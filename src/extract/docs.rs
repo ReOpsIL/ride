@@ -66,10 +66,48 @@ pub fn signature(node: Node<'_>, source: &str) -> String {
         if body_start > start
             && let Some(slice) = source.get(start..body_start)
         {
-            return collapse_ws(slice.trim_end().trim_end_matches('{').trim_end());
+            return tidy(&collapse_ws(
+                slice.trim_end().trim_end_matches('{').trim_end(),
+            ));
         }
     }
-    collapse_ws(full.trim_end_matches(';').trim())
+    tidy(&collapse_ws(full.trim_end_matches(';').trim()))
+}
+
+fn tidy(text: &str) -> String {
+    let stripped = strip_attributes(text);
+    collapse_ws(&stripped)
+        .replace("< ", "<")
+        .replace(" >", ">")
+        .replace(", >", ">")
+        .replace(",>", ">")
+        .replace(" ,", ",")
+}
+
+fn strip_attributes(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut chars = text.char_indices().peekable();
+    while let Some((i, c)) = chars.next() {
+        let rest = &text[i + c.len_utf8()..];
+        if c == '#' && (rest.starts_with('[') || rest.starts_with("![")) {
+            let mut depth = 0i32;
+            for (_, d) in chars.by_ref() {
+                match d {
+                    '[' => depth += 1,
+                    ']' => {
+                        depth -= 1;
+                        if depth == 0 {
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            continue;
+        }
+        out.push(c);
+    }
+    out
 }
 
 pub fn source_chunk(node: Node<'_>, source: &str) -> String {

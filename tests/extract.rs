@@ -299,3 +299,24 @@ fn does_not_follow_mod_outside_crate() {
     let items = extract_crate(&root, Scope::Workspace).unwrap();
     assert!(!items.iter().any(|i| i.name == "leaked"));
 }
+
+#[test]
+fn signature_drops_attributes_and_tidies_generics() {
+    let src = "pub struct HashMap<\n    K,\n    V,\n    S = RandomState,\n    #[unstable(feature = \"allocator_api\", issue = \"32838\")] A: Allocator = Global,\n> {\n    base: u8,\n}\n#[inline]\npub fn f<#[cfg(x)] T>(t: T) -> T { t }\n";
+    let ctx = ride_engine::CrateContext {
+        crate_name: "c".into(),
+        crate_version: "0.0.0".into(),
+        crate_root: std::path::PathBuf::from("<mem>"),
+        edition: None,
+        features: Vec::new(),
+        scope: ride_engine::Scope::Workspace,
+    };
+    let items = ride_engine::extract_source(src, &ctx, &["c".into()]).unwrap();
+    let map = items.iter().find(|i| i.name == "HashMap").unwrap();
+    assert_eq!(
+        map.signature,
+        "pub struct HashMap<K, V, S = RandomState, A: Allocator = Global>"
+    );
+    let f = items.iter().find(|i| i.name == "f").unwrap();
+    assert_eq!(f.signature, "pub fn f<T>(t: T) -> T");
+}
