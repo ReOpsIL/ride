@@ -12,6 +12,7 @@ extension AppState {
         if let existing = buffers.first(where: { $0.fileURL == standard }) {
             existing.isReadOnly = existing.isReadOnly || readOnly
             activeID = existing.id
+            refreshPreview()
             return
         }
         let buffer = BufferDocument(url: standard)
@@ -20,6 +21,7 @@ extension AppState {
         activeID = buffer.id
         cursorLine = 1
         cursorColumn = 1
+        refreshPreview()
     }
 
     func newUntitled() {
@@ -38,6 +40,7 @@ extension AppState {
         selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
         cursorColumn = 1
+        refreshPreview()
     }
 
     func closeBuffer(_ id: UUID) {

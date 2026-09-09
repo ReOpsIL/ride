@@ -29,9 +29,11 @@ final class AppState: ObservableObject {
     @Published var showProjectFind = false
     @Published var showProblems = false
     @Published var showSidebar = true
+    @Published var showPreview = false
     @Published var formatError: String?
     let symbolPicker = SymbolPickerModel()
     let projectFind = ProjectFindModel()
+    let preview = PreviewModel()
     let git = GitStatusService()
     var pendingJump: UInt32?
     var applyThenSave = false

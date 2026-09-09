@@ -80,6 +80,11 @@ struct RideApp: App {
                     state.toggleProblems()
                 }
                 .keyboardShortcut("m", modifiers: [.command, .shift])
+                Button("Toggle Markdown Preview") {
+                    state.togglePreview()
+                }
+                .keyboardShortcut("v", modifiers: [.command, .shift])
+                .disabled(!state.previewAvailable)
             }
             CommandMenu("Build") {
                 Button("Check") {

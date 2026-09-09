@@ -55,6 +55,14 @@
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
 		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
 		A000000000000000000000D0 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
+		B1000000000000000000002B /* HeadingLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002A /* HeadingLevel.swift */; };
+		B1000000000000000000002C /* HeadingLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002A /* HeadingLevel.swift */; };
+		B1000000000000000000003B /* PreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003A /* PreviewModel.swift */; };
+		B1000000000000000000004B /* PreviewTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000004A /* PreviewTemplate.swift */; };
+		B1000000000000000000005B /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000005A /* MarkdownPreview.swift */; };
+		B1000000000000000000006B /* PreviewPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000006A /* PreviewPane.swift */; };
+		B1000000000000000000007B /* AppState+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000007A /* AppState+Preview.swift */; };
+		B1000000000000000000008B /* HeadingLevelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000008A /* HeadingLevelTests.swift */; };
 		B1000000000000000000001B /* MarkupFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* MarkupFonts.swift */; };
 		B1000000000000000000000C /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
 		B1000000000000000000000D /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
@@ -235,6 +243,13 @@
 		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
 		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A00000000000000000000092 /* Utf16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16.swift; sourceTree = "<group>"; };
+		B1000000000000000000002A /* HeadingLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeadingLevel.swift"; sourceTree = "<group>"; };
+		B1000000000000000000003A /* PreviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewModel.swift"; sourceTree = "<group>"; };
+		B1000000000000000000004A /* PreviewTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewTemplate.swift"; sourceTree = "<group>"; };
+		B1000000000000000000005A /* MarkdownPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownPreview.swift"; sourceTree = "<group>"; };
+		B1000000000000000000006A /* PreviewPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewPane.swift"; sourceTree = "<group>"; };
+		B1000000000000000000007A /* AppState+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Preview.swift"; sourceTree = "<group>"; };
+		B1000000000000000000008A /* HeadingLevelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeadingLevelTests.swift"; sourceTree = "<group>"; };
 		B1000000000000000000001A /* MarkupFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkupFonts.swift; sourceTree = "<group>"; };
 		B1000000000000000000000A /* LineIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndex.swift; sourceTree = "<group>"; };
 		B1000000000000000000000B /* LineIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndexTests.swift; sourceTree = "<group>"; };
@@ -362,6 +377,7 @@
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
+				B1000000000000000000008A /* HeadingLevelTests.swift */,
 				A000000000000000000000C2 /* QueryIdTests.swift */,
 				A000000000000000000000E7 /* CompletionPositionTests.swift */,
 			);
@@ -383,6 +399,8 @@
 			isa = PBXGroup;
 			children = (
 				B0901DA538FDB916C2AF040F /* AppState+Layout.swift */,
+				B1000000000000000000007A /* AppState+Preview.swift */,
+				B1000000000000000000009A /* Preview */,
 				B0BFC2E56FBC0D62926D318D /* Design */,
 				A00000000000000000000147 /* AppState+Theme.swift */,
 				A00000000000000000000145 /* AppState+Watch.swift */,
@@ -468,6 +486,7 @@
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
 				A00000000000000000000092 /* Utf16.swift */,
+				B1000000000000000000002A /* HeadingLevel.swift */,
 				B1000000000000000000001A /* MarkupFonts.swift */,
 				B1000000000000000000000A /* LineIndex.swift */,
 				A00000000000000000000093 /* EditBuild.swift */,
@@ -584,6 +603,17 @@
 				A00000000000000000000903 /* DemoScene.swift */,
 			);
 			path = Debug;
+			sourceTree = "<group>";
+		};
+		B1000000000000000000009A /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				B1000000000000000000003A /* PreviewModel.swift */,
+				B1000000000000000000004A /* PreviewTemplate.swift */,
+				B1000000000000000000005A /* MarkdownPreview.swift */,
+				B1000000000000000000006A /* PreviewPane.swift */,
+			);
+			path = Preview;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -707,6 +737,8 @@
 				A000000000000000000000C3 /* Utf16Tests.swift in Sources */,
 				A000000000000000000000C4 /* QueryIdTests.swift in Sources */,
 				A000000000000000000000D0 /* Utf16.swift in Sources */,
+				B1000000000000000000002C /* HeadingLevel.swift in Sources */,
+				B1000000000000000000008B /* HeadingLevelTests.swift in Sources */,
 				B1000000000000000000000D /* LineIndex.swift in Sources */,
 				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
 				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
@@ -817,6 +849,12 @@
 				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
 				A000000000000000000000A1 /* Theme.swift in Sources */,
 				A000000000000000000000A2 /* Utf16.swift in Sources */,
+				B1000000000000000000002B /* HeadingLevel.swift in Sources */,
+				B1000000000000000000003B /* PreviewModel.swift in Sources */,
+				B1000000000000000000004B /* PreviewTemplate.swift in Sources */,
+				B1000000000000000000005B /* MarkdownPreview.swift in Sources */,
+				B1000000000000000000006B /* PreviewPane.swift in Sources */,
+				B1000000000000000000007B /* AppState+Preview.swift in Sources */,
 				B1000000000000000000001B /* MarkupFonts.swift in Sources */,
 				B1000000000000000000000C /* LineIndex.swift in Sources */,
 				A000000000000000000000A3 /* EditBuild.swift in Sources */,

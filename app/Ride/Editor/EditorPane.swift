@@ -154,6 +154,7 @@ struct EditorPane: NSViewRepresentable {
                 SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
             }
             CompletionSession.shared.schedule(document: document, view: view, state: state)
+            state.previewTextChanged(document, text: view.string)
             state.scheduleAutoSave()
         }
 
@@ -187,6 +188,7 @@ struct EditorPane: NSViewRepresentable {
             SessionService.shared.setVisible(document: document, view: view)
             CompletionSession.shared.viewportChanged(view: view)
             HoverController.shared.hide()
+            state.previewViewport(line: view.firstVisibleLine())
         }
     }
 }

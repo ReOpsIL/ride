@@ -36,6 +36,12 @@ enum DemoScene {
         case "problems":
             editor(state, file: "src/util.rs", line: 2)
             DemoLaunch.after(0.8) { problems(state) }
+        case "preview":
+            editor(state, file: "README.md", line: 1)
+            DemoLaunch.after(0.8) {
+                state.showPreview = true
+                state.refreshPreview()
+            }
         case "outline":
             state.prefs.outlinePanel = true
             editor(state)

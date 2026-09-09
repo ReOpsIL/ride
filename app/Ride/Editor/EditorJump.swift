@@ -22,13 +22,18 @@ final class EditorJump {
         guard let view else {
             return
         }
-        let ns = view.string as NSString
-        let loc = min(max(range.location, 0), ns.length)
-        let len = min(max(range.length, 0), ns.length - loc)
+        let length = view.textStorage?.length ?? 0
+        let loc = min(max(range.location, 0), length)
+        let len = min(max(range.length, 0), length - loc)
         let clamped = NSRange(location: loc, length: len)
         view.window?.makeFirstResponder(view)
         view.setSelectedRange(clamped)
-        view.scrollRangeToVisible(NSRange(location: loc, length: max(len, 1)))
+        if loc == 0 {
+            view.enclosingScrollView?.contentView.scroll(to: .zero)
+            view.enclosingScrollView?.reflectScrolledClipView(view.enclosingScrollView!.contentView)
+        } else {
+            view.scrollRangeToVisible(NSRange(location: loc, length: max(len, 1)))
+        }
         view.updateCurrentLineHighlight()
         host?.syncGutter()
     }
@@ -37,13 +42,8 @@ final class EditorJump {
         guard let view else {
             return
         }
-        let ns = view.string as NSString
-        var loc = 0
-        var current = 1
-        while current < line, loc < ns.length {
-            loc = NSMaxRange(ns.lineRange(for: NSRange(location: loc, length: 0)))
-            current += 1
-        }
+        let starts = view.lineIndex().starts
+        let loc = starts[min(max(line, 1), starts.count) - 1]
         select(NSRange(location: loc, length: 0))
     }
 

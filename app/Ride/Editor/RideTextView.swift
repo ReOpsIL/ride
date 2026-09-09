@@ -2,6 +2,8 @@ import AppKit
 
 final class RideTextView: NSTextView {
     var tabWidth = 4
+    private(set) var baseFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+    private var appliedFontSize = 0
     var showIndentGuides = true
     let lines = LineIndex()
 
@@ -75,11 +77,13 @@ final class RideTextView: NSTextView {
             showIndentGuides = prefs.indentGuides
             needsDisplay = true
         }
-        if tabWidth == prefs.tabWidth, font?.pointSize == CGFloat(prefs.fontSize) {
+        if tabWidth == prefs.tabWidth, appliedFontSize == prefs.fontSize {
             return
         }
         tabWidth = prefs.tabWidth
+        appliedFontSize = prefs.fontSize
         let font = NSFont.monospacedSystemFont(ofSize: CGFloat(prefs.fontSize), weight: .regular)
+        baseFont = font
         let space = " ".size(withAttributes: [.font: font]).width
         let paragraph = NSMutableParagraphStyle()
         paragraph.defaultTabInterval = space * CGFloat(tabWidth)
@@ -147,6 +151,17 @@ final class RideTextView: NSTextView {
             return nil
         }
         return nsRangeToTextRange(range, storage: storage)
+    }
+
+    func firstVisibleLine() -> Int {
+        guard let tlm = textLayoutManager,
+              let storage = textContentStorage,
+              let vp = tlm.textViewportLayoutController.viewportRange
+        else {
+            return 1
+        }
+        let start16 = storage.offset(from: storage.documentRange.location, to: vp.location)
+        return lineIndex().line(at: start16)
     }
 
     func visibleBytes() -> ByteRange? {

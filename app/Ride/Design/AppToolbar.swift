@@ -3,6 +3,7 @@ import SwiftUI
 struct AppToolbar: ToolbarContent {
     let state: AppState
     let hasWorkspace: Bool
+    var markdown = false
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
@@ -22,6 +23,15 @@ struct AppToolbar: ToolbarContent {
             }
         }
         ToolbarItemGroup(placement: .primaryAction) {
+            if markdown {
+                Button {
+                    state.togglePreview()
+                } label: {
+                    Image(systemName: "doc.richtext")
+                }
+                .help("Toggle Markdown Preview (⇧⌘V)")
+                .accessibilityLabel("Toggle Markdown Preview")
+            }
             Button {
                 state.runCheck()
             } label: {

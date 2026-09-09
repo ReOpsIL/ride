@@ -21,7 +21,7 @@ struct RootView: View {
         .background(ts.ui.bgBase)
         .background(WindowConfigurator())
         .toolbar {
-            AppToolbar(state: state, hasWorkspace: state.workspaceRoot != nil)
+            AppToolbar(state: state, hasWorkspace: state.workspaceRoot != nil, markdown: state.previewAvailable)
         }
         .toolbarBackground(.visible, for: .windowToolbar)
         .overlay {
@@ -80,6 +80,13 @@ struct DetailColumn: View {
         HSplitView {
             editor
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if state.previewVisible {
+                PreviewPane()
+                    .frame(width: state.prefs.previewWidth)
+                    .overlay(alignment: .leading) {
+                        SplitHandle(axis: .horizontal, value: previewWidth, range: 260...900, inverted: true)
+                    }
+            }
             if state.prefs.outlinePanel {
                 FileOutlineView()
                     .frame(width: state.prefs.outlineWidth)
@@ -94,6 +101,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.outlineWidth },
             set: { value in state.saveLayout { $0.outlineWidth = value } }
+        )
+    }
+
+    private var previewWidth: Binding<Double> {
+        Binding(
+            get: { state.prefs.previewWidth },
+            set: { value in state.saveLayout { $0.previewWidth = value } }
         )
     }
 

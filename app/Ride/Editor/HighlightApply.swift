@@ -15,7 +15,7 @@ enum HighlightApply {
             return
         }
         let map = Utf16Map(text)
-        let fonts = MarkupFonts(base: view.font)
+        let fonts = MarkupFonts(base: view.baseFont)
         storage.beginEditing()
         for range in update.changed {
             let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
@@ -37,7 +37,7 @@ enum HighlightApply {
             }
             let color = theme.color(span.capture)
             storage.addAttribute(.foregroundColor, value: color, range: ns)
-            if let font = fonts.font(for: span.capture) {
+            if let font = fonts.font(for: span.capture, text: nsText.substring(with: ns)) {
                 storage.addAttribute(.font, value: font, range: ns)
             }
             if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: ns) {

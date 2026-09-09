@@ -5,7 +5,7 @@ struct OutlineRow: Identifiable, Equatable {
     let kindLabel: String
     let startByte: UInt32
     let endByte: UInt32
-    var id: UInt32 { startByte }
+    var id: String { "\(startByte):\(name)" }
 }
 
 struct PendingEdit {

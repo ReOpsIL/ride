@@ -5,7 +5,7 @@ enum IndentGuides {
         guard view.showIndentGuides,
               let tlm = view.textLayoutManager,
               let storage = view.textContentStorage,
-              let font = view.font
+              let font = Optional(view.baseFont)
         else {
             return
         }

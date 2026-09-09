@@ -15,6 +15,7 @@ struct Preferences: Codable, Equatable {
     var sidebarWidth: Double
     var outlineWidth: Double
     var problemsHeight: Double
+    var previewWidth: Double
 
     static let defaults = Preferences(
         theme: "dark",
@@ -30,7 +31,8 @@ struct Preferences: Codable, Equatable {
         indentGuides: true,
         sidebarWidth: 230,
         outlineWidth: 220,
-        problemsHeight: 180
+        problemsHeight: 180,
+        previewWidth: 460
     )
 
     init(
@@ -47,7 +49,8 @@ struct Preferences: Codable, Equatable {
         indentGuides: Bool = true,
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
-        problemsHeight: Double = 180
+        problemsHeight: Double = 180,
+        previewWidth: Double = 460
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -63,6 +66,7 @@ struct Preferences: Codable, Equatable {
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
+        self.previewWidth = previewWidth
     }
 
     init(from decoder: Decoder) throws {
@@ -82,6 +86,7 @@ struct Preferences: Codable, Equatable {
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
+        previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
     }
 
     var clamped: Preferences {
@@ -91,6 +96,7 @@ struct Preferences: Codable, Equatable {
         next.sidebarWidth = min(420, max(180, sidebarWidth))
         next.outlineWidth = min(420, max(160, outlineWidth))
         next.problemsHeight = min(480, max(80, problemsHeight))
+        next.previewWidth = min(900, max(260, previewWidth))
         if next.theme != "light" {
             next.theme = "dark"
         }
