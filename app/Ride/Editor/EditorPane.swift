@@ -89,6 +89,7 @@ struct EditorPane: NSViewRepresentable {
         }
         SessionService.shared.attach(document: document, view: host.textView)
         EditorJump.shared.attach(host: host)
+        context.coordinator.installHooks(host.textView)
         host.syncGutter()
         return host
     }
@@ -177,6 +178,7 @@ struct EditorPane: NSViewRepresentable {
             }
             SessionService.shared.setVisible(document: document, view: view)
             CompletionSession.shared.viewportChanged(view: view)
+            HoverController.shared.hide()
         }
 
         func flush(_ host: EditorHostView) {
@@ -185,6 +187,10 @@ struct EditorPane: NSViewRepresentable {
                 document.text = text
                 EditorJump.shared.replaceText(text)
                 SessionService.shared.resync(document: document, view: host.textView)
+            }
+            if let byte = state.pendingJump {
+                state.pendingJump = nil
+                EditorJump.shared.jump(byte: byte)
             }
         }
     }

@@ -30,6 +30,15 @@ enum WorkspaceFS {
         isDirectory ? url : url.deletingLastPathComponent()
     }
 
+    static func contains(root: URL?, file: URL) -> Bool {
+        guard let root else {
+            return false
+        }
+        let rootPath = root.standardizedFileURL.path
+        let filePath = file.standardizedFileURL.path
+        return filePath == rootPath || filePath.hasPrefix(rootPath + "/")
+    }
+
     static func relativePath(root: URL, file: URL) -> String {
         let rootPath = root.standardizedFileURL.path
         let filePath = file.standardizedFileURL.path

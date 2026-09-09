@@ -2,6 +2,8 @@ import AppKit
 
 final class RideTextView: NSTextView {
     var tabWidth = 4
+    var hooks = EditorHooks()
+    var hoverArea: NSTrackingArea?
     private var currentLineUTF16 = NSRange(location: 0, length: 0)
 
     override init(frame frameRect: NSRect, textContainer container: NSTextContainer?) {

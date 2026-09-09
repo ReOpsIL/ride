@@ -24,6 +24,7 @@ extension RideTextView {
     }
 
     override func keyDown(with event: NSEvent) {
+        HoverController.shared.hide()
         if CompletionSession.shared.isVisible {
             switch event.keyCode {
             case 126:

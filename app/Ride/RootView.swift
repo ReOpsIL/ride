@@ -36,6 +36,12 @@ struct RootView: View {
             if state.showSymbolInFile {
                 SymbolInFileOverlay()
             }
+            if state.showSymbolPicker {
+                SymbolPickerOverlay(model: state.symbolPicker)
+            }
+            if state.showProjectFind {
+                ProjectFindOverlay(model: state.projectFind)
+            }
         }
     }
 }

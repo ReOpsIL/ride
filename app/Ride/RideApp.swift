@@ -73,6 +73,18 @@ struct RideApp: App {
                     state.toggleSymbolInFile()
                 }
                 .keyboardShortcut("r", modifiers: .command)
+                Button("Go to Symbol in Project…") {
+                    state.toggleSymbolPicker()
+                }
+                .keyboardShortcut("r", modifiers: [.command, .shift])
+                Button("Find in Project…") {
+                    state.toggleProjectFind()
+                }
+                .keyboardShortcut("f", modifiers: [.command, .shift])
+                Button("Go to Definition") {
+                    state.goToDefinition()
+                }
+                .keyboardShortcut(FunctionKeys.f12, modifiers: [])
             }
         }
         Settings {

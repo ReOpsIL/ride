@@ -12,12 +12,34 @@ extension AppState {
     }
 
     func toggleSymbolInFile() {
-        showQuickOpen = false
-        showFind = false
+        closeOverlays()
         showSymbolInFile.toggle()
         if showSymbolInFile {
             symbolQuery = ""
             symbolSelection = activeBuffer?.outline.first?.startByte
         }
+    }
+
+    func toggleSymbolPicker() {
+        let next = !showSymbolPicker
+        closeOverlays()
+        showSymbolPicker = next
+        if next {
+            symbolPicker.reset()
+        }
+    }
+
+    func toggleProjectFind() {
+        let next = !showProjectFind
+        closeOverlays()
+        showProjectFind = next
+    }
+
+    func closeOverlays() {
+        showQuickOpen = false
+        showFind = false
+        showSymbolInFile = false
+        showSymbolPicker = false
+        showProjectFind = false
     }
 }

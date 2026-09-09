@@ -24,6 +24,11 @@ final class AppState: ObservableObject {
     @Published var showSymbolInFile = false
     @Published var symbolQuery = ""
     @Published var symbolSelection: UInt32?
+    @Published var showSymbolPicker = false
+    @Published var showProjectFind = false
+    let symbolPicker = SymbolPickerModel()
+    let projectFind = ProjectFindModel()
+    var pendingJump: UInt32?
 
     private let recents = RecentProjects()
     private let watcher = FileWatcher()

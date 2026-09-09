@@ -60,6 +60,27 @@
 		A000000000000000000000E4 /* CompletionRowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E3 /* CompletionRowStyle.swift */; };
 		A000000000000000000000E6 /* CompletionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E5 /* CompletionRowView.swift */; };
 		A000000000000000000000E8 /* CompletionPositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E7 /* CompletionPositionTests.swift */; };
+		A00000000000000000000101 /* HitNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000100 /* HitNavigation.swift */; };
+		A00000000000000000000103 /* SymbolPickerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000102 /* SymbolPickerModel.swift */; };
+		A00000000000000000000105 /* SymbolPickerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000104 /* SymbolPickerOverlay.swift */; };
+		A00000000000000000000107 /* ProjectFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000106 /* ProjectFind.swift */; };
+		A00000000000000000000108 /* ProjectFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000106 /* ProjectFind.swift */; };
+		A0000000000000000000010A /* ProjectFindModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000109 /* ProjectFindModel.swift */; };
+		A0000000000000000000010C /* ProjectFindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000010B /* ProjectFindView.swift */; };
+		A0000000000000000000010E /* EditorHooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000010D /* EditorHooks.swift */; };
+		A00000000000000000000110 /* EditorPane+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000010F /* EditorPane+Nav.swift */; };
+		A00000000000000000000112 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000111 /* Definitions.swift */; };
+		A00000000000000000000114 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
+		A00000000000000000000115 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
+		A00000000000000000000117 /* HoverPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* HoverPanel.swift */; };
+		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
+		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
+		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
+		A0000000000000000000011F /* FunctionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011E /* FunctionKeys.swift */; };
+		A00000000000000000000120 /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000015 /* Workspace.swift */; };
+		A00000000000000000000121 /* FileIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000062 /* FileIndex.swift */; };
+		A00000000000000000000123 /* ProjectFindTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000122 /* ProjectFindTests.swift */; };
+		A00000000000000000000125 /* NavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000124 /* NavigationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -115,6 +136,23 @@
 		A000000000000000000000E3 /* CompletionRowStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowStyle.swift; sourceTree = "<group>"; };
 		A000000000000000000000E5 /* CompletionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowView.swift; sourceTree = "<group>"; };
 		A000000000000000000000E7 /* CompletionPositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPositionTests.swift; sourceTree = "<group>"; };
+		A00000000000000000000100 /* HitNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitNavigation.swift; sourceTree = "<group>"; };
+		A00000000000000000000102 /* SymbolPickerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPickerModel.swift; sourceTree = "<group>"; };
+		A00000000000000000000104 /* SymbolPickerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPickerOverlay.swift; sourceTree = "<group>"; };
+		A00000000000000000000106 /* ProjectFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFind.swift; sourceTree = "<group>"; };
+		A00000000000000000000109 /* ProjectFindModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindModel.swift; sourceTree = "<group>"; };
+		A0000000000000000000010B /* ProjectFindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindView.swift; sourceTree = "<group>"; };
+		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
+		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
+		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
+		A00000000000000000000113 /* IdentifierRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierRange.swift; sourceTree = "<group>"; };
+		A00000000000000000000116 /* HoverPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverPanel.swift; sourceTree = "<group>"; };
+		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
+		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
+		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
+		A0000000000000000000011E /* FunctionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionKeys.swift; sourceTree = "<group>"; };
+		A00000000000000000000122 /* ProjectFindTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindTests.swift; sourceTree = "<group>"; };
+		A00000000000000000000124 /* NavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +177,8 @@
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				A00000000000000000000122 /* ProjectFindTests.swift */,
+				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				A000000000000000000000C2 /* QueryIdTests.swift */,
 				A000000000000000000000E7 /* CompletionPositionTests.swift */,
@@ -209,6 +249,15 @@
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				A0000000000000000000010D /* EditorHooks.swift */,
+				A0000000000000000000010F /* EditorPane+Nav.swift */,
+				A00000000000000000000111 /* Definitions.swift */,
+				A00000000000000000000113 /* IdentifierRange.swift */,
+				A00000000000000000000116 /* HoverPanel.swift */,
+				A00000000000000000000118 /* HoverController.swift */,
+				A0000000000000000000011A /* HoverText.swift */,
+				A0000000000000000000011C /* RideTextView+Mouse.swift */,
+				A0000000000000000000011E /* FunctionKeys.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000001C /* EditorPane.swift */,
@@ -227,6 +276,12 @@
 		A00000000000000000000056 /* Search */ = {
 			isa = PBXGroup;
 			children = (
+				A00000000000000000000100 /* HitNavigation.swift */,
+				A00000000000000000000102 /* SymbolPickerModel.swift */,
+				A00000000000000000000104 /* SymbolPickerOverlay.swift */,
+				A00000000000000000000106 /* ProjectFind.swift */,
+				A00000000000000000000109 /* ProjectFindModel.swift */,
+				A0000000000000000000010B /* ProjectFindView.swift */,
 				A00000000000000000000060 /* QuickOpen.swift */,
 				A00000000000000000000061 /* FindBar.swift */,
 				A00000000000000000000062 /* FileIndex.swift */,
@@ -396,6 +451,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A00000000000000000000108 /* ProjectFind.swift in Sources */,
+				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
+				A00000000000000000000120 /* Workspace.swift in Sources */,
+				A00000000000000000000121 /* FileIndex.swift in Sources */,
+				A00000000000000000000123 /* ProjectFindTests.swift in Sources */,
+				A00000000000000000000125 /* NavigationTests.swift in Sources */,
 				A000000000000000000000C3 /* Utf16Tests.swift in Sources */,
 				A000000000000000000000C4 /* QueryIdTests.swift in Sources */,
 				A000000000000000000000D0 /* Utf16.swift in Sources */,
@@ -409,6 +470,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A00000000000000000000101 /* HitNavigation.swift in Sources */,
+				A00000000000000000000103 /* SymbolPickerModel.swift in Sources */,
+				A00000000000000000000105 /* SymbolPickerOverlay.swift in Sources */,
+				A00000000000000000000107 /* ProjectFind.swift in Sources */,
+				A0000000000000000000010A /* ProjectFindModel.swift in Sources */,
+				A0000000000000000000010C /* ProjectFindView.swift in Sources */,
+				A0000000000000000000010E /* EditorHooks.swift in Sources */,
+				A00000000000000000000110 /* EditorPane+Nav.swift in Sources */,
+				A00000000000000000000112 /* Definitions.swift in Sources */,
+				A00000000000000000000114 /* IdentifierRange.swift in Sources */,
+				A00000000000000000000117 /* HoverPanel.swift in Sources */,
+				A00000000000000000000119 /* HoverController.swift in Sources */,
+				A0000000000000000000011B /* HoverText.swift in Sources */,
+				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
+				A0000000000000000000011F /* FunctionKeys.swift in Sources */,
 				A00000000000000000000021 /* RideApp.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
