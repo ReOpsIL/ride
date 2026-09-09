@@ -23,6 +23,8 @@ enum Command {
     },
     Query {
         query: String,
+        #[arg(long, default_value_t = 1)]
+        repeat: u32,
     },
     Status,
 }
@@ -37,8 +39,8 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Some(Command::Index { force }) => index_cmd(cli.project_path, cli.index_dir, force),
-        Some(Command::Query { query }) => {
-            query_cmd(query, cli.index_dir);
+        Some(Command::Query { query, repeat }) => {
+            query_cmd(query, cli.index_dir, repeat);
             ExitCode::SUCCESS
         }
         Some(Command::Status) => {
@@ -78,17 +80,17 @@ fn index_cmd(project_path: Option<String>, index_dir: Option<String>, force: boo
     }
 }
 
-fn query_cmd(query: String, index_dir: Option<String>) {
+fn query_cmd(query: String, index_dir: Option<String>, repeat: u32) {
     let engine = engine_start(config(index_dir));
     let mode = if query.contains(' ') {
         ride_engine::QueryMode::Phrase
     } else {
         ride_engine::QueryMode::Items
     };
-    let resp = engine.query_completions(ride_engine::CompletionQuery {
-        query_id: 1,
+    let request = |id: u64| ride_engine::CompletionQuery {
+        query_id: id,
         session_id: 0,
-        prefix: query,
+        prefix: query.clone(),
         mode,
         context: ride_engine::CompletionContext::Unknown,
         cursor_byte: 0,
@@ -97,7 +99,20 @@ fn query_cmd(query: String, index_dir: Option<String>) {
         current_module: None,
         kind_filter: None,
         limit: 20,
-    });
+    };
+    let mut timings = Vec::new();
+    let mut resp = engine.query_completions(request(1));
+    for i in 2..=repeat.max(1) {
+        let start = std::time::Instant::now();
+        resp = engine.query_completions(request(u64::from(i)));
+        timings.push(start.elapsed());
+    }
+    if !timings.is_empty() {
+        timings.sort();
+        let p50 = timings[timings.len() / 2];
+        let p95 = timings[(timings.len() * 95 / 100).min(timings.len() - 1)];
+        eprintln!("p50 {p50:?} p95 {p95:?} over {} runs", timings.len());
+    }
     let hits: Vec<HitOut> = resp
         .hits
         .iter()
