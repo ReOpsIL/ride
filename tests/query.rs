@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
-use ride_engine::{CompletionQuery, EngineConfig, ItemKind, QueryMode, engine_start, write_index};
+use ride_engine::{
+    CompletionQuery, EngineConfig, ItemKind, QueryMode, engine_start, rebuild_index, write_index,
+};
 
 fn fixtures() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
@@ -162,7 +164,7 @@ fn watch_picks_up_new_generation() {
     let engine = engine_start(config(dir.path()));
     let before = engine.query_completions(query("Foo", QueryMode::Items));
     assert!(before.hits.iter().all(|h| h.name != "Foo"));
-    write_index(
+    rebuild_index(
         &fixtures().join("sample_crate"),
         dir.path(),
         &config(dir.path()),
@@ -202,7 +204,7 @@ fn overlay_clears_on_new_generation() {
             .iter()
             .all(|h| h.name != "Foo")
     );
-    write_index(
+    rebuild_index(
         &fixtures().join("sample_crate"),
         dir.path(),
         &config(dir.path()),

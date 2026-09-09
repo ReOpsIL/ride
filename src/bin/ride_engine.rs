@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
-use ride_engine::{EngineConfig, engine_start, last_status, write_index};
+use ride_engine::{EngineConfig, engine_start, last_status, rebuild_index, write_index};
 
 #[derive(Parser, Debug)]
 #[command(name = "ride-engine", version)]
@@ -17,8 +17,13 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Command {
-    Index,
-    Query { query: String },
+    Index {
+        #[arg(long)]
+        force: bool,
+    },
+    Query {
+        query: String,
+    },
     Status,
 }
 
@@ -31,7 +36,7 @@ fn main() -> ExitCode {
             }
             ExitCode::SUCCESS
         }
-        Some(Command::Index) => index_cmd(cli.project_path, cli.index_dir),
+        Some(Command::Index { force }) => index_cmd(cli.project_path, cli.index_dir, force),
         Some(Command::Query { query }) => {
             query_cmd(query, cli.index_dir);
             ExitCode::SUCCESS
@@ -43,7 +48,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn index_cmd(project_path: Option<String>, index_dir: Option<String>) -> ExitCode {
+fn index_cmd(project_path: Option<String>, index_dir: Option<String>, force: bool) -> ExitCode {
     let Some(project) = project_path else {
         eprintln!("index requires --project-path");
         return ExitCode::from(2);
@@ -53,13 +58,17 @@ fn index_cmd(project_path: Option<String>, index_dir: Option<String>) -> ExitCod
         return ExitCode::from(2);
     };
     let config = config(Some(index_dir.clone()));
-    match write_index(
+    let run = if force { rebuild_index } else { write_index };
+    match run(
         PathBuf::from(project).as_path(),
         PathBuf::from(index_dir).as_path(),
         &config,
     ) {
         Ok(status) => {
-            println!("{} docs {} crates", status.docs, status.crates_done);
+            println!(
+                "{} docs {} crates {} warnings",
+                status.docs, status.crates_done, status.warnings
+            );
             ExitCode::SUCCESS
         }
         Err(e) => {
@@ -114,8 +123,8 @@ fn status_cmd(index_dir: Option<String>) {
         && let Some(status) = last_status(PathBuf::from(dir).as_path())
     {
         println!(
-            "{:?} docs={} crates={}/{}",
-            status.state, status.docs, status.crates_done, status.crates_total
+            "{:?} docs={} crates={}/{} warnings={}",
+            status.state, status.docs, status.crates_done, status.crates_total, status.warnings
         );
         return;
     }

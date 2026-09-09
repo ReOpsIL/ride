@@ -7,6 +7,8 @@ use crate::ffi::EngineConfig;
 
 use super::DiscoveredCrate;
 
+const SYSROOT_CRATES: [&str; 5] = ["core", "alloc", "std", "proc_macro", "test"];
+
 pub fn sysroot_path(config: &EngineConfig) -> Result<Option<PathBuf>, EngineError> {
     if let Some(path) = &config.sysroot {
         let p = PathBuf::from(path);
@@ -41,28 +43,25 @@ pub fn rust_src_available(sysroot: Option<&Path>) -> bool {
 
 pub fn scan_sysroot(sysroot: &Path) -> Vec<DiscoveredCrate> {
     let library = rust_src_library(sysroot);
-    let Ok(entries) = std::fs::read_dir(&library) else {
-        return Vec::new();
-    };
-    let mut out = Vec::new();
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if !path.is_dir() {
-            continue;
-        }
-        if !path.join("Cargo.toml").is_file() {
-            continue;
-        }
-        let name = entry.file_name().to_string_lossy().to_string();
-        if name.ends_with("tests") || name.starts_with("rustc-std-workspace") {
-            continue;
-        }
-        out.push(DiscoveredCrate {
-            name,
-            version: "sysroot".into(),
+    let version = rustc_version().unwrap_or_else(|| "sysroot".into());
+    SYSROOT_CRATES
+        .iter()
+        .map(|name| (name, library.join(name)))
+        .filter(|(_, path)| path.join("Cargo.toml").is_file())
+        .map(|(name, path)| DiscoveredCrate {
+            name: (*name).to_string(),
+            version: version.clone(),
             path,
             scope: Scope::Sysroot,
-        });
+        })
+        .collect()
+}
+
+fn rustc_version() -> Option<String> {
+    let output = Command::new("rustc").arg("--version").output().ok()?;
+    if !output.status.success() {
+        return None;
     }
-    out
+    let text = String::from_utf8_lossy(&output.stdout);
+    text.split_whitespace().nth(1).map(str::to_string)
 }

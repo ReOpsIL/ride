@@ -14,6 +14,7 @@ pub struct IndexStatus {
     pub crates_done: u32,
     pub crates_total: u32,
     pub rust_src_available: bool,
+    pub warnings: u32,
     pub message: Option<String>,
 }
 
@@ -25,6 +26,7 @@ impl IndexStatus {
             crates_done: 0,
             crates_total: 0,
             rust_src_available,
+            warnings: 0,
             message: None,
         }
     }

@@ -68,10 +68,20 @@ pub fn extract_source(
 }
 
 pub fn extract_crate(crate_root: &Path, scope: Scope) -> Result<Vec<ItemDoc>, ExtractError> {
+    extract_crate_with_version(crate_root, scope, None)
+}
+
+pub fn extract_crate_with_version(
+    crate_root: &Path,
+    scope: Scope,
+    version: Option<&str>,
+) -> Result<Vec<ItemDoc>, ExtractError> {
     let pkg = read_package(crate_root)?;
     let ctx = CrateContext {
         crate_name: pkg.name.clone(),
-        crate_version: pkg.version.clone(),
+        crate_version: version
+            .map(str::to_string)
+            .unwrap_or_else(|| pkg.version.clone()),
         crate_root: crate_root.to_path_buf(),
         edition: pkg.edition.clone(),
         features: Vec::new(),

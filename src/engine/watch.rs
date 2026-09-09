@@ -6,7 +6,7 @@ use std::time::Duration;
 use tantivy::Index;
 
 use crate::ffi::IndexState;
-use crate::index::{SCHEMA_VERSION, last_status, live_index_dir, read_manifest};
+use crate::index::{SCHEMA_VERSION, last_status, live_index_dir, prune_generations, read_manifest};
 
 use super::Engine;
 
@@ -16,6 +16,7 @@ struct Tick {
     reopen: bool,
     notify: bool,
     index_dir: PathBuf,
+    generation: u32,
 }
 
 pub fn spawn(engine: Weak<Engine>) {
@@ -63,12 +64,14 @@ impl Engine {
                 reopen,
                 notify,
                 index_dir,
+                generation: i.generation,
             }
         }) else {
             return;
         };
         if tick.reopen {
             open_reader(self, &tick.index_dir);
+            prune_generations(&tick.index_dir, tick.generation);
         }
         if tick.notify {
             let Ok((status, listener)) = self.read(|i| (i.last_status.clone(), i.listener.clone()))

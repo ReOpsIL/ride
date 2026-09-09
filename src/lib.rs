@@ -16,10 +16,12 @@ pub use discover::{
 pub use engine::{Engine, engine_start};
 pub use error::EngineError;
 pub use extract::{
-    CrateContext, ExtractError, ItemDoc, Scope, Visibility, extract_crate, extract_source,
+    CrateContext, ExtractError, ItemDoc, Scope, Visibility, extract_crate,
+    extract_crate_with_version, extract_source,
 };
 pub use ffi::*;
 pub use highlight::BufferSession;
 pub use index::{
-    Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, write_index,
+    Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, rebuild_index,
+    write_index,
 };

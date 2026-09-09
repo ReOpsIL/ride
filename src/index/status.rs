@@ -15,16 +15,21 @@ pub struct Manifest {
     pub engine_semver: String,
     pub generation: u32,
     pub live_dir: String,
+    #[serde(default)]
+    pub fingerprint: String,
+    #[serde(default)]
+    pub docs: u32,
 }
 
 impl Manifest {
-    pub fn next(prev: Option<&Manifest>, generation: u32) -> Self {
-        let _ = prev;
+    pub fn next(generation: u32, fingerprint: String, docs: u32) -> Self {
         Self {
             schema_version: SCHEMA_VERSION,
             engine_semver: env!("CARGO_PKG_VERSION").to_string(),
             generation,
             live_dir: format!("gen-{generation}"),
+            fingerprint,
+            docs,
         }
     }
 }
@@ -36,6 +41,8 @@ struct StatusLine {
     crates_done: u32,
     crates_total: u32,
     rust_src_available: bool,
+    #[serde(default)]
+    warnings: u32,
     message: Option<String>,
 }
 
@@ -65,6 +72,7 @@ pub fn append_status(index_dir: &Path, status: &IndexStatus) -> Result<(), Engin
         crates_done: status.crates_done,
         crates_total: status.crates_total,
         rust_src_available: status.rust_src_available,
+        warnings: status.warnings,
         message: status.message.clone(),
     };
     let mut json = serde_json::to_string(&line).map_err(|e| EngineError::Index {
@@ -91,6 +99,7 @@ pub fn last_status(index_dir: &Path) -> Option<IndexStatus> {
         crates_done: parsed.crates_done,
         crates_total: parsed.crates_total,
         rust_src_available: parsed.rust_src_available,
+        warnings: parsed.warnings,
         message: parsed.message,
     })
 }
