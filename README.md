@@ -2,6 +2,12 @@
 
 Native macOS IDE for Rust. A SwiftUI/AppKit shell (`app/`) over a Rust language engine (`src/`) that discovers crates on disk, extracts items with tree-sitter, indexes them with Tantivy, and answers completion, highlight and outline queries in-process through UniFFI.
 
+![Ride editing a Rust file with the completion popup, documentation card and outline](docs/images/ride-editor.png)
+
+Completions come from the open buffer, the workspace and every crate already on disk, including the rustc sysroot, in under a millisecond. Markdown files get tree-sitter highlighting, a heading outline and a rendered preview.
+
+![Ride showing a markdown file next to its rendered preview](docs/images/ride-markdown.png)
+
 ## Install
 
 ```sh

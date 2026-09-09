@@ -16,3 +16,4 @@
 - extract: re-exports from non-sysroot crates (e.g. a workspace crate re-exporting a dependency item) still fall back to a guessed kind; extend External to direct deps if it matters
 - index: ~440 MB per generation for 1.58M docs; audit stored fields (source_chunk is stored and unused by the app)
 - engine: replace the 250 ms manifest poll with an FSEvents-driven reload
+- query: in-app completion for `Has` ranked a cache crate's exact `has` method above the `Hash` trait while the CLI does not; compare the app's query (context, current_crate) with the CLI's
