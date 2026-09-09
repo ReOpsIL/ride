@@ -13,7 +13,8 @@ final class GutterView: NSView {
     }
 
     override func draw(_ dirtyRect: NSRect) {
-        NSColor.controlBackgroundColor.setFill()
+        let theme = ThemeStore.shared.theme
+        theme.editor.background.setFill()
         dirtyRect.fill()
         guard let textView, let tlm = textView.textLayoutManager else {
             return
@@ -21,9 +22,14 @@ final class GutterView: NSView {
         let storage = textView.textContentStorage
         let origin = textView.textContainerOrigin
         let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        let currentLine = lineAndColumn(in: textView.string, utf16: textView.selectedRange().location).0
         let attrs: [NSAttributedString.Key: Any] = [
             .font: font,
-            .foregroundColor: NSColor.secondaryLabelColor,
+            .foregroundColor: theme.editor.gutterText,
+        ]
+        let currentAttrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .medium),
+            .foregroundColor: theme.editor.gutterCurrent,
         ]
         let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
         tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
@@ -37,10 +43,11 @@ final class GutterView: NSView {
                 let dest = convert(r, from: textView)
                 if dest.intersects(dirtyRect) {
                     let label = "\(lineNo)" as NSString
-                    let size = label.size(withAttributes: attrs)
+                    let style = lineNo == currentLine ? currentAttrs : attrs
+                    let size = label.size(withAttributes: style)
                     label.draw(
-                        at: CGPoint(x: bounds.width - size.width - 6, y: dest.midY - size.height / 2),
-                        withAttributes: attrs
+                        at: CGPoint(x: bounds.width - size.width - 8, y: dest.midY - size.height / 2),
+                        withAttributes: style
                     )
                 }
                 lineNo += 1
@@ -52,7 +59,7 @@ final class GutterView: NSView {
             }
             return true
         }
-        NSColor.separatorColor.setStroke()
+        theme.chrome.border.setStroke()
         let edge = NSBezierPath()
         edge.move(to: CGPoint(x: bounds.maxX - 0.5, y: 0))
         edge.line(to: CGPoint(x: bounds.maxX - 0.5, y: bounds.maxY))

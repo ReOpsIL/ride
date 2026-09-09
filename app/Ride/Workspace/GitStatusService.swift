@@ -3,6 +3,7 @@ import Foundation
 final class GitStatusService: ObservableObject {
     @Published var dirty: Set<String> = []
     @Published var dirtyDirs: Set<String> = []
+    @Published var branch: String?
     private var work: DispatchWorkItem?
     private let queue = DispatchQueue(label: "dev.ride.git")
     private var generation = 0
@@ -19,6 +20,7 @@ final class GitStatusService: ObservableObject {
     func clear() {
         dirty = []
         dirtyDirs = []
+        branch = nil
     }
 
     func isDirty(relative: String, isDirectory: Bool) -> Bool {
@@ -29,7 +31,8 @@ final class GitStatusService: ObservableObject {
         generation += 1
         let gen = generation
         queue.async { [weak self] in
-            let output = Self.porcelain(root: root)
+            let output = Self.git(root: root, ["status", "--porcelain", "--untracked-files=all"])
+            let head = Self.git(root: root, ["rev-parse", "--abbrev-ref", "HEAD"])
             DispatchQueue.main.async {
                 guard let self, gen == self.generation else {
                     return
@@ -37,11 +40,12 @@ final class GitStatusService: ObservableObject {
                 let files = output.map(GitStatus.parse) ?? []
                 self.dirty = files
                 self.dirtyDirs = GitStatus.parents(of: files)
+                self.branch = head?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
             }
         }
     }
 
-    private static func porcelain(root: URL) -> String? {
+    private static func git(root: URL, _ args: [String]) -> String? {
         let git = URL(fileURLWithPath: "/usr/bin/git")
         guard FileManager.default.isExecutableFile(atPath: git.path),
               FileManager.default.fileExists(atPath: root.appendingPathComponent(".git").path)
@@ -50,7 +54,7 @@ final class GitStatusService: ObservableObject {
         }
         let proc = Process()
         proc.executableURL = git
-        proc.arguments = ["-C", root.path, "status", "--porcelain", "--untracked-files=all"]
+        proc.arguments = ["-C", root.path] + args
         let pipe = Pipe()
         proc.standardOutput = pipe
         proc.standardError = FileHandle.nullDevice
@@ -65,5 +69,11 @@ final class GitStatusService: ObservableObject {
             return nil
         }
         return String(decoding: data, as: UTF8.self)
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
     }
 }

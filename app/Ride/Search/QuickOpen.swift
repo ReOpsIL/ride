@@ -24,7 +24,7 @@ struct QuickOpenOverlay: View {
                 if state.quickHits.isEmpty {
                     Text("No matching files")
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(10)
                 } else {
@@ -35,12 +35,14 @@ struct QuickOpenOverlay: View {
                             .lineLimit(1)
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .frame(maxHeight: 280)
                 }
             }
             .frame(width: 520)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(ThemeStore.shared.ui.bgOverlay)
+            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
+            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
             .shadow(radius: 16)
         }
         .onAppear {

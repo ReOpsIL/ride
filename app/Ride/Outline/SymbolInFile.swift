@@ -33,14 +33,14 @@ struct SymbolInFileOverlay: View {
                 if rows.isEmpty {
                     Text("No symbols")
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(10)
                 } else {
                     List(rows, id: \.startByte, selection: $state.symbolSelection) { row in
                         HStack {
                             Text(row.kindLabel)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                                 .frame(width: 48, alignment: .leading)
                             Text(row.name)
                         }
@@ -48,12 +48,14 @@ struct SymbolInFileOverlay: View {
                         .tag(Optional(row.startByte))
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .frame(maxHeight: 280)
                 }
             }
             .frame(width: 480)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(ThemeStore.shared.ui.bgOverlay)
+            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
+            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
             .shadow(radius: 16)
         }
         .onAppear {

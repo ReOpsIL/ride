@@ -24,7 +24,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         panel.becomesKeyOnlyIfNeeded = true
         panel.level = .popUpMenu
         panel.hasShadow = true
-        panel.backgroundColor = NSColor.controlBackgroundColor
+        panel.backgroundColor = ThemeStore.shared.chrome.bgOverlay
         panel.isOpaque = true
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("hit"))
         table.addTableColumn(column)
@@ -36,7 +36,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         table.allowsEmptySelection = false
         table.target = self
         table.action = #selector(clickRow)
-        table.backgroundColor = NSColor.controlBackgroundColor
+        table.backgroundColor = ThemeStore.shared.chrome.bgOverlay
         table.selectionHighlightStyle = .regular
         let scroll = NSScrollView()
         scroll.documentView = table

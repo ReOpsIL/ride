@@ -1,7 +1,8 @@
 import AppKit
 
 enum DiagnosticUnderlines {
-    static let style = NSUnderlineStyle.single.union(.patternDot).rawValue
+    static let style = NSUnderlineStyle.thick.union(.patternDot).rawValue
+    static let parseStyle = NSUnderlineStyle.single.union(.patternDot).rawValue
 
     static func apply(document: BufferDocument, view: RideTextView) {
         guard let storage = view.textStorage else {
@@ -31,6 +32,7 @@ enum DiagnosticUnderlines {
     }
 
     static func color(_ level: DiagnosticLevel) -> NSColor {
-        level == .error ? NSColor.systemRed : NSColor.systemYellow
+        let chrome = ThemeStore.shared.chrome
+        return level == .error ? chrome.error : chrome.warning
     }
 }

@@ -11,12 +11,12 @@ final class CompletionRowView: NSTableCellView {
         glyph.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .semibold)
         glyph.alignment = .center
         name.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .bold)
-        name.textColor = .labelColor
+        name.textColor = ThemeStore.shared.chrome.textPrimary
         detail.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-        detail.textColor = .secondaryLabelColor
+        detail.textColor = ThemeStore.shared.chrome.textSecondary
         detail.lineBreakMode = .byTruncatingTail
         origin.font = NSFont.systemFont(ofSize: 10)
-        origin.textColor = .tertiaryLabelColor
+        origin.textColor = ThemeStore.shared.chrome.textTertiary
         origin.alignment = .right
         for field in [glyph, name, detail, origin] {
             field.translatesAutoresizingMaskIntoConstraints = false

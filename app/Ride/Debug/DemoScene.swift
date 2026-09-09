@@ -3,6 +3,7 @@ import AppKit
 enum DemoScene {
     static func run(_ name: String, state: AppState) {
         state.prefs.autoSave = false
+        state.persistLayout = false
         switch name {
         case "editor":
             editor(state)

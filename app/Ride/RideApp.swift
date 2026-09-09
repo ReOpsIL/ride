@@ -15,7 +15,8 @@ struct RideApp: App {
                     DemoLaunch.start(state: state)
                 }
         }
-        .defaultSize(width: 1100, height: 720)
+        .defaultSize(width: 1200, height: 760)
+        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New") {
@@ -60,6 +61,10 @@ struct RideApp: App {
                 .keyboardShortcut("i", modifiers: [.control, .shift])
             }
             CommandGroup(after: .sidebar) {
+                Button("Toggle Sidebar") {
+                    state.showSidebar.toggle()
+                }
+                .keyboardShortcut("s", modifiers: [.command, .control])
                 Button("Show Problems") {
                     state.toggleProblems()
                 }

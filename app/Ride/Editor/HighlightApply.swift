@@ -19,7 +19,7 @@ enum HighlightApply {
             let ns = clamp(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte), in: full)
             if ns.length > 0 {
                 storage.removeAttribute(.foregroundColor, range: ns)
-                storage.addAttribute(.foregroundColor, value: NSColor.textColor, range: ns)
+                storage.addAttribute(.foregroundColor, value: theme.chrome.textPrimary, range: ns)
             }
             if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: ns) {
                 tlm.removeRenderingAttribute(.foregroundColor, for: tr)
@@ -45,11 +45,10 @@ enum HighlightApply {
                 }
             }
         }
-        for old in errors {
-            if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: old) {
-                tlm.removeRenderingAttribute(.underlineStyle, for: tr)
-                tlm.removeRenderingAttribute(.underlineColor, for: tr)
-            }
+        storage.beginEditing()
+        for old in errors where NSMaxRange(old) <= storage.length {
+            storage.removeAttribute(.underlineStyle, range: old)
+            storage.removeAttribute(.underlineColor, range: old)
         }
         var next: [NSRange] = []
         for err in update.errors {
@@ -57,12 +56,11 @@ enum HighlightApply {
             if ns.length == 0 {
                 continue
             }
-            if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: ns) {
-                tlm.addRenderingAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, for: tr)
-                tlm.addRenderingAttribute(.underlineColor, value: theme.error, for: tr)
-            }
+            storage.addAttribute(.underlineStyle, value: DiagnosticUnderlines.parseStyle, range: ns)
+            storage.addAttribute(.underlineColor, value: theme.error, range: ns)
             next.append(ns)
         }
+        storage.endEditing()
         errors = next
         view.needsDisplay = true
         view.updateCurrentLineHighlight()

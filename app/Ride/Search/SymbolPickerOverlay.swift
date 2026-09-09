@@ -25,7 +25,7 @@ struct SymbolPickerOverlay: View {
                 if model.hits.isEmpty {
                     Text(model.query.isEmpty ? "Type to search the workspace and catalog" : "No symbols")
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(10)
                 } else {
@@ -34,6 +34,7 @@ struct SymbolPickerOverlay: View {
                             .tag(Optional(i))
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .frame(maxHeight: 320)
                     .onCopyCommand {
                         guard let hit = model.selected else {
@@ -44,8 +45,9 @@ struct SymbolPickerOverlay: View {
                 }
             }
             .frame(width: 620)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(ThemeStore.shared.ui.bgOverlay)
+            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
+            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
             .shadow(radius: 16)
         }
         .onAppear {
@@ -89,12 +91,12 @@ struct SymbolHitRow: View {
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
             Text(hit.path == hit.name ? hit.signature : hit.path)
                 .font(.system(size: 11, design: .monospaced))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                 .lineLimit(1)
             Spacer()
             Text(CompletionRowStyle.origin(hit))
                 .font(.system(size: 10))
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(ThemeStore.shared.ui.textTertiary)
         }
         .help(hit.docFirstSentence)
     }

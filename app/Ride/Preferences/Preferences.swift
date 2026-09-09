@@ -11,6 +11,9 @@ struct Preferences: Codable, Equatable {
     var showHidden: Bool
     var checkOnSave: Bool
     var formatOnSave: Bool
+    var sidebarWidth: Double
+    var outlineWidth: Double
+    var problemsHeight: Double
 
     static let defaults = Preferences(
         theme: "dark",
@@ -22,7 +25,10 @@ struct Preferences: Codable, Equatable {
         visibleWhitespace: false,
         showHidden: false,
         checkOnSave: true,
-        formatOnSave: false
+        formatOnSave: false,
+        sidebarWidth: 230,
+        outlineWidth: 220,
+        problemsHeight: 180
     )
 
     init(
@@ -35,7 +41,10 @@ struct Preferences: Codable, Equatable {
         visibleWhitespace: Bool,
         showHidden: Bool,
         checkOnSave: Bool = true,
-        formatOnSave: Bool = false
+        formatOnSave: Bool = false,
+        sidebarWidth: Double = 230,
+        outlineWidth: Double = 220,
+        problemsHeight: Double = 180
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -47,6 +56,9 @@ struct Preferences: Codable, Equatable {
         self.showHidden = showHidden
         self.checkOnSave = checkOnSave
         self.formatOnSave = formatOnSave
+        self.sidebarWidth = sidebarWidth
+        self.outlineWidth = outlineWidth
+        self.problemsHeight = problemsHeight
     }
 
     init(from decoder: Decoder) throws {
@@ -62,12 +74,18 @@ struct Preferences: Codable, Equatable {
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
         checkOnSave = try c.decodeIfPresent(Bool.self, forKey: .checkOnSave) ?? d.checkOnSave
         formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
+        sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
+        outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
+        problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
     }
 
     var clamped: Preferences {
         var next = self
         next.fontSize = min(18, max(11, fontSize))
         next.tabWidth = min(8, max(2, tabWidth))
+        next.sidebarWidth = min(420, max(180, sidebarWidth))
+        next.outlineWidth = min(420, max(160, outlineWidth))
+        next.problemsHeight = min(480, max(80, problemsHeight))
         if next.theme != "light" {
             next.theme = "dark"
         }

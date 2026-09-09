@@ -30,8 +30,9 @@ struct ProjectFindOverlay: View {
                 results
             }
             .frame(width: 720)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(ThemeStore.shared.ui.bgOverlay)
+            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
+            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
             .shadow(radius: 16)
         }
         .onAppear {
@@ -55,7 +56,7 @@ struct ProjectFindOverlay: View {
         if model.matches.isEmpty {
             Text(model.query.isEmpty ? "Press Return to search" : (model.running ? "Searching…" : "No matches"))
                 .font(.system(size: 12))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(10)
         } else {
@@ -65,7 +66,7 @@ struct ProjectFindOverlay: View {
                         ForEach(group.matches) { match in
                             HStack(spacing: 8) {
                                 Text("\(match.line)")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                                     .frame(width: 44, alignment: .trailing)
                                 Text(match.preview)
                                     .lineLimit(1)
@@ -81,10 +82,11 @@ struct ProjectFindOverlay: View {
                 if model.truncated {
                     Text("Results truncated at \(ProjectFind.cap) matches")
                         .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
                 }
             }
             .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
             .frame(maxHeight: 420)
         }
     }

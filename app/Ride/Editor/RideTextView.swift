@@ -18,8 +18,7 @@ final class RideTextView: NSTextView {
 
     func applyDefaults() {
         applyPrefs(.defaults)
-        backgroundColor = NSColor.textBackgroundColor
-        insertionPointColor = NSColor.textColor
+        applyTheme(ThemeStore.shared.theme)
         isRichText = true
         importsGraphics = false
         allowsImageEditing = false
@@ -49,6 +48,15 @@ final class RideTextView: NSTextView {
         setAccessibilityLabel("Rust")
     }
 
+    func applyTheme(_ theme: Theme) {
+        backgroundColor = theme.editor.background
+        insertionPointColor = theme.editor.caret
+        textColor = theme.chrome.textPrimary
+        selectedTextAttributes = [.backgroundColor: theme.editor.selection]
+        typingAttributes[.foregroundColor] = theme.chrome.textPrimary
+        updateCurrentLineHighlight()
+    }
+
     func applyPrefs(_ prefs: Preferences) {
         if tabWidth == prefs.tabWidth, font?.pointSize == CGFloat(prefs.fontSize) {
             return
@@ -61,7 +69,7 @@ final class RideTextView: NSTextView {
         paragraph.tabStops = []
         typingAttributes = [
             .font: font,
-            .foregroundColor: NSColor.textColor,
+            .foregroundColor: ThemeStore.shared.chrome.textPrimary,
             .paragraphStyle: paragraph,
         ]
         defaultParagraphStyle = paragraph
@@ -97,7 +105,7 @@ final class RideTextView: NSTextView {
         if let next = nsRangeToTextRange(line, storage: storage) {
             tlm.addRenderingAttribute(
                 .backgroundColor,
-                value: NSColor.selectedTextBackgroundColor.withAlphaComponent(0.22),
+                value: ThemeStore.shared.editor.currentLine,
                 for: next
             )
         }

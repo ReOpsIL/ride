@@ -16,10 +16,10 @@ final class HoverPanel {
         panel.hidesOnDeactivate = true
         panel.level = .popUpMenu
         panel.hasShadow = true
-        panel.backgroundColor = NSColor.controlBackgroundColor
+        panel.backgroundColor = ThemeStore.shared.chrome.bgOverlay
         panel.isOpaque = true
         label.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-        label.textColor = .labelColor
+        label.textColor = ThemeStore.shared.chrome.textPrimary
         label.maximumNumberOfLines = 6
         label.lineBreakMode = .byWordWrapping
         label.frame = NSRect(x: 8, y: 6, width: Self.maxWidth - 16, height: 20)

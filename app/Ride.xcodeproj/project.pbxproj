@@ -7,6 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B0F036C3A8FAC953589AE02E /* SplitHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */; };
+		B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0901DA538FDB916C2AF040F /* AppState+Layout.swift */; };
+		B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00E834049D45F687C4E4144 /* FindCount.swift */; };
+		B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E018E55E618A879AC6440A /* IndexStatusView.swift */; };
+		B0C5934236C89225C2814EA0 /* StatusSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B084975AB10551D4A79998C2 /* StatusSegment.swift */; };
+		B07BDAF05568F9D012E0A76F /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0355AEC5E462433212D91A0 /* TabItem.swift */; };
+		B06C2BADC782DC9D13A268D1 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */; };
+		B06FFAA856F535B4029A4FC6 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0863351D97262CED0CFC713 /* WelcomeView.swift */; };
+		B010B1D1920879DC0CDF4A34 /* MiddleClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09372FEB73004180670F188 /* MiddleClick.swift */; };
+		B0F83C797749BB50FFC695BE /* FileIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02A3458F9D381E22B936563 /* FileIcon.swift */; };
+		B080E440BBA2FD35445605BF /* PanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B029006F6C1E502ECAB3121A /* PanelHeader.swift */; };
+		B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B037435DCB732FB951116C82 /* IconButton.swift */; };
+		B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04E875F537AC051D62D8653 /* AppToolbar.swift */; };
+		B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */; };
+		B04310B616ED144666AD4307 /* Contrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E24DEA7816D2F286932927 /* Contrast.swift */; };
+		B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05134279C118A62C90B7732 /* ContrastTests.swift */; };
+		B05E4AA889D03EFBB3220063 /* Contrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E24DEA7816D2F286932927 /* Contrast.swift */; };
+		B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09832F616F69FF9D72097BD /* ThemeStore.swift */; };
+		B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */; };
+		B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */; };
+		B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
 		A00000000000000000000127 /* CheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000126 /* CheckService.swift */; };
 		A00000000000000000000129 /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
 		A0000000000000000000012A /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
@@ -108,6 +129,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitHandle.swift"; sourceTree = "<group>"; };
+		B0901DA538FDB916C2AF040F /* AppState+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Layout.swift"; sourceTree = "<group>"; };
+		B00E834049D45F687C4E4144 /* FindCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindCount.swift"; sourceTree = "<group>"; };
+		B0E018E55E618A879AC6440A /* IndexStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexStatusView.swift"; sourceTree = "<group>"; };
+		B084975AB10551D4A79998C2 /* StatusSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatusSegment.swift"; sourceTree = "<group>"; };
+		B0355AEC5E462433212D91A0 /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TabItem.swift"; sourceTree = "<group>"; };
+		B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarView.swift"; sourceTree = "<group>"; };
+		B0863351D97262CED0CFC713 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WelcomeView.swift"; sourceTree = "<group>"; };
+		B09372FEB73004180670F188 /* MiddleClick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MiddleClick.swift"; sourceTree = "<group>"; };
+		B02A3458F9D381E22B936563 /* FileIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileIcon.swift"; sourceTree = "<group>"; };
+		B029006F6C1E502ECAB3121A /* PanelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PanelHeader.swift"; sourceTree = "<group>"; };
+		B037435DCB732FB951116C82 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IconButton.swift"; sourceTree = "<group>"; };
+		B04E875F537AC051D62D8653 /* AppToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppToolbar.swift"; sourceTree = "<group>"; };
+		B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowConfigurator.swift"; sourceTree = "<group>"; };
+		B05134279C118A62C90B7732 /* ContrastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContrastTests.swift"; sourceTree = "<group>"; };
+		B0E24DEA7816D2F286932927 /* Contrast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contrast.swift"; sourceTree = "<group>"; };
+		B09832F616F69FF9D72097BD /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeStore.swift"; sourceTree = "<group>"; };
+		B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeJSON.swift"; sourceTree = "<group>"; };
+		B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChromePalette.swift"; sourceTree = "<group>"; };
+		B06689A7D426576E81967851 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignTokens.swift"; sourceTree = "<group>"; };
 		A00000000000000000000126 /* CheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckService.swift"; sourceTree = "<group>"; };
 		A00000000000000000000128 /* DiagnosticRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRange.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012B /* DiagnosticUnderlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticUnderlines.swift"; sourceTree = "<group>"; };
@@ -218,9 +259,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B0BFC2E56FBC0D62926D318D /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */,
+				B0863351D97262CED0CFC713 /* WelcomeView.swift */,
+				B09372FEB73004180670F188 /* MiddleClick.swift */,
+				B02A3458F9D381E22B936563 /* FileIcon.swift */,
+				B029006F6C1E502ECAB3121A /* PanelHeader.swift */,
+				B037435DCB732FB951116C82 /* IconButton.swift */,
+				B04E875F537AC051D62D8653 /* AppToolbar.swift */,
+				B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */,
+				B0E24DEA7816D2F286932927 /* Contrast.swift */,
+				B09832F616F69FF9D72097BD /* ThemeStore.swift */,
+				B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */,
+				B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */,
+				B06689A7D426576E81967851 /* DesignTokens.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* CargoWatchTests.swift */,
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
@@ -247,6 +309,8 @@
 		A00000000000000000000051 /* Ride */ = {
 			isa = PBXGroup;
 			children = (
+				B0901DA538FDB916C2AF040F /* AppState+Layout.swift */,
+				B0BFC2E56FBC0D62926D318D /* Design */,
 				A00000000000000000000147 /* AppState+Theme.swift */,
 				A00000000000000000000145 /* AppState+Watch.swift */,
 				A00000000000000000000136 /* AppState+Launch.swift */,
@@ -282,6 +346,8 @@
 		A00000000000000000000053 /* StatusBar */ = {
 			isa = PBXGroup;
 			children = (
+				B0E018E55E618A879AC6440A /* IndexStatusView.swift */,
+				B084975AB10551D4A79998C2 /* StatusSegment.swift */,
 				A00000000000000000000132 /* CheckStatusView.swift */,
 				A00000000000000000000014 /* StatusBarView.swift */,
 			);
@@ -291,6 +357,7 @@
 		A00000000000000000000054 /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
+				B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */,
 				A00000000000000000000141 /* GitStatusService.swift */,
 				A0000000000000000000013E /* GitStatus.swift */,
 				A0000000000000000000013B /* CargoWatch.swift */,
@@ -307,6 +374,7 @@
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				B0355AEC5E462433212D91A0 /* TabItem.swift */,
 				A0000000000000000000012B /* DiagnosticUnderlines.swift */,
 				A00000000000000000000128 /* DiagnosticRange.swift */,
 				A0000000000000000000010D /* EditorHooks.swift */,
@@ -336,6 +404,7 @@
 		A00000000000000000000056 /* Search */ = {
 			isa = PBXGroup;
 			children = (
+				B00E834049D45F687C4E4144 /* FindCount.swift */,
 				A00000000000000000000100 /* HitNavigation.swift */,
 				A00000000000000000000102 /* SymbolPickerModel.swift */,
 				A00000000000000000000104 /* SymbolPickerOverlay.swift */,
@@ -532,6 +601,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B04310B616ED144666AD4307 /* Contrast.swift in Sources */,
+				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
 				A0000000000000000000013D /* CargoWatch.swift in Sources */,
@@ -558,6 +629,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0F036C3A8FAC953589AE02E /* SplitHandle.swift in Sources */,
+				B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */,
+				B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */,
+				B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */,
+				B0C5934236C89225C2814EA0 /* StatusSegment.swift in Sources */,
+				B07BDAF05568F9D012E0A76F /* TabItem.swift in Sources */,
+				B06C2BADC782DC9D13A268D1 /* SidebarView.swift in Sources */,
+				B06FFAA856F535B4029A4FC6 /* WelcomeView.swift in Sources */,
+				B010B1D1920879DC0CDF4A34 /* MiddleClick.swift in Sources */,
+				B0F83C797749BB50FFC695BE /* FileIcon.swift in Sources */,
+				B080E440BBA2FD35445605BF /* PanelHeader.swift in Sources */,
+				B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */,
+				B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */,
+				B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */,
+				B05E4AA889D03EFBB3220063 /* Contrast.swift in Sources */,
+				B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */,
+				B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */,
+				B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */,
+				B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */,
 				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,

@@ -16,7 +16,7 @@ final class EditorHostView: NSView {
         scroll.autohidesScrollers = true
         scroll.borderType = .noBorder
         scroll.drawsBackground = true
-        scroll.backgroundColor = NSColor.textBackgroundColor
+        scroll.backgroundColor = ThemeStore.shared.editor.background
         scroll.documentView = textView
         scroll.contentView.postsBoundsChangedNotifications = true
         gutter.translatesAutoresizingMaskIntoConstraints = false
@@ -52,6 +52,11 @@ final class EditorHostView: NSView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:)")
+    }
+
+    func applyTheme(_ theme: Theme) {
+        scroll.backgroundColor = theme.editor.background
+        gutter.needsDisplay = true
     }
 
     @objc func syncGutter() {

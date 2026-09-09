@@ -1,32 +1,9 @@
 import SwiftUI
 
-struct ProjectTreeView: View {
-    @EnvironmentObject private var state: AppState
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(state.workspaceRoot?.lastPathComponent ?? "No Folder")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 1) {
-                    ForEach(state.rootNodes) { node in
-                        TreeRow(node: node, depth: 0)
-                    }
-                }
-                .padding(6)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color(nsColor: .controlBackgroundColor))
-    }
-}
-
 struct TreeRow: View {
     @ObservedObject var node: FileNode
     @EnvironmentObject private var state: AppState
+    @ObservedObject private var ts = ThemeStore.shared
     let depth: Int
     @State private var hovering = false
 
@@ -39,7 +16,7 @@ struct TreeRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: 0) {
             row
             if node.isDirectory, expanded {
                 ForEach(node.children) { child in
@@ -50,37 +27,47 @@ struct TreeRow: View {
     }
 
     private var row: some View {
-        HStack(spacing: 4) {
-            if node.isDirectory {
-                Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                    .font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(selected ? Color.white.opacity(0.9) : Color.secondary)
-                    .frame(width: 12)
-                    .contentShape(Rectangle())
-                    .onTapGesture(perform: toggle)
-            } else {
-                Color.clear.frame(width: 12, height: 1)
-            }
-            Label(node.name, systemImage: node.isDirectory ? "folder" : "doc")
+        let icon = FileIcon.spec(name: node.name, isDirectory: node.isDirectory, expanded: expanded, chrome: ts.chrome)
+        return HStack(spacing: Tokens.Space.xs) {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(ts.ui.textTertiary)
+                .rotationEffect(.degrees(expanded ? 90 : 0))
+                .animation(.easeOut(duration: 0.15), value: expanded)
+                .frame(width: 12)
+                .opacity(node.isDirectory ? 1 : 0)
+                .contentShape(Rectangle())
+                .onTapGesture(perform: toggle)
+            Image(systemName: icon.symbol)
+                .font(.system(size: Tokens.Size.iconM))
+                .foregroundStyle(Color(icon.color))
+                .frame(width: 16)
+            Text(node.name)
+                .font(Tokens.ui(12))
+                .foregroundStyle(dimmed ? ts.ui.textTertiary : ts.ui.textPrimary)
                 .lineLimit(1)
+                .truncationMode(.middle)
+            Spacer(minLength: Tokens.Space.xs)
             if dirty {
                 Circle()
-                    .fill(Color.orange.opacity(node.isDirectory ? 0.45 : 0.95))
+                    .fill(ts.ui.warning.opacity(node.isDirectory ? 0.5 : 1))
                     .frame(width: 6, height: 6)
             }
-            Spacer(minLength: 0)
         }
-        .font(.system(size: 13))
-        .padding(.vertical, 3)
-        .padding(.leading, 4 + CGFloat(depth) * 14)
-        .padding(.trailing, 6)
-        .foregroundStyle(selected ? Color.white : Color.primary)
-        .background(rowFill, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .padding(.leading, Tokens.Space.m + CGFloat(depth) * 12)
+        .padding(.trailing, Tokens.Space.m)
+        .frame(height: Tokens.Size.sidebarRow)
+        .background(rowFill, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
+        .padding(.horizontal, Tokens.Space.xs)
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .simultaneousGesture(TapGesture(count: 1).onEnded(select))
         .simultaneousGesture(TapGesture(count: 2).onEnded(activate))
         .contextMenu { menu(for: node) }
+    }
+
+    private var dimmed: Bool {
+        node.name.hasPrefix(".") || node.name == "target"
     }
 
     private var dirty: Bool {
@@ -93,10 +80,10 @@ struct TreeRow: View {
 
     private var rowFill: Color {
         if selected {
-            return Color.accentColor
+            return ts.ui.bgSelection
         }
         if hovering {
-            return Color.primary.opacity(0.08)
+            return ts.ui.bgHover
         }
         return .clear
     }
@@ -114,15 +101,11 @@ struct TreeRow: View {
     }
 
     private func toggle() {
-        var t = Transaction()
-        t.animation = nil
-        withTransaction(t) {
-            if expanded {
-                state.expanded.remove(node.url)
-            } else {
-                node.loadChildren()
-                state.expanded.insert(node.url)
-            }
+        if expanded {
+            state.expanded.remove(node.url)
+        } else {
+            node.loadChildren()
+            state.expanded.insert(node.url)
         }
     }
 

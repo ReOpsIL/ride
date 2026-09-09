@@ -28,6 +28,7 @@ final class AppState: ObservableObject {
     @Published var showSymbolPicker = false
     @Published var showProjectFind = false
     @Published var showProblems = false
+    @Published var showSidebar = true
     @Published var formatError: String?
     let symbolPicker = SymbolPickerModel()
     let projectFind = ProjectFindModel()
@@ -36,6 +37,8 @@ final class AppState: ObservableObject {
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?
     var gitSink: AnyCancellable?
+    var layoutSaveWork: DispatchWorkItem?
+    var persistLayout = true
 
     private let recents = RecentProjects()
     private let watcher = FileWatcher()
@@ -53,7 +56,7 @@ final class AppState: ObservableObject {
     init() {
         prefs = PreferencesStore.load()
         recent = recents.load()
-        HighlightApply.theme = Theme.load(name: prefs.theme)
+        ThemeStore.shared.apply(name: prefs.theme)
         watcher.handler = { [weak self] paths in
             self?.filesChanged(paths)
         }

@@ -2,52 +2,83 @@ import SwiftUI
 
 struct FindBar: View {
     @EnvironmentObject private var state: AppState
+    @ObservedObject private var ts = ThemeStore.shared
     @FocusState private var focused: Bool
+    @State private var showReplace = false
 
     var body: some View {
-        HStack(spacing: 8) {
-            TextField("Find", text: $state.findQuery)
-                .textFieldStyle(.roundedBorder)
-                .frame(width: 180)
+        HStack(spacing: Tokens.Space.m) {
+            field(icon: "magnifyingglass", placeholder: "Find", text: $state.findQuery, trailing: countLabel)
+                .frame(width: 260)
                 .focused($focused)
                 .onSubmit {
                     state.findNext()
                 }
-            Button("Next") {
-                state.findNext()
-            }
-            Button("Previous") {
+            IconButton(symbol: "chevron.up", help: "Previous (⇧⌘G)") {
                 state.findPrevious()
             }
-            TextField("Replace", text: $state.replaceQuery)
-                .textFieldStyle(.roundedBorder)
-                .frame(width: 140)
-            Button("Replace") {
-                state.replaceOne()
+            IconButton(symbol: "chevron.down", help: "Next (⌘G)") {
+                state.findNext()
             }
-            Button("All") {
-                state.replaceAll()
+            IconButton(symbol: "arrow.left.arrow.right", help: "Replace", active: showReplace) {
+                showReplace.toggle()
             }
-            Spacer()
-            Button {
+            if showReplace {
+                field(icon: "pencil", placeholder: "Replace", text: $state.replaceQuery, trailing: nil)
+                    .frame(width: 200)
+                Button("Replace") {
+                    state.replaceOne()
+                }
+                Button("All") {
+                    state.replaceAll()
+                }
+            }
+            Spacer(minLength: 0)
+            IconButton(symbol: "xmark", help: "Close (esc)") {
                 state.showFind = false
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
             }
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .controlSize(.small)
+        .padding(.horizontal, Tokens.Space.m)
+        .frame(height: 36)
+        .background(ts.ui.bgRaised)
         .overlay(alignment: .bottom) {
-            Divider()
+            ts.ui.border.frame(height: Tokens.Size.hairline)
         }
         .onAppear {
             focused = true
         }
         .onExitCommand {
             state.showFind = false
+            EditorJump.shared.view?.window?.makeFirstResponder(EditorJump.shared.view)
         }
+    }
+
+    private var countLabel: String? {
+        guard let text = state.activeBuffer?.text else {
+            return nil
+        }
+        return FindCount.label(current: state.findRange, in: text, query: state.findQuery)
+    }
+
+    private func field(icon: String, placeholder: String, text: Binding<String>, trailing: String?) -> some View {
+        HStack(spacing: Tokens.Space.s) {
+            Image(systemName: icon)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(ts.ui.textTertiary)
+            TextField(placeholder, text: text)
+                .textFieldStyle(.plain)
+                .font(Tokens.mono(12))
+                .foregroundStyle(ts.ui.textPrimary)
+            if let trailing {
+                Text(trailing)
+                    .font(Tokens.ui(10))
+                    .foregroundStyle(ts.ui.textTertiary)
+            }
+        }
+        .padding(.horizontal, Tokens.Space.s)
+        .frame(height: 24)
+        .background(ts.ui.bgBase, in: RoundedRectangle(cornerRadius: Tokens.Radius.m))
+        .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.m).stroke(ts.ui.border, lineWidth: Tokens.Size.hairline))
     }
 }

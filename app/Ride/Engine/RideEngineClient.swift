@@ -6,6 +6,7 @@ final class RideEngineClient: ObservableObject {
     @Published var indexLabel = "idle"
     @Published var indexDetail: String?
     @Published var rustSrcAvailable = false
+    @Published var indexProgress: Double?
 
     private(set) var engine: Engine?
     private var listener: StatusForwarder?
@@ -49,6 +50,9 @@ final class RideEngineClient: ObservableObject {
 
     func apply(_ status: IndexStatus) {
         rustSrcAvailable = status.rustSrcAvailable
+        indexProgress = status.state == .indexing && status.cratesTotal > 0
+            ? Double(status.cratesDone) / Double(status.cratesTotal)
+            : nil
         indexLabel = IndexStatusLabel.text(status)
         indexDetail = IndexStatusLabel.detail(status)
     }

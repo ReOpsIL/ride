@@ -2,36 +2,28 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var state: AppState
+    @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
-        NavigationSplitView {
-            ProjectTreeView()
-                .navigationSplitViewColumnWidth(min: 160, ideal: 220, max: 320)
-        } detail: {
-            VStack(spacing: 0) {
-                TabStrip()
-                if state.showFind {
-                    FindBar()
-                }
-                HStack(spacing: 0) {
-                    if let buffer = state.activeBuffer {
-                        EditorPane(document: buffer, state: state)
-                            .id(buffer.id)
-                    } else {
-                        EditorPlaceholder()
-                    }
-                    if state.prefs.outlinePanel {
-                        FileOutlineView()
-                    }
-                }
-                if state.showProblems {
-                    ProblemsPanel()
-                }
-                StatusBarView()
+        HSplitView {
+            if state.showSidebar {
+                SidebarView()
+                    .frame(width: state.prefs.sidebarWidth)
             }
+            DetailColumn()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(alignment: .leading) {
+                    if state.showSidebar {
+                        SplitHandle(axis: .horizontal, value: sidebarWidth, range: 180...420)
+                    }
+                }
         }
-        .navigationTitle(state.windowTitle)
-        .navigationSplitViewStyle(.balanced)
+        .background(ts.ui.bgBase)
+        .background(WindowConfigurator())
+        .toolbar {
+            AppToolbar(state: state, title: state.windowTitle, hasWorkspace: state.workspaceRoot != nil)
+        }
+        .toolbarBackground(.visible, for: .windowToolbar)
         .overlay {
             if state.showQuickOpen {
                 QuickOpenOverlay()
@@ -49,16 +41,76 @@ struct RootView: View {
     }
 }
 
-struct EditorPlaceholder: View {
+extension RootView {
+    var sidebarWidth: Binding<Double> {
+        Binding(
+            get: { state.prefs.sidebarWidth },
+            set: { value in state.saveLayout { $0.sidebarWidth = value } }
+        )
+    }
+}
+
+struct DetailColumn: View {
     @EnvironmentObject private var state: AppState
+    @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
-        ZStack {
-            Color(nsColor: .textBackgroundColor)
-            Text(state.workspaceRoot == nil ? "Open a folder to start" : "No file open")
-                .font(.system(size: 13))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            TabStrip()
+            if state.showFind {
+                FindBar()
+            }
+            VSplitView {
+                editorRow
+                    .frame(maxHeight: .infinity)
+                if state.showProblems {
+                    ProblemsPanel()
+                        .frame(height: state.prefs.problemsHeight)
+                        .overlay(alignment: .top) {
+                            SplitHandle(axis: .vertical, value: problemsHeight, range: 80...480, inverted: true)
+                        }
+                }
+            }
+            StatusBarView()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(ts.ui.bgBase)
+    }
+
+    private var editorRow: some View {
+        HSplitView {
+            editor
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if state.prefs.outlinePanel {
+                FileOutlineView()
+                    .frame(width: state.prefs.outlineWidth)
+                    .overlay(alignment: .leading) {
+                        SplitHandle(axis: .horizontal, value: outlineWidth, range: 160...420, inverted: true)
+                    }
+            }
+        }
+    }
+
+    private var outlineWidth: Binding<Double> {
+        Binding(
+            get: { state.prefs.outlineWidth },
+            set: { value in state.saveLayout { $0.outlineWidth = value } }
+        )
+    }
+
+    private var problemsHeight: Binding<Double> {
+        Binding(
+            get: { state.prefs.problemsHeight },
+            set: { value in state.saveLayout { $0.problemsHeight = value } }
+        )
+    }
+
+    @ViewBuilder
+    private var editor: some View {
+        if let buffer = state.activeBuffer {
+            EditorPane(document: buffer, state: state)
+                .id(buffer.id)
+        } else {
+            WelcomeView()
+        }
     }
 }
