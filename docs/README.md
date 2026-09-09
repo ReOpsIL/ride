@@ -15,6 +15,7 @@
 |---|---|
 | `src/discover` | `$CARGO_HOME` registry and git checkouts, rustc sysroot, `cargo metadata` |
 | `src/extract` | tree-sitter item extraction with module paths, impls, re-exports |
+| `src/markdown` | pulldown-cmark HTML rendering with Rust token spans |
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
 | `src/query` | prefix / BM25 completion search, crate prefix, keyword hits |
 | `src/highlight` | buffer sessions over a `Syntax` trait: Rust (tree-sitter-rust) and Markdown (tree-sitter-md block + inline); highlight deltas, outline, parse errors |
@@ -42,6 +43,7 @@ A run whose crate-set fingerprint matches `manifest.json` appends a `ready` stat
 | `find_definitions` | identifier under the caret to buffer outline or index definitions |
 | `run_check` | `cargo check` diagnostics with absolute paths and byte ranges |
 | `format_rust` | rustfmt a buffer |
+| `render_markdown` | markdown to HTML with line anchors and highlighted Rust fences, for the preview pane |
 | `open_session` / `apply_edit` / `set_visible_range` | highlight deltas, outline, parse errors |
 
 ## Release
