@@ -2,6 +2,15 @@
 
 Native macOS IDE for Rust. A SwiftUI/AppKit shell (`app/`) over a Rust language engine (`src/`) that discovers crates on disk, extracts items with tree-sitter, indexes them with Tantivy, and answers completion, highlight and outline queries in-process through UniFFI.
 
+## Install
+
+```sh
+./scripts/install.sh            # builds a Release Ride.app and installs it to /Applications
+./scripts/install.sh ~/Applications
+```
+
+Requires Xcode and a Rust toolchain (rustup); the script adds the `rust-src` component if it is missing.
+
 ## Build and run
 
 ```sh

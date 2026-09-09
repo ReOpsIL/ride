@@ -57,6 +57,7 @@ and staples.
 |---|---|
 | `scripts/build-engine.sh` | release engine for arm64, UniFFI Swift bindings, xcframework, `ride-engine` helper |
 | `scripts/run.sh [folder]` | Debug build of Ride.app and open a folder |
+| `scripts/install.sh [dest]` | check Xcode/rustup/rust-src, build engine and Release app, ad-hoc sign, install to /Applications |
 | `scripts/release.sh` | Release archive, sign, zip, optional notarize |
 | `scripts/make-icon.swift <out-dir>` | render the app icon set (`swiftc -O` it, run, then `iconutil -c icns`) |
 
