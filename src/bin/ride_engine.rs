@@ -90,6 +90,7 @@ fn query_cmd(query: String, index_dir: Option<String>) {
         session_id: 0,
         prefix: query,
         mode,
+        context: ride_engine::CompletionContext::Unknown,
         cursor_byte: 0,
         replace_start_byte: 0,
         current_crate: None,

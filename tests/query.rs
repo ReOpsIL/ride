@@ -2,7 +2,8 @@ use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use ride_engine::{
-    CompletionQuery, EngineConfig, ItemKind, QueryMode, engine_start, rebuild_index, write_index,
+    CompletionContext, CompletionQuery, EngineConfig, ItemKind, QueryMode, engine_start,
+    rebuild_index, write_index,
 };
 
 fn fixtures() -> PathBuf {
@@ -28,6 +29,7 @@ fn query_id(query_id: u64, prefix: &str, mode: QueryMode) -> CompletionQuery {
         session_id: 0,
         prefix: prefix.into(),
         mode,
+        context: CompletionContext::Unknown,
         cursor_byte: 0,
         replace_start_byte: 0,
         current_crate: None,

@@ -8,12 +8,21 @@ pub enum QueryMode {
     Phrase,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Enum)]
+pub enum CompletionContext {
+    Unknown,
+    TypePosition,
+    ValuePosition,
+    MemberAccess,
+}
+
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct CompletionQuery {
     pub query_id: u64,
     pub session_id: u64,
     pub prefix: String,
     pub mode: QueryMode,
+    pub context: CompletionContext,
     pub cursor_byte: u32,
     pub replace_start_byte: u32,
     pub current_crate: Option<String>,

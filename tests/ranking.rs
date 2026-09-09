@@ -2,7 +2,8 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use ride_engine::{
-    CompletionQuery, Engine, EngineConfig, ItemKind, QueryMode, engine_start, write_index,
+    CompletionContext, CompletionQuery, Engine, EngineConfig, ItemKind, QueryMode, engine_start,
+    write_index,
 };
 
 fn fixtures() -> PathBuf {
@@ -37,6 +38,7 @@ fn names(engine: &Engine, prefix: &str) -> Vec<String> {
             session_id: 0,
             prefix: prefix.into(),
             mode: QueryMode::Items,
+            context: CompletionContext::Unknown,
             cursor_byte: 0,
             replace_start_byte: 0,
             current_crate: None,
@@ -73,6 +75,7 @@ fn uppercase_prefix_has_no_keywords() {
         session_id: 0,
         prefix: "Fo".into(),
         mode: QueryMode::Items,
+        context: CompletionContext::Unknown,
         cursor_byte: 0,
         replace_start_byte: 0,
         current_crate: None,
@@ -121,4 +124,42 @@ fn prefix_longer_than_max_gram_still_matches() {
     assert!(top.is_empty(), "{top:?}");
     let top = names(&engine, "hash_noise_01");
     assert_eq!(top.len(), 10, "{top:?}");
+}
+
+fn names_in(engine: &Engine, prefix: &str, context: CompletionContext) -> Vec<String> {
+    engine
+        .query_completions(CompletionQuery {
+            query_id: 1,
+            session_id: 0,
+            prefix: prefix.into(),
+            mode: QueryMode::Items,
+            context,
+            cursor_byte: 0,
+            replace_start_byte: 0,
+            current_crate: None,
+            current_module: None,
+            kind_filter: None,
+            limit: 20,
+        })
+        .hits
+        .iter()
+        .map(|h| h.name.clone())
+        .collect()
+}
+
+#[test]
+fn type_position_prefers_types_over_functions() {
+    let (_dir, engine) = engine();
+    let top = names_in(&engine, "has", CompletionContext::TypePosition);
+    assert_eq!(top[0], "Hash", "{top:?}");
+    assert!(top[..3].contains(&"HashMap".to_string()), "{top:?}");
+}
+
+#[test]
+fn member_access_prefers_methods() {
+    let (_dir, engine) = engine();
+    let top = names_in(&engine, "re", CompletionContext::MemberAccess);
+    assert_eq!(top[0], "required", "{top:?}");
+    let plain = names_in(&engine, "re", CompletionContext::Unknown);
+    assert_eq!(plain[0], "ref", "{plain:?}");
 }

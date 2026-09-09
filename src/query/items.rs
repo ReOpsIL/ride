@@ -7,7 +7,7 @@ use crate::index::MAX_GRAM;
 
 use super::hit::doc_hit;
 use super::parse::{escape_regex, kind_term};
-use super::rank;
+use super::rank::{self, Ranking};
 
 type Clause = (Occur, Box<dyn Query>);
 
@@ -46,14 +46,17 @@ pub fn item_search(
     let searcher = reader.searcher();
     let fetch = (limit as usize).saturating_mul(4).max(40);
     let guard = if phrase { "" } else { low.as_str() };
-    let prefix_len = if phrase {
-        u64::MAX
-    } else {
-        low.chars().count() as u64
+    let ranking = Ranking {
+        prefix_len: if phrase {
+            u64::MAX
+        } else {
+            low.chars().count() as u64
+        },
+        context: q.context,
     };
     let Ok(top) = searcher.search(
         &BooleanQuery::new(clauses),
-        &rank::collector(fetch, prefix_len),
+        &rank::collector(fetch, ranking),
     ) else {
         return empty;
     };

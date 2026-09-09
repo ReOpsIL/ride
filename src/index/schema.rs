@@ -32,7 +32,7 @@ pub struct IndexFields {
     pub scope: Field,
     pub name_prefix: Field,
     pub scope_rank: Field,
-    pub kind_weight: Field,
+    pub kind_rank: Field,
     pub name_len: Field,
 }
 
@@ -66,7 +66,7 @@ pub fn build_fields() -> IndexFields {
         scope: b.add_text_field("scope", STRING | STORED),
         name_prefix: b.add_text_field("name_prefix", prefix),
         scope_rank: b.add_u64_field("scope_rank", u64_fast.clone()),
-        kind_weight: b.add_u64_field("kind_weight", u64_fast.clone()),
+        kind_rank: b.add_u64_field("kind_rank", u64_fast.clone()),
         name_len: b.add_u64_field("name_len", u64_fast),
         schema: b.build(),
     }
@@ -82,17 +82,32 @@ pub fn scope_rank(scope: Scope) -> u64 {
     }
 }
 
-pub fn kind_weight(kind: ItemKind) -> u64 {
-    match kind {
-        ItemKind::Struct | ItemKind::Enum | ItemKind::Trait | ItemKind::Union | ItemKind::Type => {
-            40
-        }
-        ItemKind::Fn | ItemKind::Macro => 35,
-        ItemKind::Mod | ItemKind::Crate => 30,
-        ItemKind::Method => 20,
-        ItemKind::Const | ItemKind::Static => 10,
-        ItemKind::Keyword | ItemKind::Local => 0,
-    }
+const KIND_ORDER: [ItemKind; 14] = [
+    ItemKind::Keyword,
+    ItemKind::Local,
+    ItemKind::Crate,
+    ItemKind::Mod,
+    ItemKind::Struct,
+    ItemKind::Enum,
+    ItemKind::Union,
+    ItemKind::Trait,
+    ItemKind::Fn,
+    ItemKind::Method,
+    ItemKind::Macro,
+    ItemKind::Const,
+    ItemKind::Type,
+    ItemKind::Static,
+];
+
+pub fn kind_rank(kind: ItemKind) -> u64 {
+    KIND_ORDER.iter().position(|k| *k == kind).unwrap_or(0) as u64
+}
+
+pub fn kind_from_rank(rank: u64) -> ItemKind {
+    KIND_ORDER
+        .get(rank as usize)
+        .copied()
+        .unwrap_or(ItemKind::Type)
 }
 
 pub fn item_kind_from_label(label: &str) -> ItemKind {

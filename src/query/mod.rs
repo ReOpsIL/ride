@@ -3,7 +3,9 @@ use std::path::Path;
 
 use tantivy::{Index, IndexReader};
 
-use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, QueryMode};
+use crate::ffi::{
+    CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, QueryMode,
+};
 
 mod crates;
 mod hit;
@@ -39,7 +41,7 @@ pub fn run_query(
                 IndexSrc::Live(index, reader) => search_open(index, reader, &q, overlay),
             };
             if q.mode == QueryMode::Items {
-                let mut kw = keywords::keyword_hits(&q.prefix, 8);
+                let mut kw = keywords_for(&q, 8);
                 kw.extend(resp.hits);
                 unique_by_name(&mut kw);
                 kw.sort_by(|a, b| {
@@ -58,7 +60,7 @@ pub fn run_query(
 }
 
 fn merge_buffer(q: &CompletionQuery, extra: Vec<CompletionHit>, limit: u32) -> CompletionResponse {
-    let mut hits = keywords::keyword_hits(&q.prefix, limit);
+    let mut hits = keywords_for(q, limit);
     hits.extend(extra);
     unique_by_name(&mut hits);
     hits.sort_by(|a, b| {
@@ -78,4 +80,11 @@ fn merge_buffer(q: &CompletionQuery, extra: Vec<CompletionHit>, limit: u32) -> C
 fn unique_by_name(hits: &mut Vec<CompletionHit>) {
     let mut seen = HashSet::new();
     hits.retain(|h| seen.insert(h.name.clone()));
+}
+
+fn keywords_for(q: &CompletionQuery, limit: u32) -> Vec<CompletionHit> {
+    if q.context == CompletionContext::MemberAccess {
+        return Vec::new();
+    }
+    keywords::keyword_hits(&q.prefix, limit)
 }

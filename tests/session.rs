@@ -188,6 +188,7 @@ fn engine_session_round_trip() {
         session_id: open.session_id,
         prefix: "ba".into(),
         mode: QueryMode::BufferLocal,
+        context: ride_engine::CompletionContext::Unknown,
         cursor_byte: 0,
         replace_start_byte: 0,
         current_crate: None,
