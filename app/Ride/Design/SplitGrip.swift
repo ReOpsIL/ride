@@ -12,12 +12,11 @@ struct SplitGrip: View {
 
     var body: some View {
         Capsule(style: .continuous)
-            .fill(active ? ts.ui.accent : ts.ui.textSecondary.opacity(0.75))
+            .fill(active ? ts.ui.accent : Color(nsColor: DividerGrip.fill))
             .frame(
-                width: axis == .horizontal ? 6 : 40,
-                height: axis == .horizontal ? 40 : 6
+                width: axis == .horizontal ? DividerGrip.thickness : DividerGrip.length,
+                height: axis == .horizontal ? DividerGrip.length : DividerGrip.thickness
             )
-            .shadow(color: ts.ui.bgBase.opacity(0.6), radius: 1)
             .allowsHitTesting(false)
     }
 }

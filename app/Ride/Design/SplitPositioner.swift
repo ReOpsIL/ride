@@ -26,5 +26,6 @@ struct SplitPositioner: NSViewRepresentable {
         let total = split.isVertical ? split.bounds.width : split.bounds.height
         let target = fromEnd ? max(total - position, 0) : position
         split.setPosition(target, ofDividerAt: split.arrangedSubviews.count - 2)
+        DividerGrip.install(in: split)
     }
 }

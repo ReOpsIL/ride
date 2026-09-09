@@ -15,11 +15,6 @@ struct RootView: View {
             DetailColumn()
                 .frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity)
         }
-        .overlay(alignment: .leading) {
-            if state.showSidebar {
-                SplitGrip(axis: .horizontal).offset(x: state.prefs.sidebarWidth - 2.5)
-            }
-        }
         .background(ts.ui.bgBase)
         .background(WindowConfigurator())
         .toolbar {
@@ -72,11 +67,7 @@ struct DetailColumn: View {
                         .reportSize(.height) { problemsHeight.wrappedValue = $0 }
                 }
             }
-            .overlay(alignment: .bottom) {
-                if state.showProblems {
-                    SplitGrip(axis: .vertical).offset(y: -(state.prefs.problemsHeight + 0.5) + 3)
-                }
-            }
+
             StatusBarView()
         }
         .background(ts.ui.bgBase)

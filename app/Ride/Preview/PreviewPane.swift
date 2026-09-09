@@ -15,8 +15,5 @@ struct PreviewPane: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(ts.editorBackground)
-        .overlay(alignment: .leading) {
-            Rectangle().fill(ts.ui.border).frame(width: Tokens.Size.hairline)
-        }
     }
 }

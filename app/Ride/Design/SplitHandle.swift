@@ -6,6 +6,8 @@ struct SplitHandle: View {
         case vertical
     }
 
+    static let width: CGFloat = 7
+
     @ObservedObject private var ts = ThemeStore.shared
     @State private var hovering = false
     @State private var dragStart: Double?
@@ -15,32 +17,30 @@ struct SplitHandle: View {
     var inverted = false
 
     var body: some View {
-        Rectangle()
-            .fill(hovering ? ts.ui.accent.opacity(0.6) : ts.ui.border)
-            .frame(
-                width: axis == .horizontal ? Tokens.Size.hairline : nil,
-                height: axis == .vertical ? Tokens.Size.hairline : nil
-            )
-            .overlay {
-                Color.clear
-                    .frame(
-                        width: axis == .horizontal ? 7 : nil,
-                        height: axis == .vertical ? 7 : nil
-                    )
-                    .contentShape(Rectangle())
-                    .onHover { inside in
-                        hovering = inside
-                        if inside {
-                            (axis == .horizontal ? NSCursor.resizeLeftRight : NSCursor.resizeUpDown).push()
-                        } else {
-                            NSCursor.pop()
-                        }
-                    }
-                    .gesture(drag)
+        ZStack {
+            Color.clear
+            Rectangle()
+                .fill(hovering ? ts.ui.accent.opacity(0.6) : ts.ui.border)
+                .frame(
+                    width: axis == .horizontal ? Tokens.Size.hairline : nil,
+                    height: axis == .vertical ? Tokens.Size.hairline : nil
+                )
+            SplitGrip(axis: axis == .horizontal ? .horizontal : .vertical, active: hovering)
+        }
+        .frame(
+            width: axis == .horizontal ? Self.width : nil,
+            height: axis == .vertical ? Self.width : nil
+        )
+        .contentShape(Rectangle())
+        .onHover { inside in
+            hovering = inside
+            if inside {
+                (axis == .horizontal ? NSCursor.resizeLeftRight : NSCursor.resizeUpDown).push()
+            } else {
+                NSCursor.pop()
             }
-            .overlay {
-                SplitGrip(axis: axis == .horizontal ? .horizontal : .vertical, active: hovering)
-            }
+        }
+        .gesture(drag)
     }
 
     private var drag: some Gesture {
