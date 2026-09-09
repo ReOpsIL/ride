@@ -4,30 +4,29 @@ enum DiagnosticUnderlines {
     static let style = NSUnderlineStyle.single.union(.patternDot).rawValue
 
     static func apply(document: BufferDocument, view: RideTextView) {
-        guard let tlm = view.textLayoutManager else {
+        guard let storage = view.textStorage else {
             return
         }
-        for old in document.diagnosticRanges {
-            if let tr = view.textRange(utf16: old) {
-                tlm.removeRenderingAttribute(.underlineStyle, for: tr)
-                tlm.removeRenderingAttribute(.underlineColor, for: tr)
-            }
+        let length = storage.length
+        storage.beginEditing()
+        for old in document.diagnosticRanges where NSMaxRange(old) <= length {
+            storage.removeAttribute(.underlineStyle, range: old)
+            storage.removeAttribute(.underlineColor, range: old)
         }
         document.diagnosticRanges = []
-        guard let path = document.fileURL?.path else {
-            return
-        }
         let text = view.string
-        for diag in CheckService.shared.diagnostics where diag.path == path {
-            guard let ns = DiagnosticRange.nsRange(in: text, byteStart: diag.byteStart, byteEnd: diag.byteEnd),
-                  let tr = view.textRange(utf16: ns)
-            else {
-                continue
+        if let path = document.fileURL?.path {
+            for diag in CheckService.shared.diagnostics where diag.path == path {
+                guard let ns = DiagnosticRange.nsRange(in: text, byteStart: diag.byteStart, byteEnd: diag.byteEnd)
+                else {
+                    continue
+                }
+                storage.addAttribute(.underlineStyle, value: style, range: ns)
+                storage.addAttribute(.underlineColor, value: color(diag.level), range: ns)
+                document.diagnosticRanges.append(ns)
             }
-            tlm.addRenderingAttribute(.underlineStyle, value: style, for: tr)
-            tlm.addRenderingAttribute(.underlineColor, value: color(diag.level), for: tr)
-            document.diagnosticRanges.append(ns)
         }
+        storage.endEditing()
         view.needsDisplay = true
     }
 

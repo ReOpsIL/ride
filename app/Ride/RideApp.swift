@@ -12,6 +12,7 @@ struct RideApp: App {
                 .preferredColorScheme(state.isLightTheme ? .light : .dark)
                 .onAppear {
                     NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)
+                    DemoLaunch.start(state: state)
                 }
         }
         .defaultSize(width: 1100, height: 720)

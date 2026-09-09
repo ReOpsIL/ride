@@ -37,6 +37,13 @@ final class HoverController {
         schedule(view: view, range: range, after: Self.delay)
     }
 
+    func present(view: RideTextView, range: NSRange) {
+        timer?.cancel()
+        word = range
+        lastFire = .distantPast
+        fire(view: view, range: range)
+    }
+
     func hide() {
         timer?.cancel()
         timer = nil

@@ -26,7 +26,10 @@ final class FileWatcher {
             }
         }
         let paths = [path] as CFArray
-        let flags = UInt32(kFSEventStreamCreateFlagFileEvents | kFSEventStreamCreateFlagNoDefer)
+        let flags = UInt32(
+            kFSEventStreamCreateFlagFileEvents | kFSEventStreamCreateFlagNoDefer
+                | kFSEventStreamCreateFlagUseCFTypes
+        )
         guard let stream = FSEventStreamCreate(
             nil,
             callback,

@@ -13,6 +13,8 @@
 		A0000000000000000000012C /* DiagnosticUnderlines.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012B /* DiagnosticUnderlines.swift */; };
 		A0000000000000000000012E /* SessionService+Paint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012D /* SessionService+Paint.swift */; };
 		A00000000000000000000130 /* ProblemsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012F /* ProblemsPanel.swift */; };
+		A00000000000000000000902 /* DemoLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000901 /* DemoLaunch.swift */; };
+		A00000000000000000000904 /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000903 /* DemoScene.swift */; };
 		A00000000000000000000133 /* CheckStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000132 /* CheckStatusView.swift */; };
 		A00000000000000000000135 /* AppState+Check.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000134 /* AppState+Check.swift */; };
 		A00000000000000000000137 /* AppState+Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000136 /* AppState+Launch.swift */; };
@@ -111,6 +113,8 @@
 		A0000000000000000000012B /* DiagnosticUnderlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticUnderlines.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012D /* SessionService+Paint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Paint.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012F /* ProblemsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProblemsPanel.swift"; sourceTree = "<group>"; };
+		A00000000000000000000901 /* DemoLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoLaunch.swift"; sourceTree = "<group>"; };
+		A00000000000000000000903 /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene.swift"; sourceTree = "<group>"; };
 		A00000000000000000000132 /* CheckStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckStatusView.swift"; sourceTree = "<group>"; };
 		A00000000000000000000134 /* AppState+Check.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Check.swift"; sourceTree = "<group>"; };
 		A00000000000000000000136 /* AppState+Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Launch.swift"; sourceTree = "<group>"; };
@@ -261,6 +265,7 @@
 				A0000000000000000000005B /* Outline */,
 				A0000000000000000000005C /* Completion */,
 				A00000000000000000000131 /* Problems */,
+				A00000000000000000000905 /* Debug */,
 			);
 			path = Ride;
 			sourceTree = "<group>";
@@ -419,6 +424,15 @@
 			path = Problems;
 			sourceTree = "<group>";
 		};
+		A00000000000000000000905 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000901 /* DemoLaunch.swift */,
+				A00000000000000000000903 /* DemoScene.swift */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -544,6 +558,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
+				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,
 				A00000000000000000000129 /* DiagnosticRange.swift in Sources */,
 				A0000000000000000000012C /* DiagnosticUnderlines.swift in Sources */,
