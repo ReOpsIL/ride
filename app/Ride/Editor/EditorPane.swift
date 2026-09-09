@@ -60,7 +60,7 @@ final class EditorHostView: NSView {
     }
 
     @objc func syncGutter() {
-        let lines = max(1, textView.string.components(separatedBy: "\n").count)
+        let lines = max(1, textView.lineIndex().lineCount)
         gutterWidth.constant = GutterView.width(digits: String(lines).count)
         gutter.needsDisplay = true
     }
@@ -167,12 +167,16 @@ struct EditorPane: NSViewRepresentable {
 
         func publishCursor(_ view: NSTextView) {
             let loc = view.selectedRange().location
-            let pair = lineAndColumn(in: view.string, utf16: loc)
-            if state.cursorLine != pair.0 {
-                state.cursorLine = pair.0
+            guard let index = (view as? RideTextView)?.lineIndex() else {
+                return
             }
-            if state.cursorColumn != pair.1 {
-                state.cursorColumn = pair.1
+            let line = index.line(at: loc)
+            let column = index.column(at: loc)
+            if state.cursorLine != line {
+                state.cursorLine = line
+            }
+            if state.cursorColumn != column {
+                state.cursorColumn = column
             }
         }
 

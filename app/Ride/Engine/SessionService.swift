@@ -31,6 +31,9 @@ final class SessionService {
     }
 
     func attach(document: BufferDocument, view: RideTextView) {
+        guard document.isRust else {
+            return
+        }
         if document.sessionId == nil {
             open(document: document, view: view)
         } else {
@@ -84,13 +87,7 @@ final class SessionService {
         guard let id = document.sessionId, let vis = view.visibleBytes() else {
             return
         }
-        if view.string.utf8.count < 1_048_576 {
-            HighlightApply.restyle(
-                spans: document.highlights,
-                text: view.string,
-                view: view,
-                visible: vis
-            )
+        if view.textStorage.map({ $0.length }) ?? 0 < 1_048_576 {
             return
         }
         document.visibleWork?.cancel()
@@ -107,6 +104,9 @@ final class SessionService {
     }
 
     func resync(document: BufferDocument, view: RideTextView) {
+        guard document.isRust else {
+            return
+        }
         guard let id = document.sessionId else {
             open(document: document, view: view)
             return

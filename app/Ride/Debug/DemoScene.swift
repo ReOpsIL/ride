@@ -13,6 +13,11 @@ enum DemoScene {
             break
         case "editor":
             editor(state)
+        case "file":
+            editor(state, file: DemoLaunch.file ?? "src/main.rs", line: 1)
+            if DemoLaunch.scroll {
+                DemoLaunch.after(1.5) { autoScroll(step: 0) }
+            }
         case "completion":
             editor(state)
             DemoLaunch.after(1.0) { completion(state) }
@@ -41,6 +46,14 @@ enum DemoScene {
         default:
             break
         }
+    }
+
+    private static func autoScroll(step: Int) {
+        guard step < 40 else {
+            return
+        }
+        EditorJump.shared.jump(toLine: 1 + step * 400)
+        DemoLaunch.after(0.1) { autoScroll(step: step + 1) }
     }
 
     private static func editor(_ state: AppState, file: String = "src/main.rs", line: Int = 9) {

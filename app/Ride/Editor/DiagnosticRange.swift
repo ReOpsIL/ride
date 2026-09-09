@@ -2,11 +2,14 @@ import Foundation
 
 enum DiagnosticRange {
     static func nsRange(in text: String, byteStart: UInt32, byteEnd: UInt32) -> NSRange? {
-        let length = (text as NSString).length
+        nsRange(map: Utf16Map(text), length: (text as NSString).length, byteStart: byteStart, byteEnd: byteEnd)
+    }
+
+    static func nsRange(map: Utf16Map, length: Int, byteStart: UInt32, byteEnd: UInt32) -> NSRange? {
         guard length > 0 else {
             return nil
         }
-        var range = Utf16.nsRange(in: text, startByte: byteStart, endByte: max(byteEnd, byteStart))
+        var range = map.nsRange(startByte: byteStart, endByte: max(byteEnd, byteStart))
         guard range.location < length else {
             return nil
         }

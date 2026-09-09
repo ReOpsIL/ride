@@ -12,7 +12,7 @@ enum IndentGuides {
         let unit = " ".size(withAttributes: [.font: font]).width * CGFloat(view.tabWidth)
         let origin = view.textContainerOrigin
         let padding = view.textContainer?.lineFragmentPadding ?? 5
-        let ns = view.string as NSString
+        let ns: NSString = view.textStorage?.mutableString ?? ""
         let start = tlm.textViewportLayoutController.viewportRange?.location ?? tlm.documentRange.location
         var carry = 0
         ThemeStore.shared.editor.indentGuide.setFill()

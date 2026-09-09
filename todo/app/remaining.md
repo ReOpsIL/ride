@@ -4,3 +4,4 @@
 - auto-`use` on completion accept (needs an import-path field on hits)
 - Sparkle or manual update check (Phase 5)
 - universal (x86_64) xcframework slice (Phase 5)
+- Outline shows occasional blank rows on large files (items with empty names); filter or name them

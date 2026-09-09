@@ -14,9 +14,10 @@ enum HighlightApply {
         guard let storage = view.textContentStorage?.textStorage else {
             return
         }
+        let map = Utf16Map(text)
         storage.beginEditing()
         for range in update.changed {
-            let ns = clamp(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte), in: full)
+            let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
             if ns.length > 0 {
                 storage.removeAttribute(.foregroundColor, range: ns)
                 storage.addAttribute(.foregroundColor, value: theme.chrome.textPrimary, range: ns)
@@ -26,7 +27,7 @@ enum HighlightApply {
             }
         }
         for span in update.highlights {
-            let ns = clamp(Utf16.nsRange(in: text, startByte: span.startByte, endByte: span.endByte), in: full)
+            let ns = clamp(map.nsRange(startByte: span.startByte, endByte: span.endByte), in: full)
             if ns.length == 0 {
                 continue
             }
@@ -39,7 +40,7 @@ enum HighlightApply {
         storage.endEditing()
         if let tlm = view.textLayoutManager {
             for range in update.changed {
-                let ns = clamp(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte), in: full)
+                let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
                 if let tr = view.textRange(utf16: ns) {
                     tlm.invalidateLayout(for: tr)
                 }
@@ -52,7 +53,7 @@ enum HighlightApply {
         }
         var next: [NSRange] = []
         for err in update.errors {
-            let ns = clamp(Utf16.nsRange(in: text, startByte: err.startByte, endByte: err.endByte), in: full)
+            let ns = clamp(map.nsRange(startByte: err.startByte, endByte: err.endByte), in: full)
             if ns.length == 0 {
                 continue
             }
@@ -72,10 +73,11 @@ enum HighlightApply {
         guard let storage = view.textContentStorage?.textStorage else {
             return
         }
-        let window = visible.map { Utf16.nsRange(in: text, startByte: $0.startByte, endByte: $0.endByte) } ?? full
+        let map = Utf16Map(text)
+        let window = visible.map { map.nsRange(startByte: $0.startByte, endByte: $0.endByte) } ?? full
         storage.beginEditing()
         for span in spans {
-            let ns = clamp(Utf16.nsRange(in: text, startByte: span.startByte, endByte: span.endByte), in: full)
+            let ns = clamp(map.nsRange(startByte: span.startByte, endByte: span.endByte), in: full)
             if ns.length == 0 || !overlap(ns, window) {
                 continue
             }

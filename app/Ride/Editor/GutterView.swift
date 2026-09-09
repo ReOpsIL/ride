@@ -33,14 +33,15 @@ final class GutterView: NSView {
         }
         let storage = textView.textContentStorage
         let origin = textView.textContainerOrigin
-        let currentLine = lineAndColumn(in: textView.string, utf16: textView.selectedRange().location).0
+        let index = textView.lineIndex()
+        let currentLine = index.line(at: textView.selectedRange().location)
         let attrs: [NSAttributedString.Key: Any] = [.font: Self.font, .foregroundColor: theme.editor.gutterText]
         let currentAttrs: [NSAttributedString.Key: Any] = [.font: Self.currentFont, .foregroundColor: theme.editor.gutterCurrent]
         let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
         tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
             let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
-            var lineNo = lineAndColumn(in: textView.string, utf16: utf16).0
-            for lineFragment in fragment.textLineFragments {
+            let lineNo = index.line(at: utf16)
+            if let lineFragment = fragment.textLineFragments.first {
                 var r = lineFragment.typographicBounds
                 r.origin.x = 0
                 r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
@@ -49,7 +50,6 @@ final class GutterView: NSView {
                 if dest.intersects(dirtyRect) {
                     drawLine(lineNo, at: dest, attrs: lineNo == currentLine ? currentAttrs : attrs, theme: theme)
                 }
-                lineNo += 1
             }
             if let end = viewport?.viewportRange?.endLocation,
                fragment.rangeInElement.endLocation.compare(end) != .orderedAscending

@@ -17,6 +17,10 @@ final class BufferDocument: ObservableObject, Identifiable {
     var visibleWork: DispatchWorkItem?
     var isReadOnly = false
 
+    var isRust: Bool {
+        fileURL == nil || fileURL?.pathExtension == "rs"
+    }
+
     init(url: URL) {
         fileURL = url.standardizedFileURL
         untitledIndex = nil
@@ -45,6 +49,7 @@ final class BufferDocument: ObservableObject, Identifiable {
 
     func bind(_ textView: RideTextView) {
         textView.string = text
+        textView.lines.invalidate()
         isDirty = false
         let label = fileURL?.pathExtension == "rs" ? "\(displayName) Rust" : displayName
         textView.setAccessibilityLabel(label)
@@ -67,14 +72,4 @@ final class BufferDocument: ObservableObject, Identifiable {
         isDirty = false
         RideEngineClient.shared.engine?.workspaceFileChanged(path: fileURL.path)
     }
-}
-
-func lineAndColumn(in string: String, utf16: Int) -> (Int, Int) {
-    let ns = string as NSString
-    let loc = min(max(utf16, 0), ns.length)
-    var lineStart = 0
-    ns.getLineStart(&lineStart, end: nil, contentsEnd: nil, for: NSRange(location: loc, length: 0))
-    let prefix = ns.substring(to: loc)
-    let line = prefix.split(separator: "\n", omittingEmptySubsequences: false).count
-    return (line, loc - lineStart + 1)
 }

@@ -16,10 +16,12 @@ enum DiagnosticUnderlines {
         }
         document.diagnosticRanges = []
         var lines: [Int: DiagnosticLevel] = [:]
-        let text = view.string
         if let path = document.fileURL?.path {
-            for diag in CheckService.shared.diagnostics where diag.path == path {
-                guard let ns = DiagnosticRange.nsRange(in: text, byteStart: diag.byteStart, byteEnd: diag.byteEnd)
+            let mine = CheckService.shared.diagnostics.filter { $0.path == path }
+            let map = mine.isEmpty ? nil : Utf16Map(view.string)
+            for diag in mine {
+                guard let map,
+                      let ns = DiagnosticRange.nsRange(map: map, length: length, byteStart: diag.byteStart, byteEnd: diag.byteEnd)
                 else {
                     continue
                 }

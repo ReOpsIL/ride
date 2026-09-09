@@ -3,6 +3,17 @@ import AppKit
 final class RideTextView: NSTextView {
     var tabWidth = 4
     var showIndentGuides = true
+    let lines = LineIndex()
+
+    func lineIndex() -> LineIndex {
+        lines.refresh(textStorage?.mutableString ?? "")
+        return lines
+    }
+
+    override func didChangeText() {
+        lines.invalidate()
+        super.didChangeText()
+    }
     var hooks = EditorHooks()
     var hoverArea: NSTrackingArea?
     private var currentLineUTF16 = NSRange(location: 0, length: 0)

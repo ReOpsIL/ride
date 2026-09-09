@@ -55,6 +55,9 @@
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
 		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
 		A000000000000000000000D0 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
+		B1000000000000000000000C /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
+		B1000000000000000000000D /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
+		B1000000000000000000000E /* LineIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* LineIndexTests.swift */; };
 		A000000000000000000000D1 /* CompletionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000CF /* CompletionGate.swift */; };
 		A000000000000000000000D2 /* CompletionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000CF /* CompletionGate.swift */; };
 		A000000000000000000000D4 /* CompletionPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D3 /* CompletionPlacement.swift */; };
@@ -231,6 +234,8 @@
 		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
 		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A00000000000000000000092 /* Utf16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16.swift; sourceTree = "<group>"; };
+		B1000000000000000000000A /* LineIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndex.swift; sourceTree = "<group>"; };
+		B1000000000000000000000B /* LineIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndexTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000093 /* EditBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBuild.swift; sourceTree = "<group>"; };
 		A00000000000000000000094 /* HighlightApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightApply.swift; sourceTree = "<group>"; };
 		A00000000000000000000095 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
@@ -354,6 +359,7 @@
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
+				B1000000000000000000000B /* LineIndexTests.swift */,
 				A000000000000000000000C2 /* QueryIdTests.swift */,
 				A000000000000000000000E7 /* CompletionPositionTests.swift */,
 			);
@@ -460,6 +466,7 @@
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
 				A00000000000000000000092 /* Utf16.swift */,
+				B1000000000000000000000A /* LineIndex.swift */,
 				A00000000000000000000093 /* EditBuild.swift */,
 				A00000000000000000000094 /* HighlightApply.swift */,
 				A0000000000000000000009C /* RideTextView+Keys.swift */,
@@ -697,6 +704,8 @@
 				A000000000000000000000C3 /* Utf16Tests.swift in Sources */,
 				A000000000000000000000C4 /* QueryIdTests.swift in Sources */,
 				A000000000000000000000D0 /* Utf16.swift in Sources */,
+				B1000000000000000000000D /* LineIndex.swift in Sources */,
+				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
 				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
 				A000000000000000000000E1 /* CompletionPosition.swift in Sources */,
 				A000000000000000000000E8 /* CompletionPositionTests.swift in Sources */,
@@ -805,6 +814,7 @@
 				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
 				A000000000000000000000A1 /* Theme.swift in Sources */,
 				A000000000000000000000A2 /* Utf16.swift in Sources */,
+				B1000000000000000000000C /* LineIndex.swift in Sources */,
 				A000000000000000000000A3 /* EditBuild.swift in Sources */,
 				A000000000000000000000A4 /* HighlightApply.swift in Sources */,
 				A000000000000000000000A5 /* SessionService.swift in Sources */,

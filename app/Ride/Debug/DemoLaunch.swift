@@ -13,6 +13,14 @@ enum DemoLaunch {
         value(after: "--theme")
     }
 
+    static var file: String? {
+        value(after: "--file")
+    }
+
+    static var scroll: Bool {
+        CommandLine.arguments.contains("--scroll")
+    }
+
     static var frame: NSSize? {
         guard let raw = value(after: "--frame") else {
             return nil

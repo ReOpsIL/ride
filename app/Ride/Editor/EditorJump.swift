@@ -52,6 +52,7 @@ final class EditorJump {
             return
         }
         view.string = text
+        view.lines.invalidate()
         host?.syncGutter()
         view.updateCurrentLineHighlight()
     }

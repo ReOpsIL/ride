@@ -29,7 +29,7 @@ extension EditorPane.Coordinator {
 
     private func applyText(_ text: String, host: EditorHostView) {
         let view = host.textView
-        let line = lineAndColumn(in: view.string, utf16: view.selectedRange().location).0
+        let line = view.lineIndex().line(at: view.selectedRange().location)
         document.text = text
         EditorJump.shared.replaceText(text)
         EditorJump.shared.jump(toLine: line)
