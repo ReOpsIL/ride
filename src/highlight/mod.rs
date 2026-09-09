@@ -7,5 +7,6 @@ mod paint;
 mod ranges;
 mod session;
 mod spans;
+mod symbol;
 
 pub use session::BufferSession;

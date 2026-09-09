@@ -1,7 +1,7 @@
 use tree_sitter::{Parser, Query, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, CompletionHit, InputEditFfi, OutlineItem, SessionUpdate};
+use crate::ffi::{ByteRange, CompletionHit, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt};
 
 use super::edit::{apply_replica, rust_parser, to_ts_edit};
 use super::errors;
@@ -10,6 +10,7 @@ use super::outline;
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{from_ts, subtract, union_into};
 use super::spans;
+use super::symbol;
 
 pub struct BufferSession {
     pub generation: u64,
@@ -32,6 +33,10 @@ impl BufferSession {
 
     pub fn local_hits(&self, prefix: &str, limit: u32) -> Vec<CompletionHit> {
         locals::hits(&self.tree, &self.replica, &self.last_outline, prefix, limit)
+    }
+
+    pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {
+        symbol::symbol_at(&self.tree, &self.replica, byte)
     }
 
     pub fn open(

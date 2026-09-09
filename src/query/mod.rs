@@ -8,6 +8,7 @@ use crate::ffi::{
 };
 
 mod crates;
+mod exact;
 mod hit;
 mod items;
 mod keywords;
@@ -15,6 +16,7 @@ mod parse;
 mod rank;
 mod search;
 
+pub use exact::exact_search;
 pub use parse::parse_prefix;
 pub use search::{search_index, search_open};
 

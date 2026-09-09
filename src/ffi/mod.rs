@@ -3,6 +3,7 @@ mod index;
 mod kind;
 mod query;
 mod session;
+mod symbol;
 mod workspace;
 
 pub use config::EngineConfig;
@@ -12,4 +13,5 @@ pub use query::{CompletionContext, CompletionHit, CompletionQuery, CompletionRes
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
+pub use symbol::{DefinitionResponse, SymbolAt};
 pub use workspace::WorkspaceInfo;
