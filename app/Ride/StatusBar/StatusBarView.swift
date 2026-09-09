@@ -8,7 +8,14 @@ struct StatusBarView: View {
         HStack(spacing: 10) {
             Text("\(state.cursorLine):\(state.cursorColumn)")
             Text(state.relativePath)
+            if let error = state.formatError {
+                Text("rustfmt: \(error)")
+                    .foregroundStyle(Color.red)
+                    .lineLimit(1)
+                    .help(error)
+            }
             Spacer()
+            CheckStatusView()
             Text(state.windowTitle)
             Text(engine.indexLabel)
                 .lineLimit(1)

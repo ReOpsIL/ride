@@ -40,8 +40,9 @@ struct Theme {
         }
     }
 
-    static func load() -> Theme {
-        let url = Bundle.main.url(forResource: "dark", withExtension: "json")
+    static func load(name: String = "dark") -> Theme {
+        let file = name == "light" ? "light" : "dark"
+        let url = Bundle.main.url(forResource: file, withExtension: "json")
         let data = url.flatMap { try? Data(contentsOf: $0) }
         let map = data.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: String] } ?? [:]
         func hex(_ key: String, fallback: String) -> NSColor {

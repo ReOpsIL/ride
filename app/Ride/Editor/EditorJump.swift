@@ -33,6 +33,20 @@ final class EditorJump {
         host?.syncGutter()
     }
 
+    func jump(toLine line: Int) {
+        guard let view else {
+            return
+        }
+        let ns = view.string as NSString
+        var loc = 0
+        var current = 1
+        while current < line, loc < ns.length {
+            loc = NSMaxRange(ns.lineRange(for: NSRange(location: loc, length: 0)))
+            current += 1
+        }
+        select(NSRange(location: loc, length: 0))
+    }
+
     func replaceText(_ text: String) {
         guard let view else {
             return

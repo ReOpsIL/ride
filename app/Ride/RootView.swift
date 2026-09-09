@@ -24,6 +24,9 @@ struct RootView: View {
                         FileOutlineView()
                     }
                 }
+                if state.showProblems {
+                    ProblemsPanel()
+                }
                 StatusBarView()
             }
         }

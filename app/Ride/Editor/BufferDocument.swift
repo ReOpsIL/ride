@@ -12,6 +12,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     var editCount = 0
     var pending: PendingEdit?
     var errorRanges: [NSRange] = []
+    var diagnosticRanges: [NSRange] = []
     var highlights: [HighlightSpan] = []
     var visibleWork: DispatchWorkItem?
     var isReadOnly = false

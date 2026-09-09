@@ -9,6 +9,8 @@ struct Preferences: Codable, Equatable {
     var outlinePanel: Bool
     var visibleWhitespace: Bool
     var showHidden: Bool
+    var checkOnSave: Bool
+    var formatOnSave: Bool
 
     static let defaults = Preferences(
         theme: "dark",
@@ -18,7 +20,9 @@ struct Preferences: Codable, Equatable {
         completions: true,
         outlinePanel: true,
         visibleWhitespace: false,
-        showHidden: false
+        showHidden: false,
+        checkOnSave: true,
+        formatOnSave: false
     )
 
     init(
@@ -29,7 +33,9 @@ struct Preferences: Codable, Equatable {
         completions: Bool,
         outlinePanel: Bool,
         visibleWhitespace: Bool,
-        showHidden: Bool
+        showHidden: Bool,
+        checkOnSave: Bool = true,
+        formatOnSave: Bool = false
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -39,6 +45,8 @@ struct Preferences: Codable, Equatable {
         self.outlinePanel = outlinePanel
         self.visibleWhitespace = visibleWhitespace
         self.showHidden = showHidden
+        self.checkOnSave = checkOnSave
+        self.formatOnSave = formatOnSave
     }
 
     init(from decoder: Decoder) throws {
@@ -52,13 +60,15 @@ struct Preferences: Codable, Equatable {
         outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
         visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
+        checkOnSave = try c.decodeIfPresent(Bool.self, forKey: .checkOnSave) ?? d.checkOnSave
+        formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
     }
 
     var clamped: Preferences {
         var next = self
         next.fontSize = min(18, max(11, fontSize))
         next.tabWidth = min(8, max(2, tabWidth))
-        if next.theme.isEmpty {
+        if next.theme != "light" {
             next.theme = "dark"
         }
         return next

@@ -9,9 +9,9 @@ struct RideApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(state)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(state.isLightTheme ? .light : .dark)
                 .onAppear {
-                    NSApp.appearance = NSAppearance(named: .darkAqua)
+                    NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)
                 }
         }
         .defaultSize(width: 1100, height: 720)
@@ -51,6 +51,24 @@ struct RideApp: App {
                 Button("Reindex") {
                     state.reindex()
                 }
+            }
+            CommandGroup(after: .pasteboard) {
+                Button("Format Document") {
+                    state.formatActive()
+                }
+                .keyboardShortcut("i", modifiers: [.control, .shift])
+            }
+            CommandGroup(after: .sidebar) {
+                Button("Show Problems") {
+                    state.toggleProblems()
+                }
+                .keyboardShortcut("m", modifiers: [.command, .shift])
+            }
+            CommandMenu("Build") {
+                Button("Check") {
+                    state.runCheck()
+                }
+                .keyboardShortcut("b", modifiers: .command)
             }
             CommandGroup(after: .toolbar) {
                 Button("Open Quickly…") {

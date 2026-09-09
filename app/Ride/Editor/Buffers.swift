@@ -72,6 +72,7 @@ extension AppState {
         }
         try? buffer.save(from: nil)
         objectWillChange.send()
+        didSave(buffer)
     }
 
     func scheduleAutoSave() {
@@ -94,6 +95,7 @@ extension AppState {
         }
         try? buffer.save(from: nil)
         objectWillChange.send()
+        didSave(buffer)
     }
 
     func confirmClose(_ buffer: BufferDocument) -> Bool {

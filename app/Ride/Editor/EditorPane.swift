@@ -180,18 +180,5 @@ struct EditorPane: NSViewRepresentable {
             CompletionSession.shared.viewportChanged(view: view)
             HoverController.shared.hide()
         }
-
-        func flush(_ host: EditorHostView) {
-            if let text = state.applyText {
-                state.applyText = nil
-                document.text = text
-                EditorJump.shared.replaceText(text)
-                SessionService.shared.resync(document: document, view: host.textView)
-            }
-            if let byte = state.pendingJump {
-                state.pendingJump = nil
-                EditorJump.shared.jump(byte: byte)
-            }
-        }
     }
 }

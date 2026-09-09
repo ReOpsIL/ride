@@ -1,7 +1,7 @@
 import AppKit
 
 enum HighlightApply {
-    static let theme = Theme.load()
+    static var theme = Theme.load()
 
     static func apply(
         _ update: SessionUpdate,

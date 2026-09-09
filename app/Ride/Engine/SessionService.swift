@@ -147,28 +147,6 @@ final class SessionService {
         return view.visibleBytes()
     }
 
-    private func paint(_ update: SessionUpdate?, document: BufferDocument, view: RideTextView, text: String) {
-        guard let update else {
-            return
-        }
-        mergeHighlights(document: document, update: update)
-        HighlightApply.apply(update, text: text, view: view, errors: &document.errorRanges)
-        if let outline = update.outline {
-            document.outline = outline.map(Self.row)
-        }
-    }
-
-    private func mergeHighlights(document: BufferDocument, update: SessionUpdate) {
-        if !update.changed.isEmpty {
-            document.highlights.removeAll { span in
-                update.changed.contains { c in
-                    span.endByte > c.startByte && span.startByte < c.endByte
-                }
-            }
-        }
-        document.highlights.append(contentsOf: update.highlights)
-    }
-
     static func row(_ item: OutlineItem) -> OutlineRow {
         OutlineRow(
             name: item.name,

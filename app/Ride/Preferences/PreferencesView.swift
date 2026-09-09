@@ -7,6 +7,7 @@ struct PreferencesView: View {
         Form {
             Picker("Theme", selection: themeBinding) {
                 Text("Dark").tag("dark")
+                Text("Light").tag("light")
             }
             Stepper(value: fontBinding, in: 11...18) {
                 Text("Font size  \(state.prefs.fontSize) pt")
@@ -19,6 +20,8 @@ struct PreferencesView: View {
             Toggle("Outline panel", isOn: boolBinding(\.outlinePanel))
             Toggle("Visible whitespace", isOn: boolBinding(\.visibleWhitespace))
             Toggle("Show hidden files", isOn: boolBinding(\.showHidden))
+            Toggle("Check on save", isOn: boolBinding(\.checkOnSave))
+            Toggle("Format on save", isOn: boolBinding(\.formatOnSave))
         }
         .formStyle(.grouped)
         .frame(width: 360)

@@ -63,6 +63,11 @@ struct TreeRow: View {
             }
             Label(node.name, systemImage: node.isDirectory ? "folder" : "doc")
                 .lineLimit(1)
+            if dirty {
+                Circle()
+                    .fill(Color.orange.opacity(node.isDirectory ? 0.45 : 0.95))
+                    .frame(width: 6, height: 6)
+            }
             Spacer(minLength: 0)
         }
         .font(.system(size: 13))
@@ -76,6 +81,14 @@ struct TreeRow: View {
         .simultaneousGesture(TapGesture(count: 1).onEnded(select))
         .simultaneousGesture(TapGesture(count: 2).onEnded(activate))
         .contextMenu { menu(for: node) }
+    }
+
+    private var dirty: Bool {
+        guard let root = state.workspaceRoot else {
+            return false
+        }
+        let rel = WorkspaceFS.relativePath(root: root, file: node.url)
+        return state.git.isDirty(relative: rel, isDirectory: node.isDirectory)
     }
 
     private var rowFill: Color {

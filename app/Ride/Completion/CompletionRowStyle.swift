@@ -1,7 +1,7 @@
 import AppKit
 
 enum CompletionRowStyle {
-    static let theme = HighlightApply.theme
+    static var theme: Theme { HighlightApply.theme }
     static let sysroot: Set<String> = ["core", "alloc", "std", "proc_macro", "test"]
 
     static func glyph(_ kind: ItemKind) -> String {

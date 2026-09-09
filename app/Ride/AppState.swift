@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 final class AppState: ObservableObject {
@@ -26,9 +27,15 @@ final class AppState: ObservableObject {
     @Published var symbolSelection: UInt32?
     @Published var showSymbolPicker = false
     @Published var showProjectFind = false
+    @Published var showProblems = false
+    @Published var formatError: String?
     let symbolPicker = SymbolPickerModel()
     let projectFind = ProjectFindModel()
+    let git = GitStatusService()
     var pendingJump: UInt32?
+    var applyThenSave = false
+    var cargoWork: DispatchWorkItem?
+    var gitSink: AnyCancellable?
 
     private let recents = RecentProjects()
     private let watcher = FileWatcher()
@@ -46,8 +53,15 @@ final class AppState: ObservableObject {
     init() {
         prefs = PreferencesStore.load()
         recent = recents.load()
-        watcher.handler = { [weak self] in
-            self?.reloadTree()
+        HighlightApply.theme = Theme.load(name: prefs.theme)
+        watcher.handler = { [weak self] paths in
+            self?.filesChanged(paths)
+        }
+        gitSink = git.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
+        CheckService.shared.onFinished = { [weak self] diagnostics in
+            self?.checkFinished(diagnostics)
         }
         _ = RideEngineClient.shared
         NotificationCenter.default.addObserver(
@@ -62,25 +76,6 @@ final class AppState: ObservableObject {
         if let url = Self.launchFolder() {
             open(url)
         }
-    }
-
-    static func launchFolder() -> URL? {
-        let args = ProcessInfo.processInfo.arguments
-        if let i = args.firstIndex(of: "--open"), args.indices.contains(i + 1) {
-            let url = URL(fileURLWithPath: args[i + 1])
-            var isDir: ObjCBool = false
-            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
-                return url
-            }
-        }
-        if let path = ProcessInfo.processInfo.environment["RIDE_OPEN"] {
-            let url = URL(fileURLWithPath: path)
-            var isDir: ObjCBool = false
-            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
-                return url
-            }
-        }
-        return nil
     }
 
     var windowTitle: String {
@@ -135,6 +130,8 @@ final class AppState: ObservableObject {
         reloadTree()
         watcher.start(path: url.path)
         RideEngineClient.shared.openWorkspace(url)
+        git.clear()
+        git.refresh(root: url, delay: 0)
     }
 
     func reindex() {
@@ -153,6 +150,9 @@ final class AppState: ObservableObject {
             quickFiles = []
             reloadTree()
         }
+        if before.theme != prefs.theme {
+            applyTheme()
+        }
     }
 
     func reloadTree() {
@@ -170,25 +170,4 @@ final class AppState: ObservableObject {
             restoreExpanded(node.children)
         }
     }
-}
-
-func cargoPackageName(_ root: URL) -> String? {
-    let url = root.appendingPathComponent("Cargo.toml")
-    guard let text = try? String(contentsOf: url, encoding: .utf8) else {
-        return nil
-    }
-    for line in text.components(separatedBy: .newlines) {
-        let trimmed = line.trimmingCharacters(in: .whitespaces)
-        guard trimmed.hasPrefix("name") else {
-            continue
-        }
-        guard let first = trimmed.firstIndex(of: "\""),
-              let last = trimmed.lastIndex(of: "\""),
-              first < last
-        else {
-            continue
-        }
-        return String(trimmed[trimmed.index(after: first) ..< last])
-    }
-    return nil
 }

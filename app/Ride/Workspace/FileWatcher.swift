@@ -4,7 +4,7 @@ import Foundation
 final class FileWatcher {
     private var stream: FSEventStreamRef?
     private let queue = DispatchQueue(label: "dev.ride.fs")
-    var handler: (() -> Void)?
+    var handler: (([String]) -> Void)?
 
     func start(path: String) {
         stop()
@@ -15,13 +15,14 @@ final class FileWatcher {
             release: nil,
             copyDescription: nil
         )
-        let callback: FSEventStreamCallback = { _, info, _, _, _, _ in
+        let callback: FSEventStreamCallback = { _, info, _, eventPaths, _, _ in
             guard let info else {
                 return
             }
             let watcher = Unmanaged<FileWatcher>.fromOpaque(info).takeUnretainedValue()
+            let paths = unsafeBitCast(eventPaths, to: NSArray.self) as? [String] ?? []
             DispatchQueue.main.async {
-                watcher.handler?()
+                watcher.handler?(paths)
             }
         }
         let paths = [path] as CFArray
