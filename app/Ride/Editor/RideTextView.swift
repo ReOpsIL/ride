@@ -2,6 +2,7 @@ import AppKit
 
 final class RideTextView: NSTextView {
     var tabWidth = 4
+    var showIndentGuides = true
     var hooks = EditorHooks()
     var hoverArea: NSTrackingArea?
     private var currentLineUTF16 = NSRange(location: 0, length: 0)
@@ -20,6 +21,7 @@ final class RideTextView: NSTextView {
         applyPrefs(.defaults)
         applyTheme(ThemeStore.shared.theme)
         isRichText = true
+        drawsBackground = false
         importsGraphics = false
         allowsImageEditing = false
         isAutomaticQuoteSubstitutionEnabled = false
@@ -58,6 +60,10 @@ final class RideTextView: NSTextView {
     }
 
     func applyPrefs(_ prefs: Preferences) {
+        if showIndentGuides != prefs.indentGuides {
+            showIndentGuides = prefs.indentGuides
+            needsDisplay = true
+        }
         if tabWidth == prefs.tabWidth, font?.pointSize == CGFloat(prefs.fontSize) {
             return
         }
@@ -83,6 +89,11 @@ final class RideTextView: NSTextView {
         let container = NSTextContainer(size: NSSize(width: 0, height: 1e7))
         layout.textContainer = container
         return RideTextView(frame: .zero, textContainer: container)
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        IndentGuides.draw(in: self, rect: dirtyRect)
+        super.draw(dirtyRect)
     }
 
     override func paste(_ sender: Any?) {

@@ -2,8 +2,10 @@ import AppKit
 
 final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     let panel: NSPanel
-    private let table: NSTableView
+    private let layout = CompletionPopupLayout(frame: NSRect(origin: .zero, size: CompletionPopupLayout.size(rows: 1, doc: false)))
+    private let table = NSTableView()
     private var hits: [CompletionHit] = []
+    private var prefix = ""
     private var selected = 0
     private var replaceUtf16 = 0
     weak var textView: RideTextView?
@@ -11,39 +13,28 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     var suppress = false
 
     override init() {
-        panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 160),
-            styleMask: [.borderless, .nonactivatingPanel],
-            backing: .buffered,
-            defer: true
-        )
-        table = NSTableView()
+        panel = OverlayPanel.make(size: CompletionPopupLayout.size(rows: 1, doc: false))
         super.init()
-        panel.isFloatingPanel = true
-        panel.hidesOnDeactivate = true
-        panel.becomesKeyOnlyIfNeeded = true
-        panel.level = .popUpMenu
-        panel.hasShadow = true
-        panel.backgroundColor = ThemeStore.shared.chrome.bgOverlay
-        panel.isOpaque = true
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("hit"))
+        column.resizingMask = .autoresizingMask
+        column.width = CompletionPopupLayout.listWidth
         table.addTableColumn(column)
+        table.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
+        table.autoresizingMask = [.width]
         table.headerView = nil
+        table.style = .plain
         table.delegate = self
         table.dataSource = self
-        table.rowHeight = CompletionPlacement.rowHeight
+        table.rowHeight = Tokens.Size.completionRow
+        table.intercellSpacing = .zero
         table.refusesFirstResponder = true
         table.allowsEmptySelection = false
         table.target = self
         table.action = #selector(clickRow)
-        table.backgroundColor = ThemeStore.shared.chrome.bgOverlay
+        table.backgroundColor = .clear
         table.selectionHighlightStyle = .regular
-        let scroll = NSScrollView()
-        scroll.documentView = table
-        scroll.hasVerticalScroller = true
-        scroll.borderType = .noBorder
-        scroll.drawsBackground = false
-        panel.contentView = scroll
+        layout.scroll.documentView = table
+        panel.contentView = layout
     }
 
     var isVisible: Bool {
@@ -56,16 +47,31 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         self.replaceUtf16 = replaceUtf16
         textView = view
         selected = 0
+        prefix = Self.typedPrefix(in: view, from: replaceUtf16)
+        layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
+        layout.applyTheme()
         table.reloadData()
+        table.sizeLastColumnToFit()
         if !hits.isEmpty {
             table.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
         }
-        relocate(in: view)
-        panel.orderFront(nil)
+        layout.doc.fill(hits.first)
+        OverlayPanel.present(panel, frame: frame(in: view))
     }
 
     func relocate(in view: RideTextView) {
-        panel.setFrame(CompletionPlacement.frame(for: view, rows: hits.count), display: true)
+        panel.setFrame(frame(in: view), display: true)
+    }
+
+    private func frame(in view: RideTextView) -> NSRect {
+        CompletionPlacement.frame(for: view, size: CompletionPopupLayout.size(rows: hits.count, doc: layout.showsDoc))
+    }
+
+    private static func typedPrefix(in view: RideTextView, from start: Int) -> String {
+        let ns = view.string as NSString
+        let caret = min(view.selectedRange().location, ns.length)
+        let from = min(max(start, 0), caret)
+        return ns.substring(with: NSRange(location: from, length: caret - from))
     }
 
     func hide() {
@@ -101,8 +107,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         guard hits.indices.contains(selected), let path = hits[selected].sourcePath else {
             return
         }
-        let url = URL(fileURLWithPath: path)
-        NotificationCenter.default.post(name: .rideOpenCatalog, object: url)
+        NotificationCenter.default.post(name: .rideOpenCatalog, object: URL(fileURLWithPath: path))
         hide()
     }
 
@@ -110,12 +115,16 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         hits.count
     }
 
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        CompletionSelectionRow()
+    }
+
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let id = NSUserInterfaceItemIdentifier("row")
         let cell = (tableView.makeView(withIdentifier: id, owner: self) as? CompletionRowView)
             ?? CompletionRowView(frame: .zero)
         cell.identifier = id
-        cell.fill(hits[row])
+        cell.fill(hits[row], prefix: prefix)
         return cell
     }
 
@@ -123,6 +132,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         let row = table.selectedRow
         if row >= 0 {
             selected = row
+            layout.doc.fill(hits.indices.contains(row) ? hits[row] : nil)
         }
     }
 

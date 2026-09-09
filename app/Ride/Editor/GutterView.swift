@@ -2,9 +2,21 @@ import AppKit
 
 final class GutterView: NSView {
     weak var textView: RideTextView?
+    var diagnosticLines: [Int: DiagnosticLevel] = [:] {
+        didSet { needsDisplay = true }
+    }
     private var viewport: NSTextViewportLayoutController?
+    static let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+    static let currentFont = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
+    static let glyphColumn: CGFloat = 14
+    static let trailing: CGFloat = 8
 
     override var isFlipped: Bool { true }
+
+    static func width(digits: Int) -> CGFloat {
+        let digit = ("0" as NSString).size(withAttributes: [.font: font]).width
+        return glyphColumn + digit * CGFloat(max(digits, 3)) + trailing + 4
+    }
 
     func attach(textView: RideTextView) {
         self.textView = textView
@@ -21,16 +33,9 @@ final class GutterView: NSView {
         }
         let storage = textView.textContentStorage
         let origin = textView.textContainerOrigin
-        let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
         let currentLine = lineAndColumn(in: textView.string, utf16: textView.selectedRange().location).0
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: font,
-            .foregroundColor: theme.editor.gutterText,
-        ]
-        let currentAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: theme.editor.gutterCurrent,
-        ]
+        let attrs: [NSAttributedString.Key: Any] = [.font: Self.font, .foregroundColor: theme.editor.gutterText]
+        let currentAttrs: [NSAttributedString.Key: Any] = [.font: Self.currentFont, .foregroundColor: theme.editor.gutterCurrent]
         let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
         tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
             let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
@@ -42,13 +47,7 @@ final class GutterView: NSView {
                 r.size.width = bounds.width
                 let dest = convert(r, from: textView)
                 if dest.intersects(dirtyRect) {
-                    let label = "\(lineNo)" as NSString
-                    let style = lineNo == currentLine ? currentAttrs : attrs
-                    let size = label.size(withAttributes: style)
-                    label.draw(
-                        at: CGPoint(x: bounds.width - size.width - 8, y: dest.midY - size.height / 2),
-                        withAttributes: style
-                    )
+                    drawLine(lineNo, at: dest, attrs: lineNo == currentLine ? currentAttrs : attrs, theme: theme)
                 }
                 lineNo += 1
             }
@@ -64,5 +63,19 @@ final class GutterView: NSView {
         edge.move(to: CGPoint(x: bounds.maxX - 0.5, y: 0))
         edge.line(to: CGPoint(x: bounds.maxX - 0.5, y: bounds.maxY))
         edge.stroke()
+    }
+
+    private func drawLine(_ lineNo: Int, at dest: NSRect, attrs: [NSAttributedString.Key: Any], theme: Theme) {
+        let label = "\(lineNo)" as NSString
+        let size = label.size(withAttributes: attrs)
+        label.draw(
+            at: CGPoint(x: bounds.width - size.width - Self.trailing, y: dest.midY - size.height / 2),
+            withAttributes: attrs
+        )
+        if let level = diagnosticLines[lineNo] {
+            let color = level == .error ? theme.chrome.error : theme.chrome.warning
+            color.setFill()
+            NSBezierPath(ovalIn: NSRect(x: 5, y: dest.midY - 3, width: 6, height: 6)).fill()
+        }
     }
 }

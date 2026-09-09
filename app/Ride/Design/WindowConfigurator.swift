@@ -26,7 +26,7 @@ struct WindowConfigurator: NSViewRepresentable {
         }
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
-        window.toolbarStyle = .unified
+        window.toolbarStyle = .unifiedCompact
         window.backgroundColor = ts.chrome.bgBase
         window.isOpaque = true
         window.minSize = NSSize(width: 860, height: 520)

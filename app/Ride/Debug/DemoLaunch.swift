@@ -5,6 +5,10 @@ enum DemoLaunch {
         value(after: "--demo")
     }
 
+    static var isDemo: Bool {
+        scene != nil
+    }
+
     static var frame: NSSize? {
         guard let raw = value(after: "--frame") else {
             return nil

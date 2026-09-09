@@ -126,6 +126,23 @@
 		A00000000000000000000121 /* FileIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000062 /* FileIndex.swift */; };
 		A00000000000000000000123 /* ProjectFindTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000122 /* ProjectFindTests.swift */; };
 		A00000000000000000000125 /* NavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000124 /* NavigationTests.swift */; };
+		C03211A346C3ECBAB127B8A6 /* Plural.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06A1914D239448E02F6E5C8 /* Plural.swift */; };
+		C009D8110230ED36CA278F06 /* Plural.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06A1914D239448E02F6E5C8 /* Plural.swift */; };
+		C0E180C6B1920BAFEC114F49 /* IndentGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00E2B0384B23C50A5620F92 /* IndentGuides.swift */; };
+		C019B157FD40DB9A5A0EE158 /* OverlayCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EE051337AAEF72D568729F /* OverlayCardView.swift */; };
+		C0162E36CA7670AE7D6E3B4B /* OverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C048DF39C61F862484A7A3F9 /* OverlayPanel.swift */; };
+		C0C4FC6F23A459990B655535 /* OverlayCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0516AA756E9DABB14DB9041 /* OverlayCard.swift */; };
+		C0F84DA8BE54257551B17670 /* KindBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C009208E1081CB38E219A8CF /* KindBadge.swift */; };
+		C09BE5B3D2D77C23A6C6E98A /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06CB9850B620A924ACBC705 /* HighlightedText.swift */; };
+		C03F49DB1A8678BD116E627C /* MatchHighlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */; };
+		C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */; };
+		C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */; };
+		C0868F479E44B07AF06EC8E2 /* CompletionSelectionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */; };
+		C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09ADDA5838786CF3156310F /* CompletionDocCard.swift */; };
+		C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E408E8B25CE1E947AA275E /* CompletionPopupLayout.swift */; };
+		C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0598608D033648D3A46F5CC /* PickerCard.swift */; };
+		C0AB4383CF0D9FD395454F5D /* PickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */; };
+		C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D75BC74B6B7741BF5AE184 /* FindRows.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -238,6 +255,21 @@
 		A0000000000000000000011E /* FunctionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionKeys.swift; sourceTree = "<group>"; };
 		A00000000000000000000122 /* ProjectFindTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000124 /* NavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTests.swift; sourceTree = "<group>"; };
+		C06A1914D239448E02F6E5C8 /* Plural.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Plural.swift"; sourceTree = "<group>"; };
+		C00E2B0384B23C50A5620F92 /* IndentGuides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndentGuides.swift"; sourceTree = "<group>"; };
+		C0EE051337AAEF72D568729F /* OverlayCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OverlayCardView.swift"; sourceTree = "<group>"; };
+		C048DF39C61F862484A7A3F9 /* OverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OverlayPanel.swift"; sourceTree = "<group>"; };
+		C0516AA756E9DABB14DB9041 /* OverlayCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OverlayCard.swift"; sourceTree = "<group>"; };
+		C009208E1081CB38E219A8CF /* KindBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KindBadge.swift"; sourceTree = "<group>"; };
+		C06CB9850B620A924ACBC705 /* HighlightedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HighlightedText.swift"; sourceTree = "<group>"; };
+		C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MatchHighlight.swift"; sourceTree = "<group>"; };
+		C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MatchHighlightTests.swift"; sourceTree = "<group>"; };
+		C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSelectionRow.swift"; sourceTree = "<group>"; };
+		C09ADDA5838786CF3156310F /* CompletionDocCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionDocCard.swift"; sourceTree = "<group>"; };
+		C0E408E8B25CE1E947AA275E /* CompletionPopupLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionPopupLayout.swift"; sourceTree = "<group>"; };
+		C0598608D033648D3A46F5CC /* PickerCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PickerCard.swift"; sourceTree = "<group>"; };
+		C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PickerRow.swift"; sourceTree = "<group>"; };
+		C0D75BC74B6B7741BF5AE184 /* FindRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindRows.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +294,15 @@
 		B0BFC2E56FBC0D62926D318D /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */,
+				C0598608D033648D3A46F5CC /* PickerCard.swift */,
+				C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */,
+				C06CB9850B620A924ACBC705 /* HighlightedText.swift */,
+				C009208E1081CB38E219A8CF /* KindBadge.swift */,
+				C0516AA756E9DABB14DB9041 /* OverlayCard.swift */,
+				C048DF39C61F862484A7A3F9 /* OverlayPanel.swift */,
+				C0EE051337AAEF72D568729F /* OverlayCardView.swift */,
+				C06A1914D239448E02F6E5C8 /* Plural.swift */,
 				B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */,
 				B0863351D97262CED0CFC713 /* WelcomeView.swift */,
 				B09372FEB73004180670F188 /* MiddleClick.swift */,
@@ -282,6 +323,7 @@
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* CargoWatchTests.swift */,
 				A0000000000000000000014B /* GitStatusTests.swift */,
@@ -374,6 +416,7 @@
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				C00E2B0384B23C50A5620F92 /* IndentGuides.swift */,
 				B0355AEC5E462433212D91A0 /* TabItem.swift */,
 				A0000000000000000000012B /* DiagnosticUnderlines.swift */,
 				A00000000000000000000128 /* DiagnosticRange.swift */,
@@ -404,6 +447,7 @@
 		A00000000000000000000056 /* Search */ = {
 			isa = PBXGroup;
 			children = (
+				C0D75BC74B6B7741BF5AE184 /* FindRows.swift */,
 				B00E834049D45F687C4E4144 /* FindCount.swift */,
 				A00000000000000000000100 /* HitNavigation.swift */,
 				A00000000000000000000102 /* SymbolPickerModel.swift */,
@@ -471,6 +515,9 @@
 		A0000000000000000000005C /* Completion */ = {
 			isa = PBXGroup;
 			children = (
+				C0E408E8B25CE1E947AA275E /* CompletionPopupLayout.swift */,
+				C09ADDA5838786CF3156310F /* CompletionDocCard.swift */,
+				C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */,
 				A00000000000000000000098 /* CompletionTokenizer.swift */,
 				A00000000000000000000099 /* CompletionPopup.swift */,
 				A0000000000000000000009A /* CompletionSession.swift */,
@@ -601,6 +648,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */,
+				C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */,
+				C009D8110230ED36CA278F06 /* Plural.swift in Sources */,
 				B04310B616ED144666AD4307 /* Contrast.swift in Sources */,
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
@@ -629,6 +679,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */,
+				C0AB4383CF0D9FD395454F5D /* PickerRow.swift in Sources */,
+				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
+				C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */,
+				C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */,
+				C0868F479E44B07AF06EC8E2 /* CompletionSelectionRow.swift in Sources */,
+				C03F49DB1A8678BD116E627C /* MatchHighlight.swift in Sources */,
+				C09BE5B3D2D77C23A6C6E98A /* HighlightedText.swift in Sources */,
+				C0F84DA8BE54257551B17670 /* KindBadge.swift in Sources */,
+				C0C4FC6F23A459990B655535 /* OverlayCard.swift in Sources */,
+				C0162E36CA7670AE7D6E3B4B /* OverlayPanel.swift in Sources */,
+				C019B157FD40DB9A5A0EE158 /* OverlayCardView.swift in Sources */,
+				C0E180C6B1920BAFEC114F49 /* IndentGuides.swift in Sources */,
+				C03211A346C3ECBAB127B8A6 /* Plural.swift in Sources */,
 				B0F036C3A8FAC953589AE02E /* SplitHandle.swift in Sources */,
 				B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */,
 				B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */,

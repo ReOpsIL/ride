@@ -9,7 +9,7 @@ struct StatusBarView: View {
             if let branch = state.git.branch {
                 StatusSegment(icon: "arrow.triangle.branch", text: branch, help: "Git branch")
             }
-            StatusSegment(icon: "text.cursor", text: "Ln \(state.cursorLine), Col \(state.cursorColumn)", help: "Cursor position")
+            StatusSegment(text: "Ln \(state.cursorLine), Col \(state.cursorColumn)", help: "Cursor position")
             StatusSegment(icon: pathIcon, text: state.relativePath, help: state.activeBuffer?.fileURL?.path ?? state.relativePath)
             if let error = state.formatError {
                 StatusSegment(icon: "exclamationmark.circle", text: "rustfmt: \(error)", tint: ts.ui.error, help: error)

@@ -21,7 +21,7 @@ struct RootView: View {
         .background(ts.ui.bgBase)
         .background(WindowConfigurator())
         .toolbar {
-            AppToolbar(state: state, title: state.windowTitle, hasWorkspace: state.workspaceRoot != nil)
+            AppToolbar(state: state, hasWorkspace: state.workspaceRoot != nil)
         }
         .toolbarBackground(.visible, for: .windowToolbar)
         .overlay {

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AppToolbar: ToolbarContent {
     let state: AppState
-    let title: String
     let hasWorkspace: Bool
 
     var body: some ToolbarContent {
@@ -14,10 +13,12 @@ struct AppToolbar: ToolbarContent {
             }
             .help("Toggle Sidebar (⌃⌘S)")
         }
-        ToolbarItem(placement: .principal) {
-            Text(title)
-                .font(Tokens.ui(13, weight: .semibold))
-                .lineLimit(1)
+        if #available(macOS 26.0, *) {
+            ToolbarSpacer(.flexible, placement: .principal)
+        } else {
+            ToolbarItem(placement: .principal) {
+                Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
+            }
         }
         ToolbarItemGroup(placement: .primaryAction) {
             Button {

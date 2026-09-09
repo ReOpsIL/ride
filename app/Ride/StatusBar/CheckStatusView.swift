@@ -58,10 +58,10 @@ enum CheckSummary {
         }
         var parts: [String] = []
         if errors > 0 {
-            parts.append("\(errors) error\(errors == 1 ? "" : "s")")
+            parts.append(Plural.count(errors, "error"))
         }
         if warnings > 0 {
-            parts.append("\(warnings) warning\(warnings == 1 ? "" : "s")")
+            parts.append(Plural.count(warnings, "warning"))
         }
         return parts.joined(separator: ", ")
     }

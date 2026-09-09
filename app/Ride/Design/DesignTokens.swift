@@ -17,6 +17,7 @@ enum Tokens {
         static let m: CGFloat = 6
         static let l: CGFloat = 8
         static let xl: CGFloat = 12
+        static let card: CGFloat = 10
     }
 
     enum Size {
@@ -28,6 +29,9 @@ enum Tokens {
         static let iconS: CGFloat = 11
         static let iconM: CGFloat = 13
         static let iconL: CGFloat = 16
+        static let pickerRow: CGFloat = 26
+        static let completionRow: CGFloat = 24
+        static let badge: CGFloat = 16
     }
 
     enum Shadow {

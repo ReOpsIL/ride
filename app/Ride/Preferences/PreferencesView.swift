@@ -19,6 +19,7 @@ struct PreferencesView: View {
             Toggle("Completions", isOn: boolBinding(\.completions))
             Toggle("Outline panel", isOn: boolBinding(\.outlinePanel))
             Toggle("Visible whitespace", isOn: boolBinding(\.visibleWhitespace))
+            Toggle("Indent guides", isOn: boolBinding(\.indentGuides))
             Toggle("Show hidden files", isOn: boolBinding(\.showHidden))
             Toggle("Check on save", isOn: boolBinding(\.checkOnSave))
             Toggle("Format on save", isOn: boolBinding(\.formatOnSave))

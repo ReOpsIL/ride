@@ -9,13 +9,17 @@ final class CompletionLifecycle {
             forName: NSApplication.didResignActiveNotification,
             object: nil,
             queue: .main
-        ) { _ in hide() })
+        ) { _ in
+            if !DemoLaunch.isDemo {
+                hide()
+            }
+        })
         tokens.append(center.addObserver(
             forName: NSWindow.didResignKeyNotification,
             object: nil,
             queue: .main
         ) { [weak panel] note in
-            guard let window = note.object as? NSWindow, window !== panel else {
+            guard let window = note.object as? NSWindow, window !== panel, !DemoLaunch.isDemo else {
                 return
             }
             hide()

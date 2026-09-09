@@ -3,43 +3,23 @@ import SwiftUI
 struct ProjectFindOverlay: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject var model: ProjectFindModel
-    @FocusState private var focused: Bool
+    @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.35)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    state.showProjectFind = false
-                }
-            VStack(spacing: 0) {
-                HStack {
-                    TextField("Find in project", text: $model.query)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 14, design: .monospaced))
-                        .focused($focused)
-                        .onSubmit {
-                            submit()
-                        }
-                    if model.running {
-                        ProgressView().controlSize(.small)
-                    }
-                }
-                .padding(10)
-                Divider()
-                results
-            }
-            .frame(width: 720)
-            .background(ThemeStore.shared.ui.bgOverlay)
-            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
-            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
-            .shadow(radius: 16)
-        }
-        .onAppear {
-            focused = true
-        }
-        .onExitCommand {
-            state.showProjectFind = false
+        PickerCard(
+            query: $model.query,
+            placeholder: "Find in project",
+            width: 760,
+            hints: [
+                PickerHint(id: "run", key: "↩", label: "search / open"),
+                PickerHint(id: "nav", key: "↑↓", label: "navigate"),
+                PickerHint(id: "esc", key: "esc", label: "dismiss"),
+            ],
+            trailing: summary,
+            onSubmit: submit,
+            onDismiss: { state.showProjectFind = false }
+        ) {
+            results
         }
         .onKeyPress(.downArrow) {
             model.move(1)
@@ -51,43 +31,45 @@ struct ProjectFindOverlay: View {
         }
     }
 
+    private var summary: String? {
+        if model.running {
+            return "Searching…"
+        }
+        guard !model.matches.isEmpty else {
+            return nil
+        }
+        let files = Set(model.matches.map(\.file)).count
+        let count = Plural.count(model.matches.count, "match", plural: "matches")
+        return "\(count) in \(Plural.count(files, "file"))\(model.truncated ? " (truncated)" : "")"
+    }
+
     @ViewBuilder
     private var results: some View {
         if model.matches.isEmpty {
-            Text(model.query.isEmpty ? "Press Return to search" : (model.running ? "Searching…" : "No matches"))
-                .font(.system(size: 12))
-                .foregroundStyle(ThemeStore.shared.ui.textSecondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(10)
+            PickerEmpty(text: model.query.isEmpty ? "Type a query and press Return" : (model.running ? "Searching…" : "No matches"))
         } else {
-            List(selection: $model.selection) {
-                ForEach(model.groups, id: \.file) { group in
-                    Section(header: Text(label(group.file)).font(.system(size: 11, weight: .semibold, design: .monospaced))) {
-                        ForEach(group.matches) { match in
-                            HStack(spacing: 8) {
-                                Text("\(match.line)")
-                                    .foregroundStyle(ThemeStore.shared.ui.textSecondary)
-                                    .frame(width: 44, alignment: .trailing)
-                                Text(match.preview)
-                                    .lineLimit(1)
-                            }
-                            .font(.system(size: 12, design: .monospaced))
-                            .tag(Optional(match.id))
-                            .onTapGesture {
-                                open(match)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(model.groups, id: \.file) { group in
+                            FindGroupHeader(file: group.file, count: group.matches.count, label: label(group.file))
+                            ForEach(group.matches) { match in
+                                FindMatchRow(match: match, query: model.query, selected: model.selection == match.id) {
+                                    open(match)
+                                }
+                                .id(match.id)
                             }
                         }
                     }
+                    .padding(.vertical, Tokens.Space.xs)
                 }
-                if model.truncated {
-                    Text("Results truncated at \(ProjectFind.cap) matches")
-                        .font(.system(size: 11))
-                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
+                .frame(height: min(CGFloat(model.matches.count + model.groups.count) * Tokens.Size.pickerRow + Tokens.Space.xs * 2, 440))
+                .onChange(of: model.selection) { _, value in
+                    if let value {
+                        proxy.scrollTo(value)
+                    }
                 }
             }
-            .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-            .frame(maxHeight: 420)
         }
     }
 

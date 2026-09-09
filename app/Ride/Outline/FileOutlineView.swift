@@ -65,11 +65,7 @@ struct OutlineRowView: View {
     var body: some View {
         let kind = OutlineKind.itemKind(row.kindLabel)
         HStack(spacing: Tokens.Space.s) {
-            Text(CompletionRowStyle.glyph(kind))
-                .font(Tokens.mono(9, weight: .bold))
-                .foregroundStyle(Color(CompletionRowStyle.color(kind)))
-                .frame(width: 24, height: 14)
-                .background(Color(CompletionRowStyle.color(kind)).opacity(0.15), in: RoundedRectangle(cornerRadius: 3))
+            KindBadge(kind: kind)
             Text(row.name)
                 .font(Tokens.mono(11))
                 .foregroundStyle(ts.ui.textPrimary)

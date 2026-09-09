@@ -51,4 +51,17 @@ enum CompletionRowStyle {
         }
         return "\(hit.crateName) \(hit.crateVersion)"
     }
+
+    static func name(_ text: String, prefix: String, chrome: ChromeColors) -> NSAttributedString {
+        let font = Tokens.nsMono(12, weight: .semibold)
+        let out = NSMutableAttributedString(string: text, attributes: [.font: font, .foregroundColor: chrome.textPrimary])
+        for range in MatchHighlight.ranges(in: text, query: prefix) {
+            out.addAttribute(.foregroundColor, value: chrome.accent, range: range)
+        }
+        return out
+    }
+
+    static func hasDoc(_ hit: CompletionHit) -> Bool {
+        !hit.docFirstSentence.isEmpty
+    }
 }

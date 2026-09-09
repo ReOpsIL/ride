@@ -11,6 +11,7 @@ struct Preferences: Codable, Equatable {
     var showHidden: Bool
     var checkOnSave: Bool
     var formatOnSave: Bool
+    var indentGuides: Bool
     var sidebarWidth: Double
     var outlineWidth: Double
     var problemsHeight: Double
@@ -26,6 +27,7 @@ struct Preferences: Codable, Equatable {
         showHidden: false,
         checkOnSave: true,
         formatOnSave: false,
+        indentGuides: true,
         sidebarWidth: 230,
         outlineWidth: 220,
         problemsHeight: 180
@@ -42,6 +44,7 @@ struct Preferences: Codable, Equatable {
         showHidden: Bool,
         checkOnSave: Bool = true,
         formatOnSave: Bool = false,
+        indentGuides: Bool = true,
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
         problemsHeight: Double = 180
@@ -56,6 +59,7 @@ struct Preferences: Codable, Equatable {
         self.showHidden = showHidden
         self.checkOnSave = checkOnSave
         self.formatOnSave = formatOnSave
+        self.indentGuides = indentGuides
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
@@ -74,6 +78,7 @@ struct Preferences: Codable, Equatable {
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
         checkOnSave = try c.decodeIfPresent(Bool.self, forKey: .checkOnSave) ?? d.checkOnSave
         formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
+        indentGuides = try c.decodeIfPresent(Bool.self, forKey: .indentGuides) ?? d.indentGuides
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight

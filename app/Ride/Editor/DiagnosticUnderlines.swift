@@ -15,6 +15,7 @@ enum DiagnosticUnderlines {
             storage.removeAttribute(.underlineColor, range: old)
         }
         document.diagnosticRanges = []
+        var lines: [Int: DiagnosticLevel] = [:]
         let text = view.string
         if let path = document.fileURL?.path {
             for diag in CheckService.shared.diagnostics where diag.path == path {
@@ -25,9 +26,14 @@ enum DiagnosticUnderlines {
                 storage.addAttribute(.underlineStyle, value: style, range: ns)
                 storage.addAttribute(.underlineColor, value: color(diag.level), range: ns)
                 document.diagnosticRanges.append(ns)
+                let line = Int(diag.line)
+                if lines[line] != .error {
+                    lines[line] = diag.level == .error ? .error : .warning
+                }
             }
         }
         storage.endEditing()
+        (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.diagnosticLines = lines
         view.needsDisplay = true
     }
 

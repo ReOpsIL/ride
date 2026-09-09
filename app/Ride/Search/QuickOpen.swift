@@ -2,59 +2,41 @@ import SwiftUI
 
 struct QuickOpenOverlay: View {
     @EnvironmentObject private var state: AppState
-    @FocusState private var focused: Bool
+    @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.35)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    state.showQuickOpen = false
-                }
-            VStack(spacing: 0) {
-                TextField("Open file", text: $state.quickQuery)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 14, design: .monospaced))
-                    .padding(10)
-                    .focused($focused)
-                    .onSubmit {
-                        state.confirmQuickOpen()
+        PickerCard(
+            query: $state.quickQuery,
+            placeholder: "Open file by name",
+            trailing: state.quickHits.isEmpty ? nil : Plural.count(state.quickHits.count, "file"),
+            onSubmit: { state.confirmQuickOpen() },
+            onDismiss: { state.showQuickOpen = false }
+        ) {
+            if state.quickHits.isEmpty {
+                PickerEmpty(text: state.quickQuery.isEmpty ? "Type a file name" : "No matching files")
+            } else {
+                PickerList(count: state.quickHits.count, selected: selectedIndex) { i in
+                    let url = state.quickHits[i]
+                    let spec = FileIcon.spec(name: url.lastPathComponent, isDirectory: false, chrome: ts.chrome)
+                    PickerRow(
+                        title: url.lastPathComponent,
+                        query: state.quickQuery,
+                        subtitle: directory(url),
+                        selected: state.quickSelection == url,
+                        action: {
+                            state.quickSelection = url
+                            state.confirmQuickOpen()
+                        }
+                    ) {
+                        Image(systemName: spec.symbol)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color(spec.color))
                     }
-                Divider()
-                if state.quickHits.isEmpty {
-                    Text("No matching files")
-                        .font(.system(size: 12))
-                        .foregroundStyle(ThemeStore.shared.ui.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(10)
-                } else {
-                    List(state.quickHits, id: \.self, selection: $state.quickSelection) { url in
-                        Text(label(url))
-                            .font(.system(size: 12, design: .monospaced))
-                            .tag(url)
-                            .lineLimit(1)
-                    }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .frame(maxHeight: 280)
                 }
             }
-            .frame(width: 520)
-            .background(ThemeStore.shared.ui.bgOverlay)
-            .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.xl))
-            .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.xl).stroke(ThemeStore.shared.ui.border, lineWidth: 1))
-            .shadow(radius: 16)
         }
-        .onAppear {
-            focused = true
-            state.refreshQuickOpen()
-        }
-        .onChange(of: state.quickQuery) { _, _ in
-            state.refreshQuickOpen()
-        }
-        .onExitCommand {
-            state.showQuickOpen = false
-        }
+        .onAppear { state.refreshQuickOpen() }
+        .onChange(of: state.quickQuery) { _, _ in state.refreshQuickOpen() }
         .onKeyPress(.downArrow) {
             state.selectNextQuick()
             return .handled
@@ -65,10 +47,15 @@ struct QuickOpenOverlay: View {
         }
     }
 
-    private func label(_ url: URL) -> String {
+    private var selectedIndex: Int? {
+        state.quickSelection.flatMap { state.quickHits.firstIndex(of: $0) }
+    }
+
+    private func directory(_ url: URL) -> String {
         guard let root = state.workspaceRoot else {
-            return url.lastPathComponent
+            return ""
         }
-        return WorkspaceFS.relativePath(root: root, file: url)
+        let rel = WorkspaceFS.relativePath(root: root, file: url.deletingLastPathComponent())
+        return rel == "." ? "" : rel
     }
 }

@@ -23,7 +23,7 @@ final class EditorHostView: NSView {
         scroll.translatesAutoresizingMaskIntoConstraints = false
         addSubview(gutter)
         addSubview(scroll)
-        gutterWidth = gutter.widthAnchor.constraint(equalToConstant: 36)
+        gutterWidth = gutter.widthAnchor.constraint(equalToConstant: GutterView.width(digits: 3))
         NSLayoutConstraint.activate([
             gutter.leadingAnchor.constraint(equalTo: leadingAnchor),
             gutter.topAnchor.constraint(equalTo: topAnchor),
@@ -61,8 +61,7 @@ final class EditorHostView: NSView {
 
     @objc func syncGutter() {
         let lines = max(1, textView.string.components(separatedBy: "\n").count)
-        let digits = max(3, String(lines).count)
-        gutterWidth.constant = CGFloat(digits) * 8 + 16
+        gutterWidth.constant = GutterView.width(digits: String(lines).count)
         gutter.needsDisplay = true
     }
 

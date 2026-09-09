@@ -1,24 +1,19 @@
 import AppKit
 
 final class CompletionRowView: NSTableCellView {
-    private let glyph = NSTextField(labelWithString: "")
+    private let badge = KindBadgeView(frame: .zero)
     private let name = NSTextField(labelWithString: "")
     private let detail = NSTextField(labelWithString: "")
     private let origin = NSTextField(labelWithString: "")
 
     override init(frame: NSRect) {
         super.init(frame: frame)
-        glyph.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .semibold)
-        glyph.alignment = .center
-        name.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .bold)
-        name.textColor = ThemeStore.shared.chrome.textPrimary
-        detail.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-        detail.textColor = ThemeStore.shared.chrome.textSecondary
+        name.font = Tokens.nsMono(12, weight: .semibold)
+        detail.font = Tokens.nsMono(11)
         detail.lineBreakMode = .byTruncatingTail
-        origin.font = NSFont.systemFont(ofSize: 10)
-        origin.textColor = ThemeStore.shared.chrome.textTertiary
+        origin.font = Tokens.nsUI(10)
         origin.alignment = .right
-        for field in [glyph, name, detail, origin] {
+        for field in [badge, name, detail, origin] {
             field.translatesAutoresizingMaskIntoConstraints = false
             addSubview(field)
         }
@@ -26,15 +21,14 @@ final class CompletionRowView: NSTableCellView {
         origin.setContentCompressionResistancePriority(.required, for: .horizontal)
         detail.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         NSLayoutConstraint.activate([
-            glyph.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
-            glyph.widthAnchor.constraint(equalToConstant: 28),
-            glyph.centerYAnchor.constraint(equalTo: centerYAnchor),
-            name.leadingAnchor.constraint(equalTo: glyph.trailingAnchor, constant: 6),
+            badge.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Tokens.Space.m),
+            badge.centerYAnchor.constraint(equalTo: centerYAnchor),
+            name.leadingAnchor.constraint(equalTo: badge.trailingAnchor, constant: Tokens.Space.m),
             name.centerYAnchor.constraint(equalTo: centerYAnchor),
-            detail.leadingAnchor.constraint(equalTo: name.trailingAnchor, constant: 10),
+            detail.leadingAnchor.constraint(equalTo: name.trailingAnchor, constant: Tokens.Space.l),
             detail.centerYAnchor.constraint(equalTo: centerYAnchor),
-            origin.leadingAnchor.constraint(greaterThanOrEqualTo: detail.trailingAnchor, constant: 8),
-            origin.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            origin.leadingAnchor.constraint(greaterThanOrEqualTo: detail.trailingAnchor, constant: Tokens.Space.m),
+            origin.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Tokens.Space.l),
             origin.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
@@ -43,12 +37,13 @@ final class CompletionRowView: NSTableCellView {
         nil
     }
 
-    func fill(_ hit: CompletionHit) {
-        glyph.stringValue = CompletionRowStyle.glyph(hit.itemKind)
-        glyph.textColor = CompletionRowStyle.color(hit.itemKind)
-        name.stringValue = hit.name
+    func fill(_ hit: CompletionHit, prefix: String) {
+        let chrome = ThemeStore.shared.chrome
+        badge.fill(hit.itemKind)
+        name.attributedStringValue = CompletionRowStyle.name(hit.name, prefix: prefix, chrome: chrome)
         detail.stringValue = CompletionRowStyle.detail(hit)
+        detail.textColor = chrome.textSecondary
         origin.stringValue = CompletionRowStyle.origin(hit)
-        toolTip = hit.docFirstSentence.isEmpty ? nil : hit.docFirstSentence
+        origin.textColor = chrome.textTertiary
     }
 }

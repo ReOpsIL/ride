@@ -25,21 +25,21 @@
     "indentGuide": "#0000000F"
   },
   "syntax": {
-    "keyword": "#AF00DB",
-    "function": "#795E26",
-    "type": "#267F99",
-    "property": "#001080",
-    "variable": "#1F1F1F",
-    "constant": "#0070C1",
-    "string": "#A31515",
-    "escape": "#EE0000",
-    "comment": "#008000",
-    "attribute": "#AF00DB",
-    "lifetime": "#001080",
-    "macro": "#795E26",
-    "number": "#098658",
-    "operator": "#1F1F1F",
-    "punctuation": "#1F1F1F",
-    "label": "#3B3B3B"
+    "keyword": "#CF222E",
+    "function": "#8250DF",
+    "type": "#953800",
+    "property": "#0550AE",
+    "variable": "#24292F",
+    "constant": "#0550AE",
+    "string": "#0A3069",
+    "escape": "#0A3069",
+    "comment": "#6E7781",
+    "attribute": "#CF222E",
+    "lifetime": "#0550AE",
+    "macro": "#8250DF",
+    "number": "#0550AE",
+    "operator": "#24292F",
+    "punctuation": "#57606A",
+    "label": "#57606A"
   }
 }

@@ -52,6 +52,13 @@ final class HoverController {
         panel.hide()
     }
 
+    static func bounds(for view: NSTextView) -> NSRect {
+        guard let window = view.window else {
+            return NSScreen.main?.visibleFrame ?? .zero
+        }
+        return window.convertToScreen(window.contentLayoutRect)
+    }
+
     private func schedule(view: RideTextView, range: NSRange, after: Double) {
         timer?.cancel()
         word = range
@@ -76,14 +83,13 @@ final class HoverController {
             guard let self, let view, self.word == range else {
                 return
             }
-            guard let text = HoverText.render(resp) else {
+            guard let content = HoverText.content(resp) else {
                 return
             }
             var actual = NSRange()
             let anchor = view.firstRect(forCharacterRange: range, actualRange: &actual)
-            let screen = view.window?.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
             self.shown = range
-            self.panel.show(text: text, anchor: anchor, screen: screen)
+            self.panel.show(content, anchor: anchor, bounds: Self.bounds(for: view))
         }
     }
 }
