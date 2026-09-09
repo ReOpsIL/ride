@@ -8,9 +8,10 @@ struct CompletionToken {
     var currentCrate: String?
     var currentModule: String?
     var mode: QueryMode
+    var position: CompletionPosition
 }
 
-enum CompletionContext {
+enum CompletionTokenizer {
     static func token(in text: String, utf16 caret: Int) -> CompletionToken? {
         if inStringOrComment(text, utf16: caret) {
             return nil
@@ -55,6 +56,7 @@ enum CompletionContext {
         } else if prefix.count >= 3 {
             mode = .items
         }
+        let position = CompletionPosition.detect(before: ns.substring(to: start))
         let replaceUtf8 = UInt32(Utf16.utf8Offset(in: text, utf16: loc - prefix.utf16.count))
         let cursorUtf8 = UInt32(Utf16.utf8Offset(in: text, utf16: loc))
         return CompletionToken(
@@ -64,7 +66,8 @@ enum CompletionContext {
             cursorUtf8: cursorUtf8,
             currentCrate: crate,
             currentModule: module,
-            mode: mode
+            mode: mode,
+            position: position
         )
     }
 

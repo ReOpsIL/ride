@@ -2,7 +2,7 @@ import AppKit
 
 enum CompletionPlacement {
     static let width: CGFloat = 520
-    static let rowHeight: CGFloat = 36
+    static let rowHeight: CGFloat = 24
 
     static func caretRect(in view: NSTextView) -> NSRect {
         var actual = NSRange()

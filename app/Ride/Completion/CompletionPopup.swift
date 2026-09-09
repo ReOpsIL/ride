@@ -111,18 +111,11 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let hit = hits[row]
-        let cell = NSTableCellView()
-        let field = NSTextField(labelWithString: "")
-        field.allowsEditingTextAttributes = true
-        field.attributedStringValue = Self.attributed(hit)
-        field.translatesAutoresizingMaskIntoConstraints = false
-        cell.addSubview(field)
-        NSLayoutConstraint.activate([
-            field.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 8),
-            field.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -8),
-            field.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-        ])
+        let id = NSUserInterfaceItemIdentifier("row")
+        let cell = (tableView.makeView(withIdentifier: id, owner: self) as? CompletionRowView)
+            ?? CompletionRowView(frame: .zero)
+        cell.identifier = id
+        cell.fill(hits[row])
         return cell
     }
 
@@ -140,31 +133,6 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
             return
         }
         _ = accept()
-    }
-
-    static func attributed(_ hit: CompletionHit) -> NSAttributedString {
-        let kind = SessionService.kindLabel(hit.itemKind)
-        var crate = hit.crateName
-        if !hit.crateVersion.isEmpty {
-            crate += " \(hit.crateVersion)"
-        }
-        let top = "\(hit.path)   \(kind)   \(crate)"
-        let out = NSMutableAttributedString(
-            string: top + "\n",
-            attributes: [
-                .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .regular),
-                .foregroundColor: NSColor.labelColor,
-            ]
-        )
-        let doc = hit.docFirstSentence.isEmpty ? " " : hit.docFirstSentence
-        out.append(NSAttributedString(
-            string: doc,
-            attributes: [
-                .font: NSFont.systemFont(ofSize: 10),
-                .foregroundColor: NSColor.secondaryLabelColor,
-            ]
-        ))
-        return out
     }
 
     static func accept(_ responseId: UInt64, latest: UInt64) -> Bool {

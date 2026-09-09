@@ -32,7 +32,7 @@ final class CompletionSession {
             hide()
             return
         }
-        let token = CompletionContext.token(in: view.string, utf16: view.selectedRange().location)
+        let token = CompletionTokenizer.token(in: view.string, utf16: view.selectedRange().location)
         guard let token else {
             hide()
             return
@@ -61,8 +61,17 @@ final class CompletionSession {
         guard popup.isVisible else {
             return
         }
-        if CompletionContext.token(in: view.string, utf16: view.selectedRange().location) == nil {
+        if CompletionTokenizer.token(in: view.string, utf16: view.selectedRange().location) == nil {
             hide()
+        }
+    }
+
+    private static func context(_ position: CompletionPosition) -> CompletionContext {
+        switch position {
+        case .unknown: return .unknown
+        case .typePosition: return .typePosition
+        case .valuePosition: return .valuePosition
+        case .memberAccess: return .memberAccess
         }
     }
 
@@ -75,6 +84,7 @@ final class CompletionSession {
             sessionId: sessionId,
             prefix: token.prefix,
             mode: token.mode,
+            context: Self.context(token.position),
             cursorByte: token.cursorUtf8,
             replaceStartByte: token.replaceUtf8,
             currentCrate: token.currentCrate,
