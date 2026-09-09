@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
@@ -19,10 +20,17 @@ pub struct Manifest {
     pub fingerprint: String,
     #[serde(default)]
     pub docs: u32,
+    #[serde(default)]
+    pub crate_hashes: BTreeMap<String, String>,
 }
 
 impl Manifest {
-    pub fn next(generation: u32, fingerprint: String, docs: u32) -> Self {
+    pub fn next(
+        generation: u32,
+        fingerprint: String,
+        docs: u32,
+        crate_hashes: BTreeMap<String, String>,
+    ) -> Self {
         Self {
             schema_version: SCHEMA_VERSION,
             engine_semver: env!("CARGO_PKG_VERSION").to_string(),
@@ -30,6 +38,7 @@ impl Manifest {
             live_dir: format!("gen-{generation}"),
             fingerprint,
             docs,
+            crate_hashes,
         }
     }
 }

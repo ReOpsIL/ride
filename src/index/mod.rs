@@ -4,6 +4,7 @@ mod fingerprint;
 mod folder;
 mod gc;
 mod hash;
+mod incremental;
 mod promote;
 mod schema;
 mod status;

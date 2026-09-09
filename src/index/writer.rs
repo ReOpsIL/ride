@@ -12,6 +12,7 @@ use super::crates::{collect_crates, extract_items};
 use super::doc::{keep_item, to_document};
 use super::fingerprint::{HashedCrate, fingerprint, hash_crates};
 use super::gc::clean_stagings;
+use super::incremental::{self, key_of};
 use super::promote::{promote, tv};
 use super::schema::{SCHEMA_VERSION, build_fields};
 use super::status::{Manifest, append_status, read_manifest};
@@ -61,10 +62,11 @@ fn run(
     if !force && let Some(fresh) = prev.as_ref().filter(|m| is_fresh(m, index_dir, &fp)) {
         return finish(index_dir, status, fresh.docs);
     }
-    match build(index_dir, &hashed, &mut status) {
+    let crate_hashes = hashed.iter().map(|h| (key_of(h), h.hash.clone())).collect();
+    match write(index_dir, prev.as_ref(), &hashed, &mut status, force) {
         Ok(docs) => {
             let generation = prev.as_ref().map(|m| m.generation + 1).unwrap_or(1);
-            let manifest = Manifest::next(generation, fp, docs);
+            let manifest = Manifest::next(generation, fp, docs, crate_hashes);
             promote(index_dir, &staging_dir(index_dir), &manifest)?;
             finish(index_dir, status, docs)
         }
@@ -75,6 +77,31 @@ fn run(
             Err(e)
         }
     }
+}
+
+fn write(
+    index_dir: &Path,
+    prev: Option<&Manifest>,
+    hashed: &[HashedCrate],
+    status: &mut IndexStatus,
+    force: bool,
+) -> Result<u32, EngineError> {
+    if !force
+        && let Some(prev) = prev.filter(|m| m.schema_version == SCHEMA_VERSION)
+        && let Some(delta) = incremental::delta(prev, hashed)
+        && index_dir.join(&prev.live_dir).is_dir()
+    {
+        status.crates_total = delta.changed.len() as u32;
+        append_status(index_dir, status)?;
+        return incremental::apply(
+            index_dir,
+            &index_dir.join(&prev.live_dir),
+            &staging_dir(index_dir),
+            &delta,
+            status,
+        );
+    }
+    build(index_dir, hashed, status)
 }
 
 fn build(

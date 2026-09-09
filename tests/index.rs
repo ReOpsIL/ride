@@ -116,3 +116,74 @@ fn catalog_drops_private_of_cache_crate() {
         .unwrap();
     assert!(!hits.is_empty());
 }
+
+fn copy_dir(from: &std::path::Path, to: &std::path::Path) {
+    std::fs::create_dir_all(to).unwrap();
+    for entry in std::fs::read_dir(from).unwrap().flatten() {
+        let dest = to.join(entry.file_name());
+        if entry.path().is_dir() {
+            copy_dir(&entry.path(), &dest);
+        } else {
+            std::fs::copy(entry.path(), dest).unwrap();
+        }
+    }
+}
+
+fn count_named(index_dir: &std::path::Path, name: &str) -> usize {
+    let live = index_dir.join(read_manifest(index_dir).unwrap().live_dir);
+    let index = Index::open_in_dir(live).unwrap();
+    let field = index.schema().get_field("name_exact").unwrap();
+    let searcher = index.reader().unwrap().searcher();
+    let query = tantivy::query::TermQuery::new(
+        tantivy::Term::from_field_text(field, name),
+        tantivy::schema::IndexRecordOption::Basic,
+    );
+    searcher.search(&query, &tantivy::collector::Count).unwrap()
+}
+
+#[test]
+fn workspace_edit_reindexes_only_the_workspace_crate() {
+    let dir = tempfile::tempdir().unwrap();
+    let project = dir.path().join("proj");
+    copy_dir(&fixtures().join("sample_crate"), &project);
+    let index_dir = dir.path().join("index");
+    let first = write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    assert!(first.crates_total > 1);
+    assert_eq!(count_named(&index_dir, "added_fn"), 0);
+    let hashmap_before = count_named(&index_dir, "hashmap");
+    let lib = project.join("src/lib.rs");
+    let mut text = std::fs::read_to_string(&lib).unwrap();
+    text.push_str("\npub fn added_fn() {}\n");
+    std::thread::sleep(std::time::Duration::from_millis(20));
+    std::fs::write(&lib, text).unwrap();
+    let second = write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    assert_eq!(second.state, IndexState::Ready);
+    assert_eq!(
+        second.crates_total, 1,
+        "only the workspace crate is re-extracted"
+    );
+    assert_eq!(second.docs, first.docs + 1);
+    assert_eq!(read_manifest(&index_dir).unwrap().generation, 2);
+    assert_eq!(count_named(&index_dir, "added_fn"), 1);
+    assert_eq!(count_named(&index_dir, "foo"), 1);
+    assert_eq!(count_named(&index_dir, "hashmap"), hashmap_before);
+}
+
+#[test]
+fn removed_workspace_item_disappears_after_incremental_reindex() {
+    let dir = tempfile::tempdir().unwrap();
+    let project = dir.path().join("proj");
+    copy_dir(&fixtures().join("sample_crate"), &project);
+    let index_dir = dir.path().join("index");
+    write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    assert_eq!(count_named(&index_dir, "free_fn"), 1);
+    let lib = project.join("src/lib.rs");
+    let text = std::fs::read_to_string(&lib)
+        .unwrap()
+        .replace("pub fn free_fn() {}", "");
+    std::thread::sleep(std::time::Duration::from_millis(20));
+    std::fs::write(&lib, text).unwrap();
+    let second = write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    assert_eq!(second.crates_total, 1);
+    assert_eq!(count_named(&index_dir, "free_fn"), 0);
+}
