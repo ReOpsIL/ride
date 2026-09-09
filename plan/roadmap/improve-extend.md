@@ -33,10 +33,12 @@ Found:
 | Phase | State |
 |---|---|
 | 1 Stabilize | Done: GC, fingerprint skip, warnings log, sysroot allow-list, popup lifecycle, hidden files, status label, RideTests + app CI, README/docs |
-| 2 Completion quality | Done: schema v4 (edge-ngram prefix, fast-field ranks, best-per-name collector, path penalty), context bias, richer rows, golden tests |
-| 3 Backlog | In progress: symbol picker, project find, split (app) |
-| 4 Extend | Engine done: find_definitions, run_check, format_rust. App in progress: go to definition, hover; pending: check panel, rustfmt on save, auto-use, Cargo.lock watch, git badges, light theme |
-| 5 Distribution | Not started |
+| 2 Completion quality | Done: schema v7 (edge-ngram prefix, fast-field ranks, best-per-name collector, path penalty, no stored source_chunk), context bias, re-export resolution (chains, sysroot cross-crate, extern crate aliases), richer rows, golden tests |
+| 3 Backlog | Done: symbol picker (Cmd+Shift+R), project find (Cmd+Shift+F). Open: A3 split (EditorJump singleton must be reworked first) |
+| 4 Extend | Done: go to definition, hover docs, cargo check panel + underlines, rustfmt on save, Cargo.lock watch, git badges, light theme. Open: auto-`use` on accept |
+| 5 Distribution | `scripts/release.sh` (archive, sign, zip, optional notarize). Open: update check, universal build |
+
+Measured on 2026-09-09 (806 crates, 1.58M docs): full reindex ~50–60 s release; query p95 < 1 ms for 3+ chars, ~13 ms for a single character.
 
 ## Phase 1 — Stabilize (first)
 
