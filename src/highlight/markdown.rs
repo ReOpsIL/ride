@@ -5,6 +5,7 @@ use crate::ffi::{
     ByteRange, CompletionHit, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt,
 };
 
+use super::fences::RustFences;
 use super::ranges::from_ts;
 use super::spans::highlights_in;
 use super::syntax::{Syntax, parse_failed};
@@ -19,6 +20,7 @@ pub struct MarkdownSyntax {
     inline_query: Query,
     block_tree: Option<Tree>,
     inline_tree: Option<Tree>,
+    fences: RustFences,
 }
 
 impl MarkdownSyntax {
@@ -38,6 +40,7 @@ impl MarkdownSyntax {
             inline_query,
             block_tree: None,
             inline_tree: None,
+            fences: RustFences::new()?,
         })
     }
 
@@ -45,6 +48,7 @@ impl MarkdownSyntax {
         let Some(block) = self.block_tree.as_ref() else {
             return Ok(());
         };
+        self.fences.reparse(block.root_node(), text)?;
         let mut ranges = Vec::new();
         collect_inline(block.root_node(), &mut ranges);
         if ranges.is_empty() {
@@ -96,6 +100,7 @@ impl Syntax for MarkdownSyntax {
         if let Some(tree) = &self.inline_tree {
             out.extend(highlights_in(&self.inline_query, tree, text, ranges));
         }
+        out.extend(self.fences.highlights(text, ranges));
         out.sort_by_key(|s| (s.start_byte, s.end_byte));
         out
     }

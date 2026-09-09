@@ -18,6 +18,10 @@ impl Engine {
         }
     }
 
+    pub fn render_markdown(&self, text: String) -> String {
+        catch_unwind(AssertUnwindSafe(|| crate::markdown::render(&text))).unwrap_or_default()
+    }
+
     pub fn format_rust(
         &self,
         text: String,

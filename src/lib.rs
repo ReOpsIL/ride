@@ -8,6 +8,7 @@ mod extract;
 mod ffi;
 mod highlight;
 mod index;
+mod markdown;
 mod query;
 mod skip;
 mod toolchain;
@@ -28,4 +29,5 @@ pub use index::{
     Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, rebuild_index,
     write_index,
 };
+pub use markdown::render as render_markdown;
 pub use toolchain::tool_path;

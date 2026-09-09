@@ -6,6 +6,24 @@ use super::capture::capture_kind;
 
 const HIGHLIGHTS: &str = include_str!("../../queries/rust/highlights.scm");
 
+pub fn rust_highlights(code: &str) -> Result<Vec<HighlightSpan>, String> {
+    let mut parser = tree_sitter::Parser::new();
+    parser
+        .set_language(&tree_sitter_rust::LANGUAGE.into())
+        .map_err(|e| format!("{e:?}"))?;
+    let tree = parser.parse(code, None).ok_or("parse returned none")?;
+    let query = query()?;
+    Ok(highlights(
+        &query,
+        &tree,
+        code,
+        &[ByteRange {
+            start_byte: 0,
+            end_byte: code.len() as u32,
+        }],
+    ))
+}
+
 pub fn query() -> Result<Query, String> {
     let lang = tree_sitter::Language::new(tree_sitter_rust::LANGUAGE);
     Query::new(&lang, HIGHLIGHTS).map_err(|e| e.to_string())
