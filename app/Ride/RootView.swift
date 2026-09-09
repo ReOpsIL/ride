@@ -8,15 +8,12 @@ struct RootView: View {
         HSplitView {
             if state.showSidebar {
                 SidebarView()
-                    .frame(width: state.prefs.sidebarWidth)
+                    .frame(minWidth: 180, idealWidth: state.prefs.sidebarWidth, maxWidth: 420)
+                    .background(SplitPositioner(position: state.prefs.sidebarWidth))
+                    .reportSize(.width) { sidebarWidth.wrappedValue = $0 }
             }
             DetailColumn()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay(alignment: .leading) {
-                    if state.showSidebar {
-                        SplitHandle(axis: .horizontal, value: sidebarWidth, range: 180...420)
-                    }
-                }
+                .frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(ts.ui.bgBase)
         .background(WindowConfigurator())
@@ -62,13 +59,12 @@ struct DetailColumn: View {
             }
             VSplitView {
                 editorRow
-                    .frame(maxHeight: .infinity)
+                    .frame(minHeight: 160, maxHeight: .infinity)
                 if state.showProblems {
                     ProblemsPanel()
-                        .frame(height: state.prefs.problemsHeight)
-                        .overlay(alignment: .top) {
-                            SplitHandle(axis: .vertical, value: problemsHeight, range: 80...480, inverted: true)
-                        }
+                        .frame(minHeight: 80, idealHeight: state.prefs.problemsHeight, maxHeight: 480)
+                        .background(SplitPositioner(position: state.prefs.problemsHeight, fromEnd: true))
+                        .reportSize(.height) { problemsHeight.wrappedValue = $0 }
                 }
             }
             StatusBarView()
@@ -77,22 +73,18 @@ struct DetailColumn: View {
     }
 
     private var editorRow: some View {
-        HSplitView {
+        HStack(spacing: 0) {
             editor
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             if state.previewVisible {
+                SplitHandle(axis: .horizontal, value: previewWidth, range: 260...900, inverted: true)
                 PreviewPane()
                     .frame(width: state.prefs.previewWidth)
-                    .overlay(alignment: .leading) {
-                        SplitHandle(axis: .horizontal, value: previewWidth, range: 260...900, inverted: true)
-                    }
             }
             if state.prefs.outlinePanel {
+                SplitHandle(axis: .horizontal, value: outlineWidth, range: 160...420, inverted: true)
                 FileOutlineView()
                     .frame(width: state.prefs.outlineWidth)
-                    .overlay(alignment: .leading) {
-                        SplitHandle(axis: .horizontal, value: outlineWidth, range: 160...420, inverted: true)
-                    }
             }
         }
     }

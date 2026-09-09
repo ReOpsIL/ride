@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B0F036C3A8FAC953589AE02E /* SplitHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */; };
 		B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0901DA538FDB916C2AF040F /* AppState+Layout.swift */; };
 		B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00E834049D45F687C4E4144 /* FindCount.swift */; };
 		B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E018E55E618A879AC6440A /* IndexStatusView.swift */; };
@@ -28,6 +27,9 @@
 		B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */; };
 		B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */; };
 		B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
+		36204AE137A5250F60713535 /* SplitPositioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */; };
+		F2E1DB1A0ED5F5517F13DD75 /* SplitHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */; };
+		0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA11C41B82C43461193C957 /* SizeReporter.swift */; };
 		A00000000000000000000127 /* CheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000126 /* CheckService.swift */; };
 		A00000000000000000000129 /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
 		A0000000000000000000012A /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
@@ -167,7 +169,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitHandle.swift"; sourceTree = "<group>"; };
 		B0901DA538FDB916C2AF040F /* AppState+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Layout.swift"; sourceTree = "<group>"; };
 		B00E834049D45F687C4E4144 /* FindCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindCount.swift"; sourceTree = "<group>"; };
 		B0E018E55E618A879AC6440A /* IndexStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexStatusView.swift"; sourceTree = "<group>"; };
@@ -187,6 +188,9 @@
 		B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeJSON.swift"; sourceTree = "<group>"; };
 		B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChromePalette.swift"; sourceTree = "<group>"; };
 		B06689A7D426576E81967851 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignTokens.swift"; sourceTree = "<group>"; };
+		7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitPositioner.swift"; sourceTree = "<group>"; };
+		0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitHandle.swift"; sourceTree = "<group>"; };
+		5EA11C41B82C43461193C957 /* SizeReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SizeReporter.swift"; sourceTree = "<group>"; };
 		A00000000000000000000126 /* CheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckService.swift"; sourceTree = "<group>"; };
 		A00000000000000000000128 /* DiagnosticRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRange.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012B /* DiagnosticUnderlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticUnderlines.swift"; sourceTree = "<group>"; };
@@ -348,7 +352,6 @@
 				C048DF39C61F862484A7A3F9 /* OverlayPanel.swift */,
 				C0EE051337AAEF72D568729F /* OverlayCardView.swift */,
 				C06A1914D239448E02F6E5C8 /* Plural.swift */,
-				B00B2EF0E84D7877E79E11B0 /* SplitHandle.swift */,
 				B0863351D97262CED0CFC713 /* WelcomeView.swift */,
 				B09372FEB73004180670F188 /* MiddleClick.swift */,
 				B02A3458F9D381E22B936563 /* FileIcon.swift */,
@@ -361,6 +364,9 @@
 				B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */,
 				B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */,
 				B06689A7D426576E81967851 /* DesignTokens.swift */,
+				7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */,
+				0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */,
+				5EA11C41B82C43461193C957 /* SizeReporter.swift */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -773,7 +779,6 @@
 				C019B157FD40DB9A5A0EE158 /* OverlayCardView.swift in Sources */,
 				C0E180C6B1920BAFEC114F49 /* IndentGuides.swift in Sources */,
 				C03211A346C3ECBAB127B8A6 /* Plural.swift in Sources */,
-				B0F036C3A8FAC953589AE02E /* SplitHandle.swift in Sources */,
 				B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */,
 				B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */,
 				B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */,
@@ -792,6 +797,9 @@
 				B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */,
 				B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */,
 				B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */,
+				36204AE137A5250F60713535 /* SplitPositioner.swift in Sources */,
+				F2E1DB1A0ED5F5517F13DD75 /* SplitHandle.swift in Sources */,
+				0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */,
 				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,
