@@ -1,7 +1,7 @@
 import Foundation
 
 enum FileIndex {
-    static func list(root: URL) -> [URL] {
+    static func list(root: URL, showHidden: Bool) -> [URL] {
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(
             at: root,
@@ -13,10 +13,11 @@ enum FileIndex {
         var files: [URL] = []
         while let url = enumerator.nextObject() as? URL {
             let values = try? url.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey])
+            if WorkspaceFS.skipName(url.lastPathComponent, showHidden: showHidden) {
+                enumerator.skipDescendants()
+                continue
+            }
             if values?.isDirectory == true {
-                if WorkspaceFS.skipName(url.lastPathComponent) {
-                    enumerator.skipDescendants()
-                }
                 continue
             }
             if values?.isRegularFile == true {

@@ -4,6 +4,13 @@ final class CompletionSession {
     static let shared = CompletionSession()
     let popup = CompletionPopupController()
     private var work: DispatchWorkItem?
+    private var lifecycle: CompletionLifecycle?
+
+    private init() {
+        lifecycle = CompletionLifecycle(panel: popup.panel) { [weak self] in
+            self?.hide()
+        }
+    }
 
     func hide() {
         work?.cancel()
@@ -37,6 +44,17 @@ final class CompletionSession {
         }
         self.work = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.012, execute: work)
+    }
+
+    func viewportChanged(view: RideTextView) {
+        guard popup.isVisible, popup.textView === view else {
+            return
+        }
+        if CompletionPlacement.caretVisible(in: view) {
+            popup.relocate(in: view)
+        } else {
+            hide()
+        }
     }
 
     func selectionChanged(view: RideTextView) {

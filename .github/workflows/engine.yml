@@ -29,3 +29,18 @@ jobs:
           targets: aarch64-apple-darwin
       - name: build-engine
         run: bash scripts/build-engine.sh
+
+  app:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - name: build-engine
+        run: bash scripts/build-engine.sh
+      - name: xcodebuild
+        run: |
+          xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
+            -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
+            CODE_SIGNING_ALLOWED=NO build test

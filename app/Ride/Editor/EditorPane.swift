@@ -176,6 +176,7 @@ struct EditorPane: NSViewRepresentable {
                 return
             }
             SessionService.shared.setVisible(document: document, view: view)
+            CompletionSession.shared.viewportChanged(view: view)
         }
 
         func flush(_ host: EditorHostView) {

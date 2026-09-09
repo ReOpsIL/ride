@@ -18,6 +18,7 @@ struct PreferencesView: View {
             Toggle("Completions", isOn: boolBinding(\.completions))
             Toggle("Outline panel", isOn: boolBinding(\.outlinePanel))
             Toggle("Visible whitespace", isOn: boolBinding(\.visibleWhitespace))
+            Toggle("Show hidden files", isOn: boolBinding(\.showHidden))
         }
         .formStyle(.grouped)
         .frame(width: 360)

@@ -136,13 +136,18 @@ final class AppState: ObservableObject {
         guard let root = workspaceRoot else {
             return
         }
-        IndexerProcess.run(project: root, indexDir: RideEngineClient.shared.indexDir)
+        IndexerProcess.run(project: root, indexDir: RideEngineClient.shared.indexDir, force: true)
     }
 
     func updatePrefs(_ edit: (inout Preferences) -> Void) {
+        let before = prefs
         edit(&prefs)
         prefs = prefs.clamped
         PreferencesStore.save(prefs)
+        if before.showHidden != prefs.showHidden {
+            quickFiles = []
+            reloadTree()
+        }
     }
 
     func reloadTree() {
@@ -150,7 +155,7 @@ final class AppState: ObservableObject {
             rootNodes = []
             return
         }
-        rootNodes = WorkspaceFS.children(of: root)
+        rootNodes = WorkspaceFS.children(of: root, showHidden: prefs.showHidden)
         restoreExpanded(rootNodes)
     }
 

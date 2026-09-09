@@ -8,6 +8,7 @@ struct Preferences: Codable, Equatable {
     var completions: Bool
     var outlinePanel: Bool
     var visibleWhitespace: Bool
+    var showHidden: Bool
 
     static let defaults = Preferences(
         theme: "dark",
@@ -16,8 +17,42 @@ struct Preferences: Codable, Equatable {
         autoSave: true,
         completions: true,
         outlinePanel: true,
-        visibleWhitespace: false
+        visibleWhitespace: false,
+        showHidden: false
     )
+
+    init(
+        theme: String,
+        fontSize: Int,
+        tabWidth: Int,
+        autoSave: Bool,
+        completions: Bool,
+        outlinePanel: Bool,
+        visibleWhitespace: Bool,
+        showHidden: Bool
+    ) {
+        self.theme = theme
+        self.fontSize = fontSize
+        self.tabWidth = tabWidth
+        self.autoSave = autoSave
+        self.completions = completions
+        self.outlinePanel = outlinePanel
+        self.visibleWhitespace = visibleWhitespace
+        self.showHidden = showHidden
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let d = Preferences.defaults
+        theme = try c.decodeIfPresent(String.self, forKey: .theme) ?? d.theme
+        fontSize = try c.decodeIfPresent(Int.self, forKey: .fontSize) ?? d.fontSize
+        tabWidth = try c.decodeIfPresent(Int.self, forKey: .tabWidth) ?? d.tabWidth
+        autoSave = try c.decodeIfPresent(Bool.self, forKey: .autoSave) ?? d.autoSave
+        completions = try c.decodeIfPresent(Bool.self, forKey: .completions) ?? d.completions
+        outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
+        visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
+        showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
+    }
 
     var clamped: Preferences {
         var next = self

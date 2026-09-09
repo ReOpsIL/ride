@@ -1,7 +1,7 @@
 import AppKit
 
 final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
-    private let panel: NSPanel
+    let panel: NSPanel
     private let table: NSTableView
     private var hits: [CompletionHit] = []
     private var selected = 0
@@ -20,7 +20,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         table = NSTableView()
         super.init()
         panel.isFloatingPanel = true
-        panel.hidesOnDeactivate = false
+        panel.hidesOnDeactivate = true
         panel.becomesKeyOnlyIfNeeded = true
         panel.level = .popUpMenu
         panel.hasShadow = true
@@ -31,7 +31,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         table.headerView = nil
         table.delegate = self
         table.dataSource = self
-        table.rowHeight = 36
+        table.rowHeight = CompletionPlacement.rowHeight
         table.refusesFirstResponder = true
         table.allowsEmptySelection = false
         table.target = self
@@ -60,21 +60,12 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         if !hits.isEmpty {
             table.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
         }
-        let height = min(CGFloat(hits.count) * 36 + 8, 280)
-        let width: CGFloat = 520
-        var actual = NSRange()
-        let caret = view.selectedRange()
-        let rect = view.firstRect(forCharacterRange: NSRange(location: caret.location, length: 0), actualRange: &actual)
-        let screen = view.window?.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
-        var frame = NSRect(x: rect.minX, y: rect.minY - height - 2, width: width, height: height)
-        if frame.minY < screen.minY {
-            frame.origin.y = rect.maxY + 2
-        }
-        if frame.maxX > screen.maxX {
-            frame.origin.x = max(screen.minX, screen.maxX - width)
-        }
-        panel.setFrame(frame, display: true)
+        relocate(in: view)
         panel.orderFront(nil)
+    }
+
+    func relocate(in view: RideTextView) {
+        panel.setFrame(CompletionPlacement.frame(for: view, rows: hits.count), display: true)
     }
 
     func hide() {
@@ -177,7 +168,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
 
     static func accept(_ responseId: UInt64, latest: UInt64) -> Bool {
-        responseId == latest
+        CompletionGate.accept(responseId, latest: latest)
     }
 }
 

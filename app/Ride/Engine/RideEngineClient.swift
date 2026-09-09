@@ -4,6 +4,7 @@ final class RideEngineClient: ObservableObject {
     static let shared = RideEngineClient()
 
     @Published var indexLabel = "idle"
+    @Published var indexDetail: String?
     @Published var rustSrcAvailable = false
 
     private(set) var engine: Engine?
@@ -48,22 +49,8 @@ final class RideEngineClient: ObservableObject {
 
     func apply(_ status: IndexStatus) {
         rustSrcAvailable = status.rustSrcAvailable
-        if let message = status.message, !message.isEmpty {
-            indexLabel = message
-            return
-        }
-        switch status.state {
-        case .idle:
-            indexLabel = status.rustSrcAvailable ? "idle" : "idle · rust-src missing"
-        case .indexing:
-            indexLabel = "indexing \(status.cratesDone)/\(status.cratesTotal)"
-        case .ready:
-            indexLabel = "ready · \(status.docs) docs"
-        case .rebuilding:
-            indexLabel = "Index outdated — rebuilding"
-        case .error:
-            indexLabel = status.message ?? "index error"
-        }
+        indexLabel = IndexStatusLabel.text(status)
+        indexDetail = IndexStatusLabel.detail(status)
     }
 }
 

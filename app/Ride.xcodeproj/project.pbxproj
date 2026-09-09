@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
+		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
+		A000000000000000000000D0 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
+		A000000000000000000000D1 /* CompletionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000CF /* CompletionGate.swift */; };
+		A000000000000000000000D2 /* CompletionGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000CF /* CompletionGate.swift */; };
+		A000000000000000000000D4 /* CompletionPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D3 /* CompletionPlacement.swift */; };
+		A000000000000000000000D6 /* CompletionLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D5 /* CompletionLifecycle.swift */; };
+		A000000000000000000000D8 /* IndexStatusLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D7 /* IndexStatusLabel.swift */; };
 		A00000000000000000000021 /* RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000011 /* RideApp.swift */; };
 		A00000000000000000000022 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000012 /* AppState.swift */; };
 		A00000000000000000000023 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* RootView.swift */; };
@@ -50,6 +58,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A000000000000000000000C0 /* RideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A000000000000000000000C1 /* Utf16Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16Tests.swift; sourceTree = "<group>"; };
+		A000000000000000000000C2 /* QueryIdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryIdTests.swift; sourceTree = "<group>"; };
+		A000000000000000000000CF /* CompletionGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionGate.swift; sourceTree = "<group>"; };
+		A000000000000000000000D3 /* CompletionPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPlacement.swift; sourceTree = "<group>"; };
+		A000000000000000000000D5 /* CompletionLifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionLifecycle.swift; sourceTree = "<group>"; };
+		A000000000000000000000D7 /* IndexStatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexStatusLabel.swift; sourceTree = "<group>"; };
 		A00000000000000000000010 /* Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ride.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000011 /* RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000012 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -94,6 +109,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A000000000000000000000C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A00000000000000000000040 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -105,10 +127,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A000000000000000000000C5 /* RideTests */ = {
+			isa = PBXGroup;
+			children = (
+				A000000000000000000000C1 /* Utf16Tests.swift */,
+				A000000000000000000000C2 /* QueryIdTests.swift */,
+			);
+			path = RideTests;
+			sourceTree = "<group>";
+		};
 		A00000000000000000000050 = {
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000051 /* Ride */,
+				A000000000000000000000C5 /* RideTests */,
 				A0000000000000000000008A /* generated */,
 				A00000000000000000000080 /* RideEngine.xcframework */,
 				A00000000000000000000052 /* Products */,
@@ -139,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000010 /* Ride.app */,
+				A000000000000000000000C0 /* RideTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -216,6 +249,7 @@
 				A00000000000000000000084 /* RideEngineClient.swift */,
 				A00000000000000000000086 /* IndexerProcess.swift */,
 				A00000000000000000000095 /* SessionService.swift */,
+				A000000000000000000000D7 /* IndexStatusLabel.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -244,6 +278,9 @@
 				A00000000000000000000099 /* CompletionPopup.swift */,
 				A0000000000000000000009A /* CompletionSession.swift */,
 				A0000000000000000000009B /* CatalogPath.swift */,
+				A000000000000000000000CF /* CompletionGate.swift */,
+				A000000000000000000000D3 /* CompletionPlacement.swift */,
+				A000000000000000000000D5 /* CompletionLifecycle.swift */,
 			);
 			path = Completion;
 			sourceTree = "<group>";
@@ -251,6 +288,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A000000000000000000000C9 /* RideTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A000000000000000000000CE /* Build configuration list for PBXNativeTarget "RideTests" */;
+			buildPhases = (
+				A000000000000000000000C6 /* Sources */,
+				A000000000000000000000C7 /* Frameworks */,
+				A000000000000000000000C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RideTests;
+			productName = RideTests;
+			productReference = A000000000000000000000C0 /* RideTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A00000000000000000000002 /* Ride */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A00000000000000000000031 /* Build configuration list for PBXNativeTarget "Ride" */;
@@ -282,6 +336,9 @@
 					A00000000000000000000002 = {
 						CreatedOnToolsVersion = 16.0;
 					};
+					A000000000000000000000C9 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 				};
 			};
 			buildConfigurationList = A00000000000000000000030 /* Build configuration list for PBXProject "Ride" */;
@@ -298,11 +355,19 @@
 			projectRoot = "";
 			targets = (
 				A00000000000000000000002 /* Ride */,
+				A000000000000000000000C9 /* RideTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A000000000000000000000C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A00000000000000000000041 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -314,6 +379,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A000000000000000000000C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A000000000000000000000C3 /* Utf16Tests.swift in Sources */,
+				A000000000000000000000C4 /* QueryIdTests.swift in Sources */,
+				A000000000000000000000D0 /* Utf16.swift in Sources */,
+				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A00000000000000000000003 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -356,6 +432,10 @@
 				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
 				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,
 				A000000000000000000000B7 /* EditorJump.swift in Sources */,
+				A000000000000000000000D2 /* CompletionGate.swift in Sources */,
+				A000000000000000000000D4 /* CompletionPlacement.swift in Sources */,
+				A000000000000000000000D6 /* CompletionLifecycle.swift in Sources */,
+				A000000000000000000000D8 /* IndexStatusLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +465,38 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A000000000000000000000CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ride.RideTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A000000000000000000000CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ride.RideTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		A00000000000000000000032 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -508,6 +620,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A000000000000000000000CE /* Build configuration list for PBXNativeTarget "RideTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A000000000000000000000CC /* Debug */,
+				A000000000000000000000CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A00000000000000000000030 /* Build configuration list for PBXProject "Ride" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

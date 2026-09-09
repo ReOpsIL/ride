@@ -18,7 +18,7 @@ extension AppState {
             return
         }
         if quickFiles.isEmpty {
-            quickFiles = FileIndex.list(root: root)
+            quickFiles = FileIndex.list(root: root, showHidden: prefs.showHidden)
         }
         quickHits = FileIndex.matches(query: quickQuery, files: quickFiles, root: root)
         if let selected = quickSelection, quickHits.contains(selected) {

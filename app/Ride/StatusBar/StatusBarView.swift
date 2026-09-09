@@ -11,6 +11,8 @@ struct StatusBarView: View {
             Spacer()
             Text(state.windowTitle)
             Text(engine.indexLabel)
+                .lineLimit(1)
+                .help(engine.indexDetail ?? "")
         }
         .font(.system(size: 11, design: .monospaced))
         .foregroundStyle(.secondary)

@@ -1,17 +1,20 @@
 import Foundation
 
 enum WorkspaceFS {
-    static func skipName(_ name: String) -> Bool {
-        name == "target" || name == ".git"
+    static func skipName(_ name: String, showHidden: Bool) -> Bool {
+        if name == "target" || name == ".git" {
+            return true
+        }
+        return !showHidden && name.hasPrefix(".")
     }
 
-    static func children(of url: URL) -> [FileNode] {
+    static func children(of url: URL, showHidden: Bool) -> [FileNode] {
         let fm = FileManager.default
         guard let names = try? fm.contentsOfDirectory(atPath: url.path) else {
             return []
         }
         return names
-            .filter { !skipName($0) }
+            .filter { !skipName($0, showHidden: showHidden) }
             .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
             .compactMap { name in
                 let child = url.appendingPathComponent(name).standardizedFileURL
@@ -19,7 +22,7 @@ enum WorkspaceFS {
                 guard fm.fileExists(atPath: child.path, isDirectory: &isDir) else {
                     return nil
                 }
-                return FileNode(url: child, isDirectory: isDir.boolValue)
+                return FileNode(url: child, isDirectory: isDir.boolValue, showHidden: showHidden)
             }
     }
 
@@ -45,13 +48,15 @@ final class FileNode: Identifiable, ObservableObject {
     let url: URL
     let name: String
     let isDirectory: Bool
+    let showHidden: Bool
     @Published var children: [FileNode] = []
     private var loaded = false
 
-    init(url: URL, isDirectory: Bool) {
+    init(url: URL, isDirectory: Bool, showHidden: Bool) {
         self.url = url.standardizedFileURL
         self.name = url.lastPathComponent
         self.isDirectory = isDirectory
+        self.showHidden = showHidden
     }
 
     func loadChildren() {
@@ -60,7 +65,7 @@ final class FileNode: Identifiable, ObservableObject {
         }
         if !loaded {
             loaded = true
-            children = WorkspaceFS.children(of: url)
+            children = WorkspaceFS.children(of: url, showHidden: showHidden)
         }
     }
 
