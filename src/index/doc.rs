@@ -44,5 +44,6 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.name_len => item.name.chars().count() as u64,
         fields.name_hash => name_hash(&item.name),
         fields.path_len => item.path.chars().count() as u64,
+        fields.has_doc => u64::from(!item.doc_first_paragraph.trim().is_empty()),
     )
 }

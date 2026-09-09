@@ -257,3 +257,24 @@ fn extern_crate_alias_resolves_reexport() {
             .ends_with("alloc/src/lib.rs")
     );
 }
+
+#[test]
+fn documented_item_wins_name_tie() {
+    let (_dir, engine) = engine();
+    let resp = engine.query_completions(CompletionQuery {
+        query_id: 1,
+        session_id: 0,
+        prefix: "Hash".into(),
+        mode: QueryMode::Items,
+        context: CompletionContext::Unknown,
+        cursor_byte: 0,
+        replace_start_byte: 0,
+        current_crate: Some("core".into()),
+        current_module: None,
+        kind_filter: None,
+        limit: 20,
+    });
+    let hit = resp.hits.iter().find(|h| h.name == "Hash").expect("Hash");
+    assert_eq!(hit.item_kind, ItemKind::Trait, "{:?}", resp.hits);
+    assert_eq!(hit.doc_paragraph, "A hashable type.");
+}
