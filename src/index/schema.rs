@@ -6,7 +6,7 @@ use tantivy::schema::{
 use crate::extract::{Scope, Visibility};
 use crate::ffi::ItemKind;
 
-pub const SCHEMA_VERSION: u32 = 3;
+pub const SCHEMA_VERSION: u32 = 4;
 pub const PREFIX_TOKENIZER: &str = "edge_ngram";
 pub const MAX_GRAM: usize = 20;
 
@@ -35,6 +35,7 @@ pub struct IndexFields {
     pub kind_rank: Field,
     pub name_len: Field,
     pub name_hash: Field,
+    pub path_len: Field,
 }
 
 pub fn build_fields() -> IndexFields {
@@ -69,7 +70,8 @@ pub fn build_fields() -> IndexFields {
         scope_rank: b.add_u64_field("scope_rank", u64_fast.clone()),
         kind_rank: b.add_u64_field("kind_rank", u64_fast.clone()),
         name_len: b.add_u64_field("name_len", u64_fast.clone()),
-        name_hash: b.add_u64_field("name_hash", u64_fast),
+        name_hash: b.add_u64_field("name_hash", u64_fast.clone()),
+        path_len: b.add_u64_field("path_len", u64_fast),
         schema: b.build(),
     }
 }

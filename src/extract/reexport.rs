@@ -35,15 +35,12 @@ pub fn apply(items: &[ItemDoc], reexports: &[Reexport]) -> Vec<ItemDoc> {
 }
 
 fn remap(items: &[ItemDoc], re: &Reexport, target: &[String], alias: &str) -> ItemDoc {
-    let target_path = target.join("::");
     let path = join_path(&re.module_path, alias);
-    if let Some(src) = items.iter().find(|i| i.path == target_path) {
+    if let Some(src) = find_target(items, &re.module_path, target) {
         let mut doc = src.clone();
         doc.path = path;
         doc.name = alias.to_string();
         doc.visibility = re.vis;
-        doc.source_path = re.source_path.clone();
-        doc.byte_range = re.byte_range;
         return doc;
     }
     ItemDoc {
@@ -68,6 +65,19 @@ fn remap(items: &[ItemDoc], re: &Reexport, target: &[String], alias: &str) -> It
         visibility: re.vis,
         scope: items.first().map(|i| i.scope).unwrap_or(Scope::Cache),
     }
+}
+
+fn find_target<'a>(
+    items: &'a [ItemDoc],
+    module: &[String],
+    target: &[String],
+) -> Option<&'a ItemDoc> {
+    let joined = target.join("::");
+    let relative = join_path(module, &joined);
+    let from_root = module.first().map(|root| format!("{root}::{joined}"));
+    items.iter().find(|i| {
+        i.path == joined || i.path == relative || from_root.as_deref() == Some(i.path.as_str())
+    })
 }
 
 fn glob(items: &[ItemDoc], re: &Reexport, module: &[String]) -> Vec<ItemDoc> {

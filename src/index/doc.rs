@@ -44,5 +44,6 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.kind_rank => kind_rank(item.item_kind),
         fields.name_len => item.name.chars().count() as u64,
         fields.name_hash => name_hash(&item.name),
+        fields.path_len => item.path.chars().count() as u64,
     )
 }

@@ -9,6 +9,7 @@ pub const KEYWORD: f32 = 500.0;
 const SCOPE_BONUS: [f32; 5] = [400.0, 300.0, 300.0, 150.0, 0.0];
 const EXACT_SCALE: [f32; 5] = [1.0, 0.8, 0.8, 0.5, 0.15];
 const LEN_CAP: u64 = 40;
+const PATH_PENALTY: f32 = 0.1;
 
 #[derive(Clone, Copy)]
 pub struct Ranking {
@@ -50,6 +51,7 @@ pub struct Columns {
     kind: Option<Column<u64>>,
     len: Option<Column<u64>>,
     name: Option<Column<u64>>,
+    path: Option<Column<u64>>,
 }
 
 impl Columns {
@@ -60,6 +62,7 @@ impl Columns {
             kind: ff.u64("kind_rank").ok(),
             len: ff.u64("name_len").ok(),
             name: ff.u64("name_hash").ok(),
+            path: ff.u64("path_len").ok(),
         }
     }
 
@@ -71,6 +74,7 @@ impl Columns {
         let scope = (first(&self.scope, doc).unwrap_or(4) as usize).min(4);
         let kind = kind_from_rank(first(&self.kind, doc).unwrap_or(12));
         let len = first(&self.len, doc).unwrap_or(LEN_CAP);
+        let path = first(&self.path, doc).unwrap_or(0) as f32;
         let exact = if len == ranking.prefix_len {
             EXACT * EXACT_SCALE[scope]
         } else {
@@ -81,6 +85,7 @@ impl Columns {
             + kind_weight(kind)
             + context_bonus(ranking.context, kind)
             + length_bonus(len)
+            - PATH_PENALTY * path
             + bm25
     }
 }

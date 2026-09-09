@@ -163,3 +163,27 @@ fn member_access_prefers_methods() {
     let plain = names_in(&engine, "re", CompletionContext::Unknown);
     assert_eq!(plain[0], "ref", "{plain:?}");
 }
+
+#[test]
+fn shortest_public_path_wins_for_reexports() {
+    let (_dir, engine) = engine();
+    let resp = engine.query_completions(CompletionQuery {
+        query_id: 1,
+        session_id: 0,
+        prefix: "hashmap".into(),
+        mode: QueryMode::Items,
+        context: CompletionContext::Unknown,
+        cursor_byte: 0,
+        replace_start_byte: 0,
+        current_crate: None,
+        current_module: None,
+        kind_filter: None,
+        limit: 20,
+    });
+    assert_eq!(
+        resp.hits[0].path, "std::collections::HashMap",
+        "{:?}",
+        resp.hits
+    );
+    assert_eq!(resp.hits.iter().filter(|h| h.name == "HashMap").count(), 1);
+}
