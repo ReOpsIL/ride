@@ -210,6 +210,7 @@ fn sysroot_reexports_resolve_across_crates() {
         .find(|h| h.path == "std::option")
         .expect("std::option");
     assert_eq!(module.item_kind, ItemKind::Mod, "{:?}", resp.hits);
+    assert_eq!(module.crate_name, "std");
     let by_name = resp
         .hits
         .iter()
@@ -223,5 +224,36 @@ fn sysroot_reexports_resolve_across_crates() {
             .as_deref()
             .unwrap()
             .ends_with("core/src/lib.rs")
+    );
+}
+
+#[test]
+fn extern_crate_alias_resolves_reexport() {
+    let (_dir, engine) = engine();
+    let top = engine.query_completions(CompletionQuery {
+        query_id: 1,
+        session_id: 0,
+        prefix: "vec".into(),
+        mode: QueryMode::Items,
+        context: CompletionContext::Unknown,
+        cursor_byte: 0,
+        replace_start_byte: 0,
+        current_crate: Some("std".into()),
+        current_module: None,
+        kind_filter: None,
+        limit: 20,
+    });
+    let hit = top
+        .hits
+        .iter()
+        .find(|h| h.path == "std::vec")
+        .expect("std::vec");
+    assert_eq!(hit.item_kind, ItemKind::Mod);
+    assert_eq!(hit.crate_name, "std");
+    assert!(
+        hit.source_path
+            .as_deref()
+            .unwrap()
+            .ends_with("alloc/src/lib.rs")
     );
 }

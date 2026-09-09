@@ -20,7 +20,12 @@ pub enum ReexportKind {
     Glob { module: Vec<String> },
 }
 
-pub fn apply(items: &[ItemDoc], reexports: &[Reexport], external: &External) -> Vec<ItemDoc> {
+pub fn apply(
+    items: &[ItemDoc],
+    reexports: &[Reexport],
+    external: &External,
+    aliases: &[(String, String)],
+) -> Vec<ItemDoc> {
     let mut extra: Vec<ItemDoc> = Vec::new();
     let mut pending: Vec<&Reexport> = reexports.iter().collect();
     for _ in 0..3 {
@@ -34,7 +39,7 @@ pub fn apply(items: &[ItemDoc], reexports: &[Reexport], external: &External) -> 
                 }
                 ReexportKind::Named { target, alias } => {
                     match find_target(items, &extra, &re.module_path, target) {
-                        Some(src) => extra.push(remap(src, re, alias)),
+                        Some(src) => extra.push(remap(items, src, re, alias)),
                         None => next.push(re),
                     }
                 }
@@ -47,8 +52,8 @@ pub fn apply(items: &[ItemDoc], reexports: &[Reexport], external: &External) -> 
     }
     for re in pending {
         if let ReexportKind::Named { target, alias } = &re.kind {
-            extra.push(match external.get(&target.join("::")) {
-                Some(src) => remap(src, re, alias),
+            extra.push(match external.get(&dealias(target, aliases)) {
+                Some(src) => remap(items, src, re, alias),
                 None => unresolved(items, re, alias),
             });
         }
@@ -56,13 +61,28 @@ pub fn apply(items: &[ItemDoc], reexports: &[Reexport], external: &External) -> 
     extra
 }
 
-fn remap(src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDoc {
+fn remap(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDoc {
     let mut doc = src.clone();
     doc.path = join_path(&re.module_path, alias);
     doc.name = alias.to_string();
     doc.visibility = re.vis;
-    doc.scope = src.scope;
+    if let Some(host) = items.first() {
+        doc.crate_name = host.crate_name.clone();
+        doc.crate_version = host.crate_version.clone();
+        doc.edition = host.edition.clone();
+        doc.scope = host.scope;
+    }
     doc
+}
+
+fn dealias(target: &[String], aliases: &[(String, String)]) -> String {
+    let mut parts = target.to_vec();
+    if let Some(first) = parts.first_mut()
+        && let Some((_, real)) = aliases.iter().find(|(alias, _)| alias == first)
+    {
+        *first = real.clone();
+    }
+    parts.join("::")
 }
 
 fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {

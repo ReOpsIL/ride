@@ -22,6 +22,7 @@ pub struct FileExtract {
     pub items: Vec<ItemDoc>,
     pub pending: Vec<PendingMod>,
     pub reexports: Vec<Reexport>,
+    pub crate_aliases: Vec<(String, String)>,
     pub inner_docs: String,
 }
 
@@ -42,6 +43,7 @@ pub fn extract_tree(
         items: Vec::new(),
         pending: Vec::new(),
         reexports: Vec::new(),
+        crate_aliases: Vec::new(),
         inner_docs: inner_docs(root, source),
     };
     {
@@ -83,6 +85,13 @@ fn walk_item(node: Node<'_>, args: &mut EmitArgs<'_>, type_ctx: Option<&TypeCtx>
             args.module_path,
             &mut args.out.reexports,
         ),
+        "extern_crate_declaration" => {
+            if let Some(name) = field_text(node, "name", args.source)
+                && let Some(alias) = field_text(node, "alias", args.source)
+            {
+                args.out.crate_aliases.push((alias, name));
+            }
+        }
         "foreign_mod_item" => {
             if let Some(body) = node.child_by_field_name("body") {
                 walk_list(body, args, None);

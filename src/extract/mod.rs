@@ -69,6 +69,7 @@ pub fn extract_source(
         &items,
         &extracted.reexports,
         &External::default(),
+        &extracted.crate_aliases,
     ));
     Ok(items)
 }
@@ -98,6 +99,7 @@ pub fn extract_crate_with_version(
     let mut visited = HashSet::new();
     let mut items = Vec::new();
     let mut reexports = Vec::new();
+    let mut aliases = Vec::new();
     items.push(crate_item(&pkg, crate_root, &ctx));
     let mut queue: Vec<(PathBuf, Vec<String>)> = pkg
         .entries
@@ -130,6 +132,7 @@ pub fn extract_crate_with_version(
         }
         items.extend(extracted.items);
         reexports.extend(extracted.reexports);
+        aliases.extend(extracted.crate_aliases);
         for pending in extracted.pending {
             queue.push((pending.file, pending.module_path));
         }
@@ -137,7 +140,7 @@ pub fn extract_crate_with_version(
             queue.extend(scan::leftover_src_files(crate_root, &visited, &ctx));
         }
     }
-    items.extend(reexport::apply(&items, &reexports, external));
+    items.extend(reexport::apply(&items, &reexports, external, &aliases));
     Ok(items)
 }
 
