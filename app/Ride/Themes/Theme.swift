@@ -21,6 +21,10 @@ struct Theme {
     var operatorColor: NSColor
     var punctuation: NSColor
     var label: NSColor
+    var heading: NSColor
+    var emphasis: NSColor
+    var strong: NSColor
+    var link: NSColor
     var error: NSColor
 
     func color(_ kind: CaptureKind) -> NSColor {
@@ -41,6 +45,10 @@ struct Theme {
         case .`operator`: return operatorColor
         case .punctuation: return punctuation
         case .label: return label
+        case .heading: return heading
+        case .emphasis: return emphasis
+        case .strong: return strong
+        case .link: return link
         }
     }
 
@@ -71,6 +79,10 @@ struct Theme {
             operatorColor: s.color("operator", "#D4D4D4"),
             punctuation: s.color("punctuation", "#D4D4D4"),
             label: s.color("label", "#C8C8C8"),
+            heading: s.color("heading", dark ? "#82AAFF" : "#0550AE"),
+            emphasis: s.color("emphasis", dark ? "#E6E7EA" : "#24292F"),
+            strong: s.color("strong", dark ? "#FFFFFF" : "#1F2328"),
+            link: s.color("link", dark ? "#4FC1FF" : "#0969DA"),
             error: chrome.error
         )
     }

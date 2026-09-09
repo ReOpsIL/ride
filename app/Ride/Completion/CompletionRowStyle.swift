@@ -20,6 +20,7 @@ enum CompletionRowStyle {
         case .const: return "c"
         case .type: return "ty"
         case .`static`: return "st"
+        case .heading: return "#"
         }
     }
 
@@ -32,6 +33,7 @@ enum CompletionRowStyle {
         case .fn, .method: return theme.function
         case .macro: return theme.macro
         case .const, .`static`: return theme.constant
+        case .heading: return theme.heading
         }
     }
 

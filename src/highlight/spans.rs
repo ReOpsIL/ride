@@ -17,6 +17,18 @@ pub fn highlights(
     text: &str,
     ranges: &[ByteRange],
 ) -> Vec<HighlightSpan> {
+    let mut out = highlights_in(query, tree, text, ranges);
+    out.sort_by_key(|s| (s.start_byte, s.end_byte, std::cmp::Reverse(rank(s.capture))));
+    out.dedup_by(|a, b| a.start_byte == b.start_byte && a.end_byte == b.end_byte);
+    out
+}
+
+pub fn highlights_in(
+    query: &Query,
+    tree: &tree_sitter::Tree,
+    text: &str,
+    ranges: &[ByteRange],
+) -> Vec<HighlightSpan> {
     if ranges.is_empty() {
         return Vec::new();
     }
@@ -39,8 +51,6 @@ pub fn highlights(
             });
         }
     }
-    out.sort_by_key(|s| (s.start_byte, s.end_byte, std::cmp::Reverse(rank(s.capture))));
-    out.dedup_by(|a, b| a.start_byte == b.start_byte && a.end_byte == b.end_byte);
     out
 }
 
@@ -57,6 +67,8 @@ fn rank(kind: CaptureKind) -> u8 {
         CaptureKind::Macro => 8,
         CaptureKind::Keyword => 9,
         CaptureKind::Comment => 10,
+        CaptureKind::Heading => 3,
+        CaptureKind::Emphasis | CaptureKind::Strong | CaptureKind::Link => 5,
         CaptureKind::Operator | CaptureKind::Punctuation => 1,
     }
 }

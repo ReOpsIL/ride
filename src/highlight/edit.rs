@@ -1,17 +1,7 @@
-use tree_sitter::{InputEdit, Parser, Point};
+use tree_sitter::{InputEdit, Point};
 
 use crate::error::EngineError;
 use crate::ffi::InputEditFfi;
-
-pub fn rust_parser() -> Result<Parser, EngineError> {
-    let mut parser = Parser::new();
-    parser
-        .set_language(&tree_sitter_rust::LANGUAGE.into())
-        .map_err(|e| EngineError::InvalidEdit {
-            message: format!("{e:?}"),
-        })?;
-    Ok(parser)
-}
 
 pub fn apply_replica(
     replica: &mut String,

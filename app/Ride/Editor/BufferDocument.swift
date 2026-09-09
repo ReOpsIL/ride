@@ -18,7 +18,15 @@ final class BufferDocument: ObservableObject, Identifiable {
     var isReadOnly = false
 
     var isRust: Bool {
-        fileURL == nil || fileURL?.pathExtension == "rs"
+        language == .rust
+    }
+
+    var hasSession: Bool {
+        language != .plain
+    }
+
+    var language: BufferLanguage {
+        BufferLanguage.of(fileURL)
     }
 
     init(url: URL) {
@@ -71,5 +79,22 @@ final class BufferDocument: ObservableObject, Identifiable {
         try text.write(to: fileURL, atomically: true, encoding: .utf8)
         isDirty = false
         RideEngineClient.shared.engine?.workspaceFileChanged(path: fileURL.path)
+    }
+}
+
+enum BufferLanguage {
+    case rust
+    case markdown
+    case plain
+
+    static func of(_ url: URL?) -> BufferLanguage {
+        guard let url else {
+            return .rust
+        }
+        switch url.pathExtension.lowercased() {
+        case "rs": return .rust
+        case "md", "markdown": return .markdown
+        default: return .plain
+        }
     }
 }

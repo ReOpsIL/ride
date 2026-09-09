@@ -221,3 +221,122 @@ fn highlights_fn_name_keyword_and_local() {
     assert!(hit("item_search", CaptureKind::Function), "fn name");
     assert!(hit("searcher", CaptureKind::Variable), "local");
 }
+
+#[test]
+fn markdown_session_highlights_headings_emphasis_and_code() {
+    use ride_engine::{CaptureKind, ItemKind, Lang};
+    let text = "# Title\n\nSome *soft* and **hard** text with `code` and [a link](https://x.y).\n\n```rust\nfn main() {}\n```\n\n## Second\n";
+    let (session, update) =
+        BufferSession::open_lang(Lang::Markdown, text.to_string(), None).unwrap();
+    let kinds: Vec<(CaptureKind, &str)> = update
+        .highlights
+        .iter()
+        .map(|s| (s.capture, &text[s.start_byte as usize..s.end_byte as usize]))
+        .collect();
+    assert!(
+        kinds.contains(&(CaptureKind::Heading, "# Title\n")),
+        "{kinds:?}"
+    );
+    assert!(
+        kinds.contains(&(CaptureKind::Emphasis, "*soft*")),
+        "{kinds:?}"
+    );
+    assert!(
+        kinds.contains(&(CaptureKind::Strong, "**hard**")),
+        "{kinds:?}"
+    );
+    assert!(
+        kinds.contains(&(CaptureKind::String, "`code`")),
+        "{kinds:?}"
+    );
+    assert!(
+        kinds
+            .iter()
+            .any(|(k, t)| *k == CaptureKind::Link && t.contains("a link")),
+        "{kinds:?}"
+    );
+    assert!(
+        kinds
+            .iter()
+            .any(|(k, t)| *k == CaptureKind::String && t.contains("fn main")),
+        "{kinds:?}"
+    );
+    assert!(update.errors.is_empty());
+    let outline = update.outline.unwrap();
+    assert_eq!(outline.len(), 2);
+    assert_eq!(outline[0].name, "Title");
+    assert_eq!(outline[0].kind, ItemKind::Heading);
+    assert_eq!(outline[1].name, "Second");
+    assert!(session.outline().len() == 2);
+}
+
+#[test]
+fn markdown_edit_restyles_the_paragraph() {
+    use ride_engine::{CaptureKind, Lang};
+    let text = "# T\n\nplain word here\n";
+    let (mut session, _) =
+        BufferSession::open_lang(Lang::Markdown, text.to_string(), None).unwrap();
+    let byte = text.find("word").unwrap();
+    let update = session
+        .apply_edit(insert_at(text, byte, "**"), "**", None)
+        .unwrap();
+    let after = format!("{}**{}", &text[..byte], &text[byte..]);
+    let byte2 = after.find(" here").unwrap();
+    let update2 = session
+        .apply_edit(insert_at(&after, byte2, "**"), "**", None)
+        .unwrap();
+    let final_text = session.replica().to_string();
+    let strong: Vec<&str> = update2
+        .highlights
+        .iter()
+        .filter(|s| s.capture == CaptureKind::Strong)
+        .map(|s| &final_text[s.start_byte as usize..s.end_byte as usize])
+        .collect();
+    assert_eq!(
+        strong,
+        vec!["**word**"],
+        "{:?} / {:?}",
+        update.highlights,
+        update2.highlights
+    );
+    assert!(
+        update2
+            .changed
+            .iter()
+            .any(|c| c.start_byte <= byte as u32 && c.end_byte >= byte2 as u32)
+    );
+}
+
+#[test]
+fn engine_picks_language_from_path() {
+    let engine = engine_start(EngineConfig {
+        index_dir: tempfile::tempdir().unwrap().path().display().to_string(),
+        cargo_home: None,
+        sysroot: None,
+        offline_metadata: true,
+    });
+    let md = engine
+        .open_session(
+            "b".into(),
+            Some("/tmp/notes.md".into()),
+            "# Hi\n".into(),
+            None,
+        )
+        .unwrap();
+    assert_eq!(
+        md.update.outline.unwrap()[0].kind,
+        ride_engine::ItemKind::Heading
+    );
+    let rs = engine
+        .open_session(
+            "c".into(),
+            Some("/tmp/main.rs".into()),
+            "fn main() {}".into(),
+            None,
+        )
+        .unwrap();
+    assert_eq!(
+        rs.update.outline.unwrap()[0].kind,
+        ride_engine::ItemKind::Fn
+    );
+}

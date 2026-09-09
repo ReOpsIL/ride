@@ -97,6 +97,7 @@ enum OutlineKind {
         case "macro": return .macro
         case "const": return .const
         case "static": return .static
+        case "heading": return .heading
         default: return .type
         }
     }

@@ -11,12 +11,13 @@ impl Engine {
     pub fn open_session(
         &self,
         _buffer_id: String,
-        _path: Option<String>,
+        path: Option<String>,
         text: String,
         visible: Option<ByteRange>,
     ) -> Result<SessionOpen, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            let (session, update) = BufferSession::open(text, visible)?;
+            let lang = crate::highlight::Lang::for_path(path.as_deref());
+            let (session, update) = BufferSession::open_lang(lang, text, visible)?;
             self.write(|i| {
                 let session_id = i.next_session_id;
                 i.next_session_id += 1;

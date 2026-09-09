@@ -17,7 +17,7 @@
 | `src/extract` | tree-sitter item extraction with module paths, impls, re-exports |
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
 | `src/query` | prefix / BM25 completion search, crate prefix, keyword hits |
-| `src/highlight` | buffer sessions: incremental parse, highlight deltas, outline, parse errors |
+| `src/highlight` | buffer sessions over a `Syntax` trait: Rust (tree-sitter-rust) and Markdown (tree-sitter-md block + inline); highlight deltas, outline, parse errors |
 | `src/check` | `cargo check` JSON diagnostics and rustfmt |
 | `src/engine` | in-process `Engine`: sessions, query routing, definitions, tools, manifest watch |
 | `src/ffi` | UniFFI records, enums and listener traits |

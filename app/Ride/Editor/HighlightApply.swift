@@ -15,12 +15,16 @@ enum HighlightApply {
             return
         }
         let map = Utf16Map(text)
+        let fonts = MarkupFonts(base: view.font)
         storage.beginEditing()
         for range in update.changed {
             let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
             if ns.length > 0 {
                 storage.removeAttribute(.foregroundColor, range: ns)
                 storage.addAttribute(.foregroundColor, value: theme.chrome.textPrimary, range: ns)
+                if let base = fonts.base {
+                    storage.addAttribute(.font, value: base, range: ns)
+                }
             }
             if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: ns) {
                 tlm.removeRenderingAttribute(.foregroundColor, for: tr)
@@ -33,6 +37,9 @@ enum HighlightApply {
             }
             let color = theme.color(span.capture)
             storage.addAttribute(.foregroundColor, value: color, range: ns)
+            if let font = fonts.font(for: span.capture) {
+                storage.addAttribute(.font, value: font, range: ns)
+            }
             if let tlm = view.textLayoutManager, let tr = view.textRange(utf16: ns) {
                 tlm.addRenderingAttribute(.foregroundColor, value: color, for: tr)
             }

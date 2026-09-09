@@ -5,3 +5,4 @@
 - Sparkle or manual update check (Phase 5)
 - universal (x86_64) xcframework slice (Phase 5)
 - Outline shows occasional blank rows on large files (items with empty names); filter or name them
+- TOML highlighting for Cargo.toml (add a tree-sitter-toml Syntax the same way as markdown)

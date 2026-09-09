@@ -14,6 +14,7 @@ pub enum ItemKind {
     Const,
     Type,
     Static,
+    Heading,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
@@ -34,4 +35,8 @@ pub enum CaptureKind {
     Operator,
     Punctuation,
     Label,
+    Heading,
+    Emphasis,
+    Strong,
+    Link,
 }

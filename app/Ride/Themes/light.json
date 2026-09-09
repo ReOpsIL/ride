@@ -40,6 +40,10 @@
     "number": "#0550AE",
     "operator": "#24292F",
     "punctuation": "#57606A",
-    "label": "#57606A"
+    "label": "#57606A",
+    "heading": "#0550AE",
+    "emphasis": "#24292F",
+    "strong": "#1F2328",
+    "link": "#0969DA"
   }
 }

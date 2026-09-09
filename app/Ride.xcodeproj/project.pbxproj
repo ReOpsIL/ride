@@ -55,6 +55,7 @@
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
 		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
 		A000000000000000000000D0 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
+		B1000000000000000000001B /* MarkupFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* MarkupFonts.swift */; };
 		B1000000000000000000000C /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
 		B1000000000000000000000D /* LineIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* LineIndex.swift */; };
 		B1000000000000000000000E /* LineIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* LineIndexTests.swift */; };
@@ -234,6 +235,7 @@
 		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
 		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A00000000000000000000092 /* Utf16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16.swift; sourceTree = "<group>"; };
+		B1000000000000000000001A /* MarkupFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkupFonts.swift; sourceTree = "<group>"; };
 		B1000000000000000000000A /* LineIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndex.swift; sourceTree = "<group>"; };
 		B1000000000000000000000B /* LineIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIndexTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000093 /* EditBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBuild.swift; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
 				A00000000000000000000092 /* Utf16.swift */,
+				B1000000000000000000001A /* MarkupFonts.swift */,
 				B1000000000000000000000A /* LineIndex.swift */,
 				A00000000000000000000093 /* EditBuild.swift */,
 				A00000000000000000000094 /* HighlightApply.swift */,
@@ -814,6 +817,7 @@
 				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
 				A000000000000000000000A1 /* Theme.swift in Sources */,
 				A000000000000000000000A2 /* Utf16.swift in Sources */,
+				B1000000000000000000001B /* MarkupFonts.swift in Sources */,
 				B1000000000000000000000C /* LineIndex.swift in Sources */,
 				A000000000000000000000A3 /* EditBuild.swift in Sources */,
 				A000000000000000000000A4 /* HighlightApply.swift in Sources */,

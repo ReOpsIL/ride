@@ -23,6 +23,10 @@ final class CompletionSession {
 
     func schedule(document: BufferDocument, view: RideTextView, state: AppState) {
         work?.cancel()
+        guard document.isRust else {
+            hide()
+            return
+        }
         if popup.suppress {
             popup.suppress = false
             hide()

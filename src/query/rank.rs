@@ -31,7 +31,7 @@ pub fn kind_weight(kind: ItemKind) -> f32 {
         ItemKind::Mod | ItemKind::Crate => 30.0,
         ItemKind::Method => 20.0,
         ItemKind::Const | ItemKind::Static => 10.0,
-        ItemKind::Keyword | ItemKind::Local => 0.0,
+        ItemKind::Keyword | ItemKind::Local | ItemKind::Heading => 0.0,
     }
 }
 

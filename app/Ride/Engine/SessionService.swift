@@ -31,7 +31,7 @@ final class SessionService {
     }
 
     func attach(document: BufferDocument, view: RideTextView) {
-        guard document.isRust else {
+        guard document.hasSession else {
             return
         }
         if document.sessionId == nil {
@@ -104,7 +104,7 @@ final class SessionService {
     }
 
     func resync(document: BufferDocument, view: RideTextView) {
-        guard document.isRust else {
+        guard document.hasSession else {
             return
         }
         guard let id = document.sessionId else {
@@ -172,6 +172,7 @@ final class SessionService {
         case .const: return "const"
         case .type: return "type"
         case .`static`: return "static"
+        case .heading: return "heading"
         }
     }
 }
