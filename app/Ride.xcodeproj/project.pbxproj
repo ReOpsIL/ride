@@ -1,0 +1,532 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000021 /* RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000011 /* RideApp.swift */; };
+		A00000000000000000000022 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000012 /* AppState.swift */; };
+		A00000000000000000000023 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* RootView.swift */; };
+		A00000000000000000000024 /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000014 /* StatusBarView.swift */; };
+		A00000000000000000000025 /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000015 /* Workspace.swift */; };
+		A00000000000000000000026 /* ProjectTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000016 /* ProjectTreeView.swift */; };
+		A00000000000000000000027 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000017 /* FileWatcher.swift */; };
+		A00000000000000000000028 /* RecentProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000018 /* RecentProjects.swift */; };
+		A00000000000000000000029 /* TreeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000019 /* TreeActions.swift */; };
+		A0000000000000000000002A /* RideTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001A /* RideTextView.swift */; };
+		A0000000000000000000002B /* BufferDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001B /* BufferDocument.swift */; };
+		A0000000000000000000002C /* EditorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* EditorPane.swift */; };
+		A0000000000000000000002D /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001D /* GutterView.swift */; };
+		A0000000000000000000002E /* TabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001E /* TabStrip.swift */; };
+		A0000000000000000000002F /* Buffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001F /* Buffers.swift */; };
+		A00000000000000000000070 /* QuickOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000060 /* QuickOpen.swift */; };
+		A00000000000000000000071 /* FindBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000061 /* FindBar.swift */; };
+		A00000000000000000000072 /* FileIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000062 /* FileIndex.swift */; };
+		A00000000000000000000073 /* SearchActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000063 /* SearchActions.swift */; };
+		A00000000000000000000074 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000064 /* Preferences.swift */; };
+		A00000000000000000000075 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000065 /* PreferencesView.swift */; };
+		A00000000000000000000076 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000066 /* dark.json */; };
+		A00000000000000000000081 /* RideEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00000000000000000000080 /* RideEngine.xcframework */; };
+		A00000000000000000000083 /* RideEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000082 /* RideEngine.swift */; };
+		A00000000000000000000085 /* RideEngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000084 /* RideEngineClient.swift */; };
+		A00000000000000000000087 /* IndexerProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000086 /* IndexerProcess.swift */; };
+		A000000000000000000000A1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000091 /* Theme.swift */; };
+		A000000000000000000000A2 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
+		A000000000000000000000A3 /* EditBuild.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000093 /* EditBuild.swift */; };
+		A000000000000000000000A4 /* HighlightApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000094 /* HighlightApply.swift */; };
+		A000000000000000000000A5 /* SessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000095 /* SessionService.swift */; };
+		A000000000000000000000A6 /* FileOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000096 /* FileOutlineView.swift */; };
+		A000000000000000000000A7 /* SymbolInFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000097 /* SymbolInFile.swift */; };
+		A000000000000000000000B1 /* CompletionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000098 /* CompletionContext.swift */; };
+		A000000000000000000000B2 /* CompletionPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000099 /* CompletionPopup.swift */; };
+		A000000000000000000000B3 /* CompletionSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009A /* CompletionSession.swift */; };
+		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
+		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
+		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
+		A000000000000000000000B7 /* EditorJump.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009E /* EditorJump.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000010 /* Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ride.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000011 /* RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000012 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A00000000000000000000013 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A00000000000000000000014 /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		A00000000000000000000015 /* Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workspace.swift; sourceTree = "<group>"; };
+		A00000000000000000000016 /* ProjectTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTreeView.swift; sourceTree = "<group>"; };
+		A00000000000000000000017 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
+		A00000000000000000000018 /* RecentProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentProjects.swift; sourceTree = "<group>"; };
+		A00000000000000000000019 /* TreeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeActions.swift; sourceTree = "<group>"; };
+		A0000000000000000000001A /* RideTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTextView.swift; sourceTree = "<group>"; };
+		A0000000000000000000001B /* BufferDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferDocument.swift; sourceTree = "<group>"; };
+		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
+		A0000000000000000000001D /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
+		A0000000000000000000001E /* TabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabStrip.swift; sourceTree = "<group>"; };
+		A0000000000000000000001F /* Buffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffers.swift; sourceTree = "<group>"; };
+		A00000000000000000000060 /* QuickOpen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickOpen.swift; sourceTree = "<group>"; };
+		A00000000000000000000061 /* FindBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindBar.swift; sourceTree = "<group>"; };
+		A00000000000000000000062 /* FileIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIndex.swift; sourceTree = "<group>"; };
+		A00000000000000000000063 /* SearchActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchActions.swift; sourceTree = "<group>"; };
+		A00000000000000000000064 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		A00000000000000000000065 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		A00000000000000000000066 /* dark.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dark.json; sourceTree = "<group>"; };
+		A00000000000000000000080 /* RideEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RideEngine.xcframework; sourceTree = "<group>"; };
+		A00000000000000000000082 /* RideEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngine.swift; sourceTree = "<group>"; };
+		A00000000000000000000084 /* RideEngineClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngineClient.swift; sourceTree = "<group>"; };
+		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
+		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		A00000000000000000000092 /* Utf16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16.swift; sourceTree = "<group>"; };
+		A00000000000000000000093 /* EditBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBuild.swift; sourceTree = "<group>"; };
+		A00000000000000000000094 /* HighlightApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightApply.swift; sourceTree = "<group>"; };
+		A00000000000000000000095 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
+		A00000000000000000000096 /* FileOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOutlineView.swift; sourceTree = "<group>"; };
+		A00000000000000000000097 /* SymbolInFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolInFile.swift; sourceTree = "<group>"; };
+		A00000000000000000000098 /* CompletionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionContext.swift; sourceTree = "<group>"; };
+		A00000000000000000000099 /* CompletionPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPopup.swift; sourceTree = "<group>"; };
+		A0000000000000000000009A /* CompletionSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionSession.swift; sourceTree = "<group>"; };
+		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
+		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
+		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
+		A0000000000000000000009E /* EditorJump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorJump.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000040 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000081 /* RideEngine.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000050 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000051 /* Ride */,
+				A0000000000000000000008A /* generated */,
+				A00000000000000000000080 /* RideEngine.xcframework */,
+				A00000000000000000000052 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000051 /* Ride */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000011 /* RideApp.swift */,
+				A00000000000000000000012 /* AppState.swift */,
+				A0000000000000000000009D /* AppState+Nav.swift */,
+				A00000000000000000000013 /* RootView.swift */,
+				A00000000000000000000053 /* StatusBar */,
+				A00000000000000000000054 /* Workspace */,
+				A00000000000000000000055 /* Editor */,
+				A00000000000000000000056 /* Search */,
+				A00000000000000000000057 /* Preferences */,
+				A00000000000000000000058 /* Themes */,
+				A00000000000000000000059 /* Engine */,
+				A0000000000000000000005B /* Outline */,
+				A0000000000000000000005C /* Completion */,
+			);
+			path = Ride;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000052 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000010 /* Ride.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000053 /* StatusBar */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000014 /* StatusBarView.swift */,
+			);
+			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000054 /* Workspace */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000015 /* Workspace.swift */,
+				A00000000000000000000016 /* ProjectTreeView.swift */,
+				A00000000000000000000017 /* FileWatcher.swift */,
+				A00000000000000000000018 /* RecentProjects.swift */,
+				A00000000000000000000019 /* TreeActions.swift */,
+			);
+			path = Workspace;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000055 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				A0000000000000000000001A /* RideTextView.swift */,
+				A0000000000000000000001B /* BufferDocument.swift */,
+				A0000000000000000000001C /* EditorPane.swift */,
+				A0000000000000000000001D /* GutterView.swift */,
+				A0000000000000000000001E /* TabStrip.swift */,
+				A0000000000000000000001F /* Buffers.swift */,
+				A00000000000000000000092 /* Utf16.swift */,
+				A00000000000000000000093 /* EditBuild.swift */,
+				A00000000000000000000094 /* HighlightApply.swift */,
+				A0000000000000000000009C /* RideTextView+Keys.swift */,
+				A0000000000000000000009E /* EditorJump.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000056 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000060 /* QuickOpen.swift */,
+				A00000000000000000000061 /* FindBar.swift */,
+				A00000000000000000000062 /* FileIndex.swift */,
+				A00000000000000000000063 /* SearchActions.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000057 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000064 /* Preferences.swift */,
+				A00000000000000000000065 /* PreferencesView.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000058 /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000066 /* dark.json */,
+				A00000000000000000000091 /* Theme.swift */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000059 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000084 /* RideEngineClient.swift */,
+				A00000000000000000000086 /* IndexerProcess.swift */,
+				A00000000000000000000095 /* SessionService.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000008A /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000082 /* RideEngine.swift */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000005B /* Outline */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000096 /* FileOutlineView.swift */,
+				A00000000000000000000097 /* SymbolInFile.swift */,
+			);
+			path = Outline;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000005C /* Completion */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000098 /* CompletionContext.swift */,
+				A00000000000000000000099 /* CompletionPopup.swift */,
+				A0000000000000000000009A /* CompletionSession.swift */,
+				A0000000000000000000009B /* CatalogPath.swift */,
+			);
+			path = Completion;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000002 /* Ride */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000031 /* Build configuration list for PBXNativeTarget "Ride" */;
+			buildPhases = (
+				A00000000000000000000003 /* Sources */,
+				A00000000000000000000040 /* Frameworks */,
+				A00000000000000000000041 /* Resources */,
+				A00000000000000000000090 /* Copy ride-engine */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ride;
+			productName = Ride;
+			productReference = A00000000000000000000010 /* Ride.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A00000000000000000000002 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = A00000000000000000000030 /* Build configuration list for PBXProject "Ride" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000050;
+			productRefGroup = A00000000000000000000052 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00000000000000000000002 /* Ride */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000041 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000076 /* dark.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000021 /* RideApp.swift in Sources */,
+				A00000000000000000000022 /* AppState.swift in Sources */,
+				A00000000000000000000023 /* RootView.swift in Sources */,
+				A00000000000000000000024 /* StatusBarView.swift in Sources */,
+				A00000000000000000000025 /* Workspace.swift in Sources */,
+				A00000000000000000000026 /* ProjectTreeView.swift in Sources */,
+				A00000000000000000000027 /* FileWatcher.swift in Sources */,
+				A00000000000000000000028 /* RecentProjects.swift in Sources */,
+				A00000000000000000000029 /* TreeActions.swift in Sources */,
+				A0000000000000000000002A /* RideTextView.swift in Sources */,
+				A0000000000000000000002B /* BufferDocument.swift in Sources */,
+				A0000000000000000000002C /* EditorPane.swift in Sources */,
+				A0000000000000000000002D /* GutterView.swift in Sources */,
+				A0000000000000000000002E /* TabStrip.swift in Sources */,
+				A0000000000000000000002F /* Buffers.swift in Sources */,
+				A00000000000000000000070 /* QuickOpen.swift in Sources */,
+				A00000000000000000000071 /* FindBar.swift in Sources */,
+				A00000000000000000000072 /* FileIndex.swift in Sources */,
+				A00000000000000000000073 /* SearchActions.swift in Sources */,
+				A00000000000000000000074 /* Preferences.swift in Sources */,
+				A00000000000000000000075 /* PreferencesView.swift in Sources */,
+				A00000000000000000000083 /* RideEngine.swift in Sources */,
+				A00000000000000000000085 /* RideEngineClient.swift in Sources */,
+				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
+				A000000000000000000000A1 /* Theme.swift in Sources */,
+				A000000000000000000000A2 /* Utf16.swift in Sources */,
+				A000000000000000000000A3 /* EditBuild.swift in Sources */,
+				A000000000000000000000A4 /* HighlightApply.swift in Sources */,
+				A000000000000000000000A5 /* SessionService.swift in Sources */,
+				A000000000000000000000A6 /* FileOutlineView.swift in Sources */,
+				A000000000000000000000A7 /* SymbolInFile.swift in Sources */,
+				A000000000000000000000B1 /* CompletionContext.swift in Sources */,
+				A000000000000000000000B2 /* CompletionPopup.swift in Sources */,
+				A000000000000000000000B3 /* CompletionSession.swift in Sources */,
+				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
+				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
+				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,
+				A000000000000000000000B7 /* EditorJump.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A00000000000000000000090 /* Copy ride-engine */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../target/aarch64-apple-darwin/release/ride-engine",
+			);
+			name = "Copy ride-engine";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/ride-engine",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers\"\nif [ -f \"$SRCROOT/../target/aarch64-apple-darwin/release/ride-engine\" ]; then\n  cp \"$SRCROOT/../target/aarch64-apple-darwin/release/ride-engine\" \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride-engine\"\n  chmod +x \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride-engine\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A00000000000000000000033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		A00000000000000000000034 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGNING_REQUIRED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ride;
+				INFOPLIST_KEY_CFBundleName = Ride;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+					"-lresolv",
+					"-framework",
+					Security,
+					"-framework",
+					SystemConfiguration,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ride.Ride;
+				PRODUCT_NAME = Ride;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00000000000000000000035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGNING_REQUIRED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ride;
+				INFOPLIST_KEY_CFBundleName = Ride;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+					"-lresolv",
+					"-framework",
+					Security,
+					"-framework",
+					SystemConfiguration,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ride.Ride;
+				PRODUCT_NAME = Ride;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000030 /* Build configuration list for PBXProject "Ride" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000032 /* Debug */,
+				A00000000000000000000033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000031 /* Build configuration list for PBXNativeTarget "Ride" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000034 /* Debug */,
+				A00000000000000000000035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}

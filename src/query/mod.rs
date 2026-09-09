@@ -1,0 +1,80 @@
+use std::collections::HashSet;
+use std::path::Path;
+
+use tantivy::{Index, IndexReader};
+
+use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, QueryMode};
+
+mod crates;
+mod hit;
+mod items;
+mod keywords;
+mod parse;
+mod search;
+
+pub use parse::parse_prefix;
+pub use search::{search_index, search_open};
+
+pub enum IndexSrc<'a> {
+    Dir(&'a Path),
+    Live(&'a Index, &'a IndexReader),
+}
+
+pub fn run_query(
+    src: IndexSrc<'_>,
+    mut q: CompletionQuery,
+    buffer_hits: Vec<CompletionHit>,
+    overlay: &HashSet<String>,
+) -> CompletionResponse {
+    let (kind, prefix) = parse_prefix(&q.prefix, q.kind_filter);
+    q.kind_filter = kind.or(q.kind_filter);
+    q.prefix = prefix;
+    let limit = if q.limit == 0 { 20 } else { q.limit };
+    match q.mode {
+        QueryMode::BufferLocal => merge_buffer(&q, buffer_hits, limit),
+        QueryMode::PrefixCrates | QueryMode::Items | QueryMode::Phrase => {
+            let mut resp = match src {
+                IndexSrc::Dir(dir) => search_index(dir, &q, overlay),
+                IndexSrc::Live(index, reader) => search_open(index, reader, &q, overlay),
+            };
+            if q.mode == QueryMode::Items {
+                let mut kw = keywords::keyword_hits(&q.prefix, 8);
+                kw.extend(resp.hits);
+                unique_by_name(&mut kw);
+                kw.sort_by(|a, b| {
+                    b.score
+                        .partial_cmp(&a.score)
+                        .unwrap_or(std::cmp::Ordering::Equal)
+                });
+                let truncated = kw.len() as u32 > limit || resp.truncated;
+                kw.truncate(limit as usize);
+                resp.hits = kw;
+                resp.truncated = truncated;
+            }
+            resp
+        }
+    }
+}
+
+fn merge_buffer(q: &CompletionQuery, extra: Vec<CompletionHit>, limit: u32) -> CompletionResponse {
+    let mut hits = keywords::keyword_hits(&q.prefix, limit);
+    hits.extend(extra);
+    unique_by_name(&mut hits);
+    hits.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    let truncated = hits.len() as u32 > limit;
+    hits.truncate(limit as usize);
+    CompletionResponse {
+        query_id: q.query_id,
+        truncated,
+        hits,
+    }
+}
+
+fn unique_by_name(hits: &mut Vec<CompletionHit>) {
+    let mut seen = HashSet::new();
+    hits.retain(|h| seen.insert(h.name.clone()));
+}

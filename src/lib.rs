@@ -1,0 +1,25 @@
+uniffi::setup_scaffolding!();
+
+mod discover;
+mod engine;
+mod error;
+mod extract;
+mod ffi;
+mod highlight;
+mod index;
+mod query;
+mod skip;
+
+pub use discover::{
+    CrateTarball, DiscoveredCrate, Discovery, cargo_home, discover, sysroot_path, workspace_info,
+};
+pub use engine::{Engine, engine_start};
+pub use error::EngineError;
+pub use extract::{
+    CrateContext, ExtractError, ItemDoc, Scope, Visibility, extract_crate, extract_source,
+};
+pub use ffi::*;
+pub use highlight::BufferSession;
+pub use index::{
+    Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, write_index,
+};

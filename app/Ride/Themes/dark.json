@@ -1,0 +1,22 @@
+{
+  "background": "#1E1E1E",
+  "foreground": "#D4D4D4",
+  "keyword": "#C586C0",
+  "function": "#DCDCAA",
+  "type": "#4EC9B0",
+  "property": "#9CDCFE",
+  "variable": "#D4D4D4",
+  "constant": "#4FC1FF",
+  "string": "#CE9178",
+  "escape": "#D7BA7D",
+  "comment": "#6A9955",
+  "attribute": "#C586C0",
+  "lifetime": "#9CDCFE",
+  "macro": "#DCDCAA",
+  "number": "#B5CEA8",
+  "operator": "#D4D4D4",
+  "punctuation": "#D4D4D4",
+  "label": "#C8C8C8",
+  "currentLine": "#2A2A2A",
+  "gutter": "#252526"
+}
