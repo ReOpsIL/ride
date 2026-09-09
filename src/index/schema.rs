@@ -6,7 +6,7 @@ use tantivy::schema::{
 use crate::extract::{Scope, Visibility};
 use crate::ffi::ItemKind;
 
-pub const SCHEMA_VERSION: u32 = 6;
+pub const SCHEMA_VERSION: u32 = 7;
 pub const PREFIX_TOKENIZER: &str = "edge_ngram";
 pub const MAX_GRAM: usize = 20;
 
@@ -21,7 +21,6 @@ pub struct IndexFields {
     pub name_exact: Field,
     pub signature: Field,
     pub doc: Field,
-    pub source_chunk: Field,
     pub features: Field,
     pub edition: Field,
     pub visibility: Field,
@@ -57,7 +56,6 @@ pub fn build_fields() -> IndexFields {
         name_exact: b.add_text_field("name_exact", STRING | STORED),
         signature: b.add_text_field("signature", TEXT | STORED),
         doc: b.add_text_field("doc_first_paragraph", TEXT | STORED),
-        source_chunk: b.add_text_field("source_chunk", TEXT | STORED),
         features: b.add_text_field("features", STRING | STORED),
         edition: b.add_text_field("edition", STRING | STORED),
         visibility: b.add_text_field("visibility", STRING | STORED),

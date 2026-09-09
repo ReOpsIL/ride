@@ -30,7 +30,6 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.name_exact => name_exact.as_str(),
         fields.signature => item.signature.as_str(),
         fields.doc => item.doc_first_paragraph.as_str(),
-        fields.source_chunk => item.source_chunk.as_str(),
         fields.features => features.as_str(),
         fields.edition => edition.as_str(),
         fields.visibility => visibility_label(item.visibility),
