@@ -16,6 +16,7 @@ use crate::highlight::BufferSession;
 mod query;
 mod sessions;
 mod symbols;
+mod tools;
 mod watch;
 
 pub(crate) struct Inner {

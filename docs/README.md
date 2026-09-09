@@ -17,7 +17,8 @@
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
 | `src/query` | prefix / BM25 completion search, crate prefix, keyword hits |
 | `src/highlight` | buffer sessions: incremental parse, highlight deltas, outline, parse errors |
-| `src/engine` | in-process `Engine`: sessions, query routing, manifest watch |
+| `src/check` | `cargo check` JSON diagnostics and rustfmt |
+| `src/engine` | in-process `Engine`: sessions, query routing, definitions, tools, manifest watch |
 | `src/ffi` | UniFFI records, enums and listener traits |
 
 ## Index directory

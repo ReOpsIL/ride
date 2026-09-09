@@ -12,6 +12,8 @@ pub enum EngineError {
     InvalidEdit { message: String },
     #[error("panic: {message}")]
     Panic { message: String },
+    #[error("tool: {message}")]
+    Tool { message: String },
 }
 
 impl EngineError {

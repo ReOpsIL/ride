@@ -1,5 +1,6 @@
 uniffi::setup_scaffolding!();
 
+mod check;
 mod discover;
 mod engine;
 mod error;
@@ -10,6 +11,7 @@ mod index;
 mod query;
 mod skip;
 
+pub use check::{format_source, parse_lines, run_check};
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, cargo_home, discover, sysroot_path, workspace_info,
 };

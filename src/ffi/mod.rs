@@ -1,3 +1,4 @@
+mod check;
 mod config;
 mod index;
 mod kind;
@@ -6,6 +7,7 @@ mod session;
 mod symbol;
 mod workspace;
 
+pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use kind::{CaptureKind, ItemKind};
