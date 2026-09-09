@@ -36,9 +36,10 @@ Found:
 | 2 Completion quality | Done: schema v7 (edge-ngram prefix, fast-field ranks, best-per-name collector, path penalty, no stored source_chunk), context bias, re-export resolution (chains, sysroot cross-crate, extern crate aliases), richer rows, golden tests |
 | 3 Backlog | Done: symbol picker (Cmd+Shift+R), project find (Cmd+Shift+F). Open: A3 split (EditorJump singleton must be reworked first) |
 | 4 Extend | Done: go to definition, hover docs, cargo check panel + underlines, rustfmt on save, Cargo.lock watch, git badges, light theme. Open: auto-`use` on accept |
-| 5 Distribution | `scripts/release.sh` (archive, sign, zip, optional notarize). Open: update check, universal build |
+| 5 Distribution | `scripts/release.sh` (archive, sign, zip, optional notarize), app icon. Open: update check, universal build |
+| UI design | Phases U0–U5 done, see `plan/roadmap/ui-design.md` |
 
-Measured on 2026-09-09 (806 crates, 1.58M docs): full reindex ~50–60 s release; query p95 < 1 ms for 3+ chars, ~13 ms for a single character.
+Measured on 2026-09-09 (806 crates, 1.58M docs): full reindex ~50 s release, workspace-only edit ~1 s incremental; query p95 < 1 ms for 3+ chars, ~13 ms for a single character.
 
 ## Phase 1 — Stabilize (first)
 

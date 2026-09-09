@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-09-09 |
-| Status | In progress |
+| Status | Phases U0–U5 implemented 2026-09-09; remaining items listed under Open |
 | Goal | Ride looks and feels like a professional native macOS IDE: coherent visual system, first-class overlays, an identity, and light/dark parity |
 | Review method | `--demo <scene> --frame 1440x900` launch scenes screenshotted per phase (`app/Ride/Debug/DemoScene.swift`), no synthetic input |
 
@@ -77,3 +77,16 @@
 ## Acceptance per phase
 
 Each phase ends with the full scene set captured at 1440×900 (`editor`, `completion`, `hover`, `quickopen`, `symbols`, `find`, `problems`, `outline`, `light`), reviewed against the principles above, plus green `xcodebuild build test`.
+
+## Status (2026-09-09)
+
+| Phase | State |
+|---|---|
+| U0 tokens | Done: DesignTokens, chrome/editor/syntax JSON sections, ThemeStore, contrast tests |
+| U1 chrome | Done: compact unified toolbar, sidebar with file icons, 34 pt tabs, PanelHeader, resizable panes, segmented status bar, find bar, welcome view |
+| U2 editor | Done: gutter with diagnostic dots, indent guides, palettes, underlines via text storage |
+| U3 overlays | Done: OverlayCard/Panel, KindBadge, PickerCard/List with match highlighting, completion doc card, hover card, project find groups, problems filters |
+| U4 identity | Done: app icon, About, tabbed Preferences with swatches, shortcuts panel, empty/error states |
+| U5 parity | Done: light captures for every scene, accessibility labels, Increase Contrast, Reduce Motion |
+
+Open: focus rings on custom controls; About and Shortcuts windows have no demo scene; editor split.
