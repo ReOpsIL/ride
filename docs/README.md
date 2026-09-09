@@ -4,6 +4,7 @@
 |---|---|
 | Product and architecture spec | `plan/ride_draft.md` |
 | Roadmap and phases | `plan/roadmap/improve-extend.md` |
+| UI design plan and audit | `plan/roadmap/ui-design.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
@@ -49,3 +50,16 @@ A run whose crate-set fingerprint matches `manifest.json` appends a `ready` stat
 (ad hoc unless `RIDE_SIGN_IDENTITY` is set), zips it under `target/release-app/`
 and, when `RIDE_NOTARY_PROFILE` names a notarytool keychain profile, notarizes
 and staples.
+
+## Scripts
+
+| Script | Purpose |
+|---|---|
+| `scripts/build-engine.sh` | release engine for arm64, UniFFI Swift bindings, xcframework, `ride-engine` helper |
+| `scripts/run.sh [folder]` | Debug build of Ride.app and open a folder |
+| `scripts/release.sh` | Release archive, sign, zip, optional notarize |
+| `scripts/make-icon.swift <out-dir>` | render the app icon set (`swiftc -O` it, run, then `iconutil -c icns`) |
+
+## Screenshot review without input
+
+`Ride.app --args --open <folder> --demo <scene> --frame 1440x900` drives the UI into a state (`editor`, `completion`, `hover`, `quickopen`, `symbols`, `find`, `problems`, `outline`, `light`) so it can be captured by window id. Scenes never write preferences or files.
