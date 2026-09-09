@@ -11,6 +11,7 @@ use crate::skip::{MAX_RS_BYTES, skip_index_file, under_root};
 mod cargo_toml;
 mod docs;
 mod emit;
+mod external;
 mod impls;
 mod item;
 mod mods;
@@ -22,6 +23,7 @@ mod vis;
 mod walk;
 
 pub use cargo_toml::{Package, parse_toml, read_package, workspace_members};
+pub use external::External;
 pub use item::{CrateContext, ItemDoc, ItemParts, Scope, Visibility};
 
 #[derive(Debug, Error)]
@@ -63,18 +65,23 @@ pub fn extract_source(
     let file = Path::new("<mem>");
     let extracted = walk::extract_tree(tree.root_node(), source, file, module_path, ctx);
     let mut items = extracted.items;
-    items.extend(reexport::apply(&items, &extracted.reexports));
+    items.extend(reexport::apply(
+        &items,
+        &extracted.reexports,
+        &External::default(),
+    ));
     Ok(items)
 }
 
 pub fn extract_crate(crate_root: &Path, scope: Scope) -> Result<Vec<ItemDoc>, ExtractError> {
-    extract_crate_with_version(crate_root, scope, None)
+    extract_crate_with_version(crate_root, scope, None, &External::default())
 }
 
 pub fn extract_crate_with_version(
     crate_root: &Path,
     scope: Scope,
     version: Option<&str>,
+    external: &External,
 ) -> Result<Vec<ItemDoc>, ExtractError> {
     let pkg = read_package(crate_root)?;
     let ctx = CrateContext {
@@ -130,7 +137,7 @@ pub fn extract_crate_with_version(
             queue.extend(scan::leftover_src_files(crate_root, &visited, &ctx));
         }
     }
-    items.extend(reexport::apply(&items, &reexports));
+    items.extend(reexport::apply(&items, &reexports, external));
     Ok(items)
 }
 

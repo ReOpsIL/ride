@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::path::Path;
 
 use crate::discover::{DiscoveredCrate, Discovery};
-use crate::extract::{ExtractError, ItemDoc, Scope, extract_crate_with_version};
+use crate::extract::{External, ExtractError, ItemDoc, Scope, extract_crate_with_version};
 
 use super::hash::crate_key;
 use super::schema::scope_rank;
@@ -22,9 +22,12 @@ pub fn collect_crates(discovery: &Discovery, project: &Path) -> Vec<DiscoveredCr
     crates
 }
 
-pub fn extract_items(crate_: &DiscoveredCrate) -> Result<Vec<ItemDoc>, ExtractError> {
+pub fn extract_items(
+    crate_: &DiscoveredCrate,
+    external: &External,
+) -> Result<Vec<ItemDoc>, ExtractError> {
     let version = (crate_.scope == Scope::Sysroot).then_some(crate_.version.as_str());
-    match extract_crate_with_version(&crate_.path, crate_.scope, version) {
+    match extract_crate_with_version(&crate_.path, crate_.scope, version, external) {
         Ok(items) => Ok(items),
         Err(ExtractError::Toml { .. }) if crate_.scope == Scope::Workspace => {
             super::folder::extract_plain_folder(&crate_.path, crate_.scope)

@@ -5,6 +5,7 @@ use tantivy::{Index, IndexWriter};
 
 use crate::discover::discover;
 use crate::error::EngineError;
+use crate::extract::{External, Scope};
 use crate::ffi::{EngineConfig, IndexState, IndexStatus};
 
 use super::crates::{collect_crates, extract_items};
@@ -92,9 +93,13 @@ fn build(
     super::tokenizers::register(&index).map_err(tv)?;
     let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(tv)?;
     let mut docs = 0u32;
+    let mut external = External::default();
     for h in hashed {
-        match extract_items(&h.crate_) {
+        match extract_items(&h.crate_, &external) {
             Ok(items) => {
+                if h.crate_.scope == Scope::Sysroot {
+                    external.absorb(&items);
+                }
                 for item in items.iter().filter(|i| keep_item(i)) {
                     writer
                         .add_document(to_document(&fields, item, &h.hash))

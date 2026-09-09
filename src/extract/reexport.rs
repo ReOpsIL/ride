@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crate::ffi::ItemKind;
 
+use super::external::External;
 use super::item::{ItemDoc, Scope, Visibility, join_path};
 
 #[derive(Debug, Clone)]
@@ -19,30 +20,52 @@ pub enum ReexportKind {
     Glob { module: Vec<String> },
 }
 
-pub fn apply(items: &[ItemDoc], reexports: &[Reexport]) -> Vec<ItemDoc> {
-    let mut extra = Vec::new();
-    for re in reexports {
-        match &re.kind {
-            ReexportKind::Named { target, alias } => {
-                extra.push(remap(items, re, target, alias));
+pub fn apply(items: &[ItemDoc], reexports: &[Reexport], external: &External) -> Vec<ItemDoc> {
+    let mut extra: Vec<ItemDoc> = Vec::new();
+    let mut pending: Vec<&Reexport> = reexports.iter().collect();
+    for _ in 0..3 {
+        let before = pending.len();
+        let mut next = Vec::new();
+        for re in pending.drain(..) {
+            match &re.kind {
+                ReexportKind::Glob { module } => {
+                    let found = glob(items, &extra, re, module);
+                    extra.extend(found);
+                }
+                ReexportKind::Named { target, alias } => {
+                    match find_target(items, &extra, &re.module_path, target) {
+                        Some(src) => extra.push(remap(src, re, alias)),
+                        None => next.push(re),
+                    }
+                }
             }
-            ReexportKind::Glob { module } => {
-                extra.extend(glob(items, re, module));
-            }
+        }
+        pending = next;
+        if pending.is_empty() || pending.len() == before {
+            break;
+        }
+    }
+    for re in pending {
+        if let ReexportKind::Named { target, alias } = &re.kind {
+            extra.push(match external.get(&target.join("::")) {
+                Some(src) => remap(src, re, alias),
+                None => unresolved(items, re, alias),
+            });
         }
     }
     extra
 }
 
-fn remap(items: &[ItemDoc], re: &Reexport, target: &[String], alias: &str) -> ItemDoc {
-    let path = join_path(&re.module_path, alias);
-    if let Some(src) = find_target(items, &re.module_path, target) {
-        let mut doc = src.clone();
-        doc.path = path;
-        doc.name = alias.to_string();
-        doc.visibility = re.vis;
-        return doc;
-    }
+fn remap(src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDoc {
+    let mut doc = src.clone();
+    doc.path = join_path(&re.module_path, alias);
+    doc.name = alias.to_string();
+    doc.visibility = re.vis;
+    doc.scope = src.scope;
+    doc
+}
+
+fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
     ItemDoc {
         crate_name: items
             .first()
@@ -53,7 +76,7 @@ fn remap(items: &[ItemDoc], re: &Reexport, target: &[String], alias: &str) -> It
             .map(|i| i.crate_version.clone())
             .unwrap_or_default(),
         item_kind: guess_kind(alias),
-        path,
+        path: join_path(&re.module_path, alias),
         name: alias.to_string(),
         signature: String::new(),
         doc_first_paragraph: String::new(),
@@ -69,22 +92,28 @@ fn remap(items: &[ItemDoc], re: &Reexport, target: &[String], alias: &str) -> It
 
 fn find_target<'a>(
     items: &'a [ItemDoc],
+    extra: &'a [ItemDoc],
     module: &[String],
     target: &[String],
 ) -> Option<&'a ItemDoc> {
     let joined = target.join("::");
     let relative = join_path(module, &joined);
     let from_root = module.first().map(|root| format!("{root}::{joined}"));
-    items.iter().find(|i| {
+    let matches = |i: &&ItemDoc| {
         i.path == joined || i.path == relative || from_root.as_deref() == Some(i.path.as_str())
-    })
+    };
+    items
+        .iter()
+        .find(matches)
+        .or_else(|| extra.iter().find(matches))
 }
 
-fn glob(items: &[ItemDoc], re: &Reexport, module: &[String]) -> Vec<ItemDoc> {
+fn glob(items: &[ItemDoc], extra: &[ItemDoc], re: &Reexport, module: &[String]) -> Vec<ItemDoc> {
     let prefix = module.join("::");
     let depth = module.len() + 1;
     items
         .iter()
+        .chain(extra.iter())
         .filter(|i| {
             if i.visibility != Visibility::Pub {
                 return false;
@@ -96,8 +125,6 @@ fn glob(items: &[ItemDoc], re: &Reexport, module: &[String]) -> Vec<ItemDoc> {
             let mut doc = src.clone();
             doc.path = join_path(&re.module_path, &src.name);
             doc.visibility = re.vis;
-            doc.source_path = re.source_path.clone();
-            doc.byte_range = re.byte_range;
             doc
         })
         .collect()

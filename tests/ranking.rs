@@ -187,3 +187,41 @@ fn shortest_public_path_wins_for_reexports() {
     );
     assert_eq!(resp.hits.iter().filter(|h| h.name == "HashMap").count(), 1);
 }
+
+#[test]
+fn sysroot_reexports_resolve_across_crates() {
+    let (_dir, engine) = engine();
+    let resp = engine.query_completions(CompletionQuery {
+        query_id: 1,
+        session_id: 0,
+        prefix: "option".into(),
+        mode: QueryMode::Items,
+        context: CompletionContext::Unknown,
+        cursor_byte: 0,
+        replace_start_byte: 0,
+        current_crate: None,
+        current_module: None,
+        kind_filter: None,
+        limit: 20,
+    });
+    let module = resp
+        .hits
+        .iter()
+        .find(|h| h.path == "std::option")
+        .expect("std::option");
+    assert_eq!(module.item_kind, ItemKind::Mod, "{:?}", resp.hits);
+    let by_name = resp
+        .hits
+        .iter()
+        .find(|h| h.name == "Option")
+        .expect("Option");
+    assert_eq!(by_name.item_kind, ItemKind::Enum);
+    assert_eq!(by_name.path, "std::Option");
+    assert!(
+        by_name
+            .source_path
+            .as_deref()
+            .unwrap()
+            .ends_with("core/src/lib.rs")
+    );
+}
