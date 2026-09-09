@@ -121,6 +121,7 @@ fn query_cmd(query: String, index_dir: Option<String>, repeat: u32) {
             path: h.path.clone(),
             kind: format!("{:?}", h.item_kind),
             crate_name: h.crate_name.clone(),
+            doc: h.doc_first_sentence.clone(),
             score: h.score,
         })
         .collect();
@@ -171,5 +172,6 @@ struct HitOut {
     path: String,
     kind: String,
     crate_name: String,
+    doc: String,
     score: f32,
 }

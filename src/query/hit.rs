@@ -20,6 +20,7 @@ pub fn doc_hit(
     let path = field("path").unwrap_or_else(|| name.clone());
     let crate_name = field("crate").unwrap_or_default();
     let kind = field("item_kind").unwrap_or_default();
+    let paragraph = field("doc_first_paragraph").unwrap_or_default();
     Some(CompletionHit {
         path,
         name: name.clone(),
@@ -28,7 +29,8 @@ pub fn doc_hit(
         crate_name,
         crate_version: field("version").unwrap_or_default(),
         signature: field("signature").unwrap_or_default(),
-        doc_first_sentence: first_sentence(&field("doc_first_paragraph").unwrap_or_default()),
+        doc_first_sentence: first_sentence(&paragraph),
+        doc_paragraph: paragraph.clone(),
         source_path: field("source_path"),
         byte_start: field_u32(&doc, schema, "byte_start"),
         byte_end: field_u32(&doc, schema, "byte_end"),

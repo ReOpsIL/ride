@@ -23,6 +23,7 @@ pub fn keyword_hits(prefix: &str, limit: u32) -> Vec<CompletionHit> {
             crate_version: String::new(),
             signature: String::new(),
             doc_first_sentence: String::new(),
+            doc_paragraph: String::new(),
             source_path: None,
             byte_start: None,
             byte_end: None,

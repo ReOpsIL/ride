@@ -41,6 +41,7 @@ pub struct CompletionHit {
     pub crate_version: String,
     pub signature: String,
     pub doc_first_sentence: String,
+    pub doc_paragraph: String,
     pub source_path: Option<String>,
     pub byte_start: Option<u32>,
     pub byte_end: Option<u32>,

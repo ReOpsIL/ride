@@ -67,6 +67,7 @@ fn outline_hit(item: &OutlineItem) -> CompletionHit {
         crate_version: String::new(),
         signature: String::new(),
         doc_first_sentence: String::new(),
+        doc_paragraph: String::new(),
         source_path: None,
         byte_start: Some(item.start_byte),
         byte_end: Some(item.end_byte),
