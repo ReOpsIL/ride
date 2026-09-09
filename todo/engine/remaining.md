@@ -11,7 +11,8 @@
 - discover: sysroot scan limited to std/core/alloc and their members; real sysroot version
 - query: golden ranking tests; single-hit results for `coun`, `Has`
 
-# Found 2026-09-09 (ranking probes)
+# Open after 2026-09-09
 
-- extract: `pub mod` re-exports such as `std::option` and `core::primitive::str` are labeled `fn`; check the module item kind in reexport/apply
-- query: `crate_prefix` still uses a regex sample; move it to the name_prefix term path
+- extract: re-exports from non-sysroot crates (e.g. a workspace crate re-exporting a dependency item) still fall back to a guessed kind; extend External to direct deps if it matters
+- index: ~440 MB per generation for 1.58M docs; audit stored fields (source_chunk is stored and unused by the app)
+- engine: replace the 250 ms manifest poll with an FSEvents-driven reload

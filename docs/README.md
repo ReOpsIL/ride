@@ -32,3 +32,20 @@ warnings.jsonl    per-crate extraction errors of the last run
 ```
 
 A run whose crate-set fingerprint matches `manifest.json` appends a `ready` status and writes nothing. `ride-engine index --force` or the app's Reindex menu bypasses the check.
+
+## Engine surface used by the app
+
+| Method | Purpose |
+|---|---|
+| `query_completions` | prefix / crate / phrase completions with context bias, best hit per name |
+| `find_definitions` | identifier under the caret to buffer outline or index definitions |
+| `run_check` | `cargo check` diagnostics with absolute paths and byte ranges |
+| `format_rust` | rustfmt a buffer |
+| `open_session` / `apply_edit` / `set_visible_range` | highlight deltas, outline, parse errors |
+
+## Release
+
+`scripts/release.sh` builds the engine, archives Ride.app in Release, signs it
+(ad hoc unless `RIDE_SIGN_IDENTITY` is set), zips it under `target/release-app/`
+and, when `RIDE_NOTARY_PROFILE` names a notarytool keychain profile, notarizes
+and staples.
