@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-09-09 |
-| Status | Proposed |
+| Status | In progress (updated 2026-09-09) |
 | Baseline | `plan/ride_draft.md` PR plan; E0–E6, A0–A2c, A4–A7, A9 done |
 
 ## State observed on 2026-09-09
@@ -27,6 +27,16 @@ Found:
 | 9 | Dotfiles in tree | `.DS_Store`, `.idea`, `.oneshot` listed | `Workspace.swift` skips only `target` and `.git`. |
 | 10 | No app tests, no app CI | `project.pbxproj` has no test target; `engine.yml` never runs `xcodebuild` | Spec A6/A7 XCTests were never added. |
 | 11 | `docs/README.md` index missing | AGENTS.md references it | Never created. |
+
+## Progress
+
+| Phase | State |
+|---|---|
+| 1 Stabilize | Done: GC, fingerprint skip, warnings log, sysroot allow-list, popup lifecycle, hidden files, status label, RideTests + app CI, README/docs |
+| 2 Completion quality | Done: schema v4 (edge-ngram prefix, fast-field ranks, best-per-name collector, path penalty), context bias, richer rows, golden tests |
+| 3 Backlog | In progress: symbol picker, project find, split (app) |
+| 4 Extend | Engine done: find_definitions, run_check, format_rust. App in progress: go to definition, hover; pending: check panel, rustfmt on save, auto-use, Cargo.lock watch, git badges, light theme |
+| 5 Distribution | Not started |
 
 ## Phase 1 — Stabilize (first)
 
