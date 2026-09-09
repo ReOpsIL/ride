@@ -10,7 +10,7 @@ use crate::index::live_index_dir;
 use super::IndexSrc;
 use super::hit::doc_hit;
 use super::parse::escape_regex;
-use super::rank::{Ranking, collector};
+use super::rank::Ranking;
 
 pub fn exact_search(
     src: IndexSrc<'_>,
@@ -71,8 +71,15 @@ fn run(
         context: CompletionContext::Unknown,
     };
     let searcher = reader.searcher();
-    let Ok(top) = searcher.search(&BooleanQuery::new(clauses), &collector(limit * 2, ranking))
-    else {
+    let Ok(top) = searcher.search(
+        &BooleanQuery::new(clauses),
+        &tantivy::collector::TopDocs::with_limit(limit * 4).tweak_score(
+            move |seg: &tantivy::SegmentReader| {
+                let cols = super::rank::Columns::open(seg);
+                move |doc: tantivy::DocId, bm25: tantivy::Score| cols.score(doc, bm25, ranking)
+            },
+        ),
+    ) else {
         return Vec::new();
     };
     let mut seen = HashSet::new();

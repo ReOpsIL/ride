@@ -5,9 +5,10 @@ use tantivy::{Index, Term};
 use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, QueryMode};
 use crate::index::MAX_GRAM;
 
+use super::collect::BestPerName;
 use super::hit::doc_hit;
 use super::parse::{escape_regex, kind_term};
-use super::rank::{self, Ranking};
+use super::rank::Ranking;
 
 type Clause = (Occur, Box<dyn Query>);
 
@@ -56,7 +57,10 @@ pub fn item_search(
     };
     let Ok(top) = searcher.search(
         &BooleanQuery::new(clauses),
-        &rank::collector(fetch, ranking),
+        &BestPerName {
+            limit: fetch,
+            ranking,
+        },
     ) else {
         return empty;
     };

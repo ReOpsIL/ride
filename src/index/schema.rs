@@ -6,7 +6,7 @@ use tantivy::schema::{
 use crate::extract::{Scope, Visibility};
 use crate::ffi::ItemKind;
 
-pub const SCHEMA_VERSION: u32 = 2;
+pub const SCHEMA_VERSION: u32 = 3;
 pub const PREFIX_TOKENIZER: &str = "edge_ngram";
 pub const MAX_GRAM: usize = 20;
 
@@ -34,6 +34,7 @@ pub struct IndexFields {
     pub scope_rank: Field,
     pub kind_rank: Field,
     pub name_len: Field,
+    pub name_hash: Field,
 }
 
 pub fn build_fields() -> IndexFields {
@@ -67,7 +68,8 @@ pub fn build_fields() -> IndexFields {
         name_prefix: b.add_text_field("name_prefix", prefix),
         scope_rank: b.add_u64_field("scope_rank", u64_fast.clone()),
         kind_rank: b.add_u64_field("kind_rank", u64_fast.clone()),
-        name_len: b.add_u64_field("name_len", u64_fast),
+        name_len: b.add_u64_field("name_len", u64_fast.clone()),
+        name_hash: b.add_u64_field("name_hash", u64_fast),
         schema: b.build(),
     }
 }
@@ -164,4 +166,10 @@ pub fn scope_label(scope: Scope) -> &'static str {
         Scope::Transitive => "transitive",
         Scope::Cache => "cache",
     }
+}
+
+pub fn name_hash(name: &str) -> u64 {
+    name.bytes().fold(0xcbf2_9ce4_8422_2325u64, |h, b| {
+        (h ^ u64::from(b)).wrapping_mul(0x0100_0000_01b3)
+    })
 }

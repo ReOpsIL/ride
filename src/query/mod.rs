@@ -7,6 +7,7 @@ use crate::ffi::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, QueryMode,
 };
 
+mod collect;
 mod crates;
 mod exact;
 mod hit;
