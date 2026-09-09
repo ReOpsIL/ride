@@ -1,10 +1,10 @@
 use std::io::Write;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 use crate::error::EngineError;
 
 pub fn format_source(text: &str, edition: Option<&str>) -> Result<String, EngineError> {
-    let mut child = Command::new("rustfmt")
+    let mut child = crate::toolchain::tool("rustfmt")
         .args(["--emit", "stdout", "--edition", edition.unwrap_or("2024")])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

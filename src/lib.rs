@@ -10,6 +10,7 @@ mod highlight;
 mod index;
 mod query;
 mod skip;
+mod toolchain;
 
 pub use check::{format_source, parse_lines, run_check};
 pub use discover::{
@@ -27,3 +28,4 @@ pub use index::{
     Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, rebuild_index,
     write_index,
 };
+pub use toolchain::tool_path;

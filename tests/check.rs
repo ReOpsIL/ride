@@ -46,3 +46,17 @@ fn rustfmt_formats_and_reports_errors() {
     assert_eq!(out, "fn main() {\n    let x = 1;\n}\n");
     assert!(format_source("fn main( {", None).is_err());
 }
+
+#[test]
+fn tools_resolve_without_path() {
+    let saved = std::env::var_os("PATH");
+    unsafe { std::env::set_var("PATH", "/nonexistent") };
+    let cargo = ride_engine::tool_path("cargo");
+    let rustc = ride_engine::tool_path("rustc");
+    if let Some(p) = saved {
+        unsafe { std::env::set_var("PATH", p) };
+    }
+    assert!(cargo.is_absolute(), "{cargo:?}");
+    assert!(rustc.is_absolute(), "{rustc:?}");
+    assert!(cargo.is_file() && rustc.is_file());
+}

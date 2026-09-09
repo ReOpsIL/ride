@@ -1,5 +1,4 @@
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use crate::error::EngineError;
 use crate::extract::Scope;
@@ -14,7 +13,7 @@ pub fn sysroot_path(config: &EngineConfig) -> Result<Option<PathBuf>, EngineErro
         let p = PathBuf::from(path);
         return Ok(if p.is_dir() { Some(p) } else { None });
     }
-    let output = Command::new("rustc")
+    let output = crate::toolchain::tool("rustc")
         .args(["--print", "sysroot"])
         .output()
         .map_err(|e| EngineError::Metadata {
@@ -58,7 +57,10 @@ pub fn scan_sysroot(sysroot: &Path) -> Vec<DiscoveredCrate> {
 }
 
 fn rustc_version() -> Option<String> {
-    let output = Command::new("rustc").arg("--version").output().ok()?;
+    let output = crate::toolchain::tool("rustc")
+        .arg("--version")
+        .output()
+        .ok()?;
     if !output.status.success() {
         return None;
     }

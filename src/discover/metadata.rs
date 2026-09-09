@@ -1,5 +1,4 @@
 use std::path::Path;
-use std::process::Command;
 
 use serde::Deserialize;
 
@@ -164,7 +163,7 @@ fn run_cargo_metadata(
     offline: bool,
     no_deps: bool,
 ) -> Result<Metadata, EngineError> {
-    let mut cmd = Command::new("cargo");
+    let mut cmd = crate::toolchain::tool("cargo");
     cmd.args(["metadata", "--format-version", "1", "--manifest-path"])
         .arg(manifest);
     if offline {
