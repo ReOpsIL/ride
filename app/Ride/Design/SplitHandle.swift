@@ -38,6 +38,9 @@ struct SplitHandle: View {
                     }
                     .gesture(drag)
             }
+            .overlay {
+                SplitGrip(axis: axis == .horizontal ? .horizontal : .vertical, active: hovering)
+            }
     }
 
     private var drag: some Gesture {

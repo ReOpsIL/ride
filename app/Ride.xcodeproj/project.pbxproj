@@ -27,6 +27,7 @@
 		B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */; };
 		B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */; };
 		B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
+		2BE28F540E3F3CFF67D18F61 /* SplitGrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEEC1CCDEE78C4705C5071E7 /* SplitGrip.swift */; };
 		36204AE137A5250F60713535 /* SplitPositioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */; };
 		F2E1DB1A0ED5F5517F13DD75 /* SplitHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */; };
 		0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA11C41B82C43461193C957 /* SizeReporter.swift */; };
@@ -188,6 +189,7 @@
 		B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeJSON.swift"; sourceTree = "<group>"; };
 		B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChromePalette.swift"; sourceTree = "<group>"; };
 		B06689A7D426576E81967851 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignTokens.swift"; sourceTree = "<group>"; };
+		DEEC1CCDEE78C4705C5071E7 /* SplitGrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitGrip.swift"; sourceTree = "<group>"; };
 		7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitPositioner.swift"; sourceTree = "<group>"; };
 		0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitHandle.swift"; sourceTree = "<group>"; };
 		5EA11C41B82C43461193C957 /* SizeReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SizeReporter.swift"; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 				B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */,
 				B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */,
 				B06689A7D426576E81967851 /* DesignTokens.swift */,
+				DEEC1CCDEE78C4705C5071E7 /* SplitGrip.swift */,
 				7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */,
 				0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */,
 				5EA11C41B82C43461193C957 /* SizeReporter.swift */,
@@ -797,6 +800,7 @@
 				B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */,
 				B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */,
 				B0A33A1D83DA52F7E4241556 /* DesignTokens.swift in Sources */,
+				2BE28F540E3F3CFF67D18F61 /* SplitGrip.swift in Sources */,
 				36204AE137A5250F60713535 /* SplitPositioner.swift in Sources */,
 				F2E1DB1A0ED5F5517F13DD75 /* SplitHandle.swift in Sources */,
 				0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */,
