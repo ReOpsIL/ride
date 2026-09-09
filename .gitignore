@@ -7,3 +7,4 @@ app/generated
 app/.build
 xcuserdata
 *.xcuserstate
+*.profraw
