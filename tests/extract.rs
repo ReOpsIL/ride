@@ -320,3 +320,42 @@ fn signature_drops_attributes_and_tidies_generics() {
     let f = items.iter().find(|i| i.name == "f").unwrap();
     assert_eq!(f.signature, "pub fn f<T>(t: T) -> T");
 }
+
+#[test]
+fn blanket_impl_on_generic_param_emits_no_items() {
+    let src = "pub trait BuildHasher {\n    type Hasher;\n}\nimpl<H: Clone + Default> BuildHasher for H {\n    type Hasher = H;\n    fn build(&self) {}\n}\nimpl<T> Marker for Vec<T> {\n    fn mark(&self) {}\n}\n";
+    let ctx = ride_engine::CrateContext {
+        crate_name: "c".into(),
+        crate_version: "0.0.0".into(),
+        crate_root: std::path::PathBuf::from("<mem>"),
+        edition: None,
+        features: Vec::new(),
+        scope: ride_engine::Scope::Workspace,
+    };
+    let items = ride_engine::extract_source(src, &ctx, &["c".into()]).unwrap();
+    assert!(
+        items.iter().all(|i| !i.path.starts_with("H::")),
+        "{:?}",
+        items.iter().map(|i| &i.path).collect::<Vec<_>>()
+    );
+    assert!(items.iter().any(|i| i.path == "BuildHasher::Hasher"));
+    assert!(items.iter().any(|i| i.name == "mark"));
+}
+
+#[test]
+fn generic_impl_methods_use_the_base_type() {
+    let src = "pub struct Vec<T, A> { t: T, a: A }\nimpl<T, A: Clone> Vec<T, A> {\n    pub fn len(&self) -> usize { 0 }\n}\nimpl<T> Iterator for &mut Vec<T, ()> {\n    fn next(&mut self) {}\n}\nimpl<T> Trait for foo::Bar<T> {\n    fn m(&self) {}\n}\n";
+    let ctx = ride_engine::CrateContext {
+        crate_name: "c".into(),
+        crate_version: "0.0.0".into(),
+        crate_root: std::path::PathBuf::from("<mem>"),
+        edition: None,
+        features: Vec::new(),
+        scope: ride_engine::Scope::Workspace,
+    };
+    let items = ride_engine::extract_source(src, &ctx, &["c".into()]).unwrap();
+    let paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
+    assert!(paths.contains(&"Vec::len"), "{paths:?}");
+    assert!(paths.contains(&"Vec::next"), "{paths:?}");
+    assert!(paths.contains(&"foo::Bar::m"), "{paths:?}");
+}

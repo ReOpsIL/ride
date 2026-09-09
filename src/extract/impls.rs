@@ -3,32 +3,44 @@ use tree_sitter::Node;
 use super::item::node_text;
 
 pub fn type_as_written(node: Node<'_>, source: &str) -> String {
-    if let Some(id) = last_kind(node, "type_identifier") {
-        if node.kind() == "scoped_type_identifier" || has_kind(node, "scoped_type_identifier") {
-            return strip_angles(&collapse(&node_text(node, source)));
+    match node.kind() {
+        "type_identifier" | "primitive_type" => node_text(node, source),
+        "scoped_type_identifier" => strip_angles(&collapse(&node_text(node, source))),
+        "generic_type" | "reference_type" | "pointer_type" => node
+            .child_by_field_name("type")
+            .map(|t| type_as_written(t, source))
+            .unwrap_or_default(),
+        "dynamic_type" | "abstract_type" => node
+            .child_by_field_name("trait")
+            .map(|t| type_as_written(t, source))
+            .unwrap_or_default(),
+        _ => {
+            if let Some(id) = first_kind(node, "type_identifier") {
+                if has_kind(node, "scoped_type_identifier") {
+                    return strip_angles(&collapse(&node_text(node, source)));
+                }
+                return node_text(id, source);
+            }
+            if let Some(id) = first_kind(node, "primitive_type") {
+                return node_text(id, source);
+            }
+            strip_angles(&collapse(&node_text(node, source)))
         }
-        return node_text(id, source);
     }
-    if let Some(id) = last_kind(node, "primitive_type") {
-        return node_text(id, source);
-    }
-    strip_angles(&collapse(&node_text(node, source)))
 }
 
-fn last_kind<'a>(node: Node<'a>, kind: &str) -> Option<Node<'a>> {
-    let mut found = if node.kind() == kind {
-        Some(node)
-    } else {
-        None
-    };
+fn first_kind<'a>(node: Node<'a>, kind: &str) -> Option<Node<'a>> {
+    if node.kind() == kind {
+        return Some(node);
+    }
     for i in 0..node.named_child_count() {
         if let Some(child) = super::ts::child_at(node, i)
-            && let Some(n) = last_kind(child, kind)
+            && let Some(n) = first_kind(child, kind)
         {
-            found = Some(n);
+            return Some(n);
         }
     }
-    found
+    None
 }
 
 fn has_kind(node: Node<'_>, kind: &str) -> bool {

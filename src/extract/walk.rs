@@ -123,7 +123,7 @@ fn walk_impl(node: Node<'_>, args: &mut EmitArgs<'_>) {
         return;
     };
     let type_path = type_as_written(ty, args.source);
-    if type_path.is_empty() {
+    if type_path.is_empty() || generic_names(node, args.source).contains(&type_path) {
         return;
     }
     let trait_path = node
@@ -167,4 +167,25 @@ fn walk_mod(node: Node<'_>, args: &mut EmitArgs<'_>) {
             module_path: child_path,
         });
     }
+}
+
+fn generic_names(node: Node<'_>, source: &str) -> Vec<String> {
+    let Some(params) = node.child_by_field_name("type_parameters") else {
+        return Vec::new();
+    };
+    let mut names = Vec::new();
+    super::ts::each_named(params, |child| {
+        let name = match child.kind() {
+            "type_identifier" => Some(child),
+            _ => child
+                .child_by_field_name("left")
+                .or_else(|| child.child_by_field_name("name")),
+        };
+        if let Some(n) = name
+            && let Ok(text) = n.utf8_text(source.as_bytes())
+        {
+            names.push(text.to_string());
+        }
+    });
+    names
 }
