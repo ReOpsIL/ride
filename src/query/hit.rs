@@ -1,7 +1,7 @@
 use tantivy::schema::Value;
 use tantivy::{Searcher, TantivyDocument};
 
-use crate::ffi::{CompletionHit, ItemKind};
+use crate::ffi::CompletionHit;
 use crate::index::item_kind_from_label;
 
 pub fn doc_hit(
@@ -55,21 +55,4 @@ fn first_sentence(doc: &str) -> String {
     t.split_once('.')
         .map(|(a, _)| a.trim().to_string())
         .unwrap_or_else(|| t.to_string())
-}
-
-pub fn crate_hit(name: String, score: f32) -> CompletionHit {
-    CompletionHit {
-        path: name.clone(),
-        name: name.clone(),
-        insert_text: name.clone(),
-        item_kind: ItemKind::Crate,
-        crate_name: name,
-        crate_version: String::new(),
-        signature: String::new(),
-        doc_first_sentence: String::new(),
-        source_path: None,
-        byte_start: None,
-        byte_end: None,
-        score,
-    }
 }

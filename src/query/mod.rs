@@ -8,7 +8,6 @@ use crate::ffi::{
 };
 
 mod collect;
-mod crates;
 mod exact;
 mod hit;
 mod items;

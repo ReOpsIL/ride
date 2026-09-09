@@ -3,10 +3,9 @@ use std::path::Path;
 
 use tantivy::{Index, IndexReader};
 
-use crate::ffi::{CompletionQuery, CompletionResponse, QueryMode};
+use crate::ffi::{CompletionQuery, CompletionResponse, ItemKind, QueryMode};
 use crate::index::live_index_dir;
 
-use super::crates::crate_prefix;
 use super::items::item_search;
 
 pub fn search_index(
@@ -35,16 +34,17 @@ pub fn search_open(
 ) -> CompletionResponse {
     let empty = empty_resp(q.query_id);
     let schema = index.schema();
-    let Ok(crate_field) = schema.get_field("crate") else {
-        return empty;
-    };
     let prefix = q.prefix.trim();
     if prefix.is_empty() {
         return empty;
     }
     let limit = if q.limit == 0 { 20 } else { q.limit };
     match q.mode {
-        QueryMode::PrefixCrates => crate_prefix(reader, crate_field, prefix, limit, q.query_id),
+        QueryMode::PrefixCrates => {
+            let mut crates = q.clone();
+            crates.kind_filter = Some(ItemKind::Crate);
+            item_search(index, reader, &schema, &crates, prefix, limit)
+        }
         QueryMode::Items | QueryMode::Phrase => {
             let mut resp = item_search(index, reader, &schema, q, prefix, limit);
             if !overlay.is_empty() {
