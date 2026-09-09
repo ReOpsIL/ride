@@ -1,9 +1,14 @@
-use tantivy::schema::{Field, NumericOptions, STORED, STRING, Schema, TEXT};
+use tantivy::schema::{
+    Field, IndexRecordOption, NumericOptions, STORED, STRING, Schema, TEXT, TextFieldIndexing,
+    TextOptions,
+};
 
 use crate::extract::{Scope, Visibility};
 use crate::ffi::ItemKind;
 
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
+pub const PREFIX_TOKENIZER: &str = "edge_ngram";
+pub const MAX_GRAM: usize = 20;
 
 pub struct IndexFields {
     pub schema: Schema,
@@ -25,11 +30,21 @@ pub struct IndexFields {
     pub byte_end: Field,
     pub content_hash: Field,
     pub scope: Field,
+    pub name_prefix: Field,
+    pub scope_rank: Field,
+    pub kind_weight: Field,
+    pub name_len: Field,
 }
 
 pub fn build_fields() -> IndexFields {
     let mut b = Schema::builder();
     let u64_stored = NumericOptions::default().set_stored();
+    let u64_fast = NumericOptions::default().set_fast();
+    let prefix = TextOptions::default().set_indexing_options(
+        TextFieldIndexing::default()
+            .set_tokenizer(PREFIX_TOKENIZER)
+            .set_index_option(IndexRecordOption::WithFreqs),
+    );
     IndexFields {
         crate_name: b.add_text_field("crate", STRING | STORED),
         version: b.add_text_field("version", STRING | STORED),
@@ -49,7 +64,34 @@ pub fn build_fields() -> IndexFields {
         byte_end: b.add_u64_field("byte_end", u64_stored),
         content_hash: b.add_text_field("content_hash", STRING | STORED),
         scope: b.add_text_field("scope", STRING | STORED),
+        name_prefix: b.add_text_field("name_prefix", prefix),
+        scope_rank: b.add_u64_field("scope_rank", u64_fast.clone()),
+        kind_weight: b.add_u64_field("kind_weight", u64_fast.clone()),
+        name_len: b.add_u64_field("name_len", u64_fast),
         schema: b.build(),
+    }
+}
+
+pub fn scope_rank(scope: Scope) -> u64 {
+    match scope {
+        Scope::Workspace => 0,
+        Scope::Sysroot => 1,
+        Scope::DirectDep => 2,
+        Scope::Transitive => 3,
+        Scope::Cache => 4,
+    }
+}
+
+pub fn kind_weight(kind: ItemKind) -> u64 {
+    match kind {
+        ItemKind::Struct | ItemKind::Enum | ItemKind::Trait | ItemKind::Union | ItemKind::Type => {
+            40
+        }
+        ItemKind::Fn | ItemKind::Macro => 35,
+        ItemKind::Mod | ItemKind::Crate => 30,
+        ItemKind::Method => 20,
+        ItemKind::Const | ItemKind::Static => 10,
+        ItemKind::Keyword | ItemKind::Local => 0,
     }
 }
 

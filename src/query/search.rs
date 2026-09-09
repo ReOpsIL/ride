@@ -35,9 +35,6 @@ pub fn search_open(
 ) -> CompletionResponse {
     let empty = empty_resp(q.query_id);
     let schema = index.schema();
-    let Ok(name_exact) = schema.get_field("name_exact") else {
-        return empty;
-    };
     let Ok(crate_field) = schema.get_field("crate") else {
         return empty;
     };
@@ -49,7 +46,7 @@ pub fn search_open(
     match q.mode {
         QueryMode::PrefixCrates => crate_prefix(reader, crate_field, prefix, limit, q.query_id),
         QueryMode::Items | QueryMode::Phrase => {
-            let mut resp = item_search(index, reader, &schema, name_exact, q, prefix, limit);
+            let mut resp = item_search(index, reader, &schema, q, prefix, limit);
             if !overlay.is_empty() {
                 resp.hits
                     .retain(|h| h.source_path.as_ref().is_none_or(|p| !overlay.contains(p)));

@@ -1,5 +1,7 @@
 use crate::ffi::{CompletionHit, ItemKind};
 
+use super::rank::{EXACT, KEYWORD, length_bonus};
+
 pub const KEYWORDS: &[&str] = &[
     "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
     "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
@@ -8,10 +10,9 @@ pub const KEYWORDS: &[&str] = &[
 ];
 
 pub fn keyword_hits(prefix: &str, limit: u32) -> Vec<CompletionHit> {
-    let p = prefix.to_ascii_lowercase();
     KEYWORDS
         .iter()
-        .filter(|k| p.is_empty() || k.to_ascii_lowercase().starts_with(&p))
+        .filter(|k| prefix.is_empty() || k.starts_with(prefix))
         .take(limit as usize)
         .map(|k| CompletionHit {
             path: (*k).to_string(),
@@ -25,7 +26,12 @@ pub fn keyword_hits(prefix: &str, limit: u32) -> Vec<CompletionHit> {
             source_path: None,
             byte_start: None,
             byte_end: None,
-            score: 50.0,
+            score: score(k, prefix),
         })
         .collect()
+}
+
+fn score(keyword: &str, prefix: &str) -> f32 {
+    let exact = if keyword == prefix { EXACT } else { 0.0 };
+    KEYWORD + exact + length_bonus(keyword.len() as u64)
 }

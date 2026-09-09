@@ -9,22 +9,17 @@ pub fn doc_hit(
     schema: &tantivy::schema::Schema,
     addr: tantivy::DocAddress,
     score: f32,
-    prefix: &str,
+    prefix_lower: &str,
 ) -> Option<CompletionHit> {
     let doc = searcher.doc::<TantivyDocument>(addr).ok()?;
     let field = |n: &str| schema.get_field(n).ok().and_then(|f| field_str(&doc, f));
     let name = field("name")?;
+    if !name.to_ascii_lowercase().starts_with(prefix_lower) {
+        return None;
+    }
     let path = field("path").unwrap_or_else(|| name.clone());
     let crate_name = field("crate").unwrap_or_default();
-    let scope = field("scope").unwrap_or_default();
     let kind = field("item_kind").unwrap_or_default();
-    let mut s = score * scope_boost(&scope);
-    let low = prefix.to_ascii_lowercase();
-    if name.eq_ignore_ascii_case(prefix) {
-        s += 25.0;
-    } else if name.to_ascii_lowercase().starts_with(&low) {
-        s += 10.0;
-    }
     Some(CompletionHit {
         path,
         name: name.clone(),
@@ -37,7 +32,7 @@ pub fn doc_hit(
         source_path: field("source_path"),
         byte_start: field_u32(&doc, schema, "byte_start"),
         byte_end: field_u32(&doc, schema, "byte_end"),
-        score: s,
+        score,
     })
 }
 
@@ -50,15 +45,6 @@ pub fn field_str(doc: &TantivyDocument, field: tantivy::schema::Field) -> Option
 fn field_u32(doc: &TantivyDocument, schema: &tantivy::schema::Schema, name: &str) -> Option<u32> {
     let f = schema.get_field(name).ok()?;
     doc.get_first(f).and_then(|v| v.as_u64()).map(|n| n as u32)
-}
-
-fn scope_boost(scope: &str) -> f32 {
-    match scope {
-        "workspace" => 8.0,
-        "sysroot" | "direct_dep" => 6.0,
-        "transitive" => 3.0,
-        _ => 1.0,
-    }
 }
 
 fn first_sentence(doc: &str) -> String {

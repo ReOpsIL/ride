@@ -5,6 +5,7 @@ use crate::discover::{DiscoveredCrate, Discovery};
 use crate::extract::{ExtractError, ItemDoc, Scope, extract_crate_with_version};
 
 use super::hash::crate_key;
+use super::schema::scope_rank;
 
 pub fn collect_crates(discovery: &Discovery, project: &Path) -> Vec<DiscoveredCrate> {
     let mut crates = discovery.unpacked.clone();
@@ -41,15 +42,5 @@ fn plain_workspace(project: &Path) -> DiscoveredCrate {
         version: "0.0.0".into(),
         path: project.to_path_buf(),
         scope: Scope::Workspace,
-    }
-}
-
-fn scope_rank(scope: Scope) -> u8 {
-    match scope {
-        Scope::Workspace => 0,
-        Scope::Sysroot => 1,
-        Scope::DirectDep => 2,
-        Scope::Transitive => 3,
-        Scope::Cache => 4,
     }
 }

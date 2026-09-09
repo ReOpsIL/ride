@@ -10,6 +10,7 @@ mod hit;
 mod items;
 mod keywords;
 mod parse;
+mod rank;
 mod search;
 
 pub use parse::parse_prefix;

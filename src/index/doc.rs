@@ -3,7 +3,9 @@ use tantivy::schema::TantivyDocument;
 
 use crate::extract::{ItemDoc, Scope, Visibility};
 
-use super::schema::{IndexFields, item_kind_label, scope_label, visibility_label};
+use super::schema::{
+    IndexFields, item_kind_label, kind_weight, scope_label, scope_rank, visibility_label,
+};
 
 pub fn keep_item(item: &ItemDoc) -> bool {
     match item.scope {
@@ -37,5 +39,9 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.byte_end => u64::from(item.byte_range.1),
         fields.content_hash => hash,
         fields.scope => scope_label(item.scope),
+        fields.name_prefix => item.name.as_str(),
+        fields.scope_rank => scope_rank(item.scope),
+        fields.kind_weight => kind_weight(item.item_kind),
+        fields.name_len => item.name.chars().count() as u64,
     )
 }

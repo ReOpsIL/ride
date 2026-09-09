@@ -89,6 +89,7 @@ fn build(
     fs::create_dir_all(&staging).map_err(|e| EngineError::io(&staging, e))?;
     let fields = build_fields();
     let index = Index::create_in_dir(&staging, fields.schema.clone()).map_err(tv)?;
+    super::tokenizers::register(&index).map_err(tv)?;
     let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(tv)?;
     let mut docs = 0u32;
     for h in hashed {
