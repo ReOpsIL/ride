@@ -143,6 +143,15 @@
 		C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0598608D033648D3A46F5CC /* PickerCard.swift */; };
 		C0AB4383CF0D9FD395454F5D /* PickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */; };
 		C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D75BC74B6B7741BF5AE184 /* FindRows.swift */; };
+		D0A55E7500000000000A55E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0A55E7500000000000A55E7 /* Assets.xcassets */; };
+		D08D4ACEF7E7A00DA95D8804 /* KeyCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = D011963E31E5B2B0818804D2 /* KeyCap.swift */; };
+		D04525284BED8960C5AB24B7 /* ShortcutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */; };
+		D06FC25E5C41405EA48FC089 /* ShortcutsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */; };
+		D02B66BD78B1038B32B10A61 /* AboutPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0805A44393AFDF81FEFB357 /* AboutPanel.swift */; };
+		D0E9C9E1392729A70EA5DE1A /* EmptyEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */; };
+		D037C8618339D53D0298E7A6 /* PreferenceBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */; };
+		D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */; };
+		D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D073023A1B0A76E5775FC72B /* SettingsPanes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -270,6 +279,15 @@
 		C0598608D033648D3A46F5CC /* PickerCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PickerCard.swift"; sourceTree = "<group>"; };
 		C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PickerRow.swift"; sourceTree = "<group>"; };
 		C0D75BC74B6B7741BF5AE184 /* FindRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindRows.swift"; sourceTree = "<group>"; };
+		D0A55E7500000000000A55E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D011963E31E5B2B0818804D2 /* KeyCap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyCap.swift"; sourceTree = "<group>"; };
+		D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutsView.swift"; sourceTree = "<group>"; };
+		D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutsPanel.swift"; sourceTree = "<group>"; };
+		D0805A44393AFDF81FEFB357 /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AboutPanel.swift"; sourceTree = "<group>"; };
+		D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EmptyEditorView.swift"; sourceTree = "<group>"; };
+		D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferenceBindings.swift"; sourceTree = "<group>"; };
+		D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeSwatchPicker.swift"; sourceTree = "<group>"; };
+		D073023A1B0A76E5775FC72B /* SettingsPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPanes.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -294,6 +312,11 @@
 		B0BFC2E56FBC0D62926D318D /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */,
+				D0805A44393AFDF81FEFB357 /* AboutPanel.swift */,
+				D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */,
+				D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */,
+				D011963E31E5B2B0818804D2 /* KeyCap.swift */,
 				C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */,
 				C0598608D033648D3A46F5CC /* PickerCard.swift */,
 				C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */,
@@ -372,6 +395,7 @@
 				A0000000000000000000005C /* Completion */,
 				A00000000000000000000131 /* Problems */,
 				A00000000000000000000905 /* Debug */,
+				D0A55E7500000000000A55E7 /* Assets.xcassets */,
 			);
 			path = Ride;
 			sourceTree = "<group>";
@@ -466,6 +490,9 @@
 		A00000000000000000000057 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				D073023A1B0A76E5775FC72B /* SettingsPanes.swift */,
+				D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */,
+				D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */,
 				A00000000000000000000064 /* Preferences.swift */,
 				A00000000000000000000065 /* PreferencesView.swift */,
 			);
@@ -636,6 +663,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0A55E7500000000000A55E8 /* Assets.xcassets in Resources */,
 				A00000000000000000000144 /* light.json in Resources */,
 				A00000000000000000000076 /* dark.json in Resources */,
 			);
@@ -679,6 +707,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */,
+				D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */,
+				D037C8618339D53D0298E7A6 /* PreferenceBindings.swift in Sources */,
+				D0E9C9E1392729A70EA5DE1A /* EmptyEditorView.swift in Sources */,
+				D02B66BD78B1038B32B10A61 /* AboutPanel.swift in Sources */,
+				D06FC25E5C41405EA48FC089 /* ShortcutsPanel.swift in Sources */,
+				D04525284BED8960C5AB24B7 /* ShortcutsView.swift in Sources */,
+				D08D4ACEF7E7A00DA95D8804 /* KeyCap.swift in Sources */,
 				C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */,
 				C0AB4383CF0D9FD395454F5D /* PickerRow.swift in Sources */,
 				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
@@ -887,6 +923,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGNING_REQUIRED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -930,6 +967,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGNING_REQUIRED = NO;
 				COMBINE_HIDPI_IMAGES = YES;

@@ -53,7 +53,15 @@ struct ProblemsPanel: View {
 
     @ViewBuilder
     private var content: some View {
-        if visible.isEmpty {
+        if visible.isEmpty, let failure = check.failure {
+            Text(check.stderrTail.isEmpty ? failure : check.stderrTail.trimmingCharacters(in: .whitespacesAndNewlines))
+                .font(Tokens.mono(11))
+                .foregroundStyle(ts.ui.textTertiary)
+                .lineLimit(8)
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(Tokens.Space.l)
+        } else if visible.isEmpty {
             Text(check.hasRun ? "No problems" : "Run Check (⌘B) to see problems")
                 .font(Tokens.ui(12))
                 .foregroundStyle(ts.ui.textTertiary)

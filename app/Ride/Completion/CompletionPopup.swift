@@ -50,6 +50,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         prefix = Self.typedPrefix(in: view, from: replaceUtf16)
         layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
         layout.applyTheme()
+        layout.configureScrolling(rows: hits.count)
         table.reloadData()
         table.sizeLastColumnToFit()
         if !hits.isEmpty {

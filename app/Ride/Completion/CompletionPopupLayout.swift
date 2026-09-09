@@ -40,10 +40,22 @@ final class CompletionPopupLayout: NSView {
         footer.textColor = ThemeStore.shared.chrome.textTertiary
     }
 
+    static let topInset = Tokens.Space.xs
+
+    static func listHeight(rows: Int) -> CGFloat {
+        CGFloat(min(max(rows, 1), maxRows)) * Tokens.Size.completionRow
+    }
+
     static func size(rows: Int, doc: Bool) -> NSSize {
-        let listHeight = CGFloat(min(max(rows, 1), maxRows)) * Tokens.Size.completionRow + Tokens.Space.xs * 2
         let width = listWidth + (doc ? CompletionDocCard.width : 0)
-        return NSSize(width: width, height: listHeight + footerHeight)
+        return NSSize(width: width, height: topInset + listHeight(rows: rows) + footerHeight)
+    }
+
+    func configureScrolling(rows: Int) {
+        let scrolls = rows > Self.maxRows
+        scroll.hasVerticalScroller = scrolls
+        scroll.verticalScrollElasticity = scrolls ? .allowed : .none
+        scroll.contentView.scroll(to: .zero)
     }
 
     override func layout() {
@@ -53,7 +65,7 @@ final class CompletionPopupLayout: NSView {
 
     private func place() {
         card.frame = bounds
-        let listHeight = bounds.height - Self.footerHeight
+        let listHeight = bounds.height - Self.footerHeight - Self.topInset
         scroll.frame = NSRect(x: 0, y: Self.footerHeight, width: Self.listWidth, height: listHeight)
         doc.isHidden = !showsDoc
         doc.frame = NSRect(x: Self.listWidth, y: Self.footerHeight, width: CompletionDocCard.width, height: listHeight)

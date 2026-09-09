@@ -18,6 +18,17 @@ struct RideApp: App {
         .defaultSize(width: 1200, height: 760)
         .windowStyle(.hiddenTitleBar)
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Ride") {
+                    AboutPanel.show()
+                }
+            }
+            CommandGroup(replacing: .help) {
+                Button("Keyboard Shortcuts") {
+                    ShortcutsPanel.show()
+                }
+                .keyboardShortcut("/", modifiers: .command)
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New") {
                     state.newUntitled()

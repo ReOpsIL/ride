@@ -5,14 +5,38 @@ import SwiftUI
 final class ThemeStore: ObservableObject {
     static let shared = ThemeStore()
 
-    @Published private(set) var theme = Theme.load()
+    @Published private(set) var theme = ThemeStore.adjusted(Theme.load())
+    private var observer: NSObjectProtocol?
 
     var chrome: ChromeColors { theme.chrome }
     var editor: EditorColors { theme.editor }
 
+    private init() {
+        observer = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else {
+                return
+            }
+            self.apply(name: self.theme.name)
+        }
+    }
+
     func apply(name: String) {
-        theme = Theme.load(name: name)
+        theme = Self.adjusted(Theme.load(name: name))
         HighlightApply.theme = theme
+    }
+
+    static func adjusted(_ theme: Theme) -> Theme {
+        guard NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast else {
+            return theme
+        }
+        var strong = theme
+        let border = theme.chrome.border
+        strong.chrome.border = border.withAlphaComponent(min(1, border.alphaComponent * 3))
+        return strong
     }
 }
 

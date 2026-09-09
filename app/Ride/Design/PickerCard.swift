@@ -68,11 +68,7 @@ struct PickerCard<Content: View>: View {
         HStack(spacing: Tokens.Space.xl) {
             ForEach(hints) { hint in
                 HStack(spacing: Tokens.Space.xs) {
-                    Text(hint.key)
-                        .font(Tokens.ui(10, weight: .semibold))
-                        .padding(.horizontal, Tokens.Space.xs)
-                        .padding(.vertical, 1)
-                        .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
+                    KeyCap(key: hint.key)
                     Text(hint.label)
                         .font(Tokens.ui(10))
                 }

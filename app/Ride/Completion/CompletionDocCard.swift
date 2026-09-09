@@ -12,7 +12,7 @@ final class CompletionDocCard: NSView {
         signature.font = Tokens.nsMono(11)
         signature.maximumNumberOfLines = 4
         doc.font = Tokens.nsUI(11)
-        doc.maximumNumberOfLines = 5
+        doc.maximumNumberOfLines = 8
         origin.font = Tokens.nsMono(10)
         origin.lineBreakMode = .byTruncatingMiddle
         separator.wantsLayer = true
@@ -55,7 +55,8 @@ final class CompletionDocCard: NSView {
             return
         }
         signature.stringValue = hit.signature
-        doc.stringValue = hit.docFirstSentence.isEmpty ? "No documentation" : hit.docFirstSentence
+        let text = CompletionRowStyle.docText(hit)
+        doc.stringValue = text.isEmpty ? "No documentation" : text
         origin.stringValue = hit.crateName.isEmpty ? hit.path : "\(hit.path) · \(hit.crateName)"
     }
 }

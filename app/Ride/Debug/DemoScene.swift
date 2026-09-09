@@ -4,7 +4,13 @@ enum DemoScene {
     static func run(_ name: String, state: AppState) {
         state.prefs.autoSave = false
         state.persistLayout = false
+        if let theme = DemoLaunch.theme {
+            state.prefs.theme = theme
+            state.applyTheme()
+        }
         switch name {
+        case "empty":
+            break
         case "editor":
             editor(state)
         case "completion":

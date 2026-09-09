@@ -12,6 +12,7 @@ struct AppToolbar: ToolbarContent {
                 Image(systemName: "sidebar.left")
             }
             .help("Toggle Sidebar (⌃⌘S)")
+            .accessibilityLabel("Toggle Sidebar")
         }
         if #available(macOS 26.0, *) {
             ToolbarSpacer(.flexible, placement: .principal)
@@ -28,12 +29,14 @@ struct AppToolbar: ToolbarContent {
             }
             .disabled(!hasWorkspace)
             .help("Check (⌘B)")
+            .accessibilityLabel("Check")
             Button {
                 state.toggleProblems()
             } label: {
                 Image(systemName: "exclamationmark.triangle")
             }
             .help("Problems (⇧⌘M)")
+            .accessibilityLabel("Problems")
             Button {
                 state.toggleQuickOpen()
             } label: {
@@ -41,6 +44,7 @@ struct AppToolbar: ToolbarContent {
             }
             .disabled(!hasWorkspace)
             .help("Open Quickly (⌘P)")
+            .accessibilityLabel("Open Quickly")
         }
     }
 }

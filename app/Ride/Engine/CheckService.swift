@@ -6,6 +6,7 @@ final class CheckService: ObservableObject {
     @Published var running = false
     @Published var hasRun = false
     @Published var failure: String?
+    @Published var stderrTail = ""
     var onFinished: (([Diagnostic]) -> Void)?
     private let queue = DispatchQueue(label: "dev.ride.check")
     private var generation: UInt64 = 0
@@ -54,9 +55,11 @@ final class CheckService: ObservableObject {
         case .success(let check):
             diagnostics = check.diagnostics.filter { $0.level == .error || $0.level == .warning }
             failure = check.success || !diagnostics.isEmpty ? nil : lastLine(check.stderrTail)
+            stderrTail = failure == nil ? "" : check.stderrTail
             onFinished?(diagnostics)
         case .failure(let error):
             failure = "\(error)"
+            stderrTail = ""
         }
     }
 

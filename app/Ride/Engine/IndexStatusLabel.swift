@@ -24,11 +24,8 @@ enum IndexStatusLabel {
     }
 
     static func detail(_ status: IndexStatus) -> String? {
-        guard let message = status.message?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !message.isEmpty
-        else {
-            return nil
-        }
-        return message
+        let message = status.message?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let parts = [message, status.rustSrcAvailable ? "" : RustSrc.hint].filter { !$0.isEmpty }
+        return parts.isEmpty ? nil : parts.joined(separator: "\n")
     }
 }

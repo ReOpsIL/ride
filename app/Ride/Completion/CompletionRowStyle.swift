@@ -61,7 +61,11 @@ enum CompletionRowStyle {
         return out
     }
 
+    static func docText(_ hit: CompletionHit) -> String {
+        hit.docParagraph.isEmpty ? hit.docFirstSentence : hit.docParagraph
+    }
+
     static func hasDoc(_ hit: CompletionHit) -> Bool {
-        !hit.docFirstSentence.isEmpty
+        !docText(hit).isEmpty
     }
 }

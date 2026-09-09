@@ -9,6 +9,10 @@ enum DemoLaunch {
         scene != nil
     }
 
+    static var theme: String? {
+        value(after: "--theme")
+    }
+
     static var frame: NSSize? {
         guard let raw = value(after: "--frame") else {
             return nil
