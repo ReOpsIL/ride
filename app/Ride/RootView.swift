@@ -16,7 +16,7 @@ struct RootView: View {
                 .frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .leading) {
                     if state.showSidebar {
-                        SplitGrip(axis: .horizontal).offset(x: -2)
+                        SplitGrip(axis: .horizontal).offset(x: -3)
                     }
                 }
         }
@@ -71,7 +71,7 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.problemsHeight, fromEnd: true))
                         .reportSize(.height) { problemsHeight.wrappedValue = $0 }
                         .overlay(alignment: .top) {
-                            SplitGrip(axis: .vertical).offset(y: -2)
+                            SplitGrip(axis: .vertical).offset(y: -3)
                         }
                 }
             }
