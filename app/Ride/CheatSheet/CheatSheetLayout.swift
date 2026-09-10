@@ -4,7 +4,8 @@ final class CheatSheetLayout: NSView {
     static let listWidth: CGFloat = 300
     static let entryRow: CGFloat = 38
     static let headerRow: CGFloat = 22
-    static let maxBody: CGFloat = 440
+    static let maxBody: CGFloat = 380
+    static let minBody: CGFloat = 240
     static let footerHeight: CGFloat = 20
     static let topInset = Tokens.Space.xs
 
@@ -72,8 +73,7 @@ final class CheatSheetLayout: NSView {
 
     static func bodyHeight(rows: [CheatRow]) -> CGFloat {
         let list = rows.reduce(0) { $0 + rowHeight($1) }
-        let preview = rows.compactMap(\.entry).map(CheatSheetPreview.neededHeight).max() ?? 0
-        return min(max(list, preview, entryRow), maxBody)
+        return min(max(list, minBody), maxBody)
     }
 
     func size(rows: [CheatRow]) -> NSSize {

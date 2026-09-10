@@ -14,14 +14,20 @@ enum CheatSheetPlacement {
         guard let completion = anchor.completion else {
             return CompletionPlacement.frame(caret: anchor.caret, screen: anchor.screen, size: size)
         }
-        let above = completion.maxY + gap
-        let below = completion.minY - gap - size.height
-        var frame = NSRect(x: completion.minX, y: anchor.completionAboveCaret ? above : below, width: size.width, height: size.height)
-        if frame.minY < anchor.screen.minY {
-            frame.origin.y = above
-        } else if frame.maxY > anchor.screen.maxY {
-            frame.origin.y = below
+        let roomAbove = anchor.screen.maxY - completion.maxY - gap
+        let roomBelow = completion.minY - gap - anchor.screen.minY
+        let preferAbove = anchor.completionAboveCaret
+        let goAbove: Bool
+        if (preferAbove ? roomAbove : roomBelow) >= size.height {
+            goAbove = preferAbove
+        } else if (preferAbove ? roomBelow : roomAbove) >= size.height {
+            goAbove = !preferAbove
+        } else {
+            goAbove = roomAbove >= roomBelow
         }
+        let height = min(size.height, max(goAbove ? roomAbove : roomBelow, 0))
+        let y = goAbove ? completion.maxY + gap : completion.minY - gap - height
+        var frame = NSRect(x: completion.minX, y: y, width: size.width, height: height)
         if frame.maxX > anchor.screen.maxX {
             frame.origin.x = max(anchor.screen.minX, anchor.screen.maxX - size.width)
         }

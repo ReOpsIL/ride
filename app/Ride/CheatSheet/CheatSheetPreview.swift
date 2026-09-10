@@ -2,7 +2,6 @@ import AppKit
 
 final class CheatSheetPreview: NSView {
     static let width: CGFloat = 360
-    static let lineHeight: CGFloat = 15
     private let separator = NSView()
     private let scroll = NSScrollView()
     private let text = NSTextView()
@@ -14,9 +13,12 @@ final class CheatSheetPreview: NSView {
         text.isSelectable = false
         text.drawsBackground = false
         text.textContainerInset = NSSize(width: Tokens.Space.m, height: Tokens.Space.l)
+        text.minSize = .zero
+        text.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         text.isVerticallyResizable = true
         text.isHorizontallyResizable = false
         text.autoresizingMask = [.width]
+        text.textContainer?.containerSize = NSSize(width: Self.width, height: CGFloat.greatestFiniteMagnitude)
         text.textContainer?.widthTracksTextView = true
         text.textContainer?.lineFragmentPadding = Tokens.Space.xs
         scroll.documentView = text
@@ -32,8 +34,12 @@ final class CheatSheetPreview: NSView {
         nil
     }
 
-    override func layout() {
-        super.layout()
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        place()
+    }
+
+    private func place() {
         separator.frame = NSRect(x: 0, y: 0, width: Tokens.Size.hairline, height: bounds.height)
         scroll.frame = NSRect(x: Tokens.Size.hairline, y: 0, width: bounds.width - Tokens.Size.hairline, height: bounds.height)
         text.frame.size.width = scroll.contentSize.width
@@ -44,13 +50,8 @@ final class CheatSheetPreview: NSView {
         separator.layer?.backgroundColor = chrome.border.cgColor
         text.textStorage?.setAttributedString(Self.content(entry, chrome: chrome))
         text.frame.size.width = scroll.contentSize.width
+        text.sizeToFit()
         scroll.contentView.scroll(to: .zero)
-    }
-
-    static func neededHeight(_ entry: CheatItem) -> CGFloat {
-        let lines = entry.snippet.split(separator: "\n", omittingEmptySubsequences: false).count
-        let docLines = CGFloat((entry.doc.count / 48) + 1)
-        return CGFloat(lines) * lineHeight + docLines * lineHeight + Tokens.Space.l * 3 + lineHeight * 2
     }
 
     static func content(_ entry: CheatItem?, chrome: ChromeColors) -> NSAttributedString {
