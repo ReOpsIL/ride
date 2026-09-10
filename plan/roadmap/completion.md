@@ -10,17 +10,17 @@ Goal: the best completion we can build without a model. Every completion site an
 | 1 | `use` crates and children via `parent_path`; `crate`/`self`/`super` mapping; brace groups | done (`engine/paths.rs`) |
 | 1 | `::` children, associated items first | done |
 | 1 | `#include` completion, compile-db dirs plus cached `clang -E -v` system dirs | done (`includes/`, `discover/system_includes.rs`) |
-| 1 | App triggers, empty prefix, ⌃Space, replace range from the engine | app branch |
+| 1 | App triggers, empty prefix, ⌃Space, replace range from the engine, local narrowing | done (`app/Ride/Completion/CompletionTrigger.swift`, `CompletionNarrowing.swift`) |
 | 1 | Schema v11 (`parent_path`, `name_hump`, `reachable`, `deprecated`, variants, cfg(test) drop, derive names) | done |
 | 2 | Merged buffer + header + keyword + catalog pipeline, one scorer, mention/keyword yield | done (`engine/identifier.rs`, `engine/merge.rs`, `src/score.rs`) |
 | 2 | Import set and prelude tiers, unreachable filter, exact-match cap, typed case | done |
 | 2 | Hump matching | done (`name_hump` clause); `nucleo-matcher` typo tolerance not needed yet |
 | 2 | Scenario tests and `ride-engine complete` CLI | done (`tests/completion_sites.rs`, `tests/edits_and_signatures.rs`) |
-| 3 | Outline signature/doc, local types as detail | engine branch |
-| 3 | Row extras, doc card, signature help popup | app branch; engine `signature_help` done |
+| 3 | Outline signature/doc, local types as detail | done (`highlight/c_docs.rs`, `c_locals.rs`, `rust_locals.rs`) |
+| 3 | Row extras, doc card, signature help popup | done (`SignatureHelpController.swift`, `CompletionDocCard.swift`) |
 | 4 | Call and keyword snippets, postfix templates | done (`engine/snippets.rs`, `engine/postfix.rs`) |
-| 4 | Auto-import (`import_edit`) | engine done; app branch |
-| 4 | Rust receiver typing, struct-literal fields | engine branch |
+| 4 | Auto-import (`import_edit`) | done |
+| 4 | Rust receiver typing, struct-literal fields | done (`highlight/rust_receiver.rs`, `rust_types.rs`, `engine/rust_members.rs`) |
 | 4 | Enum variants, `#[derive]` and attribute completion, C directives | done |
 | 5 | Scope cache, system header summaries on disk, C++ `::`, field chains, `auto` | engine branch |
 
