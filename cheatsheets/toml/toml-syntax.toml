@@ -1,0 +1,78 @@
+title = "TOML syntax"
+contexts = ["table", "key"]
+
+[[entries]]
+name = "[table]"
+keys = ["table", "header", "section"]
+doc = "A standard table; keys after it belong to this header until the next."
+snippet = '''
+[${1:table}]
+${2:key} = ${3:value}
+$0'''
+
+[[entries]]
+name = "[[array of tables]]"
+keys = ["array", "tables", "element", "bin"]
+doc = "Append one element to an array of tables with the same header."
+snippet = '''
+[[${1:array}]]
+${2:key} = ${3:value}
+$0'''
+
+[[entries]]
+name = "dotted.key"
+keys = ["dotted", "key", "nested", "table"]
+doc = "Create nested tables through a dotted key."
+snippet = '''
+${1:table}.${2:key} = ${3:value}$0'''
+
+[[entries]]
+name = "inline table"
+keys = ["inline", "table", "braces"]
+doc = "A compact table written on one line in braces."
+snippet = '''
+${1:key} = { ${2:inner} = ${3:value} }$0'''
+
+[[entries]]
+name = "array"
+keys = ["array", "list", "brackets"]
+doc = "An array of values of one type."
+snippet = '''
+${1:key} = [${2:"a"}, ${3:"b"}]$0'''
+
+[[entries]]
+name = "multiline string"
+keys = ["string", "multiline", "basic", "text"]
+doc = "A basic string that spans lines; newlines are part of the value."
+snippet = '''
+${1:key} = """
+${2:text}
+"""$0'''
+
+[[entries]]
+name = "literal string"
+keys = ["literal", "string", "raw", "apostrophe"]
+doc = "A literal string; no escapes except that it cannot contain a quote."
+snippet = '''
+${1:key} = '${2:text}'$0'''
+
+[[entries]]
+name = "quoted key"
+keys = ["quoted", "key", "dots", "space"]
+doc = "A key that contains dots, spaces or other punctuation."
+snippet = '''
+"${1:key.name}" = ${2:value}$0'''
+
+[[entries]]
+name = "boolean"
+keys = ["boolean", "true", "false", "bool"]
+doc = "A TOML boolean, lowercase true or false."
+snippet = '''
+${1:key} = ${2:true}$0'''
+
+[[entries]]
+name = "datetime"
+keys = ["datetime", "date", "time", "rfc3339"]
+doc = "An RFC 3339 offset date-time."
+snippet = '''
+${1:key} = ${2:1979-05-27T07:32:00Z}$0'''

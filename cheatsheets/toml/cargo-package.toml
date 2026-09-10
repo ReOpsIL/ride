@@ -1,0 +1,82 @@
+title = "Package"
+contexts = ["table", "key"]
+
+[[entries]]
+name = "[package]"
+keys = ["package", "manifest", "crate", "name"]
+doc = "Name the crate, its version and the edition it is compiled with."
+snippet = '''
+[package]
+name = "${1:name}"
+version = "${2:0.1.0}"
+edition = "${3:2024}"
+$0'''
+
+[[entries]]
+name = "name"
+keys = ["name", "crate", "package"]
+doc = "Crate name; hyphens and underscores are interchangeable on crates.io."
+snippet = '''
+name = "${1:name}"$0'''
+
+[[entries]]
+name = "version"
+keys = ["version", "semver"]
+doc = "SemVer version of this crate."
+snippet = '''
+version = "${1:0.1.0}"$0'''
+
+[[entries]]
+name = "edition"
+keys = ["edition", "2024", "2021", "rust"]
+doc = "Rust edition used to compile this crate."
+snippet = '''
+edition = "${1:2024}"$0'''
+
+[[entries]]
+name = "rust-version"
+keys = ["rust-version", "msrv", "minimum"]
+doc = "Oldest rustc that may build this crate."
+snippet = '''
+rust-version = "${1:1.85}"$0'''
+
+[[entries]]
+name = "license"
+keys = ["license", "mit", "apache", "spdx"]
+doc = "SPDX license expression shown on crates.io."
+snippet = '''
+license = "${1:MIT OR Apache-2.0}"$0'''
+
+[[entries]]
+name = "description"
+keys = ["description", "summary", "crates.io"]
+doc = "One-line summary shown on crates.io."
+snippet = '''
+description = "${1:summary}"$0'''
+
+[[entries]]
+name = "repository"
+keys = ["repository", "git", "github", "url"]
+doc = "Source repository URL shown on crates.io."
+snippet = '''
+repository = "${1:https://github.com/user/repo}"$0'''
+
+[[entries]]
+name = "[lib]"
+keys = ["lib", "library", "crate-type", "cdylib"]
+doc = "Configure the library target: path, crate type or proc-macro."
+snippet = '''
+[lib]
+path = "${1:src/lib.rs}"
+crate-type = ["${2:lib}"]
+$0'''
+
+[[entries]]
+name = "[[bin]]"
+keys = ["bin", "binary", "main", "target"]
+doc = "Declare an extra binary target."
+snippet = '''
+[[bin]]
+name = "${1:name}"
+path = "${2:src/main.rs}"
+$0'''

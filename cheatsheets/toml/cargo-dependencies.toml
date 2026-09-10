@@ -1,0 +1,80 @@
+title = "Dependencies"
+contexts = ["table", "key"]
+
+[[entries]]
+name = "[dependencies]"
+keys = ["dependencies", "deps", "crate"]
+doc = "Runtime crates linked into this package."
+snippet = '''
+[dependencies]
+${1:crate} = "${2:1.0}"
+$0'''
+
+[[entries]]
+name = "[dev-dependencies]"
+keys = ["dev-dependencies", "dev", "test", "bench"]
+doc = "Crates used only by tests, examples and benches."
+snippet = '''
+[dev-dependencies]
+${1:crate} = "${2:1.0}"
+$0'''
+
+[[entries]]
+name = "[build-dependencies]"
+keys = ["build-dependencies", "build", "build.rs"]
+doc = "Crates linked into build.rs."
+snippet = '''
+[build-dependencies]
+${1:crate} = "${2:1.0}"
+$0'''
+
+[[entries]]
+name = "crate"
+keys = ["crate", "dep", "dependency", "version"]
+doc = "Depend on a crates.io crate by version requirement."
+snippet = '''
+${1:crate} = "${2:1.0}"$0'''
+
+[[entries]]
+name = "crate features"
+keys = ["features", "optional", "version", "dep"]
+doc = "Select named features of a crates.io dependency."
+snippet = '''
+${1:crate} = { version = "${2:1.0}", features = ["${3:feature}"] }$0'''
+
+[[entries]]
+name = "crate git"
+keys = ["git", "github", "branch", "tag", "rev"]
+doc = "Depend on a git repository instead of crates.io."
+snippet = '''
+${1:crate} = { git = "${2:https://github.com/user/repo}", ${3:branch} = "${4:main}" }$0'''
+
+[[entries]]
+name = "crate path"
+keys = ["path", "local", "workspace", "relative"]
+doc = "Depend on a crate by filesystem path."
+snippet = '''
+${1:crate} = { path = "${2:../crate}" }$0'''
+
+[[entries]]
+name = "crate workspace"
+keys = ["workspace", "inherit", "workspace.dependencies"]
+doc = "Take version and features from [workspace.dependencies]."
+snippet = '''
+${1:crate} = { workspace = true }$0'''
+
+[[entries]]
+name = "crate optional"
+keys = ["optional", "feature", "default-features"]
+doc = "An optional dependency, off unless a feature enables it."
+snippet = '''
+${1:crate} = { version = "${2:1.0}", optional = true, default-features = false }$0'''
+
+[[entries]]
+name = "target cfg dependencies"
+keys = ["target", "cfg", "cfg-if", "platform"]
+doc = "Dependencies that apply only when a cfg predicate matches."
+snippet = '''
+[target.'${1:cfg(unix)}'.dependencies]
+${2:crate} = "${3:1.0}"
+$0'''

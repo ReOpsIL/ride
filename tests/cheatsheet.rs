@@ -11,7 +11,14 @@ fn context(lang: Lang, src: &str) -> Context {
 
 #[test]
 fn every_sheet_parses() {
-    for lang in [Lang::Rust, Lang::C, Lang::Cpp, Lang::Make, Lang::Cmake] {
+    for lang in [
+        Lang::Rust,
+        Lang::C,
+        Lang::Cpp,
+        Lang::Make,
+        Lang::Cmake,
+        Lang::Toml,
+    ] {
         let sheet = validate(lang).unwrap_or_else(|e| panic!("{lang:?}: {e}"));
         assert!(!sheet.sections.is_empty(), "{lang:?} has no sections");
         for section in &sheet.sections {
@@ -27,7 +34,6 @@ fn every_sheet_parses() {
             }
         }
     }
-    assert!(sheet(Lang::Toml).is_none());
 }
 
 #[test]
@@ -292,4 +298,38 @@ fn c_switch_body_offers_case_and_default() {
         .collect();
     assert!(names.contains(&"case"), "{names:?}");
     assert!(names.contains(&"default"), "{names:?}");
+}
+
+#[test]
+fn toml_contexts() {
+    assert_eq!(context(Lang::Toml, "|"), Context::Table);
+    assert_eq!(context(Lang::Toml, "[|"), Context::Table);
+    assert_eq!(context(Lang::Toml, "[dep|"), Context::Table);
+    assert_eq!(context(Lang::Toml, "[dependencies]\n|"), Context::Key);
+    assert_eq!(context(Lang::Toml, "[dependencies]\nser|"), Context::Key);
+    assert_eq!(context(Lang::Toml, "[package]\nname|"), Context::Key);
+    assert_eq!(
+        context(Lang::Toml, "serde = { version = \"1\", |}"),
+        Context::Key
+    );
+}
+
+#[test]
+fn toml_dependencies_offer_crate_entries() {
+    let ctx = context(Lang::Toml, "[dependencies]\n|");
+    assert_eq!(ctx, Context::Key);
+    let sheet = sheet(Lang::Toml).unwrap();
+    let ranked = select(sheet, ctx, "", false);
+    let deps = ranked
+        .iter()
+        .find(|s| s.section.file == "cargo-dependencies")
+        .expect("cargo-dependencies");
+    assert!(
+        deps.entries.iter().any(|e| e.name == "crate"),
+        "{:?}",
+        deps.entries
+            .iter()
+            .map(|e| e.name.as_str())
+            .collect::<Vec<_>>()
+    );
 }

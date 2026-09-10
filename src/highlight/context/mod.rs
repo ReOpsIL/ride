@@ -5,11 +5,13 @@ mod cmake;
 mod make;
 mod rust;
 mod scan;
+mod toml;
 
 pub use c::c as c_context;
 pub use cmake::cmake as cmake_context;
 pub use make::make as make_context;
 pub use rust::rust as rust_context;
+pub use toml::toml as toml_context;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Context {
@@ -30,13 +32,11 @@ pub enum Context {
     Argument,
     Case,
     Default,
+    Table,
+    Key,
 }
 
 pub type Detector = fn(Option<&Tree>, &str, usize) -> Context;
-
-pub fn unknown(_: Option<&Tree>, _: &str, _: usize) -> Context {
-    Context::Unknown
-}
 
 const NAMES: &[(Context, &str)] = &[
     (Context::Unknown, "unknown"),
@@ -56,6 +56,8 @@ const NAMES: &[(Context, &str)] = &[
     (Context::Argument, "argument"),
     (Context::Case, "case"),
     (Context::Default, "default"),
+    (Context::Table, "table"),
+    (Context::Key, "key"),
 ];
 
 impl Context {

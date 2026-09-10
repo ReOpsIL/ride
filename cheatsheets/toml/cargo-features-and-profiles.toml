@@ -1,0 +1,80 @@
+title = "Features and profiles"
+contexts = ["table", "key"]
+
+[[entries]]
+name = "[features]"
+keys = ["features", "default", "flag"]
+doc = "Named optional functionality; default lists features on by default."
+snippet = '''
+[features]
+default = [${1:"${2:feature}"}]
+${2:feature} = [${3:]}$0'''
+
+[[entries]]
+name = "default"
+keys = ["default", "features"]
+doc = "Features enabled when a dependent does not disable default-features."
+snippet = '''
+default = ["${1:feature}"]$0'''
+
+[[entries]]
+name = "feature = [dep:]"
+keys = ["dep", "enable", "optional", "feature"]
+doc = "A feature that enables an optional dependency by its crate name."
+snippet = '''
+${1:feature} = ["dep:${2:crate}"]$0'''
+
+[[entries]]
+name = "feature = [crate/feat]"
+keys = ["forward", "crate", "feature"]
+doc = "A feature that turns on a feature of a dependency."
+snippet = '''
+${1:feature} = ["${2:crate}/${3:feat}"]$0'''
+
+[[entries]]
+name = "[profile.dev]"
+keys = ["profile", "dev", "debug", "incremental"]
+doc = "Override the development profile Cargo uses for cargo build."
+snippet = '''
+[profile.dev]
+opt-level = ${1:0}
+debug = ${2:true}
+$0'''
+
+[[entries]]
+name = "[profile.release]"
+keys = ["profile", "release", "lto", "opt-level"]
+doc = "Override the release profile Cargo uses for cargo build --release."
+snippet = '''
+[profile.release]
+opt-level = ${1:3}
+lto = ${2:true}
+$0'''
+
+[[entries]]
+name = "opt-level"
+keys = ["opt-level", "optimize", "size", "speed"]
+doc = "Optimization level: 0-3, s for size, z for size with extra effort."
+snippet = '''
+opt-level = ${1:3}$0'''
+
+[[entries]]
+name = "lto"
+keys = ["lto", "link", "time", "fat", "thin"]
+doc = "Link-time optimization: true/fat, thin, or false."
+snippet = '''
+lto = ${1:true}$0'''
+
+[[entries]]
+name = "panic"
+keys = ["panic", "abort", "unwind"]
+doc = "Panic strategy for this profile: unwind or abort."
+snippet = '''
+panic = "${1:abort}"$0'''
+
+[[entries]]
+name = "strip"
+keys = ["strip", "symbols", "debuginfo"]
+doc = "Strip symbols or debuginfo from the built binary."
+snippet = '''
+strip = "${1:debuginfo}"$0'''
