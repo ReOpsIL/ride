@@ -54,6 +54,10 @@ impl TypeTable {
         }
     }
 
+    pub fn defines(&self, name: &str) -> bool {
+        self.members.contains_key(name)
+    }
+
     pub fn is_empty(&self) -> bool {
         self.members.is_empty() && self.aliases.is_empty()
     }

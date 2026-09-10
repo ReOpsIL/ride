@@ -38,6 +38,14 @@ fn members(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionResponse> {
     let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
     let mut pool = buffer_members(snap, type_name, &q.prefix);
     merge::keep_order(&mut pool, &q.prefix);
+    let defined_here = snap
+        .scope
+        .as_ref()
+        .is_some_and(|s| s.types.defines(type_name))
+        && !snap.imports.iter().any(|i| i == type_name);
+    if defined_here {
+        return (!pool.is_empty()).then(|| merge::finish(q, pool, false));
+    }
     let taken: HashSet<String> = pool.iter().map(|h| h.name.clone()).collect();
     let catalog = query::children(
         snap.catalog.src(),
