@@ -18,8 +18,9 @@ xcodebuild \
   -scheme Ride \
   -configuration Release \
   -derivedDataPath "$ROOT/target/xcode-release" \
-  -destination 'platform=macOS,arch=arm64' \
+  -destination 'generic/platform=macOS' \
   -archivePath "$ARCHIVE" \
+  ARCHS="arm64 x86_64" \
   CODE_SIGN_IDENTITY="$IDENTITY" \
   CODE_SIGNING_REQUIRED=NO \
   archive
@@ -33,7 +34,7 @@ fi
 codesign --force --deep --sign "$IDENTITY" --options runtime "$APP"
 codesign --verify --deep --strict "$APP"
 
-ZIP="$OUT/Ride-$VERSION-arm64.zip"
+ZIP="$OUT/Ride-$VERSION.zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
 shasum -a 256 "$ZIP" > "$ZIP.sha256"
 

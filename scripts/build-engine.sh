@@ -4,21 +4,25 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-TARGET="aarch64-apple-darwin"
+ARM="aarch64-apple-darwin"
+INTEL="x86_64-apple-darwin"
 OUT_GEN="$ROOT/app/generated"
 XCFRAMEWORK="$ROOT/app/RideEngine.xcframework"
+UNIVERSAL_LIB="$ROOT/target/universal/release/libride_engine.a"
 
-rustup target add "$TARGET" >/dev/null
+rustup target add "$ARM" >/dev/null
+rustup target add "$INTEL" >/dev/null
 
-cargo build --release --target "$TARGET" --lib
-cargo build --release --target "$TARGET" --bin ride-engine
+cargo build --release --target "$ARM" --lib
+cargo build --release --target "$ARM" --bin ride-engine
+cargo build --release --target "$INTEL" --lib
 
 rm -rf "$OUT_GEN"
 mkdir -p "$OUT_GEN"
 
-LIB="$ROOT/target/$TARGET/release/libride_engine.dylib"
+LIB="$ROOT/target/$ARM/release/libride_engine.dylib"
 if [[ ! -f "$LIB" ]]; then
-  LIB="$ROOT/target/$TARGET/release/libride_engine.a"
+  LIB="$ROOT/target/$ARM/release/libride_engine.a"
 fi
 
 cargo run --release --bin uniffi-bindgen --features bindgen -- generate \
@@ -35,11 +39,16 @@ if compgen -G "$OUT_GEN/*.modulemap" >/dev/null; then
   cp "$OUT_GEN"/*.modulemap "$HEADERS/module.modulemap"
 fi
 
-STATICLIB="$ROOT/target/$TARGET/release/libride_engine.a"
+mkdir -p "$(dirname "$UNIVERSAL_LIB")"
+lipo -create \
+  "$ROOT/target/$ARM/release/libride_engine.a" \
+  "$ROOT/target/$INTEL/release/libride_engine.a" \
+  -output "$UNIVERSAL_LIB"
+
 rm -rf "$XCFRAMEWORK"
-if [[ -f "$STATICLIB" ]] && [[ -d "$HEADERS" ]] && command -v xcodebuild >/dev/null; then
+if [[ -f "$UNIVERSAL_LIB" ]] && [[ -d "$HEADERS" ]] && command -v xcodebuild >/dev/null; then
   xcodebuild -create-xcframework \
-    -library "$STATICLIB" \
+    -library "$UNIVERSAL_LIB" \
     -headers "$HEADERS" \
     -output "$XCFRAMEWORK"
 fi
