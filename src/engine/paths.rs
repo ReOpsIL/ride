@@ -2,7 +2,7 @@ use std::path::Path;
 
 use crate::ffi::{CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, ItemKind};
 use crate::query;
-use crate::score::KEYWORD;
+use crate::score::{KEYWORD, case_bonus};
 
 use super::merge;
 use super::snapshot::Snapshot;
@@ -44,7 +44,9 @@ fn crates(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
             limit,
             q.context,
         );
-        merge::boost_catalog(&mut hits, &q.prefix, &[]);
+        for hit in &mut hits {
+            hit.score += case_bonus(&hit.name, &q.prefix);
+        }
         pool.extend(hits);
     }
     pool.extend(specials(ROOTS, &q.prefix));
@@ -69,9 +71,8 @@ fn children(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> Vec<Co
         q.context
     };
     let mut hits = query::children(snap.catalog.src(), &parent, &q.prefix, limit, context);
-    merge::boost_catalog(&mut hits, &q.prefix, &[]);
     for hit in &mut hits {
-        hit.import_path = None;
+        hit.score += case_bonus(&hit.name, &q.prefix);
         if context == CompletionContext::MemberAccess && takes_self(&hit.signature) {
             hit.score -= SELF_METHOD_PENALTY;
         }
