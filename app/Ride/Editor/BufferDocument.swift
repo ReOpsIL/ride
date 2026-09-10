@@ -16,7 +16,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     var diagnosticsVersion: UInt64 = 0
     var highlights: [HighlightSpan] = []
     var visibleWork: DispatchWorkItem?
-    var isReadOnly = false
+    @Published var isReadOnly = false
     var detectedLanguage: BufferLanguage?
     var usesCRLF = false
     var changedOnDisk = false
@@ -30,7 +30,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     }
 
     var language: BufferLanguage {
-        detectedLanguage ?? BufferLanguage.of(fileURL)
+        detectedLanguage ?? BufferLanguage.sniff(url: fileURL, text: text)
     }
 
     init(url: URL) {

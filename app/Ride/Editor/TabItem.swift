@@ -17,6 +17,11 @@ struct TabItem: View {
                 .font(Tokens.ui(12, weight: selected ? .medium : .regular))
                 .foregroundStyle(selected ? ts.ui.textPrimary : ts.ui.textSecondary)
                 .lineLimit(1)
+            if buffer.isReadOnly {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: Tokens.Size.iconS))
+                    .foregroundStyle(ts.ui.textTertiary)
+            }
             trailing
                 .frame(width: 16, height: 16)
         }

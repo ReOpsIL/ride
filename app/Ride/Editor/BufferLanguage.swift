@@ -42,6 +42,30 @@ enum BufferLanguage {
         }
     }
 
+    static func sniff(url: URL?, text: String, systemDirs: [URL] = []) -> BufferLanguage {
+        if let url, isExtensionless(url), isCpp(url: url, text: text, systemDirs: systemDirs) {
+            return .cpp
+        }
+        return of(url)
+    }
+
+    static func isReadOnly(_ url: URL, systemDirs: [URL] = []) -> Bool {
+        isSystemInclude(url, systemDirs: systemDirs)
+    }
+
+    static func isSystemInclude(_ url: URL, systemDirs: [URL] = []) -> Bool {
+        let path = url.standardizedFileURL.path
+        if systemDirs.contains(where: { under(path, dir: $0) }) {
+            return true
+        }
+        return path.hasPrefix("/usr/include")
+            || path.hasPrefix("/usr/local/include")
+            || path.contains("/usr/include/")
+            || path.contains("/include/c++/")
+            || path.contains("/c++/v1/")
+            || path.hasSuffix("/c++/v1")
+    }
+
     var hasCompletions: Bool {
         switch self {
         case .rust, .c, .cpp, .toml, .make, .cmake: return true
@@ -80,5 +104,64 @@ enum BufferLanguage {
 
     var hasSignatureHelp: Bool {
         self == .rust || usesClang
+    }
+
+    private static let cppLineStarts = [
+        "namespace ", "class ", "template ", "template<", "using ",
+        "public:", "private:", "protected:", "extern \"C++\"",
+    ]
+
+    private static func isExtensionless(_ url: URL) -> Bool {
+        url.pathExtension.isEmpty
+    }
+
+    private static func isCpp(url: URL, text: String, systemDirs: [URL]) -> Bool {
+        isSystemInclude(url, systemDirs: systemDirs) || isCppHeader(text)
+    }
+
+    private static func isCppHeader(_ text: String) -> Bool {
+        var seen = 0
+        for line in text.split(whereSeparator: \.isNewline) {
+            seen += line.utf8.count + 1
+            if seen > 64 * 1024 {
+                break
+            }
+            let trimmed = line.drop { $0 == " " || $0 == "\t" }
+            if startsCpp(trimmed) || includesCppStd(trimmed) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private static func startsCpp(_ line: Substring) -> Bool {
+        cppLineStarts.contains { line.hasPrefix($0) }
+    }
+
+    private static func includesCppStd(_ line: Substring) -> Bool {
+        guard line.first == "#" else {
+            return false
+        }
+        var rest = line.dropFirst()
+        rest = rest.drop { $0 == " " || $0 == "\t" }
+        guard rest.hasPrefix("include") else {
+            return false
+        }
+        rest = rest.dropFirst("include".count)
+        rest = rest.drop { $0 == " " || $0 == "\t" }
+        guard rest.first == "<", let close = rest.firstIndex(of: ">") else {
+            return false
+        }
+        let name = rest[rest.index(after: rest.startIndex)..<close]
+        return !name.isEmpty && !name.contains(".")
+    }
+
+    private static func under(_ path: String, dir: URL) -> Bool {
+        let root = dir.standardizedFileURL.path
+        if path == root {
+            return true
+        }
+        let prefix = root.hasSuffix("/") ? root : root + "/"
+        return path.hasPrefix(prefix)
     }
 }

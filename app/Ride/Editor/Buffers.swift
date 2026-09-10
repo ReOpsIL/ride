@@ -14,13 +14,13 @@ extension AppState {
             recordLocation()
         }
         if let existing = buffers.first(where: { $0.fileURL == standard }) {
-            existing.isReadOnly = existing.isReadOnly || readOnly
+            existing.isReadOnly = existing.isReadOnly || readOnly || BufferLanguage.isReadOnly(standard)
             activeID = existing.id
             refreshPreview()
             return
         }
         let buffer = BufferDocument(url: standard)
-        buffer.isReadOnly = readOnly || CatalogPath.isCatalog(standard)
+        buffer.isReadOnly = readOnly || CatalogPath.isCatalog(standard) || BufferLanguage.isReadOnly(standard)
         buffers.append(buffer)
         activeID = buffer.id
         cursorLine = 1

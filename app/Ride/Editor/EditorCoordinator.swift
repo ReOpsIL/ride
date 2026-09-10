@@ -14,6 +14,9 @@ extension EditorPane {
         }
 
         func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
+            if document.isReadOnly {
+                return false
+            }
             document.pending = PendingEdit(
                 range: affectedCharRange,
                 inserted: replacementString ?? "",

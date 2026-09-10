@@ -32,4 +32,27 @@ final class BufferLanguageTests: XCTestCase {
         XCTAssertFalse(BufferLanguage.markdown.usesClang)
         XCTAssertFalse(BufferLanguage.cmake.usesClang)
     }
+
+    func testSniffExtensionlessCpp() {
+        let vector = URL(fileURLWithPath: "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector")
+        XCTAssertEqual(BufferLanguage.sniff(url: vector, text: "// empty\n"), .cpp)
+        let local = URL(fileURLWithPath: "/proj/samples/buffer")
+        XCTAssertEqual(BufferLanguage.sniff(url: local, text: "class vector {\n};\n"), .cpp)
+        XCTAssertEqual(BufferLanguage.sniff(url: local, text: "hello world\n"), .plain)
+        XCTAssertEqual(BufferLanguage.sniff(url: URL(fileURLWithPath: "/a/main.rs"), text: "class X {};\n"), .rust)
+    }
+
+    func testReadOnlyFromSystemPath() {
+        let sys = URL(fileURLWithPath: "/opt/sysroot/include/c++/v1")
+        let vector = sys.appendingPathComponent("vector")
+        XCTAssertTrue(BufferLanguage.isReadOnly(vector, systemDirs: [sys]))
+        XCTAssertTrue(BufferLanguage.isReadOnly(URL(fileURLWithPath: "/usr/include/stdio.h")))
+        XCTAssertTrue(
+            BufferLanguage.isReadOnly(
+                URL(fileURLWithPath: "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector")
+            )
+        )
+        XCTAssertFalse(BufferLanguage.isReadOnly(URL(fileURLWithPath: "/Users/me/proj/src/vector"), systemDirs: [sys]))
+        XCTAssertFalse(BufferLanguage.isReadOnly(URL(fileURLWithPath: "/tmp/samples/notes")))
+    }
 }
