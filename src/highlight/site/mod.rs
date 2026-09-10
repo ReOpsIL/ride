@@ -38,6 +38,8 @@ pub struct SiteAt {
     pub site: Site,
     pub prefix: String,
     pub replace_start: usize,
+    pub line_indent: String,
+    pub next_char: Option<char>,
 }
 
 pub type Classifier = fn(Option<&Tree>, &str, usize) -> SiteAt;
@@ -48,6 +50,24 @@ impl SiteAt {
             site: Site::None,
             prefix: String::new(),
             replace_start: at,
+            line_indent: String::new(),
+            next_char: None,
+        }
+    }
+
+    pub fn new(site: Site, prefix: String, replace_start: usize, text: &str, at: usize) -> Self {
+        let line_start = text[..replace_start]
+            .rfind('\n')
+            .map(|i| i + 1)
+            .unwrap_or(0);
+        let line = &text[line_start..replace_start];
+        let indent_len = line.len() - line.trim_start_matches([' ', '\t']).len();
+        Self {
+            site,
+            prefix,
+            replace_start,
+            line_indent: line[..indent_len].to_string(),
+            next_char: text[at.min(text.len())..].chars().next(),
         }
     }
 

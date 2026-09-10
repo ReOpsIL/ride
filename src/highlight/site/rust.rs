@@ -49,11 +49,7 @@ pub fn rust(tree: Option<&Tree>, text: &str, at: usize) -> SiteAt {
     } else {
         Site::Identifier(position(head, &WORDS))
     };
-    SiteAt {
-        site,
-        prefix,
-        replace_start: start,
-    }
+    SiteAt::new(site, prefix, start, text, at)
 }
 
 fn attribute(head: &str) -> Option<bool> {

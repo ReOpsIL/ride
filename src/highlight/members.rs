@@ -66,7 +66,7 @@ pub fn fallback_hits(
         let Ok(name) = node.utf8_text(text.as_bytes()) else {
             return;
         };
-        if matches(name, &p) && seen.insert(name.to_string()) {
+        if !name.is_empty() && matches(name, &p) && seen.insert(name.to_string()) {
             out.push(CompletionHit::local(
                 name,
                 ItemKind::Field,

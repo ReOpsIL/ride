@@ -34,6 +34,8 @@ pub struct Snapshot {
     pub local: Option<LocalHits>,
     pub scope: Option<SourceScope>,
     pub imports: Vec<String>,
+    pub postfix_receiver: Option<(usize, usize)>,
+    pub receiver_text: Option<String>,
     pub headers: Arc<HeaderCache>,
     pub system_includes: Arc<SystemIncludes>,
     pub catalog: Catalog,
@@ -65,10 +67,19 @@ pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot
                         at: at.replace_start as u32,
                     })
                 });
+            let postfix_receiver = session
+                .zip(site.as_ref())
+                .filter(|(s, at)| s.lang() == Lang::Rust && matches!(at.site, Site::MemberAccess))
+                .and_then(|(s, at)| s.postfix_receiver(at.replace_start));
+            let receiver_text = postfix_receiver
+                .zip(session)
+                .map(|((a, b), s)| s.replica()[a..b].to_string());
             Some(Snapshot {
                 lang,
                 site,
                 local,
+                postfix_receiver,
+                receiver_text,
                 scope: session.map(|s| s.scope()),
                 imports: session.map(|s| s.imports()).unwrap_or_default(),
                 headers: i.headers.clone(),

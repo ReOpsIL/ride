@@ -134,6 +134,14 @@ impl Syntax for TreeSyntax {
             .unwrap_or_default()
     }
 
+    fn postfix_receiver(&self, text: &str, replace_start: usize) -> Option<(usize, usize)> {
+        if self.grammar.language != tree_sitter::Language::new(tree_sitter_rust::LANGUAGE) {
+            return None;
+        }
+        let tree = self.tree.as_ref()?;
+        super::rust_postfix::receiver(tree, text, replace_start)
+    }
+
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt> {
         let tree = self.tree.as_ref()?;
         symbol::symbol_at(

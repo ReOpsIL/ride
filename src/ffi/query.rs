@@ -1,4 +1,5 @@
 use super::kind::ItemKind;
+use super::session::OutlineItem;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Enum)]
 pub enum QueryMode {
@@ -59,6 +60,7 @@ pub struct CompletionHit {
     pub import_path: Option<String>,
     pub deprecated: bool,
     pub snippet: bool,
+    pub replace_start_byte: Option<u32>,
     pub source_path: Option<String>,
     pub byte_start: Option<u32>,
     pub byte_end: Option<u32>,
@@ -90,12 +92,40 @@ impl CompletionHit {
             import_path: None,
             deprecated: false,
             snippet: false,
+            replace_start_byte: None,
             source_path: None,
             byte_start: range.map(|r| r.0),
             byte_end: range.map(|r| r.1),
             score,
         }
     }
+}
+
+impl CompletionHit {
+    pub fn from_outline(item: &OutlineItem, score: f32, source_path: Option<String>) -> Self {
+        let mut hit = Self::local(
+            &item.name,
+            item.kind,
+            score,
+            Some((item.start_byte, item.end_byte)),
+        );
+        hit.signature = item.signature.clone();
+        hit.doc_paragraph = item.doc.clone();
+        hit.doc_first_sentence = first_sentence(&item.doc);
+        hit.source_path = source_path;
+        hit
+    }
+}
+
+pub fn first_sentence(doc: &str) -> String {
+    let t = doc.trim();
+    if t.is_empty() {
+        return String::new();
+    }
+    t.split_once(". ")
+        .map(|(a, _)| a.trim().to_string())
+        .or_else(|| t.strip_suffix('.').map(str::to_string))
+        .unwrap_or_else(|| t.to_string())
 }
 
 impl CompletionResponse {

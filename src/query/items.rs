@@ -27,7 +27,7 @@ pub fn item_search(
     if phrase {
         push_phrase(&mut clauses, index, schema, prefix);
     } else if let Ok(field) = schema.get_field("name_prefix") {
-        clauses.push((Occur::Must, Box::new(prefix_term(field, &low))));
+        clauses.push((Occur::Must, name_clause(schema, field, &low)));
     }
     push_term(
         &mut clauses,
@@ -68,6 +68,20 @@ pub fn item_search(
     let truncated = hits.len() > limit as usize;
     hits.truncate(limit as usize);
     CompletionResponse::new(q.query_id, hits, truncated)
+}
+
+fn name_clause(schema: &Schema, name_field: Field, low: &str) -> Box<dyn Query> {
+    let by_name = Box::new(prefix_term(name_field, low)) as Box<dyn Query>;
+    if low.chars().count() < 2 {
+        return by_name;
+    }
+    let Ok(hump_field) = schema.get_field("name_hump") else {
+        return by_name;
+    };
+    Box::new(BooleanQuery::new(vec![
+        (Occur::Should, by_name),
+        (Occur::Should, Box::new(prefix_term(hump_field, low))),
+    ]))
 }
 
 fn prefix_term(field: Field, low: &str) -> TermQuery {

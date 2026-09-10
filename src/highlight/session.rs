@@ -1,9 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use crate::error::EngineError;
-use crate::ffi::{
-    ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SignatureHelp, SymbolAt, TextEdit,
-};
+use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt, TextEdit};
 
 use super::edit::{apply_replica, to_ts_edit};
 use super::includes::IncludeRef;
@@ -72,12 +70,18 @@ impl BufferSession {
     }
 
     pub fn import_edit(&self, import_path: &str) -> Option<TextEdit> {
-        self.syntax.import_edit(&self.replica, import_path)
+        if self.lang != Lang::Rust {
+            return None;
+        }
+        super::rust_import::edit(&self.replica, import_path)
     }
 
-    pub fn signature_help(&self, byte: u32) -> Option<SignatureHelp> {
-        self.syntax
-            .signature_help(&self.replica, &self.last_outline, byte as usize)
+    pub fn call_site(&self, byte: u32) -> Option<super::call_site::CallSite> {
+        super::call_site::find(&self.replica, byte as usize)
+    }
+
+    pub fn postfix_receiver(&self, replace_start: usize) -> Option<(usize, usize)> {
+        self.syntax.postfix_receiver(&self.replica, replace_start)
     }
 
     pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {

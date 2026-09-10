@@ -4,6 +4,8 @@ use tantivy::{Searcher, TantivyDocument};
 use crate::ffi::CompletionHit;
 use crate::index::item_kind_from_label;
 
+const HUMP_PENALTY: f32 = 100.0;
+
 pub fn doc_hit(
     searcher: &Searcher,
     schema: &tantivy::schema::Schema,
@@ -14,9 +16,11 @@ pub fn doc_hit(
     let doc = searcher.doc::<TantivyDocument>(addr).ok()?;
     let field = |n: &str| schema.get_field(n).ok().and_then(|f| field_str(&doc, f));
     let name = field("name")?;
-    if !name.to_ascii_lowercase().starts_with(prefix_lower) {
+    let by_name = name.to_ascii_lowercase().starts_with(prefix_lower);
+    if !by_name && !crate::index::hump(&name).starts_with(prefix_lower) {
         return None;
     }
+    let score = if by_name { score } else { score - HUMP_PENALTY };
     let path = field("path").unwrap_or_else(|| name.clone());
     let crate_name = field("crate").unwrap_or_default();
     let kind = field("item_kind").unwrap_or_default();
@@ -35,6 +39,7 @@ pub fn doc_hit(
         import_path: None,
         deprecated: false,
         snippet: false,
+        replace_start_byte: None,
         source_path: field("source_path"),
         byte_start: field_u32(&doc, schema, "byte_start"),
         byte_end: field_u32(&doc, schema, "byte_end"),

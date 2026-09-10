@@ -10,6 +10,7 @@ mod highlight;
 pub mod includes;
 mod index;
 mod markdown;
+mod params;
 mod query;
 mod score;
 mod skip;

@@ -44,7 +44,7 @@ pub fn hits(
         let Ok(name) = node.utf8_text(text.as_bytes()) else {
             return;
         };
-        if !matches(name, &p) {
+        if name.is_empty() || !matches(name, &p) {
             return;
         }
         let tier = if (grammar.declares)(node, text) {

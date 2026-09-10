@@ -19,6 +19,27 @@ pub fn is_test_only(node: Node<'_>, source: &str) -> bool {
     })
 }
 
+pub fn derive_name(node: Node<'_>, source: &str) -> Option<String> {
+    let mut found = None;
+    each_attr(node, |attr| {
+        if attr_ident(attr, source).as_deref() != Some("proc_macro_derive") {
+            return;
+        }
+        let Some(args) = attr.child_by_field_name("arguments") else {
+            return;
+        };
+        let mut cursor = args.walk();
+        if let Some(first) = args
+            .named_children(&mut cursor)
+            .find(|c| c.kind() == "identifier")
+            && let Ok(text) = first.utf8_text(source.as_bytes())
+        {
+            found = Some(text.to_string());
+        }
+    });
+    found
+}
+
 pub fn path_attribute(node: Node<'_>, source: &str) -> Option<String> {
     let mut found = None;
     each_attr(node, |attr| {

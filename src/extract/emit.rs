@@ -4,7 +4,7 @@ use tree_sitter::Node;
 
 use crate::ffi::ItemKind;
 
-use super::attrs::{has_attr, is_deprecated};
+use super::attrs::{derive_name, has_attr, is_deprecated};
 use super::docs::{preceding_docs, signature, source_chunk};
 use super::item::{
     CrateContext, ItemDoc, ItemParts, Visibility, byte_range, field_text, join_path,
@@ -42,6 +42,14 @@ pub fn emit_fn(node: Node<'_>, args: &mut EmitArgs<'_>, type_ctx: Option<&TypeCt
     };
     let item = make_item(args, kind, path, name.clone(), vis, node);
     push_item(args, item, type_ctx.map(|t| t.type_path.as_str()));
+    if type_ctx.is_none()
+        && let Some(derive) = derive_name(node, args.source)
+    {
+        let path = join_path(args.module_path, &derive);
+        let mut item = make_item(args, ItemKind::Macro, path, derive, Visibility::Pub, node);
+        item.reachable = true;
+        args.out.items.push(item);
+    }
     if let Some(trait_path) = type_ctx.and_then(|t| t.trait_path.as_deref()) {
         let path = format!("{trait_path}::{name}");
         let item = make_item(args, kind, path, name, vis, node);

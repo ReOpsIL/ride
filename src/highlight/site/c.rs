@@ -76,11 +76,7 @@ fn classify(tree: Option<&Tree>, text: &str, at: usize, cpp: bool) -> SiteAt {
     } else {
         Site::Identifier(position(head, &WORDS))
     };
-    SiteAt {
-        site,
-        prefix,
-        replace_start: start,
-    }
+    SiteAt::new(site, prefix, start, text, at)
 }
 
 fn directive(text: &str, at: usize) -> Option<SiteAt> {
@@ -95,11 +91,13 @@ fn directive(text: &str, at: usize) -> Option<SiteAt> {
         .unwrap_or(at);
     let word = &text[word_start..word_end];
     if word_end == at {
-        return Some(SiteAt {
-            site: Site::Directive,
-            prefix: word.to_string(),
-            replace_start: word_start,
-        });
+        return Some(SiteAt::new(
+            Site::Directive,
+            word.to_string(),
+            word_start,
+            text,
+            at,
+        ));
     }
     if !INCLUDES.contains(&word) {
         return None;
@@ -116,12 +114,14 @@ fn directive(text: &str, at: usize) -> Option<SiteAt> {
         return Some(SiteAt::none(at));
     }
     let split = body.rfind('/').map(|i| i + 1).unwrap_or(0);
-    Some(SiteAt {
-        site: Site::Include {
+    Some(SiteAt::new(
+        Site::Include {
             quoted,
             dir: body[..split].to_string(),
         },
-        prefix: body[split..].to_string(),
-        replace_start: at - (body.len() - split),
-    })
+        body[split..].to_string(),
+        at - (body.len() - split),
+        text,
+        at,
+    ))
 }

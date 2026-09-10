@@ -13,3 +13,7 @@ pub use inner::deep::buried as surfaced;
 mod tests {
     pub fn in_tests() {}
 }
+#[proc_macro_derive(Fancy, attributes(fancy))]
+pub fn derive_fancy(input: u8) -> u8 {
+    input
+}
