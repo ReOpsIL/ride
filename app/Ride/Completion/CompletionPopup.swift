@@ -2,18 +2,16 @@ import AppKit
 
 final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableViewDelegate {
     let panel: NSPanel
-    private let layout = CompletionPopupLayout(frame: NSRect(origin: .zero, size: CompletionPopupLayout.size(rows: 1, doc: false)))
+    private let layout = CompletionPopupLayout(frame: NSRect(origin: .zero, size: CompletionPopupLayout.initialSize))
     private let table = NSTableView()
     private var hits: [CompletionHit] = []
     private var prefix = ""
     private var selected = 0
-    private var replaceUtf16 = 0
+    private var wideDoc = false
     weak var textView: RideTextView?
-    var queryId: UInt64 = 0
-    var suppress = false
 
     override init() {
-        panel = OverlayPanel.make(size: CompletionPopupLayout.size(rows: 1, doc: false))
+        panel = OverlayPanel.make(size: CompletionPopupLayout.initialSize)
         super.init()
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("hit"))
         column.resizingMask = .autoresizingMask
@@ -41,22 +39,25 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         panel.isVisible
     }
 
-    func show(hits: [CompletionHit], queryId: UInt64, replaceUtf16: Int, in view: RideTextView) {
+    var selectedHit: CompletionHit? {
+        hits.indices.contains(selected) ? hits[selected] : nil
+    }
+
+    func show(hits: [CompletionHit], prefix: String, truncated: Bool, selectedName: String?, in view: RideTextView) {
         self.hits = hits
-        self.queryId = queryId
-        self.replaceUtf16 = replaceUtf16
+        self.prefix = prefix
         textView = view
-        selected = 0
-        prefix = Self.typedPrefix(in: view, from: replaceUtf16)
+        selected = CompletionNarrowing.selection(in: hits, previous: selectedName) { $0.name }
         layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
+        layout.wide = wideDoc
+        layout.truncated = truncated
         layout.applyTheme()
         layout.configureScrolling(rows: hits.count)
         table.reloadData()
         table.sizeLastColumnToFit()
-        if !hits.isEmpty {
-            table.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
-        }
-        layout.doc.fill(hits.first)
+        table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
+        table.scrollRowToVisible(selected)
+        layout.doc.fill(selectedHit)
         OverlayPanel.present(panel, frame: frame(in: view))
     }
 
@@ -64,21 +65,27 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         panel.setFrame(frame(in: view), display: true)
     }
 
-    private func frame(in view: RideTextView) -> NSRect {
-        CompletionPlacement.frame(for: view, size: CompletionPopupLayout.size(rows: hits.count, doc: layout.showsDoc))
+    func toggleWideDoc() {
+        wideDoc.toggle()
+        guard isVisible, let view = textView else {
+            return
+        }
+        layout.wide = wideDoc
+        layout.doc.fill(selectedHit)
+        panel.setFrame(frame(in: view), display: true)
     }
 
-    private static func typedPrefix(in view: RideTextView, from start: Int) -> String {
-        let ns = view.string as NSString
-        let caret = min(view.selectedRange().location, ns.length)
-        let from = min(max(start, 0), caret)
-        return ns.substring(with: NSRange(location: from, length: caret - from))
+    func isAboveCaret(in view: NSTextView) -> Bool {
+        panel.frame.minY >= CompletionPlacement.caretRect(in: view).maxY - 1
+    }
+
+    private func frame(in view: RideTextView) -> NSRect {
+        CompletionPlacement.frame(for: view, size: layout.size(rows: hits.count))
     }
 
     func hide() {
         panel.orderOut(nil)
         hits = []
-        queryId = 0
     }
 
     func move(_ delta: Int) {
@@ -90,26 +97,12 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         table.scrollRowToVisible(selected)
     }
 
-    func accept() -> Bool {
-        guard isVisible, hits.indices.contains(selected), let view = textView else {
-            return false
-        }
-        let hit = hits[selected]
-        suppress = true
-        let caret = view.selectedRange().location
-        let start = min(replaceUtf16, caret)
-        let range = NSRange(location: start, length: max(0, caret - start))
-        view.insertText(hit.insertText, replacementRange: range)
-        hide()
-        return true
-    }
-
     func openSelectedSource() {
-        guard hits.indices.contains(selected), let path = hits[selected].sourcePath else {
+        guard let path = selectedHit?.sourcePath else {
             return
         }
         NotificationCenter.default.post(name: .rideOpenCatalog, object: URL(fileURLWithPath: path))
-        hide()
+        CompletionSession.shared.hide()
     }
 
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -133,7 +126,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         let row = table.selectedRow
         if row >= 0 {
             selected = row
-            layout.doc.fill(hits.indices.contains(row) ? hits[row] : nil)
+            layout.doc.fill(selectedHit)
         }
     }
 
@@ -143,11 +136,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
             openSelectedSource()
             return
         }
-        _ = accept()
-    }
-
-    static func accept(_ responseId: UInt64, latest: UInt64) -> Bool {
-        CompletionGate.accept(responseId, latest: latest)
+        _ = CompletionSession.shared.accept()
     }
 }
 

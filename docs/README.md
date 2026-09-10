@@ -129,6 +129,8 @@ Two extraction changes ship with the bump: enum variants are emitted as `variant
 | `run_check_c` | `clang -fsyntax-only` diagnostics for one C or C++ file, flags from `compile_commands.json` |
 | `has_tool` | whether a toolchain binary (`clang-format`, …) is on PATH or in the usual install dirs |
 | `format_c` | clang-format a C or C++ buffer (`--assume-filename` from the buffer path so `.clang-format` is honoured) |
+| `import_edit` | the `use` line to insert for a hit's `import_path`, as a `TextEdit` the app applies after accepting the hit (caret shifted past the inserted text) |
+| `signature_help` | signature of the call around the caret with parameter byte ranges and the active index; the app queries it after accepting a fn/method/macro hit, on `(` and `,` in Rust/C/C++, and on every caret move while its popup is visible |
 | `render_markdown` | markdown to HTML with line anchors and highlighted Rust, C and C++ fences, for the preview pane |
 | `open_session` / `apply_edit` / `set_visible_range` | highlight deltas, outline, parse errors; the language comes from the path and, for `.h`, the content (`Lang::for_buffer`) and is returned in `SessionOpen.lang` |
 

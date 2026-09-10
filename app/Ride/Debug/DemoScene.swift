@@ -84,6 +84,9 @@ enum DemoScene {
         let end = NSMaxRange(anchor)
         EditorJump.shared.select(NSRange(location: end, length: 0))
         view.insertText("\n    let m: HashM", replacementRange: NSRange(location: end, length: 0))
+        DemoLaunch.after(0.1) {
+            CompletionSession.shared.trigger(view: view)
+        }
     }
 
     private static func hover() {

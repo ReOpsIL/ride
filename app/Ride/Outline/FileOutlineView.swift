@@ -103,6 +103,8 @@ enum OutlineKind {
         case "field": return .field
         case "table": return .table
         case "target": return .target
+        case "variant": return .variant
+        case "header": return .header
         default: return .type
         }
     }
