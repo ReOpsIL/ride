@@ -20,6 +20,8 @@ pub enum ItemKind {
     Field,
     Table,
     Target,
+    Variant,
+    Header,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
