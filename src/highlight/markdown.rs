@@ -5,10 +5,10 @@ use crate::ffi::{
     ByteRange, CompletionHit, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt,
 };
 
-use super::fences::RustFences;
+use super::fences::Fences;
 use super::ranges::from_ts;
 use super::spans::highlights_in;
-use super::syntax::{Syntax, parse_failed};
+use super::syntax::{Syntax, lang_err, parse_failed, query_err};
 
 const BLOCK_QUERY: &str = include_str!("../../queries/markdown/block.scm");
 const INLINE_QUERY: &str = include_str!("../../queries/markdown/inline.scm");
@@ -20,7 +20,7 @@ pub struct MarkdownSyntax {
     inline_query: Query,
     block_tree: Option<Tree>,
     inline_tree: Option<Tree>,
-    fences: RustFences,
+    fences: Fences,
 }
 
 impl MarkdownSyntax {
@@ -40,7 +40,7 @@ impl MarkdownSyntax {
             inline_query,
             block_tree: None,
             inline_tree: None,
-            fences: RustFences::new()?,
+            fences: Fences::new()?,
         })
     }
 
@@ -169,17 +169,5 @@ fn headings(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     let mut cursor = node.walk();
     for child in node.named_children(&mut cursor) {
         headings(child, text, out);
-    }
-}
-
-fn lang_err(e: tree_sitter::LanguageError) -> EngineError {
-    EngineError::InvalidEdit {
-        message: format!("{e:?}"),
-    }
-}
-
-fn query_err(e: tree_sitter::QueryError) -> EngineError {
-    EngineError::InvalidEdit {
-        message: e.to_string(),
     }
 }

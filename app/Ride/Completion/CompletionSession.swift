@@ -23,7 +23,7 @@ final class CompletionSession {
 
     func schedule(document: BufferDocument, view: RideTextView, state: AppState) {
         work?.cancel()
-        guard document.isRust else {
+        guard document.hasCompletions else {
             hide()
             return
         }

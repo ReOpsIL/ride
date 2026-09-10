@@ -19,6 +19,8 @@ enum KindStyle {
         case .type: return "t"
         case .`static`: return "s"
         case .heading: return "#"
+        case .`class`: return "C"
+        case .namespace: return "N"
         }
     }
 

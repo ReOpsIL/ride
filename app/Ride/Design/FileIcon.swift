@@ -19,6 +19,9 @@ enum FileIcon {
         }
         switch (lower as NSString).pathExtension {
         case "rs": return FileIconSpec(symbol: "doc.text.fill", color: chrome.warning)
+        case "c", "h": return FileIconSpec(symbol: "c.square.fill", color: chrome.info)
+        case "cpp", "cc", "cxx", "hpp", "hh", "hxx", "inl", "ipp":
+            return FileIconSpec(symbol: "c.square.fill", color: chrome.accent)
         case "toml", "yml", "yaml": return FileIconSpec(symbol: "slider.horizontal.3", color: chrome.accent)
         case "md", "txt": return FileIconSpec(symbol: "doc.richtext", color: chrome.info)
         case "json": return FileIconSpec(symbol: "curlybraces", color: chrome.success)

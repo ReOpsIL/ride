@@ -6,6 +6,7 @@ use tantivy::{Index, IndexReader};
 use crate::ffi::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, QueryMode,
 };
+use crate::highlight::Lang;
 
 mod collect;
 mod exact;
@@ -28,6 +29,7 @@ pub enum IndexSrc<'a> {
 pub fn run_query(
     src: IndexSrc<'_>,
     mut q: CompletionQuery,
+    lang: Lang,
     buffer_hits: Vec<CompletionHit>,
     overlay: &HashSet<String>,
 ) -> CompletionResponse {
@@ -35,15 +37,16 @@ pub fn run_query(
     q.kind_filter = kind.or(q.kind_filter);
     q.prefix = prefix;
     let limit = if q.limit == 0 { 20 } else { q.limit };
+    let keywords = lang.keywords();
     match q.mode {
-        QueryMode::BufferLocal => merge_buffer(&q, buffer_hits, limit),
+        QueryMode::BufferLocal => merge_buffer(&q, keywords, buffer_hits, limit),
         QueryMode::PrefixCrates | QueryMode::Items | QueryMode::Phrase => {
             let mut resp = match src {
                 IndexSrc::Dir(dir) => search_index(dir, &q, overlay),
                 IndexSrc::Live(index, reader) => search_open(index, reader, &q, overlay),
             };
             if q.mode == QueryMode::Items {
-                let mut kw = keywords_for(&q, 8);
+                let mut kw = keywords_for(&q, keywords, 8);
                 kw.extend(resp.hits);
                 unique_by_name(&mut kw);
                 kw.sort_by(|a, b| {
@@ -61,8 +64,13 @@ pub fn run_query(
     }
 }
 
-fn merge_buffer(q: &CompletionQuery, extra: Vec<CompletionHit>, limit: u32) -> CompletionResponse {
-    let mut hits = keywords_for(q, limit);
+fn merge_buffer(
+    q: &CompletionQuery,
+    keywords: &[&str],
+    extra: Vec<CompletionHit>,
+    limit: u32,
+) -> CompletionResponse {
+    let mut hits = keywords_for(q, keywords, limit);
     hits.extend(extra);
     unique_by_name(&mut hits);
     hits.sort_by(|a, b| {
@@ -84,9 +92,9 @@ fn unique_by_name(hits: &mut Vec<CompletionHit>) {
     hits.retain(|h| seen.insert(h.name.clone()));
 }
 
-fn keywords_for(q: &CompletionQuery, limit: u32) -> Vec<CompletionHit> {
+fn keywords_for(q: &CompletionQuery, keywords: &[&str], limit: u32) -> Vec<CompletionHit> {
     if q.context == CompletionContext::MemberAccess {
         return Vec::new();
     }
-    keywords::keyword_hits(&q.prefix, limit)
+    keywords::keyword_hits(keywords, &q.prefix, limit)
 }

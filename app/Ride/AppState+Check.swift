@@ -9,7 +9,7 @@ extension AppState {
     }
 
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
-        if allowFormat, prefs.formatOnSave, buffer.fileURL?.pathExtension == "rs", buffer.id == activeID {
+        if allowFormat, prefs.formatOnSave, buffer.language == .rust, buffer.id == activeID {
             formatActive(thenSave: true)
         }
         guard let root = workspaceRoot, prefs.checkOnSave else {
@@ -46,9 +46,16 @@ extension AppState {
         }
         let text = buffer.text
         let edition = workspaceRoot.flatMap(cargoEdition)
+        let language = buffer.language
+        let path = buffer.fileURL?.path
         let id = buffer.id
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let result = Result { try engine.formatRust(text: text, edition: edition) }
+            let result = Result {
+                switch language {
+                case .c, .cpp: try engine.formatC(text: text, assumeFilename: path)
+                default: try engine.formatRust(text: text, edition: edition)
+                }
+            }
             DispatchQueue.main.async {
                 self?.formatFinished(result, bufferID: id, thenSave: thenSave)
             }
@@ -70,7 +77,7 @@ extension AppState {
             objectWillChange.send()
         case .failure(let error):
             if case let EngineError.Tool(message) = error {
-                formatError = message.split(separator: "\n").first.map(String.init) ?? "rustfmt failed"
+                formatError = message.split(separator: "\n").first.map(String.init) ?? "format failed"
             } else {
                 formatError = "\(error)"
             }

@@ -1,6 +1,8 @@
 use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, html};
 
-use super::code::rust_to_html;
+use crate::highlight::Lang;
+
+use super::code::code_to_html;
 
 pub fn render(text: &str) -> String {
     let mut options = Options::empty();
@@ -11,7 +13,8 @@ pub fn render(text: &str) -> String {
     options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
     let lines = LineIndex::new(text);
     let mut depth = 0usize;
-    let mut code_lang: Option<String> = None;
+    let mut code_lang: Option<Lang> = None;
+    let mut in_fence = false;
     let mut events: Vec<Event<'_>> = Vec::new();
     for (event, range) in Parser::new_ext(text, options).into_offset_iter() {
         match &event {
@@ -23,21 +26,23 @@ pub fn render(text: &str) -> String {
                     ));
                 }
                 if let Tag::CodeBlock(CodeBlockKind::Fenced(info)) = tag {
-                    code_lang = Some(info.to_string());
+                    code_lang = Lang::for_fence(info);
+                    in_fence = true;
                 }
                 depth += 1;
             }
             Event::End(_) => {
                 depth = depth.saturating_sub(1);
-                if code_lang.is_some()
-                    && matches!(event, Event::End(pulldown_cmark::TagEnd::CodeBlock))
-                {
+                if in_fence && matches!(event, Event::End(pulldown_cmark::TagEnd::CodeBlock)) {
                     code_lang = None;
+                    in_fence = false;
                 }
             }
-            Event::Text(code) if code_lang.as_deref().is_some_and(is_rust) => {
-                events.push(Event::Html(rust_to_html(code).into()));
-                continue;
+            Event::Text(code) => {
+                if let Some(lang) = code_lang {
+                    events.push(Event::Html(code_to_html(lang, code).into()));
+                    continue;
+                }
             }
             _ => {}
         }
@@ -59,10 +64,6 @@ fn is_block(tag: &Tag<'_>) -> bool {
             | Tag::BlockQuote(_)
             | Tag::HtmlBlock
     )
-}
-
-fn is_rust(info: &str) -> bool {
-    crate::highlight::is_rust_fence(info)
 }
 
 struct LineIndex {

@@ -1,36 +1,47 @@
-use tree_sitter::{InputEdit, Parser, Query, Tree};
+use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
 use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
+use super::grammar::Grammar;
 use super::ranges::from_ts;
-use super::syntax::{Syntax, parse_failed};
-use super::{errors, locals, outline, spans, symbol};
+use super::syntax::{Syntax, lang_err, parse_failed, query_err};
+use super::{errors, locals, spans, symbol};
 
-pub struct RustSyntax {
+pub struct TreeSyntax {
+    grammar: Grammar,
     parser: Parser,
     query: Query,
     tree: Option<Tree>,
 }
 
-impl RustSyntax {
-    pub fn new() -> Result<Self, EngineError> {
+impl TreeSyntax {
+    pub fn new(grammar: Grammar) -> Result<Self, EngineError> {
         let mut parser = Parser::new();
-        parser
-            .set_language(&tree_sitter_rust::LANGUAGE.into())
-            .map_err(|e| EngineError::InvalidEdit {
-                message: format!("{e:?}"),
-            })?;
-        let query = spans::query().map_err(|message| EngineError::InvalidEdit { message })?;
+        parser.set_language(&grammar.language).map_err(lang_err)?;
+        let query = Query::new(&grammar.language, grammar.highlights).map_err(query_err)?;
         Ok(Self {
+            grammar,
             parser,
             query,
             tree: None,
         })
     }
+
+    pub fn set_included_ranges(&mut self, ranges: &[Range]) -> Result<(), EngineError> {
+        self.parser
+            .set_included_ranges(ranges)
+            .map_err(|e| EngineError::InvalidEdit {
+                message: format!("{e:?}"),
+            })
+    }
+
+    pub fn clear(&mut self) {
+        self.tree = None;
+    }
 }
 
-impl Syntax for RustSyntax {
+impl Syntax for TreeSyntax {
     fn parse_full(&mut self, text: &str) -> Result<(), EngineError> {
         self.tree = Some(self.parser.parse(text, None).ok_or_else(parse_failed)?);
         Ok(())
@@ -62,7 +73,10 @@ impl Syntax for RustSyntax {
     }
 
     fn outline(&self, text: &str) -> Vec<OutlineItem> {
-        outline::from_source(text).unwrap_or_default()
+        self.tree
+            .as_ref()
+            .map(|t| (self.grammar.outline)(t, text))
+            .unwrap_or_default()
     }
 
     fn errors(&self) -> Vec<ParseErrorSpan> {
@@ -81,13 +95,18 @@ impl Syntax for RustSyntax {
     ) -> Vec<CompletionHit> {
         self.tree
             .as_ref()
-            .map(|t| locals::hits(t, text, outline, prefix, limit))
+            .map(|t| locals::hits(t, text, outline, prefix, limit, self.grammar.local_kinds))
             .unwrap_or_default()
     }
 
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt> {
-        self.tree
-            .as_ref()
-            .and_then(|t| symbol::symbol_at(t, text, byte))
+        let tree = self.tree.as_ref()?;
+        symbol::symbol_at(
+            tree,
+            text,
+            byte,
+            self.grammar.symbol_kinds,
+            self.grammar.qualifier,
+        )
     }
 }

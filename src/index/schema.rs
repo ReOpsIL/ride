@@ -86,7 +86,7 @@ pub fn scope_rank(scope: Scope) -> u64 {
     }
 }
 
-const KIND_ORDER: [ItemKind; 15] = [
+const KIND_ORDER: [ItemKind; 17] = [
     ItemKind::Keyword,
     ItemKind::Local,
     ItemKind::Crate,
@@ -102,6 +102,8 @@ const KIND_ORDER: [ItemKind; 15] = [
     ItemKind::Type,
     ItemKind::Static,
     ItemKind::Heading,
+    ItemKind::Class,
+    ItemKind::Namespace,
 ];
 
 pub fn kind_rank(kind: ItemKind) -> u64 {
@@ -131,6 +133,8 @@ pub fn item_kind_from_label(label: &str) -> ItemKind {
         "const" => ItemKind::Const,
         "static" => ItemKind::Static,
         "heading" => ItemKind::Heading,
+        "class" => ItemKind::Class,
+        "namespace" => ItemKind::Namespace,
         _ => ItemKind::Type,
     }
 }
@@ -152,6 +156,8 @@ pub fn item_kind_label(kind: ItemKind) -> &'static str {
         ItemKind::Type => "type",
         ItemKind::Static => "static",
         ItemKind::Heading => "heading",
+        ItemKind::Class => "class",
+        ItemKind::Namespace => "namespace",
     }
 }
 

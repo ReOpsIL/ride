@@ -173,6 +173,8 @@ final class SessionService {
         case .type: return "type"
         case .`static`: return "static"
         case .heading: return "heading"
+        case .`class`: return "class"
+        case .namespace: return "namespace"
         }
     }
 }

@@ -98,6 +98,8 @@ enum OutlineKind {
         case "const": return .const
         case "static": return .static
         case "heading": return .heading
+        case "class": return .`class`
+        case "namespace": return .namespace
         default: return .type
         }
     }

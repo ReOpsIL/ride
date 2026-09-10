@@ -33,14 +33,21 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
         Some((
             symbol,
             local,
+            session.lang().has_catalog(),
             i.config.index_dir.clone(),
             i.index.clone(),
             i.reader.clone(),
         ))
     });
-    let Ok(Some((symbol, mut hits, index_dir, index, reader))) = snap else {
+    let Ok(Some((symbol, mut hits, catalog, index_dir, index, reader))) = snap else {
         return DefinitionResponse::empty();
     };
+    if !catalog {
+        return DefinitionResponse {
+            symbol: Some(symbol),
+            hits,
+        };
+    }
     let src = match (index.as_ref(), reader.as_ref()) {
         (Some(index), Some(reader)) => IndexSrc::Live(index, reader),
         _ => IndexSrc::Dir(Path::new(&index_dir)),

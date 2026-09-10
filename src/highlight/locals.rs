@@ -10,6 +10,7 @@ pub fn hits(
     outline: &[OutlineItem],
     prefix: &str,
     limit: u32,
+    kinds: &[&str],
 ) -> Vec<CompletionHit> {
     let cap = limit as usize;
     let mut seen = HashSet::new();
@@ -33,7 +34,7 @@ pub fn hits(
             Some(item.end_byte),
         ));
     }
-    collect_idents(tree.root_node(), text, &p, &mut seen, &mut out, cap);
+    collect_idents(tree.root_node(), text, &p, kinds, &mut seen, &mut out, cap);
     out
 }
 
@@ -41,6 +42,7 @@ fn collect_idents(
     node: Node<'_>,
     text: &str,
     prefix: &str,
+    kinds: &[&str],
     seen: &mut HashSet<String>,
     out: &mut Vec<CompletionHit>,
     cap: usize,
@@ -48,7 +50,7 @@ fn collect_idents(
     if out.len() >= cap {
         return;
     }
-    if matches!(node.kind(), "identifier" | "type_identifier")
+    if kinds.contains(&node.kind())
         && let Ok(name) = node.utf8_text(text.as_bytes())
         && matches_prefix(name, prefix)
         && seen.insert(name.to_string())
@@ -63,7 +65,7 @@ fn collect_idents(
     }
     for i in 0..node.named_child_count() {
         if let Some(child) = node.named_child(u32::try_from(i).unwrap_or(u32::MAX)) {
-            collect_idents(child, text, prefix, seen, out, cap);
+            collect_idents(child, text, prefix, kinds, seen, out, cap);
         }
     }
 }

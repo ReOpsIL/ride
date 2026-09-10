@@ -17,3 +17,10 @@
 - index: ~440 MB per generation for 1.58M docs; audit stored fields (source_chunk is stored and unused by the app)
 - engine: replace the 250 ms manifest poll with an FSEvents-driven reload
 - query: in-app completion for `Has` ranked a cache crate's exact `has` method above the `Hash` trait while the CLI does not; compare the app's query (context, current_crate) with the CLI's
+
+# C / C++ (added 2026-09-10)
+
+- check: no diagnostics for C/C++; a `compile_commands.json`-driven `clang` run (or `clangd`) would fill the Problems panel the way `cargo check` does
+- highlight: `.h` is always C; sniff the header for `class`/`namespace`/`template` and open it as C++ when found
+- highlight: C/C++ definitions are buffer-only; index `#include` targets found on the include path for cross-file jumps
+- highlight: C++ completion has no member-access awareness (`obj.` lists all buffer identifiers)

@@ -15,6 +15,8 @@ pub enum ItemKind {
     Type,
     Static,
     Heading,
+    Class,
+    Namespace,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]

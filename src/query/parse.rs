@@ -21,6 +21,8 @@ pub fn parse_prefix(raw: &str, existing: Option<ItemKind>) -> (Option<ItemKind>,
         "static" => Some(ItemKind::Static),
         "method" => Some(ItemKind::Method),
         "crate" => Some(ItemKind::Crate),
+        "class" => Some(ItemKind::Class),
+        "namespace" => Some(ItemKind::Namespace),
         _ => None,
     };
     if kind.is_some() {

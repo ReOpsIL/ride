@@ -2,15 +2,8 @@ use crate::ffi::{CompletionHit, ItemKind};
 
 use super::rank::{EXACT, KEYWORD, length_bonus};
 
-pub const KEYWORDS: &[&str] = &[
-    "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
-    "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
-    "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
-    "unsafe", "use", "where", "while",
-];
-
-pub fn keyword_hits(prefix: &str, limit: u32) -> Vec<CompletionHit> {
-    KEYWORDS
+pub fn keyword_hits(keywords: &[&str], prefix: &str, limit: u32) -> Vec<CompletionHit> {
+    keywords
         .iter()
         .filter(|k| prefix.is_empty() || k.starts_with(prefix))
         .take(limit as usize)

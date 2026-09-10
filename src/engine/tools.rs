@@ -1,7 +1,7 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::check::{format_source, run_check};
+use crate::check::{format_clang, format_source, run_check};
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 
@@ -29,6 +29,19 @@ impl Engine {
     ) -> Result<String, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
             format_source(&text, edition.as_deref())
+        })) {
+            Ok(r) => r,
+            Err(p) => Err(EngineError::from_panic(p)),
+        }
+    }
+
+    pub fn format_c(
+        &self,
+        text: String,
+        assume_filename: Option<String>,
+    ) -> Result<String, EngineError> {
+        match catch_unwind(AssertUnwindSafe(|| {
+            format_clang(&text, assume_filename.as_deref())
         })) {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),

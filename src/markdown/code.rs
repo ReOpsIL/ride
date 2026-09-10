@@ -1,8 +1,8 @@
 use crate::ffi::CaptureKind;
-use crate::highlight::rust_highlights;
+use crate::highlight::{Lang, source_highlights};
 
-pub fn rust_to_html(code: &str) -> String {
-    let spans = rust_highlights(code).unwrap_or_default();
+pub fn code_to_html(lang: Lang, code: &str) -> String {
+    let spans = source_highlights(lang, code).unwrap_or_default();
     let mut out = String::with_capacity(code.len() * 2);
     let mut cursor = 0usize;
     for span in spans {

@@ -24,11 +24,14 @@ pub fn length_bonus(len: u64) -> f32 {
 
 pub fn kind_weight(kind: ItemKind) -> f32 {
     match kind {
-        ItemKind::Struct | ItemKind::Enum | ItemKind::Trait | ItemKind::Union | ItemKind::Type => {
-            40.0
-        }
+        ItemKind::Struct
+        | ItemKind::Enum
+        | ItemKind::Trait
+        | ItemKind::Union
+        | ItemKind::Type
+        | ItemKind::Class => 40.0,
         ItemKind::Fn | ItemKind::Macro => 35.0,
-        ItemKind::Mod | ItemKind::Crate => 30.0,
+        ItemKind::Mod | ItemKind::Crate | ItemKind::Namespace => 30.0,
         ItemKind::Method => 20.0,
         ItemKind::Const | ItemKind::Static => 10.0,
         ItemKind::Keyword | ItemKind::Local | ItemKind::Heading => 0.0,

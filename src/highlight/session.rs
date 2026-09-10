@@ -8,6 +8,7 @@ use super::syntax::{Lang, Syntax};
 
 pub struct BufferSession {
     pub generation: u64,
+    lang: Lang,
     replica: String,
     syntax: Box<dyn Syntax>,
     already_covered: Vec<ByteRange>,
@@ -17,6 +18,10 @@ pub struct BufferSession {
 impl BufferSession {
     pub fn replica(&self) -> &str {
         &self.replica
+    }
+
+    pub fn lang(&self) -> Lang {
+        self.lang
     }
 
     pub fn outline(&self) -> &[OutlineItem] {
@@ -52,6 +57,7 @@ impl BufferSession {
         let errors = syntax.errors();
         let session = Self {
             generation: 1,
+            lang,
             replica: text,
             syntax,
             already_covered: painted.clone(),

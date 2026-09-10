@@ -21,6 +21,8 @@ enum CompletionRowStyle {
         case .type: return "ty"
         case .`static`: return "st"
         case .heading: return "#"
+        case .`class`: return "cls"
+        case .namespace: return "ns"
         }
     }
 
@@ -28,8 +30,8 @@ enum CompletionRowStyle {
         switch kind {
         case .keyword: return theme.keyword
         case .local: return theme.variable
-        case .crate, .mod: return theme.property
-        case .`struct`, .`enum`, .union, .trait, .type: return theme.type
+        case .crate, .mod, .namespace: return theme.property
+        case .`struct`, .`enum`, .union, .trait, .type, .`class`: return theme.type
         case .fn, .method: return theme.function
         case .macro: return theme.macro
         case .const, .`static`: return theme.constant
