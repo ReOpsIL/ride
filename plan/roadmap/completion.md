@@ -22,7 +22,7 @@ Goal: the best completion we can build without a model. Every completion site an
 | 4 | Auto-import (`import_edit`) | done |
 | 4 | Rust receiver typing, struct-literal fields | done (`highlight/rust_receiver.rs`, `rust_types.rs`, `engine/rust_members.rs`) |
 | 4 | Enum variants, `#[derive]` and attribute completion, C directives | done |
-| 5 | Scope cache, system header summaries on disk, C++ `::`, field chains, `auto` | engine branch |
+| 5 | Scope cache, system header summaries on disk, C++ `::`, field chains, `auto` | done (`highlight/scope.rs`, `engine/reach.rs`, `engine/header_store.rs`, `highlight/c_scopes.rs`, `c_members.rs`) |
 
 ## Audit
 
