@@ -7,6 +7,7 @@ use super::edit::{apply_replica, to_ts_edit};
 use super::includes::IncludeRef;
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{subtract, union_into};
+use super::site::SiteAt;
 use super::syntax::{Lang, LocalHits, LocalQuery, Syntax};
 use super::types::TypeTable;
 
@@ -58,6 +59,14 @@ impl BufferSession {
 
     pub fn local_hits(&self, q: &LocalQuery<'_>) -> LocalHits {
         self.syntax.local_hits(&self.replica, &self.last_outline, q)
+    }
+
+    pub fn site_at(&self, byte: u32) -> SiteAt {
+        self.syntax.site_at(&self.replica, byte as usize)
+    }
+
+    pub fn imports(&self) -> Vec<String> {
+        self.syntax.imports(&self.replica)
     }
 
     pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {

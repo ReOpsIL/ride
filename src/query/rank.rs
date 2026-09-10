@@ -3,11 +3,12 @@ use tantivy::{DocId, Score, SegmentReader};
 
 use crate::ffi::{CompletionContext, ItemKind};
 use crate::index::kind_from_rank;
+use crate::score::DEPRECATED_PENALTY;
 
-pub const EXACT: f32 = 1000.0;
-pub const KEYWORD: f32 = 500.0;
+pub use crate::score::{EXACT, KEYWORD, kind_weight, length_bonus};
+
 const SCOPE_BONUS: [f32; 5] = [400.0, 300.0, 300.0, 150.0, 0.0];
-const EXACT_SCALE: [f32; 5] = [1.0, 0.8, 0.8, 0.5, 0.15];
+const EXACT_SCALE: [f32; 5] = [1.0, 0.8, 0.8, 0.15, 0.05];
 const LEN_CAP: u64 = 40;
 const PATH_PENALTY: f32 = 0.1;
 const DOC_BONUS: f32 = 5.0;
@@ -18,37 +19,13 @@ pub struct Ranking {
     pub context: CompletionContext,
 }
 
-pub fn length_bonus(len: u64) -> f32 {
-    LEN_CAP.saturating_sub(len) as f32
-}
-
-pub fn kind_weight(kind: ItemKind) -> f32 {
-    match kind {
-        ItemKind::Struct
-        | ItemKind::Enum
-        | ItemKind::Trait
-        | ItemKind::Union
-        | ItemKind::Type
-        | ItemKind::Class => 40.0,
-        ItemKind::Fn | ItemKind::Macro | ItemKind::Target => 35.0,
-        ItemKind::Mod | ItemKind::Crate | ItemKind::Namespace | ItemKind::Table => 30.0,
-        ItemKind::Method | ItemKind::Variant => 20.0,
-        ItemKind::Const | ItemKind::Static => 10.0,
-        ItemKind::Keyword
-        | ItemKind::Local
-        | ItemKind::Heading
-        | ItemKind::Field
-        | ItemKind::Header => 0.0,
-    }
-}
-
 pub fn context_bonus(context: CompletionContext, kind: ItemKind) -> f32 {
     use ItemKind::*;
     match (context, kind) {
         (CompletionContext::TypePosition, Struct | Enum | Trait | Union | Type) => 60.0,
         (CompletionContext::TypePosition, Mod | Crate) => 20.0,
         (CompletionContext::ValuePosition, Fn | Const | Static | Macro) => 40.0,
-        (CompletionContext::ValuePosition, Struct | Enum) => 20.0,
+        (CompletionContext::ValuePosition, Struct | Enum | Variant) => 20.0,
         (CompletionContext::MemberAccess, Method | Field) => 80.0,
         _ => 0.0,
     }
@@ -61,6 +38,8 @@ pub struct Columns {
     name: Option<Column<u64>>,
     path: Option<Column<u64>>,
     doc: Option<Column<u64>>,
+    reachable: Option<Column<u64>>,
+    deprecated: Option<Column<u64>>,
 }
 
 impl Columns {
@@ -73,11 +52,17 @@ impl Columns {
             name: ff.u64("name_hash").ok(),
             path: ff.u64("path_len").ok(),
             doc: ff.u64("has_doc").ok(),
+            reachable: ff.u64("reachable").ok(),
+            deprecated: ff.u64("deprecated").ok(),
         }
     }
 
     pub fn name_key(&self, doc: DocId) -> u64 {
         first(&self.name, doc).unwrap_or(u64::from(doc))
+    }
+
+    pub fn reachable(&self, doc: DocId) -> bool {
+        first(&self.reachable, doc).unwrap_or(1) == 1
     }
 
     pub fn score(&self, doc: DocId, bm25: Score, ranking: Ranking) -> f32 {
@@ -86,6 +71,7 @@ impl Columns {
         let len = first(&self.len, doc).unwrap_or(LEN_CAP);
         let path = first(&self.path, doc).unwrap_or(0) as f32;
         let documented = first(&self.doc, doc).unwrap_or(0) as f32;
+        let deprecated = first(&self.deprecated, doc).unwrap_or(0) as f32;
         let exact = if len == ranking.prefix_len {
             EXACT * EXACT_SCALE[scope]
         } else {
@@ -98,6 +84,7 @@ impl Columns {
             + length_bonus(len)
             - PATH_PENALTY * path
             + DOC_BONUS * documented
+            - DEPRECATED_PENALTY * deprecated
             + bm25
     }
 }

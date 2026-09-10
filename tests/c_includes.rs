@@ -21,6 +21,7 @@ fn engine() -> std::sync::Arc<ride_engine::Engine> {
 }
 
 fn query(session_id: u64, prefix: &str, at: usize) -> CompletionQuery {
+    let at = at + prefix.len();
     CompletionQuery {
         query_id: 1,
         session_id,

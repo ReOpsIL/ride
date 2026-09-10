@@ -77,3 +77,17 @@ fn definition_scope(definition: Node<'_>, text: &str) -> Option<String> {
 pub fn no_receiver(_: &Tree, _: &str, _: Node<'_>) -> Option<String> {
     None
 }
+
+pub fn declares_local(node: Node<'_>, _: &str) -> bool {
+    let mut current = node;
+    for _ in 0..4 {
+        let Some(parent) = current.parent() else {
+            return false;
+        };
+        if DECLARATIONS.contains(&parent.kind()) {
+            return super::locals::within_field(parent, "declarator", node);
+        }
+        current = parent;
+    }
+    false
+}

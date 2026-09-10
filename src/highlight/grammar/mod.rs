@@ -2,6 +2,7 @@ use tree_sitter::{Language, Node, Tree};
 
 use crate::ffi::OutlineItem;
 use crate::highlight::includes::IncludeRef;
+use crate::highlight::site::Classifier;
 use crate::highlight::types::TypeTable;
 
 pub mod c;
@@ -16,6 +17,7 @@ pub struct Grammar {
     pub highlights: &'static str,
     pub keywords: &'static [&'static str],
     pub local_kinds: &'static [&'static str],
+    pub declares: crate::highlight::locals::Declares,
     pub symbol_kinds: &'static [&'static str],
     pub qualifier: fn(Node<'_>, &str) -> Option<String>,
     pub outline: fn(&Tree, &str) -> Vec<OutlineItem>,
@@ -24,4 +26,6 @@ pub struct Grammar {
     pub receiver_type: fn(&Tree, &str, Node<'_>) -> Option<String>,
     pub type_table: fn(&Tree, &str) -> TypeTable,
     pub includes: fn(&Tree, &str) -> Vec<IncludeRef>,
+    pub site: Classifier,
+    pub imports: fn(&Tree, &str) -> Vec<String>,
 }

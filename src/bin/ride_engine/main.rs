@@ -2,6 +2,9 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
+
+mod complete;
+mod out;
 use ride_engine::{EngineConfig, engine_start, last_status, rebuild_index, write_index};
 
 #[derive(Parser, Debug)]
@@ -26,6 +29,17 @@ enum Command {
         #[arg(long, default_value_t = 1)]
         repeat: u32,
     },
+    Complete {
+        file: PathBuf,
+        #[arg(long)]
+        byte: Option<usize>,
+        #[arg(long)]
+        find: Option<String>,
+        #[arg(long)]
+        typed: Option<String>,
+        #[arg(long, default_value_t = 1)]
+        repeat: u32,
+    },
     Status,
 }
 
@@ -43,6 +57,18 @@ fn main() -> ExitCode {
             query_cmd(query, cli.index_dir, repeat);
             ExitCode::SUCCESS
         }
+        Some(Command::Complete {
+            file,
+            byte,
+            find,
+            typed,
+            repeat,
+        }) => complete::run(
+            config(cli.index_dir),
+            &file,
+            complete::Cursor { byte, find, typed },
+            repeat,
+        ),
         Some(Command::Status) => {
             status_cmd(cli.index_dir);
             ExitCode::SUCCESS
@@ -113,26 +139,7 @@ fn query_cmd(query: String, index_dir: Option<String>, repeat: u32) {
         let p95 = timings[(timings.len() * 95 / 100).min(timings.len() - 1)];
         eprintln!("p50 {p50:?} p95 {p95:?} over {} runs", timings.len());
     }
-    let hits: Vec<HitOut> = resp
-        .hits
-        .iter()
-        .map(|h| HitOut {
-            name: h.name.clone(),
-            path: h.path.clone(),
-            kind: format!("{:?}", h.item_kind),
-            crate_name: h.crate_name.clone(),
-            doc: h.doc_first_sentence.clone(),
-            score: h.score,
-        })
-        .collect();
-    match serde_json::to_string(&QueryOut {
-        query_id: resp.query_id,
-        truncated: resp.truncated,
-        hits,
-    }) {
-        Ok(s) => println!("{s}"),
-        Err(e) => eprintln!("{e}"),
-    }
+    out::print(&resp);
 }
 
 fn status_cmd(index_dir: Option<String>) {
@@ -157,21 +164,4 @@ fn config(index_dir: Option<String>) -> EngineConfig {
         sysroot: None,
         offline_metadata: true,
     }
-}
-
-#[derive(serde::Serialize)]
-struct QueryOut {
-    query_id: u64,
-    truncated: bool,
-    hits: Vec<HitOut>,
-}
-
-#[derive(serde::Serialize)]
-struct HitOut {
-    name: String,
-    path: String,
-    kind: String,
-    crate_name: String,
-    doc: String,
-    score: f32,
 }

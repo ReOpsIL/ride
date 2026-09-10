@@ -64,6 +64,9 @@ impl SegmentCollector for BestPerNameSegment {
     type Fruit = HashMap<u64, (f32, DocAddress)>;
 
     fn collect(&mut self, doc: DocId, bm25: Score) {
+        if !self.columns.reachable(doc) {
+            return;
+        }
         let score = self.columns.score(doc, bm25, self.ranking);
         let key = self.columns.name_key(doc);
         match self.best.get(&key) {

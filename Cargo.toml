@@ -9,7 +9,7 @@ crate-type = ["lib", "staticlib", "cdylib"]
 
 [[bin]]
 name = "ride-engine"
-path = "src/bin/ride_engine.rs"
+path = "src/bin/ride_engine/main.rs"
 
 [[bin]]
 name = "uniffi-bindgen"

@@ -38,7 +38,7 @@ fn names(
     after: &str,
     prefix: &str,
 ) -> Vec<(String, ItemKind)> {
-    let at = src.find(after).expect("anchor") + after.len();
+    let at = src.find(after).expect("anchor") + after.len() + prefix.len();
     engine
         .query_completions(query(session, prefix, at))
         .hits
@@ -77,8 +77,8 @@ fn c_member_access_lists_struct_fields_through_typedef_and_pointer() {
         vec![("width".to_string(), ItemKind::Field)],
         "{arrow:?}"
     );
-    let keywords = names(&engine, id, C_SRC, "return r->", "i");
-    assert!(keywords.is_empty(), "{keywords:?}");
+    let keywords = names(&engine, id, C_SRC, "return r->", "w");
+    assert!(!keywords.iter().any(|(n, _)| n == "while"), "{keywords:?}");
 }
 
 #[test]

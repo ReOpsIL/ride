@@ -44,7 +44,14 @@ fn engine() -> std::sync::Arc<ride_engine::Engine> {
     })
 }
 
-fn names(engine: &ride_engine::Engine, session: u64, prefix: &str) -> Vec<(String, ItemKind)> {
+fn names(
+    engine: &ride_engine::Engine,
+    session: u64,
+    src: &str,
+    prefix: &str,
+) -> Vec<(String, ItemKind)> {
+    let text = format!("{src}\n{prefix}");
+    engine.set_text(session, text.clone(), None).unwrap();
     engine
         .query_completions(CompletionQuery {
             query_id: 1,
@@ -52,8 +59,8 @@ fn names(engine: &ride_engine::Engine, session: u64, prefix: &str) -> Vec<(Strin
             prefix: prefix.into(),
             mode: QueryMode::Items,
             context: CompletionContext::Unknown,
-            cursor_byte: 0,
-            replace_start_byte: 0,
+            cursor_byte: text.len() as u32,
+            replace_start_byte: text.len() as u32,
             current_crate: None,
             current_module: None,
             kind_filter: None,
@@ -182,33 +189,33 @@ fn completion_offers_keywords_and_buffer_items_without_the_catalog() {
         .open_session("t".into(), Some("/p/Cargo.toml".into()), TOML.into(), None)
         .unwrap();
     assert_eq!(toml.lang, Lang::Toml);
-    let hits = names(&engine, toml.session_id, "dep");
+    let hits = names(&engine, toml.session_id, TOML, "dep");
     assert!(
         hits.contains(&("dependencies".to_string(), ItemKind::Table)),
         "{hits:?}"
     );
-    let hits = names(&engine, toml.session_id, "dev");
+    let hits = names(&engine, toml.session_id, TOML, "dev");
     assert!(
         hits.contains(&("dev-dependencies".to_string(), ItemKind::Keyword)),
         "{hits:?}"
     );
-    let hits = names(&engine, toml.session_id, "edi");
+    let hits = names(&engine, toml.session_id, TOML, "edi");
     assert!(hits.iter().any(|(n, _)| n == "edition"), "{hits:?}");
 
     let make = engine
         .open_session("m".into(), Some("/p/Makefile".into()), MAKE.into(), None)
         .unwrap();
-    let hits = names(&engine, make.session_id, "CF");
+    let hits = names(&engine, make.session_id, MAKE, "CF");
     assert!(
         hits.contains(&("CFLAGS".to_string(), ItemKind::Static)),
         "{hits:?}"
     );
-    let hits = names(&engine, make.session_id, "pat");
+    let hits = names(&engine, make.session_id, MAKE, "pat");
     assert!(
         hits.contains(&("patsubst".to_string(), ItemKind::Keyword)),
         "{hits:?}"
     );
-    let hits = names(&engine, make.session_id, "cle");
+    let hits = names(&engine, make.session_id, MAKE, "cle");
     assert!(
         hits.contains(&("clean".to_string(), ItemKind::Target)),
         "{hits:?}"
@@ -226,13 +233,13 @@ fn completion_offers_keywords_and_buffer_items_without_the_catalog() {
             None,
         )
         .unwrap();
-    let hits = names(&engine, cmake.session_id, "target_");
+    let hits = names(&engine, cmake.session_id, CMAKE, "target_");
     assert!(
         hits.iter()
             .any(|(n, k)| n == "target_link_libraries" && *k == ItemKind::Keyword),
         "{hits:?}"
     );
-    let hits = names(&engine, cmake.session_id, "demo_");
+    let hits = names(&engine, cmake.session_id, CMAKE, "demo_");
     assert!(
         hits.contains(&("demo_add_warnings".to_string(), ItemKind::Fn)),
         "{hits:?}"

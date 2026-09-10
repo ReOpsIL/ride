@@ -8,8 +8,8 @@ use super::grammar::Grammar;
 use super::walk::each_node;
 
 const RECEIVER_KINDS: &[&str] = &["identifier", "field_identifier", "this", "self"];
-pub const METHOD_SCORE: f32 = 45.0;
-pub const FIELD_SCORE: f32 = 40.0;
+pub const METHOD_SCORE: f32 = crate::score::TIER_ITEM;
+pub const FIELD_SCORE: f32 = crate::score::TIER_MENTION;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Access {

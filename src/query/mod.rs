@@ -8,6 +8,7 @@ use crate::ffi::{
 };
 use crate::highlight::Lang;
 
+mod children;
 mod collect;
 mod exact;
 mod hit;
@@ -17,9 +18,22 @@ mod parse;
 mod rank;
 mod search;
 
+pub use children::{Filter, children, listed};
 pub use exact::exact_search;
+pub use keywords::keyword_hits;
 pub use parse::parse_prefix;
 pub use search::{search_index, search_open};
+
+pub fn search(
+    src: IndexSrc<'_>,
+    q: &CompletionQuery,
+    overlay: &HashSet<String>,
+) -> CompletionResponse {
+    match src {
+        IndexSrc::Dir(dir) => search_index(dir, q, overlay),
+        IndexSrc::Live(index, reader) => search_open(index, reader, q, overlay),
+    }
+}
 
 pub enum IndexSrc<'a> {
     Dir(&'a Path),
@@ -80,11 +94,7 @@ fn merge_buffer(
     });
     let truncated = hits.len() as u32 > limit;
     hits.truncate(limit as usize);
-    CompletionResponse {
-        query_id: q.query_id,
-        truncated,
-        hits,
-    }
+    CompletionResponse::new(q.query_id, hits, truncated)
 }
 
 fn unique_by_name(hits: &mut Vec<CompletionHit>) {

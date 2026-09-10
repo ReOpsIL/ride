@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::{c_members, c_outline, c_types, includes};
+use crate::highlight::{c_members, c_outline, c_types, imports, includes, site};
 
 const HIGHLIGHTS: &str = concat!(
     include_str!("../../../queries/c/highlights.scm"),
@@ -132,6 +132,7 @@ pub fn grammar() -> Grammar {
         highlights: HIGHLIGHTS,
         keywords: KEYWORDS,
         local_kinds: super::c::LOCAL_KINDS,
+        declares: c_members::declares_local,
         symbol_kinds: SYMBOL_KINDS,
         qualifier,
         outline: c_outline::outline,
@@ -140,6 +141,8 @@ pub fn grammar() -> Grammar {
         receiver_type: c_members::receiver_type,
         type_table: c_types::build,
         includes: includes::c_includes,
+        site: site::cpp_site,
+        imports: imports::no_imports,
     }
 }
 

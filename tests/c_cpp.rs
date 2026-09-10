@@ -124,20 +124,28 @@ fn engine() -> std::sync::Arc<ride_engine::Engine> {
     })
 }
 
-fn query(session_id: u64, prefix: &str, mode: QueryMode) -> CompletionQuery {
-    CompletionQuery {
+fn typed(
+    engine: &ride_engine::Engine,
+    session_id: u64,
+    src: &str,
+    prefix: &str,
+    mode: QueryMode,
+) -> ride_engine::CompletionResponse {
+    let text = format!("{src}\n{prefix}");
+    engine.set_text(session_id, text.clone(), None).unwrap();
+    engine.query_completions(CompletionQuery {
         query_id: 1,
         session_id,
         prefix: prefix.into(),
         mode,
         context: ride_engine::CompletionContext::Unknown,
-        cursor_byte: 0,
-        replace_start_byte: 0,
+        cursor_byte: text.len() as u32,
+        replace_start_byte: text.len() as u32,
         current_crate: None,
         current_module: None,
         kind_filter: None,
         limit: 20,
-    }
+    })
 }
 
 #[test]
@@ -146,9 +154,9 @@ fn engine_picks_c_and_cpp_from_path_and_completes_locals_and_keywords() {
     let c = engine
         .open_session("c".into(), Some("/tmp/x.c".into()), C_SRC.into(), None)
         .unwrap();
-    let resp = engine.query_completions(query(c.session_id, "cou", QueryMode::BufferLocal));
+    let resp = typed(&engine, c.session_id, C_SRC, "cou", QueryMode::BufferLocal);
     assert!(resp.hits.iter().any(|h| h.name == "counter"), "{resp:?}");
-    let resp = engine.query_completions(query(c.session_id, "type", QueryMode::Items));
+    let resp = typed(&engine, c.session_id, C_SRC, "type", QueryMode::Items);
     assert!(
         resp.hits
             .iter()
@@ -159,7 +167,7 @@ fn engine_picks_c_and_cpp_from_path_and_completes_locals_and_keywords() {
     let cpp = engine
         .open_session("h".into(), Some("/tmp/x.hpp".into()), CPP_SRC.into(), None)
         .unwrap();
-    let resp = engine.query_completions(query(cpp.session_id, "name", QueryMode::Items));
+    let resp = typed(&engine, cpp.session_id, CPP_SRC, "name", QueryMode::Items);
     assert!(resp.hits.iter().any(|h| h.name == "namespace"), "{resp:?}");
     assert!(
         cpp.update
@@ -171,7 +179,7 @@ fn engine_picks_c_and_cpp_from_path_and_completes_locals_and_keywords() {
     let h = engine
         .open_session("h".into(), Some("/tmp/x.h".into()), C_SRC.into(), None)
         .unwrap();
-    let resp = engine.query_completions(query(h.session_id, "clas", QueryMode::Items));
+    let resp = typed(&engine, h.session_id, C_SRC, "clas", QueryMode::Items);
     assert!(!resp.hits.iter().any(|h| h.name == "class"), "{resp:?}");
 }
 

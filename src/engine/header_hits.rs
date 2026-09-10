@@ -7,8 +7,8 @@ use crate::highlight::{Member, TypeTable};
 use super::headers::Header;
 
 const DEFINITION_SCORE: f32 = 1999.0;
-const MEMBER_SCORE: f32 = 50.0;
-const COMPLETION_SCORE: f32 = 42.0;
+const MEMBER_SCORE: f32 = crate::score::TIER_ITEM;
+const COMPLETION_SCORE: f32 = crate::score::TIER_HEADER;
 
 pub fn definitions(headers: &[Arc<Header>], name: &str) -> Vec<CompletionHit> {
     headers

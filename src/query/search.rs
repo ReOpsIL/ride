@@ -8,22 +8,22 @@ use crate::index::live_index_dir;
 
 use super::items::item_search;
 
+pub fn open_dir(index_dir: &Path) -> Option<(Index, IndexReader)> {
+    let live = live_index_dir(index_dir)?;
+    let index = Index::open_in_dir(live).ok()?;
+    let reader = index.reader().ok()?;
+    Some((index, reader))
+}
+
 pub fn search_index(
     index_dir: &Path,
     q: &CompletionQuery,
     overlay: &HashSet<String>,
 ) -> CompletionResponse {
-    let empty = empty_resp(q.query_id);
-    let Some(live) = live_index_dir(index_dir) else {
-        return empty;
-    };
-    let Ok(index) = Index::open_in_dir(live) else {
-        return empty;
-    };
-    let Ok(reader) = index.reader() else {
-        return empty;
-    };
-    search_open(&index, &reader, q, overlay)
+    match open_dir(index_dir) {
+        Some((index, reader)) => search_open(&index, &reader, q, overlay),
+        None => empty_resp(q.query_id),
+    }
 }
 
 pub fn search_open(
@@ -58,9 +58,5 @@ pub fn search_open(
 }
 
 fn empty_resp(query_id: u64) -> CompletionResponse {
-    CompletionResponse {
-        query_id,
-        hits: Vec::new(),
-        truncated: false,
-    }
+    CompletionResponse::empty(query_id)
 }

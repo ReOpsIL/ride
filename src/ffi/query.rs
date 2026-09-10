@@ -16,6 +16,19 @@ pub enum CompletionContext {
     MemberAccess,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Enum)]
+pub enum CompletionSiteKind {
+    None,
+    Identifier,
+    MemberAccess,
+    ScopedPath,
+    UsePath,
+    Include,
+    Attribute,
+    Directive,
+    StructLiteral,
+}
+
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct CompletionQuery {
     pub query_id: u64,
@@ -42,6 +55,9 @@ pub struct CompletionHit {
     pub signature: String,
     pub doc_first_sentence: String,
     pub doc_paragraph: String,
+    pub detail: String,
+    pub import_path: Option<String>,
+    pub deprecated: bool,
     pub source_path: Option<String>,
     pub byte_start: Option<u32>,
     pub byte_end: Option<u32>,
@@ -53,6 +69,8 @@ pub struct CompletionResponse {
     pub query_id: u64,
     pub hits: Vec<CompletionHit>,
     pub truncated: bool,
+    pub replace_start_byte: u32,
+    pub site: CompletionSiteKind,
 }
 
 impl CompletionHit {
@@ -67,10 +85,35 @@ impl CompletionHit {
             signature: String::new(),
             doc_first_sentence: String::new(),
             doc_paragraph: String::new(),
+            detail: String::new(),
+            import_path: None,
+            deprecated: false,
             source_path: None,
             byte_start: range.map(|r| r.0),
             byte_end: range.map(|r| r.1),
             score,
         }
+    }
+}
+
+impl CompletionResponse {
+    pub fn empty(query_id: u64) -> Self {
+        Self::new(query_id, Vec::new(), false)
+    }
+
+    pub fn new(query_id: u64, hits: Vec<CompletionHit>, truncated: bool) -> Self {
+        Self {
+            query_id,
+            hits,
+            truncated,
+            replace_start_byte: 0,
+            site: CompletionSiteKind::Identifier,
+        }
+    }
+
+    pub fn at(mut self, replace_start_byte: u32, site: CompletionSiteKind) -> Self {
+        self.replace_start_byte = replace_start_byte;
+        self.site = site;
+        self
     }
 }

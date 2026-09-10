@@ -11,6 +11,7 @@ pub mod includes;
 mod index;
 mod markdown;
 mod query;
+mod score;
 mod skip;
 mod toolchain;
 
@@ -28,7 +29,7 @@ pub use extract::{
     extract_crate_with_version, extract_source,
 };
 pub use ffi::*;
-pub use highlight::{BufferSession, Lang};
+pub use highlight::{BufferSession, Lang, Position, Site, SiteAt};
 pub use index::{
     Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, rebuild_index,
     write_index,

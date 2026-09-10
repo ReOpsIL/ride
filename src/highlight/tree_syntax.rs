@@ -7,6 +7,7 @@ use super::grammar::Grammar;
 use super::includes::IncludeRef;
 use super::members::{self, Access};
 use super::ranges::from_ts;
+use super::site::SiteAt;
 use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
 use super::types::TypeTable;
 use super::{errors, locals, spans, symbol};
@@ -102,14 +103,7 @@ impl Syntax for TreeSyntax {
                 }),
             },
             None => LocalHits {
-                hits: locals::hits(
-                    tree,
-                    text,
-                    outline,
-                    q.prefix,
-                    limit,
-                    self.grammar.local_kinds,
-                ),
+                hits: locals::hits(tree, text, outline, q, &self.grammar),
                 access: None,
             },
         }
@@ -126,6 +120,17 @@ impl Syntax for TreeSyntax {
         self.tree
             .as_ref()
             .map(|t| (self.grammar.type_table)(t, text))
+            .unwrap_or_default()
+    }
+
+    fn site_at(&self, text: &str, at: usize) -> SiteAt {
+        (self.grammar.site)(self.tree.as_ref(), text, at.min(text.len()))
+    }
+
+    fn imports(&self, text: &str) -> Vec<String> {
+        self.tree
+            .as_ref()
+            .map(|t| (self.grammar.imports)(t, text))
             .unwrap_or_default()
     }
 

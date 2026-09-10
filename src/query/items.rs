@@ -20,11 +20,7 @@ pub fn item_search(
     prefix: &str,
     limit: u32,
 ) -> CompletionResponse {
-    let empty = CompletionResponse {
-        query_id: q.query_id,
-        hits: Vec::new(),
-        truncated: false,
-    };
+    let empty = CompletionResponse::empty(q.query_id);
     let low = prefix.to_ascii_lowercase();
     let phrase = q.mode == QueryMode::Phrase || prefix.contains(' ');
     let mut clauses: Vec<Clause> = Vec::new();
@@ -71,11 +67,7 @@ pub fn item_search(
     hits.sort_by(|a, b| b.score.total_cmp(&a.score));
     let truncated = hits.len() > limit as usize;
     hits.truncate(limit as usize);
-    CompletionResponse {
-        query_id: q.query_id,
-        hits,
-        truncated,
-    }
+    CompletionResponse::new(q.query_id, hits, truncated)
 }
 
 fn prefix_term(field: Field, low: &str) -> TermQuery {

@@ -13,11 +13,18 @@ use crate::ffi::{
 };
 use crate::highlight::BufferSession;
 
+mod access;
 mod header_hits;
 mod headers;
+mod identifier;
 mod include_graph;
+mod includes;
+mod lists;
+mod merge;
+mod paths;
 mod query;
 mod sessions;
+mod snapshot;
 mod symbols;
 mod tools;
 mod watch;
@@ -35,6 +42,7 @@ pub(crate) struct Inner {
     pub(crate) index: Option<Index>,
     pub(crate) reader: Option<IndexReader>,
     pub(crate) headers: Arc<headers::HeaderCache>,
+    pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
 }
 
 #[derive(uniffi::Object)]
@@ -63,6 +71,7 @@ impl Engine {
                 index: None,
                 reader: None,
                 headers: Arc::default(),
+                system_includes: Arc::default(),
             }),
         }
     }
@@ -134,11 +143,7 @@ impl Engine {
     pub fn query_completions(&self, q: CompletionQuery) -> CompletionResponse {
         match catch_unwind(AssertUnwindSafe(|| query::run(self, q.clone()))) {
             Ok(resp) => resp,
-            Err(_) => CompletionResponse {
-                query_id: q.query_id,
-                hits: Vec::new(),
-                truncated: false,
-            },
+            Err(_) => CompletionResponse::empty(q.query_id),
         }
     }
 

@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::{c_members, cmake_outline, includes, types};
+use crate::highlight::{c_members, cmake_outline, imports, includes, site, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/cmake/highlights.scm");
 
@@ -149,6 +149,7 @@ pub fn grammar() -> Grammar {
         highlights: HIGHLIGHTS,
         keywords: KEYWORDS,
         local_kinds: &["variable"],
+        declares: crate::highlight::locals::no_declares,
         symbol_kinds: &["variable", "identifier", "unquoted_argument"],
         qualifier: no_qualifier,
         outline: cmake_outline::outline,
@@ -157,6 +158,8 @@ pub fn grammar() -> Grammar {
         receiver_type: c_members::no_receiver,
         type_table: types::empty_table,
         includes: includes::no_includes,
+        site: site::plain_site,
+        imports: imports::no_imports,
     }
 }
 

@@ -6,6 +6,7 @@ use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErro
 use super::grammar::{self, Grammar};
 use super::includes::IncludeRef;
 use super::members::Access;
+use super::site::SiteAt;
 use super::types::TypeTable;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
@@ -145,6 +146,12 @@ pub trait Syntax: Send + Sync {
     }
     fn type_table(&self, _text: &str) -> TypeTable {
         TypeTable::default()
+    }
+    fn site_at(&self, _text: &str, at: usize) -> SiteAt {
+        SiteAt::none(at)
+    }
+    fn imports(&self, _text: &str) -> Vec<String> {
+        Vec::new()
     }
 }
 
