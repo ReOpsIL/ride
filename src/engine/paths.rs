@@ -9,6 +9,7 @@ use super::snapshot::Snapshot;
 
 const ROOTS: &[&str] = &["crate", "self", "super", "std", "core", "alloc"];
 const IN_GROUP: &[&str] = &["self", "*"];
+const SELF_METHOD_PENALTY: f32 = 60.0;
 
 pub fn use_hits(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> CompletionResponse {
     if segments.is_empty() {
@@ -71,6 +72,9 @@ fn children(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> Vec<Co
     merge::boost_catalog(&mut hits, &q.prefix, &[]);
     for hit in &mut hits {
         hit.import_path = None;
+        if context == CompletionContext::MemberAccess && takes_self(&hit.signature) {
+            hit.score -= SELF_METHOD_PENALTY;
+        }
     }
     hits
 }
@@ -113,6 +117,19 @@ fn module_path(snap: &Snapshot) -> Option<Vec<String>> {
     let mut out = vec![package];
     out.extend(parts);
     Some(out)
+}
+
+fn takes_self(signature: &str) -> bool {
+    signature
+        .split_once('(')
+        .map(|(_, rest)| rest.trim_start())
+        .is_some_and(|rest| {
+            rest.starts_with("self")
+                || rest.starts_with("&self")
+                || rest.starts_with("&mut self")
+                || rest.starts_with("mut self")
+                || rest.starts_with("&'")
+        })
 }
 
 fn specials(words: &[&str], prefix: &str) -> Vec<CompletionHit> {
