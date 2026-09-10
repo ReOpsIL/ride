@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use ride_engine::{BufferSession, Context, Lang, engine_start, select, sheet, validate};
 
 fn context(lang: Lang, src: &str) -> Context {
@@ -9,11 +11,20 @@ fn context(lang: Lang, src: &str) -> Context {
 
 #[test]
 fn every_sheet_parses() {
-    for lang in [Lang::Rust, Lang::C, Lang::Cpp, Lang::Make] {
+    for lang in [Lang::Rust, Lang::C, Lang::Cpp, Lang::Make, Lang::Cmake] {
         let sheet = validate(lang).unwrap_or_else(|e| panic!("{lang:?}: {e}"));
         assert!(!sheet.sections.is_empty(), "{lang:?} has no sections");
         for section in &sheet.sections {
             assert!(!section.entries.is_empty(), "{}: no entries", section.file);
+            let mut names = HashSet::new();
+            for entry in &section.entries {
+                assert!(
+                    names.insert(entry.name.as_str()),
+                    "{}: duplicate name {}",
+                    section.file,
+                    entry.name
+                );
+            }
         }
     }
     assert!(sheet(Lang::Toml).is_none());
@@ -59,7 +70,7 @@ fn rust_contexts() {
             Lang::Rust,
             "fn f(x: Option<u8>) {\n    match x {\n        |\n    }\n}"
         ),
-        Context::Pattern
+        Context::Case
     );
     assert_eq!(
         context(
@@ -213,4 +224,72 @@ fn engine_cheat_sheet_uses_site_prefix_and_indent() {
         .unwrap();
     let resp = engine.cheat_sheet(open.session_id, 5, false);
     assert!(resp.sections.is_empty());
+}
+
+#[test]
+fn cmake_contexts() {
+    assert_eq!(context(Lang::Cmake, "|"), Context::Statement);
+    assert_eq!(context(Lang::Cmake, "add_executable(|"), Context::Argument);
+    assert_eq!(
+        context(Lang::Cmake, "if(FOO)\n  |\nendif()\n"),
+        Context::Statement
+    );
+    assert_eq!(
+        context(Lang::Cmake, "function(foo)\n  se|\nendfunction()\n"),
+        Context::Statement
+    );
+    assert_eq!(
+        context(Lang::Cmake, "target_link_libraries(demo PRIVATE |)"),
+        Context::Argument
+    );
+}
+
+#[test]
+fn cmake_argument_ranks_find_and_link_first() {
+    let ctx = context(Lang::Cmake, "target_link_libraries(|");
+    assert_eq!(ctx, Context::Argument);
+    let sheet = sheet(Lang::Cmake).unwrap();
+    let ranked = select(sheet, ctx, "", false);
+    assert_eq!(ranked[0].section.file, "find-and-link");
+    assert!(
+        ranked[0]
+            .entries
+            .iter()
+            .any(|e| e.name == "target_link_libraries"),
+        "{:?}",
+        ranked[0]
+            .entries
+            .iter()
+            .map(|e| e.name.as_str())
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn rust_match_arm_offers_match() {
+    let ctx = context(
+        Lang::Rust,
+        "fn f(x: Option<u8>) {\n    match x {\n        |\n    }\n}",
+    );
+    assert_eq!(ctx, Context::Case);
+    let names: Vec<_> = select(sheet(Lang::Rust).unwrap(), ctx, "", false)
+        .iter()
+        .flat_map(|s| s.entries.iter().map(|e| e.name.as_str()))
+        .collect();
+    assert!(names.contains(&"match"), "{names:?}");
+}
+
+#[test]
+fn c_switch_body_offers_case_and_default() {
+    let ctx = context(
+        Lang::C,
+        "int main(void) {\n    switch (x) {\n        |\n    }\n}",
+    );
+    assert_eq!(ctx, Context::Case);
+    let names: Vec<_> = select(sheet(Lang::C).unwrap(), ctx, "", false)
+        .iter()
+        .flat_map(|s| s.entries.iter().map(|e| e.name.as_str()))
+        .collect();
+    assert!(names.contains(&"case"), "{names:?}");
+    assert!(names.contains(&"default"), "{names:?}");
 }

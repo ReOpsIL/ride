@@ -37,7 +37,7 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
         "attribute_item" | "inner_attribute_item" => Context::Attribute,
         "use_declaration" => Context::Use,
         "match_block" => match_block(text, start),
-        "match_arm" if !head.contains("=>") => Context::Pattern,
+        "match_arm" if !head.contains("=>") => Context::Case,
         "let_declaration" => let_declaration(head),
         "parameters" | "closure_parameters" | "type_parameters" | "type_arguments"
         | "where_clause" | "trait_bounds" => Context::Type,
@@ -86,7 +86,7 @@ fn in_block(text: &str, start: usize) -> Context {
 fn match_block(text: &str, start: usize) -> Context {
     let head = text[..start].trim_end();
     if head.ends_with(['{', ',', '}']) {
-        Context::Pattern
+        Context::Case
     } else {
         Context::Expression
     }

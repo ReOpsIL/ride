@@ -1,0 +1,89 @@
+title = "Control flow"
+contexts = ["statement"]
+
+[[entries]]
+name = "if"
+keys = ["if", "cond", "branch"]
+doc = "Branch when a CMake condition is true."
+snippet = '''
+if(${1:condition})
+    $0
+endif()'''
+
+[[entries]]
+name = "if else"
+keys = ["if", "else", "branch"]
+doc = "Two-way branch on a CMake condition."
+snippet = '''
+if(${1:condition})
+    ${2:}
+else()
+    $0
+endif()'''
+
+[[entries]]
+name = "elseif"
+keys = ["elseif", "else", "if", "elif"]
+doc = "Further condition after a preceding if()."
+snippet = '''
+elseif(${1:condition})
+    $0'''
+
+[[entries]]
+name = "foreach"
+keys = ["foreach", "loop", "list"]
+doc = "Iterate over items given directly."
+snippet = '''
+foreach(${1:item} ${2:a} ${3:b})
+    $0
+endforeach()'''
+
+[[entries]]
+name = "foreach IN LISTS"
+keys = ["foreach", "lists", "list", "loop"]
+doc = "Iterate over the elements of one or more list variables."
+snippet = '''
+foreach(${1:item} IN LISTS ${2:VAR})
+    $0
+endforeach()'''
+
+[[entries]]
+name = "foreach RANGE"
+keys = ["foreach", "range", "count", "loop"]
+doc = "Iterate integers from start to stop inclusive."
+snippet = '''
+foreach(${1:i} RANGE ${2:0} ${3:n})
+    $0
+endforeach()'''
+
+[[entries]]
+name = "while"
+keys = ["while", "loop", "cond"]
+doc = "Loop while a CMake condition stays true."
+snippet = '''
+while(${1:condition})
+    $0
+endwhile()'''
+
+[[entries]]
+name = "break"
+keys = ["break", "exit", "loop"]
+doc = "Leave the innermost foreach() or while()."
+snippet = '''
+break()$0'''
+
+[[entries]]
+name = "continue"
+keys = ["continue", "skip", "next", "loop"]
+doc = "Skip to the next iteration of the innermost loop."
+snippet = '''
+continue()$0'''
+
+[[entries]]
+name = "block"
+keys = ["block", "scope", "policy", "variables"]
+doc = "A scope for variables and policies, ended by endblock()."
+snippet = '''
+block()
+    $0
+endblock()'''

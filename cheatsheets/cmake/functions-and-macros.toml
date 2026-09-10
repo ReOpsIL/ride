@@ -1,0 +1,55 @@
+title = "Functions and macros"
+contexts = ["statement"]
+
+[[entries]]
+name = "function"
+keys = ["function", "def", "proc"]
+doc = "Define a function with its own variable scope."
+snippet = '''
+function(${1:name} ${2:arg})
+    $0
+endfunction()'''
+
+[[entries]]
+name = "macro"
+keys = ["macro", "define"]
+doc = "Define a macro that expands in the caller's scope."
+snippet = '''
+macro(${1:name} ${2:arg})
+    $0
+endmacro()'''
+
+[[entries]]
+name = "cmake_parse_arguments"
+keys = ["cmake_parse_arguments", "parse", "arguments", "args"]
+doc = "Parse ARGN into options, one-value and multi-value keywords."
+snippet = '''
+cmake_parse_arguments(${1:prefix} "${2:OPTIONS}" "${3:ONE}" "${4:MULTI}" ${ARGN})$0'''
+
+[[entries]]
+name = "return"
+keys = ["return", "early"]
+doc = "Return from the current function, directory or block."
+snippet = '''
+return()$0'''
+
+[[entries]]
+name = "include_guard"
+keys = ["include_guard", "once", "guard"]
+doc = "Skip the rest of this file if it has already been included."
+snippet = '''
+include_guard()$0'''
+
+[[entries]]
+name = "variable_watch"
+keys = ["variable_watch", "watch", "debug", "trace"]
+doc = "Print a message whenever a variable is read or written."
+snippet = '''
+variable_watch(${1:VAR})$0'''
+
+[[entries]]
+name = "cmake_language DEFER"
+keys = ["cmake_language", "defer", "later", "directory"]
+doc = "Run a command at the end of the current directory."
+snippet = '''
+cmake_language(DEFER CALL ${1:command})$0'''

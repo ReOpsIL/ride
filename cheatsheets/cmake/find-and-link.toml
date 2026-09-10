@@ -1,0 +1,96 @@
+title = "Find and link"
+contexts = ["statement", "argument"]
+
+[[entries]]
+name = "target_link_libraries"
+keys = ["target_link_libraries", "link", "libraries", "lib"]
+doc = "Link a target against libraries or other targets, with visibility."
+snippet = '''
+target_link_libraries(${1:target} PRIVATE ${2:dep})$0'''
+
+[[entries]]
+name = "PRIVATE"
+keys = ["private", "visibility", "link"]
+doc = "Usage requirement that applies only to this target."
+snippet = '''
+PRIVATE ${1:dep}$0'''
+
+[[entries]]
+name = "PUBLIC"
+keys = ["public", "visibility", "link"]
+doc = "Usage requirement that applies to this target and to its dependents."
+snippet = '''
+PUBLIC ${1:dep}$0'''
+
+[[entries]]
+name = "INTERFACE"
+keys = ["interface", "visibility", "link"]
+doc = "Usage requirement that applies only to dependents of this target."
+snippet = '''
+INTERFACE ${1:dep}$0'''
+
+[[entries]]
+name = "find_package"
+keys = ["find_package", "package", "find"]
+doc = "Load a package config or find-module, failing if REQUIRED and missing."
+snippet = '''
+find_package(${1:Pkg} ${2:1.0} REQUIRED)$0'''
+
+[[entries]]
+name = "find_package COMPONENTS"
+keys = ["find_package", "components", "optional", "required"]
+doc = "Request named components of a package."
+snippet = '''
+find_package(${1:Pkg} REQUIRED COMPONENTS ${2:comp})$0'''
+
+[[entries]]
+name = "find_library"
+keys = ["find_library", "lib", "library", "path"]
+doc = "Search for a library file and store its path."
+snippet = '''
+find_library(${1:VAR} NAMES ${2:name} REQUIRED)$0'''
+
+[[entries]]
+name = "find_path"
+keys = ["find_path", "header", "include", "directory"]
+doc = "Search for a directory containing a named file, typically a header."
+snippet = '''
+find_path(${1:VAR} NAMES ${2:header.h} REQUIRED)$0'''
+
+[[entries]]
+name = "find_program"
+keys = ["find_program", "program", "tool", "executable"]
+doc = "Search for an executable on PATH and in CMAKE_PREFIX_PATH."
+snippet = '''
+find_program(${1:VAR} NAMES ${2:tool} REQUIRED)$0'''
+
+[[entries]]
+name = "FetchContent_Declare"
+keys = ["fetchcontent", "declare", "git", "download", "dep"]
+doc = "Describe an external project to download; pair with FetchContent_MakeAvailable."
+snippet = '''
+include(FetchContent)
+FetchContent_Declare(${1:name}
+    GIT_REPOSITORY ${2:https://example.com/repo.git}
+    GIT_TAG ${3:v1.0.0})$0'''
+
+[[entries]]
+name = "FetchContent_MakeAvailable"
+keys = ["fetchcontent", "makeavailable", "populate", "dep"]
+doc = "Populate a declared FetchContent dependency and add it with add_subdirectory."
+snippet = '''
+FetchContent_MakeAvailable(${1:name})$0'''
+
+[[entries]]
+name = "target_link_directories"
+keys = ["target_link_directories", "link", "directories", "rpath"]
+doc = "Add linker search directories to a target."
+snippet = '''
+target_link_directories(${1:target} PRIVATE ${2:dir})$0'''
+
+[[entries]]
+name = "generator expression"
+keys = ["generator", "expression", "genex", "$<"]
+doc = "Evaluate a value per configuration or per target at generate time."
+snippet = '''
+$<${1:CONFIG}>$0'''

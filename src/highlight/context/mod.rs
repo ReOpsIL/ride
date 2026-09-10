@@ -1,11 +1,13 @@
 use tree_sitter::{Node, Tree};
 
 mod c;
+mod cmake;
 mod make;
 mod rust;
 mod scan;
 
 pub use c::c as c_context;
+pub use cmake::cmake as cmake_context;
 pub use make::make as make_context;
 pub use rust::rust as rust_context;
 
@@ -25,6 +27,9 @@ pub enum Context {
     Recipe,
     Function,
     Value,
+    Argument,
+    Case,
+    Default,
 }
 
 pub type Detector = fn(Option<&Tree>, &str, usize) -> Context;
@@ -48,6 +53,9 @@ const NAMES: &[(Context, &str)] = &[
     (Context::Recipe, "recipe"),
     (Context::Function, "function"),
     (Context::Value, "value"),
+    (Context::Argument, "argument"),
+    (Context::Case, "case"),
+    (Context::Default, "default"),
 ];
 
 impl Context {
@@ -61,6 +69,15 @@ impl Context {
 
     pub fn parse(name: &str) -> Option<Context> {
         NAMES.iter().find(|(_, n)| *n == name).map(|(c, _)| *c)
+    }
+
+    pub fn covers(self, got: Context) -> bool {
+        self == got
+            || (matches!(got, Context::Case | Context::Default)
+                && matches!(
+                    self,
+                    Context::Statement | Context::Pattern | Context::Case | Context::Default
+                ))
     }
 }
 

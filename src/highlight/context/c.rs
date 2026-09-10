@@ -48,7 +48,8 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
             Context::Preprocessor
         }
         "field_declaration_list" | "enumerator_list" => Context::Fields,
-        "compound_statement" => statement_or_expression(text, start),
+        "compound_statement" => switch_or_block(node, text, start),
+        "case_statement" => case_label(node, text),
         "translation_unit"
         | "declaration_list"
         | "template_declaration"
@@ -88,6 +89,27 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
         _ => return None,
     };
     Some(ctx)
+}
+
+fn switch_or_block(node: Node<'_>, text: &str, start: usize) -> Context {
+    if node
+        .parent()
+        .is_some_and(|p| p.kind() == "switch_statement")
+    {
+        Context::Case
+    } else {
+        statement_or_expression(text, start)
+    }
+}
+
+fn case_label(node: Node<'_>, text: &str) -> Context {
+    let start = node.start_byte();
+    let end = node.end_byte().min(text.len());
+    if text[start..end].trim_start().starts_with("default") {
+        Context::Default
+    } else {
+        Context::Case
+    }
 }
 
 fn fallback(text: &str, start: usize) -> Context {

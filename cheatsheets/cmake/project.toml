@@ -1,0 +1,73 @@
+title = "Project"
+contexts = ["statement"]
+
+[[entries]]
+name = "cmake_minimum_required"
+keys = ["cmake_minimum_required", "minimum", "version", "required"]
+doc = "Declare the oldest CMake that may read this file."
+snippet = '''
+cmake_minimum_required(VERSION ${1:3.20})$0'''
+
+[[entries]]
+name = "project"
+keys = ["project", "languages", "name"]
+doc = "Name the project and enable its languages."
+snippet = '''
+project(${1:name} LANGUAGES ${2:CXX})$0'''
+
+[[entries]]
+name = "project with VERSION"
+keys = ["project", "version", "languages"]
+doc = "Name the project, set PROJECT_VERSION and enable languages."
+snippet = '''
+project(${1:name} VERSION ${2:0.1.0} LANGUAGES ${3:CXX})$0'''
+
+[[entries]]
+name = "enable_language"
+keys = ["enable_language", "language", "c", "cxx", "objc"]
+doc = "Enable a language after the project() call."
+snippet = '''
+enable_language(${1:CXX})$0'''
+
+[[entries]]
+name = "add_subdirectory"
+keys = ["add_subdirectory", "subdir", "subdirectory"]
+doc = "Process a nested CMakeLists.txt, optionally with a separate binary dir."
+snippet = '''
+add_subdirectory(${1:src})$0'''
+
+[[entries]]
+name = "include"
+keys = ["include", "module", "cmake"]
+doc = "Read another CMake file or a module from CMAKE_MODULE_PATH."
+snippet = '''
+include(${1:module})$0'''
+
+[[entries]]
+name = "cmake_policy"
+keys = ["cmake_policy", "policy", "cmp"]
+doc = "Select NEW or OLD behaviour for one policy."
+snippet = '''
+cmake_policy(SET ${1:CMP0167} ${2:NEW})$0'''
+
+[[entries]]
+name = "message"
+keys = ["message", "status", "warning", "fatal", "log"]
+doc = "Print a status, warning or fatal diagnostic."
+snippet = '''
+message(${1:STATUS} "${2:text}")$0'''
+
+[[entries]]
+name = "CMAKE_CXX_STANDARD"
+keys = ["standard", "cxx", "c++", "std"]
+doc = "Default C++ language standard for every later target."
+snippet = '''
+set(CMAKE_CXX_STANDARD ${1:20})
+set(CMAKE_CXX_STANDARD_REQUIRED ON)$0'''
+
+[[entries]]
+name = "CMAKE_EXPORT_COMPILE_COMMANDS"
+keys = ["compile_commands", "export", "clangd", "database"]
+doc = "Write compile_commands.json into the build directory."
+snippet = '''
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)$0'''

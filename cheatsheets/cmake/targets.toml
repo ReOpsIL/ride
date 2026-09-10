@@ -1,0 +1,98 @@
+title = "Targets"
+contexts = ["statement"]
+
+[[entries]]
+name = "add_executable"
+keys = ["add_executable", "executable", "bin", "main"]
+doc = "Declare an executable target from its sources."
+snippet = '''
+add_executable(${1:name} ${2:src/main.cpp})$0'''
+
+[[entries]]
+name = "add_library"
+keys = ["add_library", "static", "shared", "library"]
+doc = "Declare a static or shared library target."
+snippet = '''
+add_library(${1:name} ${2:STATIC} ${3:src/lib.cpp})$0'''
+
+[[entries]]
+name = "add_library INTERFACE"
+keys = ["add_library", "interface", "header", "header-only"]
+doc = "Header-only target that only propagates usage requirements."
+snippet = '''
+add_library(${1:name} INTERFACE)
+target_include_directories(${1:name} INTERFACE ${2:include})$0'''
+
+[[entries]]
+name = "add_library OBJECT"
+keys = ["add_library", "object", "objects"]
+doc = "Compile sources once and reuse the object files in other targets."
+snippet = '''
+add_library(${1:name} OBJECT ${2:src/lib.cpp})$0'''
+
+[[entries]]
+name = "target_include_directories"
+keys = ["target_include_directories", "include", "includes", "headers"]
+doc = "Add include directories to a target, with visibility."
+snippet = '''
+target_include_directories(${1:target} ${2:PUBLIC} ${3:include})$0'''
+
+[[entries]]
+name = "target_sources"
+keys = ["target_sources", "sources", "files"]
+doc = "Add source files to a target after it is declared."
+snippet = '''
+target_sources(${1:target} PRIVATE ${2:src/more.cpp})$0'''
+
+[[entries]]
+name = "target_compile_features"
+keys = ["target_compile_features", "features", "cxx_std", "std"]
+doc = "Require a language standard or compile feature on a target."
+snippet = '''
+target_compile_features(${1:target} ${2:PUBLIC} cxx_std_${3:20})$0'''
+
+[[entries]]
+name = "target_compile_options"
+keys = ["target_compile_options", "options", "flags", "wall"]
+doc = "Add compiler flags to a target."
+snippet = '''
+target_compile_options(${1:target} PRIVATE ${2:-Wall} ${3:-Wextra})$0'''
+
+[[entries]]
+name = "target_compile_definitions"
+keys = ["target_compile_definitions", "definitions", "define", "macros"]
+doc = "Add preprocessor definitions to a target."
+snippet = '''
+target_compile_definitions(${1:target} PRIVATE ${2:NAME}=${3:1})$0'''
+
+[[entries]]
+name = "add_dependencies"
+keys = ["add_dependencies", "depends", "order"]
+doc = "Build other targets first, without linking them."
+snippet = '''
+add_dependencies(${1:target} ${2:other})$0'''
+
+[[entries]]
+name = "set_target_properties"
+keys = ["set_target_properties", "properties", "output"]
+doc = "Set one or more properties on a target."
+snippet = '''
+set_target_properties(${1:target} PROPERTIES ${2:OUTPUT_NAME} ${3:name})$0'''
+
+[[entries]]
+name = "add_custom_command"
+keys = ["add_custom_command", "custom", "generate", "output"]
+doc = "Run a command to produce an output file."
+snippet = '''
+add_custom_command(
+    OUTPUT ${1:generated.cpp}
+    COMMAND ${2:${CMAKE_COMMAND} -E echo}
+    DEPENDS ${3:input}
+    VERBATIM)$0'''
+
+[[entries]]
+name = "add_custom_target"
+keys = ["add_custom_target", "custom", "phony", "utility"]
+doc = "A target that runs a command and is never considered out of date by files."
+snippet = '''
+add_custom_target(${1:name} COMMAND ${2:command})$0'''

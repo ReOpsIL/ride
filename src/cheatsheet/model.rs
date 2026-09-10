@@ -87,7 +87,7 @@ impl Section {
     }
 
     pub fn applies(&self, ctx: Context) -> bool {
-        self.contexts.is_empty() || self.contexts.contains(&ctx)
+        self.contexts.is_empty() || self.contexts.iter().any(|listed| listed.covers(ctx))
     }
 }
 

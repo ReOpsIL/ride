@@ -1,0 +1,64 @@
+title = "Install and test"
+contexts = ["statement"]
+
+[[entries]]
+name = "enable_testing"
+keys = ["enable_testing", "testing", "ctest"]
+doc = "Enable add_test() in this directory so ctest can run them."
+snippet = '''
+enable_testing()$0'''
+
+[[entries]]
+name = "add_test"
+keys = ["add_test", "test", "ctest"]
+doc = "Register a test command that ctest will run."
+snippet = '''
+add_test(NAME ${1:name} COMMAND ${2:target})$0'''
+
+[[entries]]
+name = "include CTest"
+keys = ["ctest", "include", "testing", "dashboard"]
+doc = "Enable testing and load CTest dashboard helpers."
+snippet = '''
+include(CTest)$0'''
+
+[[entries]]
+name = "install TARGETS"
+keys = ["install", "targets", "runtime", "library"]
+doc = "Install binaries and libraries into the prefix layout."
+snippet = '''
+install(TARGETS ${1:target}
+    RUNTIME DESTINATION ${2:bin}
+    LIBRARY DESTINATION ${3:lib}
+    ARCHIVE DESTINATION ${4:lib})$0'''
+
+[[entries]]
+name = "install FILES"
+keys = ["install", "files", "headers", "copy"]
+doc = "Install files, typically public headers."
+snippet = '''
+install(FILES ${1:include/name.h} DESTINATION ${2:include})$0'''
+
+[[entries]]
+name = "include GNUInstallDirs"
+keys = ["gnuinstalldirs", "prefix", "bindir", "libdir"]
+doc = "Define CMAKE_INSTALL_BINDIR, LIBDIR, INCLUDEDIR and related paths."
+snippet = '''
+include(GNUInstallDirs)$0'''
+
+[[entries]]
+name = "install EXPORT"
+keys = ["install", "export", "config", "package"]
+doc = "Install a target export file so other projects can find_package this one."
+snippet = '''
+install(EXPORT ${1:name}Targets
+    FILE ${1:name}Targets.cmake
+    NAMESPACE ${1:name}::
+    DESTINATION ${2:lib/cmake/${1:name}})$0'''
+
+[[entries]]
+name = "add_test WORKING_DIRECTORY"
+keys = ["add_test", "working", "directory", "cwd"]
+doc = "Register a test that runs in a chosen working directory."
+snippet = '''
+add_test(NAME ${1:name} COMMAND ${2:target} WORKING_DIRECTORY ${3:${CMAKE_CURRENT_SOURCE_DIR}})$0'''

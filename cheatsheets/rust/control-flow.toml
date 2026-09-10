@@ -1,5 +1,5 @@
 title = "Control flow"
-contexts = ["statement", "expression"]
+contexts = ["statement", "expression", "case", "default"]
 
 [[entries]]
 name = "if"

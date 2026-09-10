@@ -161,7 +161,7 @@ pub fn grammar() -> Grammar {
         type_table: types::empty_table,
         includes: includes::no_includes,
         site: site::plain_site,
-        context: context::unknown,
+        context: context::cmake_context,
         imports: imports::no_imports,
         editing: EditingKinds {
             strings: &["quoted_argument", "bracket_argument"],

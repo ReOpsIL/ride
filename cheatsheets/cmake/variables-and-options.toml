@@ -1,0 +1,72 @@
+title = "Variables and options"
+contexts = ["statement"]
+
+[[entries]]
+name = "set"
+keys = ["set", "variable", "var", "assign"]
+doc = "Set a normal variable in the current scope."
+snippet = '''
+set(${1:VAR} ${2:value})$0'''
+
+[[entries]]
+name = "set CACHE"
+keys = ["set", "cache", "cached", "force"]
+doc = "Set a cache entry the user can change from the cmake GUI or -D."
+snippet = '''
+set(${1:VAR} ${2:value} CACHE ${3:STRING} "${4:doc}")$0'''
+
+[[entries]]
+name = "set PARENT_SCOPE"
+keys = ["set", "parent", "scope", "return"]
+doc = "Write a variable into the caller's scope from a function."
+snippet = '''
+set(${1:VAR} ${2:value} PARENT_SCOPE)$0'''
+
+[[entries]]
+name = "unset"
+keys = ["unset", "clear", "remove", "variable"]
+doc = "Remove a normal or cache variable."
+snippet = '''
+unset(${1:VAR})$0'''
+
+[[entries]]
+name = "option"
+keys = ["option", "flag", "boolean", "cache"]
+doc = "A boolean cache entry, ON or OFF, with help text."
+snippet = '''
+option(${1:NAME} "${2:doc}" ${3:OFF})$0'''
+
+[[entries]]
+name = "list APPEND"
+keys = ["list", "append", "add"]
+doc = "Append items to a semicolon-separated list variable."
+snippet = '''
+list(APPEND ${1:VAR} ${2:item})$0'''
+
+[[entries]]
+name = "list JOIN"
+keys = ["list", "join", "concat", "separator"]
+doc = "Join list elements into a string with a separator."
+snippet = '''
+list(JOIN ${1:VAR} "${2:;}" ${3:OUT})$0'''
+
+[[entries]]
+name = "string APPEND"
+keys = ["string", "append", "concat"]
+doc = "Append text to a string variable."
+snippet = '''
+string(APPEND ${1:VAR} ${2:suffix})$0'''
+
+[[entries]]
+name = "math EXPR"
+keys = ["math", "expr", "arithmetic", "compute"]
+doc = "Evaluate an integer expression and store the result."
+snippet = '''
+math(EXPR ${1:VAR} "${2:a + b}")$0'''
+
+[[entries]]
+name = "configure_file"
+keys = ["configure_file", "template", "in", "substitute"]
+doc = "Copy a template, substituting @VAR@ (and optionally ${VAR}) values."
+snippet = '''
+configure_file(${1:config.h.in} ${2:config.h} @ONLY)$0'''
