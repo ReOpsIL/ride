@@ -1,7 +1,8 @@
 use std::collections::HashSet;
+use std::path::Path;
 use std::sync::Arc;
 
-use crate::ffi::{CompletionHit, OutlineItem};
+use crate::ffi::CompletionHit;
 use crate::highlight::{Member, TypeTable};
 
 use super::headers::Header;
@@ -18,7 +19,7 @@ pub fn definitions(headers: &[Arc<Header>], name: &str) -> Vec<CompletionHit> {
                 .outline
                 .iter()
                 .filter(|o| o.name == name)
-                .map(|o| hit(o, DEFINITION_SCORE, Some(h.path.display().to_string())))
+                .map(|o| item_hit(h, o, DEFINITION_SCORE))
         })
         .collect()
 }
@@ -33,11 +34,7 @@ pub fn completions(headers: &[Arc<Header>], prefix: &str, limit: usize) -> Vec<C
                 return out;
             }
             if matches(&item.name, &p) && seen.insert(item.name.clone()) {
-                out.push(hit(
-                    item,
-                    COMPLETION_SCORE,
-                    Some(header.path.display().to_string()),
-                ));
+                out.push(item_hit(header, item, COMPLETION_SCORE));
             }
         }
     }
@@ -60,11 +57,10 @@ pub fn members(
         .filter(|m| matches(&m.item.name, &p) && seen.insert(m.item.name.clone()))
         .take(limit)
         .map(|m: Member| {
-            hit(
-                &m.item,
-                MEMBER_SCORE,
-                m.origin.map(|o| o.display().to_string()),
-            )
+            let origin = m.origin.map(|o| o.display().to_string());
+            let mut hit = CompletionHit::from_outline(&m.item, MEMBER_SCORE, origin);
+            hit.detail = m.detail;
+            hit
         })
         .collect()
 }
@@ -73,13 +69,14 @@ fn matches(name: &str, prefix_lower: &str) -> bool {
     prefix_lower.is_empty() || name.to_ascii_lowercase().starts_with(prefix_lower)
 }
 
-fn hit(item: &OutlineItem, score: f32, source_path: Option<String>) -> CompletionHit {
-    let mut hit = CompletionHit::local(
-        &item.name,
-        item.kind,
-        score,
-        Some((item.start_byte, item.end_byte)),
-    );
-    hit.source_path = source_path;
+fn item_hit(header: &Header, item: &crate::ffi::OutlineItem, score: f32) -> CompletionHit {
+    let mut hit = CompletionHit::from_outline(item, score, Some(header.path.display().to_string()));
+    hit.detail = file_name(&header.path);
     hit
+}
+
+fn file_name(path: &Path) -> String {
+    path.file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default()
 }

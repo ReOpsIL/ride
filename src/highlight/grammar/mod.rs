@@ -18,6 +18,7 @@ pub struct Grammar {
     pub keywords: &'static [&'static str],
     pub local_kinds: &'static [&'static str],
     pub declares: crate::highlight::locals::Declares,
+    pub local_detail: crate::highlight::locals::LocalDetail,
     pub symbol_kinds: &'static [&'static str],
     pub qualifier: fn(Node<'_>, &str) -> Option<String>,
     pub outline: fn(&Tree, &str) -> Vec<OutlineItem>,

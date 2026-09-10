@@ -11,6 +11,7 @@ use super::syntax::LocalQuery;
 use super::walk::each_node;
 
 pub type Declares = fn(Node<'_>, &str) -> bool;
+pub type LocalDetail = fn(Node<'_>, &str) -> Option<String>;
 
 pub fn hits(
     tree: &Tree,
@@ -28,12 +29,7 @@ pub fn hits(
         if matches(&item.name, &p) {
             offer(
                 &mut best,
-                CompletionHit::local(
-                    &item.name,
-                    item.kind,
-                    TIER_ITEM,
-                    Some((item.start_byte, item.end_byte)),
-                ),
+                CompletionHit::from_outline(item, TIER_ITEM, None),
             );
         }
     }
@@ -47,20 +43,22 @@ pub fn hits(
         if name.is_empty() || !matches(name, &p) {
             return;
         }
-        let tier = if (grammar.declares)(node, text) {
+        let declared = (grammar.declares)(node, text);
+        let tier = if declared {
             TIER_DECLARED
         } else {
             TIER_MENTION
         };
-        offer(
-            &mut best,
-            CompletionHit::local(
-                name,
-                ItemKind::Local,
-                tier,
-                Some((node.start_byte() as u32, node.end_byte() as u32)),
-            ),
+        let mut hit = CompletionHit::local(
+            name,
+            ItemKind::Local,
+            tier,
+            Some((node.start_byte() as u32, node.end_byte() as u32)),
         );
+        if declared {
+            hit.detail = (grammar.local_detail)(node, text).unwrap_or_default();
+        }
+        offer(&mut best, hit);
     });
     let mut out: Vec<CompletionHit> = best.into_values().collect();
     out.sort_by(|a, b| b.score.total_cmp(&a.score).then(a.name.cmp(&b.name)));
@@ -79,6 +77,10 @@ fn offer(best: &mut HashMap<String, CompletionHit>, hit: CompletionHit) {
 
 pub fn no_declares(_: Node<'_>, _: &str) -> bool {
     false
+}
+
+pub fn no_detail(_: Node<'_>, _: &str) -> Option<String> {
+    None
 }
 
 pub fn within_field(parent: Node<'_>, field: &str, node: Node<'_>) -> bool {

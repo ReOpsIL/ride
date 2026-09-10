@@ -150,6 +150,7 @@ pub fn grammar() -> Grammar {
         keywords: KEYWORDS,
         local_kinds: &["variable"],
         declares: crate::highlight::locals::no_declares,
+        local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["variable", "identifier", "unquoted_argument"],
         qualifier: no_qualifier,
         outline: cmake_outline::outline,

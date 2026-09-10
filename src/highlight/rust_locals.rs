@@ -1,5 +1,7 @@
 use tree_sitter::Node;
 
+use crate::text::collapse_ws;
+
 use super::locals::within_field;
 
 const PATTERN_OWNERS: &[&str] = &[
@@ -8,6 +10,8 @@ const PATTERN_OWNERS: &[&str] = &[
     "for_expression",
     "match_arm",
 ];
+
+const TYPED_OWNERS: &[&str] = &["let_declaration", "parameter"];
 
 pub fn declares(node: Node<'_>, _: &str) -> bool {
     let mut current = node;
@@ -24,4 +28,16 @@ pub fn declares(node: Node<'_>, _: &str) -> bool {
         current = parent;
     }
     false
+}
+
+pub fn detail(node: Node<'_>, text: &str) -> Option<String> {
+    let mut owner = node.parent()?;
+    if matches!(owner.kind(), "mut_pattern" | "ref_pattern") {
+        owner = owner.parent()?;
+    }
+    if !TYPED_OWNERS.contains(&owner.kind()) || !within_field(owner, "pattern", node) {
+        return None;
+    }
+    let ty = owner.child_by_field_name("type")?;
+    Some(collapse_ws(ty.utf8_text(text.as_bytes()).ok()?))
 }

@@ -14,6 +14,7 @@ mod params;
 mod query;
 mod score;
 mod skip;
+mod text;
 mod toolchain;
 
 pub use check::{

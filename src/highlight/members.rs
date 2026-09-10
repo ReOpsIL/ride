@@ -52,12 +52,7 @@ pub fn fallback_hits(
             return out;
         }
         if matches(&item.name, &p) && seen.insert(item.name.clone()) {
-            out.push(CompletionHit::local(
-                &item.name,
-                ItemKind::Method,
-                METHOD_SCORE,
-                Some((item.start_byte, item.end_byte)),
-            ));
+            out.push(CompletionHit::from_outline(item, METHOD_SCORE, None));
         }
     }
     each_node(tree.root_node(), &mut |node| {

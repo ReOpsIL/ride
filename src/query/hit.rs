@@ -3,6 +3,7 @@ use tantivy::{Searcher, TantivyDocument};
 
 use crate::ffi::CompletionHit;
 use crate::index::item_kind_from_label;
+use crate::text::first_sentence;
 
 const HUMP_PENALTY: f32 = 100.0;
 
@@ -56,14 +57,4 @@ pub fn field_str(doc: &TantivyDocument, field: tantivy::schema::Field) -> Option
 fn field_u32(doc: &TantivyDocument, schema: &tantivy::schema::Schema, name: &str) -> Option<u32> {
     let f = schema.get_field(name).ok()?;
     doc.get_first(f).and_then(|v| v.as_u64()).map(|n| n as u32)
-}
-
-fn first_sentence(doc: &str) -> String {
-    let t = doc.trim();
-    if t.is_empty() {
-        return String::new();
-    }
-    t.split_once('.')
-        .map(|(a, _)| a.trim().to_string())
-        .unwrap_or_else(|| t.to_string())
 }

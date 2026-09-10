@@ -2,8 +2,10 @@ use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
 
+use super::c_docs;
+use super::c_locals::declared_type;
 use super::c_names::{SPECIFIERS, function_name, node_text, plain_name, type_name};
-use super::types::TypeTable;
+use super::types::{Member, TypeTable};
 use super::walk::each_node;
 
 pub fn build(tree: &Tree, text: &str) -> TypeTable {
@@ -75,7 +77,7 @@ fn bases(node: Node<'_>, text: &str) -> Vec<String> {
         .collect()
 }
 
-fn members(body: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
+fn members(body: Node<'_>, text: &str, out: &mut Vec<Member>) {
     let mut cursor = body.walk();
     for child in body.named_children(&mut cursor) {
         match child.kind() {
@@ -84,7 +86,7 @@ fn members(body: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
                 if let Some(d) = child.child_by_field_name("declarator")
                     && let Some((name, _)) = function_name(d, text)
                 {
-                    push(child, name, ItemKind::Method, out);
+                    push(child, name, ItemKind::Method, String::new(), text, out);
                 }
             }
             "template_declaration" => members(child, text, out),
@@ -98,32 +100,42 @@ fn members(body: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     }
 }
 
-fn declarators(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
+fn declarators(node: Node<'_>, text: &str, out: &mut Vec<Member>) {
     let mut cursor = node.walk();
     for declarator in node.children_by_field_name("declarator", &mut cursor) {
         if let Some((name, _)) = function_name(declarator, text) {
-            push(node, name, ItemKind::Method, out);
+            push(node, name, ItemKind::Method, String::new(), text, out);
         } else if let Some(name) = plain_name(declarator, text) {
-            push(node, name, ItemKind::Field, out);
+            let detail = declared_type(node, declarator, text).unwrap_or_default();
+            push(node, name, ItemKind::Field, detail, text, out);
         }
     }
 }
 
-fn named(node: Node<'_>, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
+fn named(node: Node<'_>, kind: ItemKind, text: &str, out: &mut Vec<Member>) {
     if let Some(name) = node.child_by_field_name("name") {
-        push(node, node_text(name, text), kind, out);
+        push(node, node_text(name, text), kind, String::new(), text, out);
     }
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>) {
-    if !name.is_empty() {
-        out.push(OutlineItem {
-            name,
-            kind,
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-            signature: String::new(),
-            doc: String::new(),
-        });
+fn push(
+    node: Node<'_>,
+    name: String,
+    kind: ItemKind,
+    detail: String,
+    text: &str,
+    out: &mut Vec<Member>,
+) {
+    if name.is_empty() {
+        return;
     }
+    let item = OutlineItem {
+        name,
+        kind,
+        start_byte: node.start_byte() as u32,
+        end_byte: node.end_byte() as u32,
+        signature: c_docs::signature(node, text),
+        doc: c_docs::doc(node, text),
+    };
+    out.push(Member::new(item, detail));
 }

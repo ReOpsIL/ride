@@ -1,6 +1,7 @@
 use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
+use crate::text::first_line;
 
 use super::c_names::node_text;
 use super::walk::each_node;
@@ -22,7 +23,7 @@ fn definition(node: Node<'_>, head: &str, kind: ItemKind, text: &str, out: &mut 
         return;
     };
     if let Some(name) = first_argument(command, text) {
-        push(node, name, kind, out);
+        push(node, name, kind, text, out);
     }
 }
 
@@ -38,7 +39,7 @@ fn command(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
         _ => return,
     };
     if let Some(name) = first_argument(node, text) {
-        push(node, name, kind, out);
+        push(node, name, kind, text, out);
     }
 }
 
@@ -53,14 +54,14 @@ fn first_argument(command: Node<'_>, text: &str) -> Option<String> {
         .map(|a| node_text(a, text))
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>) {
+fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if !name.is_empty() {
         out.push(OutlineItem {
             name,
             kind,
             start_byte: node.start_byte() as u32,
             end_byte: node.end_byte() as u32,
-            signature: String::new(),
+            signature: first_line(&node_text(node, text)),
             doc: String::new(),
         });
     }
