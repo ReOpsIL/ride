@@ -36,7 +36,7 @@ extension AppState {
             showProblems = true
         }
         if let view = EditorJump.shared.view, let buffer = activeBuffer {
-            DiagnosticUnderlines.apply(document: buffer, view: view)
+            Underlines.apply(document: buffer, view: view, parseErrors: nil)
         }
     }
 

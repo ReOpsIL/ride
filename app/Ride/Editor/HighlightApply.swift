@@ -3,12 +3,7 @@ import AppKit
 enum HighlightApply {
     static var theme = Theme.load()
 
-    static func apply(
-        _ update: SessionUpdate,
-        text: String,
-        view: RideTextView,
-        errors: inout [NSRange]
-    ) {
+    static func apply(_ update: SessionUpdate, text: String, view: RideTextView) {
         let nsText = text as NSString
         let full = NSRange(location: 0, length: nsText.length)
         guard let storage = view.textContentStorage?.textStorage else {
@@ -53,23 +48,6 @@ enum HighlightApply {
                 }
             }
         }
-        storage.beginEditing()
-        for old in errors where NSMaxRange(old) <= storage.length {
-            storage.removeAttribute(.underlineStyle, range: old)
-            storage.removeAttribute(.underlineColor, range: old)
-        }
-        var next: [NSRange] = []
-        for err in update.errors {
-            let ns = clamp(map.nsRange(startByte: err.startByte, endByte: err.endByte), in: full)
-            if ns.length == 0 {
-                continue
-            }
-            storage.addAttribute(.underlineStyle, value: DiagnosticUnderlines.parseStyle, range: ns)
-            storage.addAttribute(.underlineColor, value: theme.error, range: ns)
-            next.append(ns)
-        }
-        storage.endEditing()
-        errors = next
         view.needsDisplay = true
         view.updateCurrentLineHighlight()
     }

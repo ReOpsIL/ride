@@ -35,7 +35,7 @@
 		A00000000000000000000127 /* CheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000126 /* CheckService.swift */; };
 		A00000000000000000000129 /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
 		A0000000000000000000012A /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
-		A0000000000000000000012C /* DiagnosticUnderlines.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012B /* DiagnosticUnderlines.swift */; };
+		A0000000000000000000012C /* Underlines.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012B /* Underlines.swift */; };
 		A0000000000000000000012E /* SessionService+Paint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012D /* SessionService+Paint.swift */; };
 		A00000000000000000000130 /* ProblemsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012F /* ProblemsPanel.swift */; };
 		A00000000000000000000902 /* DemoLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000901 /* DemoLaunch.swift */; };
@@ -90,6 +90,9 @@
 		A0000000000000000000002B /* BufferDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001B /* BufferDocument.swift */; };
 		A0000000000000000000090B /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
 		A0000000000000000000090C /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
+		A0000000000000000000090E /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
+		A0000000000000000000090F /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
+		A00000000000000000000911 /* RangeShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000910 /* RangeShiftTests.swift */; };
 		A0000000000000000000002C /* EditorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* EditorPane.swift */; };
 		A0000000000000000000002D /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001D /* GutterView.swift */; };
 		A0000000000000000000002E /* TabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001E /* TabStrip.swift */; };
@@ -201,7 +204,7 @@
 		5EA11C41B82C43461193C957 /* SizeReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SizeReporter.swift"; sourceTree = "<group>"; };
 		A00000000000000000000126 /* CheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckService.swift"; sourceTree = "<group>"; };
 		A00000000000000000000128 /* DiagnosticRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRange.swift"; sourceTree = "<group>"; };
-		A0000000000000000000012B /* DiagnosticUnderlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticUnderlines.swift"; sourceTree = "<group>"; };
+		A0000000000000000000012B /* Underlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Underlines.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012D /* SessionService+Paint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Paint.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012F /* ProblemsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProblemsPanel.swift"; sourceTree = "<group>"; };
 		A00000000000000000000901 /* DemoLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoLaunch.swift"; sourceTree = "<group>"; };
@@ -240,6 +243,8 @@
 		A0000000000000000000001A /* RideTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTextView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001B /* BufferDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferDocument.swift; sourceTree = "<group>"; };
 		A0000000000000000000090A /* BufferLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferLanguage.swift; sourceTree = "<group>"; };
+		A0000000000000000000090D /* RangeShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShift.swift; sourceTree = "<group>"; };
+		A00000000000000000000910 /* RangeShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShiftTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
 		A0000000000000000000001D /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001E /* TabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabStrip.swift; sourceTree = "<group>"; };
@@ -393,6 +398,7 @@
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
+				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
@@ -488,7 +494,7 @@
 			children = (
 				C00E2B0384B23C50A5620F92 /* IndentGuides.swift */,
 				B0355AEC5E462433212D91A0 /* TabItem.swift */,
-				A0000000000000000000012B /* DiagnosticUnderlines.swift */,
+				A0000000000000000000012B /* Underlines.swift */,
 				A00000000000000000000128 /* DiagnosticRange.swift */,
 				A0000000000000000000010D /* EditorHooks.swift */,
 				A0000000000000000000010F /* EditorPane+Nav.swift */,
@@ -502,6 +508,7 @@
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000090A /* BufferLanguage.swift */,
+				A0000000000000000000090D /* RangeShift.swift */,
 				A0000000000000000000001C /* EditorPane.swift */,
 				A0000000000000000000001D /* GutterView.swift */,
 				A0000000000000000000001E /* TabStrip.swift */,
@@ -745,11 +752,13 @@
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
+				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
 				A0000000000000000000013D /* CargoWatch.swift in Sources */,
 				A00000000000000000000140 /* GitStatus.swift in Sources */,
 				A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */,
 				A00000000000000000000909 /* BufferLanguageTests.swift in Sources */,
+				A00000000000000000000911 /* RangeShiftTests.swift in Sources */,
 				A0000000000000000000014C /* GitStatusTests.swift in Sources */,
 				A0000000000000000000014E /* CargoWatchTests.swift in Sources */,
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
@@ -824,7 +833,7 @@
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,
 				A00000000000000000000129 /* DiagnosticRange.swift in Sources */,
-				A0000000000000000000012C /* DiagnosticUnderlines.swift in Sources */,
+				A0000000000000000000012C /* Underlines.swift in Sources */,
 				A0000000000000000000012E /* SessionService+Paint.swift in Sources */,
 				A00000000000000000000130 /* ProblemsPanel.swift in Sources */,
 				A00000000000000000000133 /* CheckStatusView.swift in Sources */,
@@ -863,6 +872,7 @@
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
 				A0000000000000000000090B /* BufferLanguage.swift in Sources */,
+				A0000000000000000000090E /* RangeShift.swift in Sources */,
 				A0000000000000000000002C /* EditorPane.swift in Sources */,
 				A0000000000000000000002D /* GutterView.swift in Sources */,
 				A0000000000000000000002E /* TabStrip.swift in Sources */,

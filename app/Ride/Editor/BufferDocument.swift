@@ -11,8 +11,9 @@ final class BufferDocument: ObservableObject, Identifiable {
     var sessionId: UInt64?
     var editCount = 0
     var pending: PendingEdit?
-    var errorRanges: [NSRange] = []
-    var diagnosticRanges: [NSRange] = []
+    var parseUnderlines: [NSRange] = []
+    var diagnosticUnderlines: [DiagnosticUnderline] = []
+    var diagnosticsVersion: UInt64 = 0
     var highlights: [HighlightSpan] = []
     var visibleWork: DispatchWorkItem?
     var isReadOnly = false

@@ -150,6 +150,7 @@ struct EditorPane: NSViewRepresentable {
             publishCursor(view)
             if let pending = document.pending {
                 document.pending = nil
+                Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
                 let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
                 SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
             }

@@ -16,6 +16,18 @@ final class RideTextView: NSTextView {
         lines.invalidate()
         super.didChangeText()
     }
+
+    override var typingAttributes: [NSAttributedString.Key: Any] {
+        get {
+            var attributes = super.typingAttributes
+            attributes.removeValue(forKey: .underlineStyle)
+            attributes.removeValue(forKey: .underlineColor)
+            return attributes
+        }
+        set {
+            super.typingAttributes = newValue
+        }
+    }
     var hooks = EditorHooks()
     var hoverArea: NSTrackingArea?
     private var currentLineUTF16 = NSRange(location: 0, length: 0)

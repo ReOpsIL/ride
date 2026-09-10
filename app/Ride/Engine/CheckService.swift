@@ -8,6 +8,7 @@ final class CheckService: ObservableObject {
     @Published var hasRun = false
     @Published var failure: String?
     @Published var stderrTail = ""
+    @Published private(set) var version: UInt64 = 0
     var onFinished: (([Diagnostic]) -> Void)?
     private let queue = DispatchQueue(label: "dev.ride.check")
     private var bySource: [String: [Diagnostic]] = [:]
@@ -79,6 +80,7 @@ final class CheckService: ObservableObject {
         case .success(let check):
             let mine = check.diagnostics.filter { $0.level == .error || $0.level == .warning }
             bySource[source] = mine
+            version += 1
             diagnostics = bySource.values.flatMap { $0 }.sorted { ($0.path, $0.byteStart) < ($1.path, $1.byteStart) }
             failure = check.success || !mine.isEmpty ? nil : lastLine(check.stderrTail)
             stderrTail = failure == nil ? "" : check.stderrTail

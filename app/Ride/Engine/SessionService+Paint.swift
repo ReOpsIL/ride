@@ -6,11 +6,11 @@ extension SessionService {
             return
         }
         mergeHighlights(document: document, update: update)
-        HighlightApply.apply(update, text: text, view: view, errors: &document.errorRanges)
+        HighlightApply.apply(update, text: text, view: view)
         if let outline = update.outline {
             document.outline = outline.map(Self.row)
         }
-        DiagnosticUnderlines.apply(document: document, view: view)
+        Underlines.apply(document: document, view: view, parseErrors: update.errors)
     }
 
     private func mergeHighlights(document: BufferDocument, update: SessionUpdate) {
