@@ -66,8 +66,10 @@ extension AppState {
         if buffer.isReadOnly || buffer.fileURL == nil {
             let panel = NSSavePanel()
             panel.canCreateDirectories = true
-            panel.nameFieldStringValue = buffer.displayName + ".rs"
-            guard panel.runModal() == .OK, let url = panel.url else {
+            panel.nameFieldStringValue = buffer.displayName + "." + buffer.language.fileExtension
+            let picker = SaveLanguagePicker(panel: panel, initial: buffer.language)
+            let response = withExtendedLifetime(picker) { panel.runModal() }
+            guard response == .OK, let url = panel.url else {
                 return
             }
             buffer.fileURL = url

@@ -19,7 +19,7 @@
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
 | `src/query` | prefix / BM25 completion search, crate prefix, keyword hits |
 | `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline, parse errors |
-| `src/check` | `cargo check` JSON diagnostics, rustfmt and clang-format |
+| `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
 | `src/engine` | in-process `Engine`: sessions, query routing, definitions, tools, manifest watch |
 | `src/ffi` | UniFFI records, enums and listener traits |
 
@@ -32,7 +32,13 @@
 | C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords, buffer locals | buffer outline, `a::b::c` qualifier | clang-format |
 | Markdown | `md`, `markdown` | tree-sitter-md | headings | none | none | none |
 
-Non-Rust sessions never touch the crate index: the engine forces `BufferLocal` mode for their completion queries and skips the catalog in `find_definitions`. `.h` is treated as C.
+Non-Rust sessions never touch the crate index: the engine forces `BufferLocal` mode for their completion queries and skips the catalog in `find_definitions`. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++.
+
+### C / C++ diagnostics
+
+`run_check_c` runs `clang -fsyntax-only` on one saved file and parses the `path:line:col:{ranges}: level: message [-Wflag]` lines into the same `Diagnostic` record `cargo check` produces, with byte offsets computed from the file on disk. Flags come from the nearest `compile_commands.json` (searched upward from the file in `.`, `build/`, `out/` and `cmake-build-debug/`): the entry for the file, or for a source in the same directory when the file is a header, with the compiler, `-c`, `-o` and dependency-file flags stripped. Without a database the fallback is `-std=c23` / `-std=c++23 -Wall -I<file dir>`. The app runs it on save and on Check (⌘B) for C/C++ buffers instead of `cargo check`, and keeps the diagnostics of each source (cargo or file path) separately in the Problems panel.
+
+Format on save for C/C++ runs only when `has_tool("clang-format")` is true, so a machine without clang-format saves silently.
 
 ## Index directory
 
@@ -54,6 +60,8 @@ A run whose crate-set fingerprint matches `manifest.json` appends a `ready` stat
 | `find_definitions` | identifier under the caret to buffer outline or index definitions |
 | `run_check` | `cargo check` diagnostics with absolute paths and byte ranges |
 | `format_rust` | rustfmt a buffer |
+| `run_check_c` | `clang -fsyntax-only` diagnostics for one C or C++ file, flags from `compile_commands.json` |
+| `has_tool` | whether a toolchain binary (`clang-format`, …) is on PATH or in the usual install dirs |
 | `format_c` | clang-format a C or C++ buffer (`--assume-filename` from the buffer path so `.clang-format` is honoured) |
 | `render_markdown` | markdown to HTML with line anchors and highlighted Rust, C and C++ fences, for the preview pane |
 | `open_session` / `apply_edit` / `set_visible_range` | highlight deltas, outline, parse errors; the language comes from the path extension (`Lang::for_path`) |

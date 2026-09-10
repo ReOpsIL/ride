@@ -3,9 +3,8 @@ use std::path::Path;
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 
+use super::output::stderr_tail;
 use super::parse::parse_lines;
-
-const STDERR_TAIL: usize = 2000;
 
 pub fn run_check(root: &Path, target_dir: Option<&Path>) -> Result<CheckResult, EngineError> {
     let mut cmd = crate::toolchain::tool("cargo");
@@ -22,15 +21,6 @@ pub fn run_check(root: &Path, target_dir: Option<&Path>) -> Result<CheckResult, 
     Ok(CheckResult {
         success: output.status.success(),
         diagnostics: parse_lines(root, &stdout),
-        stderr_tail: tail(&stderr),
+        stderr_tail: stderr_tail(&stderr),
     })
-}
-
-fn tail(text: &str) -> String {
-    let start = text.len().saturating_sub(STDERR_TAIL);
-    let mut idx = start;
-    while !text.is_char_boundary(idx) {
-        idx += 1;
-    }
-    text[idx..].to_string()
 }

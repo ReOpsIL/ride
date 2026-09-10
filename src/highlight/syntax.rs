@@ -20,14 +20,26 @@ const CPP_EXTS: &[&str] = &[
 
 impl Lang {
     pub fn for_path(path: Option<&str>) -> Lang {
-        let ext = path
-            .and_then(|p| p.rsplit_once('.'))
-            .map(|(_, e)| e.to_ascii_lowercase());
-        match ext.as_deref() {
+        match extension(path).as_deref() {
             Some("md") | Some("markdown") => Lang::Markdown,
             Some(e) if C_EXTS.contains(&e) => Lang::C,
             Some(e) if CPP_EXTS.contains(&e) => Lang::Cpp,
             _ => Lang::Rust,
+        }
+    }
+
+    pub fn for_buffer(path: Option<&str>, text: &str) -> Lang {
+        match Self::for_path(path) {
+            Lang::C if is_header(path) && super::header::is_cpp_header(text) => Lang::Cpp,
+            lang => lang,
+        }
+    }
+
+    pub fn clang_name(self) -> Option<&'static str> {
+        match self {
+            Lang::C => Some("c"),
+            Lang::Cpp => Some("c++"),
+            Lang::Rust | Lang::Markdown => None,
         }
     }
 
@@ -62,6 +74,15 @@ impl Lang {
     pub fn has_catalog(self) -> bool {
         self == Lang::Rust
     }
+}
+
+fn extension(path: Option<&str>) -> Option<String> {
+    path.and_then(|p| p.rsplit_once('.'))
+        .map(|(_, e)| e.to_ascii_lowercase())
+}
+
+fn is_header(path: Option<&str>) -> bool {
+    extension(path).as_deref() == Some("h")
 }
 
 pub trait Syntax: Send + Sync {

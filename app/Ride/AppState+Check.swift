@@ -2,20 +2,33 @@ import AppKit
 
 extension AppState {
     func runCheck() {
-        guard let root = workspaceRoot else {
-            return
+        if let buffer = activeBuffer, buffer.language.usesClang, let url = buffer.fileURL {
+            CheckService.shared.run(file: url)
+        } else if let root = workspaceRoot {
+            CheckService.shared.run(root: root)
         }
-        CheckService.shared.run(root: root)
     }
 
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
-        if allowFormat, prefs.formatOnSave, buffer.language == .rust, buffer.id == activeID {
+        if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer.language) {
             formatActive(thenSave: true)
         }
-        guard let root = workspaceRoot, prefs.checkOnSave else {
+        guard prefs.checkOnSave else {
             return
         }
-        CheckService.shared.schedule(root: root)
+        if buffer.language.usesClang, let url = buffer.fileURL {
+            CheckService.shared.schedule(file: url)
+        } else if let root = workspaceRoot {
+            CheckService.shared.schedule(root: root)
+        }
+    }
+
+    private func formatsOnSave(_ language: BufferLanguage) -> Bool {
+        switch language {
+        case .rust: return true
+        case .c, .cpp: return RideEngineClient.shared.engine?.hasTool(name: "clang-format") ?? false
+        case .markdown, .plain: return false
+        }
     }
 
     func checkFinished(_ diagnostics: [Diagnostic]) {

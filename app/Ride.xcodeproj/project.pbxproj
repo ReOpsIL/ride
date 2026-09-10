@@ -54,6 +54,7 @@
 		A00000000000000000000146 /* AppState+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000145 /* AppState+Watch.swift */; };
 		A00000000000000000000148 /* AppState+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000147 /* AppState+Theme.swift */; };
 		A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000149 /* DiagnosticRangeTests.swift */; };
+		A00000000000000000000909 /* BufferLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000908 /* BufferLanguageTests.swift */; };
 		A0000000000000000000014C /* GitStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014B /* GitStatusTests.swift */; };
 		A0000000000000000000014E /* CargoWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014D /* CargoWatchTests.swift */; };
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
@@ -87,10 +88,13 @@
 		A00000000000000000000029 /* TreeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000019 /* TreeActions.swift */; };
 		A0000000000000000000002A /* RideTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001A /* RideTextView.swift */; };
 		A0000000000000000000002B /* BufferDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001B /* BufferDocument.swift */; };
+		A0000000000000000000090B /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
+		A0000000000000000000090C /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
 		A0000000000000000000002C /* EditorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* EditorPane.swift */; };
 		A0000000000000000000002D /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001D /* GutterView.swift */; };
 		A0000000000000000000002E /* TabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001E /* TabStrip.swift */; };
 		A0000000000000000000002F /* Buffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001F /* Buffers.swift */; };
+		A00000000000000000000907 /* SaveLanguagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000906 /* SaveLanguagePicker.swift */; };
 		A00000000000000000000070 /* QuickOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000060 /* QuickOpen.swift */; };
 		A00000000000000000000071 /* FindBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000061 /* FindBar.swift */; };
 		A00000000000000000000072 /* FileIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000062 /* FileIndex.swift */; };
@@ -213,6 +217,7 @@
 		A00000000000000000000145 /* AppState+Watch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Watch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000147 /* AppState+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Theme.swift"; sourceTree = "<group>"; };
 		A00000000000000000000149 /* DiagnosticRangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRangeTests.swift"; sourceTree = "<group>"; };
+		A00000000000000000000908 /* BufferLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BufferLanguageTests.swift"; sourceTree = "<group>"; };
 		A0000000000000000000014B /* GitStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatusTests.swift"; sourceTree = "<group>"; };
 		A0000000000000000000014D /* CargoWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CargoWatchTests.swift"; sourceTree = "<group>"; };
 		A000000000000000000000C0 /* RideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -234,10 +239,12 @@
 		A00000000000000000000019 /* TreeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeActions.swift; sourceTree = "<group>"; };
 		A0000000000000000000001A /* RideTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTextView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001B /* BufferDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferDocument.swift; sourceTree = "<group>"; };
+		A0000000000000000000090A /* BufferLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferLanguage.swift; sourceTree = "<group>"; };
 		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
 		A0000000000000000000001D /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001E /* TabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabStrip.swift; sourceTree = "<group>"; };
 		A0000000000000000000001F /* Buffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffers.swift; sourceTree = "<group>"; };
+		A00000000000000000000906 /* SaveLanguagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLanguagePicker.swift; sourceTree = "<group>"; };
 		A00000000000000000000060 /* QuickOpen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickOpen.swift; sourceTree = "<group>"; };
 		A00000000000000000000061 /* FindBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindBar.swift; sourceTree = "<group>"; };
 		A00000000000000000000062 /* FileIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIndex.swift; sourceTree = "<group>"; };
@@ -385,6 +392,7 @@
 				A0000000000000000000014D /* CargoWatchTests.swift */,
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
+				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
@@ -493,10 +501,12 @@
 				A0000000000000000000011E /* FunctionKeys.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
+				A0000000000000000000090A /* BufferLanguage.swift */,
 				A0000000000000000000001C /* EditorPane.swift */,
 				A0000000000000000000001D /* GutterView.swift */,
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
+				A00000000000000000000906 /* SaveLanguagePicker.swift */,
 				A00000000000000000000092 /* Utf16.swift */,
 				B1000000000000000000002A /* HeadingLevel.swift */,
 				B1000000000000000000001A /* MarkupFonts.swift */,
@@ -734,10 +744,12 @@
 				B04310B616ED144666AD4307 /* Contrast.swift in Sources */,
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
+				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
 				A0000000000000000000013D /* CargoWatch.swift in Sources */,
 				A00000000000000000000140 /* GitStatus.swift in Sources */,
 				A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */,
+				A00000000000000000000909 /* BufferLanguageTests.swift in Sources */,
 				A0000000000000000000014C /* GitStatusTests.swift in Sources */,
 				A0000000000000000000014E /* CargoWatchTests.swift in Sources */,
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
@@ -850,10 +862,12 @@
 				A00000000000000000000029 /* TreeActions.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
+				A0000000000000000000090B /* BufferLanguage.swift in Sources */,
 				A0000000000000000000002C /* EditorPane.swift in Sources */,
 				A0000000000000000000002D /* GutterView.swift in Sources */,
 				A0000000000000000000002E /* TabStrip.swift in Sources */,
 				A0000000000000000000002F /* Buffers.swift in Sources */,
+				A00000000000000000000907 /* SaveLanguagePicker.swift in Sources */,
 				A00000000000000000000070 /* QuickOpen.swift in Sources */,
 				A00000000000000000000071 /* FindBar.swift in Sources */,
 				A00000000000000000000072 /* FileIndex.swift in Sources */,

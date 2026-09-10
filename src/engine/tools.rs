@@ -1,7 +1,7 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::check::{format_clang, format_source, run_check};
+use crate::check::{format_clang, format_source, run_check, run_clang_check};
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 
@@ -16,6 +16,17 @@ impl Engine {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
         }
+    }
+
+    pub fn run_check_c(&self, path: String) -> Result<CheckResult, EngineError> {
+        match catch_unwind(AssertUnwindSafe(|| run_clang_check(Path::new(&path)))) {
+            Ok(r) => r,
+            Err(p) => Err(EngineError::from_panic(p)),
+        }
+    }
+
+    pub fn has_tool(&self, name: String) -> bool {
+        crate::toolchain::tool_path(&name).is_file()
     }
 
     pub fn render_markdown(&self, text: String) -> String {

@@ -16,7 +16,7 @@ impl Engine {
         visible: Option<ByteRange>,
     ) -> Result<SessionOpen, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            let lang = crate::highlight::Lang::for_path(path.as_deref());
+            let lang = crate::highlight::Lang::for_buffer(path.as_deref(), &text);
             let (session, update) = BufferSession::open_lang(lang, text, visible)?;
             self.write(|i| {
                 let session_id = i.next_session_id;

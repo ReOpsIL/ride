@@ -4,6 +4,7 @@ mod edit;
 mod errors;
 mod fences;
 mod grammar;
+mod header;
 mod locals;
 mod markdown;
 mod paint;

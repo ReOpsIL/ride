@@ -20,7 +20,8 @@
 
 # C / C++ (added 2026-09-10)
 
-- check: no diagnostics for C/C++; a `compile_commands.json`-driven `clang` run (or `clangd`) would fill the Problems panel the way `cargo check` does
-- highlight: `.h` is always C; sniff the header for `class`/`namespace`/`template` and open it as C++ when found
+- check: `run_check_c` is per saved file; a header edit does not re-check the sources that include it, and there is no whole-project C check (`compile_commands.json` walk)
+- check: diagnostics for a `.h` sniffed as C++ but compiled with a C sibling's flags fail on `-std=c…`; pick the sibling by language
 - highlight: C/C++ definitions are buffer-only; index `#include` targets found on the include path for cross-file jumps
 - highlight: C++ completion has no member-access awareness (`obj.` lists all buffer identifiers)
+- app: a `.h` the engine opens as C++ still shows the `C` label and icon; surface the sniffed language in `SessionOpen`
