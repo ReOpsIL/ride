@@ -97,7 +97,15 @@ impl Syntax for TreeSyntax {
         let limit = q.limit as usize;
         match members::access_before(tree, text, q.at as usize, self.grammar.member_ops) {
             Some(receiver) => LocalHits {
-                hits: members::fallback_hits(tree, text, outline, q.prefix, limit, &self.grammar),
+                hits: members::fallback_hits(
+                    tree,
+                    text,
+                    outline,
+                    q.prefix,
+                    limit,
+                    &self.grammar,
+                    q.at as usize,
+                ),
                 access: Some(Access {
                     type_name: receiver.and_then(|r| (self.grammar.receiver_type)(tree, text, r)),
                 }),

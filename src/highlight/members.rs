@@ -42,6 +42,7 @@ pub fn fallback_hits(
     prefix: &str,
     limit: usize,
     grammar: &Grammar,
+    typing_at: usize,
 ) -> Vec<CompletionHit> {
     let p = prefix.to_ascii_lowercase();
     let mut seen = HashSet::new();
@@ -60,7 +61,10 @@ pub fn fallback_hits(
         }
     }
     each_node(tree.root_node(), &mut |node| {
-        if out.len() >= limit || !grammar.member_kinds.contains(&node.kind()) {
+        if out.len() >= limit
+            || !grammar.member_kinds.contains(&node.kind())
+            || node.start_byte() == typing_at
+        {
             return;
         }
         let Ok(name) = node.utf8_text(text.as_bytes()) else {

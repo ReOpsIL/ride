@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, ItemKind};
+use crate::ffi::{CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, ItemKind};
 use crate::query;
 use crate::score::KEYWORD;
 
@@ -58,7 +58,16 @@ fn children(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> Vec<Co
     let Some(parent) = resolve(snap, segments) else {
         return Vec::new();
     };
-    let mut hits = query::children(snap.catalog.src(), &parent, &q.prefix, limit, q.context);
+    let context = if segments
+        .last()
+        .and_then(|s| s.chars().next())
+        .is_some_and(char::is_uppercase)
+    {
+        CompletionContext::MemberAccess
+    } else {
+        q.context
+    };
+    let mut hits = query::children(snap.catalog.src(), &parent, &q.prefix, limit, context);
     merge::boost_catalog(&mut hits, &q.prefix, &[]);
     for hit in &mut hits {
         hit.import_path = None;
