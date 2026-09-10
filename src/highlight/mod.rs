@@ -1,3 +1,5 @@
+mod c_docs;
+mod c_locals;
 mod c_members;
 mod c_names;
 mod c_outline;

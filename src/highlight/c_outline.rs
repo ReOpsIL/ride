@@ -2,6 +2,7 @@ use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
 
+use super::c_docs;
 use super::c_names::{function_name, node_text, plain_name};
 
 const TRANSPARENT: [&str; 10] = [
@@ -59,7 +60,7 @@ fn function(node: Node<'_>, text: &str, in_type: bool, out: &mut Vec<OutlineItem
         } else {
             ItemKind::Fn
         };
-        push(node, name, kind, out);
+        push(node, name, kind, text, out);
     }
 }
 
@@ -81,9 +82,9 @@ fn declaration(node: Node<'_>, text: &str, in_type: bool, out: &mut Vec<OutlineI
             } else {
                 ItemKind::Fn
             };
-            push(node, name, kind, out);
+            push(node, name, kind, text, out);
         } else if !in_type && let Some(name) = plain_name(declarator, text) {
-            push(node, name, ItemKind::Static, out);
+            push(node, name, ItemKind::Static, text, out);
         }
     }
 }
@@ -99,7 +100,7 @@ fn type_body(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
             "enum_specifier" => ItemKind::Enum,
             _ => ItemKind::Struct,
         };
-        push(node, node_text(name, text), kind, out);
+        push(node, node_text(name, text), kind, text, out);
     }
     scope(body, text, true, out);
 }
@@ -111,14 +112,14 @@ fn typedef(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     let mut cursor = node.walk();
     for declarator in node.children_by_field_name("declarator", &mut cursor) {
         if let Some(name) = plain_name(declarator, text) {
-            push(node, name, ItemKind::Type, out);
+            push(node, name, ItemKind::Type, text, out);
         }
     }
 }
 
 fn namespace(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     if let Some(name) = node.child_by_field_name("name") {
-        push(node, node_text(name, text), ItemKind::Namespace, out);
+        push(node, node_text(name, text), ItemKind::Namespace, text, out);
     }
     if let Some(body) = node.child_by_field_name("body") {
         scope(body, text, false, out);
@@ -127,11 +128,11 @@ fn namespace(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
 
 fn push_field(node: Node<'_>, field: &str, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if let Some(name) = node.child_by_field_name(field) {
-        push(node, node_text(name, text), kind, out);
+        push(node, node_text(name, text), kind, text, out);
     }
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>) {
+fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if name.is_empty() {
         return;
     }
@@ -140,7 +141,7 @@ fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>
         kind,
         start_byte: node.start_byte() as u32,
         end_byte: node.end_byte() as u32,
-        signature: String::new(),
-        doc: String::new(),
+        signature: c_docs::signature(node, text),
+        doc: c_docs::doc(node, text),
     });
 }

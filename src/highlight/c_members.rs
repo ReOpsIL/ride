@@ -1,14 +1,8 @@
 use tree_sitter::{Node, Tree};
 
+use super::c_locals::DECLARATIONS;
 use super::c_names::{SPECIFIERS, WRAPPERS, node_text, plain_name, type_name, wrapped};
 use super::walk::each_node;
-
-const DECLARATIONS: &[&str] = &[
-    "declaration",
-    "parameter_declaration",
-    "optional_parameter_declaration",
-    "field_declaration",
-];
 
 pub fn receiver_type(tree: &Tree, text: &str, receiver: Node<'_>) -> Option<String> {
     if receiver.kind() == "this" {
@@ -76,18 +70,4 @@ fn definition_scope(definition: Node<'_>, text: &str) -> Option<String> {
 
 pub fn no_receiver(_: &Tree, _: &str, _: Node<'_>) -> Option<String> {
     None
-}
-
-pub fn declares_local(node: Node<'_>, _: &str) -> bool {
-    let mut current = node;
-    for _ in 0..4 {
-        let Some(parent) = current.parent() else {
-            return false;
-        };
-        if DECLARATIONS.contains(&parent.kind()) {
-            return super::locals::within_field(parent, "declarator", node);
-        }
-        current = parent;
-    }
-    false
 }

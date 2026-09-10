@@ -22,6 +22,7 @@ pub fn grammar() -> Grammar {
         keywords: KEYWORDS,
         local_kinds: &["identifier", "type_identifier"],
         declares: crate::highlight::rust_locals::declares,
+        local_detail: crate::highlight::rust_locals::detail,
         symbol_kinds: &[
             "identifier",
             "type_identifier",

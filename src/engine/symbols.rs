@@ -70,10 +70,5 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
 }
 
 fn outline_hit(item: &OutlineItem) -> CompletionHit {
-    CompletionHit::local(
-        &item.name,
-        item.kind,
-        LOCAL_SCORE,
-        Some((item.start_byte, item.end_byte)),
-    )
+    CompletionHit::from_outline(item, LOCAL_SCORE, None)
 }

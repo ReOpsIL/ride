@@ -1,6 +1,7 @@
 use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
+use crate::text::first_line;
 
 use super::c_names::node_text;
 
@@ -25,7 +26,7 @@ fn table(node: Node<'_>, text: &str) -> Option<OutlineItem> {
         kind: ItemKind::Table,
         start_byte: node.start_byte() as u32,
         end_byte: node.end_byte() as u32,
-        signature: String::new(),
+        signature: first_line(&node_text(node, text)),
         doc: String::new(),
     })
 }

@@ -1,6 +1,7 @@
 use tree_sitter::Node;
 
 use super::item::node_text;
+use crate::text::collapse_ws;
 
 pub fn first_paragraph(docs: &str) -> String {
     let trimmed = docs.trim();
@@ -161,8 +162,4 @@ fn strip_inner(text: &str) -> Option<String> {
         return Some(rest.trim().trim_end_matches("*/").trim().to_string());
     }
     None
-}
-
-fn collapse_ws(s: &str) -> String {
-    s.split_whitespace().collect::<Vec<_>>().join(" ")
 }

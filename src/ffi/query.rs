@@ -1,4 +1,6 @@
 use super::kind::ItemKind;
+use super::session::OutlineItem;
+use crate::text::first_sentence;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Enum)]
 pub enum QueryMode {
@@ -75,6 +77,20 @@ pub struct CompletionResponse {
 }
 
 impl CompletionHit {
+    pub fn from_outline(item: &OutlineItem, score: f32, source_path: Option<String>) -> Self {
+        let mut hit = Self::local(
+            &item.name,
+            item.kind,
+            score,
+            Some((item.start_byte, item.end_byte)),
+        );
+        hit.signature = item.signature.clone();
+        hit.doc_first_sentence = first_sentence(&item.doc);
+        hit.doc_paragraph = item.doc.clone();
+        hit.source_path = source_path;
+        hit
+    }
+
     pub fn local(name: &str, kind: ItemKind, score: f32, range: Option<(u32, u32)>) -> Self {
         Self {
             path: name.to_string(),

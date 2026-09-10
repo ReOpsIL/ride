@@ -78,6 +78,7 @@ pub fn grammar() -> Grammar {
         keywords: KEYWORDS,
         local_kinds: &["bare_key"],
         declares: crate::highlight::locals::no_declares,
+        local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["bare_key"],
         qualifier: no_qualifier,
         outline: toml_outline::outline,

@@ -10,7 +10,7 @@ const MAX_DEPTH: usize = 6;
 #[derive(Debug, Default, Clone)]
 pub struct TypeTable {
     origin: Option<PathBuf>,
-    members: HashMap<String, Vec<OutlineItem>>,
+    members: HashMap<String, Vec<Member>>,
     bases: HashMap<String, Vec<String>>,
     aliases: HashMap<String, String>,
 }
@@ -18,7 +18,18 @@ pub struct TypeTable {
 #[derive(Debug, Clone)]
 pub struct Member {
     pub item: OutlineItem,
+    pub detail: String,
     pub origin: Option<PathBuf>,
+}
+
+impl Member {
+    pub fn new(item: OutlineItem, detail: String) -> Self {
+        Self {
+            item,
+            detail,
+            origin: None,
+        }
+    }
 }
 
 impl TypeTable {
@@ -27,7 +38,7 @@ impl TypeTable {
         self
     }
 
-    pub fn add_members(&mut self, name: String, items: Vec<OutlineItem>) {
+    pub fn add_members(&mut self, name: String, items: Vec<Member>) {
         self.members.entry(name).or_default().extend(items);
     }
 
@@ -76,9 +87,9 @@ fn collect(
     }
     for table in tables {
         if let Some(items) = table.members.get(name) {
-            out.extend(items.iter().map(|item| Member {
-                item: item.clone(),
+            out.extend(items.iter().map(|member| Member {
                 origin: table.origin.clone(),
+                ..member.clone()
             }));
         }
         if let Some(bases) = table.bases.get(name) {
