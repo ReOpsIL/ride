@@ -13,3 +13,13 @@ pub trait Hash {
 }
 pub fn hash_slice() {}
 pub fn free_std() {}
+impl HashMap {
+    pub fn new() -> Self {
+        HashMap
+    }
+    pub fn insert(&mut self) {}
+    pub fn get(&self) {}
+    pub fn len(&self) -> usize {
+        0
+    }
+}

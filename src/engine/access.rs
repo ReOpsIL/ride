@@ -1,10 +1,13 @@
 use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse};
 
 use super::snapshot::Snapshot;
-use super::{header_hits, include_graph, merge};
+use super::{header_hits, include_graph, merge, rust_members};
 
 pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
     let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    if let Some(resp) = rust_members::try_hits(snap, q) {
+        return resp;
+    }
     let Some(local) = &snap.local else {
         return CompletionResponse::empty(q.query_id);
     };

@@ -6,7 +6,9 @@ use tantivy::{Index, IndexReader};
 
 use crate::discover::SystemIncludes;
 use crate::ffi::{CompletionQuery, WorkspaceInfo};
-use crate::highlight::{Lang, LocalHits, LocalQuery, Site, SiteAt, SourceScope};
+use crate::highlight::{
+    Lang, LiteralState, LocalHits, LocalQuery, Site, SiteAt, SourceScope, literal_state,
+};
 use crate::query::IndexSrc;
 
 use super::Engine;
@@ -32,6 +34,7 @@ pub struct Snapshot {
     pub lang: Lang,
     pub site: Option<SiteAt>,
     pub local: Option<LocalHits>,
+    pub literal: Option<LiteralState>,
     pub scope: Option<SourceScope>,
     pub imports: Vec<String>,
     pub headers: Arc<HeaderCache>,
@@ -65,10 +68,17 @@ pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot
                         at: at.replace_start as u32,
                     })
                 });
+            let literal = session
+                .zip(site.as_ref())
+                .filter(|(_, at)| matches!(at.site, Site::StructLiteral(_)))
+                .map(|(s, at)| {
+                    literal_state(s.replica(), at.replace_start, q.cursor_byte as usize)
+                });
             Some(Snapshot {
                 lang,
                 site,
                 local,
+                literal,
                 scope: session.map(|s| s.scope()),
                 imports: session.map(|s| s.imports()).unwrap_or_default(),
                 headers: i.headers.clone(),

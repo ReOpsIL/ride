@@ -1,5 +1,7 @@
 use tree_sitter::{Node, Tree};
 
+use crate::highlight::rust_type_names::enclosing_impl;
+
 use super::common::{
     PositionWords, head_before, in_open_comment, inside, path_segments, position, word_start,
 };
@@ -90,5 +92,9 @@ fn struct_name(expr: Node<'_>, text: &str) -> Option<String> {
     }
     let name = expr.child_by_field_name("name")?;
     let full = &text[name.start_byte()..name.end_byte().min(text.len())];
-    Some(full.rsplit("::").next().unwrap_or(full).to_string())
+    let base = full.rsplit("::").next().unwrap_or(full);
+    if base == "Self" {
+        return enclosing_impl(expr, text);
+    }
+    Some(base.to_string())
 }
