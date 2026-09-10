@@ -22,6 +22,8 @@ enum KindStyle {
         case .`class`: return "C"
         case .namespace: return "N"
         case .field: return "p"
+        case .table: return "["
+        case .target: return ">"
         }
     }
 

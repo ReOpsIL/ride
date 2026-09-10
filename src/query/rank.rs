@@ -30,8 +30,8 @@ pub fn kind_weight(kind: ItemKind) -> f32 {
         | ItemKind::Union
         | ItemKind::Type
         | ItemKind::Class => 40.0,
-        ItemKind::Fn | ItemKind::Macro => 35.0,
-        ItemKind::Mod | ItemKind::Crate | ItemKind::Namespace => 30.0,
+        ItemKind::Fn | ItemKind::Macro | ItemKind::Target => 35.0,
+        ItemKind::Mod | ItemKind::Crate | ItemKind::Namespace | ItemKind::Table => 30.0,
         ItemKind::Method => 20.0,
         ItemKind::Const | ItemKind::Static => 10.0,
         ItemKind::Keyword | ItemKind::Local | ItemKind::Heading | ItemKind::Field => 0.0,

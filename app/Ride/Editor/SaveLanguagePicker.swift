@@ -3,7 +3,7 @@ import AppKit
 final class SaveLanguagePicker: NSObject {
     private weak var panel: NSSavePanel?
     private let popup = NSPopUpButton(frame: .zero, pullsDown: false)
-    private let languages: [BufferLanguage] = [.rust, .c, .cpp]
+    private let languages: [BufferLanguage] = [.rust, .c, .cpp, .toml, .make, .cmake, .markdown]
 
     init(panel: NSSavePanel, initial: BufferLanguage) {
         self.panel = panel

@@ -1,0 +1,93 @@
+use tree_sitter::{Language, Node};
+
+use super::Grammar;
+use crate::highlight::{c_members, includes, toml_outline, types};
+
+const HIGHLIGHTS: &str = include_str!("../../../queries/toml/highlights.scm");
+
+pub const KEYWORDS: &[&str] = &[
+    "authors",
+    "badges",
+    "bench",
+    "bin",
+    "branch",
+    "build",
+    "build-dependencies",
+    "categories",
+    "codegen-units",
+    "crate-type",
+    "debug",
+    "default",
+    "default-features",
+    "default-run",
+    "dependencies",
+    "description",
+    "dev-dependencies",
+    "documentation",
+    "edition",
+    "example",
+    "exclude",
+    "false",
+    "features",
+    "git",
+    "harness",
+    "homepage",
+    "include",
+    "incremental",
+    "inf",
+    "keywords",
+    "lib",
+    "license",
+    "license-file",
+    "links",
+    "lints",
+    "lto",
+    "members",
+    "name",
+    "nan",
+    "opt-level",
+    "optional",
+    "overflow-checks",
+    "package",
+    "panic",
+    "patch",
+    "path",
+    "proc-macro",
+    "profile",
+    "publish",
+    "readme",
+    "registry",
+    "repository",
+    "required-features",
+    "resolver",
+    "rev",
+    "rust-version",
+    "strip",
+    "tag",
+    "target",
+    "test",
+    "true",
+    "version",
+    "workspace",
+];
+
+pub fn grammar() -> Grammar {
+    Grammar {
+        language: Language::new(tree_sitter_toml_ng::LANGUAGE),
+        highlights: HIGHLIGHTS,
+        keywords: KEYWORDS,
+        local_kinds: &["bare_key"],
+        symbol_kinds: &["bare_key"],
+        qualifier: no_qualifier,
+        outline: toml_outline::outline,
+        member_ops: &[],
+        member_kinds: &[],
+        receiver_type: c_members::no_receiver,
+        type_table: types::empty_table,
+        includes: includes::no_includes,
+    }
+}
+
+fn no_qualifier(_: Node<'_>, _: &str) -> Option<String> {
+    None
+}

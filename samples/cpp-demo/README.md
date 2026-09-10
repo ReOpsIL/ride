@@ -8,6 +8,8 @@ include/registry.h   a .h with C++ content (Ride sniffs it and opens it as C++)
 src/shapes.cpp       out-of-class definitions using this->
 src/registry.cpp     std::map-backed registry
 src/main.cpp         circle., found->, geo:: qualifiers, std::vector
+CMakeLists.txt       project, option, a function, a static library and the executable (CMake outline and completion)
+Makefile             targets and variables (Makefile outline and completion)
 build/compile_commands.json   -std=c++20 -Iinclude for each source (directory is relative to build/)
 ```
 

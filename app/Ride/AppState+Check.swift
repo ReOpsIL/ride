@@ -27,7 +27,7 @@ extension AppState {
         switch language {
         case .rust: return true
         case .c, .cpp: return RideEngineClient.shared.engine?.hasTool(name: "clang-format") ?? false
-        case .markdown, .plain: return false
+        case .toml, .make, .cmake, .markdown, .plain: return false
         }
     }
 

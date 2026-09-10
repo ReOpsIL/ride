@@ -47,6 +47,9 @@ pub fn highlights_in(
         while let Some((m, cap_i)) = captures.next() {
             let cap = m.captures()[*cap_i];
             let name = query.capture_names()[cap.index as usize];
+            if name.starts_with('_') {
+                continue;
+            }
             let kind = capture_kind(name);
             if kind == CaptureKind::Punctuation && name.contains("bracket") {
                 continue;

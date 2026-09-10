@@ -5,8 +5,11 @@ use crate::highlight::includes::IncludeRef;
 use crate::highlight::types::TypeTable;
 
 pub mod c;
+pub mod cmake;
 pub mod cpp;
+pub mod make;
 pub mod rust;
+pub mod toml;
 
 pub struct Grammar {
     pub language: Language,

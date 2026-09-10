@@ -8,6 +8,8 @@ include/geometry.h   point_t / rect_t typedefs, struct shape with a union, proto
 src/util.h           struct buffer and its API (quoted include from main.c)
 src/geometry.c       implementations using SQUARE and r->width
 src/main.c           uses every header: p.x, s->kind, out.data, MAX_SHAPES
+CMakeLists.txt       a static library and the executable (CMake outline and completion)
+Makefile             targets and variables (Makefile outline and completion)
 build/compile_commands.json   -Iinclude for each source (directory is relative to build/)
 ```
 

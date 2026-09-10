@@ -180,6 +180,8 @@ final class SessionService {
         case .`class`: return "class"
         case .namespace: return "namespace"
         case .field: return "field"
+        case .table: return "table"
+        case .target: return "target"
         }
     }
 }
@@ -191,6 +193,9 @@ extension BufferLanguage {
         case .c: self = .c
         case .cpp: self = .cpp
         case .markdown: self = .markdown
+        case .toml: self = .toml
+        case .make: self = .make
+        case .cmake: self = .cmake
         }
     }
 }

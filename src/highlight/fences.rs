@@ -6,7 +6,14 @@ use crate::ffi::{ByteRange, HighlightSpan};
 use super::syntax::{Lang, Syntax};
 use super::tree_syntax::TreeSyntax;
 
-const FENCE_LANGS: [Lang; 3] = [Lang::Rust, Lang::C, Lang::Cpp];
+const FENCE_LANGS: [Lang; 6] = [
+    Lang::Rust,
+    Lang::C,
+    Lang::Cpp,
+    Lang::Toml,
+    Lang::Make,
+    Lang::Cmake,
+];
 
 struct LangFences {
     lang: Lang,

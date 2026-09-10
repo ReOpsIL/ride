@@ -30,9 +30,12 @@
 | Rust | `rs` | tree-sitter-rust | `extract` items | keywords, buffer locals, crate catalog | buffer outline + catalog | rustfmt |
 | C | `c`, `h` | tree-sitter-c | functions, prototypes, structs/enums/unions, typedefs, globals, `#define` | keywords, buffer locals, included headers, struct members after `.` / `->` | buffer outline + included headers | clang-format |
 | C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords, buffer locals, included headers, class members after `.` / `->` / `this->` (bases followed) | buffer outline + included headers, `a::b::c` qualifier | clang-format |
+| TOML | `toml` | tree-sitter-toml-ng | tables and table arrays | Cargo manifest table and key names, keys in the buffer | buffer outline | none |
+| Makefile | `Makefile`, `GNUmakefile`, `mk`, `mak`, `make` | tree-sitter-make | targets, variable and `define` assignments | GNU make directives, functions, builtin variables and special targets, buffer targets and variables | buffer outline | none |
+| CMake | `CMakeLists.txt`, `cmake` | tree-sitter-cmake | project, `add_executable` / `add_library` / `add_custom_target` targets, `set` variables, `option`s, functions, macros | common commands, variables and argument keywords, buffer functions, targets and variables | buffer outline | none |
 | Markdown | `md`, `markdown` | tree-sitter-md | headings | none | none | none |
 
-Non-Rust sessions never touch the crate index: the engine forces `BufferLocal` mode for their completion queries and skips the catalog in `find_definitions`. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++. `SessionOpen.lang` carries the language the engine chose so the app can relabel a sniffed header.
+`Lang::for_path` checks the file name before the extension (`Makefile`, `GNUmakefile`, `CMakeLists.txt`). A buffer item whose name equals a keyword wins the name dedupe, so `[dependencies]` completes as the buffer's table rather than the manifest keyword. Non-Rust sessions never touch the crate index: the engine forces `BufferLocal` mode for their completion queries and skips the catalog in `find_definitions`. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++. `SessionOpen.lang` carries the language the engine chose so the app can relabel a sniffed header.
 
 ### C / C++ headers
 

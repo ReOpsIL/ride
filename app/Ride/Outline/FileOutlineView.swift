@@ -101,6 +101,8 @@ enum OutlineKind {
         case "class": return .`class`
         case "namespace": return .namespace
         case "field": return .field
+        case "table": return .table
+        case "target": return .target
         default: return .type
         }
     }

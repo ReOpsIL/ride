@@ -10,6 +10,8 @@ enum FileIcon {
         switch buffer.language {
         case .c: return c(chrome)
         case .cpp: return cpp(chrome)
+        case .make: return make(chrome)
+        case .cmake: return cmake(chrome)
         default: return spec(name: buffer.displayName, isDirectory: false, chrome: chrome)
         }
     }
@@ -25,11 +27,19 @@ enum FileIcon {
         if lower == "cargo.lock" || lower.hasSuffix(".lock") {
             return FileIconSpec(symbol: "lock.fill", color: chrome.textTertiary)
         }
+        if BufferLanguage.makeNames.contains(lower) {
+            return make(chrome)
+        }
+        if lower == "cmakelists.txt" {
+            return cmake(chrome)
+        }
         let ext = (lower as NSString).pathExtension
         switch ext {
         case "rs": return FileIconSpec(symbol: "doc.text.fill", color: chrome.warning)
         case _ where BufferLanguage.cExtensions.contains(ext): return c(chrome)
         case _ where BufferLanguage.cppExtensions.contains(ext): return cpp(chrome)
+        case _ where BufferLanguage.makeExtensions.contains(ext): return make(chrome)
+        case "cmake": return cmake(chrome)
         case "toml", "yml", "yaml": return FileIconSpec(symbol: "slider.horizontal.3", color: chrome.accent)
         case "md", "txt": return FileIconSpec(symbol: "doc.richtext", color: chrome.info)
         case "json": return FileIconSpec(symbol: "curlybraces", color: chrome.success)
@@ -45,5 +55,13 @@ enum FileIcon {
 
     private static func cpp(_ chrome: ChromeColors) -> FileIconSpec {
         FileIconSpec(symbol: "c.square.fill", color: chrome.accent)
+    }
+
+    private static func make(_ chrome: ChromeColors) -> FileIconSpec {
+        FileIconSpec(symbol: "hammer.fill", color: chrome.success)
+    }
+
+    private static func cmake(_ chrome: ChromeColors) -> FileIconSpec {
+        FileIconSpec(symbol: "gearshape.2.fill", color: chrome.info)
     }
 }

@@ -70,8 +70,8 @@ fn merge_buffer(
     extra: Vec<CompletionHit>,
     limit: u32,
 ) -> CompletionResponse {
-    let mut hits = keywords_for(q, keywords, limit);
-    hits.extend(extra);
+    let mut hits = extra;
+    hits.extend(keywords_for(q, keywords, limit));
     unique_by_name(&mut hits);
     hits.sort_by(|a, b| {
         b.score

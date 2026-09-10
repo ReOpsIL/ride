@@ -5,6 +5,5 @@
 - Sparkle or manual update check (Phase 5)
 - universal (x86_64) xcframework slice (Phase 5)
 - Outline shows occasional blank rows on large files (items with empty names); filter or name them
-- TOML highlighting for Cargo.toml (add a tree-sitter-toml Syntax the same way as markdown)
 - New File in the workspace tree still defaults to `untitled.rs`; reuse the save panel's language picker
 - Problems panel keeps a C file's diagnostics until that file is checked again; drop them when the buffer closes or the file is deleted

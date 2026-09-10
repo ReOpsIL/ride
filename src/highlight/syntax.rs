@@ -14,19 +14,36 @@ pub enum Lang {
     Markdown,
     C,
     Cpp,
+    Toml,
+    Make,
+    Cmake,
 }
 
 const C_EXTS: &[&str] = &["c", "h"];
 const CPP_EXTS: &[&str] = &[
     "cpp", "cc", "cxx", "c++", "hpp", "hh", "hxx", "h++", "inl", "ipp", "tpp", "cppm", "ixx",
 ];
+const MAKE_NAMES: &[&str] = &["makefile", "gnumakefile"];
+const MAKE_EXTS: &[&str] = &["mk", "mak", "make"];
+const CMAKE_NAMES: &[&str] = &["cmakelists.txt"];
+const CMAKE_EXTS: &[&str] = &["cmake"];
 
 impl Lang {
     pub fn for_path(path: Option<&str>) -> Lang {
-        match extension(path).as_deref() {
+        let name = file_name(path);
+        if MAKE_NAMES.contains(&name.as_str()) {
+            return Lang::Make;
+        }
+        if CMAKE_NAMES.contains(&name.as_str()) {
+            return Lang::Cmake;
+        }
+        match extension(&name).as_deref() {
             Some("md") | Some("markdown") => Lang::Markdown,
+            Some("toml") => Lang::Toml,
             Some(e) if C_EXTS.contains(&e) => Lang::C,
             Some(e) if CPP_EXTS.contains(&e) => Lang::Cpp,
+            Some(e) if MAKE_EXTS.contains(&e) => Lang::Make,
+            Some(e) if CMAKE_EXTS.contains(&e) => Lang::Cmake,
             _ => Lang::Rust,
         }
     }
@@ -42,7 +59,7 @@ impl Lang {
         match self {
             Lang::C => Some("c"),
             Lang::Cpp => Some("c++"),
-            Lang::Rust | Lang::Markdown => None,
+            Lang::Rust | Lang::Markdown | Lang::Toml | Lang::Make | Lang::Cmake => None,
         }
     }
 
@@ -52,6 +69,9 @@ impl Lang {
             "rust" | "rs" => Some(Lang::Rust),
             "c" | "h" => Some(Lang::C),
             "cpp" | "c++" | "cc" | "cxx" | "hpp" | "cplusplus" => Some(Lang::Cpp),
+            "toml" => Some(Lang::Toml),
+            "make" | "makefile" | "mk" => Some(Lang::Make),
+            "cmake" => Some(Lang::Cmake),
             _ => None,
         }
     }
@@ -61,6 +81,9 @@ impl Lang {
             Lang::Rust => Some(grammar::rust::grammar()),
             Lang::C => Some(grammar::c::grammar()),
             Lang::Cpp => Some(grammar::cpp::grammar()),
+            Lang::Toml => Some(grammar::toml::grammar()),
+            Lang::Make => Some(grammar::make::grammar()),
+            Lang::Cmake => Some(grammar::cmake::grammar()),
             Lang::Markdown => None,
         }
     }
@@ -70,6 +93,9 @@ impl Lang {
             Lang::Rust => grammar::rust::KEYWORDS,
             Lang::C => grammar::c::KEYWORDS,
             Lang::Cpp => grammar::cpp::KEYWORDS,
+            Lang::Toml => grammar::toml::KEYWORDS,
+            Lang::Make => grammar::make::KEYWORDS,
+            Lang::Cmake => grammar::cmake::KEYWORDS,
             Lang::Markdown => &[],
         }
     }
@@ -79,13 +105,18 @@ impl Lang {
     }
 }
 
-fn extension(path: Option<&str>) -> Option<String> {
-    path.and_then(|p| p.rsplit_once('.'))
-        .map(|(_, e)| e.to_ascii_lowercase())
+fn file_name(path: Option<&str>) -> String {
+    path.map(|p| p.rsplit(['/', '\\']).next().unwrap_or(p))
+        .unwrap_or_default()
+        .to_ascii_lowercase()
+}
+
+fn extension(name: &str) -> Option<String> {
+    name.rsplit_once('.').map(|(_, e)| e.to_string())
 }
 
 fn is_header(path: Option<&str>) -> bool {
-    extension(path).as_deref() == Some("h")
+    extension(&file_name(path)).as_deref() == Some("h")
 }
 
 #[derive(Debug, Clone, Copy)]
