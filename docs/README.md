@@ -66,6 +66,19 @@ warnings.jsonl    per-crate extraction errors of the last run
 
 A run whose crate-set fingerprint matches `manifest.json` appends a `ready` status and writes nothing. `ride-engine index --force` or the app's Reindex menu bypasses the check.
 
+### Schema v11 fields
+
+Besides the stored text fields (`path`, `name`, `signature`, `doc_first_paragraph`, `visibility`, `source_path`, ...) and the ranking fast fields (`scope_rank`, `kind_rank`, `name_len`, `name_hash`, `path_len`, `has_doc`), schema 11 adds the fields the completion plan's sites and ranking read. Field names are exported as constants (`PARENT_PATH`, `NAME_HUMP`, `REACHABLE`, `DEPRECATED`) next to `parent_path_of` and `hump`.
+
+| Field | Type | Value |
+|---|---|---|
+| `parent_path` | STRING, stored | the item's `path` minus its last `::` segment, lowercased like `path_exact`; empty for crate docs and crate-root items; `type` for a `Type::method` doc. A term query lists the direct children of a path (`use std::collections::`, `HashMap::`). |
+| `name_hump` | TEXT, edge-ngram tokenizer | the name's hump string: the first letter of every word, lowercased, words split on `_`, lower→upper and letter→digit (`HashMap` → `hm`, `read_line` → `rl`, `Utf8Error` → `ue`). Only indexed when at least two characters long. |
+| `reachable` | u64 fast | 1 for every workspace doc; otherwise 1 only when the item is `pub` and every enclosing module on its declaring path is `pub`, or the doc was emitted for a `pub use` at such a path. Methods and variants inherit the flag of their type, trait or enum (`extract/reach.rs`). Pub items under private modules stay indexed with 0 so go-to-definition still finds them. |
+| `deprecated` | u64 fast | 1 when the item carries `#[deprecated]` or `#[deprecated(...)]`. |
+
+Two extraction changes ship with the bump: enum variants are emitted as `variant` docs at `Enum::Variant` (signature `Some(T)`, `Named { .. }`, `Unit`; doc, visibility and reachability from the enum), and nothing inside a `#[cfg(test)]` module or carrying `#[cfg(test)]` / `#[test]` is emitted in any scope (a `#[cfg(test)] mod tests;` file is also excluded from the leftover-file scan).
+
 ## Engine surface used by the app
 
 | Method | Purpose |

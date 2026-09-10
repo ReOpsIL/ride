@@ -1,30 +1,36 @@
 use std::collections::HashSet;
-use std::fs;
 use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 use tree_sitter::Parser;
 
 use crate::ffi::ItemKind;
-use crate::skip::{MAX_RS_BYTES, skip_index_file, under_root};
+use crate::skip::under_root;
 
+mod attrs;
 mod cargo_toml;
 mod docs;
 mod emit;
 mod external;
 mod impls;
 mod item;
+mod mod_walk;
 mod mods;
+mod reach;
 mod reexport;
 mod scan;
 mod ts;
+mod types_walk;
 mod use_walk;
+mod variants;
 mod vis;
 mod walk;
 
 pub use cargo_toml::{Package, parse_toml, read_package, workspace_members};
 pub use external::External;
 pub use item::{CrateContext, ItemDoc, ItemParts, Scope, Visibility};
+
+use walk::PendingMod;
 
 #[derive(Debug, Error)]
 pub enum ExtractError {
@@ -63,7 +69,7 @@ pub fn extract_source(
             message: "parse returned none".into(),
         })?;
     let file = Path::new("<mem>");
-    let extracted = walk::extract_tree(tree.root_node(), source, file, module_path, ctx);
+    let extracted = walk::extract_tree(tree.root_node(), source, file, module_path, true, ctx);
     let mut items = extracted.items;
     items.extend(reexport::apply(
         &items,
@@ -71,6 +77,7 @@ pub fn extract_source(
         &External::default(),
         &extracted.crate_aliases,
     ));
+    reach::resolve(&mut items, &extracted.assoc, ctx.scope);
     Ok(items)
 }
 
@@ -100,30 +107,39 @@ pub fn extract_crate_with_version(
     let mut items = Vec::new();
     let mut reexports = Vec::new();
     let mut aliases = Vec::new();
+    let mut assoc = Vec::new();
     items.push(crate_item(&pkg, crate_root, &ctx));
-    let mut queue: Vec<(PathBuf, Vec<String>)> = pkg
+    let mut queue: Vec<PendingMod> = pkg
         .entries
         .into_iter()
-        .map(|p| (p, vec![ctx.crate_name.clone()]))
+        .map(|file| PendingMod {
+            file,
+            module_path: vec![ctx.crate_name.clone()],
+            reach: true,
+        })
         .collect();
-    while let Some((file, module_path)) = queue.pop() {
-        let Ok(canon) = file.canonicalize() else {
+    while let Some(pending) = queue.pop() {
+        let Ok(canon) = pending.file.canonicalize() else {
             continue;
         };
-        if !visited.insert(canon.clone()) {
+        if !visited.insert(canon.clone()) || !under_root(&canon, crate_root) {
             continue;
         }
-        if !under_root(&canon, crate_root) {
-            continue;
-        }
-        let Some(source) = read_rs(&canon, &ctx.crate_name)? else {
+        let Some(source) = scan::read_rs(&canon, &ctx.crate_name)? else {
             continue;
         };
         let Some(tree) = parser.parse(&source, None) else {
             continue;
         };
-        let extracted = walk::extract_tree(tree.root_node(), &source, &canon, &module_path, &ctx);
-        if module_path.len() == 1
+        let extracted = walk::extract_tree(
+            tree.root_node(),
+            &source,
+            &canon,
+            &pending.module_path,
+            pending.reach,
+            &ctx,
+        );
+        if pending.module_path.len() == 1
             && let Some(crate_doc) = items.iter_mut().find(|i| i.item_kind == ItemKind::Crate)
             && crate_doc.doc_first_paragraph.is_empty()
             && !extracted.inner_docs.is_empty()
@@ -133,14 +149,28 @@ pub fn extract_crate_with_version(
         items.extend(extracted.items);
         reexports.extend(extracted.reexports);
         aliases.extend(extracted.crate_aliases);
-        for pending in extracted.pending {
-            queue.push((pending.file, pending.module_path));
-        }
+        assoc.extend(extracted.assoc);
+        visited.extend(
+            extracted
+                .excluded
+                .iter()
+                .filter_map(|f| f.canonicalize().ok()),
+        );
+        queue.extend(extracted.pending);
         if queue.is_empty() {
-            queue.extend(scan::leftover_src_files(crate_root, &visited, &ctx));
+            queue.extend(
+                scan::leftover_src_files(crate_root, &visited, &ctx)
+                    .into_iter()
+                    .map(|(file, module_path)| PendingMod {
+                        file,
+                        module_path,
+                        reach: false,
+                    }),
+            );
         }
     }
     items.extend(reexport::apply(&items, &reexports, external, &aliases));
+    reach::resolve(&mut items, &assoc, scope);
     Ok(items)
 }
 
@@ -157,21 +187,8 @@ fn crate_item(pkg: &Package, crate_root: &Path, ctx: &CrateContext) -> ItemDoc {
             signature: String::new(),
             doc: pkg.description.clone().unwrap_or_default(),
             chunk: String::new(),
+            reachable: true,
+            deprecated: false,
         },
     )
-}
-
-fn read_rs(path: &Path, crate_name: &str) -> Result<Option<String>, ExtractError> {
-    let meta = fs::metadata(path).map_err(|source| ExtractError::Io {
-        path: path.to_path_buf(),
-        source,
-    })?;
-    if meta.len() > MAX_RS_BYTES || skip_index_file(path, crate_name, meta.len()) {
-        return Ok(None);
-    }
-    let bytes = fs::read(path).map_err(|source| ExtractError::Io {
-        path: path.to_path_buf(),
-        source,
-    })?;
-    Ok(String::from_utf8(bytes).ok())
 }

@@ -44,6 +44,8 @@ pub struct ItemDoc {
     pub features: Vec<String>,
     pub visibility: Visibility,
     pub scope: Scope,
+    pub reachable: bool,
+    pub deprecated: bool,
 }
 
 pub struct ItemParts {
@@ -56,6 +58,8 @@ pub struct ItemParts {
     pub signature: String,
     pub doc: String,
     pub chunk: String,
+    pub reachable: bool,
+    pub deprecated: bool,
 }
 
 impl ItemDoc {
@@ -75,6 +79,8 @@ impl ItemDoc {
             features: ctx.features.clone(),
             visibility: parts.vis,
             scope: ctx.scope,
+            reachable: parts.reachable,
+            deprecated: parts.deprecated,
         }
     }
 }

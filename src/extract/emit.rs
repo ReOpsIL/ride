@@ -4,17 +4,20 @@ use tree_sitter::Node;
 
 use crate::ffi::ItemKind;
 
+use super::attrs::{has_attr, is_deprecated};
 use super::docs::{preceding_docs, signature, source_chunk};
 use super::item::{
     CrateContext, ItemDoc, ItemParts, Visibility, byte_range, field_text, join_path,
 };
-use super::vis::{effective_vis, has_attr, visibility};
+use super::reach::Assoc;
+use super::vis::{effective_vis, visibility};
 use super::walk::{FileExtract, TypeCtx};
 
 pub struct EmitArgs<'a> {
     pub source: &'a str,
     pub file: &'a Path,
     pub module_path: &'a [String],
+    pub reach: bool,
     pub ctx: &'a CrateContext,
     pub out: &'a mut FileExtract,
 }
@@ -37,14 +40,12 @@ pub fn emit_fn(node: Node<'_>, args: &mut EmitArgs<'_>, type_ctx: Option<&TypeCt
         Some(t) => format!("{}::{name}", t.type_path),
         None => join_path(args.module_path, &name),
     };
-    args.out
-        .items
-        .push(make_item(args, kind, path, name.clone(), vis, node));
-    if let Some(trait_path) = type_ctx.and_then(|t| t.trait_path.as_ref()) {
+    let item = make_item(args, kind, path, name.clone(), vis, node);
+    push_item(args, item, type_ctx.map(|t| t.type_path.as_str()));
+    if let Some(trait_path) = type_ctx.and_then(|t| t.trait_path.as_deref()) {
         let path = format!("{trait_path}::{name}");
-        args.out
-            .items
-            .push(make_item(args, kind, path, name, vis, node));
+        let item = make_item(args, kind, path, name, vis, node);
+        push_item(args, item, Some(trait_path));
     }
 }
 
@@ -66,27 +67,27 @@ pub fn emit_named(
         Some(t) => format!("{}::{name}", t.type_path),
         None => join_path(args.module_path, &name),
     };
-    args.out
-        .items
-        .push(make_item(args, kind, path, name, vis, node));
+    let item = make_item(args, kind, path, name, vis, node);
+    push_item(args, item, type_ctx.map(|t| t.type_path.as_str()));
 }
 
 pub fn emit_macro(node: Node<'_>, args: &mut EmitArgs<'_>) {
     let Some(name) = field_text(node, "name", args.source) else {
         return;
     };
-    let vis = if has_attr(node, args.source, "macro_export") {
+    let exported = has_attr(node, args.source, "macro_export");
+    let vis = if exported {
         Visibility::Pub
     } else {
         visibility(node, args.source)
     };
     let path = join_path(args.module_path, &name);
-    args.out
-        .items
-        .push(make_item(args, ItemKind::Macro, path, name, vis, node));
+    let mut item = make_item(args, ItemKind::Macro, path, name, vis, node);
+    item.reachable |= exported;
+    args.out.items.push(item);
 }
 
-fn make_item(
+pub fn make_item(
     args: &EmitArgs<'_>,
     kind: ItemKind,
     path: String,
@@ -106,6 +107,18 @@ fn make_item(
             signature: signature(node, args.source),
             doc: preceding_docs(node, args.source),
             chunk: source_chunk(node, args.source),
+            reachable: args.reach && vis == Visibility::Pub,
+            deprecated: is_deprecated(node, args.source),
         },
     )
+}
+
+pub fn push_item(args: &mut EmitArgs<'_>, item: ItemDoc, owner: Option<&str>) {
+    if let Some(owner) = owner {
+        args.out.assoc.push(Assoc {
+            path: item.path.clone(),
+            owner: owner.to_string(),
+        });
+    }
+    args.out.items.push(item);
 }

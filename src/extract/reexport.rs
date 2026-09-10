@@ -9,6 +9,7 @@ use super::item::{ItemDoc, Scope, Visibility, join_path};
 pub struct Reexport {
     pub module_path: Vec<String>,
     pub vis: Visibility,
+    pub reach: bool,
     pub source_path: PathBuf,
     pub byte_range: (u32, u32),
     pub kind: ReexportKind,
@@ -66,6 +67,7 @@ fn remap(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDo
     doc.path = join_path(&re.module_path, alias);
     doc.name = alias.to_string();
     doc.visibility = re.vis;
+    doc.reachable = exported(re);
     if let Some(host) = items.first() {
         doc.crate_name = host.crate_name.clone();
         doc.crate_version = host.crate_version.clone();
@@ -107,7 +109,13 @@ fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
         features: Vec::new(),
         visibility: re.vis,
         scope: items.first().map(|i| i.scope).unwrap_or(Scope::Cache),
+        reachable: exported(re),
+        deprecated: false,
     }
+}
+
+fn exported(re: &Reexport) -> bool {
+    re.reach && re.vis == Visibility::Pub
 }
 
 fn find_target<'a>(
@@ -145,6 +153,7 @@ fn glob(items: &[ItemDoc], extra: &[ItemDoc], re: &Reexport, module: &[String]) 
             let mut doc = src.clone();
             doc.path = join_path(&re.module_path, &src.name);
             doc.visibility = re.vis;
+            doc.reachable = exported(re);
             doc
         })
         .collect()

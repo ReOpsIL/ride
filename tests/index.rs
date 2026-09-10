@@ -1,10 +1,13 @@
 use std::path::PathBuf;
 
 use ride_engine::{
-    EngineConfig, IndexState, SCHEMA_VERSION, last_status, read_manifest, rebuild_index,
-    write_index,
+    DEPRECATED, EngineConfig, IndexState, NAME_HUMP, PARENT_PATH, REACHABLE, SCHEMA_VERSION, hump,
+    last_status, parent_path_of, read_manifest, rebuild_index, write_index,
 };
-use tantivy::Index;
+use tantivy::collector::TopDocs;
+use tantivy::query::TermQuery;
+use tantivy::schema::{IndexRecordOption, TantivyDocument, Value};
+use tantivy::{DocAddress, Index, Term};
 
 fn fixtures() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
@@ -186,4 +189,173 @@ fn removed_workspace_item_disappears_after_incremental_reindex() {
     let second = write_index(&project, &index_dir, &config(&index_dir)).unwrap();
     assert_eq!(second.crates_total, 1);
     assert_eq!(count_named(&index_dir, "free_fn"), 0);
+}
+
+fn indexed_sample() -> tempfile::TempDir {
+    let dir = tempfile::tempdir().unwrap();
+    let project = fixtures().join("sample_crate");
+    write_index(&project, dir.path(), &config(dir.path())).unwrap();
+    dir
+}
+
+fn live_index(index_dir: &std::path::Path) -> Index {
+    let live = index_dir.join(read_manifest(index_dir).unwrap().live_dir);
+    Index::open_in_dir(live).unwrap()
+}
+
+fn term_hits(index: &Index, field: &str, value: &str) -> Vec<DocAddress> {
+    let field = index.schema().get_field(field).unwrap();
+    let searcher = index.reader().unwrap().searcher();
+    let query = TermQuery::new(
+        Term::from_field_text(field, value),
+        IndexRecordOption::Basic,
+    );
+    searcher
+        .search(&query, &TopDocs::with_limit(200))
+        .unwrap()
+        .into_iter()
+        .map(|(_, addr)| addr)
+        .collect()
+}
+
+fn stored(index: &Index, addr: DocAddress, field: &str) -> String {
+    let searcher = index.reader().unwrap().searcher();
+    let field = index.schema().get_field(field).unwrap();
+    let doc: TantivyDocument = searcher.doc(addr).unwrap();
+    doc.get_first(field)
+        .and_then(|v| v.as_str())
+        .unwrap_or_default()
+        .to_string()
+}
+
+fn names_under(index: &Index, field: &str, value: &str) -> Vec<String> {
+    term_hits(index, field, value)
+        .into_iter()
+        .map(|addr| stored(index, addr, "name"))
+        .collect()
+}
+
+fn fast_u64(index: &Index, path_exact: &str, field: &str) -> u64 {
+    let addr = term_hits(index, "path_exact", path_exact)
+        .into_iter()
+        .next()
+        .unwrap_or_else(|| panic!("missing {path_exact}"));
+    let searcher = index.reader().unwrap().searcher();
+    let column = searcher
+        .segment_reader(addr.segment_ord)
+        .fast_fields()
+        .u64(field)
+        .unwrap();
+    column.first(addr.doc_id).unwrap()
+}
+
+#[test]
+fn parent_path_lists_direct_children() {
+    let dir = indexed_sample();
+    let index = live_index(dir.path());
+    let kids = names_under(&index, PARENT_PATH, "std::collections");
+    for expected in [
+        "HashMap",
+        "HashSet",
+        "Hash",
+        "hash_map",
+        "hash_slice",
+        "free_std",
+    ] {
+        assert!(kids.contains(&expected.to_string()), "{kids:?}");
+    }
+    assert!(!kids.contains(&"map".to_string()), "{kids:?}");
+    let assoc = names_under(&index, PARENT_PATH, "foo");
+    for expected in ["new", "hidden", "required"] {
+        assert!(assoc.contains(&expected.to_string()), "{assoc:?}");
+    }
+    let roots = names_under(&index, PARENT_PATH, "");
+    for expected in ["sample", "std", "core", "demo"] {
+        assert!(roots.contains(&expected.to_string()), "{roots:?}");
+    }
+    assert_eq!(
+        parent_path_of("std::collections::HashMap"),
+        "std::collections"
+    );
+    assert_eq!(parent_path_of("Type::method"), "type");
+    assert_eq!(parent_path_of("std"), "");
+}
+
+#[test]
+fn hump_strings() {
+    assert_eq!(hump("HashMap"), "hm");
+    assert_eq!(hump("read_line"), "rl");
+    assert_eq!(hump("TokenStream"), "ts");
+    assert_eq!(hump("HasLen"), "hl");
+    assert_eq!(hump("Utf8Error"), "ue");
+    assert_eq!(hump("IoSlice"), "is");
+    assert_eq!(hump("Foo"), "f");
+    assert_eq!(hump("hash_noise_000"), "hn");
+}
+
+#[test]
+fn name_hump_matches_initials() {
+    let dir = indexed_sample();
+    let index = live_index(dir.path());
+    let hm = names_under(&index, NAME_HUMP, "hm");
+    assert!(hm.contains(&"HashMap".to_string()), "{hm:?}");
+    assert!(!hm.contains(&"HashSet".to_string()), "{hm:?}");
+    let hs = names_under(&index, NAME_HUMP, "hs");
+    assert!(hs.contains(&"HashSet".to_string()), "{hs:?}");
+    let f = names_under(&index, NAME_HUMP, "f");
+    assert!(f.contains(&"free_fn".to_string()), "{f:?}");
+    assert!(!f.contains(&"Foo".to_string()), "{f:?}");
+}
+
+#[test]
+fn reachable_marks_private_module_chains() {
+    let dir = indexed_sample();
+    let index = live_index(dir.path());
+    assert_eq!(fast_u64(&index, "std::sys::pal::token_query", REACHABLE), 0);
+    assert_eq!(fast_u64(&index, "std::collections::hashmap", REACHABLE), 1);
+    assert_eq!(
+        fast_u64(&index, "std::collections::hash::map::hashmap", REACHABLE),
+        0
+    );
+    assert_eq!(fast_u64(&index, "core::hash::hash", REACHABLE), 1);
+    assert_eq!(fast_u64(&index, "demo::surfaced", REACHABLE), 1);
+    assert_eq!(fast_u64(&index, "demo::inner::deep::buried", REACHABLE), 0);
+    assert_eq!(
+        fast_u64(&index, "sample::private_mod::only_in_private", REACHABLE),
+        1
+    );
+}
+
+#[test]
+fn deprecated_flag_is_a_fast_field() {
+    let dir = indexed_sample();
+    let index = live_index(dir.path());
+    assert_eq!(fast_u64(&index, "demo::old_demo", DEPRECATED), 1);
+    assert_eq!(fast_u64(&index, "demo::demo", DEPRECATED), 0);
+}
+
+#[test]
+fn cfg_test_items_are_not_indexed() {
+    let dir = indexed_sample();
+    assert_eq!(count_named(dir.path(), "in_tests"), 0);
+    assert_eq!(count_named(dir.path(), "old_demo"), 1);
+}
+
+#[test]
+fn enum_variants_are_indexed() {
+    let dir = indexed_sample();
+    let index = live_index(dir.path());
+    for path in ["option::some", "option::none", "result::ok", "result::err"] {
+        let addr = term_hits(&index, "path_exact", path)
+            .into_iter()
+            .next()
+            .unwrap_or_else(|| panic!("missing {path}"));
+        assert_eq!(stored(&index, addr, "item_kind"), "variant");
+    }
+    let kids = names_under(&index, PARENT_PATH, "option");
+    assert!(kids.contains(&"Some".to_string()), "{kids:?}");
+    assert!(kids.contains(&"None".to_string()), "{kids:?}");
+    let some = term_hits(&index, "path_exact", "option::some")[0];
+    assert_eq!(stored(&index, some, "signature"), "Some(T)");
+    assert_eq!(fast_u64(&index, "option::some", REACHABLE), 1);
 }

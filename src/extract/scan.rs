@@ -1,9 +1,25 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::skip::{skip_dir_name, under_root};
+use crate::skip::{MAX_RS_BYTES, skip_dir_name, skip_index_file, under_root};
 
+use super::ExtractError;
 use super::item::CrateContext;
+
+pub fn read_rs(path: &Path, crate_name: &str) -> Result<Option<String>, ExtractError> {
+    let meta = fs::metadata(path).map_err(|source| ExtractError::Io {
+        path: path.to_path_buf(),
+        source,
+    })?;
+    if meta.len() > MAX_RS_BYTES || skip_index_file(path, crate_name, meta.len()) {
+        return Ok(None);
+    }
+    let bytes = fs::read(path).map_err(|source| ExtractError::Io {
+        path: path.to_path_buf(),
+        source,
+    })?;
+    Ok(String::from_utf8(bytes).ok())
+}
 
 pub fn leftover_src_files(
     crate_root: &Path,

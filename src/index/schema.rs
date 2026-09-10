@@ -3,12 +3,13 @@ use tantivy::schema::{
     TextOptions,
 };
 
-use crate::extract::{Scope, Visibility};
-use crate::ffi::ItemKind;
-
-pub const SCHEMA_VERSION: u32 = 10;
+pub const SCHEMA_VERSION: u32 = 11;
 pub const PREFIX_TOKENIZER: &str = "edge_ngram";
 pub const MAX_GRAM: usize = 20;
+pub const PARENT_PATH: &str = "parent_path";
+pub const NAME_HUMP: &str = "name_hump";
+pub const REACHABLE: &str = "reachable";
+pub const DEPRECATED: &str = "deprecated";
 
 pub struct IndexFields {
     pub schema: Schema,
@@ -17,6 +18,7 @@ pub struct IndexFields {
     pub item_kind: Field,
     pub path: Field,
     pub path_exact: Field,
+    pub parent_path: Field,
     pub name: Field,
     pub name_exact: Field,
     pub signature: Field,
@@ -30,12 +32,15 @@ pub struct IndexFields {
     pub content_hash: Field,
     pub scope: Field,
     pub name_prefix: Field,
+    pub name_hump: Field,
     pub scope_rank: Field,
     pub kind_rank: Field,
     pub name_len: Field,
     pub name_hash: Field,
     pub path_len: Field,
     pub has_doc: Field,
+    pub reachable: Field,
+    pub deprecated: Field,
 }
 
 pub fn build_fields() -> IndexFields {
@@ -53,6 +58,7 @@ pub fn build_fields() -> IndexFields {
         item_kind: b.add_text_field("item_kind", STRING | STORED),
         path: b.add_text_field("path", TEXT | STORED),
         path_exact: b.add_text_field("path_exact", STRING | STORED),
+        parent_path: b.add_text_field(PARENT_PATH, STRING | STORED),
         name: b.add_text_field("name", TEXT | STORED),
         name_exact: b.add_text_field("name_exact", STRING | STORED),
         signature: b.add_text_field("signature", TEXT | STORED),
@@ -65,131 +71,22 @@ pub fn build_fields() -> IndexFields {
         byte_end: b.add_u64_field("byte_end", u64_stored),
         content_hash: b.add_text_field("content_hash", STRING | STORED),
         scope: b.add_text_field("scope", STRING | STORED),
-        name_prefix: b.add_text_field("name_prefix", prefix),
+        name_prefix: b.add_text_field("name_prefix", prefix.clone()),
+        name_hump: b.add_text_field(NAME_HUMP, prefix),
         scope_rank: b.add_u64_field("scope_rank", u64_fast.clone()),
         kind_rank: b.add_u64_field("kind_rank", u64_fast.clone()),
         name_len: b.add_u64_field("name_len", u64_fast.clone()),
         name_hash: b.add_u64_field("name_hash", u64_fast.clone()),
         path_len: b.add_u64_field("path_len", u64_fast.clone()),
-        has_doc: b.add_u64_field("has_doc", u64_fast),
+        has_doc: b.add_u64_field("has_doc", u64_fast.clone()),
+        reachable: b.add_u64_field(REACHABLE, u64_fast.clone()),
+        deprecated: b.add_u64_field(DEPRECATED, u64_fast),
         schema: b.build(),
     }
 }
 
-pub fn scope_rank(scope: Scope) -> u64 {
-    match scope {
-        Scope::Workspace => 0,
-        Scope::Sysroot => 1,
-        Scope::DirectDep => 2,
-        Scope::Transitive => 3,
-        Scope::Cache => 4,
-    }
-}
-
-const KIND_ORDER: [ItemKind; 20] = [
-    ItemKind::Keyword,
-    ItemKind::Local,
-    ItemKind::Crate,
-    ItemKind::Mod,
-    ItemKind::Struct,
-    ItemKind::Enum,
-    ItemKind::Union,
-    ItemKind::Trait,
-    ItemKind::Fn,
-    ItemKind::Method,
-    ItemKind::Macro,
-    ItemKind::Const,
-    ItemKind::Type,
-    ItemKind::Static,
-    ItemKind::Heading,
-    ItemKind::Class,
-    ItemKind::Namespace,
-    ItemKind::Field,
-    ItemKind::Table,
-    ItemKind::Target,
-];
-
-pub fn kind_rank(kind: ItemKind) -> u64 {
-    KIND_ORDER.iter().position(|k| *k == kind).unwrap_or(0) as u64
-}
-
-pub fn kind_from_rank(rank: u64) -> ItemKind {
-    KIND_ORDER
-        .get(rank as usize)
-        .copied()
-        .unwrap_or(ItemKind::Type)
-}
-
-pub fn item_kind_from_label(label: &str) -> ItemKind {
-    match label {
-        "keyword" => ItemKind::Keyword,
-        "local" => ItemKind::Local,
-        "crate" => ItemKind::Crate,
-        "mod" => ItemKind::Mod,
-        "struct" => ItemKind::Struct,
-        "enum" => ItemKind::Enum,
-        "union" => ItemKind::Union,
-        "trait" => ItemKind::Trait,
-        "fn" => ItemKind::Fn,
-        "method" => ItemKind::Method,
-        "macro" => ItemKind::Macro,
-        "const" => ItemKind::Const,
-        "static" => ItemKind::Static,
-        "heading" => ItemKind::Heading,
-        "class" => ItemKind::Class,
-        "namespace" => ItemKind::Namespace,
-        "field" => ItemKind::Field,
-        "table" => ItemKind::Table,
-        "target" => ItemKind::Target,
-        _ => ItemKind::Type,
-    }
-}
-
-pub fn item_kind_label(kind: ItemKind) -> &'static str {
-    match kind {
-        ItemKind::Keyword => "keyword",
-        ItemKind::Local => "local",
-        ItemKind::Crate => "crate",
-        ItemKind::Mod => "mod",
-        ItemKind::Struct => "struct",
-        ItemKind::Enum => "enum",
-        ItemKind::Union => "union",
-        ItemKind::Trait => "trait",
-        ItemKind::Fn => "fn",
-        ItemKind::Method => "method",
-        ItemKind::Macro => "macro",
-        ItemKind::Const => "const",
-        ItemKind::Type => "type",
-        ItemKind::Static => "static",
-        ItemKind::Heading => "heading",
-        ItemKind::Class => "class",
-        ItemKind::Namespace => "namespace",
-        ItemKind::Field => "field",
-        ItemKind::Table => "table",
-        ItemKind::Target => "target",
-    }
-}
-
-pub fn visibility_label(vis: Visibility) -> &'static str {
-    match vis {
-        Visibility::Pub => "pub",
-        Visibility::Crate => "crate",
-        Visibility::Private => "private",
-    }
-}
-
-pub fn scope_label(scope: Scope) -> &'static str {
-    match scope {
-        Scope::Workspace => "workspace",
-        Scope::Sysroot => "sysroot",
-        Scope::DirectDep => "direct_dep",
-        Scope::Transitive => "transitive",
-        Scope::Cache => "cache",
-    }
-}
-
-pub fn name_hash(name: &str) -> u64 {
-    name.bytes().fold(0xcbf2_9ce4_8422_2325u64, |h, b| {
-        (h ^ u64::from(b)).wrapping_mul(0x0100_0000_01b3)
-    })
+pub fn parent_path_of(path: &str) -> String {
+    path.rsplit_once("::")
+        .map(|(parent, _)| parent.to_ascii_lowercase())
+        .unwrap_or_default()
 }
