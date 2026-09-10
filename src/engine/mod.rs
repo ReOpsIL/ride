@@ -14,6 +14,7 @@ use crate::ffi::{
 use crate::highlight::BufferSession;
 
 mod access;
+mod edits;
 mod header_hits;
 mod headers;
 mod identifier;

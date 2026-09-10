@@ -1,7 +1,10 @@
 use tree_sitter::InputEdit;
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
+use crate::ffi::{
+    ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SignatureHelp, SymbolAt,
+    TextEdit,
+};
 
 use super::grammar::{self, Grammar};
 use super::includes::IncludeRef;
@@ -152,6 +155,17 @@ pub trait Syntax: Send + Sync {
     }
     fn imports(&self, _text: &str) -> Vec<String> {
         Vec::new()
+    }
+    fn import_edit(&self, _text: &str, _import_path: &str) -> Option<TextEdit> {
+        None
+    }
+    fn signature_help(
+        &self,
+        _text: &str,
+        _outline: &[OutlineItem],
+        _at: usize,
+    ) -> Option<SignatureHelp> {
+        None
     }
 }
 

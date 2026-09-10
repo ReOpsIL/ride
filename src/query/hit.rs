@@ -34,6 +34,7 @@ pub fn doc_hit(
         detail: String::new(),
         import_path: None,
         deprecated: false,
+        snippet: false,
         source_path: field("source_path"),
         byte_start: field_u32(&doc, schema, "byte_start"),
         byte_end: field_u32(&doc, schema, "byte_end"),

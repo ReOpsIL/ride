@@ -1,5 +1,6 @@
 mod check;
 mod config;
+mod edit;
 mod index;
 mod kind;
 mod query;
@@ -9,6 +10,7 @@ mod workspace;
 
 pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
+pub use edit::{SignatureHelp, TextEdit};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use kind::{CaptureKind, ItemKind};
 pub use query::{

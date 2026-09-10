@@ -1,7 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt};
+use crate::ffi::{
+    ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SignatureHelp, SymbolAt, TextEdit,
+};
 
 use super::edit::{apply_replica, to_ts_edit};
 use super::includes::IncludeRef;
@@ -67,6 +69,15 @@ impl BufferSession {
 
     pub fn imports(&self) -> Vec<String> {
         self.syntax.imports(&self.replica)
+    }
+
+    pub fn import_edit(&self, import_path: &str) -> Option<TextEdit> {
+        self.syntax.import_edit(&self.replica, import_path)
+    }
+
+    pub fn signature_help(&self, byte: u32) -> Option<SignatureHelp> {
+        self.syntax
+            .signature_help(&self.replica, &self.last_outline, byte as usize)
     }
 
     pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {
