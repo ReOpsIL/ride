@@ -1,8 +1,7 @@
-use std::path::{Path, PathBuf};
-
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 use crate::highlight::Lang;
+use std::path::{Path, PathBuf};
 
 use super::clang_parse::parse_clang;
 use super::compile_db;
