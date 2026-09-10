@@ -5,7 +5,7 @@ use crate::discover::{DiscoveredCrate, Discovery};
 use crate::extract::{External, ExtractError, ItemDoc, Scope, extract_crate_with_version};
 
 use super::hash::crate_key;
-use super::schema::scope_rank;
+use super::labels::scope_rank;
 
 pub fn collect_crates(discovery: &Discovery, project: &Path) -> Vec<DiscoveredCrate> {
     let mut crates = discovery.unpacked.clone();

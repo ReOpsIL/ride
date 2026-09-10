@@ -11,6 +11,7 @@ pub fn collect_use(
     source: &str,
     file: &Path,
     module_path: &[String],
+    reach: bool,
     out: &mut Vec<Reexport>,
 ) {
     let vis = visibility(node, source);
@@ -23,6 +24,7 @@ pub fn collect_use(
     let ctx = UseCtx {
         module_path,
         vis,
+        reach,
         file,
         range: byte_range(node),
     };
@@ -32,6 +34,7 @@ pub fn collect_use(
 struct UseCtx<'a> {
     module_path: &'a [String],
     vis: Visibility,
+    reach: bool,
     file: &'a Path,
     range: (u32, u32),
 }
@@ -80,6 +83,7 @@ fn collect_clause(
             out.push(Reexport {
                 module_path: ctx.module_path.to_vec(),
                 vis: ctx.vis,
+                reach: ctx.reach,
                 source_path: ctx.file.to_path_buf(),
                 byte_range: ctx.range,
                 kind: ReexportKind::Glob {
@@ -101,6 +105,7 @@ fn push_named(out: &mut Vec<Reexport>, ctx: &UseCtx<'_>, parts: Vec<String>, ali
     out.push(Reexport {
         module_path: ctx.module_path.to_vec(),
         vis: ctx.vis,
+        reach: ctx.reach,
         source_path: ctx.file.to_path_buf(),
         byte_range: ctx.range,
         kind: ReexportKind::Named {

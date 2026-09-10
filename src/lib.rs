@@ -31,8 +31,8 @@ pub use extract::{
 pub use ffi::*;
 pub use highlight::{BufferSession, Lang, Position, Site, SiteAt};
 pub use index::{
-    Manifest, SCHEMA_VERSION, last_status, live_index_dir, read_manifest, rebuild_index,
-    write_index,
+    DEPRECATED, Manifest, NAME_HUMP, PARENT_PATH, REACHABLE, SCHEMA_VERSION, hump, last_status,
+    live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,
 };
 pub use markdown::render as render_markdown;
 pub use toolchain::tool_path;

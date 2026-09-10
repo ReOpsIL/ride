@@ -359,3 +359,161 @@ fn generic_impl_methods_use_the_base_type() {
     assert!(paths.contains(&"Vec::next"), "{paths:?}");
     assert!(paths.contains(&"foo::Bar::m"), "{paths:?}");
 }
+
+fn scoped_ctx(crate_name: &str, scope: Scope) -> CrateContext {
+    CrateContext {
+        crate_name: crate_name.into(),
+        crate_version: "0.0.0".into(),
+        crate_root: PathBuf::from("<mem>"),
+        edition: None,
+        features: Vec::new(),
+        scope,
+    }
+}
+
+const REACH_SRC: &str = r#"
+pub mod a {
+    pub mod b {
+        pub struct Deep;
+        impl Deep {
+            pub fn m(&self) {}
+        }
+    }
+    mod hidden {
+        pub struct Buried;
+        impl Buried {
+            pub fn m(&self) {}
+        }
+        pub fn f() {}
+    }
+    pub use hidden::Buried;
+}
+mod c {
+    pub struct Inner;
+    pub fn g() {}
+}
+impl c::Inner {
+    pub fn h(&self) {}
+}
+mod imp {
+    impl super::a::b::Deep {
+        pub fn n(&self) {}
+        fn p(&self) {}
+    }
+}
+#[macro_export]
+macro_rules! exported {
+    () => {};
+}
+"#;
+
+#[test]
+fn reachable_follows_module_chain_and_reexports() {
+    let items = extract_source(
+        REACH_SRC,
+        &scoped_ctx("std", Scope::Sysroot),
+        &["std".into()],
+    )
+    .unwrap();
+    let reach = |p: &str| item(&items, p).reachable;
+    assert!(reach("std::a"));
+    assert!(reach("std::a::b::Deep"));
+    assert!(reach("Deep::m"));
+    assert!(reach("super::a::b::Deep::n"));
+    assert!(!reach("super::a::b::Deep::p"));
+    assert!(!reach("std::a::hidden"));
+    assert!(!reach("std::a::hidden::Buried"));
+    assert!(reach("std::a::Buried"));
+    assert!(reach("Buried::m"));
+    assert!(!reach("std::a::hidden::f"));
+    assert!(!reach("std::c::Inner"));
+    assert!(!reach("c::Inner::h"));
+    assert!(!reach("std::c::g"));
+    assert!(reach("std::exported"));
+}
+
+#[test]
+fn workspace_items_are_always_reachable() {
+    let items = extract_source(REACH_SRC, &sample_ctx(), &["sample".into()]).unwrap();
+    assert!(items.iter().all(|i| i.reachable), "{:?}", paths(&items));
+}
+
+#[test]
+fn cfg_test_items_are_not_emitted() {
+    let src = r#"
+#[cfg(test)]
+mod tests {
+    pub fn in_tests() {}
+}
+#[test]
+fn unit() {}
+#[cfg(test)]
+pub fn helper() {}
+#[tokio::test]
+async fn async_unit() {}
+#[cfg(all(test, feature = "x"))]
+pub struct OnlyTests;
+pub fn kept() {}
+"#;
+    let items = extract_source(src, &sample_ctx(), &["sample".into()]).unwrap();
+    assert_eq!(paths(&items), vec!["sample::kept"]);
+}
+
+#[test]
+fn cfg_test_file_module_is_not_scanned() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    std::fs::create_dir_all(root.join("src")).unwrap();
+    std::fs::write(
+        root.join("Cargo.toml"),
+        "[package]\nname = \"tested\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("src/lib.rs"),
+        "#[cfg(test)]\nmod tests;\npub fn kept() {}\n",
+    )
+    .unwrap();
+    std::fs::write(root.join("src/tests.rs"), "pub fn in_file_tests() {}\n").unwrap();
+    let items = extract_crate(root, Scope::Workspace).unwrap();
+    item(&items, "tested::kept");
+    assert!(!items.iter().any(|i| i.name == "in_file_tests"));
+}
+
+#[test]
+fn deprecated_attribute_is_flagged() {
+    let src = "#[deprecated]\npub fn old() {}\n#[deprecated(since = \"1.0\", note = \"gone\")]\npub struct Old;\npub fn fresh() {}\n";
+    let items = extract_source(src, &sample_ctx(), &["sample".into()]).unwrap();
+    assert!(item(&items, "sample::old").deprecated);
+    assert!(item(&items, "sample::Old").deprecated);
+    assert!(!item(&items, "sample::fresh").deprecated);
+}
+
+#[test]
+fn enum_variants_are_emitted_under_the_enum() {
+    let src = "/// Maybe.\npub enum Option<T> {\n    /// Some value.\n    Some(T),\n    None,\n}\nenum Shape {\n    Named { x: i32 },\n    #[deprecated]\n    Old,\n    Big = 3,\n}\n";
+    let items = extract_source(src, &sample_ctx(), &["sample".into()]).unwrap();
+    let some = item(&items, "Option::Some");
+    assert_eq!(some.item_kind, ItemKind::Variant);
+    assert_eq!(some.name, "Some");
+    assert_eq!(some.signature, "Some(T)");
+    assert_eq!(some.doc_first_paragraph, "Some value.");
+    assert_eq!(some.visibility, Visibility::Pub);
+    let none = item(&items, "Option::None");
+    assert_eq!(none.signature, "None");
+    assert!(none.doc_first_paragraph.is_empty());
+    let named = item(&items, "Shape::Named");
+    assert_eq!(named.signature, "Named { .. }");
+    assert_eq!(named.visibility, Visibility::Private);
+    assert!(item(&items, "Shape::Old").deprecated);
+    assert_eq!(item(&items, "Shape::Big").signature, "Big = 3");
+}
+
+#[test]
+fn variants_inherit_reachability_of_a_reexported_enum() {
+    let src = "mod inner {\n    pub enum E {\n        A,\n    }\n}\npub use inner::E;\n";
+    let items = extract_source(src, &scoped_ctx("c", Scope::Sysroot), &["c".into()]).unwrap();
+    assert!(!item(&items, "c::inner::E").reachable);
+    assert!(item(&items, "c::E").reachable);
+    assert!(item(&items, "E::A").reachable);
+}

@@ -66,15 +66,15 @@ pub fn signature(node: Node<'_>, source: &str) -> String {
         if body_start > start
             && let Some(slice) = source.get(start..body_start)
         {
-            return tidy(&collapse_ws(
+            return tidy_signature(&collapse_ws(
                 slice.trim_end().trim_end_matches('{').trim_end(),
             ));
         }
     }
-    tidy(&collapse_ws(full.trim_end_matches(';').trim()))
+    tidy_signature(&collapse_ws(full.trim_end_matches(';').trim()))
 }
 
-fn tidy(text: &str) -> String {
+pub fn tidy_signature(text: &str) -> String {
     let stripped = strip_attributes(text);
     collapse_ws(&stripped)
         .replace("< ", "<")

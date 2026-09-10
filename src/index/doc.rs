@@ -3,9 +3,11 @@ use tantivy::schema::TantivyDocument;
 
 use crate::extract::{ItemDoc, Scope, Visibility};
 
-use super::schema::{
-    IndexFields, item_kind_label, kind_rank, name_hash, scope_label, scope_rank, visibility_label,
+use super::hump::{MIN_HUMP, hump};
+use super::labels::{
+    item_kind_label, kind_rank, name_hash, scope_label, scope_rank, visibility_label,
 };
+use super::schema::{IndexFields, parent_path_of};
 
 pub fn keep_item(item: &ItemDoc) -> bool {
     match item.scope {
@@ -16,16 +18,18 @@ pub fn keep_item(item: &ItemDoc) -> bool {
 
 pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyDocument {
     let path_exact = item.path.to_ascii_lowercase();
+    let parent_path = parent_path_of(&item.path);
     let name_exact = item.name.to_ascii_lowercase();
     let features = item.features.join(",");
     let edition = item.edition.clone().unwrap_or_default();
     let source_path = item.source_path.to_string_lossy().into_owned();
-    doc!(
+    let mut doc = doc!(
         fields.crate_name => item.crate_name.as_str(),
         fields.version => item.crate_version.as_str(),
         fields.item_kind => item_kind_label(item.item_kind),
         fields.path => item.path.as_str(),
         fields.path_exact => path_exact.as_str(),
+        fields.parent_path => parent_path.as_str(),
         fields.name => item.name.as_str(),
         fields.name_exact => name_exact.as_str(),
         fields.signature => item.signature.as_str(),
@@ -45,5 +49,12 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.name_hash => name_hash(&item.name),
         fields.path_len => item.path.chars().count() as u64,
         fields.has_doc => u64::from(!item.doc_first_paragraph.trim().is_empty()),
-    )
+        fields.reachable => u64::from(item.reachable),
+        fields.deprecated => u64::from(item.deprecated),
+    );
+    let hump = hump(&item.name);
+    if hump.chars().count() >= MIN_HUMP {
+        doc.add_text(fields.name_hump, &hump);
+    }
+    doc
 }
