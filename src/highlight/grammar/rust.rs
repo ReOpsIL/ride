@@ -3,8 +3,8 @@ use tree_sitter::{Language, Node, Tree};
 use crate::ffi::OutlineItem;
 
 use super::Grammar;
-use crate::highlight::rust_outline;
 use crate::highlight::symbol::node_text;
+use crate::highlight::{c_members, includes, rust_outline, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/rust/highlights.scm");
 
@@ -29,6 +29,11 @@ pub fn grammar() -> Grammar {
         ],
         qualifier,
         outline,
+        member_ops: &["."],
+        member_kinds: &["field_identifier"],
+        receiver_type: c_members::no_receiver,
+        type_table: types::empty_table,
+        includes: includes::no_includes,
     }
 }
 

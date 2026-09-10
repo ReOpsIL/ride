@@ -2,20 +2,7 @@ use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
 
-const NAME_KINDS: [&str; 6] = [
-    "identifier",
-    "field_identifier",
-    "type_identifier",
-    "destructor_name",
-    "operator_name",
-    "namespace_identifier",
-];
-
-const WRAPPERS: [&str; 3] = [
-    "pointer_declarator",
-    "reference_declarator",
-    "parenthesized_declarator",
-];
+use super::c_names::{function_name, node_text, plain_name};
 
 const TRANSPARENT: [&str; 10] = [
     "template_declaration",
@@ -138,38 +125,6 @@ fn namespace(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     }
 }
 
-fn function_name(declarator: Node<'_>, text: &str) -> Option<(String, bool)> {
-    let mut node = declarator;
-    while WRAPPERS.contains(&node.kind()) {
-        node = node.child_by_field_name("declarator")?;
-    }
-    if node.kind() != "function_declarator" {
-        return None;
-    }
-    let inner = node.child_by_field_name("declarator")?;
-    let qualified = inner.kind() == "qualified_identifier";
-    plain_name(inner, text).map(|name| (name, qualified))
-}
-
-fn plain_name(declarator: Node<'_>, text: &str) -> Option<String> {
-    let mut node = declarator;
-    loop {
-        if NAME_KINDS.contains(&node.kind()) {
-            return Some(node_text(node, text));
-        }
-        node = match node.kind() {
-            k if WRAPPERS.contains(&k) => node.child_by_field_name("declarator")?,
-            "array_declarator" | "attributed_declarator" | "init_declarator" => {
-                node.child_by_field_name("declarator")?
-            }
-            "qualified_identifier" | "template_function" | "template_method" => {
-                node.child_by_field_name("name")?
-            }
-            _ => return None,
-        };
-    }
-}
-
 fn push_field(node: Node<'_>, field: &str, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if let Some(name) = node.child_by_field_name(field) {
         push(node, node_text(name, text), kind, out);
@@ -186,10 +141,4 @@ fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>
         start_byte: node.start_byte() as u32,
         end_byte: node.end_byte() as u32,
     });
-}
-
-fn node_text(node: Node<'_>, text: &str) -> String {
-    node.utf8_text(text.as_bytes())
-        .unwrap_or_default()
-        .to_string()
 }

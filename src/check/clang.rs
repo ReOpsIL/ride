@@ -25,7 +25,7 @@ pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
     };
     let mut cmd = crate::toolchain::tool("clang");
     cmd.args(["-x", lang_name]);
-    let cwd = match compile_db::lookup(file) {
+    let cwd = match compile_db::lookup(file, lang) {
         Some(cc) => {
             cmd.args(cc.args);
             cc.directory

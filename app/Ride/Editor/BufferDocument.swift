@@ -16,6 +16,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     var highlights: [HighlightSpan] = []
     var visibleWork: DispatchWorkItem?
     var isReadOnly = false
+    var detectedLanguage: BufferLanguage?
 
     var hasCompletions: Bool {
         language.hasCompletions
@@ -26,7 +27,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     }
 
     var language: BufferLanguage {
-        BufferLanguage.of(fileURL)
+        detectedLanguage ?? BufferLanguage.of(fileURL)
     }
 
     init(url: URL) {
@@ -59,10 +60,14 @@ final class BufferDocument: ObservableObject, Identifiable {
         textView.string = text
         textView.lines.invalidate()
         isDirty = false
-        let label = language.title.map { "\(displayName) \($0)" } ?? displayName
-        textView.setAccessibilityLabel(label)
+        updateLabel(textView)
         textView.isEditable = !isReadOnly
         textView.updateCurrentLineHighlight()
+    }
+
+    func updateLabel(_ textView: RideTextView) {
+        let label = language.title.map { "\(displayName) \($0)" } ?? displayName
+        textView.setAccessibilityLabel(label)
     }
 
     func capture(_ textView: RideTextView) {

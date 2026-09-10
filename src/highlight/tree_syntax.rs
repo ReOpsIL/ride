@@ -1,11 +1,14 @@
 use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
+use crate::ffi::{ByteRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
 use super::grammar::Grammar;
+use super::includes::IncludeRef;
+use super::members::{self, Access};
 use super::ranges::from_ts;
-use super::syntax::{Syntax, lang_err, parse_failed, query_err};
+use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
+use super::types::TypeTable;
 use super::{errors, locals, spans, symbol};
 
 pub struct TreeSyntax {
@@ -86,16 +89,43 @@ impl Syntax for TreeSyntax {
             .unwrap_or_default()
     }
 
-    fn local_hits(
-        &self,
-        text: &str,
-        outline: &[OutlineItem],
-        prefix: &str,
-        limit: u32,
-    ) -> Vec<CompletionHit> {
+    fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits {
+        let Some(tree) = self.tree.as_ref() else {
+            return LocalHits::default();
+        };
+        let limit = q.limit as usize;
+        match members::access_before(tree, text, q.at as usize, self.grammar.member_ops) {
+            Some(receiver) => LocalHits {
+                hits: members::fallback_hits(tree, text, outline, q.prefix, limit, &self.grammar),
+                access: Some(Access {
+                    type_name: receiver.and_then(|r| (self.grammar.receiver_type)(tree, text, r)),
+                }),
+            },
+            None => LocalHits {
+                hits: locals::hits(
+                    tree,
+                    text,
+                    outline,
+                    q.prefix,
+                    limit,
+                    self.grammar.local_kinds,
+                ),
+                access: None,
+            },
+        }
+    }
+
+    fn includes(&self, text: &str) -> Vec<IncludeRef> {
         self.tree
             .as_ref()
-            .map(|t| locals::hits(t, text, outline, prefix, limit, self.grammar.local_kinds))
+            .map(|t| (self.grammar.includes)(t, text))
+            .unwrap_or_default()
+    }
+
+    fn type_table(&self, text: &str) -> TypeTable {
+        self.tree
+            .as_ref()
+            .map(|t| (self.grammar.type_table)(t, text))
             .unwrap_or_default()
     }
 

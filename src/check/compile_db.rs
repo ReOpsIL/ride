@@ -2,6 +2,8 @@ use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
 
+use crate::highlight::Lang;
+
 const DB_NAME: &str = "compile_commands.json";
 const DB_DIRS: &[&str] = &["", "build", "out", "cmake-build-debug"];
 const SKIP_WITH_VALUE: &[&str] = &["-o", "-MF", "-MT", "-MQ"];
@@ -20,9 +22,9 @@ pub struct CompileCommand {
     pub args: Vec<String>,
 }
 
-pub fn lookup(file: &Path) -> Option<CompileCommand> {
+pub fn lookup(file: &Path, lang: Lang) -> Option<CompileCommand> {
     let file = file.canonicalize().ok()?;
-    databases(&file).find_map(|db| best_entry(&db, &file))
+    databases(&file).find_map(|db| best_entry(&db, &file, lang))
 }
 
 fn databases(file: &Path) -> impl Iterator<Item = PathBuf> + '_ {
@@ -32,7 +34,7 @@ fn databases(file: &Path) -> impl Iterator<Item = PathBuf> + '_ {
         .filter(|p| p.is_file())
 }
 
-fn best_entry(db: &Path, file: &Path) -> Option<CompileCommand> {
+fn best_entry(db: &Path, file: &Path, lang: Lang) -> Option<CompileCommand> {
     let text = std::fs::read_to_string(db).ok()?;
     let entries: Vec<Entry> = serde_json::from_str(&text).ok()?;
     let sources: Vec<(PathBuf, &Entry)> = entries
@@ -42,15 +44,19 @@ fn best_entry(db: &Path, file: &Path) -> Option<CompileCommand> {
     let exact = sources
         .iter()
         .find(|(src, _)| src.canonicalize().ok().as_deref() == Some(file));
-    let sibling = || {
-        sources.iter().find(|(src, _)| {
+    let siblings = || {
+        sources.iter().filter(|(src, _)| {
             src.parent().and_then(|p| p.canonicalize().ok()).as_deref() == file.parent()
         })
     };
-    let (src, entry) = exact.or_else(sibling)?;
+    let same_lang = || siblings().find(|(src, _)| Lang::for_path(src.to_str()) == lang);
+    let (src, entry, keep_std) = match exact.or_else(same_lang) {
+        Some((src, entry)) => (src, *entry, true),
+        None => siblings().next().map(|(src, entry)| (src, *entry, false))?,
+    };
     Some(CompileCommand {
         directory: PathBuf::from(&entry.directory),
-        args: strip(argv(entry)?, src),
+        args: strip(argv(entry)?, src, keep_std),
     })
 }
 
@@ -62,14 +68,19 @@ fn argv(entry: &Entry) -> Option<Vec<String>> {
     }
 }
 
-fn strip(args: Vec<String>, source: &Path) -> Vec<String> {
+fn strip(args: Vec<String>, source: &Path, keep_std: bool) -> Vec<String> {
     let name = source.file_name();
     let mut out = Vec::new();
     let mut it = args.into_iter().skip(1);
     while let Some(arg) = it.next() {
         if SKIP_WITH_VALUE.contains(&arg.as_str()) {
             it.next();
-        } else if !SKIP_ALONE.contains(&arg.as_str()) && Path::new(&arg).file_name() != name {
+        } else if SKIP_ALONE.contains(&arg.as_str())
+            || Path::new(&arg).file_name() == name
+            || (!keep_std && arg.starts_with("-std="))
+        {
+            continue;
+        } else {
             out.push(arg);
         }
     }

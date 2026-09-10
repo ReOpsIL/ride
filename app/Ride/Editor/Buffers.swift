@@ -72,8 +72,14 @@ extension AppState {
             guard response == .OK, let url = panel.url else {
                 return
             }
+            let previous = buffer.language
             buffer.fileURL = url
+            buffer.detectedLanguage = nil
             buffer.isReadOnly = false
+            if buffer.language != previous, let view = EditorJump.shared.view {
+                SessionService.shared.close(buffer)
+                SessionService.shared.attach(document: buffer, view: view)
+            }
         }
         try? buffer.save(from: nil)
         objectWillChange.send()

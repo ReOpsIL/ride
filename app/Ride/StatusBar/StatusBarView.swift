@@ -12,7 +12,7 @@ struct StatusBarView: View {
             StatusSegment(text: "Ln \(state.cursorLine), Col \(state.cursorColumn)", help: "Cursor position")
             StatusSegment(icon: pathIcon, text: state.relativePath, help: state.activeBuffer?.fileURL?.path ?? state.relativePath)
             if let error = state.formatError {
-                StatusSegment(icon: "exclamationmark.circle", text: "rustfmt: \(error)", tint: ts.ui.error, help: error)
+                StatusSegment(icon: "exclamationmark.circle", text: "\(formatter): \(error)", tint: ts.ui.error, help: error)
             }
             Spacer(minLength: 0)
             CheckStatusView()
@@ -29,6 +29,13 @@ struct StatusBarView: View {
     }
 
     private var pathIcon: String {
-        FileIcon.spec(name: state.activeBuffer?.displayName ?? "", isDirectory: false, chrome: ts.chrome).symbol
+        guard let buffer = state.activeBuffer else {
+            return "doc"
+        }
+        return FileIcon.spec(for: buffer, chrome: ts.chrome).symbol
+    }
+
+    private var formatter: String {
+        state.activeBuffer?.language.usesClang == true ? "clang-format" : "rustfmt"
     }
 }

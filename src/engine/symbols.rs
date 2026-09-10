@@ -4,7 +4,7 @@ use std::path::Path;
 use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem};
 use crate::query::{IndexSrc, exact_search};
 
-use super::Engine;
+use super::{Engine, header_hits, include_graph};
 
 const LOCAL_SCORE: f32 = 2000.0;
 
@@ -34,15 +34,20 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
             symbol,
             local,
             session.lang().has_catalog(),
+            session.scope(),
+            i.headers.clone(),
             i.config.index_dir.clone(),
             i.index.clone(),
             i.reader.clone(),
         ))
     });
-    let Ok(Some((symbol, mut hits, catalog, index_dir, index, reader))) = snap else {
+    let Ok(Some((symbol, mut hits, catalog, scope, headers, index_dir, index, reader))) = snap
+    else {
         return DefinitionResponse::empty();
     };
     if !catalog {
+        let reachable = include_graph::reachable(&headers, &scope);
+        hits.extend(header_hits::definitions(&reachable, &symbol.name));
         return DefinitionResponse {
             symbol: Some(symbol),
             hits,
@@ -65,19 +70,10 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
 }
 
 fn outline_hit(item: &OutlineItem) -> CompletionHit {
-    CompletionHit {
-        path: item.name.clone(),
-        name: item.name.clone(),
-        insert_text: item.name.clone(),
-        item_kind: item.kind,
-        crate_name: String::new(),
-        crate_version: String::new(),
-        signature: String::new(),
-        doc_first_sentence: String::new(),
-        doc_paragraph: String::new(),
-        source_path: None,
-        byte_start: Some(item.start_byte),
-        byte_end: Some(item.end_byte),
-        score: LOCAL_SCORE,
-    }
+    CompletionHit::local(
+        &item.name,
+        item.kind,
+        LOCAL_SCORE,
+        Some((item.start_byte, item.end_byte)),
+    )
 }

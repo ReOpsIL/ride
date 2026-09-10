@@ -21,7 +21,7 @@
 # C / C++ (added 2026-09-10)
 
 - check: `run_check_c` is per saved file; a header edit does not re-check the sources that include it, and there is no whole-project C check (`compile_commands.json` walk)
-- check: diagnostics for a `.h` sniffed as C++ but compiled with a C sibling's flags fail on `-std=c…`; pick the sibling by language
-- highlight: C/C++ definitions are buffer-only; index `#include` targets found on the include path for cross-file jumps
-- highlight: C++ completion has no member-access awareness (`obj.` lists all buffer identifiers)
-- app: a `.h` the engine opens as C++ still shows the `C` label and icon; surface the sniffed language in `SessionOpen`
+- highlight: member access types only a plain identifier or `this`; field chains (`a.b.`), call results and `auto` stay on the field-name fallback
+- highlight: header lookups stop at 64 files and never probe the compiler's system include dirs; ask `clang -E -v` once per compile database if `<vector>`-style completion matters
+- highlight: go-to-definition on an `#include "x.h"` line should open the header
+- highlight: the include graph is walked on every completion query; cache the resolved header list per session and invalidate on edit or header mtime change if it shows up in profiles

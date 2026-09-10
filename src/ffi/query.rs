@@ -54,3 +54,23 @@ pub struct CompletionResponse {
     pub hits: Vec<CompletionHit>,
     pub truncated: bool,
 }
+
+impl CompletionHit {
+    pub fn local(name: &str, kind: ItemKind, score: f32, range: Option<(u32, u32)>) -> Self {
+        Self {
+            path: name.to_string(),
+            name: name.to_string(),
+            insert_text: name.to_string(),
+            item_kind: kind,
+            crate_name: String::new(),
+            crate_version: String::new(),
+            signature: String::new(),
+            doc_first_sentence: String::new(),
+            doc_paragraph: String::new(),
+            source_path: None,
+            byte_start: range.map(|r| r.0),
+            byte_end: range.map(|r| r.1),
+            score,
+        }
+    }
+}

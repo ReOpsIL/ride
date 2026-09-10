@@ -135,6 +135,10 @@ final class SessionService {
             )
             DispatchQueue.main.async {
                 document.sessionId = opened?.sessionId
+                if let lang = opened?.lang {
+                    document.detectedLanguage = BufferLanguage(lang)
+                    document.updateLabel(view)
+                }
                 self.paint(opened?.update, document: document, view: view, text: view.string)
             }
         }
@@ -175,6 +179,18 @@ final class SessionService {
         case .heading: return "heading"
         case .`class`: return "class"
         case .namespace: return "namespace"
+        case .field: return "field"
+        }
+    }
+}
+
+extension BufferLanguage {
+    init(_ lang: Lang) {
+        switch lang {
+        case .rust: self = .rust
+        case .c: self = .c
+        case .cpp: self = .cpp
+        case .markdown: self = .markdown
         }
     }
 }

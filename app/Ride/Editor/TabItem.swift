@@ -8,7 +8,7 @@ struct TabItem: View {
     @State private var hovering = false
 
     var body: some View {
-        let icon = FileIcon.spec(name: buffer.displayName, isDirectory: false, chrome: ts.chrome)
+        let icon = FileIcon.spec(for: buffer, chrome: ts.chrome)
         HStack(spacing: Tokens.Space.s) {
             Image(systemName: icon.symbol)
                 .font(.system(size: Tokens.Size.iconS))

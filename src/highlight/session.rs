@@ -1,14 +1,28 @@
+use std::path::{Path, PathBuf};
+
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, CompletionHit, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt};
+use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt};
 
 use super::edit::{apply_replica, to_ts_edit};
+use super::includes::IncludeRef;
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{subtract, union_into};
-use super::syntax::{Lang, Syntax};
+use super::syntax::{Lang, LocalHits, LocalQuery, Syntax};
+use super::types::TypeTable;
+
+#[derive(Debug, Clone, Default)]
+pub struct SourceScope {
+    pub path: Option<PathBuf>,
+    pub search_dirs: Vec<PathBuf>,
+    pub includes: Vec<IncludeRef>,
+    pub types: TypeTable,
+}
 
 pub struct BufferSession {
     pub generation: u64,
     lang: Lang,
+    path: Option<PathBuf>,
+    search_dirs: Vec<PathBuf>,
     replica: String,
     syntax: Box<dyn Syntax>,
     already_covered: Vec<ByteRange>,
@@ -28,9 +42,22 @@ impl BufferSession {
         &self.last_outline
     }
 
-    pub fn local_hits(&self, prefix: &str, limit: u32) -> Vec<CompletionHit> {
-        self.syntax
-            .local_hits(&self.replica, &self.last_outline, prefix, limit)
+    pub fn locate(&mut self, path: &Path, search_dirs: Vec<PathBuf>) {
+        self.path = Some(path.to_path_buf());
+        self.search_dirs = search_dirs;
+    }
+
+    pub fn scope(&self) -> SourceScope {
+        SourceScope {
+            path: self.path.clone(),
+            search_dirs: self.search_dirs.clone(),
+            includes: self.syntax.includes(&self.replica),
+            types: self.syntax.type_table(&self.replica),
+        }
+    }
+
+    pub fn local_hits(&self, q: &LocalQuery<'_>) -> LocalHits {
+        self.syntax.local_hits(&self.replica, &self.last_outline, q)
     }
 
     pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {
@@ -58,6 +85,8 @@ impl BufferSession {
         let session = Self {
             generation: 1,
             lang,
+            path: None,
+            search_dirs: Vec::new(),
             replica: text,
             syntax,
             already_covered: painted.clone(),

@@ -4,8 +4,11 @@ use crate::error::EngineError;
 use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
 use super::grammar::{self, Grammar};
+use super::includes::IncludeRef;
+use super::members::Access;
+use super::types::TypeTable;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
 pub enum Lang {
     Rust,
     Markdown,
@@ -85,20 +88,33 @@ fn is_header(path: Option<&str>) -> bool {
     extension(path).as_deref() == Some("h")
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct LocalQuery<'a> {
+    pub prefix: &'a str,
+    pub limit: u32,
+    pub at: u32,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct LocalHits {
+    pub hits: Vec<CompletionHit>,
+    pub access: Option<Access>,
+}
+
 pub trait Syntax: Send + Sync {
     fn parse_full(&mut self, text: &str) -> Result<(), EngineError>;
     fn edit(&mut self, edit: &InputEdit, text: &str) -> Result<Vec<ByteRange>, EngineError>;
     fn highlights(&self, text: &str, ranges: &[ByteRange]) -> Vec<HighlightSpan>;
     fn outline(&self, text: &str) -> Vec<OutlineItem>;
     fn errors(&self) -> Vec<ParseErrorSpan>;
-    fn local_hits(
-        &self,
-        text: &str,
-        outline: &[OutlineItem],
-        prefix: &str,
-        limit: u32,
-    ) -> Vec<CompletionHit>;
+    fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;
+    fn includes(&self, _text: &str) -> Vec<IncludeRef> {
+        Vec::new()
+    }
+    fn type_table(&self, _text: &str) -> TypeTable {
+        TypeTable::default()
+    }
 }
 
 pub fn parse_failed() -> EngineError {

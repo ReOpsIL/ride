@@ -1,4 +1,5 @@
 use super::kind::{CaptureKind, ItemKind};
+use crate::highlight::Lang;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Record)]
 pub struct ByteRange {
@@ -52,6 +53,7 @@ pub struct SessionUpdate {
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct SessionOpen {
     pub session_id: u64,
+    pub lang: Lang,
     pub update: SessionUpdate,
 }
 

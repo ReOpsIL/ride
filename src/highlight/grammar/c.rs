@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::c_outline;
+use crate::highlight::{c_members, c_outline, c_types, includes};
 
 pub const HIGHLIGHTS: &str = include_str!("../../../queries/c/highlights.scm");
 
@@ -65,6 +65,8 @@ pub const KEYWORDS: &[&str] = &[
 ];
 
 pub const LOCAL_KINDS: &[&str] = &["identifier", "type_identifier", "field_identifier"];
+pub const MEMBER_OPS: &[&str] = &["->", "."];
+pub const MEMBER_KINDS: &[&str] = &["field_identifier"];
 
 pub const SYMBOL_KINDS: &[&str] = &[
     "identifier",
@@ -83,6 +85,11 @@ pub fn grammar() -> Grammar {
         symbol_kinds: SYMBOL_KINDS,
         qualifier: no_qualifier,
         outline: c_outline::outline,
+        member_ops: MEMBER_OPS,
+        member_kinds: MEMBER_KINDS,
+        receiver_type: c_members::receiver_type,
+        type_table: c_types::build,
+        includes: includes::c_includes,
     }
 }
 

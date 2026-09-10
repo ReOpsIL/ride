@@ -1,99 +1,51 @@
 use std::collections::HashSet;
 
-use tree_sitter::{Node, Tree};
+use tree_sitter::Tree;
 
 use crate::ffi::{CompletionHit, ItemKind, OutlineItem};
+
+use super::members::{FIELD_SCORE, METHOD_SCORE, matches};
+use super::walk::each_node;
 
 pub fn hits(
     tree: &Tree,
     text: &str,
     outline: &[OutlineItem],
     prefix: &str,
-    limit: u32,
+    limit: usize,
     kinds: &[&str],
 ) -> Vec<CompletionHit> {
-    let cap = limit as usize;
+    let p = prefix.to_ascii_lowercase();
     let mut seen = HashSet::new();
     let mut out = Vec::new();
-    let p = prefix.to_ascii_lowercase();
     for item in outline {
-        if out.len() >= cap {
+        if out.len() >= limit {
             return out;
         }
-        if !matches_prefix(&item.name, &p) {
-            continue;
+        if matches(&item.name, &p) && seen.insert(item.name.clone()) {
+            out.push(CompletionHit::local(
+                &item.name,
+                item.kind,
+                METHOD_SCORE,
+                Some((item.start_byte, item.end_byte)),
+            ));
         }
-        if !seen.insert(item.name.clone()) {
-            continue;
-        }
-        out.push(hit(
-            &item.name,
-            item.kind,
-            45.0,
-            Some(item.start_byte),
-            Some(item.end_byte),
-        ));
     }
-    collect_idents(tree.root_node(), text, &p, kinds, &mut seen, &mut out, cap);
+    each_node(tree.root_node(), &mut |node| {
+        if out.len() >= limit || !kinds.contains(&node.kind()) {
+            return;
+        }
+        let Ok(name) = node.utf8_text(text.as_bytes()) else {
+            return;
+        };
+        if matches(name, &p) && seen.insert(name.to_string()) {
+            out.push(CompletionHit::local(
+                name,
+                ItemKind::Local,
+                FIELD_SCORE,
+                Some((node.start_byte() as u32, node.end_byte() as u32)),
+            ));
+        }
+    });
     out
-}
-
-fn collect_idents(
-    node: Node<'_>,
-    text: &str,
-    prefix: &str,
-    kinds: &[&str],
-    seen: &mut HashSet<String>,
-    out: &mut Vec<CompletionHit>,
-    cap: usize,
-) {
-    if out.len() >= cap {
-        return;
-    }
-    if kinds.contains(&node.kind())
-        && let Ok(name) = node.utf8_text(text.as_bytes())
-        && matches_prefix(name, prefix)
-        && seen.insert(name.to_string())
-    {
-        out.push(hit(
-            name,
-            ItemKind::Local,
-            40.0,
-            Some(node.start_byte() as u32),
-            Some(node.end_byte() as u32),
-        ));
-    }
-    for i in 0..node.named_child_count() {
-        if let Some(child) = node.named_child(u32::try_from(i).unwrap_or(u32::MAX)) {
-            collect_idents(child, text, prefix, kinds, seen, out, cap);
-        }
-    }
-}
-
-fn matches_prefix(name: &str, prefix: &str) -> bool {
-    prefix.is_empty() || name.to_ascii_lowercase().starts_with(prefix)
-}
-
-fn hit(
-    name: &str,
-    kind: ItemKind,
-    score: f32,
-    start: Option<u32>,
-    end: Option<u32>,
-) -> CompletionHit {
-    CompletionHit {
-        path: name.to_string(),
-        name: name.to_string(),
-        insert_text: name.to_string(),
-        item_kind: kind,
-        crate_name: String::new(),
-        crate_version: String::new(),
-        signature: String::new(),
-        doc_first_sentence: String::new(),
-        doc_paragraph: String::new(),
-        source_path: None,
-        byte_start: start,
-        byte_end: end,
-        score,
-    }
 }

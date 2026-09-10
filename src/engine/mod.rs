@@ -13,6 +13,9 @@ use crate::ffi::{
 };
 use crate::highlight::BufferSession;
 
+mod header_hits;
+mod headers;
+mod include_graph;
 mod query;
 mod sessions;
 mod symbols;
@@ -31,6 +34,7 @@ pub(crate) struct Inner {
     pub(crate) generation: u32,
     pub(crate) index: Option<Index>,
     pub(crate) reader: Option<IndexReader>,
+    pub(crate) headers: Arc<headers::HeaderCache>,
 }
 
 #[derive(uniffi::Object)]
@@ -58,6 +62,7 @@ impl Engine {
                 generation: 0,
                 index: None,
                 reader: None,
+                headers: Arc::default(),
             }),
         }
     }

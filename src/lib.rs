@@ -14,7 +14,7 @@ mod skip;
 mod toolchain;
 
 pub use check::{
-    format_clang, format_source, parse_clang, parse_lines, run_check, run_clang_check,
+    format_clang, format_source, include_dirs, parse_clang, parse_lines, run_check, run_clang_check,
 };
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, cargo_home, discover, sysroot_path, workspace_info,

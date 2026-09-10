@@ -1,14 +1,12 @@
 use tree_sitter::{InputEdit, Node, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{
-    ByteRange, CompletionHit, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt,
-};
+use crate::ffi::{ByteRange, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt};
 
 use super::fences::Fences;
 use super::ranges::from_ts;
 use super::spans::highlights_in;
-use super::syntax::{Syntax, lang_err, parse_failed, query_err};
+use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
 
 const BLOCK_QUERY: &str = include_str!("../../queries/markdown/block.scm");
 const INLINE_QUERY: &str = include_str!("../../queries/markdown/inline.scm");
@@ -118,8 +116,8 @@ impl Syntax for MarkdownSyntax {
         Vec::new()
     }
 
-    fn local_hits(&self, _: &str, _: &[OutlineItem], _: &str, _: u32) -> Vec<CompletionHit> {
-        Vec::new()
+    fn local_hits(&self, _: &str, _: &[OutlineItem], _: &LocalQuery<'_>) -> LocalHits {
+        LocalHits::default()
     }
 
     fn symbol_at(&self, _: &str, _: u32) -> Option<SymbolAt> {

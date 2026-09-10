@@ -34,7 +34,7 @@ pub fn kind_weight(kind: ItemKind) -> f32 {
         ItemKind::Mod | ItemKind::Crate | ItemKind::Namespace => 30.0,
         ItemKind::Method => 20.0,
         ItemKind::Const | ItemKind::Static => 10.0,
-        ItemKind::Keyword | ItemKind::Local | ItemKind::Heading => 0.0,
+        ItemKind::Keyword | ItemKind::Local | ItemKind::Heading | ItemKind::Field => 0.0,
     }
 }
 
@@ -45,7 +45,7 @@ pub fn context_bonus(context: CompletionContext, kind: ItemKind) -> f32 {
         (CompletionContext::TypePosition, Mod | Crate) => 20.0,
         (CompletionContext::ValuePosition, Fn | Const | Static | Macro) => 40.0,
         (CompletionContext::ValuePosition, Struct | Enum) => 20.0,
-        (CompletionContext::MemberAccess, Method) => 80.0,
+        (CompletionContext::MemberAccess, Method | Field) => 80.0,
         _ => 0.0,
     }
 }
