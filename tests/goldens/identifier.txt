@@ -1,0 +1,16 @@
+samples/c-demo/src/main.c	int main(void) {\n    	rect
+rect
+rect_t
+rect_area
+rect_contains
+
+samples/cpp-demo/src/main.cpp	{\n    	Cir
+circle
+Circle
+
+tests/fixtures/sample_crate/src/lib.rs	    pub fn new() -> Self {\n        	Has
+Hash
+HashMap
+HashSet
+hash_slice
+hash

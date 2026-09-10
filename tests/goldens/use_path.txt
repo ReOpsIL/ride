@@ -1,0 +1,6 @@
+tests/fixtures/sample_crate/src/lib.rs	//! Sample crate inner docs.\n\n	use std::
+*
+self
+Option
+vec
+option

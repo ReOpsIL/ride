@@ -1,0 +1,13 @@
+samples/c-demo/src/main.c	#	
+if
+elif
+else
+line
+embed
+
+samples/cpp-demo/src/main.cpp	#	
+if
+elif
+else
+line
+embed

@@ -1,0 +1,6 @@
+tests/fixtures/sample_crate/src/lib.rs	#[	
+cfg
+doc
+cold
+deny
+link

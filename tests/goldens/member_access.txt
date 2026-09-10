@@ -1,0 +1,16 @@
+samples/c-demo/src/main.c	origin.x, origin.	
+x
+y
+
+samples/cpp-demo/src/main.cpp	circle.	
+area
+perimeter
+scale
+radius
+radius_
+
+tests/fixtures/sample_crate/src/lib.rs	fn required(&self) {	 self.
+x
+new
+hidden
+required

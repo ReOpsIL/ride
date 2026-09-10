@@ -1,0 +1,11 @@
+samples/cpp-demo/src/main.cpp	    geo::	
+Real
+PI
+Scalable
+Shape
+Circle
+
+tests/fixtures/sample_crate/src/lib.rs	    pub fn new() -> Self {\n        	Foo::
+new
+hidden
+required
