@@ -29,15 +29,35 @@
 
 | Language | Extensions | Highlight | Outline | Completion | Definitions | Format |
 |---|---|---|---|---|---|---|
-| Rust | `rs` | tree-sitter-rust | `extract` items | keywords, buffer locals, crate catalog | buffer outline + catalog | rustfmt |
-| C | `c`, `h` | tree-sitter-c | functions, prototypes, structs/enums/unions, typedefs, globals, `#define` | keywords, buffer locals, included headers, struct members after `.` / `->` | buffer outline + included headers | clang-format |
-| C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords, buffer locals, included headers, class members after `.` / `->` / `this->` (bases followed) | buffer outline + included headers, `a::b::c` qualifier | clang-format |
+| Rust | `rs` | tree-sitter-rust | `extract` items | keywords and keyword snippets, buffer locals, crate catalog, `use` paths (crates, then children), `Type::` / `module::` children, `#[derive(…)]` and attribute names, postfix templates after `.`, call snippets, auto-import edits | buffer outline + catalog | rustfmt |
+| C | `c`, `h` | tree-sitter-c | functions, prototypes, structs/enums/unions, typedefs, globals, `#define` | keywords and snippets, buffer locals, included headers, struct members after `.` / `->`, `#include <…>` / `"…"` header paths, `#` directives | buffer outline + included headers | clang-format |
+| C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords and snippets, buffer locals, included headers, class members after `.` / `->` / `this->` (bases followed), `#include` header paths, `#` directives | buffer outline + included headers, `a::b::c` qualifier | clang-format |
 | TOML | `toml` | tree-sitter-toml-ng | tables and table arrays | Cargo manifest table and key names, keys in the buffer | buffer outline | none |
 | Makefile | `Makefile`, `GNUmakefile`, `mk`, `mak`, `make` | tree-sitter-make | targets, variable and `define` assignments | GNU make directives, functions, builtin variables and special targets, buffer targets and variables | buffer outline | none |
 | CMake | `CMakeLists.txt`, `cmake` | tree-sitter-cmake | project, `add_executable` / `add_library` / `add_custom_target` targets, `set` variables, `option`s, functions, macros | common commands, variables and argument keywords, buffer functions, targets and variables | buffer outline | none |
 | Markdown | `md`, `markdown` | tree-sitter-md | headings | none | none | none |
 
-`Lang::for_path` checks the file name before the extension (`Makefile`, `GNUmakefile`, `CMakeLists.txt`). A buffer item whose name equals a keyword wins the name dedupe, so `[dependencies]` completes as the buffer's table rather than the manifest keyword. Non-Rust sessions never touch the crate index: the engine forces `BufferLocal` mode for their completion queries and skips the catalog in `find_definitions`. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++. `SessionOpen.lang` carries the language the engine chose so the app can relabel a sniffed header.
+`Lang::for_path` checks the file name before the extension (`Makefile`, `GNUmakefile`, `CMakeLists.txt`). A buffer item whose name equals a keyword wins the name dedupe, so `[dependencies]` completes as the buffer's table rather than the manifest keyword. Non-Rust sessions never touch the crate index (`Lang::has_catalog`), and `find_definitions` skips it for them. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++. `SessionOpen.lang` carries the language the engine chose so the app can relabel a sniffed header.
+
+### Completion sites and pipeline
+
+The engine classifies the caret itself (`highlight/site/`, one classifier per grammar, text scan with tree-sitter used for comment/string vetoes and struct literals) and ignores the app's `prefix` / `mode` / `context` whenever a session exists; `CompletionResponse` carries the `site` kind and `replace_start_byte` (UTF-8) so the app replaces exactly the typed prefix. Sites and what answers them:
+
+| Site | Trigger | Source (`engine/`) |
+|---|---|---|
+| `Identifier` | a word, or a manual trigger | `identifier.rs`: declared locals (`TIER_DECLARED`), buffer items (`TIER_ITEM`), reachable header items (`TIER_HEADER`), identifier mentions (`TIER_MENTION`), keywords, and for Rust the catalog from two characters on (imported names +`IMPORT_BONUS`, prelude names +`PRELUDE_BONUS`, typed-case agreement +`CASE_BONUS`) |
+| `MemberAccess` | `.` / `->` | `access.rs`: typed receiver members in declaration order, else the field-name fallback; Rust adds postfix templates (`postfix.rs`: `if`, `match`, `while`, `let`, `not`, `ref`, `refm`, `dbg`, `return`, `some`, `ok`, `err`, `box`, `println`) whose `replace_start_byte` points at the receiver expression |
+| `UsePath` | inside `use …;` (brace groups followed) | `paths.rs`: no segment → every crate in the catalog plus `crate`/`self`/`super`/`std`/`core`/`alloc`; segments → direct children through the `parent_path` field (`crate::` maps to the workspace package, `self`/`super` to the file's module path) plus `self` and `*`; methods are dropped |
+| `ScopedPath` | `a::b::` outside `use` | `paths.rs`: children of the path; a capitalised last segment ranks methods first |
+| `Include` | `#include <…` / `"…` | `includes.rs` over `crate::includes` with the compile-database dirs and the cached `clang -E -v` system dirs |
+| `Directive` | `#…` on a preprocessor line | `lists.rs` |
+| `Attribute` | inside `#[…]` / `#![…]` | `lists.rs`: attribute names, or inside `derive(` the std derives plus catalog derive macros (`#[proc_macro_derive(Name)]` fns are indexed as `Name`) |
+| `StructLiteral` | inside `Foo { … }` | `access.rs` |
+| `None` | comments, strings, after a closed include | nothing |
+
+All sources go through `merge::finish`: one scorer (`src/score.rs` tiers plus the catalog formula in `query/rank.rs`), a dedupe by name in which a bare identifier mention or keyword yields to any real item of the same name, then the limit. Catalog prefix queries also match the `name_hump` field (`HM` → `HashMap`, demoted by `HUMP_PENALTY`) and skip docs with `reachable = 0`; deprecated docs lose `DEPRECATED_PENALTY`. Fn/method hits whose signature parses become call snippets (`name(${1:a}, ${2:b})$0`, `snippet = true`), macros `name!($0)`, and statement keywords expand to templates indented like the caret line (`snippets.rs`). Catalog items not imported and not in the prelude carry `import_path`; `Engine::import_edit` turns it into a sorted `use` insertion in the buffer's last import block (or after the inner attributes). `Engine::signature_help` finds the enclosing call by a text scan (`highlight/call_site.rs`), resolves the callee through the buffer outline, reachable headers and the catalog, and returns the signature with parameter byte ranges and the active index.
+
+`ride-engine complete <file> [--byte N | --find <anchor>] [--typed <text>] [--repeat N]` opens a session on a file and prints the site, replace offset and hits, so any of the above can be probed without the app.
 
 ### C / C++ headers
 
@@ -90,7 +110,9 @@ Two extraction changes ship with the bump: enum variants are emitted as `variant
 
 | Method | Purpose |
 |---|---|
-| `query_completions` | prefix / crate / phrase completions with context bias, best hit per name |
+| `query_completions` | site-classified completions (see above); sessionless calls fall back to prefix / crate / phrase catalog search |
+| `import_edit` | `TextEdit` adding `use <path>;` to a Rust buffer, or none when already imported |
+| `signature_help` | signature of the call enclosing the caret with parameter ranges and the active parameter |
 | `find_definitions` | identifier under the caret to buffer outline or index definitions |
 | `run_check` | `cargo check` diagnostics with absolute paths and byte ranges |
 | `format_rust` | rustfmt a buffer |
