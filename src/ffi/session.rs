@@ -33,6 +33,21 @@ pub struct OutlineItem {
     pub kind: ItemKind,
     pub start_byte: u32,
     pub end_byte: u32,
+    pub signature: String,
+    pub doc: String,
+}
+
+impl OutlineItem {
+    pub fn new(name: String, kind: ItemKind, start_byte: u32, end_byte: u32) -> Self {
+        Self {
+            name,
+            kind,
+            start_byte,
+            end_byte,
+            signature: String::new(),
+            doc: String::new(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Record)]

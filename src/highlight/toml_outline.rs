@@ -25,5 +25,7 @@ fn table(node: Node<'_>, text: &str) -> Option<OutlineItem> {
         kind: ItemKind::Table,
         start_byte: node.start_byte() as u32,
         end_byte: node.end_byte() as u32,
+        signature: String::new(),
+        doc: String::new(),
     })
 }

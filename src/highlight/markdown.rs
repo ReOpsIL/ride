@@ -162,6 +162,8 @@ fn headings(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
             kind: ItemKind::Heading,
             start_byte: node.start_byte() as u32,
             end_byte: node.end_byte() as u32,
+            signature: String::new(),
+            doc: String::new(),
         });
     }
     let mut cursor = node.walk();

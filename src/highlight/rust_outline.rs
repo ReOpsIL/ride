@@ -36,6 +36,8 @@ pub fn from_source(text: &str) -> Option<Vec<OutlineItem>> {
             kind: i.item_kind,
             start_byte: i.byte_range.0,
             end_byte: i.byte_range.1,
+            signature: String::new(),
+            doc: String::new(),
         })
         .collect();
     Some(outline)
