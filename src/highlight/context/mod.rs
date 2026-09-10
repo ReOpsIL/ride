@@ -1,0 +1,78 @@
+use tree_sitter::{Node, Tree};
+
+mod c;
+mod make;
+mod rust;
+mod scan;
+
+pub use c::c as c_context;
+pub use make::make as make_context;
+pub use rust::rust as rust_context;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Context {
+    Unknown,
+    Item,
+    Body,
+    Fields,
+    Statement,
+    Expression,
+    Type,
+    Pattern,
+    Attribute,
+    Preprocessor,
+    Use,
+    Recipe,
+    Function,
+    Value,
+}
+
+pub type Detector = fn(Option<&Tree>, &str, usize) -> Context;
+
+pub fn unknown(_: Option<&Tree>, _: &str, _: usize) -> Context {
+    Context::Unknown
+}
+
+const NAMES: &[(Context, &str)] = &[
+    (Context::Unknown, "unknown"),
+    (Context::Item, "item"),
+    (Context::Body, "body"),
+    (Context::Fields, "fields"),
+    (Context::Statement, "statement"),
+    (Context::Expression, "expression"),
+    (Context::Type, "type"),
+    (Context::Pattern, "pattern"),
+    (Context::Attribute, "attribute"),
+    (Context::Preprocessor, "preprocessor"),
+    (Context::Use, "use"),
+    (Context::Recipe, "recipe"),
+    (Context::Function, "function"),
+    (Context::Value, "value"),
+];
+
+impl Context {
+    pub fn name(self) -> &'static str {
+        NAMES
+            .iter()
+            .find(|(c, _)| *c == self)
+            .map(|(_, n)| *n)
+            .unwrap_or("unknown")
+    }
+
+    pub fn parse(name: &str) -> Option<Context> {
+        NAMES.iter().find(|(_, n)| *n == name).map(|(c, _)| *c)
+    }
+}
+
+pub(super) fn node_at(tree: Option<&Tree>, start: usize, at: usize) -> Option<Node<'_>> {
+    let probe = if start < at {
+        start
+    } else {
+        at.saturating_sub(1)
+    };
+    tree?.root_node().descendant_for_byte_range(probe, probe)
+}
+
+pub(super) fn ancestors<'a>(node: Node<'a>) -> impl Iterator<Item = Node<'a>> {
+    std::iter::successors(Some(node), |n| n.parent()).take(24)
+}

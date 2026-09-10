@@ -34,12 +34,14 @@ final class CompletionSession {
         if let view {
             SignatureHelpController.shared.relocate(in: view)
         }
+        CheatSheetController.shared.completionHidden()
     }
 
     func reset() {
         hide()
         snippet = nil
         SignatureHelpController.shared.hide()
+        CheatSheetController.shared.close()
     }
 
     func textChanged(document: BufferDocument, view: RideTextView, state: AppState, range: NSRange, inserted: String) {
@@ -109,6 +111,7 @@ final class CompletionSession {
         }
         if CompletionPlacement.caretVisible(in: view) {
             popup.relocate(in: view)
+            CheatSheetController.shared.relocate(in: view)
         } else {
             hide()
         }
@@ -149,6 +152,9 @@ final class CompletionSession {
         let keep = keepSelection ? popup.selectedHit?.name : nil
         popup.show(hits: hits, prefix: prefix, truncated: list.truncated, selectedName: keep, in: view)
         SignatureHelpController.shared.relocate(in: view)
+        if let binding = view.hooks.binding?() {
+            CheatSheetController.shared.follow(document: binding.document, view: view, state: binding.state)
+        }
         return true
     }
 

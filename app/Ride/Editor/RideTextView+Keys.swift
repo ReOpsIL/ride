@@ -24,8 +24,9 @@ extension RideTextView {
     }
 
     override func cancelOperation(_ sender: Any?) {
-        if CompletionSession.shared.isVisible {
+        if CompletionSession.shared.isVisible || CheatSheetController.shared.isVisible {
             CompletionSession.shared.hide()
+            CheatSheetController.shared.close()
             return
         }
         if SignatureHelpController.shared.isVisible {
@@ -41,13 +42,50 @@ extension RideTextView {
     override func keyDown(with event: NSEvent) {
         HoverController.shared.hide()
         if event.keyCode == 49, event.modifierFlags.contains(.control) {
-            CompletionSession.shared.trigger(view: self)
+            if event.modifierFlags.contains(.shift) {
+                CheatSheetController.shared.toggle(view: self)
+            } else {
+                CompletionSession.shared.trigger(view: self)
+            }
+            return
+        }
+        if CheatSheetController.shared.isVisible, handleCheatSheetKey(event) {
             return
         }
         if CompletionSession.shared.isVisible, handleCompletionKey(event) {
             return
         }
         super.keyDown(with: event)
+    }
+
+    private func handleCheatSheetKey(_ event: NSEvent) -> Bool {
+        let sheet = CheatSheetController.shared
+        let shared = CompletionSession.shared.isVisible
+        if shared, !event.modifierFlags.contains(.option) {
+            return event.keyCode == 53 && cancelPopups()
+        }
+        switch event.keyCode {
+        case 126:
+            sheet.move(-1)
+            return true
+        case 125:
+            sheet.move(1)
+            return true
+        case 53:
+            return cancelPopups()
+        case 36, 76:
+            return sheet.insert()
+        case 48:
+            return !shared && sheet.insert()
+        default:
+            return false
+        }
+    }
+
+    private func cancelPopups() -> Bool {
+        CompletionSession.shared.hide()
+        CheatSheetController.shared.close()
+        return true
     }
 
     private func handleCompletionKey(_ event: NSEvent) -> Bool {
@@ -74,6 +112,16 @@ extension RideTextView {
     }
 
     override func doCommand(by selector: Selector) {
+        if CheatSheetController.shared.isVisible, !CompletionSession.shared.isVisible {
+            if selector == #selector(moveUp(_:)) {
+                CheatSheetController.shared.move(-1)
+                return
+            }
+            if selector == #selector(moveDown(_:)) {
+                CheatSheetController.shared.move(1)
+                return
+            }
+        }
         if CompletionSession.shared.isVisible {
             if selector == #selector(moveUp(_:)) {
                 CompletionSession.shared.popup.move(-1)

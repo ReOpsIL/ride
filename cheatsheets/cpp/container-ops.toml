@@ -1,0 +1,156 @@
+title = "Container operations"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "push_back"
+keys = ["push_back", "push", "append", "add"]
+doc = "Append a copy of a value to the end."
+snippet = """
+${1:v}.push_back(${2:value});$0"""
+
+[[entries]]
+name = "emplace_back"
+keys = ["emplace_back", "emplace", "push", "construct"]
+doc = "Construct an element in place at the end."
+snippet = """
+${1:v}.emplace_back(${2:args});$0"""
+
+[[entries]]
+name = "pop_back"
+keys = ["pop_back", "pop", "remove"]
+doc = "Remove the last element."
+snippet = """
+${1:v}.pop_back();$0"""
+
+[[entries]]
+name = "insert"
+keys = ["insert", "add"]
+doc = "Insert a value before an iterator position."
+snippet = """
+${1:v}.insert(${2:v.begin() + i}, ${3:value});$0"""
+
+[[entries]]
+name = "erase at"
+keys = ["erase", "remove", "delete"]
+doc = "Erase the element at an iterator position."
+snippet = """
+${1:v}.erase(${2:v.begin() + i});$0"""
+
+[[entries]]
+name = "erase range"
+keys = ["erase", "remove", "range"]
+doc = "Erase elements in [first, last)."
+snippet = """
+${1:v}.erase(${2:first}, ${3:last});$0"""
+
+[[entries]]
+name = "erase-remove idiom"
+keys = ["erase", "remove", "remove_if", "idiom", "filter"]
+doc = "Remove every element matching a predicate."
+snippet = """
+${1:v}.erase(std::remove_if(${1:v}.begin(), ${1:v}.end(), [](${2:const auto &x}) { return ${3:cond}; }), ${1:v}.end());$0"""
+
+[[entries]]
+name = "std::erase_if"
+keys = ["erase_if", "erase", "remove", "filter"]
+doc = "C++20 one-call removal of elements matching a predicate."
+snippet = """
+std::erase_if(${1:v}, [](${2:const auto &x}) { return ${3:cond}; });$0"""
+
+[[entries]]
+name = "at"
+keys = ["at", "index", "bounds"]
+doc = "Bounds-checked element access that throws out_of_range."
+snippet = """
+${1:v}.at(${2:i})$0"""
+
+[[entries]]
+name = "operator[]"
+keys = ["index", "subscript", "[]"]
+doc = "Unchecked element access."
+snippet = """
+${1:v}[${2:i}]$0"""
+
+[[entries]]
+name = "front / back"
+keys = ["front", "back", "first", "last"]
+doc = "First or last element."
+snippet = """
+${1:v}.${2:back}()$0"""
+
+[[entries]]
+name = "size"
+keys = ["size", "length", "count"]
+doc = "Number of elements."
+snippet = """
+${1:v}.size()$0"""
+
+[[entries]]
+name = "empty"
+keys = ["empty", "size"]
+doc = "True when the container has no elements."
+snippet = """
+${1:v}.empty()$0"""
+
+[[entries]]
+name = "clear"
+keys = ["clear", "reset"]
+doc = "Remove all elements."
+snippet = """
+${1:v}.clear();$0"""
+
+[[entries]]
+name = "reserve"
+keys = ["reserve", "capacity"]
+doc = "Reserve capacity to avoid reallocations."
+snippet = """
+${1:v}.reserve(${2:n});$0"""
+
+[[entries]]
+name = "resize"
+keys = ["resize", "size", "grow"]
+doc = "Change the element count, value-initializing new elements."
+snippet = """
+${1:v}.resize(${2:n});$0"""
+
+[[entries]]
+name = "data"
+keys = ["data", "pointer", "raw"]
+doc = "Pointer to the underlying contiguous storage."
+snippet = """
+${1:v}.data()$0"""
+
+[[entries]]
+name = "begin / end"
+keys = ["begin", "end", "iterator"]
+doc = "Iterator pair over the whole container."
+snippet = """
+${1:v}.begin(), ${1:v}.end()$0"""
+
+[[entries]]
+name = "rbegin / rend"
+keys = ["rbegin", "rend", "reverse", "iterator"]
+doc = "Reverse iterator pair."
+snippet = """
+${1:v}.rbegin(), ${1:v}.rend()$0"""
+
+[[entries]]
+name = "std::begin / std::end"
+keys = ["begin", "end", "std::", "array"]
+doc = "Free iterator functions that also work on C arrays."
+snippet = """
+std::begin(${1:arr}), std::end(${1:arr})$0"""
+
+[[entries]]
+name = "swap"
+keys = ["swap", "exchange"]
+doc = "Swap two values or containers."
+snippet = """
+std::swap(${1:a}, ${2:b});$0"""
+
+[[entries]]
+name = "assign"
+keys = ["assign", "replace", "fill"]
+doc = "Replace contents with a range or n copies."
+snippet = """
+${1:v}.assign(${2:first}, ${3:last});$0"""

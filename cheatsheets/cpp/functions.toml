@@ -1,0 +1,110 @@
+title = "Functions"
+contexts = ["item"]
+
+[[entries]]
+name = "function"
+keys = ["fn", "func", "def"]
+doc = "Define a free function with a return type and parameters."
+snippet = """
+${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "function declaration"
+keys = ["fn", "prototype", "declare", "forward"]
+doc = "Declare a function without defining it."
+snippet = """
+${1:void} ${2:name}(${3:});$0"""
+
+[[entries]]
+name = "main"
+keys = ["main", "entry"]
+doc = "Program entry point with argc and argv."
+snippet = """
+int main(int argc, char *argv[]) {
+    $0
+    return 0;
+}"""
+
+[[entries]]
+name = "main (no args)"
+keys = ["main", "entry"]
+doc = "Program entry point that ignores its arguments."
+snippet = """
+int main() {
+    $0
+    return 0;
+}"""
+
+[[entries]]
+name = "inline function"
+keys = ["inline", "fn"]
+doc = "Function that may be defined in several translation units."
+snippet = """
+inline ${1:int} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "static function"
+keys = ["static", "fn", "internal"]
+doc = "Function with internal linkage, visible only in this file."
+snippet = """
+static ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "constexpr function"
+keys = ["constexpr", "fn", "compile"]
+doc = "Function that can be evaluated at compile time."
+snippet = """
+constexpr ${1:int} ${2:name}(${3:int x}) {
+    return $0;
+}"""
+
+[[entries]]
+name = "consteval function"
+keys = ["consteval", "fn", "immediate"]
+doc = "C++20 immediate function that must be evaluated at compile time."
+snippet = """
+consteval ${1:int} ${2:name}(${3:int x}) {
+    return $0;
+}"""
+
+[[entries]]
+name = "trailing return type"
+keys = ["auto", "fn", "trailing", "arrow"]
+doc = "Function whose return type is written after the parameter list."
+snippet = """
+auto ${1:name}(${2:}) -> ${3:int} {
+    $0
+}"""
+
+[[entries]]
+name = "noexcept function"
+keys = ["noexcept", "fn"]
+doc = "Function that promises not to throw."
+snippet = """
+${1:void} ${2:name}(${3:}) noexcept {
+    $0
+}"""
+
+[[entries]]
+name = "[[nodiscard]] function"
+keys = ["nodiscard", "attribute", "fn"]
+doc = "Warn when the caller ignores the return value."
+snippet = """
+[[nodiscard]] ${1:bool} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "member function out of line"
+keys = ["method", "define", "scope", "::"]
+doc = "Define a member function outside its class."
+snippet = """
+${1:void} ${2:Name}::${3:method}(${4:}) {
+    $0
+}"""

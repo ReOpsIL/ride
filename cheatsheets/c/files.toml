@@ -1,0 +1,188 @@
+title = "Files"
+contexts = ["statement"]
+
+[[entries]]
+name = "fopen"
+keys = ["fopen", "open", "file", "stream"]
+doc = "Open a file with a mode (r, w, a, r+, w+ and b for binary) and check for failure."
+snippet = '''
+FILE *${1:fp} = fopen(${2:path}, "${3:r}");
+if (${1:fp} == NULL) {
+    perror(${2:path});
+    $0
+}'''
+
+[[entries]]
+name = "fclose"
+keys = ["fclose", "close", "file"]
+doc = "Flush and close a stream; check the result when writing."
+snippet = '''
+fclose(${1:fp});$0'''
+
+[[entries]]
+name = "fgets loop"
+keys = ["fgets", "lines", "read", "loop", "file"]
+doc = "Read a file line by line into a fixed buffer."
+snippet = '''
+char line[${1:256}];
+while (fgets(line, sizeof line, ${2:fp}) != NULL) {
+    $0
+}'''
+
+[[entries]]
+name = "fgetc loop"
+keys = ["fgetc", "getc", "read", "char", "loop"]
+doc = "Read a stream byte by byte until EOF."
+snippet = '''
+int c;
+while ((c = fgetc(${1:fp})) != EOF) {
+    $0
+}'''
+
+[[entries]]
+name = "fputc"
+keys = ["fputc", "putc", "write", "char"]
+doc = "Write one byte to a stream."
+snippet = '''
+fputc(${1:c}, ${2:fp});$0'''
+
+[[entries]]
+name = "fread"
+keys = ["fread", "read", "binary", "bytes"]
+doc = "Read up to sizeof buf bytes; the return value is the count actually read."
+snippet = '''
+size_t ${1:got} = fread(${2:buf}, 1, sizeof ${2:buf}, ${3:fp});$0'''
+
+[[entries]]
+name = "fwrite"
+keys = ["fwrite", "write", "binary", "bytes"]
+doc = "Write bytes and treat a short count as an error."
+snippet = '''
+if (fwrite(${1:buf}, 1, ${2:len}, ${3:fp}) != ${2:len}) {
+    $0
+}'''
+
+[[entries]]
+name = "fprintf"
+keys = ["fprintf", "write", "format", "file"]
+doc = "Formatted output to any stream."
+snippet = '''
+fprintf(${1:fp}, "${2:%s}\n", ${3:text});$0'''
+
+[[entries]]
+name = "fscanf"
+keys = ["fscanf", "read", "parse", "file"]
+doc = "Parse records from a stream until a conversion fails."
+snippet = '''
+while (fscanf(${1:fp}, "${2:%d}", &${3:value}) == ${4:1}) {
+    $0
+}'''
+
+[[entries]]
+name = "fseek"
+keys = ["fseek", "seek", "seek_set", "seek_end", "seek_cur", "position"]
+doc = "Move the file position relative to the start, current position or end."
+snippet = '''
+fseek(${1:fp}, ${2:0}, ${3:SEEK_SET});$0'''
+
+[[entries]]
+name = "ftell"
+keys = ["ftell", "position", "offset", "tell"]
+doc = "Current file position as a long, or -1 on error."
+snippet = '''
+long ${1:pos} = ftell(${2:fp});$0'''
+
+[[entries]]
+name = "rewind"
+keys = ["rewind", "seek", "start", "reset"]
+doc = "Return to the start of the stream and clear error flags."
+snippet = '''
+rewind(${1:fp});$0'''
+
+[[entries]]
+name = "file size"
+keys = ["size", "length", "fseek", "ftell", "file"]
+doc = "Measure a file by seeking to its end; reliable only for binary streams."
+snippet = '''
+fseek(${1:fp}, 0, SEEK_END);
+long ${2:size} = ftell(${1:fp});
+rewind(${1:fp});$0'''
+
+[[entries]]
+name = "read whole file"
+keys = ["read", "whole", "slurp", "file", "contents"]
+doc = "Load a file into a NUL-terminated heap buffer after measuring it."
+snippet = '''
+char *${1:data} = malloc(${2:size} + 1);
+size_t ${3:got} = fread(${1:data}, 1, ${2:size}, ${4:fp});
+${1:data}[${3:got}] = '\0';$0'''
+
+[[entries]]
+name = "feof"
+keys = ["feof", "eof", "end"]
+doc = "True only after a read has hit the end, so never use it as the loop condition."
+snippet = '''
+if (feof(${1:fp})) {
+    $0
+}'''
+
+[[entries]]
+name = "ferror"
+keys = ["ferror", "error", "stream", "check"]
+doc = "Check whether a stream has recorded an I/O error."
+snippet = '''
+if (ferror(${1:fp})) {
+    $0
+}'''
+
+[[entries]]
+name = "fflush"
+keys = ["fflush", "flush", "stdout", "buffer"]
+doc = "Push buffered output to the device, for example before a prompt."
+snippet = '''
+fflush(${1:stdout});$0'''
+
+[[entries]]
+name = "setvbuf"
+keys = ["setvbuf", "buffer", "unbuffered", "_ionbf", "_iolbf", "_iofbf"]
+doc = "Set a stream's buffering mode before any I/O on it."
+snippet = '''
+setvbuf(${1:stdout}, NULL, ${2:_IONBF}, 0);$0'''
+
+[[entries]]
+name = "remove"
+keys = ["remove", "unlink", "delete", "file"]
+doc = "Delete a file by path."
+snippet = '''
+if (remove(${1:path}) != 0) {
+    $0
+}'''
+
+[[entries]]
+name = "rename"
+keys = ["rename", "move", "file"]
+doc = "Rename or move a file, atomically on POSIX when on one filesystem."
+snippet = '''
+if (rename(${1:old_path}, ${2:new_path}) != 0) {
+    $0
+}'''
+
+[[entries]]
+name = "tmpfile"
+keys = ["tmpfile", "temporary", "temp", "file"]
+doc = "Open a temporary binary file that is deleted when closed."
+snippet = '''
+FILE *${1:tmp} = tmpfile();$0'''
+
+[[entries]]
+name = "getline"
+keys = ["getline", "line", "read", "posix", "dynamic"]
+doc = "POSIX line reader that grows its buffer as needed."
+snippet = '''
+char *line = NULL;
+size_t cap = 0;
+ssize_t len;
+while ((len = getline(&line, &cap, ${1:fp})) != -1) {
+    $0
+}
+free(line);'''

@@ -1,0 +1,204 @@
+title = "Bindings and patterns"
+contexts = ["pattern", "statement"]
+
+[[entries]]
+name = "let"
+keys = ["let", "bind", "var", "variable"]
+doc = "Bind an immutable variable, inferring its type."
+snippet = '''
+let ${1:name} = ${2:value};$0'''
+
+[[entries]]
+name = "let mut"
+keys = ["let", "mut", "mutable", "var"]
+doc = "Bind a mutable variable."
+snippet = '''
+let mut ${1:name} = ${2:value};$0'''
+
+[[entries]]
+name = "let with type"
+keys = ["let", "type", "annotate", "typed"]
+doc = "Bind a variable with an explicit type annotation."
+snippet = '''
+let ${1:name}: ${2:Type} = ${3:value};$0'''
+
+[[entries]]
+name = "let uninitialized"
+keys = ["let", "declare", "later", "deferred"]
+doc = "Declare a variable that is assigned exactly once later on every path."
+snippet = '''
+let ${1:name}: ${2:Type};
+$0'''
+
+[[entries]]
+name = "let tuple"
+keys = ["let", "tuple", "destructure", "unpack"]
+doc = "Destructure a tuple into separate bindings."
+snippet = '''
+let (${1:a}, ${2:b}) = ${3:pair};$0'''
+
+[[entries]]
+name = "let struct"
+keys = ["let", "struct", "destructure", "fields"]
+doc = "Destructure a struct into bindings named after its fields."
+snippet = '''
+let ${1:Point} { ${2:x}, ${3:y}${4:, ..} } = ${5:value};$0'''
+
+[[entries]]
+name = "let struct renamed"
+keys = ["let", "struct", "destructure", "rename", "field"]
+doc = "Destructure a struct binding a field under a different name."
+snippet = '''
+let ${1:Point} { ${2:x}: ${3:px}, .. } = ${4:value};$0'''
+
+[[entries]]
+name = "let slice"
+keys = ["let", "slice", "array", "destructure", "rest"]
+doc = "Destructure a fixed-size array or slice with a rest binding."
+snippet = '''
+let [${1:first}, ${2:rest} @ ..] = ${3:array};$0'''
+
+[[entries]]
+name = "let ref"
+keys = ["let", "ref", "borrow", "bind"]
+doc = "Bind by reference inside a pattern instead of moving."
+snippet = '''
+let ref ${1:name} = ${2:value};$0'''
+
+[[entries]]
+name = "let ref mut"
+keys = ["let", "ref", "mut", "borrow"]
+doc = "Bind by mutable reference inside a pattern."
+snippet = '''
+let ref mut ${1:name} = ${2:value};$0'''
+
+[[entries]]
+name = "shadowing"
+keys = ["let", "shadow", "rebind", "parse"]
+doc = "Rebind a name to a new value or type, hiding the previous binding."
+snippet = '''
+let ${1:value} = ${1:value}.${2:trim()};$0'''
+
+[[entries]]
+name = "tuple pattern"
+keys = ["tuple", "pattern", "arm", "pair"]
+doc = "Match a tuple positionally."
+snippet = '''
+(${1:a}, ${2:b})$0'''
+
+[[entries]]
+name = "enum variant pattern"
+keys = ["enum", "variant", "pattern", "some", "ok"]
+doc = "Match a tuple-like enum variant and bind its payload."
+snippet = '''
+${1:Some}(${2:value})$0'''
+
+[[entries]]
+name = "struct variant pattern"
+keys = ["enum", "struct", "variant", "pattern", "fields"]
+doc = "Match a struct-like variant by field names, ignoring the rest."
+snippet = '''
+${1:Shape::Rect} { ${2:width}, ${3:height}${4:, ..} }$0'''
+
+[[entries]]
+name = "slice pattern"
+keys = ["slice", "array", "pattern", "head", "tail", "rest"]
+doc = "Match the head and tail of a slice."
+snippet = '''
+[${1:first}, ${2:rest} @ ..]$0'''
+
+[[entries]]
+name = "empty and single slice"
+keys = ["slice", "pattern", "empty", "single"]
+doc = "Match arms for an empty slice and a one-element slice."
+snippet = '''
+[] => ${1:empty},
+[${2:only}] => ${3:single},
+[${4:first}, ..] => $0,'''
+
+[[entries]]
+name = "@ binding"
+keys = ["at", "binding", "bind", "range", "pattern"]
+doc = "Bind the whole value while also testing it against a sub-pattern."
+snippet = '''
+${1:n} @ ${2:1..=9}$0'''
+
+[[entries]]
+name = "range pattern"
+keys = ["range", "pattern", "inclusive", "between"]
+doc = "Match any value inside an inclusive range."
+snippet = '''
+${1:0}..=${2:9}$0'''
+
+[[entries]]
+name = "or pattern"
+keys = ["or", "pattern", "alternatives", "pipe"]
+doc = "Match any of several alternatives in one arm."
+snippet = '''
+${1:A} | ${2:B}$0'''
+
+[[entries]]
+name = "nested or pattern"
+keys = ["or", "nested", "pattern", "some"]
+doc = "Use alternatives inside an enclosing pattern."
+snippet = '''
+${1:Some}(${2:1} | ${3:2})$0'''
+
+[[entries]]
+name = "wildcard"
+keys = ["wildcard", "underscore", "ignore", "default", "any"]
+doc = "Match anything without binding, typically the final catch-all arm."
+snippet = '''
+_ => $0,'''
+
+[[entries]]
+name = "catch-all binding"
+keys = ["other", "default", "bind", "catchall", "rest"]
+doc = "Match anything and bind it for use in the arm."
+snippet = '''
+${1:other} => $0,'''
+
+[[entries]]
+name = "guard"
+keys = ["guard", "if", "arm", "condition"]
+doc = "Add an if condition to a match arm that must hold for the arm to be taken."
+snippet = '''
+${1:Some(n)} if ${2:n > 0} => $0,'''
+
+[[entries]]
+name = "reference pattern"
+keys = ["ref", "reference", "deref", "pattern", "ampersand"]
+doc = "Destructure through a reference so the binding is a value, not a reference."
+snippet = '''
+&${1:(a, b)}$0'''
+
+[[entries]]
+name = "mut binding pattern"
+keys = ["mut", "binding", "pattern", "mutable"]
+doc = "Bind a matched value mutably inside a pattern."
+snippet = '''
+${1:Some}(mut ${2:value})$0'''
+
+[[entries]]
+name = "box pattern free"
+keys = ["box", "deref", "pattern", "as_deref"]
+doc = "Match through a Box or Option of Box by dereferencing before the match."
+snippet = '''
+match ${1:boxed}.as_deref() {
+    Some(${2:inner}) => $0,
+    None => {}
+}'''
+
+[[entries]]
+name = "nested pattern"
+keys = ["nested", "pattern", "deep", "destructure"]
+doc = "Destructure several layers of tuples, structs and enums at once."
+snippet = '''
+${1:Ok}(${2:Point} { ${3:x}: ${4:0}, ${5:y} })$0'''
+
+[[entries]]
+name = "const pattern"
+keys = ["const", "pattern", "literal", "named"]
+doc = "Match against a named constant or literal value."
+snippet = '''
+${1:MAX} => $0,'''

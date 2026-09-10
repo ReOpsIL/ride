@@ -1,0 +1,92 @@
+title = "Struct members"
+contexts = ["fields"]
+
+[[entries]]
+name = "member"
+keys = ["member", "field", "int"]
+doc = "Plain data member."
+snippet = '''
+${1:int} ${2:name};$0'''
+
+[[entries]]
+name = "pointer member"
+keys = ["pointer", "member", "field", "*"]
+doc = "Member holding a pointer, whose ownership the struct's API must define."
+snippet = '''
+${1:char} *${2:name};$0'''
+
+[[entries]]
+name = "array member"
+keys = ["array", "member", "field", "buffer"]
+doc = "Inline fixed-size array stored within the struct."
+snippet = '''
+${1:char} ${2:name}[${3:32}];$0'''
+
+[[entries]]
+name = "nested struct member"
+keys = ["struct", "member", "nested", "embed"]
+doc = "Another struct embedded by value."
+snippet = '''
+struct ${1:point} ${2:origin};$0'''
+
+[[entries]]
+name = "self pointer"
+keys = ["next", "self", "pointer", "list", "recursive"]
+doc = "Pointer to the enclosing struct type, for lists and trees."
+snippet = '''
+struct ${1:node} *${2:next};$0'''
+
+[[entries]]
+name = "function pointer member"
+keys = ["function", "pointer", "callback", "member", "vtable"]
+doc = "Callback stored in the struct."
+snippet = '''
+${1:int} (*${2:callback})(${3:void *ctx});$0'''
+
+[[entries]]
+name = "bit field"
+keys = ["bit", "field", "bitfield", ":", "flags"]
+doc = "Member occupying a fixed number of bits; use unsigned to avoid sign surprises."
+snippet = '''
+${1:unsigned} ${2:flag} : ${3:1};$0'''
+
+[[entries]]
+name = "anonymous union"
+keys = ["anonymous", "union", "member", "c11"]
+doc = "Union whose members are accessed directly on the enclosing struct (C11)."
+snippet = '''
+union {
+    ${1:int i;}
+    ${2:float f;}
+};$0'''
+
+[[entries]]
+name = "anonymous struct"
+keys = ["anonymous", "struct", "member", "c11"]
+doc = "Struct whose members are accessed directly on the enclosing union or struct (C11)."
+snippet = '''
+struct {
+    ${1:int x;}
+    ${2:int y;}
+};$0'''
+
+[[entries]]
+name = "flexible array member"
+keys = ["flexible", "array", "member", "fam", "[]", "trailing"]
+doc = "Unsized trailing array that must be the last member and is sized at allocation (C99)."
+snippet = '''
+${1:char} ${2:data}[];$0'''
+
+[[entries]]
+name = "aligned member"
+keys = ["alignas", "aligned", "member", "cache line"]
+doc = "Member with a forced alignment, for example to its own cache line."
+snippet = '''
+alignas(${1:64}) ${2:char} ${3:line}[${1:64}];$0'''
+
+[[entries]]
+name = "atomic member"
+keys = ["_atomic", "atomic", "member", "refcount"]
+doc = "Atomic-qualified member for lock-free counters and flags."
+snippet = '''
+_Atomic ${1:int} ${2:refs};$0'''

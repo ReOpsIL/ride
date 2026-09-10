@@ -1,0 +1,114 @@
+title = "Control, shell and user functions"
+contexts = ["function"]
+
+[[entries]]
+name = "if"
+keys = ["if", "conditional", "then", "else"]
+doc = "Expand the then-part when the condition is non-empty after stripping, else the else-part."
+snippet = '''
+if ${1:$(DEBUG)},${2:-g -O0},${3:-O2})$0'''
+
+[[entries]]
+name = "or"
+keys = ["or", "any", "either"]
+doc = "Expand to the first argument that is non-empty."
+snippet = '''
+or ${1:$(A)},${2:$(B)})$0'''
+
+[[entries]]
+name = "and"
+keys = ["and", "all", "both"]
+doc = "Expand to the last argument if every argument is non-empty, else to nothing."
+snippet = '''
+and ${1:$(A)},${2:$(B)})$0'''
+
+[[entries]]
+name = "intcmp"
+keys = ["intcmp", "compare", "integer", "numeric", "lt", "gt"]
+doc = "Compare two integers and expand the lt, eq or gt branch."
+snippet = '''
+intcmp ${1:$(N)},${2:10},${3:small},${4:equal},${5:large})$0'''
+
+[[entries]]
+name = "foreach"
+keys = ["foreach", "loop", "map", "each"]
+doc = "Expand the text once per word with the variable bound to that word."
+snippet = '''
+foreach ${1:f},${2:$(FILES)},${3:$(f).o})$0'''
+
+[[entries]]
+name = "call"
+keys = ["call", "function", "user", "invoke"]
+doc = "Expand a user-defined variable with $(1), $(2) and so on bound to the arguments."
+snippet = '''
+call ${1:func},${2:arg1},${3:arg2})$0'''
+
+[[entries]]
+name = "value"
+keys = ["value", "raw", "unexpanded"]
+doc = "Return a variable's value without expanding it."
+snippet = '''
+value ${1:VAR})$0'''
+
+[[entries]]
+name = "eval"
+keys = ["eval", "generate", "template", "rules"]
+doc = "Parse the expanded text as makefile syntax, defining rules and variables at run time."
+snippet = '''
+eval $(call ${1:template},${2:arg}))$0'''
+
+[[entries]]
+name = "origin"
+keys = ["origin", "source", "where", "defined"]
+doc = "Tell how a variable was defined: undefined, default, environment, file, command line, override or automatic."
+snippet = '''
+origin ${1:VAR})$0'''
+
+[[entries]]
+name = "flavor"
+keys = ["flavor", "recursive", "simple", "kind"]
+doc = "Tell whether a variable is recursive, simple or undefined."
+snippet = '''
+flavor ${1:VAR})$0'''
+
+[[entries]]
+name = "shell"
+keys = ["shell", "command", "exec", "output"]
+doc = "Run a shell command at expansion time and return its output with newlines as spaces."
+snippet = '''
+shell ${1:git rev-parse --short HEAD})$0'''
+
+[[entries]]
+name = "guile"
+keys = ["guile", "scheme", "lisp"]
+doc = "Evaluate Scheme code in the embedded Guile interpreter, when make was built with it."
+snippet = '''
+guile ${1:(+ 1 2)})$0'''
+
+[[entries]]
+name = "error"
+keys = ["error", "fail", "abort", "fatal"]
+doc = "Print the message and stop make immediately."
+snippet = '''
+error ${1:message})$0'''
+
+[[entries]]
+name = "warning"
+keys = ["warning", "warn"]
+doc = "Print the message with file and line and continue."
+snippet = '''
+warning ${1:message})$0'''
+
+[[entries]]
+name = "info"
+keys = ["info", "print", "debug", "echo", "log"]
+doc = "Print the message to standard output and continue."
+snippet = '''
+info ${1:message})$0'''
+
+[[entries]]
+name = "let"
+keys = ["let", "bind", "local", "destructure"]
+doc = "Bind words to local variables, the last variable taking the remaining words, then expand the body."
+snippet = '''
+let ${1:first rest},${2:$(LIST)},${3:$(first)})$0'''

@@ -1,0 +1,135 @@
+title = "Automatic variables"
+contexts = ["recipe", "value"]
+
+[[entries]]
+name = "$@ target"
+keys = ["@", "at", "target", "output"]
+doc = "The file name of the target being built."
+snippet = '''
+$@$0'''
+
+[[entries]]
+name = "$< first prerequisite"
+keys = ["<", "lt", "less", "first", "input", "source"]
+doc = "The name of the first prerequisite."
+snippet = '''
+$<$0'''
+
+[[entries]]
+name = "$^ all prerequisites"
+keys = ["^", "caret", "all", "prerequisites", "deps"]
+doc = "All prerequisites with duplicates removed, order-only ones excluded."
+snippet = '''
+$^$0'''
+
+[[entries]]
+name = "$+ all prerequisites with duplicates"
+keys = ["+", "plus", "duplicates", "prerequisites"]
+doc = "All prerequisites in order, keeping repeats, which matters for library link order."
+snippet = '''
+$+$0'''
+
+[[entries]]
+name = "$? newer prerequisites"
+keys = ["?", "question", "newer", "changed", "outdated"]
+doc = "Only the prerequisites that are newer than the target."
+snippet = '''
+$?$0'''
+
+[[entries]]
+name = "$* stem"
+keys = ["*", "star", "stem", "match"]
+doc = "The stem that % matched in a pattern rule."
+snippet = '''
+$*$0'''
+
+[[entries]]
+name = "$% archive member"
+keys = ["%", "percent", "member", "archive"]
+doc = "The member name when the target is an archive member like lib.a(x.o)."
+snippet = '''
+$%$0'''
+
+[[entries]]
+name = "$| order-only prerequisites"
+keys = ["|", "pipe", "order", "orderonly"]
+doc = "The order-only prerequisites of the target."
+snippet = '''
+$|$0'''
+
+[[entries]]
+name = "$(@D) target directory"
+keys = ["@d", "atd", "dir", "directory", "target"]
+doc = "The directory part of the target, or . when it has none."
+snippet = '''
+$(@D)$0'''
+
+[[entries]]
+name = "$(@F) target file name"
+keys = ["@f", "atf", "file", "notdir", "target"]
+doc = "The file part of the target without its directory."
+snippet = '''
+$(@F)$0'''
+
+[[entries]]
+name = "$(<D) first prerequisite directory"
+keys = ["<d", "ltd", "dir", "directory", "first"]
+doc = "The directory part of the first prerequisite."
+snippet = '''
+$(<D)$0'''
+
+[[entries]]
+name = "$(<F) first prerequisite file name"
+keys = ["<f", "ltf", "file", "notdir", "first"]
+doc = "The file part of the first prerequisite."
+snippet = '''
+$(<F)$0'''
+
+[[entries]]
+name = "$(^D) prerequisite directories"
+keys = ["^d", "caretd", "dirs", "directories"]
+doc = "The directory parts of all prerequisites."
+snippet = '''
+$(^D)$0'''
+
+[[entries]]
+name = "$(^F) prerequisite file names"
+keys = ["^f", "caretf", "files", "notdir"]
+doc = "The file parts of all prerequisites."
+snippet = '''
+$(^F)$0'''
+
+[[entries]]
+name = "$(?D) and $(?F)"
+keys = ["?d", "?f", "newer", "dir", "file"]
+doc = "Directory and file parts of the prerequisites newer than the target."
+snippet = '''
+$(?${1:F})$0'''
+
+[[entries]]
+name = "$(*D) stem directory"
+keys = ["*d", "stard", "stem", "dir"]
+doc = "The directory part of the stem."
+snippet = '''
+$(*D)$0'''
+
+[[entries]]
+name = "$(*F) stem file name"
+keys = ["*f", "starf", "stem", "file"]
+doc = "The file part of the stem."
+snippet = '''
+$(*F)$0'''
+
+[[entries]]
+name = "$$ shell dollar"
+keys = ["$$", "dollar", "shell", "escape"]
+doc = "A doubled dollar reaches the shell as one $, needed for shell variables."
+snippet = '''
+$$${1:var}$0'''
+
+[[entries]]
+name = "$$@ with .SECONDEXPANSION"
+keys = ["$$@", "secondexpansion", "second", "prerequisites"]
+doc = "Automatic variables inside a prerequisite list need $$ and a prior .SECONDEXPANSION."
+snippet = '''
+${1:prog}: $$($$@_OBJS)$0'''

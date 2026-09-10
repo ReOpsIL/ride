@@ -1,0 +1,171 @@
+title = "Pattern rules and VPATH"
+contexts = ["item"]
+
+[[entries]]
+name = "%.o: %.c"
+keys = ["pattern", "implicit", "object", "c", "%"]
+doc = "Build any object from the C source with the same stem."
+snippet = '''
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "%.o: %.cpp"
+keys = ["pattern", "implicit", "object", "cpp", "cxx", "%"]
+doc = "Build any object from the C++ source with the same stem."
+snippet = '''
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "build/%.o: src/%.c"
+keys = ["pattern", "build", "outoftree", "mkdir", "dir"]
+doc = "Compile into a separate build tree, creating the directory first."
+snippet = '''
+${1:build}/%.o: ${2:src}/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "build directory as order-only prerequisite"
+keys = ["pattern", "build", "orderonly", "dir", "mkdir"]
+doc = "Depend on the build directory without letting its timestamp trigger rebuilds."
+snippet = '''
+${1:build}/%.o: ${2:src}/%.c | ${1:build}
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+${1:build}:
+	mkdir -p $@$0'''
+
+[[entries]]
+name = "static pattern rule"
+keys = ["static", "pattern", "explicit", "list"]
+doc = "Apply a pattern only to the listed targets."
+snippet = '''
+$(${1:OBJS}): ${2:build}/%.o: ${3:src}/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "pattern rule with several targets"
+keys = ["pattern", "multiple", "grouped", "outputs", "bison"]
+doc = "A pattern rule with several targets runs its recipe once to produce all of them."
+snippet = '''
+%.tab.c %.tab.h: %.y
+	${1:bison -d $<}$0'''
+
+[[entries]]
+name = "built-in compile variables"
+keys = ["compile.c", "output_option", "builtin", "implicit", "variables"]
+doc = "The built-in rules use COMPILE.c, COMPILE.cc, LINK.c and OUTPUT_OPTION, which can be reused."
+snippet = '''
+%.o: %.c
+	$(COMPILE.c) $(OUTPUT_OPTION) $<$0'''
+
+[[entries]]
+name = "built-in link variable"
+keys = ["link.c", "link.cc", "builtin", "implicit", "link"]
+doc = "LINK.c expands to the compiler with CFLAGS, CPPFLAGS, LDFLAGS and TARGET_ARCH."
+snippet = '''
+${1:prog}: ${2:$(OBJS)}
+	$(LINK.c) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "cancel implicit rule"
+keys = ["cancel", "disable", "implicit", "builtin", "empty"]
+doc = "A pattern rule with no recipe removes the built-in rule for that pattern."
+snippet = '''
+${1:%.o}: ${2:%.c}$0'''
+
+[[entries]]
+name = "disable all built-in rules"
+keys = ["builtin", "disable", "nobuiltinrules", "suffixes"]
+doc = "Turn off every built-in rule and suffix so only this makefile's rules apply."
+snippet = '''
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:$0'''
+
+[[entries]]
+name = "suffix rule"
+keys = ["suffix", "rule", "oldstyle", ".c.o"]
+doc = "Old-style suffix rule equivalent to the pattern rule %.o: %.c."
+snippet = '''
+.SUFFIXES: .c .o
+.c.o:
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "vpath %.c src"
+keys = ["vpath", "search", "sources", "pattern"]
+doc = "Look for C sources in the given directories when they are not in the current one."
+snippet = '''
+vpath ${1:%.c} ${2:src}
+vpath ${3:%.h} ${4:include}$0'''
+
+[[entries]]
+name = "VPATH directory list"
+keys = ["vpath", "search", "path", "directories"]
+doc = "Directories searched for every prerequisite that is not found in the current directory."
+snippet = '''
+VPATH = ${1:src include}$0'''
+
+[[entries]]
+name = "match-anything rule"
+keys = ["matchanything", "match", "any", "executable", "%:"]
+doc = "A rule whose target is a bare % matches any file, such as linking prog from prog.o."
+snippet = '''
+%: %.o
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "terminal match-anything rule"
+keys = ["terminal", "doublecolon", "matchanything"]
+doc = "A :: match-anything rule applies only when its prerequisite already exists."
+snippet = '''
+%:: ${1:RCS/%,v}
+	${2:$(CO) $(COFLAGS) $<}$0'''
+
+[[entries]]
+name = "chain of implicit rules"
+keys = ["chain", "intermediate", "generate", "lex", "yacc"]
+doc = "Make chains pattern rules, so %.c from %.y and %.o from %.c build %.o from %.y with an intermediate."
+snippet = '''
+%.c: %.y
+	${1:bison -o $@ $<}
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "keep intermediates with .SECONDARY"
+keys = ["secondary", "intermediate", "keep", "chain"]
+doc = "Stop make from deleting files produced in the middle of a rule chain."
+snippet = '''
+.SECONDARY: ${1:$(OBJS)}$0'''
+
+[[entries]]
+name = "archive member rule"
+keys = ["archive", "member", "lib", "ar", "(a)"]
+doc = "Update members of a static library directly with the built-in (%.o) archive rule."
+snippet = '''
+lib${1:foo}.a: lib${1:foo}.a(${2:a.o b.o})
+	ranlib $@$0'''
+
+[[entries]]
+name = "archive member pattern rule"
+keys = ["archive", "member", "pattern", "ar", "%"]
+doc = "Explicit rule for adding an object to an archive, using $% for the member name."
+snippet = '''
+(%.o): %.o
+	$(AR) $(ARFLAGS) $@ $<$0'''
+
+[[entries]]
+name = "pattern-specific variable"
+keys = ["pattern", "specific", "variable", "cflags"]
+doc = "Set a variable for every target matching the pattern."
+snippet = '''
+${1:%.o}: ${2:CFLAGS} += ${3:-O2}$0'''
+
+[[entries]]
+name = "directory-specific flags"
+keys = ["directory", "specific", "flags", "pattern"]
+doc = "Give the files under one directory their own flags through a pattern-specific variable."
+snippet = '''
+${1:build/vendor}/%.o: CFLAGS += ${2:-w}$0'''

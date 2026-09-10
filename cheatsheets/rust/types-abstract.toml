@@ -1,0 +1,170 @@
+title = "Types: traits, functions and markers"
+contexts = ["type"]
+
+[[entries]]
+name = "fn pointer"
+keys = ["fn", "pointer", "function", "callback"]
+doc = "Pointer to a function or non-capturing closure."
+snippet = '''
+fn(${1:i32}) -> ${2:i32}$0'''
+
+[[entries]]
+name = "impl Fn"
+keys = ["impl", "fn", "closure", "callback"]
+doc = "Anonymous generic type implementing a closure trait."
+snippet = '''
+impl ${1:Fn}(${2:i32}) -> ${3:i32}$0'''
+
+[[entries]]
+name = "impl Trait"
+keys = ["impl", "trait", "opaque", "generic"]
+doc = "Opaque or anonymous generic type bounded by a trait."
+snippet = '''
+impl ${1:Trait}$0'''
+
+[[entries]]
+name = "dyn Trait"
+keys = ["dyn", "trait", "object", "dispatch"]
+doc = "Dynamically sized trait object, used behind a pointer."
+snippet = '''
+dyn ${1:Trait}$0'''
+
+[[entries]]
+name = "&dyn Trait"
+keys = ["dyn", "ref", "trait", "object", "borrowed"]
+doc = "Borrowed trait object."
+snippet = '''
+&dyn ${1:Trait}$0'''
+
+[[entries]]
+name = "Box<dyn Fn>"
+keys = ["box", "dyn", "fn", "closure", "stored"]
+doc = "Owned, type-erased closure stored in a struct or collection."
+snippet = '''
+Box<dyn ${1:Fn}(${2:i32}) -> ${3:i32}${4: + Send}>$0'''
+
+[[entries]]
+name = "Pin<Box<dyn Future>>"
+keys = ["pin", "box", "future", "async", "dyn"]
+doc = "Heap-pinned, type-erased future."
+snippet = '''
+Pin<Box<dyn Future<Output = ${1:T}>${2: + Send}>>$0'''
+
+[[entries]]
+name = "generic with bound"
+keys = ["generic", "bound", "t", "trait", "where"]
+doc = "Type parameter constrained by one or more traits."
+snippet = '''
+<T: ${1:Trait}${2: + Send}>$0'''
+
+[[entries]]
+name = "generic with lifetime"
+keys = ["generic", "lifetime", "t"]
+doc = "Type parameter that must outlive a given lifetime."
+snippet = '''
+<'a, T: 'a>$0'''
+
+[[entries]]
+name = "'static"
+keys = ["static", "lifetime", "owned", "forever"]
+doc = "Lifetime of the whole program, also satisfied by owned types."
+snippet = '''
+'static$0'''
+
+[[entries]]
+name = "associated type path"
+keys = ["associated", "type", "item", "iterator", "path"]
+doc = "Refer to an associated type of a trait implementation."
+snippet = '''
+<${1:T} as ${2:Iterator}>::${3:Item}$0'''
+
+[[entries]]
+name = "PhantomData<T>"
+keys = ["phantom", "marker", "unused", "generic"]
+doc = "Zero-sized marker that makes a type act as if it owned a T."
+snippet = '''
+std::marker::PhantomData<${1:T}>$0'''
+
+[[entries]]
+name = "Cow<str>"
+keys = ["cow", "clone", "write", "borrowed", "owned"]
+doc = "Either a borrowed or an owned value, cloned only when mutated."
+snippet = '''
+Cow<'${1:a}, ${2:str}>$0'''
+
+[[entries]]
+name = "Option<Box<T>>"
+keys = ["option", "box", "linked", "list", "node"]
+doc = "Nullable owned pointer, the shape of a linked list node."
+snippet = '''
+Option<Box<${1:Node}>>$0'''
+
+[[entries]]
+name = "Option<&T>"
+keys = ["option", "ref", "borrowed", "lookup"]
+doc = "Optional borrowed value, as returned by lookups."
+snippet = '''
+Option<&${1:T}>$0'''
+
+[[entries]]
+name = "io::Result<T>"
+keys = ["io", "result", "file"]
+doc = "Result specialized to std I/O errors."
+snippet = '''
+std::io::Result<${1:()}>$0'''
+
+[[entries]]
+name = "Path and PathBuf"
+keys = ["path", "pathbuf", "file", "dir"]
+doc = "Borrowed and owned filesystem paths."
+snippet = '''
+${1:&Path}$0'''
+
+[[entries]]
+name = "Duration"
+keys = ["duration", "time", "span"]
+doc = "Span of time in seconds and nanoseconds."
+snippet = '''
+std::time::Duration$0'''
+
+[[entries]]
+name = "Self"
+keys = ["self", "this", "type"]
+doc = "The implementing type inside an impl or trait."
+snippet = '''
+Self$0'''
+
+[[entries]]
+name = "never type"
+keys = ["never", "diverge", "bang", "noreturn"]
+doc = "Return type of a function that never returns."
+snippet = '''
+!$0'''
+
+[[entries]]
+name = "raw pointers"
+keys = ["raw", "pointer", "ptr", "unsafe", "const", "mut"]
+doc = "Unchecked const or mutable raw pointer."
+snippet = '''
+*${1:const} ${2:T}$0'''
+
+[[entries]]
+name = "NonNull<T>"
+keys = ["nonnull", "raw", "pointer", "ptr"]
+doc = "Raw pointer that is never null, with niche optimization."
+snippet = '''
+std::ptr::NonNull<${1:T}>$0'''
+
+[[entries]]
+name = "atomic types"
+keys = ["atomic", "atomicusize", "atomicbool", "sync"]
+doc = "Lock-free integer or bool shared between threads."
+snippet = '''
+std::sync::atomic::${1:AtomicUsize}$0'''
+
+[[entries]]
+name = "channel ends"
+keys = ["sender", "receiver", "mpsc", "channel"]
+doc = "Sending and receiving halves of an mpsc channel."
+snippet = '''
+std::sync::mpsc::${1:Sender}<${2:T}>$0'''

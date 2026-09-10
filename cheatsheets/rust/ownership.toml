@@ -1,0 +1,201 @@
+title = "Ownership and smart pointers"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "borrow"
+keys = ["borrow", "ref", "reference", "ampersand"]
+doc = "Take a shared reference without moving the value."
+snippet = '''
+&${1:value}$0'''
+
+[[entries]]
+name = "mutable borrow"
+keys = ["borrow", "mut", "reference", "exclusive"]
+doc = "Take an exclusive reference to mutate a value in place."
+snippet = '''
+&mut ${1:value}$0'''
+
+[[entries]]
+name = "clone"
+keys = ["clone", "copy", "duplicate", "own"]
+doc = "Make an owned deep copy of a value."
+snippet = '''
+${1:value}.clone()$0'''
+
+[[entries]]
+name = "to_owned"
+keys = ["to_owned", "owned", "str", "string", "slice"]
+doc = "Turn a borrowed str or slice into its owned counterpart."
+snippet = '''
+${1:value}.to_owned()$0'''
+
+[[entries]]
+name = "deref"
+keys = ["deref", "star", "asterisk", "copy", "out"]
+doc = "Copy the value out from behind a reference or smart pointer."
+snippet = '''
+*${1:reference}$0'''
+
+[[entries]]
+name = "Box::new"
+keys = ["box", "new", "heap", "allocate"]
+doc = "Move a value onto the heap."
+snippet = '''
+Box::new(${1:value})$0'''
+
+[[entries]]
+name = "Box<dyn Trait> value"
+keys = ["box", "dyn", "trait", "object", "as"]
+doc = "Coerce a concrete value into a boxed trait object."
+snippet = '''
+let ${1:obj}: Box<dyn ${2:Trait}> = Box::new(${3:value});$0'''
+
+[[entries]]
+name = "Rc::new"
+keys = ["rc", "new", "shared", "refcount"]
+doc = "Create a single-threaded reference-counted pointer."
+snippet = '''
+Rc::new(${1:value})$0'''
+
+[[entries]]
+name = "Rc::clone"
+keys = ["rc", "clone", "share", "handle"]
+doc = "Create another handle to the same allocation, bumping the count."
+snippet = '''
+Rc::clone(&${1:shared})$0'''
+
+[[entries]]
+name = "Arc::new"
+keys = ["arc", "new", "shared", "thread", "atomic"]
+doc = "Create a thread-safe reference-counted pointer."
+snippet = '''
+Arc::new(${1:value})$0'''
+
+[[entries]]
+name = "Arc::clone"
+keys = ["arc", "clone", "share", "thread", "handle"]
+doc = "Create another thread-safe handle to the same allocation."
+snippet = '''
+Arc::clone(&${1:shared})$0'''
+
+[[entries]]
+name = "Rc::strong_count"
+keys = ["rc", "arc", "strong", "count", "refcount"]
+doc = "Read the number of strong handles to an allocation."
+snippet = '''
+Rc::strong_count(&${1:shared})$0'''
+
+[[entries]]
+name = "Weak downgrade / upgrade"
+keys = ["weak", "downgrade", "upgrade", "rc", "cycle", "parent"]
+doc = "Make a non-owning handle and later try to get a strong one back."
+snippet = '''
+let ${1:weak} = Rc::downgrade(&${2:shared});
+if let Some(${3:strong}) = ${1:weak}.upgrade() {
+    $0
+}'''
+
+[[entries]]
+name = "RefCell borrow"
+keys = ["refcell", "borrow", "read", "interior"]
+doc = "Borrow the contents of a RefCell immutably, checked at runtime."
+snippet = '''
+${1:cell}.borrow()$0'''
+
+[[entries]]
+name = "RefCell borrow_mut"
+keys = ["refcell", "borrow", "mut", "write", "interior"]
+doc = "Borrow the contents of a RefCell mutably, panicking if already borrowed."
+snippet = '''
+${1:cell}.borrow_mut()$0'''
+
+[[entries]]
+name = "Rc<RefCell> new"
+keys = ["rc", "refcell", "new", "shared", "mutable"]
+doc = "Create shared mutable state for single-threaded code."
+snippet = '''
+Rc::new(RefCell::new(${1:value}))$0'''
+
+[[entries]]
+name = "Cell get / set"
+keys = ["cell", "get", "set", "interior", "copy"]
+doc = "Read or overwrite a Copy value through a shared reference."
+snippet = '''
+${1:cell}.${2:set}(${3:value})$0'''
+
+[[entries]]
+name = "mem::take"
+keys = ["mem", "take", "swap", "default", "move", "out"]
+doc = "Move a value out of a mutable reference, leaving Default behind."
+snippet = '''
+std::mem::take(&mut ${1:value})$0'''
+
+[[entries]]
+name = "mem::replace"
+keys = ["mem", "replace", "swap", "move", "out"]
+doc = "Move a value out of a mutable reference, putting a new value in its place."
+snippet = '''
+std::mem::replace(&mut ${1:value}, ${2:new})$0'''
+
+[[entries]]
+name = "mem::swap"
+keys = ["mem", "swap", "exchange"]
+doc = "Exchange the values behind two mutable references."
+snippet = '''
+std::mem::swap(&mut ${1:a}, &mut ${2:b});$0'''
+
+[[entries]]
+name = "Option take"
+keys = ["option", "take", "move", "out", "none"]
+doc = "Move the value out of an Option, leaving None."
+snippet = '''
+${1:opt}.take()$0'''
+
+[[entries]]
+name = "Option as_ref / as_mut"
+keys = ["option", "as_ref", "as_mut", "borrow", "inner"]
+doc = "Borrow the contents of an Option without consuming it."
+snippet = '''
+${1:opt}.${2:as_ref}()$0'''
+
+[[entries]]
+name = "Option as_deref"
+keys = ["option", "as_deref", "string", "str", "borrow"]
+doc = "Borrow an Option of an owned value as an Option of its borrowed form."
+snippet = '''
+${1:opt}.as_deref()$0'''
+
+[[entries]]
+name = "Option replace / insert"
+keys = ["option", "replace", "insert", "get_or_insert"]
+doc = "Put a value into an Option, returning what was there before."
+snippet = '''
+${1:opt}.${2:replace}(${3:value})$0'''
+
+[[entries]]
+name = "Cow borrowed / owned"
+keys = ["cow", "borrowed", "owned", "clone", "write"]
+doc = "Return a borrowed string when possible and an owned one only when needed."
+snippet = '''
+if ${1:needs_change} {
+    Cow::Owned(${2:text.replace(' ', "_")})
+} else {
+    Cow::Borrowed(${3:text})
+}$0'''
+
+[[entries]]
+name = "drop"
+keys = ["drop", "free", "release", "destroy", "early"]
+doc = "Destroy a value early, releasing its resources before scope end."
+snippet = '''
+drop(${1:value});$0'''
+
+[[entries]]
+name = "scoped borrow block"
+keys = ["block", "scope", "borrow", "end", "release"]
+doc = "Limit a borrow to an inner block so the value can be used again afterwards."
+snippet = '''
+{
+    let ${1:guard} = ${2:value}.${3:borrow_mut()};
+    $0
+}'''

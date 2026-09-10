@@ -1,0 +1,202 @@
+title = "Streams and files"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "cout"
+keys = ["cout", "print", "output", "<<"]
+doc = "Write to standard output with a newline."
+snippet = """
+std::cout << ${1:value} << '\\n';$0"""
+
+[[entries]]
+name = "cerr"
+keys = ["cerr", "error", "stderr"]
+doc = "Write to standard error."
+snippet = """
+std::cerr << ${1:"error: "} << ${2:msg} << '\\n';$0"""
+
+[[entries]]
+name = "cin"
+keys = ["cin", "read", "input", ">>"]
+doc = "Read a whitespace-separated value from standard input."
+snippet = """
+std::cin >> ${1:value};$0"""
+
+[[entries]]
+name = "getline"
+keys = ["getline", "read", "line", "input"]
+doc = "Read a whole line into a string."
+snippet = """
+std::string ${1:line};
+std::getline(${2:std::cin}, ${1:line});$0"""
+
+[[entries]]
+name = "read all lines"
+keys = ["getline", "while", "lines", "loop"]
+doc = "Loop over every line of a stream."
+snippet = """
+for (std::string ${1:line}; std::getline(${2:in}, ${1:line});) {
+    $0
+}"""
+
+[[entries]]
+name = "std::print"
+keys = ["print", "println", "format", "output"]
+doc = "C++23 formatted print to stdout."
+snippet = """
+std::println("{${1:}}", ${2:value});$0"""
+
+[[entries]]
+name = "std::endl"
+keys = ["endl", "newline", "flush"]
+doc = "Newline plus flush (prefer '\\n' when flushing is not needed)."
+snippet = """
+std::endl$0"""
+
+[[entries]]
+name = "stringstream"
+keys = ["stringstream", "sstream", "ostringstream", "build"]
+doc = "Build a string with stream insertion."
+snippet = """
+std::ostringstream ${1:oss};
+${1:oss} << ${2:value};
+std::string ${3:s} = ${1:oss}.str();$0"""
+
+[[entries]]
+name = "istringstream parse"
+keys = ["istringstream", "stringstream", "parse", "extract"]
+doc = "Parse values out of a string."
+snippet = """
+std::istringstream ${1:iss}(${2:s});
+${1:iss} >> ${3:value};$0"""
+
+[[entries]]
+name = "ifstream read"
+keys = ["ifstream", "file", "read", "open"]
+doc = "Open a file for reading and check it succeeded."
+snippet = """
+std::ifstream ${1:in}(${2:path});
+if (!${1:in}) {
+    ${3:return;}
+}
+$0"""
+
+[[entries]]
+name = "read whole file"
+keys = ["ifstream", "file", "read", "slurp", "contents"]
+doc = "Read an entire file into a string."
+snippet = """
+std::ifstream ${1:in}(${2:path}, std::ios::binary);
+std::string ${3:contents}((std::istreambuf_iterator<char>(${1:in})), std::istreambuf_iterator<char>());$0"""
+
+[[entries]]
+name = "ofstream write"
+keys = ["ofstream", "file", "write", "save"]
+doc = "Open a file for writing and write to it."
+snippet = """
+std::ofstream ${1:out}(${2:path});
+${1:out} << ${3:contents};$0"""
+
+[[entries]]
+name = "ofstream append"
+keys = ["ofstream", "file", "append", "ios::app"]
+doc = "Open a file in append mode."
+snippet = """
+std::ofstream ${1:out}(${2:path}, std::ios::app);$0"""
+
+[[entries]]
+name = "binary read"
+keys = ["read", "binary", "ifstream", "bytes"]
+doc = "Read raw bytes from a binary stream."
+snippet = """
+${1:in}.read(reinterpret_cast<char *>(${2:&data}), ${3:sizeof data});$0"""
+
+[[entries]]
+name = "binary write"
+keys = ["write", "binary", "ofstream", "bytes"]
+doc = "Write raw bytes to a binary stream."
+snippet = """
+${1:out}.write(reinterpret_cast<const char *>(${2:&data}), ${3:sizeof data});$0"""
+
+[[entries]]
+name = "iomanip precision"
+keys = ["setprecision", "fixed", "iomanip", "decimal"]
+doc = "Print a floating value with fixed decimals."
+snippet = """
+std::cout << std::fixed << std::setprecision(${1:2}) << ${2:value};$0"""
+
+[[entries]]
+name = "iomanip width"
+keys = ["setw", "setfill", "iomanip", "pad", "align"]
+doc = "Pad output to a field width."
+snippet = """
+std::cout << std::setw(${1:8}) << std::setfill(${2:' '}) << ${3:value};$0"""
+
+[[entries]]
+name = "hex output"
+keys = ["hex", "dec", "oct", "iomanip", "base"]
+doc = "Print an integer in hexadecimal."
+snippet = """
+std::cout << std::hex << ${1:value} << std::dec;$0"""
+
+[[entries]]
+name = "boolalpha"
+keys = ["boolalpha", "bool", "iomanip"]
+doc = "Print booleans as true/false."
+snippet = """
+std::cout << std::boolalpha << ${1:flag};$0"""
+
+[[entries]]
+name = "filesystem path"
+keys = ["path", "filesystem", "fs"]
+doc = "Construct and join a filesystem path."
+snippet = """
+std::filesystem::path ${1:p} = ${2:dir} / ${3:"file.txt"};$0"""
+
+[[entries]]
+name = "filesystem exists"
+keys = ["exists", "filesystem", "fs", "file"]
+doc = "Test whether a path exists."
+snippet = """
+std::filesystem::exists(${1:path})$0"""
+
+[[entries]]
+name = "filesystem create_directories"
+keys = ["create_directories", "mkdir", "filesystem", "fs"]
+doc = "Create a directory and all missing parents."
+snippet = """
+std::filesystem::create_directories(${1:path});$0"""
+
+[[entries]]
+name = "filesystem directory_iterator"
+keys = ["directory_iterator", "listdir", "filesystem", "fs", "walk"]
+doc = "Iterate over the entries of a directory."
+snippet = """
+for (const auto &${1:entry} : std::filesystem::${2:directory_iterator}(${3:dir})) {
+    $0
+}"""
+
+[[entries]]
+name = "filesystem path parts"
+keys = ["filename", "extension", "stem", "parent_path", "filesystem"]
+doc = "Extract a component of a path."
+snippet = """
+${1:p}.${2:filename}()$0"""
+
+[[entries]]
+name = "filesystem file_size / remove"
+keys = ["file_size", "remove", "rename", "copy", "filesystem"]
+doc = "Common filesystem operations."
+snippet = """
+std::filesystem::${1:file_size}(${2:path})$0"""
+
+[[entries]]
+name = "filesystem error_code"
+keys = ["error_code", "filesystem", "noexcept"]
+doc = "Filesystem call that reports errors without throwing."
+snippet = """
+std::error_code ${1:ec};
+std::filesystem::${2:remove}(${3:path}, ${1:ec});
+if (${1:ec}) {
+    $0
+}"""

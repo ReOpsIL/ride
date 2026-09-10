@@ -1,0 +1,191 @@
+title = "Types"
+contexts = ["type"]
+
+[[entries]]
+name = "char"
+keys = ["char", "byte"]
+doc = "One byte whose signedness is implementation-defined, so use unsigned char for raw bytes."
+snippet = '''
+char$0'''
+
+[[entries]]
+name = "signed char"
+keys = ["signed", "char", "int8"]
+doc = "Explicitly signed 8-bit integer, distinct from plain char."
+snippet = '''
+signed char$0'''
+
+[[entries]]
+name = "unsigned char"
+keys = ["unsigned", "char", "byte", "uint8"]
+doc = "Raw byte type that may alias any object without undefined behaviour."
+snippet = '''
+unsigned char$0'''
+
+[[entries]]
+name = "short"
+keys = ["short", "int16"]
+doc = "Signed integer of at least 16 bits; prefix with unsigned for the unsigned form."
+snippet = '''
+short$0'''
+
+[[entries]]
+name = "int"
+keys = ["int", "integer", "signed"]
+doc = "Natural signed integer of at least 16 bits, 32 on every mainstream platform."
+snippet = '''
+int$0'''
+
+[[entries]]
+name = "unsigned"
+keys = ["unsigned", "uint", "unsigned int"]
+doc = "Unsigned int, which wraps modulo 2^N instead of overflowing."
+snippet = '''
+unsigned$0'''
+
+[[entries]]
+name = "long"
+keys = ["long", "unsigned long"]
+doc = "At least 32 bits; 64 on LP64 Unix but only 32 on 64-bit Windows."
+snippet = '''
+long$0'''
+
+[[entries]]
+name = "long long"
+keys = ["long", "long long", "int64", "unsigned long long"]
+doc = "At least 64 bits on every platform (C99)."
+snippet = '''
+long long$0'''
+
+[[entries]]
+name = "float"
+keys = ["float", "single", "f32"]
+doc = "Single-precision IEEE float, usually 32 bits."
+snippet = '''
+float$0'''
+
+[[entries]]
+name = "double"
+keys = ["double", "f64", "real"]
+doc = "Double-precision float, the default type for floating literals."
+snippet = '''
+double$0'''
+
+[[entries]]
+name = "void"
+keys = ["void", "none", "unit"]
+doc = "No value, used as a return type or an empty parameter list."
+snippet = '''
+void$0'''
+
+[[entries]]
+name = "bool"
+keys = ["bool", "_bool", "boolean", "stdbool"]
+doc = "Boolean type; a keyword in C23, from stdbool.h before that."
+snippet = '''
+bool$0'''
+
+[[entries]]
+name = "intN_t"
+keys = ["int8_t", "int16_t", "int32_t", "int64_t", "stdint", "fixed"]
+doc = "Exact-width signed integer from stdint.h."
+snippet = '''
+int${1:32}_t$0'''
+
+[[entries]]
+name = "uintN_t"
+keys = ["uint8_t", "uint16_t", "uint32_t", "uint64_t", "stdint", "fixed"]
+doc = "Exact-width unsigned integer from stdint.h."
+snippet = '''
+uint${1:32}_t$0'''
+
+[[entries]]
+name = "intptr_t"
+keys = ["intptr_t", "uintptr_t", "pointer", "stdint"]
+doc = "Integer wide enough to round-trip a pointer, for address arithmetic."
+snippet = '''
+${1:u}intptr_t$0'''
+
+[[entries]]
+name = "size_t"
+keys = ["size_t", "size", "length", "unsigned"]
+doc = "Unsigned type returned by sizeof and used for sizes, counts and indices."
+snippet = '''
+size_t$0'''
+
+[[entries]]
+name = "ptrdiff_t"
+keys = ["ptrdiff_t", "difference", "signed"]
+doc = "Signed type of the difference between two pointers."
+snippet = '''
+ptrdiff_t$0'''
+
+[[entries]]
+name = "ssize_t"
+keys = ["ssize_t", "posix", "signed size"]
+doc = "POSIX signed size used by read and write to report errors as -1."
+snippet = '''
+ssize_t$0'''
+
+[[entries]]
+name = "wchar_t"
+keys = ["wchar_t", "wide", "wchar"]
+doc = "Wide character whose width is platform-dependent (16 bits on Windows, 32 elsewhere)."
+snippet = '''
+wchar_t$0'''
+
+[[entries]]
+name = "char16_t / char32_t"
+keys = ["char16_t", "char32_t", "utf16", "utf32", "uchar"]
+doc = "UTF-16 and UTF-32 code unit types from uchar.h (C11)."
+snippet = '''
+char${1:32}_t$0'''
+
+[[entries]]
+name = "const char *"
+keys = ["const", "char", "string", "str"]
+doc = "Read-only string pointer, the type of a string literal in practice."
+snippet = '''
+const char *$0'''
+
+[[entries]]
+name = "void *"
+keys = ["void", "pointer", "generic", "any"]
+doc = "Untyped pointer that converts implicitly to and from any object pointer."
+snippet = '''
+void *$0'''
+
+[[entries]]
+name = "function pointer type"
+keys = ["pointer", "function", "callback", "fnptr"]
+doc = "Pointer to a function with the given signature."
+snippet = '''
+${1:int} (*)(${2:int})$0'''
+
+[[entries]]
+name = "struct type"
+keys = ["struct", "record"]
+doc = "Refer to a struct by its tag without a typedef."
+snippet = '''
+struct ${1:name}$0'''
+
+[[entries]]
+name = "enum type"
+keys = ["enum", "enumeration"]
+doc = "Refer to an enum by its tag; enumerators are ints unless C23 fixes the type."
+snippet = '''
+enum ${1:name}$0'''
+
+[[entries]]
+name = "array type"
+keys = ["array", "[]"]
+doc = "Array type as written in a typedef or cast, element type first."
+snippet = '''
+${1:int}[${2:N}]$0'''
+
+[[entries]]
+name = "_Atomic"
+keys = ["_atomic", "atomic", "stdatomic"]
+doc = "Atomic-qualified type from stdatomic.h (C11)."
+snippet = '''
+_Atomic(${1:int})$0'''

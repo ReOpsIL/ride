@@ -1,0 +1,171 @@
+title = "Strings"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "strlen"
+keys = ["strlen", "length", "len", "size"]
+doc = "Number of bytes before the terminating NUL."
+snippet = '''
+strlen(${1:s})$0'''
+
+[[entries]]
+name = "strcpy"
+keys = ["strcpy", "copy", "string"]
+doc = "Copy including the terminator; dst must be large enough, so prefer snprintf."
+snippet = '''
+strcpy(${1:dst}, ${2:src});$0'''
+
+[[entries]]
+name = "strncpy"
+keys = ["strncpy", "copy", "bounded"]
+doc = "Bounded copy that does not terminate when src fills the buffer, hence the manual NUL."
+snippet = '''
+strncpy(${1:dst}, ${2:src}, sizeof ${1:dst} - 1);
+${1:dst}[sizeof ${1:dst} - 1] = '\0';$0'''
+
+[[entries]]
+name = "safe copy"
+keys = ["snprintf", "copy", "safe", "strlcpy", "bounded"]
+doc = "Truncating copy into a fixed buffer that always terminates."
+snippet = '''
+snprintf(${1:dst}, sizeof ${1:dst}, "%s", ${2:src});$0'''
+
+[[entries]]
+name = "strcat"
+keys = ["strcat", "append", "concat", "concatenate"]
+doc = "Append src to dst, which must have room for both plus the terminator."
+snippet = '''
+strcat(${1:dst}, ${2:src});$0'''
+
+[[entries]]
+name = "strncat"
+keys = ["strncat", "append", "bounded"]
+doc = "Append at most n bytes and always terminate; n is the remaining room, not the buffer size."
+snippet = '''
+strncat(${1:dst}, ${2:src}, sizeof ${1:dst} - strlen(${1:dst}) - 1);$0'''
+
+[[entries]]
+name = "strcmp"
+keys = ["strcmp", "compare", "equal", "equals"]
+doc = "Lexicographic compare; zero means the strings are equal."
+snippet = '''
+strcmp(${1:a}, ${2:b}) == 0$0'''
+
+[[entries]]
+name = "strncmp"
+keys = ["strncmp", "prefix", "compare", "starts with"]
+doc = "Compare only the first n bytes, useful for prefix tests."
+snippet = '''
+strncmp(${1:s}, ${2:"prefix"}, ${3:6}) == 0$0'''
+
+[[entries]]
+name = "strchr"
+keys = ["strchr", "find", "char", "search"]
+doc = "Pointer to the first occurrence of a character, or NULL."
+snippet = '''
+char *${1:p} = strchr(${2:s}, '${3:/}');$0'''
+
+[[entries]]
+name = "strrchr"
+keys = ["strrchr", "find", "last", "extension", "basename"]
+doc = "Pointer to the last occurrence of a character, or NULL."
+snippet = '''
+const char *${1:ext} = strrchr(${2:path}, '${3:.}');$0'''
+
+[[entries]]
+name = "strstr"
+keys = ["strstr", "find", "substring", "contains", "search"]
+doc = "Pointer to the first occurrence of a substring, or NULL."
+snippet = '''
+char *${1:p} = strstr(${2:haystack}, ${3:"needle"});$0'''
+
+[[entries]]
+name = "strtok"
+keys = ["strtok", "split", "tokenize", "token", "strtok_r"]
+doc = "Split in place on delimiter characters; not reentrant, so use strtok_r in threads."
+snippet = '''
+for (char *tok = strtok(${1:s}, "${2: ,}"); tok != NULL; tok = strtok(NULL, "${2: ,}")) {
+    $0
+}'''
+
+[[entries]]
+name = "strdup"
+keys = ["strdup", "duplicate", "copy", "clone", "malloc"]
+doc = "Heap-allocated copy of a string that the caller must free (POSIX and C23)."
+snippet = '''
+char *${1:copy} = strdup(${2:s});$0'''
+
+[[entries]]
+name = "strip newline"
+keys = ["strcspn", "newline", "chomp", "strip", "trim"]
+doc = "Cut a trailing newline left by fgets using strcspn."
+snippet = '''
+${1:line}[strcspn(${1:line}, "\n")] = '\0';$0'''
+
+[[entries]]
+name = "snprintf"
+keys = ["snprintf", "format", "build", "string"]
+doc = "Format into a bounded buffer, always terminating and returning the full length."
+snippet = '''
+snprintf(${1:buf}, sizeof ${1:buf}, "${2:%s=%d}", ${3:key, value});$0'''
+
+[[entries]]
+name = "sprintf"
+keys = ["sprintf", "format", "unsafe"]
+doc = "Unbounded formatting into a buffer; overflow is undefined, so prefer snprintf."
+snippet = '''
+sprintf(${1:buf}, "${2:%d}", ${3:value});$0'''
+
+[[entries]]
+name = "strtol"
+keys = ["strtol", "parse", "int", "number", "convert"]
+doc = "Parse an integer with an end pointer so garbage and empty input can be detected."
+snippet = '''
+char *end;
+long ${1:v} = strtol(${2:s}, &end, ${3:10});
+if (end == ${2:s} || *end != '\0') {
+    $0
+}'''
+
+[[entries]]
+name = "strtoul"
+keys = ["strtoul", "strtoull", "parse", "unsigned", "hex"]
+doc = "Parse an unsigned integer; base 0 accepts 0x and 0 prefixes."
+snippet = '''
+unsigned long ${1:v} = strtoul(${2:s}, ${3:NULL}, ${4:0});$0'''
+
+[[entries]]
+name = "strtod"
+keys = ["strtod", "strtof", "parse", "double", "float"]
+doc = "Parse a floating-point number, reporting where parsing stopped."
+snippet = '''
+double ${1:v} = strtod(${2:s}, ${3:&end});$0'''
+
+[[entries]]
+name = "atoi"
+keys = ["atoi", "atol", "atof", "parse", "int"]
+doc = "Quick parse with no error reporting; returns 0 on garbage."
+snippet = '''
+atoi(${1:s})$0'''
+
+[[entries]]
+name = "isdigit"
+keys = ["isdigit", "isalpha", "isspace", "isalnum", "ctype", "ispunct"]
+doc = "Character class test; cast to unsigned char to avoid undefined behaviour on negative chars."
+snippet = '''
+${1:isdigit}((unsigned char)${2:c})$0'''
+
+[[entries]]
+name = "toupper"
+keys = ["toupper", "tolower", "case", "ctype"]
+doc = "Convert case of one character, with the unsigned char cast."
+snippet = '''
+${1:toupper}((unsigned char)${2:c})$0'''
+
+[[entries]]
+name = "wide string"
+keys = ["wide", "wchar_t", "l\"\"", "wprintf", "wcslen"]
+doc = "Wide-character string literal and its printf form."
+snippet = '''
+const wchar_t *${1:ws} = L"${2:text}";
+wprintf(L"%ls\n", ${1:ws});$0'''

@@ -6,6 +6,7 @@
 | Roadmap and phases | `plan/roadmap/improve-extend.md` |
 | UI design plan and audit | `plan/roadmap/ui-design.md` |
 | Completion plan (sites, `use`/`#include`, ranking, rows, accept) | `plan/roadmap/completion.md` |
+| Cheat sheet plan (contexts, sheet data, popup) | `plan/roadmap/cheatsheet.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
@@ -22,10 +23,11 @@
 | `src/query` | prefix / hump / BM25 catalog search, path children and crate listings, keyword hits, best-per-name collector with the reachability filter |
 | `src/score` | shared score tiers and bonuses used by buffer, header and catalog hits |
 | `src/params` | parameter-list parsing of signatures for call snippets and signature help |
+| `src/cheatsheet` | language cheat sheets: TOML sections under `cheatsheets/<lang>/` embedded per language (`sheets/`), parsed once (`load.rs`), selected by caret context and typed prefix (`lookup.rs`) |
 | `src/text` | shared text helpers: first sentence, whitespace collapse, caps |
-| `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline (with signature and doc), parse errors, completion sites (`site/`), imports, call sites, Rust/C type tables and receiver typing, postfix receivers |
+| `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline (with signature and doc), parse errors, completion sites (`site/`), caret contexts for the cheat sheet (`context/`), imports, call sites, Rust/C type tables and receiver typing, postfix receivers |
 | `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
-| `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), definitions, import edits, signature help, tools, manifest watch |
+| `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), the cheat sheet lookup (`cheat.rs`), definitions, import edits, signature help, tools, manifest watch |
 | `src/ffi` | UniFFI records, enums and listener traits |
 
 ## Languages
@@ -65,6 +67,16 @@ All sources go through `merge::finish`: one scorer (`src/score.rs` tiers plus th
 ### Rows
 
 Buffer and header hits carry what the outline knows about the item. `OutlineItem.signature` is the declaration without its body: for Rust the extractor's signature (`pub fn new() -> Self`), for C and C++ the source from the item start up to the body, initializer or `;` with whitespace collapsed and capped at 160 characters (`int shape_sides(const shape_t *s)`, `#define SQUARE(x)`, `class Circle : public Shape`), for TOML, Make and CMake the item's first source line. `OutlineItem.doc` is the comment block directly above the item: for Rust the first `///` / `/** */` paragraph, for C and C++ consecutive `//` lines or one `/* */` block with the markers, leading `*` and Doxygen `@brief` stripped, capped at 400 characters (a `template<…>` head or a `typedef` wrapper is looked through); TOML, Make and CMake have none. `CompletionHit.from_outline` copies both into `signature`, `doc_first_sentence` and `doc_paragraph` for buffer outline items, header items and definitions. `CompletionHit.detail` carries the declared type of a local when it is written in the source (`u32` for `let n: u32` or a Rust parameter, `const char *` for a C declaration or parameter, `const Circle &` for a C++ reference parameter; no inference) and of a struct or class field reached through `.` / `->`; items from a reachable header put the header file name (`shapes.h`) there instead.
+
+### Cheat sheet
+
+`Engine::cheat_sheet(session_id, cursor_byte, all)` answers with the sections of the language cheat sheet that fit the caret. The sheet is data: one TOML file per section under `cheatsheets/<lang>/` (`title`, `contexts`, `[[entries]]` with `name`, `keys`, `doc`, `snippet` in the same `${1:text}` / `$0` syntax as completion snippets), listed in display order by `src/cheatsheet/sheets/<lang>.rs` and parsed once per process. Rust, C, C++ and Makefile have sheets; TOML and CMake answer with no sections.
+
+The caret is classified twice. `site_at` supplies the typed prefix, the replace start, the line indent and the comment/string veto; `context_at` (`highlight/context/`, one detector per grammar wired through `Grammar.context`) names the syntactic place: `item` (file, module or namespace level), `body` (impl or trait body), `fields` (struct, class, enum or union body), `statement` (start of a statement in a block: after `;`, `{`, `}`, `else` or a control-flow `(...)`), `expression` (anywhere else in a block, after `=`, `(`, `return`), `type` (parameter lists, `->`, `<...>`, after `:`, or a type position by the site's word table), `pattern` (a new `match` arm or a `let` before `=`), `attribute`, `preprocessor` (a `#` line), `use`; for Makefiles `item` (line start), `recipe` (tab line), `function` (inside an unclosed `$(`) and `value` (after an assignment operator or `:`). Detection walks tree-sitter ancestors from the prefix start and falls back to a brace-depth scan when the caret sits in an `ERROR` node; `Site::Attribute`, `Include`, `Directive`, `UsePath` and the member/scoped/struct-literal sites override the detected context.
+
+`cheatsheet::select` lists the sections whose `contexts` contain the caret context (or every section for `all`) in file order, each filtered to the entries whose lowercased name, name words or `keys` start with the typed prefix; with a non-empty prefix the remaining sections that still match follow, flagged `matched = false` so the app labels them "by prefix". Snippets are indented like the caret line, and at a member-access site (`v.`, `p->`) a template's leading receiver placeholder (`${1:items}.iter()` → `iter()`) is dropped because the receiver is already typed. `ride-engine cheat <file> [--byte N | --find anchor] [--typed text] [--all]` prints the context and the sections.
+
+In the app (`app/Ride/CheatSheet/`) the sheet is a second overlay panel stacked on the far side of the completion popup (below it when the popup is below the caret, above it otherwise; at the caret when the popup is hidden). Auto mode follows the completion popup whenever the preference "Cheat sheet with completions" is on; `⌃⇧Space` pins the sheet so it stays while the caret moves and refreshes on every edit, and `esc` or a second `⌃⇧Space` closes it. With both popups visible `⌥↑` / `⌥↓` move the sheet selection and `⌥↩` inserts; alone, plain arrows, `↩` and `⇥` do. Inserting replaces the typed prefix with the template through the shared `SnippetInsert` and starts the same snippet session (`⇥` / `⇧⇥` between placeholders) completion uses. The right pane previews the selected template with its placeholders highlighted.
 
 ### C / C++ headers
 
@@ -142,6 +154,7 @@ Two extraction changes ship with the bump: enum variants are emitted as `variant
 | `format_c` | clang-format a C or C++ buffer (`--assume-filename` from the buffer path so `.clang-format` is honoured) |
 | `import_edit` | the `use` line to insert for a hit's `import_path`, as a `TextEdit` the app applies after accepting the hit (caret shifted past the inserted text) |
 | `signature_help` | signature of the call around the caret with parameter byte ranges and the active index; the app queries it after accepting a fn/method/macro hit, on `(` and `,` in Rust/C/C++, and on every caret move while its popup is visible |
+| `cheat_sheet` | cheat sheet sections for the caret context and typed prefix (`all` ignores the context), with the replace start byte and snippets indented like the caret line |
 | `render_markdown` | markdown to HTML with line anchors and highlighted Rust, C and C++ fences, for the preview pane |
 | `open_session` / `apply_edit` / `set_visible_range` | highlight deltas, outline, parse errors; the language comes from the path and, for `.h`, the content (`Lang::for_buffer`) and is returned in `SessionOpen.lang` |
 
@@ -164,4 +177,4 @@ and staples.
 
 ## Screenshot review without input
 
-`Ride.app --args --open <folder> --demo <scene> --frame 1440x900` drives the UI into a state (`editor`, `completion`, `hover`, `quickopen`, `symbols`, `find`, `problems`, `outline`, `light`) so it can be captured by window id. Scenes never write preferences or files.
+`Ride.app --args --open <folder> --demo <scene> --frame 1440x900` drives the UI into a state (`editor`, `completion`, `cheatsheet`, `hover`, `quickopen`, `symbols`, `find`, `problems`, `outline`, `light`) so it can be captured by window id. Scenes never write preferences or files.

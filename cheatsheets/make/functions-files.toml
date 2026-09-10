@@ -1,0 +1,86 @@
+title = "File name functions"
+contexts = ["function"]
+
+[[entries]]
+name = "dir"
+keys = ["dir", "directory", "dirname"]
+doc = "Return the directory part of each file name, ./ when there is none."
+snippet = '''
+dir ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "notdir"
+keys = ["notdir", "basename", "file", "strip"]
+doc = "Return each file name without its directory part."
+snippet = '''
+notdir ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "suffix"
+keys = ["suffix", "extension", "ext"]
+doc = "Return the suffix, starting at the last dot, of each file name."
+snippet = '''
+suffix ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "basename"
+keys = ["basename", "stem", "extension", "strip"]
+doc = "Return each file name with its suffix removed."
+snippet = '''
+basename ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "wildcard"
+keys = ["wildcard", "glob", "find", "files"]
+doc = "Expand a shell glob into the matching file names that exist now."
+snippet = '''
+wildcard ${1:src/*.c})$0'''
+
+[[entries]]
+name = "wildcard several directories"
+keys = ["wildcard", "glob", "dirs", "recursive"]
+doc = "Glob in every directory of a list with foreach."
+snippet = '''
+foreach d,${1:$(DIRS)},$(wildcard $(d)/${2:*.c}))$0'''
+
+[[entries]]
+name = "realpath"
+keys = ["realpath", "canonical", "resolve", "absolute"]
+doc = "Resolve symlinks and . and .. into a canonical absolute path for each existing file."
+snippet = '''
+realpath ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "abspath"
+keys = ["abspath", "absolute", "path"]
+doc = "Make each path absolute without resolving symlinks or requiring the file to exist."
+snippet = '''
+abspath ${1:$(FILES)})$0'''
+
+[[entries]]
+name = "file write"
+keys = ["file", "write", "overwrite", ">"]
+doc = "Write the text to a file, replacing its contents."
+snippet = '''
+file >${1:out.txt},${2:$(TEXT)})$0'''
+
+[[entries]]
+name = "file append"
+keys = ["file", "append", ">>"]
+doc = "Append the text to a file, creating it when needed."
+snippet = '''
+file >>${1:out.txt},${2:$(TEXT)})$0'''
+
+[[entries]]
+name = "file read"
+keys = ["file", "read", "<", "contents"]
+doc = "Read a file's contents, with the trailing newline removed."
+snippet = '''
+file <${1:in.txt})$0'''
+
+[[entries]]
+name = "response file for long command lines"
+keys = ["file", "response", "argfile", "long"]
+doc = "Write the object list to a response file the linker reads with @file."
+snippet = '''
+file >${1:$@.args},${2:$^})$0'''

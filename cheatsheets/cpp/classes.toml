@@ -1,0 +1,78 @@
+title = "Classes"
+contexts = ["item"]
+
+[[entries]]
+name = "class"
+keys = ["class"]
+doc = "Class with private members by default."
+snippet = """
+class ${1:Name} {
+public:
+    $0
+private:
+};"""
+
+[[entries]]
+name = "struct"
+keys = ["struct", "pod", "aggregate"]
+doc = "Class with public members by default."
+snippet = """
+struct ${1:Name} {
+    $0
+};"""
+
+[[entries]]
+name = "class with constructor and destructor"
+keys = ["class", "ctor", "dtor", "constructor", "destructor"]
+doc = "Class skeleton with a constructor and a destructor."
+snippet = """
+class ${1:Name} {
+public:
+    ${1:Name}(${2:});
+    ~${1:Name}();
+    $0
+private:
+};"""
+
+[[entries]]
+name = "derived class"
+keys = ["class", "inherit", "derived", "extends", "base"]
+doc = "Class that publicly inherits from a base."
+snippet = """
+class ${1:Derived} : public ${2:Base} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "final class"
+keys = ["class", "final", "sealed"]
+doc = "Class that cannot be derived from."
+snippet = """
+class ${1:Name} final {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "abstract class"
+keys = ["class", "abstract", "interface", "pure", "virtual"]
+doc = "Class with a pure virtual function and a virtual destructor."
+snippet = """
+class ${1:Interface} {
+public:
+    virtual ~${1:Interface}() = default;
+    virtual ${2:void} ${3:method}(${4:}) = 0;
+    $0
+};"""
+
+[[entries]]
+name = "union"
+keys = ["union"]
+doc = "Type whose members share the same storage."
+snippet = """
+union ${1:Name} {
+    ${2:int} ${3:i};
+    ${4:float} ${5:f};
+    $0
+};"""

@@ -50,6 +50,7 @@ extension EditorPane {
             session.textChanged(document: document, view: view, state: state, range: pending.range, inserted: pending.inserted)
             if session.editSource == .user {
                 SignatureHelpController.shared.textChanged(document: document, view: view, inserted: pending.inserted)
+                CheatSheetController.shared.textChanged(document: document, view: view)
             }
         }
 
@@ -59,6 +60,7 @@ extension EditorPane {
                 publishCursor(view)
                 CompletionSession.shared.selectionChanged(view: view)
                 SignatureHelpController.shared.caretMoved(document: document, view: view)
+                CheatSheetController.shared.caretMoved(view: view)
             }
         }
 
@@ -83,6 +85,7 @@ extension EditorPane {
             }
             SessionService.shared.setVisible(document: document, view: view)
             CompletionSession.shared.viewportChanged(view: view)
+            CheatSheetController.shared.viewportChanged(view: view)
             SignatureHelpController.shared.relocate(in: view)
             HoverController.shared.hide()
             state.previewViewport(line: view.firstVisibleLine())

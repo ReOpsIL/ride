@@ -1,0 +1,216 @@
+title = "Items"
+contexts = ["item"]
+
+[[entries]]
+name = "struct"
+keys = ["struct", "record", "class"]
+doc = "Define a struct with named fields."
+snippet = '''
+struct ${1:Name} {
+    ${2:field}: ${3:Type},$0
+}'''
+
+[[entries]]
+name = "pub struct"
+keys = ["pub", "struct", "public"]
+doc = "Define a public struct with public named fields."
+snippet = '''
+pub struct ${1:Name} {
+    pub ${2:field}: ${3:Type},$0
+}'''
+
+[[entries]]
+name = "tuple struct"
+keys = ["struct", "tuple", "newtype", "wrapper"]
+doc = "Define a struct with positional fields, the newtype pattern when it has one."
+snippet = '''
+struct ${1:Name}(${2:pub }${3:Type});$0'''
+
+[[entries]]
+name = "unit struct"
+keys = ["struct", "unit", "marker", "zst"]
+doc = "Define a zero-sized struct with no fields."
+snippet = '''
+struct ${1:Name};$0'''
+
+[[entries]]
+name = "generic struct"
+keys = ["struct", "generic", "template", "t"]
+doc = "Define a struct parameterized over a type."
+snippet = '''
+struct ${1:Name}<T${2:: Clone}> {
+    ${3:value}: T,$0
+}'''
+
+[[entries]]
+name = "struct with lifetime"
+keys = ["struct", "lifetime", "borrow", "reference"]
+doc = "Define a struct that holds a reference and so carries a lifetime parameter."
+snippet = '''
+struct ${1:Name}<'a> {
+    ${2:text}: &'a ${3:str},$0
+}'''
+
+[[entries]]
+name = "derive struct"
+keys = ["struct", "derive", "debug", "clone"]
+doc = "Define a struct with commonly derived traits."
+snippet = '''
+#[derive(Debug, Clone, PartialEq${2:, Eq, Hash})]
+pub struct ${1:Name} {
+    $0
+}'''
+
+[[entries]]
+name = "enum"
+keys = ["enum", "variant", "sum"]
+doc = "Define an enum with unit variants."
+snippet = '''
+enum ${1:Name} {
+    ${2:First},
+    ${3:Second},$0
+}'''
+
+[[entries]]
+name = "enum with data"
+keys = ["enum", "variant", "data", "payload", "tagged"]
+doc = "Define an enum whose variants carry tuple or struct payloads."
+snippet = '''
+enum ${1:Name} {
+    ${2:Unit},
+    ${3:Tuple}(${4:i32}),
+    ${5:Struct} { ${6:field}: ${7:String} },$0
+}'''
+
+[[entries]]
+name = "enum with discriminants"
+keys = ["enum", "repr", "discriminant", "c", "value"]
+doc = "Define a C-like enum with explicit integer values."
+snippet = '''
+#[repr(${1:u8})]
+enum ${2:Name} {
+    ${3:A} = ${4:0},
+    ${5:B} = ${6:1},$0
+}'''
+
+[[entries]]
+name = "generic enum"
+keys = ["enum", "generic", "t"]
+doc = "Define an enum parameterized over a type."
+snippet = '''
+enum ${1:Name}<T> {
+    ${2:Some}(T),
+    ${3:None},$0
+}'''
+
+[[entries]]
+name = "union"
+keys = ["union", "unsafe", "ffi", "overlap"]
+doc = "Define a C-style union whose fields share storage and are read in unsafe code."
+snippet = '''
+#[repr(C)]
+union ${1:Name} {
+    ${2:int}: ${3:u32},
+    ${4:float}: ${5:f32},$0
+}'''
+
+[[entries]]
+name = "trait"
+keys = ["trait", "interface", "protocol"]
+doc = "Define a trait with a required method."
+snippet = '''
+trait ${1:Name} {
+    fn ${2:method}(&self${3:, arg: Type}) -> ${4:ReturnType};$0
+}'''
+
+[[entries]]
+name = "impl"
+keys = ["impl", "methods", "inherent"]
+doc = "Add inherent methods to a type."
+snippet = '''
+impl ${1:Type} {
+    $0
+}'''
+
+[[entries]]
+name = "impl Trait for"
+keys = ["impl", "trait", "for", "implement"]
+doc = "Implement a trait for a type."
+snippet = '''
+impl ${1:Trait} for ${2:Type} {
+    $0
+}'''
+
+[[entries]]
+name = "generic impl"
+keys = ["impl", "generic", "t"]
+doc = "Add methods to every instantiation of a generic type."
+snippet = '''
+impl<T${1:: Clone}> ${2:Type}<T> {
+    $0
+}'''
+
+[[entries]]
+name = "impl with lifetime"
+keys = ["impl", "lifetime"]
+doc = "Add methods to a type that carries a lifetime parameter."
+snippet = '''
+impl<'a> ${1:Type}<'a> {
+    $0
+}'''
+
+[[entries]]
+name = "const"
+keys = ["const", "constant"]
+doc = "Define a compile-time constant inlined at each use."
+snippet = '''
+const ${1:NAME}: ${2:usize} = ${3:value};$0'''
+
+[[entries]]
+name = "static"
+keys = ["static", "global"]
+doc = "Define a global with a fixed address that lives for the whole program."
+snippet = '''
+static ${1:NAME}: ${2:&str} = ${3:"value"};$0'''
+
+[[entries]]
+name = "type alias"
+keys = ["type", "alias", "typedef"]
+doc = "Give a type a new name without creating a distinct type."
+snippet = '''
+type ${1:Name} = ${2:Type};$0'''
+
+[[entries]]
+name = "generic type alias"
+keys = ["type", "alias", "result", "generic"]
+doc = "Define a shorthand for a generic type, typically a crate-wide Result."
+snippet = '''
+pub type ${1:Result}<T> = std::result::Result<T, ${2:Error}>;$0'''
+
+[[entries]]
+name = "extern crate"
+keys = ["extern", "crate", "import"]
+doc = "Bring a crate into scope explicitly, needed only for alloc or renaming."
+snippet = '''
+extern crate ${1:alloc};$0'''
+
+[[entries]]
+name = "extern block"
+keys = ["extern", "block", "ffi", "link", "c"]
+doc = "Declare foreign functions from a C library."
+snippet = '''
+#[link(name = "${1:m}")]
+unsafe extern "C" {
+    fn ${2:sqrt}(${3:x}: ${4:f64}) -> ${5:f64};$0
+}'''
+
+[[entries]]
+name = "macro_rules!"
+keys = ["macro", "rules", "define", "declarative"]
+doc = "Define a declarative macro by example."
+snippet = '''
+macro_rules! ${1:name} {
+    (${2:$x:expr}) => {
+        $0
+    };
+}'''

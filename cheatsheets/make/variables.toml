@@ -1,0 +1,169 @@
+title = "Variables"
+contexts = ["item", "value"]
+
+[[entries]]
+name = "recursive assignment ="
+keys = ["=", "assign", "recursive", "lazy", "variable"]
+doc = "Store the text verbatim and expand it every time the variable is used."
+snippet = '''
+${1:VAR} = ${2:value}$0'''
+
+[[entries]]
+name = "simple assignment :="
+keys = [":=", "assign", "simple", "immediate", "variable"]
+doc = "Expand the right-hand side once, at the point of assignment."
+snippet = '''
+${1:VAR} := ${2:value}$0'''
+
+[[entries]]
+name = "POSIX simple assignment ::="
+keys = ["::=", "assign", "posix", "simple"]
+doc = "POSIX spelling of the simply expanded assignment, identical to :=."
+snippet = '''
+${1:VAR} ::= ${2:value}$0'''
+
+[[entries]]
+name = "immediate escaped assignment :::="
+keys = [":::=", "assign", "escaped"]
+doc = "Expand now, then escape every $ so the stored text survives later expansion unchanged."
+snippet = '''
+${1:VAR} :::= ${2:value}$0'''
+
+[[entries]]
+name = "conditional assignment ?="
+keys = ["?=", "conditional", "default", "unless"]
+doc = "Assign only when the variable is not already set, including from the environment."
+snippet = '''
+${1:VAR} ?= ${2:default}$0'''
+
+[[entries]]
+name = "append +="
+keys = ["+=", "append", "add"]
+doc = "Append text, separated by a space, keeping the variable's existing flavor."
+snippet = '''
+${1:CFLAGS} += ${2:-Wall}$0'''
+
+[[entries]]
+name = "shell assignment !="
+keys = ["!=", "shell", "command", "output"]
+doc = "Run a shell command and store its output, newlines turned into spaces."
+snippet = '''
+${1:VERSION} != ${2:git describe --tags --always}$0'''
+
+[[entries]]
+name = "multi-line value"
+keys = ["continuation", "backslash", "multiline", "list"]
+doc = "A backslash at the end of a line joins the next line into the value."
+snippet = '''
+${1:SRCS} := ${2:main.c} \\
+    ${3:util.c}$0'''
+
+[[entries]]
+name = "define / endef"
+keys = ["define", "endef", "multiline", "verbatim"]
+doc = "Define a variable whose value spans several lines, newlines included."
+snippet = '''
+define ${1:NAME}
+${2:line one}
+${3:line two}
+endef$0'''
+
+[[entries]]
+name = "define with :="
+keys = ["define", "endef", "simple"]
+doc = "A multi-line variable expanded once at definition time."
+snippet = '''
+define ${1:NAME} :=
+$0
+endef'''
+
+[[entries]]
+name = "override"
+keys = ["override", "commandline", "force"]
+doc = "Assign even when the variable was given on the command line."
+snippet = '''
+override ${1:CFLAGS} += ${2:-Wall}$0'''
+
+[[entries]]
+name = "export variable"
+keys = ["export", "environment", "env"]
+doc = "Pass the variable to every recipe shell and sub-make."
+snippet = '''
+export ${1:VAR} := ${2:value}$0'''
+
+[[entries]]
+name = "export existing variable"
+keys = ["export", "environment", "env"]
+doc = "Export an already defined variable to recipe shells and sub-makes."
+snippet = '''
+export ${1:VAR}$0'''
+
+[[entries]]
+name = "unexport"
+keys = ["unexport", "environment", "env"]
+doc = "Stop a variable from being passed to sub-makes."
+snippet = '''
+unexport ${1:VAR}$0'''
+
+[[entries]]
+name = "private"
+keys = ["private", "inherit"]
+doc = "Keep a target-specific variable from being inherited by the target's prerequisites."
+snippet = '''
+${1:target}: private ${2:CFLAGS} += ${3:-DLOCAL}$0'''
+
+[[entries]]
+name = "target-specific variable"
+keys = ["target", "specific", "targetspecific", "scoped"]
+doc = "Set a variable only while this target and its prerequisites are built."
+snippet = '''
+${1:debug}: ${2:CFLAGS} += ${3:-g -O0}$0'''
+
+[[entries]]
+name = "pattern-specific variable"
+keys = ["pattern", "specific", "patternspecific", "%"]
+doc = "Set a variable for every target that matches the pattern."
+snippet = '''
+${1:%.o}: ${2:CFLAGS} += ${3:-O2}$0'''
+
+[[entries]]
+name = "variable reference $(VAR)"
+keys = ["ref", "reference", "expand", "$("]
+doc = "Expand a variable's value."
+snippet = '''
+$(${1:VAR})$0'''
+
+[[entries]]
+name = "variable reference ${VAR}"
+keys = ["ref", "reference", "braces", "${"]
+doc = "Braces are equivalent to parentheses when expanding a variable."
+snippet = '''
+\${${1:VAR}}$0'''
+
+[[entries]]
+name = "substitution reference"
+keys = ["substitution", "subst", "suffix", "replace", ":.c=.o"]
+doc = "Replace the suffix of every word in the value, like $(patsubst %.c,%.o,$(SRCS))."
+snippet = '''
+$(${1:SRCS}:${2:.c}=${3:.o})$0'''
+
+[[entries]]
+name = "patterned substitution reference"
+keys = ["substitution", "pattern", "%", "replace"]
+doc = "Rewrite every word with a % pattern, keeping the stem."
+snippet = '''
+$(${1:SRCS}:${2:src/%.c}=${3:build/%.o})$0'''
+
+[[entries]]
+name = "computed variable name"
+keys = ["computed", "nested", "indirect", "dynamic"]
+doc = "Build a variable name from another expansion and expand that."
+snippet = '''
+$($(${1:TARGET})_${2:FLAGS})$0'''
+
+[[entries]]
+name = "command line variable"
+keys = ["commandline", "cli", "invoke", "make"]
+doc = "Values passed on the command line override every ordinary assignment in the makefile."
+snippet = '''
+# make ${1:CC}=${2:clang} ${3:all}$0'''

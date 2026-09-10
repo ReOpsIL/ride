@@ -1,0 +1,193 @@
+title = "C11 and C23 features"
+contexts = ["statement", "item"]
+
+[[entries]]
+name = "thrd_create"
+keys = ["thrd_create", "thread", "threads.h", "spawn", "c11"]
+doc = "Start a thread running an int (*)(void *) function (C11 threads.h)."
+snippet = '''
+thrd_t ${1:t};
+if (thrd_create(&${1:t}, ${2:worker}, ${3:arg}) != thrd_success) {
+    $0
+}'''
+
+[[entries]]
+name = "thread function"
+keys = ["thread", "worker", "thrd_start_t", "entry"]
+doc = "Entry point signature required by thrd_create."
+snippet = '''
+int ${1:worker}(void *${2:arg}) {
+    $0
+    return 0;
+}'''
+
+[[entries]]
+name = "thrd_join"
+keys = ["thrd_join", "join", "thread", "wait"]
+doc = "Wait for a thread and collect its return value."
+snippet = '''
+int ${1:result};
+thrd_join(${2:t}, &${1:result});$0'''
+
+[[entries]]
+name = "mtx_init"
+keys = ["mtx_init", "mutex", "mtx_t", "mtx_plain", "lock"]
+doc = "Create a mutex; mtx_plain, mtx_timed or with mtx_recursive OR-ed in."
+snippet = '''
+mtx_t ${1:lock};
+mtx_init(&${1:lock}, ${2:mtx_plain});$0'''
+
+[[entries]]
+name = "mtx_lock"
+keys = ["mtx_lock", "mtx_unlock", "mutex", "lock", "critical"]
+doc = "Critical section guarded by a mutex."
+snippet = '''
+mtx_lock(&${1:lock});
+$0
+mtx_unlock(&${1:lock});'''
+
+[[entries]]
+name = "cnd_wait"
+keys = ["cnd_wait", "condition", "cnd_t", "wait", "predicate"]
+doc = "Wait on a condition variable in a loop to survive spurious wakeups."
+snippet = '''
+while (!${1:ready}) {
+    cnd_wait(&${2:cond}, &${3:lock});
+}$0'''
+
+[[entries]]
+name = "cnd_signal"
+keys = ["cnd_signal", "cnd_broadcast", "condition", "notify", "wake"]
+doc = "Wake one waiter, or every waiter with cnd_broadcast."
+snippet = '''
+cnd_${1:signal}(&${2:cond});$0'''
+
+[[entries]]
+name = "call_once"
+keys = ["call_once", "once_flag", "init", "once", "singleton"]
+doc = "Run an initialiser exactly once across all threads."
+snippet = '''
+static once_flag ${1:flag} = ONCE_FLAG_INIT;
+call_once(&${1:flag}, ${2:init});$0'''
+
+[[entries]]
+name = "atomic_int"
+keys = ["atomic_int", "atomic", "stdatomic", "counter", "atomic_bool"]
+doc = "Atomic integer usable from several threads without a lock (C11)."
+snippet = '''
+atomic_int ${1:counter} = ${2:0};$0'''
+
+[[entries]]
+name = "atomic_fetch_add"
+keys = ["atomic_fetch_add", "atomic_fetch_sub", "increment", "atomic"]
+doc = "Atomically add and return the previous value."
+snippet = '''
+atomic_fetch_add(&${1:counter}, ${2:1});$0'''
+
+[[entries]]
+name = "atomic_load"
+keys = ["atomic_load", "read", "atomic"]
+doc = "Atomically read a value with sequentially consistent ordering."
+snippet = '''
+atomic_load(&${1:flag})$0'''
+
+[[entries]]
+name = "atomic_store"
+keys = ["atomic_store", "write", "atomic"]
+doc = "Atomically write a value with sequentially consistent ordering."
+snippet = '''
+atomic_store(&${1:flag}, ${2:true});$0'''
+
+[[entries]]
+name = "atomic_compare_exchange"
+keys = ["atomic_compare_exchange_strong", "cas", "compare", "exchange", "atomic"]
+doc = "Compare-and-swap; on failure expected is updated with the current value."
+snippet = '''
+${1:int} expected = ${2:old};
+if (atomic_compare_exchange_strong(&${3:value}, &expected, ${4:new_value})) {
+    $0
+}'''
+
+[[entries]]
+name = "atomic_flag spinlock"
+keys = ["atomic_flag", "spinlock", "test_and_set", "lock"]
+doc = "Minimal spinlock built on the always lock-free atomic_flag."
+snippet = '''
+static atomic_flag ${1:lock} = ATOMIC_FLAG_INIT;
+while (atomic_flag_test_and_set(&${1:lock})) {}
+$0
+atomic_flag_clear(&${1:lock});'''
+
+[[entries]]
+name = "memory order"
+keys = ["memory_order", "acquire", "release", "relaxed", "explicit", "atomic"]
+doc = "Explicit ordering variant for a weaker and cheaper atomic access."
+snippet = '''
+atomic_load_explicit(&${1:x}, ${2:memory_order_acquire})$0'''
+
+[[entries]]
+name = "_Generic"
+keys = ["_generic", "generic", "select", "type", "dispatch"]
+doc = "Choose a function by the type of the controlling expression (C11)."
+snippet = '''
+_Generic((${1:x}), int: ${2:f_int}, double: ${3:f_double}, default: ${4:f_other})(${1:x})$0'''
+
+[[entries]]
+name = "u8 string"
+keys = ["u8", "utf8", "unicode", "char8_t", "literal"]
+doc = "UTF-8 string literal; its element type is char8_t in C23."
+snippet = '''
+const char *${1:s} = u8"${2:text}";$0'''
+
+[[entries]]
+name = "UTF-16 UTF-32 string"
+keys = ["u\"", "utf16", "utf32", "char16_t", "char32_t", "literal"]
+doc = "UTF-16 or UTF-32 string literal from uchar.h types (C11)."
+snippet = '''
+const char32_t *${1:s} = U"${2:text}";$0'''
+
+[[entries]]
+name = "quick_exit"
+keys = ["quick_exit", "at_quick_exit", "exit", "fast"]
+doc = "Terminate running only at_quick_exit handlers, skipping stream flushing (C11)."
+snippet = '''
+at_quick_exit(${1:cleanup});
+quick_exit(${2:EXIT_SUCCESS});$0'''
+
+[[entries]]
+name = "timespec_get"
+keys = ["timespec_get", "timespec", "time_utc", "nanoseconds", "clock"]
+doc = "Wall-clock time with nanosecond resolution (C11)."
+snippet = '''
+struct timespec ${1:ts};
+timespec_get(&${1:ts}, TIME_UTC);$0'''
+
+[[entries]]
+name = "ckd_add"
+keys = ["ckd_add", "ckd_sub", "ckd_mul", "checked", "overflow", "stdckdint", "c23"]
+doc = "Checked arithmetic that returns true on overflow (C23 stdckdint.h)."
+snippet = '''
+if (ckd_${1:add}(&${2:result}, ${3:a}, ${4:b})) {
+    $0
+}'''
+
+[[entries]]
+name = "stdc_count_ones"
+keys = ["stdc_count_ones", "popcount", "stdbit", "stdc_bit_width", "stdc_leading_zeros", "c23"]
+doc = "Type-generic bit utilities from stdbit.h (C23)."
+snippet = '''
+stdc_${1:count_ones}(${2:value})$0'''
+
+[[entries]]
+name = "unreachable"
+keys = ["unreachable", "__builtin_unreachable", "c23", "optimize"]
+doc = "Tell the compiler control never reaches here, which is undefined if it does (C23)."
+snippet = '''
+unreachable();$0'''
+
+[[entries]]
+name = "memset_explicit"
+keys = ["memset_explicit", "secure", "zero", "secret", "c23"]
+doc = "Zero memory in a way the optimiser may not remove (C23)."
+snippet = '''
+memset_explicit(${1:secret}, 0, sizeof ${1:secret});$0'''

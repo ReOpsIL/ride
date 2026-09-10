@@ -1,0 +1,202 @@
+title = "Macros"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "println!"
+keys = ["println", "print", "stdout", "log"]
+doc = "Print a formatted line to stdout, capturing variables inline."
+snippet = '''
+println!("${1:{value\}}");$0'''
+
+[[entries]]
+name = "print!"
+keys = ["print", "stdout", "no", "newline"]
+doc = "Print to stdout without a trailing newline."
+snippet = '''
+print!("${1:text}");$0'''
+
+[[entries]]
+name = "eprintln!"
+keys = ["eprintln", "eprint", "stderr", "error", "log"]
+doc = "Print a formatted line to stderr."
+snippet = '''
+eprintln!("${1:error: {e\}}");$0'''
+
+[[entries]]
+name = "format!"
+keys = ["format", "string", "interpolate"]
+doc = "Build a String from a format template."
+snippet = '''
+format!("${1:{value\}}")$0'''
+
+[[entries]]
+name = "write!"
+keys = ["write", "fmt", "formatter", "buffer"]
+doc = "Write formatted text into a Formatter, String or io::Write."
+snippet = '''
+write!(${1:f}, "${2:{value\}}")$0'''
+
+[[entries]]
+name = "writeln!"
+keys = ["writeln", "write", "line", "buffer", "fmt"]
+doc = "Write a formatted line into a writer."
+snippet = '''
+writeln!(${1:out}, "${2:{value\}}")?;$0'''
+
+[[entries]]
+name = "vec!"
+keys = ["vec", "vector", "list"]
+doc = "Create a vector from listed elements or a repeated value."
+snippet = '''
+vec![${1:items}]$0'''
+
+[[entries]]
+name = "assert!"
+keys = ["assert", "check", "test", "invariant"]
+doc = "Panic with an optional message when a condition is false."
+snippet = '''
+assert!(${1:condition}${2:, "message"});$0'''
+
+[[entries]]
+name = "assert_eq!"
+keys = ["assert", "eq", "equal", "test"]
+doc = "Panic showing both values when they are not equal."
+snippet = '''
+assert_eq!(${1:actual}, ${2:expected});$0'''
+
+[[entries]]
+name = "assert_ne!"
+keys = ["assert", "ne", "not", "equal", "test"]
+doc = "Panic showing both values when they are equal."
+snippet = '''
+assert_ne!(${1:a}, ${2:b});$0'''
+
+[[entries]]
+name = "debug_assert!"
+keys = ["debug", "assert", "check", "release"]
+doc = "Assert only in debug builds."
+snippet = '''
+debug_assert!(${1:condition});$0'''
+
+[[entries]]
+name = "panic!"
+keys = ["panic", "abort", "crash", "fatal"]
+doc = "Abort the current thread with a formatted message."
+snippet = '''
+panic!("${1:message}");$0'''
+
+[[entries]]
+name = "unreachable!"
+keys = ["unreachable", "panic", "impossible"]
+doc = "Mark code that should never execute, panicking if it does."
+snippet = '''
+unreachable!(${1:"reason"})$0'''
+
+[[entries]]
+name = "todo!"
+keys = ["todo", "stub", "later", "panic"]
+doc = "Placeholder that type-checks as any type and panics when reached."
+snippet = '''
+todo!(${1:"describe"})$0'''
+
+[[entries]]
+name = "unimplemented!"
+keys = ["unimplemented", "stub", "panic"]
+doc = "Placeholder for functionality intentionally left out."
+snippet = '''
+unimplemented!()$0'''
+
+[[entries]]
+name = "dbg!"
+keys = ["dbg", "debug", "print", "inspect", "stderr"]
+doc = "Print an expression and its value to stderr, returning the value."
+snippet = '''
+dbg!(${1:expr})$0'''
+
+[[entries]]
+name = "matches!"
+keys = ["matches", "pattern", "bool", "is"]
+doc = "Test whether a value matches a pattern."
+snippet = '''
+matches!(${1:value}, ${2:Pattern})$0'''
+
+[[entries]]
+name = "include_str!"
+keys = ["include", "str", "file", "embed", "compile"]
+doc = "Embed a file's contents as a str at compile time."
+snippet = '''
+include_str!("${1:file.txt}")$0'''
+
+[[entries]]
+name = "include_bytes!"
+keys = ["include", "bytes", "file", "embed", "binary"]
+doc = "Embed a file's contents as a byte array at compile time."
+snippet = '''
+include_bytes!("${1:file.bin}")$0'''
+
+[[entries]]
+name = "env!"
+keys = ["env", "compile", "cargo", "version", "variable"]
+doc = "Read an environment variable at compile time, failing the build if unset."
+snippet = '''
+env!("${1:CARGO_PKG_VERSION}")$0'''
+
+[[entries]]
+name = "option_env!"
+keys = ["env", "option", "compile", "optional"]
+doc = "Read an environment variable at compile time as an Option."
+snippet = '''
+option_env!("${1:NAME}")$0'''
+
+[[entries]]
+name = "concat!"
+keys = ["concat", "literal", "compile", "join"]
+doc = "Concatenate literals into a static str at compile time."
+snippet = '''
+concat!(${1:"a", "b"})$0'''
+
+[[entries]]
+name = "stringify!"
+keys = ["stringify", "tokens", "source", "name"]
+doc = "Turn the given tokens into a string literal."
+snippet = '''
+stringify!(${1:expr})$0'''
+
+[[entries]]
+name = "cfg!"
+keys = ["cfg", "runtime", "bool", "target", "platform"]
+doc = "Evaluate a configuration predicate to a bool at compile time."
+snippet = '''
+cfg!(${1:debug_assertions})$0'''
+
+[[entries]]
+name = "file! line! column!"
+keys = ["file", "line", "column", "location", "source"]
+doc = "Expand to the current source location."
+snippet = '''
+${1:line}!()$0'''
+
+[[entries]]
+name = "macro_rules! repetition"
+keys = ["macro", "rules", "repetition", "variadic", "define"]
+doc = "Declarative macro that accepts a comma-separated list."
+snippet = '''
+macro_rules! ${1:name} {
+    ($( $x:expr ),* $(,)?) => {
+        {
+            let mut ${2:v} = Vec::new();
+            $( ${2:v}.push($x); )*
+            ${2:v}
+        }
+    };
+}$0'''
+
+[[entries]]
+name = "macro_rules! multiple arms"
+keys = ["macro", "rules", "arms", "overload", "define"]
+doc = "Declarative macro with several matching rules."
+snippet = '''
+macro_rules! ${1:name} {
+    () => { ${2:Default::default()} };
+    ($x:expr) => { $0 };
+}'''

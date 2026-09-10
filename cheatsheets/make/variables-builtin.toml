@@ -1,0 +1,180 @@
+title = "Conventional and special variables"
+contexts = ["item", "value"]
+
+[[entries]]
+name = "CC"
+keys = ["cc", "compiler", "gcc", "clang"]
+doc = "The C compiler used by the built-in and conventional compile rules."
+snippet = '''
+CC := ${1:gcc}$0'''
+
+[[entries]]
+name = "CXX"
+keys = ["cxx", "compiler", "g++", "clang++"]
+doc = "The C++ compiler used by the built-in and conventional compile rules."
+snippet = '''
+CXX := ${1:g++}$0'''
+
+[[entries]]
+name = "CFLAGS"
+keys = ["cflags", "flags", "warnings"]
+doc = "Flags for the C compiler, conventionally optimisation, debugging and warnings."
+snippet = '''
+CFLAGS := ${1:-O2 -g -Wall -Wextra}$0'''
+
+[[entries]]
+name = "CXXFLAGS"
+keys = ["cxxflags", "flags", "std"]
+doc = "Flags for the C++ compiler, conventionally the language standard and warnings."
+snippet = '''
+CXXFLAGS := ${1:-std=c++20 -O2 -g -Wall -Wextra}$0'''
+
+[[entries]]
+name = "CPPFLAGS"
+keys = ["cppflags", "preprocessor", "include", "define", "-i", "-d"]
+doc = "Preprocessor flags shared by C and C++, conventionally -I include paths and -D defines."
+snippet = '''
+CPPFLAGS := -I${1:include} -D${2:NDEBUG}$0'''
+
+[[entries]]
+name = "LDFLAGS"
+keys = ["ldflags", "linker", "-l"]
+doc = "Linker flags such as library search paths, placed before the objects."
+snippet = '''
+LDFLAGS := -L${1:lib}$0'''
+
+[[entries]]
+name = "LDLIBS"
+keys = ["ldlibs", "libs", "libraries", "-l"]
+doc = "Libraries to link, placed after the objects so symbol resolution works."
+snippet = '''
+LDLIBS := -l${1:m}$0'''
+
+[[entries]]
+name = "AR and ARFLAGS"
+keys = ["ar", "arflags", "archive", "static"]
+doc = "The archiver and its flags used when building static libraries."
+snippet = '''
+AR      := ar
+ARFLAGS := ${1:rcs}$0'''
+
+[[entries]]
+name = "RM"
+keys = ["rm", "remove", "delete"]
+doc = "The remove command, rm -f by default, used by clean targets."
+snippet = '''
+RM := ${1:rm -f}$0'''
+
+[[entries]]
+name = "SHELL"
+keys = ["shell", "bash", "sh"]
+doc = "The program that runs recipe lines, /bin/sh unless set here."
+snippet = '''
+SHELL := ${1:/bin/bash}$0'''
+
+[[entries]]
+name = ".SHELLFLAGS"
+keys = ["shellflags", "strict", "pipefail"]
+doc = "Options passed to the shell for every recipe line, -c by default."
+snippet = '''
+.SHELLFLAGS := ${1:-eu -o pipefail -c}$0'''
+
+[[entries]]
+name = "MAKEFLAGS"
+keys = ["makeflags", "flags", "options", "builtin"]
+doc = "Flags make was invoked with; appending here applies them to this make and sub-makes."
+snippet = '''
+MAKEFLAGS += ${1:--no-builtin-rules --warn-undefined-variables}$0'''
+
+[[entries]]
+name = ".DEFAULT_GOAL"
+keys = ["defaultgoal", "goal", "default"]
+doc = "The target built when make is run without one on the command line."
+snippet = '''
+.DEFAULT_GOAL := ${1:all}$0'''
+
+[[entries]]
+name = "$(MAKE)"
+keys = ["make", "submake", "recursive"]
+doc = "The path of the running make, to be used for recursive invocations."
+snippet = '''
+$(MAKE) ${1:-C subdir}$0'''
+
+[[entries]]
+name = "$(CURDIR)"
+keys = ["curdir", "pwd", "directory", "cwd"]
+doc = "The absolute directory make is running in."
+snippet = '''
+$(CURDIR)$0'''
+
+[[entries]]
+name = "$(MAKEFILE_LIST)"
+keys = ["makefilelist", "makefile", "self", "lastword"]
+doc = "Every makefile parsed so far, the current one last."
+snippet = '''
+$(lastword $(MAKEFILE_LIST))$0'''
+
+[[entries]]
+name = "$(MAKECMDGOALS)"
+keys = ["makecmdgoals", "goals", "commandline"]
+doc = "The goals given on the command line, useful for skipping work under clean."
+snippet = '''
+$(filter ${1:clean},$(MAKECMDGOALS))$0'''
+
+[[entries]]
+name = "$(MAKELEVEL)"
+keys = ["makelevel", "level", "depth", "recursion"]
+doc = "The recursion depth, zero in the top-level make."
+snippet = '''
+$(MAKELEVEL)$0'''
+
+[[entries]]
+name = "$(MAKE_VERSION)"
+keys = ["makeversion", "version"]
+doc = "The version string of the running GNU make."
+snippet = '''
+$(MAKE_VERSION)$0'''
+
+[[entries]]
+name = "$(.FEATURES)"
+keys = ["features", "jobserver", "capability"]
+doc = "Words naming what this make supports, such as jobserver, oneshell and grouped-target."
+snippet = '''
+$(filter ${1:grouped-target},$(.FEATURES))$0'''
+
+[[entries]]
+name = "VPATH"
+keys = ["vpath", "search", "path", "sources"]
+doc = "Colon or space separated directories searched for prerequisites that are not found locally."
+snippet = '''
+VPATH := ${1:src:include}$0'''
+
+[[entries]]
+name = ".RECIPEPREFIX"
+keys = ["recipeprefix", "prefix", "tab"]
+doc = "Use this character instead of a tab to introduce recipe lines."
+snippet = '''
+.RECIPEPREFIX := ${1:>}$0'''
+
+[[entries]]
+name = ".ONESHELL"
+keys = ["oneshell", "shell", "single"]
+doc = "Run every recipe in one shell invocation instead of one shell per line."
+snippet = '''
+.ONESHELL:$0'''
+
+[[entries]]
+name = ".EXTRA_PREREQS"
+keys = ["extraprereqs", "extra", "hidden"]
+doc = "Prerequisites added to every target without appearing in the automatic variables."
+snippet = '''
+.EXTRA_PREREQS := ${1:$(MAKEFILE_LIST)}$0'''
+
+[[entries]]
+name = "PREFIX and DESTDIR"
+keys = ["prefix", "destdir", "install", "bindir"]
+doc = "GNU install conventions: PREFIX picks the tree, DESTDIR relocates it for packaging."
+snippet = '''
+PREFIX ?= /usr/local
+bindir ?= $(PREFIX)/bin
+DESTDIR ?=$0'''

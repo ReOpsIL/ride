@@ -1,0 +1,161 @@
+title = "Class members"
+contexts = ["fields"]
+
+[[entries]]
+name = "virtual method"
+keys = ["virtual", "method", "fn"]
+doc = "Member function that derived classes may override."
+snippet = """
+virtual ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "override method"
+keys = ["override", "virtual", "method"]
+doc = "Override a base class virtual function."
+snippet = """
+${1:void} ${2:name}(${3:}) override {
+    $0
+}"""
+
+[[entries]]
+name = "final method"
+keys = ["final", "override", "virtual"]
+doc = "Override that cannot be overridden further."
+snippet = """
+${1:void} ${2:name}(${3:}) final {
+    $0
+}"""
+
+[[entries]]
+name = "pure virtual"
+keys = ["virtual", "pure", "abstract"]
+doc = "Virtual function with no implementation in this class."
+snippet = """
+virtual ${1:void} ${2:name}(${3:}) = 0;$0"""
+
+[[entries]]
+name = "virtual destructor"
+keys = ["virtual", "destructor", "dtor"]
+doc = "Destructor that lets a derived object be deleted through a base pointer."
+snippet = """
+virtual ~${1:Name}() = default;$0"""
+
+[[entries]]
+name = "const method"
+keys = ["const", "method", "getter"]
+doc = "Member function that does not modify the object."
+snippet = """
+${1:int} ${2:name}(${3:}) const {
+    return $0;
+}"""
+
+[[entries]]
+name = "static member"
+keys = ["static", "member", "field"]
+doc = "Data member shared by all instances, defined inline."
+snippet = """
+static inline ${1:int} ${2:count} = ${3:0};$0"""
+
+[[entries]]
+name = "static method"
+keys = ["static", "method", "fn"]
+doc = "Member function that needs no instance."
+snippet = """
+static ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "friend function"
+keys = ["friend", "fn"]
+doc = "Grant a free function access to private members."
+snippet = """
+friend ${1:void} ${2:name}(${3:const Name &obj});$0"""
+
+[[entries]]
+name = "friend class"
+keys = ["friend", "class"]
+doc = "Grant another class access to private members."
+snippet = """
+friend class ${1:Other};$0"""
+
+[[entries]]
+name = "nested class"
+keys = ["class", "nested", "inner"]
+doc = "Class defined inside another class."
+snippet = """
+class ${1:Inner} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "access specifier"
+keys = ["public", "private", "protected", "access"]
+doc = "Change member access for the members that follow."
+snippet = """
+${1:private}:
+    $0"""
+
+[[entries]]
+name = "bit field"
+keys = ["bit", "field", "bitfield"]
+doc = "Member that occupies a fixed number of bits."
+snippet = """
+${1:unsigned} ${2:flag} : ${3:1};$0"""
+
+[[entries]]
+name = "singleton"
+keys = ["singleton", "instance", "static"]
+doc = "Meyers singleton with a function-local static."
+snippet = """
+static ${1:Name} &instance() {
+    static ${1:Name} inst;
+    return inst;
+}$0"""
+
+[[entries]]
+name = "member"
+keys = ["member", "field"]
+doc = "Plain data member."
+snippet = """
+${1:int} ${2:value_};$0"""
+
+[[entries]]
+name = "member with default initializer"
+keys = ["member", "field", "init", "default"]
+doc = "Data member with an in-class default value."
+snippet = """
+${1:int} ${2:value_}{${3:0}};$0"""
+
+[[entries]]
+name = "getter"
+keys = ["get", "getter", "accessor"]
+doc = "Const accessor returning a member."
+snippet = """
+${1:const int &} ${2:value}() const { return ${3:value_}; }$0"""
+
+[[entries]]
+name = "setter"
+keys = ["set", "setter", "mutator"]
+doc = "Mutator that stores a new value."
+snippet = """
+void set_${1:value}(${2:int} v) { ${3:value_} = v; }$0"""
+
+[[entries]]
+name = "using base constructors"
+keys = ["using", "inherit", "constructor", "ctor"]
+doc = "Inherit the base class constructors."
+snippet = """
+using ${1:Base}::${1:Base};$0"""
+
+[[entries]]
+name = "static factory"
+keys = ["static", "factory", "create", "make"]
+doc = "Static function that builds an instance."
+snippet = """
+static ${1:Name} create(${2:}) {
+    return ${1:Name}($0);
+}"""

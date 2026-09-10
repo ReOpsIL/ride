@@ -1,0 +1,68 @@
+title = "Macros"
+contexts = ["preprocessor", "item"]
+
+[[entries]]
+name = "#define"
+keys = ["define", "macro", "constant"]
+doc = "Object-like macro."
+snippet = """
+#define ${1:NAME} ${2:value}$0"""
+
+[[entries]]
+name = "function-like macro"
+keys = ["define", "macro", "function"]
+doc = "Macro with parameters, fully parenthesized."
+snippet = """
+#define ${1:NAME}(${2:x}) (${3:(x) * (x)})$0"""
+
+[[entries]]
+name = "multi-line macro"
+keys = ["define", "macro", "do while"]
+doc = "Statement macro wrapped in do-while(0)."
+snippet = """
+#define ${1:NAME}(${2:x}) \\
+    do { \\
+        ${3:} \\
+    } while (0)$0"""
+
+[[entries]]
+name = "#undef"
+keys = ["undef", "macro"]
+doc = "Remove a macro definition."
+snippet = """
+#undef ${1:NAME}$0"""
+
+[[entries]]
+name = "predefined macros"
+keys = ["file", "line", "func", "date", "__file__", "__line__"]
+doc = "Compiler-provided macros: __FILE__, __LINE__, __func__, __DATE__, __TIME__."
+snippet = """
+__${1:FILE}__$0"""
+
+[[entries]]
+name = "stringize operator"
+keys = ["stringize", "stringify", "#", "macro"]
+doc = "Turn a macro argument into a string literal."
+snippet = """
+#define ${1:STR}(x) #x$0"""
+
+[[entries]]
+name = "token paste operator"
+keys = ["paste", "concat", "##", "macro"]
+doc = "Concatenate tokens inside a macro."
+snippet = """
+#define ${1:CAT}(a, b) a##b$0"""
+
+[[entries]]
+name = "variadic macro"
+keys = ["variadic", "va_args", "macro"]
+doc = "Macro accepting variable arguments."
+snippet = """
+#define ${1:LOG}(fmt, ...) std::printf(fmt, __VA_ARGS__)$0"""
+
+[[entries]]
+name = "#pragma"
+keys = ["pragma", "compiler"]
+doc = "Compiler-specific directive."
+snippet = """
+#pragma ${1:GCC diagnostic push}$0"""

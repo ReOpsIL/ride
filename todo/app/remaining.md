@@ -8,3 +8,5 @@
 - Outline shows occasional blank rows on large files (items with empty names); filter or name them
 - New File in the workspace tree still defaults to `untitled.rs`; reuse the save panel's language picker
 - Problems panel keeps a C file's diagnostics until that file is checked again; drop them when the buffer closes or the file is deleted
+- Cheat sheet pinned mode refetches on every caret move (one engine call each); add a per-line debounce if it shows up in profiles
+- Cheat sheet rows show the template's first lines joined with ⏎; a syntax-highlighted preview through the engine's highlighter would read better

@@ -1,0 +1,151 @@
+title = "Control flow"
+contexts = ["statement"]
+
+[[entries]]
+name = "if"
+keys = ["if", "cond", "branch"]
+doc = "Run a block when the condition is nonzero."
+snippet = '''
+if (${1:condition}) {
+    $0
+}'''
+
+[[entries]]
+name = "if else"
+keys = ["if", "else", "ifelse"]
+doc = "Choose between two blocks on a condition."
+snippet = '''
+if (${1:condition}) {
+    ${2:}
+} else {
+    $0
+}'''
+
+[[entries]]
+name = "else if"
+keys = ["else", "elif", "elseif", "if"]
+doc = "Chain another condition after a preceding if."
+snippet = '''
+else if (${1:condition}) {
+    $0
+}'''
+
+[[entries]]
+name = "if else if chain"
+keys = ["if", "else", "chain", "elif"]
+doc = "Test several conditions in order with a final fallback."
+snippet = '''
+if (${1:a}) {
+    ${2:}
+} else if (${3:b}) {
+    ${4:}
+} else {
+    $0
+}'''
+
+[[entries]]
+name = "switch"
+keys = ["switch", "case", "default"]
+doc = "Multi-way branch on an integer or enum value; every case needs a break."
+snippet = '''
+switch (${1:value}) {
+case ${2:0}:
+    ${3:}
+    break;
+default:
+    $0
+    break;
+}'''
+
+[[entries]]
+name = "case"
+keys = ["case", "switch"]
+doc = "One label inside a switch, ending in break."
+snippet = '''
+case ${1:value}:
+    $0
+    break;'''
+
+[[entries]]
+name = "default"
+keys = ["default", "switch"]
+doc = "Label taken when no case matches."
+snippet = '''
+default:
+    $0
+    break;'''
+
+[[entries]]
+name = "fallthrough"
+keys = ["fallthrough", "case", "switch", "[["]
+doc = "Intentionally continue into the next case; C23 attribute silences the warning."
+snippet = '''
+case ${1:value}:
+    ${2:}
+    [[fallthrough]];
+case ${3:next}:
+    $0
+    break;'''
+
+[[entries]]
+name = "while"
+keys = ["while", "loop"]
+doc = "Loop while the condition stays nonzero, testing before each pass."
+snippet = '''
+while (${1:condition}) {
+    $0
+}'''
+
+[[entries]]
+name = "do while"
+keys = ["do", "while", "loop", "dowhile"]
+doc = "Loop that runs the body at least once, testing afterwards."
+snippet = '''
+do {
+    $0
+} while (${1:condition});'''
+
+[[entries]]
+name = "for"
+keys = ["for", "loop", "count"]
+doc = "Counted loop with init, test and step."
+snippet = '''
+for (${1:int i = 0}; ${2:i < n}; ${3:i++}) {
+    $0
+}'''
+
+[[entries]]
+name = "for reverse"
+keys = ["for", "loop", "reverse", "down", "backwards"]
+doc = "Count down safely with an unsigned index by testing before decrement."
+snippet = '''
+for (size_t ${1:i} = ${2:n}; ${1:i}-- > 0;) {
+    $0
+}'''
+
+[[entries]]
+name = "for multiple variables"
+keys = ["for", "loop", "comma", "two"]
+doc = "Drive two same-typed variables with the comma operator."
+snippet = '''
+for (${1:int i = 0, j = n - 1}; ${2:i < j}; ${3:i++, j--}) {
+    $0
+}'''
+
+[[entries]]
+name = "infinite loop"
+keys = ["for", "forever", "infinite", "loop", "for(;;)"]
+doc = "Loop until a break or return inside the body."
+snippet = '''
+for (;;) {
+    $0
+}'''
+
+[[entries]]
+name = "while true"
+keys = ["while", "forever", "infinite", "loop", "while(1)"]
+doc = "Infinite loop written with while."
+snippet = '''
+while (1) {
+    $0
+}'''

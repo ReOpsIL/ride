@@ -23,6 +23,7 @@ enum Shortcuts {
         ShortcutEntry(id: "problems", name: "Show Problems", keys: "⇧⌘M"),
         ShortcutEntry(id: "format", name: "Format Document", keys: "⌃⇧I"),
         ShortcutEntry(id: "sidebar", name: "Toggle Sidebar", keys: "⌃⌘S"),
+        ShortcutEntry(id: "cheat", name: "Cheat Sheet", keys: "⌃⇧Space"),
         ShortcutEntry(id: "help", name: "Keyboard Shortcuts", keys: "⌘/"),
     ]
 

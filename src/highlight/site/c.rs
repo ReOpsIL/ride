@@ -4,7 +4,7 @@ use super::common::{
     PositionWords, head_before, in_open_comment, inside, is_word, path_segments, position,
     word_start,
 };
-use super::{Site, SiteAt};
+use super::{Position, Site, SiteAt};
 
 const NO_COMPLETION: &[&str] = &[
     "comment",
@@ -49,6 +49,14 @@ const WORDS: PositionWords = PositionWords {
 };
 
 const INCLUDES: &[&str] = &["include", "import", "include_next"];
+
+pub fn is_type_position(head: &str) -> bool {
+    let trimmed = head.trim_end();
+    position(head, &WORDS) == Position::Type
+        || trimmed
+            .strip_suffix('<')
+            .is_some_and(|h| h.trim_end().ends_with("template"))
+}
 
 pub fn c(tree: Option<&Tree>, text: &str, at: usize) -> SiteAt {
     classify(tree, text, at, false)

@@ -1,0 +1,208 @@
+title = "Tests and docs"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "test fn"
+keys = ["test", "fn", "unit", "assert"]
+doc = "Define a unit test."
+snippet = '''
+#[test]
+fn ${1:name}() {
+    $0
+}'''
+
+[[entries]]
+name = "tests module"
+keys = ["test", "mod", "cfg", "tests", "module", "unit"]
+doc = "Define the conventional test module compiled only under cargo test."
+snippet = '''
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ${1:name}() {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "test should_panic"
+keys = ["test", "should_panic", "panic", "expected"]
+doc = "Define a test that passes only when it panics with a matching message."
+snippet = '''
+#[test]
+#[should_panic(expected = "${1:message}")]
+fn ${2:name}() {
+    $0
+}'''
+
+[[entries]]
+name = "test ignore"
+keys = ["test", "ignore", "skip", "slow"]
+doc = "Define a test skipped by default."
+snippet = '''
+#[test]
+#[ignore = "${1:reason}"]
+fn ${2:name}() {
+    $0
+}'''
+
+[[entries]]
+name = "test returning Result"
+keys = ["test", "result", "question", "error"]
+doc = "Define a test that can use the question-mark operator."
+snippet = '''
+#[test]
+fn ${1:name}() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "async test (tokio)"
+keys = ["test", "async", "tokio", "await"]
+doc = "Define an async test run on the tokio runtime."
+snippet = '''
+#[tokio::test]
+async fn ${1:name}() {
+    $0
+}'''
+
+[[entries]]
+name = "table-driven test"
+keys = ["test", "table", "cases", "loop", "parametrized"]
+doc = "Run one assertion over a table of input and expected pairs."
+snippet = '''
+#[test]
+fn ${1:name}() {
+    let cases = [(${2:input}, ${3:expected})];
+    for (input, expected) in cases {
+        assert_eq!(${4:f}(input), expected, "input {input:?}");$0
+    }
+}'''
+
+[[entries]]
+name = "test helper fn"
+keys = ["test", "helper", "fixture", "setup"]
+doc = "Define a fixture builder shared by tests in the module."
+snippet = '''
+fn ${1:fixture}() -> ${2:Type} {
+    $0
+}'''
+
+[[entries]]
+name = "assert float approx"
+keys = ["assert", "float", "approx", "epsilon", "abs"]
+doc = "Assert two floats are equal within a tolerance."
+snippet = '''
+assert!((${1:actual} - ${2:expected}).abs() < ${3:1e-9}, "got {}", ${1:actual});$0'''
+
+[[entries]]
+name = "assert error variant"
+keys = ["assert", "err", "matches", "error", "variant"]
+doc = "Assert that a call fails with a specific error variant."
+snippet = '''
+assert!(matches!(${1:call}, Err(${2:Error::NotFound})));$0'''
+
+[[entries]]
+name = "doc comment ///"
+keys = ["doc", "comment", "documentation", "rustdoc"]
+doc = "Document the following item with markdown."
+snippet = '''
+/// ${1:Summary line.}
+///
+/// ${2:Details.}$0'''
+
+[[entries]]
+name = "module doc //!"
+keys = ["doc", "module", "crate", "inner", "comment"]
+doc = "Document the enclosing module or crate."
+snippet = '''
+//! ${1:Crate or module summary.}$0'''
+
+[[entries]]
+name = "doc test"
+keys = ["doc", "test", "example", "fence", "rustdoc"]
+doc = "Add a code example to docs that cargo test compiles and runs."
+snippet = '''
+/// # Examples
+///
+/// ```
+/// ${1:let value = crate_name::function();}
+/// assert_eq!(${2:value}, ${3:expected});
+/// ```$0'''
+
+[[entries]]
+name = "doc test hidden lines"
+keys = ["doc", "test", "hidden", "hash", "setup"]
+doc = "Hide setup lines from rendered docs while still compiling them."
+snippet = '''
+/// ```
+/// # use ${1:crate_name::Type};
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// ${2:code}
+/// # Ok(())
+/// # }
+/// ```$0'''
+
+[[entries]]
+name = "doc sections"
+keys = ["doc", "panics", "errors", "safety", "sections"]
+doc = "Document the standard sections of a function."
+snippet = '''
+/// ${1:Summary.}
+///
+/// # Errors
+/// ${2:When this fails.}
+///
+/// # Panics
+/// ${3:When this panics.}$0'''
+
+[[entries]]
+name = "doc link"
+keys = ["doc", "link", "intra", "reference", "see"]
+doc = "Link to another item from docs with an intra-doc link."
+snippet = '''
+/// See [`${1:Type::method}`].$0'''
+
+[[entries]]
+name = "integration test file"
+keys = ["test", "integration", "tests", "dir", "file"]
+doc = "Skeleton for a file under tests/ that uses the crate as a dependency."
+snippet = '''
+use ${1:crate_name}::*;
+
+#[test]
+fn ${2:name}() {
+    $0
+}'''
+
+[[entries]]
+name = "bench (criterion)"
+keys = ["bench", "benchmark", "criterion", "perf"]
+doc = "Skeleton for a criterion benchmark under benches/."
+snippet = '''
+use criterion::{criterion_group, criterion_main, Criterion};
+
+fn ${1:bench}(c: &mut Criterion) {
+    c.bench_function("${2:name}", |b| b.iter(|| ${3:work()}));$0
+}
+
+criterion_group!(benches, ${1:bench});
+criterion_main!(benches);'''
+
+[[entries]]
+name = "test with temp dir"
+keys = ["test", "tempdir", "tempfile", "fs", "fixture"]
+doc = "Create a temporary directory cleaned up when the test ends."
+snippet = '''
+let ${1:dir} = tempfile::tempdir()?;
+let ${2:path} = ${1:dir}.path().join("${3:file.txt}");$0'''
+
+[[entries]]
+name = "cargo test cheat"
+keys = ["cargo", "test", "run", "filter", "nocapture", "command"]
+doc = "Common cargo test invocations, as a comment to keep nearby."
+snippet = '''
+// cargo test ${1:name} -- --nocapture --test-threads=1 --ignored$0'''

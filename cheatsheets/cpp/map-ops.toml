@@ -1,0 +1,83 @@
+title = "Map and set operations"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "map find"
+keys = ["find", "map", "lookup", "contains"]
+doc = "Look up a key and test for presence."
+snippet = """
+if (auto ${1:it} = ${2:m}.find(${3:key}); ${1:it} != ${2:m}.end()) {
+    $0
+}"""
+
+[[entries]]
+name = "map contains"
+keys = ["contains", "map", "set", "has"]
+doc = "C++20 key presence test."
+snippet = """
+${1:m}.contains(${2:key})$0"""
+
+[[entries]]
+name = "map count"
+keys = ["count", "map", "set"]
+doc = "Number of elements with a key (0 or 1 for unique containers)."
+snippet = """
+${1:m}.count(${2:key})$0"""
+
+[[entries]]
+name = "map insert_or_assign"
+keys = ["insert_or_assign", "map", "insert", "assign", "upsert"]
+doc = "Insert a key or overwrite its value."
+snippet = """
+${1:m}.insert_or_assign(${2:key}, ${3:value});$0"""
+
+[[entries]]
+name = "map try_emplace"
+keys = ["try_emplace", "map", "emplace", "insert"]
+doc = "Insert only when the key is absent, without constructing otherwise."
+snippet = """
+${1:m}.try_emplace(${2:key}, ${3:args});$0"""
+
+[[entries]]
+name = "map insert with result"
+keys = ["insert", "map", "set", "inserted", "pair"]
+doc = "Insert and learn whether the key was new."
+snippet = """
+auto [${1:it}, ${2:inserted}] = ${3:m}.insert({${4:key}, ${5:value}});$0"""
+
+[[entries]]
+name = "map erase key"
+keys = ["erase", "map", "set", "key", "remove"]
+doc = "Erase by key and get the count removed."
+snippet = """
+${1:m}.erase(${2:key});$0"""
+
+[[entries]]
+name = "map extract"
+keys = ["extract", "map", "node", "move"]
+doc = "Move a node out of a map to rekey or transfer it."
+snippet = """
+auto ${1:node} = ${2:m}.extract(${3:key});$0"""
+
+[[entries]]
+name = "equal_range"
+keys = ["equal_range", "multimap", "range"]
+doc = "Iterator range of all elements with a key."
+snippet = """
+auto [${1:first}, ${2:last}] = ${3:m}.equal_range(${4:key});$0"""
+
+[[entries]]
+name = "stack top / pop"
+keys = ["top", "pop", "stack", "push"]
+doc = "Read and remove the top of a stack."
+snippet = """
+auto ${1:x} = ${2:st}.top();
+${2:st}.pop();$0"""
+
+[[entries]]
+name = "queue front / pop"
+keys = ["front", "pop", "queue", "push"]
+doc = "Read and remove the front of a queue."
+snippet = """
+auto ${1:x} = ${2:q}.front();
+${2:q}.pop();$0"""

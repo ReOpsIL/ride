@@ -1,0 +1,115 @@
+title = "Directives"
+contexts = ["item"]
+
+[[entries]]
+name = "include"
+keys = ["include", "import"]
+doc = "Read another makefile here and fail if it is missing."
+snippet = '''
+include ${1:config.mk}$0'''
+
+[[entries]]
+name = "-include"
+keys = ["-include", "include", "optional", "silent"]
+doc = "Read another makefile here, silently ignoring a missing file."
+snippet = '''
+-include ${1:$(DEPS)}$0'''
+
+[[entries]]
+name = "sinclude"
+keys = ["sinclude", "include", "optional"]
+doc = "Alternative spelling of -include kept for compatibility."
+snippet = '''
+sinclude ${1:local.mk}$0'''
+
+[[entries]]
+name = "vpath pattern"
+keys = ["vpath", "search", "pattern", "path"]
+doc = "Search these directories for prerequisites matching the pattern."
+snippet = '''
+vpath ${1:%.c} ${2:src}$0'''
+
+[[entries]]
+name = "vpath clear pattern"
+keys = ["vpath", "clear", "reset"]
+doc = "Clear the search path for one pattern."
+snippet = '''
+vpath ${1:%.c}$0'''
+
+[[entries]]
+name = "vpath clear all"
+keys = ["vpath", "clear", "reset", "all"]
+doc = "Clear every directory search path set with vpath."
+snippet = '''
+vpath$0'''
+
+[[entries]]
+name = "user function with define"
+keys = ["define", "function", "call", "parameters", "args"]
+doc = "A multi-line variable used as a function through $(call) with $(1), $(2) parameters."
+snippet = '''
+define ${1:compile}
+$(CC) $(CFLAGS) -c $(1) -o $(2)
+endef
+$0'''
+
+[[entries]]
+name = "one-line user function"
+keys = ["function", "call", "lambda", "parameters"]
+doc = "A recursive variable used as a function with $(call)."
+snippet = '''
+${1:uppercase} = $(shell echo $(1) | tr a-z A-Z)$0'''
+
+[[entries]]
+name = "rule template with eval"
+keys = ["eval", "template", "generate", "rules", "call"]
+doc = "Define a rule template and instantiate it per program with eval and call."
+snippet = '''
+define PROGRAM_template
+$(1): $(${2:$(1)_OBJS})
+	$$(CC) $$(LDFLAGS) $$^ $$(LDLIBS) -o $$@
+endef
+$(foreach p,$(${1:PROGRAMS}),$(eval $(call PROGRAM_template,$(p))))$0'''
+
+[[entries]]
+name = "undefine"
+keys = ["undefine", "unset", "remove"]
+doc = "Remove a variable so origin reports it as undefined."
+snippet = '''
+undefine ${1:VAR}$0'''
+
+[[entries]]
+name = "export all variables"
+keys = ["export", "all", "environment"]
+doc = "Export every variable to recipe shells and sub-makes."
+snippet = '''
+export$0'''
+
+[[entries]]
+name = "unexport all variables"
+keys = ["unexport", "all", "environment"]
+doc = "Stop exporting variables by default."
+snippet = '''
+unexport$0'''
+
+[[entries]]
+name = ".SECONDEXPANSION"
+keys = ["secondexpansion", "second", "expansion", "$$"]
+doc = "Expand prerequisite lists a second time so $$@ and $$* refer to the target."
+snippet = '''
+.SECONDEXPANSION:
+${1:%.o}: $$(${2:$$@_DEPS})$0'''
+
+[[entries]]
+name = "override directive"
+keys = ["override", "commandline", "force"]
+doc = "Make an assignment take effect even against a command-line value."
+snippet = '''
+override ${1:VAR} := ${2:value}$0'''
+
+[[entries]]
+name = "load"
+keys = ["load", "plugin", "extension", "dynamic"]
+doc = "Load a dynamic object that extends make with new functions."
+snippet = '''
+load ${1:./mk-plugin.so}$0'''

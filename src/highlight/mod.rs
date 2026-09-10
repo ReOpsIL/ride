@@ -10,6 +10,7 @@ mod c_types;
 mod call_site;
 mod capture;
 mod cmake_outline;
+mod context;
 mod edit;
 mod errors;
 mod fences;
@@ -47,6 +48,7 @@ mod types;
 mod walk;
 
 pub use call_site::CallSite;
+pub use context::Context;
 pub use includes::{IncludeRef, include_on_line};
 pub use members::Root;
 pub use scope::SourceScope;

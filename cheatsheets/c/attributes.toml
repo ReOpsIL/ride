@@ -1,0 +1,100 @@
+title = "Globals and attributes"
+contexts = ["item"]
+
+[[entries]]
+name = "global variable"
+keys = ["global", "var", "variable"]
+doc = "File-scope variable with external linkage, initialised once."
+snippet = '''
+${1:int} ${2:counter} = ${3:0};$0'''
+
+[[entries]]
+name = "extern declaration"
+keys = ["extern", "global", "declare"]
+doc = "Declare a global that is defined in another translation unit."
+snippet = '''
+extern ${1:int} ${2:counter};$0'''
+
+[[entries]]
+name = "const global"
+keys = ["const", "static const", "constant"]
+doc = "File-scope constant; before C23 it is not a constant expression, so use enum or #define for array bounds."
+snippet = '''
+static const ${1:int} ${2:max_items} = ${3:64};$0'''
+
+[[entries]]
+name = "const table"
+keys = ["const", "table", "lookup", "array"]
+doc = "Read-only lookup table placed in constant storage."
+snippet = '''
+static const ${1:char *}${2:names}[] = {
+    ${3:"zero", "one", "two"},
+};$0'''
+
+[[entries]]
+name = "_Noreturn"
+keys = ["noreturn", "_noreturn", "die", "fatal"]
+doc = "Mark a function that never returns to its caller (C11; C23 prefers [[noreturn]])."
+snippet = '''
+_Noreturn void ${1:die}(const char *${2:msg}) {
+    $0
+    exit(EXIT_FAILURE);
+}'''
+
+[[entries]]
+name = "[[noreturn]]"
+keys = ["noreturn", "attribute", "[[", "die"]
+doc = "C23 attribute form of a function that never returns."
+snippet = '''
+[[noreturn]] void ${1:die}(const char *${2:msg}) {
+    $0
+    exit(EXIT_FAILURE);
+}'''
+
+[[entries]]
+name = "[[nodiscard]]"
+keys = ["nodiscard", "attribute", "[[", "warn_unused_result"]
+doc = "Warn when the return value is ignored (C23)."
+snippet = '''
+[[nodiscard]] ${1:int} ${2:name}(${3:void});$0'''
+
+[[entries]]
+name = "[[maybe_unused]]"
+keys = ["maybe_unused", "unused", "attribute", "[["]
+doc = "Silence unused warnings for a declaration that may go unreferenced (C23)."
+snippet = '''
+[[maybe_unused]] static ${1:int} ${2:helper}(${3:void}) {
+    $0
+}'''
+
+[[entries]]
+name = "[[deprecated]]"
+keys = ["deprecated", "attribute", "[["]
+doc = "Warn at each use of an obsolete function, with an optional message (C23)."
+snippet = '''
+[[deprecated("${1:use new_name instead}")]] ${2:int} ${3:old_name}(${4:void});$0'''
+
+[[entries]]
+name = "__attribute__((unused))"
+keys = ["attribute", "unused", "gcc", "__attribute__"]
+doc = "GCC/Clang attribute that suppresses unused warnings on a declaration."
+snippet = '''
+__attribute__((unused)) static ${1:int} ${2:helper}(${3:void});$0'''
+
+[[entries]]
+name = "__attribute__((format))"
+keys = ["attribute", "format", "printf", "gcc", "__attribute__"]
+doc = "Let the compiler check printf-style arguments against the format string."
+snippet = '''
+__attribute__((format(printf, ${1:1}, ${2:2})))
+void ${3:log_msg}(const char *fmt, ...);$0'''
+
+[[entries]]
+name = "__attribute__((constructor))"
+keys = ["attribute", "constructor", "destructor", "init", "gcc", "__attribute__"]
+doc = "Run a function automatically before main (or after exit with destructor)."
+snippet = '''
+__attribute__((${1:constructor}))
+static void ${2:init}(void) {
+    $0
+}'''

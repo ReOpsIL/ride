@@ -8,9 +8,10 @@ mod plain;
 mod rust;
 mod use_path;
 
-pub use c::{c as c_site, cpp as cpp_site};
+pub use c::{c as c_site, cpp as cpp_site, is_type_position as c_type_position};
+pub use common::word_start;
 pub use plain::plain as plain_site;
-pub use rust::rust as rust_site;
+pub use rust::{is_type_position as rust_type_position, rust as rust_site};
 pub use use_path::leaf_names as use_leaf_names;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -1,0 +1,185 @@
+title = "Attributes"
+contexts = ["attribute", "item"]
+
+[[entries]]
+name = "#[derive]"
+keys = ["derive", "debug", "clone", "auto"]
+doc = "Auto-implement traits for the following type."
+snippet = '''
+#[derive(${1:Debug, Clone, PartialEq})]$0'''
+
+[[entries]]
+name = "#[cfg]"
+keys = ["cfg", "conditional", "target", "os", "platform"]
+doc = "Compile the following item only when the configuration predicate holds."
+snippet = '''
+#[cfg(${1:target_os = "linux"})]$0'''
+
+[[entries]]
+name = "#[cfg(feature)]"
+keys = ["cfg", "feature", "conditional", "optional"]
+doc = "Compile the following item only when a Cargo feature is enabled."
+snippet = '''
+#[cfg(feature = "${1:name}")]$0'''
+
+[[entries]]
+name = "#[cfg(not / any / all)]"
+keys = ["cfg", "not", "any", "all", "conditional"]
+doc = "Combine configuration predicates."
+snippet = '''
+#[cfg(${1:any}(${2:unix, windows}))]$0'''
+
+[[entries]]
+name = "#[cfg_attr]"
+keys = ["cfg_attr", "conditional", "attribute", "derive", "serde"]
+doc = "Apply another attribute only when a predicate holds."
+snippet = '''
+#[cfg_attr(${1:feature = "serde"}, ${2:derive(serde::Serialize)})]$0'''
+
+[[entries]]
+name = "#[allow]"
+keys = ["allow", "lint", "warning", "suppress", "dead_code", "unused"]
+doc = "Silence a lint for the following item."
+snippet = '''
+#[allow(${1:dead_code})]$0'''
+
+[[entries]]
+name = "#[warn] / #[deny]"
+keys = ["warn", "deny", "forbid", "lint", "clippy"]
+doc = "Raise the level of a lint for the following item."
+snippet = '''
+#[${1:deny}(${2:missing_docs})]$0'''
+
+[[entries]]
+name = "#![crate attribute]"
+keys = ["crate", "inner", "attribute", "bang", "lint", "global"]
+doc = "Inner attribute applying to the whole crate, placed at the top of the root file."
+snippet = '''
+#![${1:warn(missing_docs)}]$0'''
+
+[[entries]]
+name = "#[inline]"
+keys = ["inline", "always", "never", "performance"]
+doc = "Hint that the function should be inlined at call sites."
+snippet = '''
+#[inline${1:(always)}]$0'''
+
+[[entries]]
+name = "#[must_use]"
+keys = ["must_use", "warn", "unused", "result"]
+doc = "Warn when the function's result or the type's value is discarded."
+snippet = '''
+#[must_use${1: = "reason"}]$0'''
+
+[[entries]]
+name = "#[deprecated]"
+keys = ["deprecated", "obsolete", "warning", "since"]
+doc = "Warn callers that an item should no longer be used."
+snippet = '''
+#[deprecated(since = "${1:1.0.0}", note = "${2:use other instead}")]$0'''
+
+[[entries]]
+name = "#[doc]"
+keys = ["doc", "documentation", "hidden", "include"]
+doc = "Attach or control documentation, such as hiding an item from docs."
+snippet = '''
+#[doc${1:(hidden)}]$0'''
+
+[[entries]]
+name = "#[repr(C)]"
+keys = ["repr", "c", "layout", "ffi", "transparent", "packed"]
+doc = "Fix the memory layout of a type for FFI."
+snippet = '''
+#[repr(${1:C})]$0'''
+
+[[entries]]
+name = "#[repr(int)]"
+keys = ["repr", "u8", "enum", "discriminant", "integer"]
+doc = "Store an enum's discriminant in a specific integer type."
+snippet = '''
+#[repr(${1:u8})]$0'''
+
+[[entries]]
+name = "#[non_exhaustive]"
+keys = ["non_exhaustive", "enum", "struct", "future", "variants"]
+doc = "Reserve the right to add variants or fields without a breaking change."
+snippet = '''
+#[non_exhaustive]$0'''
+
+[[entries]]
+name = "#[test]"
+keys = ["test", "unit"]
+doc = "Mark a function as a test run by cargo test."
+snippet = '''
+#[test]$0'''
+
+[[entries]]
+name = "#[cfg(test)]"
+keys = ["cfg", "test", "module", "tests"]
+doc = "Compile the following item only when building tests."
+snippet = '''
+#[cfg(test)]$0'''
+
+[[entries]]
+name = "#[should_panic]"
+keys = ["should_panic", "test", "panic", "expected"]
+doc = "Make a test pass only if it panics, optionally with a matching message."
+snippet = '''
+#[should_panic${1:(expected = "message")}]$0'''
+
+[[entries]]
+name = "#[ignore]"
+keys = ["ignore", "test", "skip", "slow"]
+doc = "Skip a test unless cargo test is run with --ignored."
+snippet = '''
+#[ignore${1: = "reason"}]$0'''
+
+[[entries]]
+name = "#[unsafe(no_mangle)]"
+keys = ["no_mangle", "unsafe", "export", "ffi", "symbol"]
+doc = "Export a function or static under its plain name for C callers."
+snippet = '''
+#[unsafe(no_mangle)]$0'''
+
+[[entries]]
+name = "#[link]"
+keys = ["link", "library", "ffi", "extern", "native"]
+doc = "Link a native library for the following extern block."
+snippet = '''
+#[link(name = "${1:name}"${2:, kind = "static"})]$0'''
+
+[[entries]]
+name = "#[macro_export]"
+keys = ["macro_export", "macro", "export", "public"]
+doc = "Export a macro_rules macro at the crate root."
+snippet = '''
+#[macro_export]$0'''
+
+[[entries]]
+name = "#[track_caller]"
+keys = ["track_caller", "panic", "location", "caller"]
+doc = "Report panics inside this function at the caller's location."
+snippet = '''
+#[track_caller]$0'''
+
+[[entries]]
+name = "#![no_std]"
+keys = ["no_std", "embedded", "core", "crate"]
+doc = "Build the crate against core instead of std."
+snippet = '''
+#![no_std]$0'''
+
+[[entries]]
+name = "#![feature]"
+keys = ["feature", "nightly", "unstable", "crate"]
+doc = "Enable an unstable compiler feature on nightly."
+snippet = '''
+#![feature(${1:name})]$0'''
+
+[[entries]]
+name = "#[global_allocator]"
+keys = ["global_allocator", "allocator", "static", "alloc"]
+doc = "Choose the crate's global memory allocator."
+snippet = '''
+#[global_allocator]
+static GLOBAL: ${1:std::alloc::System} = ${1:std::alloc::System};$0'''

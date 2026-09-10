@@ -1,0 +1,210 @@
+title = "Error handling"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "? operator"
+keys = ["question", "try", "propagate", "unwrap", "error"]
+doc = "Return early with the error or None, converting the error type with From."
+snippet = '''
+${1:expr}?$0'''
+
+[[entries]]
+name = "let ? bind"
+keys = ["let", "question", "try", "propagate"]
+doc = "Bind the success value or return the error to the caller."
+snippet = '''
+let ${1:value} = ${2:fallible()}?;$0'''
+
+[[entries]]
+name = "Ok"
+keys = ["ok", "result", "success", "return"]
+doc = "Wrap a success value in Result."
+snippet = '''
+Ok(${1:value})$0'''
+
+[[entries]]
+name = "Err"
+keys = ["err", "result", "error", "return", "fail"]
+doc = "Return an error value from a Result-returning function."
+snippet = '''
+return Err(${1:error}.into());$0'''
+
+[[entries]]
+name = "match Result"
+keys = ["result", "ok", "err", "handle"]
+doc = "Handle both outcomes of a Result explicitly."
+snippet = '''
+match ${1:result} {
+    Ok(${2:value}) => $0,
+    Err(${3:e}) => ${4:eprintln!("error: {e\}")},
+}'''
+
+[[entries]]
+name = "if let Ok"
+keys = ["if", "let", "ok", "result"]
+doc = "Run a block only when a Result is Ok."
+snippet = '''
+if let Ok(${1:value}) = ${2:result} {
+    $0
+}'''
+
+[[entries]]
+name = "if let Err"
+keys = ["if", "let", "err", "result", "log"]
+doc = "Inspect the error of a Result without stopping."
+snippet = '''
+if let Err(${1:e}) = ${2:result} {
+    ${3:eprintln!("{e\}")};$0
+}'''
+
+[[entries]]
+name = "unwrap_or"
+keys = ["unwrap", "or", "default", "fallback", "option"]
+doc = "Take the contained value or an eagerly evaluated fallback."
+snippet = '''
+.unwrap_or(${1:default})$0'''
+
+[[entries]]
+name = "unwrap_or_else"
+keys = ["unwrap", "or", "else", "fallback", "lazy"]
+doc = "Take the contained value or compute a fallback from a closure."
+snippet = '''
+.unwrap_or_else(|${1:e}| ${2:expr})$0'''
+
+[[entries]]
+name = "unwrap_or_default"
+keys = ["unwrap", "or", "default", "zero", "empty"]
+doc = "Take the contained value or the type's Default."
+snippet = '''
+.unwrap_or_default()$0'''
+
+[[entries]]
+name = "expect"
+keys = ["expect", "unwrap", "panic", "message"]
+doc = "Take the contained value or panic with a message explaining why it should exist."
+snippet = '''
+.expect("${1:reason it cannot fail}")$0'''
+
+[[entries]]
+name = "unwrap"
+keys = ["unwrap", "panic", "force"]
+doc = "Take the contained value or panic, acceptable in tests and prototypes."
+snippet = '''
+.unwrap()$0'''
+
+[[entries]]
+name = "map_err"
+keys = ["map", "err", "error", "convert", "wrap"]
+doc = "Convert the error variant with a closure, leaving Ok untouched."
+snippet = '''
+.map_err(|${1:e}| ${2:MyError::Io(e)})?$0'''
+
+[[entries]]
+name = "ok_or"
+keys = ["ok", "or", "option", "result", "convert"]
+doc = "Turn an Option into a Result with a given error for None."
+snippet = '''
+.ok_or(${1:error})?$0'''
+
+[[entries]]
+name = "ok_or_else"
+keys = ["ok", "or", "else", "option", "result", "lazy"]
+doc = "Turn an Option into a Result, building the error lazily."
+snippet = '''
+.ok_or_else(|| ${1:error})?$0'''
+
+[[entries]]
+name = "and_then"
+keys = ["and", "then", "chain", "flatmap", "bind"]
+doc = "Chain another fallible step on the success value."
+snippet = '''
+.and_then(|${1:value}| ${2:next(value)})$0'''
+
+[[entries]]
+name = "map on Option/Result"
+keys = ["map", "option", "result", "transform"]
+doc = "Transform the contained success value."
+snippet = '''
+.map(|${1:value}| ${2:expr})$0'''
+
+[[entries]]
+name = "ok"
+keys = ["ok", "result", "option", "discard", "ignore"]
+doc = "Discard the error and turn a Result into an Option."
+snippet = '''
+.ok()$0'''
+
+[[entries]]
+name = "is_ok / is_err / is_some"
+keys = ["is", "ok", "err", "some", "none", "check"]
+doc = "Test which variant a Result or Option holds."
+snippet = '''
+.${1:is_ok}()$0'''
+
+[[entries]]
+name = "matches!"
+keys = ["matches", "pattern", "bool", "test"]
+doc = "Test whether a value matches a pattern, yielding a bool."
+snippet = '''
+matches!(${1:value}, ${2:Some(_)})$0'''
+
+[[entries]]
+name = "with context (map_err format)"
+keys = ["context", "map", "err", "format", "wrap", "message"]
+doc = "Attach a message to an error while converting it to a string error."
+snippet = '''
+.map_err(|e| format!("${1:failed to read {path\}}: {e}"))?$0'''
+
+[[entries]]
+name = "Box<dyn Error> from string"
+keys = ["box", "error", "string", "into", "from"]
+doc = "Build a boxed error from a message using its From impl for strings."
+snippet = '''
+return Err(format!("${1:message}").into());$0'''
+
+[[entries]]
+name = "custom error enum"
+keys = ["enum", "error", "custom", "display", "thiserror"]
+doc = "Define an error enum with Display and Error impls."
+snippet = '''
+#[derive(Debug)]
+pub enum ${1:Error} {
+    ${2:Io}(std::io::Error),
+    ${3:Parse}(String),
+}
+
+impl std::fmt::Display for ${1:Error} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::${2:Io}(e) => write!(f, "io error: {e}"),
+            Self::${3:Parse}(msg) => write!(f, "parse error: {msg}"),
+        }
+    }
+}
+
+impl std::error::Error for ${1:Error} {}$0'''
+
+[[entries]]
+name = "From for error conversion"
+keys = ["from", "error", "convert", "question", "impl"]
+doc = "Let the question-mark operator convert a source error into your error type."
+snippet = '''
+impl From<${1:std::io::Error}> for ${2:Error} {
+    fn from(e: ${1:std::io::Error}) -> Self {
+        Self::${3:Io}(e)
+    }
+}$0'''
+
+[[entries]]
+name = "Error source"
+keys = ["error", "source", "cause", "chain", "impl"]
+doc = "Expose the underlying error for error chain reporting."
+snippet = '''
+impl std::error::Error for ${1:Error} {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::${2:Io}(e) => Some(e),
+            _ => None,
+        }
+    }
+}$0'''

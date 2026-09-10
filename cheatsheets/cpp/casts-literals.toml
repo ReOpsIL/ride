@@ -1,0 +1,181 @@
+title = "Casts and literals"
+contexts = ["expression"]
+
+[[entries]]
+name = "static_cast"
+keys = ["static_cast", "cast", "convert"]
+doc = "Checked compile-time conversion between related types."
+snippet = """
+static_cast<${1:int}>(${2:value})$0"""
+
+[[entries]]
+name = "dynamic_cast"
+keys = ["dynamic_cast", "cast", "downcast", "rtti"]
+doc = "Runtime-checked downcast that yields nullptr on failure."
+snippet = """
+dynamic_cast<${1:Derived} *>(${2:base})$0"""
+
+[[entries]]
+name = "dynamic_cast check"
+keys = ["dynamic_cast", "if", "downcast"]
+doc = "Downcast and branch when it succeeds."
+snippet = """
+if (auto *${1:d} = dynamic_cast<${2:Derived} *>(${3:base})) {
+    $0
+}"""
+
+[[entries]]
+name = "const_cast"
+keys = ["const_cast", "cast", "const"]
+doc = "Remove or add const."
+snippet = """
+const_cast<${1:T} *>(${2:ptr})$0"""
+
+[[entries]]
+name = "reinterpret_cast"
+keys = ["reinterpret_cast", "cast", "bits", "pointer"]
+doc = "Reinterpret the bit pattern as another pointer or integer type."
+snippet = """
+reinterpret_cast<${1:std::uintptr_t}>(${2:ptr})$0"""
+
+[[entries]]
+name = "C-style cast"
+keys = ["cast", "c", "()"]
+doc = "Legacy cast (prefer the named casts)."
+snippet = """
+(${1:int})${2:value}$0"""
+
+[[entries]]
+name = "functional cast"
+keys = ["cast", "functional", "construct"]
+doc = "Construct a value of a type from an argument."
+snippet = """
+${1:int}(${2:value})$0"""
+
+[[entries]]
+name = "std::bit_cast"
+keys = ["bit_cast", "cast", "bits", "punning"]
+doc = "C++20 reinterpret the object representation safely."
+snippet = """
+std::bit_cast<${1:std::uint32_t}>(${2:value})$0"""
+
+[[entries]]
+name = "integer literal"
+keys = ["literal", "int", "hex", "binary", "octal", "0x", "0b"]
+doc = "Integer literal forms: decimal, 0x hex, 0b binary, 0 octal, with digit separators."
+snippet = """
+${1:0x}${2:FF}$0"""
+
+[[entries]]
+name = "integer suffix"
+keys = ["literal", "suffix", "u", "l", "ll", "z"]
+doc = "Integer suffixes: u, l, ll, ul, ull, and C++23 z for size_t."
+snippet = """
+${1:42}${2:u}$0"""
+
+[[entries]]
+name = "floating literal"
+keys = ["literal", "float", "double", "f", "exponent"]
+doc = "Floating literal with an f (float) or L (long double) suffix."
+snippet = """
+${1:1.0}${2:f}$0"""
+
+[[entries]]
+name = "digit separator"
+keys = ["literal", "separator", "'", "thousands"]
+doc = "Apostrophes separate digit groups in numeric literals."
+snippet = """
+${1:1'000'000}$0"""
+
+[[entries]]
+name = "char literal"
+keys = ["literal", "char", "'"]
+doc = "Single character literal."
+snippet = """
+'${1:a}'$0"""
+
+[[entries]]
+name = "wide / unicode char literal"
+keys = ["literal", "wchar", "u8", "u16", "u32", "unicode"]
+doc = "Character literal with an encoding prefix: L, u8, u, U."
+snippet = """
+${1:u8}'${2:a}'$0"""
+
+[[entries]]
+name = "string literal"
+keys = ["literal", "string", "\""]
+doc = "Null-terminated const char array."
+snippet = """
+"${1:text}"$0"""
+
+[[entries]]
+name = "raw string literal"
+keys = ["literal", "raw", "string", "r", "regex"]
+doc = "String with no escape processing, useful for regex and paths."
+snippet = """
+R"(${1:text})"$0"""
+
+[[entries]]
+name = "raw string with delimiter"
+keys = ["literal", "raw", "string", "delimiter"]
+doc = "Raw string whose content may contain )\"."
+snippet = """
+R"${1:x}(${2:text})${1:x}"$0"""
+
+[[entries]]
+name = "u8 string literal"
+keys = ["literal", "u8", "utf8", "string", "unicode"]
+doc = "UTF-8 encoded string literal (char8_t in C++20)."
+snippet = """
+u8"${1:text}"$0"""
+
+[[entries]]
+name = "escape sequence"
+keys = ["escape", "newline", "tab", "\\n", "\\t"]
+doc = "Escapes: \\n \\t \\\\ \\' \\\" \\0 \\xHH \\u1234."
+snippet = """
+\\${1:n}$0"""
+
+[[entries]]
+name = "user-defined literal"
+keys = ["literal", "operator\"\"", "udl", "user"]
+doc = "Define a literal suffix operator."
+snippet = """
+constexpr ${1:long double} operator""_${2:km}(${3:long double} ${4:v}) {
+    return ${5:v * 1000};
+}$0"""
+
+[[entries]]
+name = "chrono literal"
+keys = ["literal", "chrono", "ms", "s", "duration"]
+doc = "Duration literals such as 10ms, 2s, 1min."
+snippet = """
+${1:10}${2:ms}$0"""
+
+[[entries]]
+name = "boolean literal"
+keys = ["true", "false", "bool", "literal"]
+doc = "Boolean constants true and false."
+snippet = """
+${1:true}$0"""
+
+[[entries]]
+name = "nullptr"
+keys = ["nullptr", "null", "literal"]
+doc = "Null pointer constant."
+snippet = """
+nullptr$0"""
+
+[[entries]]
+name = "numeric_limits"
+keys = ["numeric_limits", "max", "min", "limits", "infinity"]
+doc = "Extreme values of a numeric type."
+snippet = """
+std::numeric_limits<${1:int}>::${2:max}()$0"""
+
+[[entries]]
+name = "std::numbers::pi"
+keys = ["numbers", "pi", "e", "constants"]
+doc = "C++20 mathematical constants."
+snippet = """
+std::numbers::${1:pi}$0"""

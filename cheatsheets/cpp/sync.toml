@@ -1,0 +1,191 @@
+title = "Synchronization"
+contexts = ["statement"]
+
+[[entries]]
+name = "std::mutex"
+keys = ["mutex", "lock", "sync"]
+doc = "Mutual exclusion lock."
+snippet = """
+std::mutex ${1:mtx};$0"""
+
+[[entries]]
+name = "lock_guard"
+keys = ["lock_guard", "mutex", "lock", "raii"]
+doc = "Lock a mutex for the rest of the scope."
+snippet = """
+std::lock_guard<std::mutex> ${1:lock}(${2:mtx});$0"""
+
+[[entries]]
+name = "unique_lock"
+keys = ["unique_lock", "mutex", "lock", "condition"]
+doc = "Movable lock that can be unlocked early or used with a condition variable."
+snippet = """
+std::unique_lock<std::mutex> ${1:lock}(${2:mtx});$0"""
+
+[[entries]]
+name = "scoped_lock"
+keys = ["scoped_lock", "mutex", "lock", "deadlock"]
+doc = "Lock several mutexes at once without deadlock."
+snippet = """
+std::scoped_lock ${1:lock}(${2:mtx1}, ${3:mtx2});$0"""
+
+[[entries]]
+name = "try_lock"
+keys = ["try_lock", "mutex", "lock"]
+doc = "Attempt to lock without blocking."
+snippet = """
+if (${1:mtx}.try_lock()) {
+    $0
+    ${1:mtx}.unlock();
+}"""
+
+[[entries]]
+name = "shared_mutex"
+keys = ["shared_mutex", "rwlock", "reader", "writer"]
+doc = "Reader/writer lock allowing many readers or one writer."
+snippet = """
+std::shared_mutex ${1:rw};$0"""
+
+[[entries]]
+name = "shared_lock"
+keys = ["shared_lock", "shared_mutex", "reader"]
+doc = "Take a shared (read) lock."
+snippet = """
+std::shared_lock ${1:lock}(${2:rw});$0"""
+
+[[entries]]
+name = "condition_variable"
+keys = ["condition_variable", "cv", "wait", "notify"]
+doc = "Wait until a predicate becomes true."
+snippet = """
+std::unique_lock<std::mutex> ${1:lock}(${2:mtx});
+${3:cv}.wait(${1:lock}, [&] { return ${4:ready}; });$0"""
+
+[[entries]]
+name = "condition_variable notify"
+keys = ["notify_one", "notify_all", "condition_variable", "cv"]
+doc = "Wake waiting threads after changing state under the lock."
+snippet = """
+{
+    std::lock_guard<std::mutex> ${1:lock}(${2:mtx});
+    ${3:ready = true;}
+}
+${4:cv}.notify_${5:one}();$0"""
+
+[[entries]]
+name = "condition_variable wait_for"
+keys = ["wait_for", "condition_variable", "timeout"]
+doc = "Wait for a predicate with a timeout."
+snippet = """
+if (${1:cv}.wait_for(${2:lock}, ${3:std::chrono::seconds(1)}, [&] { return ${4:ready}; })) {
+    $0
+}"""
+
+[[entries]]
+name = "std::atomic"
+keys = ["atomic", "lockfree", "counter"]
+doc = "Atomic variable safe to access from several threads."
+snippet = """
+std::atomic<${1:int}> ${2:counter}{${3:0}};$0"""
+
+[[entries]]
+name = "atomic load / store"
+keys = ["atomic", "load", "store", "memory_order"]
+doc = "Read or write an atomic with an explicit memory order."
+snippet = """
+${1:flag}.${2:store}(${3:true}, std::memory_order_${4:release});$0"""
+
+[[entries]]
+name = "atomic fetch_add"
+keys = ["atomic", "fetch_add", "increment", "counter"]
+doc = "Atomically add and return the previous value."
+snippet = """
+${1:counter}.fetch_add(${2:1}, std::memory_order_relaxed);$0"""
+
+[[entries]]
+name = "compare_exchange"
+keys = ["atomic", "compare_exchange", "cas", "compare_exchange_strong"]
+doc = "Compare-and-swap loop."
+snippet = """
+${1:int} ${2:expected} = ${3:a}.load();
+while (!${3:a}.compare_exchange_weak(${2:expected}, ${4:expected + 1})) {
+}$0"""
+
+[[entries]]
+name = "atomic_flag spinlock"
+keys = ["atomic_flag", "spinlock", "test_and_set"]
+doc = "Spin until the flag is acquired."
+snippet = """
+std::atomic_flag ${1:lock} = ATOMIC_FLAG_INIT;
+while (${1:lock}.test_and_set(std::memory_order_acquire)) {
+}
+$0
+${1:lock}.clear(std::memory_order_release);"""
+
+[[entries]]
+name = "atomic wait / notify"
+keys = ["atomic", "wait", "notify_one", "notify_all"]
+doc = "C++20 block on an atomic until its value changes."
+snippet = """
+${1:flag}.wait(${2:false});$0"""
+
+[[entries]]
+name = "call_once"
+keys = ["call_once", "once_flag", "init", "once"]
+doc = "Run initialization exactly once across threads."
+snippet = """
+static std::once_flag ${1:flag};
+std::call_once(${1:flag}, [] {
+    $0
+});"""
+
+[[entries]]
+name = "std::latch"
+keys = ["latch", "countdown", "barrier", "wait"]
+doc = "C++20 single-use countdown that releases waiters at zero."
+snippet = """
+std::latch ${1:done}(${2:n});
+${1:done}.count_down();
+${1:done}.wait();$0"""
+
+[[entries]]
+name = "std::barrier"
+keys = ["barrier", "phase", "sync", "wait"]
+doc = "C++20 reusable barrier for phased work."
+snippet = """
+std::barrier ${1:sync}(${2:n});
+${1:sync}.arrive_and_wait();$0"""
+
+[[entries]]
+name = "std::semaphore"
+keys = ["semaphore", "counting_semaphore", "binary_semaphore", "acquire", "release"]
+doc = "C++20 counting semaphore."
+snippet = """
+std::counting_semaphore<${1:4}> ${2:slots}(${1:4});
+${2:slots}.acquire();
+$0
+${2:slots}.release();"""
+
+[[entries]]
+name = "stop_source"
+keys = ["stop_source", "stop_token", "cancel"]
+doc = "Issue stop requests to stop tokens."
+snippet = """
+std::stop_source ${1:src};
+std::stop_token ${2:tok} = ${1:src}.get_token();$0"""
+
+[[entries]]
+name = "stop_callback"
+keys = ["stop_callback", "stop_token", "cancel"]
+doc = "Run a callback when a stop is requested."
+snippet = """
+std::stop_callback ${1:cb}(${2:token}, [] {
+    $0
+});"""
+
+[[entries]]
+name = "std::osyncstream"
+keys = ["osyncstream", "cout", "thread", "sync"]
+doc = "C++20 synchronized output that does not interleave."
+snippet = """
+std::osyncstream(std::cout) << ${1:value} << '\\n';$0"""

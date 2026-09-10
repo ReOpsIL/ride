@@ -1,0 +1,197 @@
+title = "Iterators: sources and adapters"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "iter"
+keys = ["iter", "iterator", "borrow", "each"]
+doc = "Iterate over shared references to the elements."
+snippet = '''
+${1:items}.iter()$0'''
+
+[[entries]]
+name = "iter_mut"
+keys = ["iter", "mut", "iterator", "mutate"]
+doc = "Iterate over mutable references to the elements."
+snippet = '''
+${1:items}.iter_mut()$0'''
+
+[[entries]]
+name = "into_iter"
+keys = ["into", "iter", "iterator", "consume", "owned"]
+doc = "Consume the collection and iterate over its elements by value."
+snippet = '''
+${1:items}.into_iter()$0'''
+
+[[entries]]
+name = "map"
+keys = ["map", "transform", "iterator"]
+doc = "Transform each element with a closure."
+snippet = '''
+.map(|${1:x}| ${2:expr})$0'''
+
+[[entries]]
+name = "filter"
+keys = ["filter", "where", "select", "iterator"]
+doc = "Keep only elements for which the predicate holds."
+snippet = '''
+.filter(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "filter_map"
+keys = ["filter", "map", "option", "flatten", "iterator"]
+doc = "Map to an Option and keep only the Some values."
+snippet = '''
+.filter_map(|${1:x}| ${2:x.parse().ok()})$0'''
+
+[[entries]]
+name = "flat_map"
+keys = ["flat", "map", "flatten", "nested", "iterator"]
+doc = "Map each element to an iterator and flatten the results."
+snippet = '''
+.flat_map(|${1:x}| ${2:x.iter()})$0'''
+
+[[entries]]
+name = "flatten"
+keys = ["flatten", "nested", "option", "iterator"]
+doc = "Flatten one level of nested iterables or Options."
+snippet = '''
+.flatten()$0'''
+
+[[entries]]
+name = "enumerate"
+keys = ["enumerate", "index", "count", "iterator"]
+doc = "Pair each element with its zero-based index."
+snippet = '''
+.enumerate()$0'''
+
+[[entries]]
+name = "zip"
+keys = ["zip", "pair", "combine", "iterator"]
+doc = "Pair elements with those of another iterator, stopping at the shorter."
+snippet = '''
+.zip(${1:other}.iter())$0'''
+
+[[entries]]
+name = "chain"
+keys = ["chain", "concat", "append", "iterator"]
+doc = "Continue with the elements of a second iterator."
+snippet = '''
+.chain(${1:other})$0'''
+
+[[entries]]
+name = "rev"
+keys = ["rev", "reverse", "backwards", "iterator"]
+doc = "Iterate from the end, for double-ended iterators."
+snippet = '''
+.rev()$0'''
+
+[[entries]]
+name = "skip"
+keys = ["skip", "drop", "offset", "iterator"]
+doc = "Skip the first n elements."
+snippet = '''
+.skip(${1:n})$0'''
+
+[[entries]]
+name = "take"
+keys = ["take", "limit", "first", "iterator"]
+doc = "Yield at most the first n elements."
+snippet = '''
+.take(${1:n})$0'''
+
+[[entries]]
+name = "step_by"
+keys = ["step", "by", "stride", "every", "iterator"]
+doc = "Yield every nth element starting with the first."
+snippet = '''
+.step_by(${1:2})$0'''
+
+[[entries]]
+name = "take_while"
+keys = ["take", "while", "prefix", "iterator"]
+doc = "Yield elements until the predicate first fails."
+snippet = '''
+.take_while(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "skip_while"
+keys = ["skip", "while", "iterator"]
+doc = "Skip elements until the predicate first fails, then yield the rest."
+snippet = '''
+.skip_while(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "peekable"
+keys = ["peekable", "peek", "lookahead", "iterator"]
+doc = "Wrap the iterator so the next element can be inspected without consuming it."
+snippet = '''
+let mut ${1:it} = ${2:iter}.peekable();
+while let Some(${3:x}) = ${1:it}.next() {
+    $0
+}'''
+
+[[entries]]
+name = "inspect"
+keys = ["inspect", "debug", "peek", "iterator"]
+doc = "Run a side effect on each element as it passes through."
+snippet = '''
+.inspect(|${1:x}| ${2:println!("{x:?\}")})$0'''
+
+[[entries]]
+name = "scan"
+keys = ["scan", "accumulate", "running", "prefix", "iterator"]
+doc = "Map with a running state, yielding an intermediate value each step."
+snippet = '''
+.scan(${1:0}, |${2:acc}, ${3:x}| {
+    *${2:acc} += ${3:x};
+    Some(*${2:acc})
+})$0'''
+
+[[entries]]
+name = "cloned / copied"
+keys = ["cloned", "copied", "deref", "owned", "iterator"]
+doc = "Turn an iterator of references into an iterator of owned values."
+snippet = '''
+.${1:cloned}()$0'''
+
+[[entries]]
+name = "windows"
+keys = ["windows", "sliding", "pairs", "slice"]
+doc = "Iterate over overlapping windows of a slice."
+snippet = '''
+${1:items}.windows(${2:2})$0'''
+
+[[entries]]
+name = "chunks"
+keys = ["chunks", "batch", "groups", "slice", "exact"]
+doc = "Iterate over non-overlapping chunks of a slice."
+snippet = '''
+${1:items}.chunks(${2:n})$0'''
+
+[[entries]]
+name = "range iterator"
+keys = ["range", "iterator", "numbers", "count"]
+doc = "Iterate over a range of integers with adapters."
+snippet = '''
+(${1:0}..${2:n})$0'''
+
+[[entries]]
+name = "iter::repeat / once"
+keys = ["repeat", "once", "iter", "generate", "source"]
+doc = "Create an iterator from a repeated or single value."
+snippet = '''
+std::iter::${1:repeat}(${2:value})$0'''
+
+[[entries]]
+name = "successors / from_fn"
+keys = ["successors", "from_fn", "generate", "sequence", "iter"]
+doc = "Generate a sequence where each element is computed from the previous one."
+snippet = '''
+std::iter::successors(Some(${1:1}), |${2:x}| ${3:Some(x * 2)})$0'''
+
+[[entries]]
+name = "chars / bytes"
+keys = ["chars", "bytes", "string", "iterator"]
+doc = "Iterate over the characters or the bytes of a string."
+snippet = '''
+${1:text}.${2:chars}()$0'''

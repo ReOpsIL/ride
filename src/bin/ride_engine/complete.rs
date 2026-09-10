@@ -4,34 +4,18 @@ use std::time::Instant;
 
 use ride_engine::{CompletionContext, CompletionQuery, EngineConfig, QueryMode, engine_start};
 
+use crate::cursor::{Cursor, place};
 use crate::out;
 
-pub struct Cursor {
-    pub byte: Option<usize>,
-    pub find: Option<String>,
-    pub typed: Option<String>,
-}
-
 pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> ExitCode {
-    let Ok(mut text) = std::fs::read_to_string(file) else {
-        eprintln!("cannot read {}", file.display());
-        return ExitCode::from(2);
+    let placed = match place(file, &cursor) {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("{e}");
+            return ExitCode::from(2);
+        }
     };
-    let mut at = match (&cursor.byte, &cursor.find) {
-        (Some(b), _) => *b,
-        (None, Some(anchor)) => match text.find(anchor.as_str()) {
-            Some(i) => i + anchor.len(),
-            None => {
-                eprintln!("anchor not found: {anchor}");
-                return ExitCode::from(2);
-            }
-        },
-        (None, None) => text.len(),
-    };
-    if let Some(typed) = &cursor.typed {
-        text.insert_str(at, typed);
-        at += typed.len();
-    }
+    let (text, at) = (placed.text, placed.at);
     let engine = engine_start(config);
     if let Some(parent) = file.parent()
         && let Ok(root) = std::fs::canonicalize(parent)

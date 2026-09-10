@@ -1,0 +1,196 @@
+title = "Structs, unions and enums"
+contexts = ["item", "statement"]
+
+[[entries]]
+name = "struct"
+keys = ["struct", "record", "type"]
+doc = "Aggregate type with named members laid out in order."
+snippet = '''
+struct ${1:point} {
+    ${2:int x;}
+    ${3:int y;}
+};$0'''
+
+[[entries]]
+name = "typedef struct"
+keys = ["typedef", "struct", "alias"]
+doc = "Struct with a tag and a matching typedef so both spellings work."
+snippet = '''
+typedef struct ${1:point} {
+    ${2:int x, y;}
+} ${1:point};$0'''
+
+[[entries]]
+name = "typedef anonymous struct"
+keys = ["typedef", "struct", "anonymous"]
+doc = "Tagless struct usable only through its typedef name."
+snippet = '''
+typedef struct {
+    ${1:int x, y;}
+} ${2:point};$0'''
+
+[[entries]]
+name = "forward declaration"
+keys = ["forward", "struct", "incomplete", "declare"]
+doc = "Introduce an incomplete struct type so pointers to it can be declared."
+snippet = '''
+struct ${1:node};$0'''
+
+[[entries]]
+name = "nested struct"
+keys = ["nested", "struct", "compose", "member"]
+doc = "Struct containing other structs by value."
+snippet = '''
+struct ${1:rect} {
+    struct ${2:point} ${3:origin};
+    struct ${2:point} ${4:size};
+};$0'''
+
+[[entries]]
+name = "struct variable"
+keys = ["struct", "variable", "init", "positional"]
+doc = "Struct initialised positionally in member order."
+snippet = '''
+struct ${1:point} ${2:p} = { ${3:1, 2} };$0'''
+
+[[entries]]
+name = "designated initializer"
+keys = ["designated", "initializer", ".x =", "struct", "init"]
+doc = "Initialise members by name, leaving unnamed ones zero (C99)."
+snippet = '''
+struct ${1:point} ${2:p} = { .${3:x} = ${4:1}, .${5:y} = ${6:2} };$0'''
+
+[[entries]]
+name = "struct pointer"
+keys = ["struct", "pointer", "->", "address"]
+doc = "Pointer to a struct, accessed with the arrow operator."
+snippet = '''
+struct ${1:point} *${2:p} = &${3:pt};$0'''
+
+[[entries]]
+name = "arrow assign"
+keys = ["->", "arrow", "member", "assign"]
+doc = "Assign to a member through a struct pointer."
+snippet = '''
+${1:p}->${2:field} = ${3:value};$0'''
+
+[[entries]]
+name = "array of structs"
+keys = ["array", "struct", "table", "records"]
+doc = "Array of structs with per-element designated initialisers."
+snippet = '''
+struct ${1:point} ${2:pts}[] = {
+    { ${3:.x = 0, .y = 0} },
+    { ${4:.x = 1, .y = 1} },
+};$0'''
+
+[[entries]]
+name = "union"
+keys = ["union", "overlay", "variant"]
+doc = "Members share one storage location; reading the last-written member is defined in C."
+snippet = '''
+union ${1:value} {
+    ${2:int i;}
+    ${3:float f;}
+};$0'''
+
+[[entries]]
+name = "tagged union"
+keys = ["tagged", "union", "variant", "sum type", "discriminated"]
+doc = "Enum tag plus a union payload, the C sum-type idiom."
+snippet = '''
+struct ${1:variant} {
+    enum { ${2:V_INT, V_FLOAT} } tag;
+    union {
+        ${3:int i;}
+        ${4:float f;}
+    } as;
+};$0'''
+
+[[entries]]
+name = "opaque handle"
+keys = ["opaque", "handle", "hide", "abstract", "encapsulate"]
+doc = "Header exposes only a typedef and functions; the struct body stays in the .c file."
+snippet = '''
+typedef struct ${1:widget} ${1:widget};
+${1:widget} *${1:widget}_new(void);
+void ${1:widget}_free(${1:widget} *${2:w});$0'''
+
+[[entries]]
+name = "linked list node"
+keys = ["linked", "list", "node", "next", "self"]
+doc = "Self-referential struct forming a singly linked list."
+snippet = '''
+struct ${1:node} {
+    ${2:int value;}
+    struct ${1:node} *next;
+};$0'''
+
+[[entries]]
+name = "list iteration"
+keys = ["list", "iterate", "for", "next", "traverse"]
+doc = "Walk a linked list until the next pointer is NULL."
+snippet = '''
+for (struct ${1:node} *${2:n} = ${3:head}; ${2:n} != NULL; ${2:n} = ${2:n}->next) {
+    $0
+}'''
+
+[[entries]]
+name = "vtable struct"
+keys = ["vtable", "ops", "interface", "function pointers", "polymorphism"]
+doc = "Struct of function pointers giving an interface with swappable implementations."
+snippet = '''
+struct ${1:ops} {
+    int (*${2:open})(void *ctx);
+    void (*${3:close})(void *ctx);
+};$0'''
+
+[[entries]]
+name = "struct equality"
+keys = ["equal", "compare", "memcmp", "eq", "struct"]
+doc = "Compare member by member; memcmp is unreliable because padding bytes are unspecified."
+snippet = '''
+bool ${1:point}_eq(const struct ${1:point} *a, const struct ${1:point} *b) {
+    return a->${2:x} == b->${2:x} && a->${3:y} == b->${3:y};
+}$0'''
+
+[[entries]]
+name = "return struct"
+keys = ["return", "struct", "value", "constructor", "make"]
+doc = "Build and return a struct by value using a compound literal."
+snippet = '''
+struct ${1:point} ${2:make_point}(int x, int y) {
+    return (struct ${1:point}){ .x = x, .y = y };
+}$0'''
+
+[[entries]]
+name = "offsetof"
+keys = ["offsetof", "offset", "stddef", "member"]
+doc = "Byte offset of a member within its struct, from stddef.h."
+snippet = '''
+size_t ${1:off} = offsetof(struct ${2:point}, ${3:y});$0'''
+
+[[entries]]
+name = "container_of"
+keys = ["container_of", "offsetof", "intrusive", "embed", "outer"]
+doc = "Recover the enclosing struct from a pointer to one of its members."
+snippet = '''
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - offsetof(type, member)))$0'''
+
+[[entries]]
+name = "packed struct"
+keys = ["packed", "attribute", "wire", "no padding", "__attribute__"]
+doc = "Remove padding for wire formats; member access may then be misaligned."
+snippet = '''
+struct __attribute__((packed)) ${1:header} {
+    ${2:uint8_t type;}
+    ${3:uint32_t length;}
+};$0'''
+
+[[entries]]
+name = "flexible array allocation"
+keys = ["flexible", "array", "member", "malloc", "fam", "trailing"]
+doc = "Allocate a struct together with n elements of its trailing flexible array member."
+snippet = '''
+struct ${1:buffer} *${2:b} = malloc(sizeof *${2:b} + ${3:n} * sizeof ${2:b}->${4:data}[0]);$0'''

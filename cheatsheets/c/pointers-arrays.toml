@@ -1,0 +1,203 @@
+title = "Pointers and arrays"
+contexts = ["statement", "item"]
+
+[[entries]]
+name = "pointer"
+keys = ["pointer", "ptr", "*", "address"]
+doc = "Pointer variable initialised with the address of an object."
+snippet = '''
+${1:int} *${2:p} = &${3:value};$0'''
+
+[[entries]]
+name = "dereference assign"
+keys = ["deref", "dereference", "*p", "store"]
+doc = "Store through a pointer into the pointee."
+snippet = '''
+*${1:p} = ${2:value};$0'''
+
+[[entries]]
+name = "pointer to pointer"
+keys = ["pointer", "double", "**", "indirect"]
+doc = "Pointer holding the address of another pointer."
+snippet = '''
+${1:int} **${2:pp} = &${3:p};$0'''
+
+[[entries]]
+name = "pointer arithmetic"
+keys = ["pointer", "arithmetic", "offset", "end"]
+doc = "Adding n moves by n whole elements; only positions up to one past the end are valid."
+snippet = '''
+${1:int} *${2:end} = ${3:arr} + ${4:n};$0'''
+
+[[entries]]
+name = "pointer difference"
+keys = ["pointer", "difference", "ptrdiff_t", "distance"]
+doc = "Subtracting pointers into the same array yields an element count as ptrdiff_t."
+snippet = '''
+ptrdiff_t ${1:count} = ${2:end} - ${3:begin};$0'''
+
+[[entries]]
+name = "array"
+keys = ["array", "[]", "declare"]
+doc = "Fixed-size array with an integer constant bound."
+snippet = '''
+${1:int} ${2:arr}[${3:8}];$0'''
+
+[[entries]]
+name = "array initializer"
+keys = ["array", "init", "initializer", "{", "list"]
+doc = "Array whose size is deduced from the initialiser list."
+snippet = '''
+${1:int} ${2:arr}[] = { ${3:1, 2, 3} };$0'''
+
+[[entries]]
+name = "array zero"
+keys = ["array", "zero", "{0}", "clear"]
+doc = "Sized array with every element set to zero."
+snippet = '''
+${1:int} ${2:arr}[${3:8}] = {0};$0'''
+
+[[entries]]
+name = "2D array"
+keys = ["array", "2d", "matrix", "grid", "[][]"]
+doc = "Row-major two-dimensional array with nested initialisers."
+snippet = '''
+${1:int} ${2:grid}[${3:2}][${4:3}] = {
+    { ${5:1, 2, 3} },
+    { ${6:4, 5, 6} },
+};$0'''
+
+[[entries]]
+name = "array of pointers"
+keys = ["array", "pointers", "strings", "sentinel", "names"]
+doc = "Array of string pointers terminated by a NULL sentinel."
+snippet = '''
+const char *${1:names}[] = { ${2:"alpha", "beta"}, NULL };$0'''
+
+[[entries]]
+name = "pointer to array"
+keys = ["pointer", "array", "row", "(*p)[]"]
+doc = "Pointer to a whole array, as produced by a 2D array's name."
+snippet = '''
+${1:int} (*${2:row})[${3:COLS}] = ${4:grid};$0'''
+
+[[entries]]
+name = "string array"
+keys = ["string", "char", "array", "buffer", "writable"]
+doc = "Writable copy of a string literal in a char array."
+snippet = '''
+char ${1:s}[] = "${2:text}";$0'''
+
+[[entries]]
+name = "string pointer"
+keys = ["string", "char", "pointer", "literal", "const"]
+doc = "Pointer to a read-only string literal; writing through it is undefined."
+snippet = '''
+const char *${1:s} = "${2:text}";$0'''
+
+[[entries]]
+name = "function pointer variable"
+keys = ["pointer", "function", "callback", "fnptr"]
+doc = "Store a function's address and call it through the pointer later."
+snippet = '''
+${1:int} (*${2:fn})(${3:int}) = ${4:square};$0'''
+
+[[entries]]
+name = "pointer to const"
+keys = ["const", "pointer", "readonly", "const t *"]
+doc = "The pointee is read-only through p, but p itself may be reassigned."
+snippet = '''
+const ${1:int} *${2:p} = ${3:&value};$0'''
+
+[[entries]]
+name = "const pointer"
+keys = ["const", "pointer", "t *const", "fixed"]
+doc = "The pointer cannot be reassigned, but the pointee may be modified."
+snippet = '''
+${1:int} *const ${2:p} = ${3:&value};$0'''
+
+[[entries]]
+name = "const pointer to const"
+keys = ["const", "pointer", "const t *const"]
+doc = "Neither the pointer nor the pointee may change."
+snippet = '''
+const ${1:int} *const ${2:p} = ${3:&value};$0'''
+
+[[entries]]
+name = "void pointer conversion"
+keys = ["void", "pointer", "cast", "context", "generic"]
+doc = "void * converts implicitly in C; casting is only needed for C++ compatibility."
+snippet = '''
+${1:struct ctx} *${2:ctx} = ${3:arg};$0'''
+
+[[entries]]
+name = "NULL check"
+keys = ["null", "check", "if", "pointer"]
+doc = "Guard against a null pointer before dereferencing it."
+snippet = '''
+if (${1:p} == NULL) {
+    $0
+}'''
+
+[[entries]]
+name = "array length"
+keys = ["length", "count", "sizeof", "array size", "len"]
+doc = "Element count of a true array; do not use on a pointer parameter."
+snippet = '''
+size_t ${1:n} = sizeof ${2:arr} / sizeof ${2:arr}[0];$0'''
+
+[[entries]]
+name = "iterate with pointer"
+keys = ["iterate", "pointer", "loop", "for", "range"]
+doc = "Walk an array with a moving pointer instead of an index."
+snippet = '''
+for (${1:int} *${2:p} = ${3:arr}; ${2:p} < ${3:arr} + ${4:n}; ${2:p}++) {
+    $0
+}'''
+
+[[entries]]
+name = "pass array"
+keys = ["pass", "array", "call", "length"]
+doc = "Pass an array with its element count, since the callee only sees a pointer."
+snippet = '''
+${1:fill}(${2:arr}, sizeof ${2:arr} / sizeof ${2:arr}[0]);$0'''
+
+[[entries]]
+name = "out parameter"
+keys = ["out", "parameter", "result", "pointer", "return"]
+doc = "Return a result through a pointer so the return value can carry status."
+snippet = '''
+int ${1:parse}(const char *${2:s}, ${3:int} *${4:out}) {
+    *${4:out} = ${5:value};
+    return 0;
+}$0'''
+
+[[entries]]
+name = "out pointer parameter"
+keys = ["out", "double", "**", "allocate", "create"]
+doc = "Hand a freshly allocated object back through a pointer to pointer."
+snippet = '''
+int ${1:create}(${2:struct item} **${3:out}) {
+    *${3:out} = calloc(1, sizeof **${3:out});
+    return *${3:out} ? 0 : -1;
+}$0'''
+
+[[entries]]
+name = "fill caller buffer"
+keys = ["buffer", "out", "array", "return array", "fill"]
+doc = "Return array data by writing into a caller-supplied buffer of known size."
+snippet = '''
+void ${1:get_name}(char *${2:buf}, size_t ${3:size}) {
+    snprintf(${2:buf}, ${3:size}, "%s", ${4:name});
+}$0'''
+
+[[entries]]
+name = "swap"
+keys = ["swap", "exchange", "temp"]
+doc = "Exchange two values through pointers using a temporary."
+snippet = '''
+void ${1:swap}(${2:int} *a, ${2:int} *b) {
+    ${2:int} tmp = *a;
+    *a = *b;
+    *b = tmp;
+}$0'''

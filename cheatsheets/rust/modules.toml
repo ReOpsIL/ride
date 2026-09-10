@@ -1,0 +1,179 @@
+title = "Modules and visibility"
+contexts = ["item", "use"]
+
+[[entries]]
+name = "mod"
+keys = ["mod", "module", "namespace", "inline"]
+doc = "Define an inline module."
+snippet = '''
+mod ${1:name} {
+    $0
+}'''
+
+[[entries]]
+name = "mod file"
+keys = ["mod", "module", "file", "declare"]
+doc = "Declare a module whose body lives in name.rs or name/mod.rs."
+snippet = '''
+mod ${1:name};$0'''
+
+[[entries]]
+name = "pub mod"
+keys = ["pub", "mod", "module", "public"]
+doc = "Declare a public module from a file."
+snippet = '''
+pub mod ${1:name};$0'''
+
+[[entries]]
+name = "mod with path attribute"
+keys = ["mod", "path", "attribute", "file", "custom"]
+doc = "Declare a module loaded from a custom file path."
+snippet = '''
+#[path = "${1:dir/file.rs}"]
+mod ${2:name};$0'''
+
+[[entries]]
+name = "pub"
+keys = ["pub", "public", "visibility", "export"]
+doc = "Make an item visible outside its module."
+snippet = '''
+pub $0'''
+
+[[entries]]
+name = "pub(crate)"
+keys = ["pub", "crate", "visibility", "internal"]
+doc = "Make an item visible anywhere in the current crate only."
+snippet = '''
+pub(crate) $0'''
+
+[[entries]]
+name = "pub(super)"
+keys = ["pub", "super", "visibility", "parent"]
+doc = "Make an item visible to the parent module."
+snippet = '''
+pub(super) $0'''
+
+[[entries]]
+name = "pub(in path)"
+keys = ["pub", "in", "path", "visibility", "ancestor"]
+doc = "Make an item visible within a named ancestor module."
+snippet = '''
+pub(in ${1:crate::parent}) $0'''
+
+[[entries]]
+name = "use"
+keys = ["use", "import", "include"]
+doc = "Bring a path into scope."
+snippet = '''
+use ${1:std::collections::HashMap};$0'''
+
+[[entries]]
+name = "use group"
+keys = ["use", "import", "group", "braces", "multiple"]
+doc = "Import several items from one path."
+snippet = '''
+use ${1:std::io}::{${2:self, Read, Write}};$0'''
+
+[[entries]]
+name = "use as"
+keys = ["use", "as", "alias", "rename", "import"]
+doc = "Import an item under a different name."
+snippet = '''
+use ${1:std::fmt::Result} as ${2:FmtResult};$0'''
+
+[[entries]]
+name = "use glob"
+keys = ["use", "glob", "star", "all", "wildcard", "prelude"]
+doc = "Import every public item from a module, typical for preludes and test modules."
+snippet = '''
+use ${1:super}::*;$0'''
+
+[[entries]]
+name = "use crate::"
+keys = ["use", "crate", "root", "absolute", "import"]
+doc = "Import from the crate root with an absolute path."
+snippet = '''
+use crate::${1:module::Item};$0'''
+
+[[entries]]
+name = "use super::"
+keys = ["use", "super", "parent", "relative", "import"]
+doc = "Import from the parent module."
+snippet = '''
+use super::${1:Item};$0'''
+
+[[entries]]
+name = "use self::"
+keys = ["use", "self", "current", "relative", "import"]
+doc = "Import from a child of the current module explicitly."
+snippet = '''
+use self::${1:child::Item};$0'''
+
+[[entries]]
+name = "use trait anonymously"
+keys = ["use", "as", "underscore", "trait", "methods"]
+doc = "Bring a trait's methods into scope without importing its name."
+snippet = '''
+use ${1:std::io::Write} as _;$0'''
+
+[[entries]]
+name = "pub use re-export"
+keys = ["pub", "use", "reexport", "export", "facade"]
+doc = "Re-export an item so users can import it from this module."
+snippet = '''
+pub use ${1:self::inner::Item};$0'''
+
+[[entries]]
+name = "pub use glob re-export"
+keys = ["pub", "use", "reexport", "glob", "flatten"]
+doc = "Re-export everything public from a submodule."
+snippet = '''
+pub use ${1:inner}::*;$0'''
+
+[[entries]]
+name = "nested mod"
+keys = ["mod", "nested", "inner", "module"]
+doc = "Define modules inside modules with visibility on each."
+snippet = '''
+pub mod ${1:outer} {
+    pub mod ${2:inner} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "prelude module"
+keys = ["mod", "prelude", "reexport", "glob"]
+doc = "Define a prelude module that re-exports the crate's common items."
+snippet = '''
+pub mod prelude {
+    pub use crate::{${1:Item, Trait}};$0
+}'''
+
+[[entries]]
+name = "use std::fmt"
+keys = ["use", "std", "fmt", "display", "import"]
+doc = "Import the formatting module for Display impls."
+snippet = '''
+use std::fmt;$0'''
+
+[[entries]]
+name = "use std::io"
+keys = ["use", "std", "io", "read", "write", "import"]
+doc = "Import the I/O traits needed for read and write methods."
+snippet = '''
+use std::io::{self, BufRead, Read, Write};$0'''
+
+[[entries]]
+name = "use std::sync"
+keys = ["use", "std", "sync", "arc", "mutex", "import"]
+doc = "Import the common thread-safe sharing types."
+snippet = '''
+use std::sync::{Arc, Mutex${1:, RwLock}};$0'''
+
+[[entries]]
+name = "use std::path"
+keys = ["use", "std", "path", "pathbuf", "import"]
+doc = "Import the filesystem path types."
+snippet = '''
+use std::path::{Path, PathBuf};$0'''

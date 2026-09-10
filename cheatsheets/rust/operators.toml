@@ -1,0 +1,136 @@
+title = "Operators"
+contexts = []
+
+[[entries]]
+name = "arithmetic + - * / %"
+keys = ["arithmetic", "plus", "minus", "times", "divide", "modulo", "remainder", "math"]
+doc = "Binary arithmetic, with integer division truncating toward zero and % giving the remainder."
+snippet = '''
+${1:a} ${2:+} ${3:b}$0'''
+
+[[entries]]
+name = "compound assignment"
+keys = ["assign", "compound", "plus", "equals", "increment", "add"]
+doc = "Apply an operator and assign, the only way to increment since ++ does not exist."
+snippet = '''
+${1:x} ${2:+=} ${3:1};$0'''
+
+[[entries]]
+name = "comparison == != < <= > >="
+keys = ["compare", "equal", "less", "greater", "eq", "ne", "lt", "gt", "comparison"]
+doc = "Comparison operators from PartialEq and PartialOrd, which do not chain."
+snippet = '''
+${1:a} ${2:==} ${3:b}$0'''
+
+[[entries]]
+name = "logical && || !"
+keys = ["logical", "and", "or", "not", "boolean", "short", "circuit"]
+doc = "Short-circuiting boolean and, or, and negation."
+snippet = '''
+${1:a} ${2:&&} ${3:b}$0'''
+
+[[entries]]
+name = "bitwise & | ^ ! << >>"
+keys = ["bitwise", "and", "or", "xor", "shift", "bits", "mask"]
+doc = "Bitwise operators, where ! is bitwise not on integers and shifts panic on overflow in debug."
+snippet = '''
+${1:a} ${2:&} ${3:b}$0'''
+
+[[entries]]
+name = "negation -x"
+keys = ["negate", "minus", "unary", "neg"]
+doc = "Unary negation, defined for signed numbers only."
+snippet = '''
+-${1:x}$0'''
+
+[[entries]]
+name = "checked / wrapping / saturating"
+keys = ["checked", "wrapping", "saturating", "overflow", "add", "mul", "arithmetic"]
+doc = "Explicit overflow behavior instead of a debug panic."
+snippet = '''
+${1:a}.${2:checked_add}(${3:b})$0'''
+
+[[entries]]
+name = "pow / abs / rem_euclid"
+keys = ["pow", "abs", "rem_euclid", "power", "modulo", "math"]
+doc = "Common integer math methods, with rem_euclid giving a non-negative remainder."
+snippet = '''
+${1:a}.${2:pow}(${3:2})$0'''
+
+[[entries]]
+name = "float math"
+keys = ["sqrt", "floor", "ceil", "round", "powf", "float", "math"]
+doc = "Float methods for roots, rounding and powers."
+snippet = '''
+${1:x}.${2:sqrt}()$0'''
+
+[[entries]]
+name = "min / max / clamp"
+keys = ["min", "max", "clamp", "bound", "limit"]
+doc = "Clamp a value to a range or pick the smaller or larger of two."
+snippet = '''
+${1:x}.clamp(${2:lo}, ${3:hi})$0'''
+
+[[entries]]
+name = "deref *"
+keys = ["deref", "star", "asterisk", "unary", "pointer"]
+doc = "Dereference a reference, Box or other Deref type."
+snippet = '''
+*${1:reference}$0'''
+
+[[entries]]
+name = "borrow & / &mut"
+keys = ["borrow", "reference", "ampersand", "unary", "mut"]
+doc = "Take a shared or exclusive reference."
+snippet = '''
+&${1:mut }${2:value}$0'''
+
+[[entries]]
+name = "? try"
+keys = ["question", "try", "propagate", "error", "operator"]
+doc = "Unwrap a Result or Option, returning early on Err or None."
+snippet = '''
+${1:expr}?$0'''
+
+[[entries]]
+name = "as cast"
+keys = ["as", "cast", "convert", "operator"]
+doc = "Primitive cast between numeric, pointer and enum-to-integer types."
+snippet = '''
+${1:value} as ${2:f64}$0'''
+
+[[entries]]
+name = "range .. ..="
+keys = ["range", "dotdot", "inclusive", "exclusive", "operator"]
+doc = "Range operators producing Range and RangeInclusive values."
+snippet = '''
+${1:lo}..${2:=}${3:hi}$0'''
+
+[[entries]]
+name = "precedence table"
+keys = ["precedence", "order", "binding", "operators", "table"]
+doc = "Operator precedence from highest to lowest, kept as a comment."
+snippet = '''
+// method/field/index/?  >  unary - ! * & &mut  >  as  >  * / %  >  + -
+// >  << >>  >  &  >  ^  >  |  >  == != < > <= >=  >  &&  >  ||  >  .. ..=  >  =  >  return break closures$0'''
+
+[[entries]]
+name = "closure precedence note"
+keys = ["closure", "precedence", "pipe", "body", "parentheses"]
+doc = "A closure body extends as far right as possible, so parenthesize when chaining after it."
+snippet = '''
+(|${1:x}| ${2:x + 1})(${3:arg})$0'''
+
+[[entries]]
+name = "comparison chain via cmp"
+keys = ["cmp", "ordering", "then", "compare", "chain", "tie"]
+doc = "Compare by several keys in order using Ordering::then_with."
+snippet = '''
+${1:a}.${2:key}.cmp(&${3:b}.${2:key}).then_with(|| ${1:a}.${4:name}.cmp(&${3:b}.${4:name}))$0'''
+
+[[entries]]
+name = "bool then / then_some"
+keys = ["bool", "then", "then_some", "option", "conditional"]
+doc = "Turn a bool into an Option, lazily or with a value."
+snippet = '''
+${1:cond}.then(|| ${2:value})$0'''

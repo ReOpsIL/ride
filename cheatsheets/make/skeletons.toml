@@ -1,0 +1,108 @@
+title = "Project skeletons"
+contexts = ["item"]
+
+[[entries]]
+name = "C project skeleton"
+keys = ["skeleton", "project", "c", "template", "minimal"]
+doc = "Complete Makefile for a C program with out-of-tree objects and auto-generated dependencies."
+snippet = '''
+CC       ?= cc
+CFLAGS   ?= -O2 -g -Wall -Wextra
+CPPFLAGS += -MMD -MP
+LDLIBS   ?=
+TARGET   := ${1:prog}
+SRCS     := $(wildcard src/*.c)
+OBJS     := $(SRCS:src/%.c=build/%.o)
+DEPS     := $(OBJS:.o=.d)
+
+.PHONY: all clean
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+build/%.o: src/%.c | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build:
+	mkdir -p $@
+
+clean:
+	$(RM) -r build $(TARGET)
+
+-include $(DEPS)$0'''
+
+[[entries]]
+name = "C++ project skeleton"
+keys = ["skeleton", "project", "cpp", "cxx", "template"]
+doc = "Complete Makefile for a C++ program with out-of-tree objects and auto-generated dependencies."
+snippet = '''
+CXX      ?= c++
+CXXFLAGS ?= -std=c++20 -O2 -g -Wall -Wextra
+CPPFLAGS += -MMD -MP
+LDLIBS   ?=
+TARGET   := ${1:prog}
+SRCS     := $(wildcard src/*.cpp)
+OBJS     := $(SRCS:src/%.cpp=build/%.o)
+DEPS     := $(OBJS:.o=.d)
+
+.PHONY: all clean
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+build/%.o: src/%.cpp | build
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+build:
+	mkdir -p $@
+
+clean:
+	$(RM) -r build $(TARGET)
+
+-include $(DEPS)$0'''
+
+[[entries]]
+name = "static library skeleton"
+keys = ["skeleton", "library", "lib", "archive", "ar"]
+doc = "Build a static archive from every source in the directory."
+snippet = '''
+AR      ?= ar
+ARFLAGS := rcs
+LIB     := lib${1:foo}.a
+SRCS    := $(wildcard *.c)
+OBJS    := $(SRCS:.c=.o)
+
+.PHONY: all clean
+all: $(LIB)
+
+$(LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+
+clean:
+	$(RM) $(OBJS) $(LIB)$0'''
+
+[[entries]]
+name = "Rust cargo wrapper"
+keys = ["skeleton", "rust", "cargo", "wrapper"]
+doc = "Makefile that forwards the conventional targets to cargo."
+snippet = '''
+CARGO ?= cargo
+
+.PHONY: all build release test run fmt clippy clean
+all: build
+build:
+	$(CARGO) build
+release:
+	$(CARGO) build --release
+test:
+	$(CARGO) test
+run:
+	$(CARGO) run -- $(ARGS)
+fmt:
+	$(CARGO) fmt
+clippy:
+	$(CARGO) clippy --all-targets -- -D warnings
+clean:
+	$(CARGO) clean$0'''

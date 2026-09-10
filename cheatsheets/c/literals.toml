@@ -1,0 +1,157 @@
+title = "Literals and constants"
+contexts = []
+
+[[entries]]
+name = "hex literal"
+keys = ["0x", "hex", "hexadecimal", "literal"]
+doc = "Hexadecimal integer literal."
+snippet = '''
+0x${1:FF}$0'''
+
+[[entries]]
+name = "octal literal"
+keys = ["octal", "0o", "mode", "literal"]
+doc = "A leading zero makes an octal literal, so 010 is eight."
+snippet = '''
+0${1:755}$0'''
+
+[[entries]]
+name = "binary literal"
+keys = ["0b", "binary", "bits", "literal", "c23"]
+doc = "Binary integer literal (C23, long a GCC extension)."
+snippet = '''
+0b${1:1010}$0'''
+
+[[entries]]
+name = "digit separator"
+keys = ["separator", "'", "digits", "readable", "c23"]
+doc = "Single quotes group digits for readability (C23)."
+snippet = '''
+${1:1'000'000}$0'''
+
+[[entries]]
+name = "unsigned literal"
+keys = ["u", "unsigned", "suffix", "literal"]
+doc = "The u suffix makes the literal unsigned, avoiding signed shifts and comparisons."
+snippet = '''
+${1:1}u$0'''
+
+[[entries]]
+name = "long literal"
+keys = ["l", "ll", "ul", "ull", "long", "suffix", "literal"]
+doc = "Suffixes L, LL, UL and ULL select long and long long types."
+snippet = '''
+${1:1}${2:ULL}$0'''
+
+[[entries]]
+name = "float literal"
+keys = ["f", "float", "suffix", "literal", "1.0f"]
+doc = "The f suffix makes a float instead of the default double."
+snippet = '''
+${1:1.0}f$0'''
+
+[[entries]]
+name = "exponent literal"
+keys = ["e", "exponent", "scientific", "double", "literal"]
+doc = "Double in scientific notation."
+snippet = '''
+${1:1}e${2:-3}$0'''
+
+[[entries]]
+name = "char literal"
+keys = ["char", "character", "'", "literal"]
+doc = "Character constant, whose type is int in C."
+snippet = '''
+'${1:a}'$0'''
+
+[[entries]]
+name = "escape sequence"
+keys = ["escape", "\\n", "\\t", "backslash", "newline"]
+doc = "Escapes: \\n newline, \\t tab, \\\\ backslash, \\' and \\\" quotes, \\0 NUL, \\xhh hex, \\ooo octal."
+snippet = '''
+'\n'$0'''
+
+[[entries]]
+name = "hex escape"
+keys = ["\\x", "hex", "escape", "byte"]
+doc = "Byte given in hexadecimal inside a char or string literal."
+snippet = '''
+'\x${1:41}'$0'''
+
+[[entries]]
+name = "NUL char"
+keys = ["nul", "\\0", "terminator", "zero"]
+doc = "The zero byte that terminates strings."
+snippet = '''
+'\0'$0'''
+
+[[entries]]
+name = "string concatenation"
+keys = ["concatenation", "adjacent", "multiline", "string", "join"]
+doc = "Adjacent literals merge at compile time, splitting long strings across lines."
+snippet = '''
+"${1:first part }"
+"${2:second part}"$0'''
+
+[[entries]]
+name = "wide literal"
+keys = ["l\"", "wide", "wchar_t", "literal"]
+doc = "Wide string literal of wchar_t."
+snippet = '''
+L"${1:text}"$0'''
+
+[[entries]]
+name = "NULL"
+keys = ["null", "nil", "pointer", "zero"]
+doc = "Null pointer constant from stddef.h; nullptr in C23."
+snippet = '''
+NULL$0'''
+
+[[entries]]
+name = "true false"
+keys = ["true", "false", "bool", "boolean"]
+doc = "Boolean constants, keywords in C23 and macros from stdbool.h before."
+snippet = '''
+${1:true}$0'''
+
+[[entries]]
+name = "INT_MAX"
+keys = ["int_max", "int_min", "long_max", "limits", "uint_max"]
+doc = "Integer limits from limits.h."
+snippet = '''
+${1:INT}_${2:MAX}$0'''
+
+[[entries]]
+name = "UINT32_MAX"
+keys = ["uint32_max", "int64_max", "int32_min", "stdint", "limits"]
+doc = "Fixed-width limits from stdint.h."
+snippet = '''
+${1:UINT32}_${2:MAX}$0'''
+
+[[entries]]
+name = "SIZE_MAX"
+keys = ["size_max", "size_t", "limit", "stdint"]
+doc = "Largest size_t value, used in overflow checks."
+snippet = '''
+SIZE_MAX$0'''
+
+[[entries]]
+name = "DBL_MAX FLT_EPSILON"
+keys = ["dbl_max", "flt_epsilon", "dbl_epsilon", "float.h", "limits"]
+doc = "Floating-point limits and epsilons from float.h."
+snippet = '''
+${1:DBL}_${2:EPSILON}$0'''
+
+[[entries]]
+name = "EOF"
+keys = ["eof", "end of file", "-1"]
+doc = "Negative int returned by character reads at end of input."
+snippet = '''
+EOF$0'''
+
+[[entries]]
+name = "EXIT_SUCCESS"
+keys = ["exit_success", "exit_failure", "status", "code"]
+doc = "Portable exit status constants from stdlib.h."
+snippet = '''
+EXIT_${1:SUCCESS}$0'''

@@ -23,3 +23,9 @@
 - check: `run_check_c` is per saved file; a header edit does not re-check the sources that include it, and there is no whole-project C check (`compile_commands.json` walk)
 - highlight: the include walk follows both branches of an `#if`, so libc++'s frozen `__cxx03/` copies share the 512-file system budget with the live headers; evaluate `__cplusplus`-style guards or skip `__cxx03/` if `std::` names go missing
 - highlight: range-for over a template container (`for (auto &s : shapes)`) and iterator results stay on the field-name fallback; element typing needs template-argument tracking in the `TypeTable`
+
+# Cheat sheet (added 2026-09-10, see plan/roadmap/cheatsheet.md)
+
+- cheatsheet: no sheets for TOML (Cargo manifest keys) and CMake yet; `Lang::Toml` / `Lang::Cmake` answer with no sections
+- context: detection is syntactic; `expression` after `x.` does not know the type of `x`, so iterator and string sections rely on the typed prefix
+- context: C `switch` bodies and Rust `match` arm blocks classify by the generic brace rules; a `case` label context could offer `case`/`default` templates first

@@ -33,6 +33,7 @@ struct EditorSettings: View {
             Section("Editing") {
                 Toggle("Auto-save after 1 s", isOn: bind.bool(\.autoSave))
                 Toggle("Completions as you type", isOn: bind.bool(\.completions))
+                Toggle("Cheat sheet with completions", isOn: bind.bool(\.cheatSheet))
             }
             Section("Display") {
                 Toggle("Outline panel", isOn: bind.bool(\.outlinePanel))

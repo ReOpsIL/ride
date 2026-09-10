@@ -192,6 +192,20 @@
 		E10000000000000000000023 /* SnippetParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000022 /* SnippetParserTests.swift */; };
 		E10000000000000000000102 /* CompletionSession+Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000101 /* CompletionSession+Snippet.swift */; };
 		E10000000000000000000104 /* SessionService+Kinds.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000103 /* SessionService+Kinds.swift */; };
+		E20000000000000000000002 /* CheatSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* CheatSheetController.swift */; };
+		E20000000000000000000004 /* CheatSheetFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000003 /* CheatSheetFetch.swift */; };
+		E20000000000000000000006 /* CheatSheetLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000005 /* CheatSheetLayout.swift */; };
+		E20000000000000000000008 /* CheatSheetPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000007 /* CheatSheetPlacement.swift */; };
+		E2000000000000000000000A /* CheatSheetPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000009 /* CheatSheetPopup.swift */; };
+		E2000000000000000000000C /* CheatSheetPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000000000000000000000B /* CheatSheetPreview.swift */; };
+		E2000000000000000000000E /* CheatSheetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000000000000000000000D /* CheatSheetRowView.swift */; };
+		E20000000000000000000010 /* CheatSheetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000000000000000000000F /* CheatSheetRows.swift */; };
+		E20000000000000000000012 /* SnippetInsert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000011 /* SnippetInsert.swift */; };
+		E20000000000000000000014 /* CheatSheetRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000013 /* CheatSheetRowsTests.swift */; };
+		E30000000000000000000001 /* CheatSheetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000000000000000000000F /* CheatSheetRows.swift */; };
+		E30000000000000000000002 /* CheatSheetPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000007 /* CheatSheetPlacement.swift */; };
+		E30000000000000000000003 /* CompletionPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D3 /* CompletionPlacement.swift */; };
+		E30000000000000000000009 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -362,6 +376,16 @@
 		E10000000000000000000022 /* SnippetParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParserTests.swift"; sourceTree = "<group>"; };
 		E10000000000000000000101 /* CompletionSession+Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Snippet.swift"; sourceTree = "<group>"; };
 		E10000000000000000000103 /* SessionService+Kinds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Kinds.swift"; sourceTree = "<group>"; };
+		E20000000000000000000001 /* CheatSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetController.swift"; sourceTree = "<group>"; };
+		E20000000000000000000003 /* CheatSheetFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetFetch.swift"; sourceTree = "<group>"; };
+		E20000000000000000000005 /* CheatSheetLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetLayout.swift"; sourceTree = "<group>"; };
+		E20000000000000000000007 /* CheatSheetPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetPlacement.swift"; sourceTree = "<group>"; };
+		E20000000000000000000009 /* CheatSheetPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetPopup.swift"; sourceTree = "<group>"; };
+		E2000000000000000000000B /* CheatSheetPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetPreview.swift"; sourceTree = "<group>"; };
+		E2000000000000000000000D /* CheatSheetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRowView.swift"; sourceTree = "<group>"; };
+		E2000000000000000000000F /* CheatSheetRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRows.swift"; sourceTree = "<group>"; };
+		E20000000000000000000011 /* SnippetInsert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetInsert.swift"; sourceTree = "<group>"; };
+		E20000000000000000000013 /* CheatSheetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRowsTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -427,6 +451,7 @@
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
+				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
 				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* CargoWatchTests.swift */,
@@ -479,6 +504,7 @@
 				A00000000000000000000059 /* Engine */,
 				A0000000000000000000005B /* Outline */,
 				A0000000000000000000005C /* Completion */,
+				E20000000000000000000015 /* CheatSheet */,
 				A00000000000000000000131 /* Problems */,
 				A00000000000000000000905 /* Debug */,
 				D0A55E7500000000000A55E7 /* Assets.xcassets */,
@@ -660,6 +686,7 @@
 				A000000000000000000000D5 /* CompletionLifecycle.swift */,
 				A000000000000000000000E3 /* CompletionRowStyle.swift */,
 				A000000000000000000000E5 /* CompletionRowView.swift */,
+				E20000000000000000000011 /* SnippetInsert.swift */,
 			);
 			path = Completion;
 			sourceTree = "<group>";
@@ -690,6 +717,21 @@
 				B1000000000000000000006A /* PreviewPane.swift */,
 			);
 			path = Preview;
+			sourceTree = "<group>";
+		};
+		E20000000000000000000015 /* CheatSheet */ = {
+			isa = PBXGroup;
+			children = (
+				E20000000000000000000001 /* CheatSheetController.swift */,
+				E20000000000000000000003 /* CheatSheetFetch.swift */,
+				E20000000000000000000005 /* CheatSheetLayout.swift */,
+				E20000000000000000000007 /* CheatSheetPlacement.swift */,
+				E20000000000000000000009 /* CheatSheetPopup.swift */,
+				E2000000000000000000000B /* CheatSheetPreview.swift */,
+				E2000000000000000000000D /* CheatSheetRowView.swift */,
+				E2000000000000000000000F /* CheatSheetRows.swift */,
+			);
+			path = CheatSheet;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -795,9 +837,14 @@
 				E10000000000000000000003 /* CompletionTrigger.swift in Sources */,
 				E10000000000000000000006 /* CompletionNarrowing.swift in Sources */,
 				E10000000000000000000009 /* SnippetParser.swift in Sources */,
+				E30000000000000000000009 /* DesignTokens.swift in Sources */,
+				E30000000000000000000001 /* CheatSheetRows.swift in Sources */,
+				E30000000000000000000002 /* CheatSheetPlacement.swift in Sources */,
+				E30000000000000000000003 /* CompletionPlacement.swift in Sources */,
 				E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */,
 				E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */,
 				E10000000000000000000023 /* SnippetParserTests.swift in Sources */,
+				E20000000000000000000014 /* CheatSheetRowsTests.swift in Sources */,
 				C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */,
 				C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */,
 				C009D8110230ED36CA278F06 /* Plural.swift in Sources */,
@@ -863,6 +910,15 @@
 				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
 				C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */,
 				C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */,
+				E20000000000000000000002 /* CheatSheetController.swift in Sources */,
+				E20000000000000000000004 /* CheatSheetFetch.swift in Sources */,
+				E20000000000000000000006 /* CheatSheetLayout.swift in Sources */,
+				E20000000000000000000008 /* CheatSheetPlacement.swift in Sources */,
+				E2000000000000000000000A /* CheatSheetPopup.swift in Sources */,
+				E2000000000000000000000C /* CheatSheetPreview.swift in Sources */,
+				E2000000000000000000000E /* CheatSheetRowView.swift in Sources */,
+				E20000000000000000000010 /* CheatSheetRows.swift in Sources */,
+				E20000000000000000000012 /* SnippetInsert.swift in Sources */,
 				C0868F479E44B07AF06EC8E2 /* CompletionSelectionRow.swift in Sources */,
 				C03F49DB1A8678BD116E627C /* MatchHighlight.swift in Sources */,
 				C09BE5B3D2D77C23A6C6E98A /* HighlightedText.swift in Sources */,

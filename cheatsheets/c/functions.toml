@@ -1,0 +1,153 @@
+title = "Functions and items"
+contexts = ["item"]
+
+[[entries]]
+name = "function"
+keys = ["fn", "func", "def", "definition"]
+doc = "Define a function with a return type, name and parameter list."
+snippet = '''
+${1:int} ${2:name}(${3:void}) {
+    $0
+}'''
+
+[[entries]]
+name = "prototype"
+keys = ["proto", "declaration", "forward"]
+doc = "Declare a function before its definition or in a header."
+snippet = '''
+${1:int} ${2:name}(${3:void});$0'''
+
+[[entries]]
+name = "main"
+keys = ["main", "entry"]
+doc = "Program entry point that takes no arguments."
+snippet = '''
+int main(void) {
+    $0
+    return 0;
+}'''
+
+[[entries]]
+name = "main argv"
+keys = ["main", "argc", "argv", "args"]
+doc = "Program entry point that receives the command-line arguments."
+snippet = '''
+int main(int argc, char *argv[]) {
+    $0
+    return 0;
+}'''
+
+[[entries]]
+name = "static function"
+keys = ["static", "private", "internal"]
+doc = "Function with internal linkage, visible only in this translation unit."
+snippet = '''
+static ${1:int} ${2:name}(${3:void}) {
+    $0
+}'''
+
+[[entries]]
+name = "inline function"
+keys = ["inline", "static inline"]
+doc = "Inline helper; static avoids the C99 extern-inline linkage rules."
+snippet = '''
+static inline ${1:int} ${2:name}(${3:int x}) {
+    $0
+}'''
+
+[[entries]]
+name = "variadic function"
+keys = ["variadic", "va_list", "va_start", "va_arg", "va_end", "..."]
+doc = "Take a variable number of arguments and walk them with va_arg."
+snippet = '''
+${1:int} ${2:name}(${3:int count}, ...) {
+    va_list args;
+    va_start(args, ${4:count});
+    ${5:int value = va_arg(args, int);}
+    va_end(args);
+    $0
+}'''
+
+[[entries]]
+name = "vprintf forwarding"
+keys = ["va_list", "vfprintf", "vsnprintf", "forward", "log"]
+doc = "Forward a variadic argument list to a v-prefixed printf function."
+snippet = '''
+void ${1:log_msg}(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(${2:stderr}, fmt, args);
+    va_end(args);
+}$0'''
+
+[[entries]]
+name = "function pointer typedef"
+keys = ["typedef", "callback", "fnptr", "pointer"]
+doc = "Name a function pointer type so callbacks read cleanly."
+snippet = '''
+typedef ${1:int} (*${2:handler_fn})(${3:int});$0'''
+
+[[entries]]
+name = "callback parameter"
+keys = ["callback", "pointer", "fn"]
+doc = "Accept a function pointer as a parameter and call it per element."
+snippet = '''
+void ${1:for_each}(${2:int} *${3:items}, size_t ${4:n}, void (*${5:fn})(${2:int})) {
+    for (size_t i = 0; i < ${4:n}; i++) {
+        ${5:fn}(${3:items}[i]);
+    }
+}$0'''
+
+[[entries]]
+name = "function returning pointer"
+keys = ["pointer", "return", "ptr"]
+doc = "Return a pointer; the caller must know who owns the pointee."
+snippet = '''
+${1:char} *${2:name}(${3:void}) {
+    $0
+}'''
+
+[[entries]]
+name = "function returning function pointer"
+keys = ["pointer", "return", "fnptr"]
+doc = "Return a function pointer without a typedef, reading inside out."
+snippet = '''
+${1:int} (*${2:pick}(${3:int which}))(${4:int, int}) {
+    $0
+}'''
+
+[[entries]]
+name = "array parameter"
+keys = ["array", "param", "decay"]
+doc = "An array parameter decays to a pointer, so pass the length separately."
+snippet = '''
+void ${1:fill}(${2:int} ${3:arr}[], size_t ${4:n}) {
+    $0
+}'''
+
+[[entries]]
+name = "array parameter static"
+keys = ["array", "static", "param", "[static n]"]
+doc = "Promise the callee at least N elements so the compiler can warn on short arrays."
+snippet = '''
+void ${1:sum}(const ${2:int} ${3:arr}[static ${4:4}]) {
+    $0
+}'''
+
+[[entries]]
+name = "2D array parameter"
+keys = ["array", "matrix", "2d", "param"]
+doc = "All but the first dimension must be given so indexing can be computed."
+snippet = '''
+void ${1:print}(${2:int} ${3:m}[][${4:COLS}], size_t ${5:rows}) {
+    $0
+}'''
+
+[[entries]]
+name = "VLA parameter"
+keys = ["vla", "array", "matrix", "param"]
+doc = "Dimensions given by earlier parameters, so any row length works (C99)."
+snippet = '''
+void ${1:print}(size_t ${2:rows}, size_t ${3:cols}, ${4:int} ${5:m}[${2:rows}][${3:cols}]) {
+    $0
+}'''

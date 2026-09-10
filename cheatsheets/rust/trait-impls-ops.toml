@@ -1,0 +1,145 @@
+title = "Standard trait impls: ops and iteration"
+contexts = ["item"]
+
+[[entries]]
+name = "impl Deref"
+keys = ["impl", "deref", "wrapper", "newtype", "smart"]
+doc = "Let a wrapper auto-dereference to its inner type."
+snippet = '''
+impl std::ops::Deref for ${1:Type} {
+    type Target = ${2:Inner};
+
+    fn deref(&self) -> &Self::Target {
+        &self.${3:0}
+    }
+}$0'''
+
+[[entries]]
+name = "impl DerefMut"
+keys = ["impl", "derefmut", "deref", "mut", "wrapper"]
+doc = "Let a wrapper auto-dereference mutably to its inner type."
+snippet = '''
+impl std::ops::DerefMut for ${1:Type} {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.${2:0}
+    }
+}$0'''
+
+[[entries]]
+name = "impl AsRef"
+keys = ["impl", "asref", "borrow", "convert", "reference"]
+doc = "Offer a cheap reference-to-reference conversion."
+snippet = '''
+impl AsRef<${1:str}> for ${2:Type} {
+    fn as_ref(&self) -> &${1:str} {
+        &self.${3:0}
+    }
+}$0'''
+
+[[entries]]
+name = "impl Add (operator)"
+keys = ["impl", "add", "operator", "overload", "plus", "sub", "mul"]
+doc = "Overload a binary operator by implementing its ops trait."
+snippet = '''
+impl std::ops::${1:Add} for ${2:Type} {
+    type Output = ${3:Self};
+
+    fn ${4:add}(self, rhs: Self) -> Self::Output {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl AddAssign"
+keys = ["impl", "addassign", "operator", "compound", "plus"]
+doc = "Overload a compound assignment operator."
+snippet = '''
+impl std::ops::${1:AddAssign} for ${2:Type} {
+    fn ${3:add_assign}(&mut self, rhs: Self) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Index"
+keys = ["impl", "index", "operator", "subscript", "brackets"]
+doc = "Overload the indexing operator."
+snippet = '''
+impl std::ops::Index<${1:usize}> for ${2:Type} {
+    type Output = ${3:T};
+
+    fn index(&self, ${4:i}: ${1:usize}) -> &Self::Output {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Neg / Not"
+keys = ["impl", "neg", "not", "unary", "operator", "minus"]
+doc = "Overload a unary operator."
+snippet = '''
+impl std::ops::${1:Neg} for ${2:Type} {
+    type Output = Self;
+
+    fn ${3:neg}(self) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Iterator"
+keys = ["impl", "iterator", "next", "item", "custom"]
+doc = "Make a type iterable by defining next and the Item type."
+snippet = '''
+impl Iterator for ${1:Type} {
+    type Item = ${2:u32};
+
+    fn next(&mut self) -> Option<Self::Item> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl IntoIterator"
+keys = ["impl", "intoiterator", "for", "loop", "iter"]
+doc = "Let a borrowed collection type be used directly in a for loop."
+snippet = '''
+impl<'a> IntoIterator for &'a ${1:Type} {
+    type Item = &'a ${2:Elem};
+    type IntoIter = std::slice::Iter<'a, ${2:Elem}>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.${3:items}.iter()
+    }
+}$0'''
+
+[[entries]]
+name = "impl Extend"
+keys = ["impl", "extend", "collection", "push"]
+doc = "Let a collection type absorb any iterator of items."
+snippet = '''
+impl Extend<${1:T}> for ${2:Type} {
+    fn extend<I: IntoIterator<Item = ${1:T}>>(&mut self, iter: I) {
+        for ${3:item} in iter {
+            $0
+        }
+    }
+}'''
+
+[[entries]]
+name = "impl FromIterator"
+keys = ["impl", "fromiterator", "collect", "custom"]
+doc = "Let the type be built by collect from an iterator."
+snippet = '''
+impl FromIterator<${1:T}> for ${2:Type} {
+    fn from_iter<I: IntoIterator<Item = ${1:T}>>(iter: I) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "unsafe impl Send/Sync"
+keys = ["unsafe", "impl", "send", "sync", "thread"]
+doc = "Assert that a type with raw pointers is safe to send or share across threads."
+snippet = '''
+unsafe impl ${1:Send} for ${2:Type} {}$0'''

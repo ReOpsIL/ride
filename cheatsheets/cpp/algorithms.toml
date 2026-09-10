@@ -1,0 +1,142 @@
+title = "Algorithms"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "sort"
+keys = ["sort", "algorithm"]
+doc = "Sort a range in ascending order."
+snippet = """
+std::sort(${1:v}.begin(), ${1:v}.end());$0"""
+
+[[entries]]
+name = "sort with comparator"
+keys = ["sort", "comparator", "lambda", "descending"]
+doc = "Sort with a custom ordering."
+snippet = """
+std::sort(${1:v}.begin(), ${1:v}.end(), [](${2:const auto &a}, ${3:const auto &b}) { return ${4:a < b}; });$0"""
+
+[[entries]]
+name = "stable_sort"
+keys = ["stable_sort", "sort", "stable"]
+doc = "Sort while preserving the order of equal elements."
+snippet = """
+std::stable_sort(${1:v}.begin(), ${1:v}.end()${2:});$0"""
+
+[[entries]]
+name = "partial_sort"
+keys = ["partial_sort", "sort", "top"]
+doc = "Sort only the first n elements into place."
+snippet = """
+std::partial_sort(${1:v}.begin(), ${1:v}.begin() + ${2:n}, ${1:v}.end());$0"""
+
+[[entries]]
+name = "nth_element"
+keys = ["nth_element", "median", "select"]
+doc = "Place the nth element as if the range were sorted."
+snippet = """
+std::nth_element(${1:v}.begin(), ${1:v}.begin() + ${2:n}, ${1:v}.end());$0"""
+
+[[entries]]
+name = "find"
+keys = ["find", "search", "locate"]
+doc = "Find the first element equal to a value."
+snippet = """
+auto ${1:it} = std::find(${2:v}.begin(), ${2:v}.end(), ${3:value});$0"""
+
+[[entries]]
+name = "find_if"
+keys = ["find_if", "find", "predicate", "search"]
+doc = "Find the first element matching a predicate."
+snippet = """
+auto ${1:it} = std::find_if(${2:v}.begin(), ${2:v}.end(), [](${3:const auto &x}) { return ${4:cond}; });$0"""
+
+[[entries]]
+name = "count"
+keys = ["count", "occurrences"]
+doc = "Count elements equal to a value."
+snippet = """
+std::count(${1:v}.begin(), ${1:v}.end(), ${2:value})$0"""
+
+[[entries]]
+name = "count_if"
+keys = ["count_if", "count", "predicate"]
+doc = "Count elements matching a predicate."
+snippet = """
+std::count_if(${1:v}.begin(), ${1:v}.end(), [](${2:const auto &x}) { return ${3:cond}; })$0"""
+
+[[entries]]
+name = "all_of / any_of / none_of"
+keys = ["all_of", "any_of", "none_of", "predicate", "every", "some"]
+doc = "Test whether all, any or none of the elements satisfy a predicate."
+snippet = """
+std::${1:all_of}(${2:v}.begin(), ${2:v}.end(), [](${3:const auto &x}) { return ${4:cond}; })$0"""
+
+[[entries]]
+name = "accumulate"
+keys = ["accumulate", "sum", "fold", "numeric"]
+doc = "Sum (or fold) a range starting from an initial value."
+snippet = """
+std::accumulate(${1:v}.begin(), ${1:v}.end(), ${2:0})$0"""
+
+[[entries]]
+name = "reduce"
+keys = ["reduce", "sum", "fold", "parallel"]
+doc = "Unordered fold that may run in parallel."
+snippet = """
+std::reduce(${1:v}.begin(), ${1:v}.end(), ${2:0})$0"""
+
+[[entries]]
+name = "min_element / max_element"
+keys = ["min_element", "max_element", "min", "max"]
+doc = "Iterator to the smallest or largest element."
+snippet = """
+auto ${1:it} = std::${2:max_element}(${3:v}.begin(), ${3:v}.end());$0"""
+
+[[entries]]
+name = "minmax_element"
+keys = ["minmax_element", "min", "max"]
+doc = "Iterators to both the smallest and largest elements."
+snippet = """
+auto [${1:lo}, ${2:hi}] = std::minmax_element(${3:v}.begin(), ${3:v}.end());$0"""
+
+[[entries]]
+name = "std::min / std::max"
+keys = ["min", "max", "clamp"]
+doc = "Smaller or larger of two values."
+snippet = """
+std::${1:max}(${2:a}, ${3:b})$0"""
+
+[[entries]]
+name = "std::clamp"
+keys = ["clamp", "min", "max", "bound"]
+doc = "Constrain a value to a range."
+snippet = """
+std::clamp(${1:value}, ${2:lo}, ${3:hi})$0"""
+
+[[entries]]
+name = "lower_bound / upper_bound"
+keys = ["lower_bound", "upper_bound", "binary", "search", "sorted"]
+doc = "First position not less than (or greater than) a value in a sorted range."
+snippet = """
+auto ${1:it} = std::${2:lower_bound}(${3:v}.begin(), ${3:v}.end(), ${4:value});$0"""
+
+[[entries]]
+name = "binary_search"
+keys = ["binary_search", "search", "sorted", "contains"]
+doc = "Test whether a sorted range contains a value."
+snippet = """
+std::binary_search(${1:v}.begin(), ${1:v}.end(), ${2:value})$0"""
+
+[[entries]]
+name = "equal"
+keys = ["equal", "compare"]
+doc = "Test whether two ranges have equal elements."
+snippet = """
+std::equal(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end())$0"""
+
+[[entries]]
+name = "std::distance"
+keys = ["distance", "index", "iterator"]
+doc = "Number of steps between two iterators."
+snippet = """
+std::distance(${1:v}.begin(), ${2:it})$0"""

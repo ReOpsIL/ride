@@ -1,0 +1,198 @@
+title = "Threads and synchronization"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "thread::spawn"
+keys = ["thread", "spawn", "new", "concurrent"]
+doc = "Run a closure on a new thread and get a handle to join it."
+snippet = '''
+let ${1:handle} = std::thread::spawn(move || {
+    $0
+});'''
+
+[[entries]]
+name = "join handle"
+keys = ["join", "thread", "wait", "handle", "result"]
+doc = "Wait for a thread to finish and take its return value."
+snippet = '''
+let ${1:result} = ${2:handle}.join().${3:unwrap()};$0'''
+
+[[entries]]
+name = "spawn many and join"
+keys = ["thread", "spawn", "join", "many", "workers", "vec"]
+doc = "Start several threads and wait for all of them."
+snippet = '''
+let handles: Vec<_> = (0..${1:n})
+    .map(|${2:i}| std::thread::spawn(move || $0))
+    .collect();
+for h in handles {
+    h.join().unwrap();
+}'''
+
+[[entries]]
+name = "thread::scope"
+keys = ["thread", "scope", "scoped", "borrow", "stack"]
+doc = "Spawn threads that may borrow local data, all joined when the scope ends."
+snippet = '''
+std::thread::scope(|s| {
+    s.spawn(|| {
+        $0
+    });
+});'''
+
+[[entries]]
+name = "thread builder"
+keys = ["thread", "builder", "name", "stack", "size"]
+doc = "Spawn a thread with a name or custom stack size."
+snippet = '''
+std::thread::Builder::new()
+    .name("${1:worker}".into())
+    .spawn(move || $0)?'''
+
+[[entries]]
+name = "thread::sleep"
+keys = ["sleep", "thread", "wait", "delay", "duration"]
+doc = "Block the current thread for a duration."
+snippet = '''
+std::thread::sleep(std::time::Duration::from_${1:millis}(${2:100}));$0'''
+
+[[entries]]
+name = "Arc<Mutex> shared state"
+keys = ["arc", "mutex", "shared", "state", "counter", "thread"]
+doc = "Create state that several threads can lock and mutate."
+snippet = '''
+let ${1:state} = Arc::new(Mutex::new(${2:0}));$0'''
+
+[[entries]]
+name = "lock mutex"
+keys = ["lock", "mutex", "guard", "unwrap"]
+doc = "Acquire a mutex, getting a guard that unlocks when dropped."
+snippet = '''
+let mut ${1:guard} = ${2:state}.lock().unwrap();
+*${1:guard} ${3:+= 1};$0'''
+
+[[entries]]
+name = "RwLock read / write"
+keys = ["rwlock", "read", "write", "lock", "guard"]
+doc = "Acquire a shared read lock or an exclusive write lock."
+snippet = '''
+let ${1:guard} = ${2:lock}.${3:read}().unwrap();$0'''
+
+[[entries]]
+name = "mpsc channel"
+keys = ["mpsc", "channel", "sender", "receiver", "queue", "message"]
+doc = "Create a multi-producer single-consumer channel."
+snippet = '''
+let (${1:tx}, ${2:rx}) = std::sync::mpsc::channel::<${3:T}>();$0'''
+
+[[entries]]
+name = "send"
+keys = ["send", "channel", "tx", "sender", "message"]
+doc = "Send a value through a channel, failing if the receiver is gone."
+snippet = '''
+${1:tx}.send(${2:value}).unwrap();$0'''
+
+[[entries]]
+name = "receive loop"
+keys = ["recv", "receive", "channel", "rx", "for", "loop", "iter"]
+doc = "Process messages until every sender has been dropped."
+snippet = '''
+for ${1:msg} in ${2:rx} {
+    $0
+}'''
+
+[[entries]]
+name = "recv_timeout / try_recv"
+keys = ["recv", "timeout", "try", "channel", "poll", "nonblocking"]
+doc = "Receive with a timeout or without blocking."
+snippet = '''
+match ${1:rx}.recv_timeout(std::time::Duration::from_${2:millis}(${3:100})) {
+    Ok(${4:msg}) => $0,
+    Err(_) => {}
+}'''
+
+[[entries]]
+name = "sync_channel"
+keys = ["sync", "channel", "bounded", "backpressure", "mpsc"]
+doc = "Create a bounded channel whose senders block when it is full."
+snippet = '''
+let (${1:tx}, ${2:rx}) = std::sync::mpsc::sync_channel::<${3:T}>(${4:capacity});$0'''
+
+[[entries]]
+name = "atomic counter"
+keys = ["atomic", "counter", "fetch_add", "usize", "lockfree"]
+doc = "Increment a shared counter without a lock."
+snippet = '''
+${1:counter}.fetch_add(1, std::sync::atomic::Ordering::${2:Relaxed});$0'''
+
+[[entries]]
+name = "atomic load / store"
+keys = ["atomic", "load", "store", "flag", "bool", "ordering"]
+doc = "Read or write an atomic value with a memory ordering."
+snippet = '''
+${1:flag}.${2:load}(std::sync::atomic::Ordering::${3:SeqCst})$0'''
+
+[[entries]]
+name = "static atomic"
+keys = ["static", "atomic", "global", "counter", "flag"]
+doc = "Declare a global atomic that needs no unsafe to use."
+snippet = '''
+static ${1:COUNTER}: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);$0'''
+
+[[entries]]
+name = "OnceLock"
+keys = ["oncelock", "once", "lazy", "static", "init", "global"]
+doc = "Global initialized exactly once on first access."
+snippet = '''
+static ${1:CONFIG}: std::sync::OnceLock<${2:String}> = std::sync::OnceLock::new();
+${1:CONFIG}.get_or_init(|| ${3:value})$0'''
+
+[[entries]]
+name = "LazyLock"
+keys = ["lazylock", "lazy", "static", "init", "global", "regex"]
+doc = "Global initialized lazily by a closure the first time it is dereferenced."
+snippet = '''
+static ${1:NAME}: std::sync::LazyLock<${2:Type}> = std::sync::LazyLock::new(|| ${3:value});$0'''
+
+[[entries]]
+name = "Once"
+keys = ["once", "call_once", "init", "setup"]
+doc = "Run initialization code exactly once across threads."
+snippet = '''
+static ${1:INIT}: std::sync::Once = std::sync::Once::new();
+${1:INIT}.call_once(|| {
+    $0
+});'''
+
+[[entries]]
+name = "Condvar wait"
+keys = ["condvar", "condition", "variable", "wait", "notify"]
+doc = "Block until another thread signals a condition guarded by a mutex."
+snippet = '''
+let (${1:lock}, ${2:cvar}) = &*${3:pair};
+let mut ${4:ready} = ${1:lock}.lock().unwrap();
+while !*${4:ready} {
+    ${4:ready} = ${2:cvar}.wait(${4:ready}).unwrap();
+}$0'''
+
+[[entries]]
+name = "Barrier"
+keys = ["barrier", "sync", "rendezvous", "wait", "threads"]
+doc = "Make n threads wait for each other at a point."
+snippet = '''
+let ${1:barrier} = Arc::new(std::sync::Barrier::new(${2:n}));
+${1:barrier}.wait();$0'''
+
+[[entries]]
+name = "available_parallelism"
+keys = ["parallelism", "cpus", "cores", "threads", "count"]
+doc = "Number of threads the machine can run in parallel."
+snippet = '''
+std::thread::available_parallelism().map_or(1, |n| n.get())$0'''
+
+[[entries]]
+name = "Send + Sync bound"
+keys = ["send", "sync", "bound", "thread", "safe", "static"]
+doc = "Require a generic type to be safely movable and shareable across threads."
+snippet = '''
+${1:T}: Send + Sync + 'static$0'''

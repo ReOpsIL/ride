@@ -38,16 +38,8 @@ extension CompletionSession {
     }
 
     private func insert(_ hit: CompletionHit, replacing range: NSRange, in view: RideTextView) {
-        guard hit.snippet else {
-            view.insertText(hit.insertText, replacementRange: range)
-            return
-        }
-        let parsed = SnippetParser.parse(hit.insertText)
-        view.insertText(parsed.text, replacementRange: range)
-        if let session = SnippetSession(parsed, insertedAt: range.location, in: view) {
+        if let session = SnippetInsert.insert(hit.insertText, snippet: hit.snippet, replacing: range, in: view) {
             snippet = session
-        } else {
-            view.setSelectedRange(NSRange(location: range.location + parsed.finalOffset, length: 0))
         }
     }
 

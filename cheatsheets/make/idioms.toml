@@ -1,0 +1,98 @@
+title = "Idioms"
+contexts = ["item", "value"]
+
+[[entries]]
+name = "SRCS from wildcard"
+keys = ["srcs", "sources", "wildcard", "glob"]
+doc = "Collect every C source in a directory."
+snippet = '''
+SRCS := $(wildcard ${1:src/*.c})$0'''
+
+[[entries]]
+name = "OBJS by substitution reference"
+keys = ["objs", "objects", "substitution", "build"]
+doc = "Map each source path to an object path in the build directory."
+snippet = '''
+OBJS := $(${1:SRCS}:${2:src/%.c}=${3:build/%.o})$0'''
+
+[[entries]]
+name = "OBJS with patsubst"
+keys = ["objs", "objects", "patsubst"]
+doc = "Derive object names from sources with patsubst."
+snippet = '''
+OBJS := $(patsubst ${1:%.c},${2:%.o},$(${3:SRCS}))$0'''
+
+[[entries]]
+name = "DEPS from OBJS"
+keys = ["deps", "depfiles", "dependencies", ".d"]
+doc = "Name one .d dependency file per object."
+snippet = '''
+DEPS := $(${1:OBJS}:.o=.d)$0'''
+
+[[entries]]
+name = "dependency generation -MMD -MP"
+keys = ["mmd", "mp", "depend", "dependencies", "header"]
+doc = "Ask the compiler to write header dependencies next to each object and include them."
+snippet = '''
+CPPFLAGS += -MMD -MP
+-include $(${1:OBJS}:.o=.d)$0'''
+
+[[entries]]
+name = "recursive wildcard function"
+keys = ["rwildcard", "recursive", "wildcard", "find"]
+doc = "A user function that globs a pattern through every subdirectory."
+snippet = '''
+rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$(d),$(2)) $(filter $(subst *,%,$(2)),$(d)))
+SRCS := $(call rwildcard,${1:src},${2:*.c})$0'''
+
+[[entries]]
+name = "version from git"
+keys = ["version", "git", "describe", "shell"]
+doc = "Capture the git description once at parse time."
+snippet = '''
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo ${1:0.0.0})$0'''
+
+[[entries]]
+name = "verbosity switch V=1"
+keys = ["verbose", "quiet", "q", "v", "silent"]
+doc = "Prefix recipe lines with $(Q) so make V=1 shows the commands."
+snippet = '''
+Q := $(if $(V),,@)$0'''
+
+[[entries]]
+name = "build directory list from objects"
+keys = ["dirs", "directories", "sort", "dir", "mkdir"]
+doc = "The unique set of directories the objects live in, ready for mkdir -p."
+snippet = '''
+BUILD_DIRS := $(sort $(dir $(${1:OBJS})))$0'''
+
+[[entries]]
+name = "space and comma variables"
+keys = ["space", "comma", "empty", "literal"]
+doc = "Named variables for characters that are otherwise awkward inside function calls."
+snippet = '''
+empty :=
+space := $(empty) $(empty)
+comma := ,$0'''
+
+[[entries]]
+name = "join list with commas"
+keys = ["join", "comma", "separator", "subst"]
+doc = "Turn a space-separated list into a comma-separated one."
+snippet = '''
+$(subst $(space),$(comma),$(strip ${1:$(LIST)}))$0'''
+
+[[entries]]
+name = "makefile directory"
+keys = ["makefile", "dir", "self", "root", "here"]
+doc = "The directory of the current makefile, independent of the working directory."
+snippet = '''
+ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))$0'''
+
+[[entries]]
+name = "pkg-config flags"
+keys = ["pkg-config", "pkgconfig", "cflags", "libs"]
+doc = "Pull compile and link flags for a library from pkg-config."
+snippet = '''
+CFLAGS += $(shell pkg-config --cflags ${1:gtk4})
+LDLIBS += $(shell pkg-config --libs ${1:gtk4})$0'''

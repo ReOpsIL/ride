@@ -1,0 +1,163 @@
+title = "Expressions and operators"
+contexts = ["expression"]
+
+[[entries]]
+name = "ternary"
+keys = ["ternary", "?:", "conditional", "if"]
+doc = "Conditional expression choosing between two values."
+snippet = '''
+${1:cond} ? ${2:a} : ${3:b}$0'''
+
+[[entries]]
+name = "comma"
+keys = ["comma", ",", "sequence"]
+doc = "Evaluate left to right and yield the last value."
+snippet = '''
+(${1:a}, ${2:b})$0'''
+
+[[entries]]
+name = "compound assignment"
+keys = ["+=", "-=", "*=", "|=", "compound", "assign"]
+doc = "Apply an operator and assign in one step."
+snippet = '''
+${1:x} ${2:+}= ${3:1}$0'''
+
+[[entries]]
+name = "post-increment"
+keys = ["++", "increment", "post", "i++"]
+doc = "Yield the old value, then increment."
+snippet = '''
+${1:i}++$0'''
+
+[[entries]]
+name = "pre-increment"
+keys = ["++", "increment", "pre", "++i", "--"]
+doc = "Increment, then yield the new value."
+snippet = '''
+++${1:i}$0'''
+
+[[entries]]
+name = "address-of"
+keys = ["&", "address", "addressof", "reference"]
+doc = "Pointer to an object."
+snippet = '''
+&${1:value}$0'''
+
+[[entries]]
+name = "dereference"
+keys = ["*", "deref", "dereference", "pointee"]
+doc = "The object a pointer points to."
+snippet = '''
+*${1:p}$0'''
+
+[[entries]]
+name = "sizeof"
+keys = ["sizeof", "size", "bytes"]
+doc = "Size in bytes of an expression's type, without evaluating it."
+snippet = '''
+sizeof ${1:expr}$0'''
+
+[[entries]]
+name = "sizeof type"
+keys = ["sizeof", "size", "type", "bytes"]
+doc = "Size in bytes of a type name, which requires parentheses."
+snippet = '''
+sizeof(${1:int})$0'''
+
+[[entries]]
+name = "cast"
+keys = ["cast", "convert", "(type)"]
+doc = "Explicit conversion to another type."
+snippet = '''
+(${1:int})${2:value}$0'''
+
+[[entries]]
+name = "widen before multiply"
+keys = ["widen", "promotion", "overflow", "cast", "int64"]
+doc = "Cast one operand first so the arithmetic happens in the wider type."
+snippet = '''
+(${1:int64_t})${2:a} * ${3:b}$0'''
+
+[[entries]]
+name = "float division"
+keys = ["division", "float", "double", "cast", "/"]
+doc = "Cast one operand to avoid truncating integer division."
+snippet = '''
+(double)${1:a} / ${2:b}$0'''
+
+[[entries]]
+name = "modulo"
+keys = ["%", "modulo", "remainder", "mod"]
+doc = "Remainder whose sign follows the dividend."
+snippet = '''
+${1:a} % ${2:b}$0'''
+
+[[entries]]
+name = "ceiling division"
+keys = ["ceil", "division", "round up", "chunks"]
+doc = "Integer division rounded up, for positive operands."
+snippet = '''
+(${1:a} + ${2:b} - 1) / ${2:b}$0'''
+
+[[entries]]
+name = "logical and"
+keys = ["&&", "and", "short circuit", "logical"]
+doc = "Short-circuit and: the right side runs only when the left is true."
+snippet = '''
+${1:p} != NULL && ${2:p->ok}$0'''
+
+[[entries]]
+name = "logical or"
+keys = ["||", "or", "short circuit", "logical"]
+doc = "Short-circuit or: the right side runs only when the left is false."
+snippet = '''
+${1:a} || ${2:b}$0'''
+
+[[entries]]
+name = "logical not"
+keys = ["!", "not", "negate", "logical"]
+doc = "Yields 1 when the operand is zero, else 0."
+snippet = '''
+!${1:x}$0'''
+
+[[entries]]
+name = "normalize bool"
+keys = ["!!", "bool", "normalize", "boolean"]
+doc = "Collapse any nonzero value to exactly 1."
+snippet = '''
+!!${1:x}$0'''
+
+[[entries]]
+name = "abs"
+keys = ["abs", "labs", "llabs", "fabs", "absolute"]
+doc = "Absolute value; abs(INT_MIN) overflows."
+snippet = '''
+${1:abs}(${2:x})$0'''
+
+[[entries]]
+name = "overflow check add"
+keys = ["overflow", "int_max", "add", "safe", "signed"]
+doc = "Test before adding, because signed overflow is undefined."
+snippet = '''
+${1:a} > ${2:INT_MAX} - ${3:b}$0'''
+
+[[entries]]
+name = "unsigned wrap"
+keys = ["wrap", "unsigned", "modular", "delta", "timer"]
+doc = "Unsigned subtraction wraps, giving a correct delta across a counter rollover."
+snippet = '''
+(${1:uint32_t})(${2:now} - ${3:then})$0'''
+
+[[entries]]
+name = "bounds check"
+keys = ["bounds", "index", "range", "check"]
+doc = "Index is valid when below the element count."
+snippet = '''
+${1:i} < sizeof ${2:arr} / sizeof ${2:arr}[0]$0'''
+
+[[entries]]
+name = "precedence"
+keys = ["precedence", "parenthesize", "bitwise", "compare"]
+doc = "Comparison binds tighter than & and |, so parenthesise bitwise tests."
+snippet = '''
+(${1:x} & ${2:MASK}) == ${2:MASK}$0'''

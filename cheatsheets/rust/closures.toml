@@ -1,0 +1,143 @@
+title = "Closures"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "closure"
+keys = ["closure", "lambda", "anonymous", "pipe"]
+doc = "Anonymous function that captures variables from its environment by reference."
+snippet = '''
+|${1:x}| ${2:x + 1}$0'''
+
+[[entries]]
+name = "closure block"
+keys = ["closure", "lambda", "block", "multiline"]
+doc = "Closure with a block body for several statements."
+snippet = '''
+|${1:x}| {
+    $0
+}'''
+
+[[entries]]
+name = "closure typed"
+keys = ["closure", "lambda", "typed", "annotate"]
+doc = "Closure with explicit parameter and return types."
+snippet = '''
+|${1:x}: ${2:i32}| -> ${3:i32} { $0 }'''
+
+[[entries]]
+name = "closure no args"
+keys = ["closure", "lambda", "thunk", "lazy"]
+doc = "Closure that takes no arguments, used for lazy evaluation."
+snippet = '''
+|| ${1:expr}$0'''
+
+[[entries]]
+name = "move closure"
+keys = ["move", "closure", "capture", "own", "thread"]
+doc = "Closure that takes ownership of the variables it captures."
+snippet = '''
+move |${1:x}| ${2:expr}$0'''
+
+[[entries]]
+name = "let closure"
+keys = ["let", "closure", "lambda", "bind"]
+doc = "Bind a closure to a name so it can be called or passed later."
+snippet = '''
+let ${1:f} = |${2:x}: ${3:i32}| ${4:x * 2};$0'''
+
+[[entries]]
+name = "let mut closure (FnMut)"
+keys = ["let", "mut", "closure", "fnmut", "counter", "state"]
+doc = "Bind a closure that mutates captured state, so the binding itself must be mut."
+snippet = '''
+let mut ${1:count} = ${2:0};
+let mut ${3:tick} = || {
+    ${1:count} += 1;
+    $0
+};'''
+
+[[entries]]
+name = "Fn param"
+keys = ["fn", "closure", "param", "callback", "generic"]
+doc = "Generic parameter that accepts any closure callable many times by shared reference."
+snippet = '''
+${1:f}: impl Fn(${2:i32}) -> ${3:i32}$0'''
+
+[[entries]]
+name = "FnMut param"
+keys = ["fnmut", "closure", "param", "callback", "mutable"]
+doc = "Generic parameter that accepts a closure allowed to mutate its captures."
+snippet = '''
+mut ${1:f}: impl FnMut(${2:i32})$0'''
+
+[[entries]]
+name = "FnOnce param"
+keys = ["fnonce", "closure", "param", "callback", "consume"]
+doc = "Generic parameter that accepts a closure called at most once and may move out of its captures."
+snippet = '''
+${1:f}: impl FnOnce() -> ${2:T}$0'''
+
+[[entries]]
+name = "call closure param"
+keys = ["call", "closure", "invoke", "callback"]
+doc = "Invoke a closure received as a parameter."
+snippet = '''
+${1:f}(${2:arg})$0'''
+
+[[entries]]
+name = "closure in struct field"
+keys = ["closure", "struct", "field", "box", "dyn", "store"]
+doc = "Store a closure in a struct field as a boxed trait object."
+snippet = '''
+${1:callback}: Box<dyn Fn(${2:&str})${3: + Send}>,$0'''
+
+[[entries]]
+name = "closure vector"
+keys = ["closure", "vec", "list", "box", "dyn", "handlers"]
+doc = "Keep a list of heterogeneous closures behind Box<dyn Fn>."
+snippet = '''
+let mut ${1:handlers}: Vec<Box<dyn Fn(${2:i32})>> = Vec::new();
+${1:handlers}.push(Box::new(|${3:x}| $0));'''
+
+[[entries]]
+name = "function as closure arg"
+keys = ["function", "closure", "name", "pass", "path"]
+doc = "Pass a named function or method path where a closure is expected."
+snippet = '''
+.map(${1:String::from})$0'''
+
+[[entries]]
+name = "closure capturing clone"
+keys = ["closure", "clone", "capture", "arc", "thread"]
+doc = "Clone a shared handle before moving it into a closure."
+snippet = '''
+let ${1:handle} = Arc::clone(&${2:shared});
+${3:thread::spawn}(move || {
+    $0
+});'''
+
+[[entries]]
+name = "closure returning Result"
+keys = ["closure", "result", "question", "try"]
+doc = "Closure whose body uses the question-mark operator, so it returns a Result."
+snippet = '''
+|${1:x}| -> Result<${2:T}, ${3:E}> {
+    $0
+    Ok(${4:value})
+}'''
+
+[[entries]]
+name = "async closure"
+keys = ["async", "closure", "future", "await"]
+doc = "Closure that returns a future when called."
+snippet = '''
+async |${1:x}| {
+    $0
+}'''
+
+[[entries]]
+name = "sort comparator closure"
+keys = ["closure", "sort", "cmp", "compare", "ordering"]
+doc = "Two-argument closure returning an Ordering for sort_by."
+snippet = '''
+|a, b| a.${1:key}.cmp(&b.${1:key})$0'''

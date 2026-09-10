@@ -1,0 +1,203 @@
+title = "Templates"
+contexts = ["item"]
+
+[[entries]]
+name = "function template"
+keys = ["template", "fn", "generic"]
+doc = "Function parameterized on a type."
+snippet = """
+template <typename ${1:T}>
+${2:T} ${3:name}(${4:const T &value}) {
+    $0
+}"""
+
+[[entries]]
+name = "class template"
+keys = ["template", "class", "generic"]
+doc = "Class parameterized on a type."
+snippet = """
+template <typename ${1:T}>
+class ${2:Name} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "struct template"
+keys = ["template", "struct", "generic"]
+doc = "Struct parameterized on a type."
+snippet = """
+template <typename ${1:T}>
+struct ${2:Name} {
+    $0
+};"""
+
+[[entries]]
+name = "variadic template"
+keys = ["template", "variadic", "pack", "args"]
+doc = "Function taking any number of arguments."
+snippet = """
+template <typename... ${1:Args}>
+${2:void} ${3:name}(${1:Args} &&...${4:args}) {
+    $0
+}"""
+
+[[entries]]
+name = "fold expression"
+keys = ["fold", "pack", "variadic", "..."]
+doc = "Apply a binary operator across a parameter pack."
+snippet = """
+template <typename... ${1:Args}>
+auto ${2:sum}(${1:Args}... ${3:args}) {
+    return (${3:args} ${4:+} ...);
+}$0"""
+
+[[entries]]
+name = "fold with init"
+keys = ["fold", "pack", "variadic", "init"]
+doc = "Fold with an initial value, e.g. printing every argument."
+snippet = """
+template <typename... ${1:Args}>
+void ${2:print}(${1:Args} &&...${3:args}) {
+    (${4:std::cout} << ... << ${3:args});$0
+}"""
+
+[[entries]]
+name = "template specialization"
+keys = ["template", "specialization", "full", "explicit"]
+doc = "Full specialization of a template for one type."
+snippet = """
+template <>
+${1:struct} ${2:Name}<${3:int}> {
+    $0
+};"""
+
+[[entries]]
+name = "partial specialization"
+keys = ["template", "specialization", "partial"]
+doc = "Specialization for a family of types such as pointers."
+snippet = """
+template <typename ${1:T}>
+struct ${2:Name}<${1:T} ${3:*}> {
+    $0
+};"""
+
+[[entries]]
+name = "non-type template parameter"
+keys = ["template", "non-type", "nttp", "value", "size"]
+doc = "Template parameterized on a compile-time value."
+snippet = """
+template <${1:std::size_t} ${2:N}>
+${3:struct} ${4:Name} {
+    $0
+};"""
+
+[[entries]]
+name = "template template parameter"
+keys = ["template", "template template", "container"]
+doc = "Template parameter that is itself a template."
+snippet = """
+template <template <typename...> class ${1:Container}, typename ${2:T}>
+${3:void} ${4:name}(const ${1:Container}<${2:T}> &${5:c}) {
+    $0
+}"""
+
+[[entries]]
+name = "default template argument"
+keys = ["template", "default", "argument"]
+doc = "Template parameter with a default type."
+snippet = """
+template <typename ${1:T} = ${2:int}>
+${3:struct} ${4:Name} {
+    $0
+};"""
+
+[[entries]]
+name = "member template"
+keys = ["template", "member", "method"]
+doc = "Template member function inside a class."
+snippet = """
+template <typename ${1:U}>
+${2:void} ${3:name}(${4:U &&value}) {
+    $0
+}"""
+
+[[entries]]
+name = "alias template"
+keys = ["using", "alias", "template"]
+doc = "Parameterized type alias."
+snippet = """
+template <typename ${1:T}>
+using ${2:Vec} = ${3:std::vector<T>};$0"""
+
+[[entries]]
+name = "variable template"
+keys = ["template", "variable", "constexpr", "_v"]
+doc = "Parameterized constexpr variable."
+snippet = """
+template <typename ${1:T}>
+constexpr ${2:bool} ${3:is_small_v} = ${4:sizeof(T) <= 8};$0"""
+
+[[entries]]
+name = "explicit instantiation"
+keys = ["template", "instantiation", "extern"]
+doc = "Force or suppress instantiation of a template."
+snippet = """
+${1:extern }template ${2:class} ${3:Name}<${4:int}>;$0"""
+
+[[entries]]
+name = "SFINAE enable_if"
+keys = ["sfinae", "enable_if", "template"]
+doc = "Remove an overload from resolution when a trait is false."
+snippet = """
+template <typename ${1:T}, std::enable_if_t<${2:std::is_integral_v<T>}, int> = 0>
+${3:void} ${4:name}(${1:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "if constexpr with traits"
+keys = ["if", "constexpr", "trait", "template"]
+doc = "Branch on a type trait inside a template."
+snippet = """
+template <typename ${1:T}>
+auto ${2:name}(${1:T} ${3:value}) {
+    if constexpr (${4:std::is_integral_v<T>}) {
+        $0
+    } else {
+    }
+}"""
+
+[[entries]]
+name = "CTAD deduction guide"
+keys = ["ctad", "deduction", "guide", "template"]
+doc = "User-defined deduction guide for class template argument deduction."
+snippet = """
+template <typename ${1:T}>
+${2:Name}(${1:T}) -> ${2:Name}<${1:T}>;$0"""
+
+[[entries]]
+name = "dependent type name"
+keys = ["typename", "dependent", "template"]
+doc = "Refer to a nested type of a template parameter."
+snippet = """
+typename ${1:T}::${2:value_type}$0"""
+
+[[entries]]
+name = "std::integral_constant"
+keys = ["integral_constant", "tag", "dispatch"]
+doc = "Tag type that wraps a compile-time value."
+snippet = """
+std::integral_constant<${1:int}, ${2:N}>$0"""
+
+[[entries]]
+name = "overloaded visitor"
+keys = ["overloaded", "visit", "variant", "lambda"]
+doc = "Combine lambdas into one overloaded callable for std::visit."
+snippet = """
+template <typename... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <typename... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;$0"""

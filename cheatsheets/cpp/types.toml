@@ -1,0 +1,212 @@
+title = "Types"
+contexts = ["type"]
+
+[[entries]]
+name = "fundamental types"
+keys = ["int", "char", "bool", "double", "float", "long", "short", "void"]
+doc = "Built-in types: bool, char, int, long, long long, float, double, void."
+snippet = """
+${1:int}$0"""
+
+[[entries]]
+name = "fixed-width integer"
+keys = ["int32_t", "int64_t", "uint8_t", "uint32_t", "uint64_t", "cstdint", "std::"]
+doc = "Integer of exact width from <cstdint>."
+snippet = """
+std::${1:int32_t}$0"""
+
+[[entries]]
+name = "size_t"
+keys = ["size_t", "size", "std::"]
+doc = "Unsigned type for sizes and indices."
+snippet = """
+std::size_t$0"""
+
+[[entries]]
+name = "const reference"
+keys = ["const", "ref", "&"]
+doc = "Read-only reference parameter."
+snippet = """
+const ${1:T} &$0"""
+
+[[entries]]
+name = "rvalue reference"
+keys = ["rvalue", "ref", "&&"]
+doc = "Reference that binds to temporaries."
+snippet = """
+${1:T} &&$0"""
+
+[[entries]]
+name = "pointer"
+keys = ["ptr", "pointer", "*"]
+doc = "Pointer type."
+snippet = """
+${1:T} *$0"""
+
+[[entries]]
+name = "auto"
+keys = ["auto", "deduce"]
+doc = "Deduced type (also usable in C++20 function parameters)."
+snippet = """
+auto$0"""
+
+[[entries]]
+name = "decltype(auto)"
+keys = ["decltype", "auto", "forward"]
+doc = "Return type that preserves references and const."
+snippet = """
+decltype(auto)$0"""
+
+[[entries]]
+name = "decltype"
+keys = ["decltype", "type"]
+doc = "Type of an expression."
+snippet = """
+decltype(${1:expr})$0"""
+
+[[entries]]
+name = "std::string"
+keys = ["string", "std::"]
+doc = "Owning character string."
+snippet = """
+std::string$0"""
+
+[[entries]]
+name = "std::string_view"
+keys = ["string_view", "view", "std::"]
+doc = "Non-owning read-only string reference."
+snippet = """
+std::string_view$0"""
+
+[[entries]]
+name = "std::vector"
+keys = ["vector", "std::"]
+doc = "Dynamic array."
+snippet = """
+std::vector<${1:int}>$0"""
+
+[[entries]]
+name = "std::array"
+keys = ["array", "std::"]
+doc = "Fixed-size array."
+snippet = """
+std::array<${1:int}, ${2:N}>$0"""
+
+[[entries]]
+name = "std::map"
+keys = ["map", "std::"]
+doc = "Ordered associative container."
+snippet = """
+std::map<${1:std::string}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::unordered_map"
+keys = ["unordered_map", "hash", "map", "std::"]
+doc = "Hash map."
+snippet = """
+std::unordered_map<${1:std::string}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::pair"
+keys = ["pair", "std::"]
+doc = "Two values."
+snippet = """
+std::pair<${1:int}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::tuple"
+keys = ["tuple", "std::"]
+doc = "Fixed heterogeneous collection."
+snippet = """
+std::tuple<${1:int}, ${2:double}>$0"""
+
+[[entries]]
+name = "std::optional"
+keys = ["optional", "std::"]
+doc = "Possibly absent value."
+snippet = """
+std::optional<${1:int}>$0"""
+
+[[entries]]
+name = "std::variant"
+keys = ["variant", "std::"]
+doc = "Type-safe union."
+snippet = """
+std::variant<${1:int}, ${2:std::string}>$0"""
+
+[[entries]]
+name = "std::expected"
+keys = ["expected", "result", "error", "std::"]
+doc = "C++23 value or error."
+snippet = """
+std::expected<${1:int}, ${2:std::string}>$0"""
+
+[[entries]]
+name = "std::span"
+keys = ["span", "std::"]
+doc = "Non-owning contiguous view."
+snippet = """
+std::span<${1:const int}>$0"""
+
+[[entries]]
+name = "std::unique_ptr"
+keys = ["unique_ptr", "ptr", "std::"]
+doc = "Sole-owner smart pointer."
+snippet = """
+std::unique_ptr<${1:T}>$0"""
+
+[[entries]]
+name = "std::shared_ptr"
+keys = ["shared_ptr", "ptr", "std::"]
+doc = "Reference-counted smart pointer."
+snippet = """
+std::shared_ptr<${1:T}>$0"""
+
+[[entries]]
+name = "std::function"
+keys = ["function", "callback", "std::"]
+doc = "Type-erased callable wrapper."
+snippet = """
+std::function<${1:void}(${2:int})>$0"""
+
+[[entries]]
+name = "function pointer"
+keys = ["function", "pointer", "fnptr", "callback"]
+doc = "Pointer to a free function."
+snippet = """
+${1:void} (*${2:fn})(${3:int})$0"""
+
+[[entries]]
+name = "member function pointer"
+keys = ["member", "pointer", "method"]
+doc = "Pointer to a member function."
+snippet = """
+${1:void} (${2:Class}::*${3:fn})(${4:int})$0"""
+
+[[entries]]
+name = "type trait"
+keys = ["is_same_v", "is_integral_v", "trait", "type_traits", "std::"]
+doc = "Compile-time type query from <type_traits>."
+snippet = """
+std::${1:is_same_v}<${2:T}, ${3:U}>$0"""
+
+[[entries]]
+name = "std::remove_cvref_t"
+keys = ["remove_cvref_t", "decay", "trait", "std::"]
+doc = "Strip references and cv-qualifiers from a type."
+snippet = """
+std::remove_cvref_t<${1:T}>$0"""
+
+[[entries]]
+name = "std::conditional_t"
+keys = ["conditional_t", "trait", "std::"]
+doc = "Choose a type by a compile-time condition."
+snippet = """
+std::conditional_t<${1:cond}, ${2:A}, ${3:B}>$0"""
+
+[[entries]]
+name = "std::enable_if_t"
+keys = ["enable_if_t", "sfinae", "std::"]
+doc = "SFINAE helper that removes an overload when the condition is false."
+snippet = """
+std::enable_if_t<${1:cond}, ${2:int}> = 0$0"""

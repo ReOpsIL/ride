@@ -6,6 +6,7 @@ struct Preferences: Codable, Equatable {
     var tabWidth: Int
     var autoSave: Bool
     var completions: Bool
+    var cheatSheet: Bool
     var outlinePanel: Bool
     var visibleWhitespace: Bool
     var showHidden: Bool
@@ -32,7 +33,8 @@ struct Preferences: Codable, Equatable {
         sidebarWidth: 230,
         outlineWidth: 220,
         problemsHeight: 180,
-        previewWidth: 460
+        previewWidth: 460,
+        cheatSheet: true
     )
 
     init(
@@ -50,7 +52,8 @@ struct Preferences: Codable, Equatable {
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
         problemsHeight: Double = 180,
-        previewWidth: Double = 460
+        previewWidth: Double = 460,
+        cheatSheet: Bool = true
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -67,6 +70,7 @@ struct Preferences: Codable, Equatable {
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
         self.previewWidth = previewWidth
+        self.cheatSheet = cheatSheet
     }
 
     init(from decoder: Decoder) throws {
@@ -77,6 +81,7 @@ struct Preferences: Codable, Equatable {
         tabWidth = try c.decodeIfPresent(Int.self, forKey: .tabWidth) ?? d.tabWidth
         autoSave = try c.decodeIfPresent(Bool.self, forKey: .autoSave) ?? d.autoSave
         completions = try c.decodeIfPresent(Bool.self, forKey: .completions) ?? d.completions
+        cheatSheet = try c.decodeIfPresent(Bool.self, forKey: .cheatSheet) ?? d.cheatSheet
         outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
         visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden

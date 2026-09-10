@@ -4,6 +4,7 @@ use std::sync::Arc;
 use crate::error::EngineError;
 use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt, TextEdit};
 
+use super::context::Context;
 use super::edit::{apply_replica, to_ts_edit};
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{subtract, union_into};
@@ -58,6 +59,10 @@ impl BufferSession {
 
     pub fn site_at(&self, byte: u32) -> SiteAt {
         self.syntax.site_at(&self.replica, byte as usize)
+    }
+
+    pub fn context_at(&self, byte: u32) -> Context {
+        self.syntax.context_at(&self.replica, byte as usize)
     }
 
     pub fn imports(&self) -> Vec<String> {

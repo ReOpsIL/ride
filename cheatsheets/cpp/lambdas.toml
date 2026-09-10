@@ -1,0 +1,190 @@
+title = "Lambdas and functional"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "lambda"
+keys = ["lambda", "closure", "fn", "[]"]
+doc = "Anonymous function object."
+snippet = """
+[${1:}](${2:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda one-liner"
+keys = ["lambda", "closure", "inline"]
+doc = "Single-expression lambda."
+snippet = """
+[${1:}](${2:auto x}) { return ${3:x}; }$0"""
+
+[[entries]]
+name = "lambda with return type"
+keys = ["lambda", "return", "arrow"]
+doc = "Lambda with an explicit return type."
+snippet = """
+[${1:}](${2:}) -> ${3:int} {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture by value"
+keys = ["lambda", "capture", "value", "="]
+doc = "Copy every used local into the closure."
+snippet = """
+[=](${1:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture by reference"
+keys = ["lambda", "capture", "reference", "&"]
+doc = "Refer to every used local by reference."
+snippet = """
+[&](${1:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture this"
+keys = ["lambda", "capture", "this", "member"]
+doc = "Capture the enclosing object pointer."
+snippet = """
+[this](${1:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda init capture"
+keys = ["lambda", "capture", "init", "move"]
+doc = "Capture by moving or by a new named value."
+snippet = """
+[${1:p} = std::move(${2:p})](${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "mutable lambda"
+keys = ["lambda", "mutable", "state"]
+doc = "Lambda that may modify its by-value captures."
+snippet = """
+[${1:count} = ${2:0}](${3:}) mutable {
+    $0
+}"""
+
+[[entries]]
+name = "generic lambda"
+keys = ["lambda", "generic", "auto", "template"]
+doc = "Lambda with auto parameters, templated on call."
+snippet = """
+[](const auto &${1:x}) {
+    $0
+}"""
+
+[[entries]]
+name = "template lambda"
+keys = ["lambda", "template", "typename"]
+doc = "C++20 lambda with an explicit template parameter list."
+snippet = """
+[]<typename ${1:T}>(${1:T} ${2:x}) {
+    $0
+}"""
+
+[[entries]]
+name = "immediately invoked lambda"
+keys = ["lambda", "iife", "invoke", "init"]
+doc = "Call a lambda immediately, often to initialize a const."
+snippet = """
+const auto ${1:value} = [&] {
+    $0
+}();"""
+
+[[entries]]
+name = "recursive lambda"
+keys = ["lambda", "recursive", "self", "deducing this"]
+doc = "C++23 lambda that calls itself through an explicit self parameter."
+snippet = """
+auto ${1:fib} = [](this auto self, ${2:int n}) -> ${3:int} {
+    return ${4:n < 2 ? n : self(n - 1) + self(n - 2)};
+};$0"""
+
+[[entries]]
+name = "std::function"
+keys = ["function", "callback", "std::function"]
+doc = "Type-erased callable holder."
+snippet = """
+std::function<${1:void}(${2:int})> ${3:fn} = ${4:callback};$0"""
+
+[[entries]]
+name = "function pointer"
+keys = ["function", "pointer", "fnptr", "callback"]
+doc = "Pointer to a free function."
+snippet = """
+${1:int} (*${2:fn})(${3:int}) = &${4:func};$0"""
+
+[[entries]]
+name = "std::bind"
+keys = ["bind", "placeholders", "partial"]
+doc = "Bind some arguments of a callable (prefer lambdas)."
+snippet = """
+auto ${1:bound} = std::bind(${2:func}, ${3:std::placeholders::_1}, ${4:arg});$0"""
+
+[[entries]]
+name = "std::bind_front"
+keys = ["bind_front", "bind", "partial"]
+doc = "C++20 bind leading arguments of a callable."
+snippet = """
+auto ${1:bound} = std::bind_front(${2:func}, ${3:arg});$0"""
+
+[[entries]]
+name = "std::invoke"
+keys = ["invoke", "call", "member"]
+doc = "Call any callable uniformly, including member pointers."
+snippet = """
+std::invoke(${1:fn}, ${2:args})$0"""
+
+[[entries]]
+name = "std::apply"
+keys = ["apply", "tuple", "unpack", "call"]
+doc = "Call a function with the elements of a tuple as arguments."
+snippet = """
+std::apply(${1:fn}, ${2:tuple})$0"""
+
+[[entries]]
+name = "std::mem_fn"
+keys = ["mem_fn", "member", "function"]
+doc = "Wrap a member function pointer as a callable."
+snippet = """
+std::mem_fn(&${1:Class}::${2:method})$0"""
+
+[[entries]]
+name = "std::ref"
+keys = ["ref", "reference_wrapper", "cref"]
+doc = "Pass a reference where a value would be copied."
+snippet = """
+std::ref(${1:value})$0"""
+
+[[entries]]
+name = "callback parameter"
+keys = ["callback", "invocable", "template", "functor"]
+doc = "Accept any callable as a template parameter."
+snippet = """
+template <std::invocable<${1:int}> ${2:F}>
+void ${3:name}(${2:F} &&${4:fn}) {
+    ${4:fn}($0);
+}"""
+
+[[entries]]
+name = "functor struct"
+keys = ["functor", "struct", "operator()", "callable"]
+doc = "Struct with a call operator."
+snippet = """
+struct ${1:Name} {
+    ${2:int} operator()(${3:int x}) const { return $0; }
+};"""
+
+[[entries]]
+name = "std::plus / std::less"
+keys = ["plus", "less", "greater", "functional", "operator"]
+doc = "Standard function objects for operators."
+snippet = """
+std::${1:less}<${2:}>()$0"""

@@ -5,6 +5,7 @@ use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 use crate::error::EngineError;
 use crate::ffi::{ByteRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
+use super::context::Context;
 use super::grammar::Grammar;
 use super::includes::IncludeRef;
 use super::members::{self, Access};
@@ -145,6 +146,10 @@ impl Syntax for TreeSyntax {
 
     fn site_at(&self, text: &str, at: usize) -> SiteAt {
         (self.grammar.site)(self.tree.as_ref(), text, at.min(text.len()))
+    }
+
+    fn context_at(&self, text: &str, at: usize) -> Context {
+        (self.grammar.context)(self.tree.as_ref(), text, at.min(text.len()))
     }
 
     fn imports(&self, text: &str) -> Vec<String> {

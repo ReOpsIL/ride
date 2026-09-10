@@ -1,0 +1,123 @@
+title = "Special targets"
+contexts = ["item"]
+
+[[entries]]
+name = ".PHONY"
+keys = ["phony", "special"]
+doc = "Targets that are not files and always run when asked for."
+snippet = '''
+.PHONY: ${1:all clean install test}$0'''
+
+[[entries]]
+name = ".SUFFIXES"
+keys = ["suffixes", "special", "reset", "builtin"]
+doc = "Set the suffix list; an empty list disables all built-in suffix rules."
+snippet = '''
+.SUFFIXES:
+.SUFFIXES: ${1:.c .o}$0'''
+
+[[entries]]
+name = ".DEFAULT"
+keys = ["default", "special", "fallback"]
+doc = "Recipe used for any target that has no rule of its own."
+snippet = '''
+.DEFAULT:
+	${1:@echo "no rule for $@"}$0'''
+
+[[entries]]
+name = ".PRECIOUS"
+keys = ["precious", "special", "keep", "interrupt"]
+doc = "Keep these files when make is interrupted or when they are intermediate."
+snippet = '''
+.PRECIOUS: ${1:%.o}$0'''
+
+[[entries]]
+name = ".INTERMEDIATE"
+keys = ["intermediate", "special", "delete"]
+doc = "Treat these files as intermediate so they are deleted after use."
+snippet = '''
+.INTERMEDIATE: ${1:parser.c}$0'''
+
+[[entries]]
+name = ".NOTINTERMEDIATE"
+keys = ["notintermediate", "special", "keep"]
+doc = "Never treat these files (or any file, if empty) as intermediate."
+snippet = '''
+.NOTINTERMEDIATE: ${1:%.o}$0'''
+
+[[entries]]
+name = ".SECONDARY"
+keys = ["secondary", "special", "keep", "intermediate"]
+doc = "Intermediate files that are kept rather than deleted; with no prerequisites, all of them."
+snippet = '''
+.SECONDARY:$0'''
+
+[[entries]]
+name = ".SECONDEXPANSION"
+keys = ["secondexpansion", "special", "$$"]
+doc = "Expand the prerequisite lists of following rules a second time."
+snippet = '''
+.SECONDEXPANSION:$0'''
+
+[[entries]]
+name = ".DELETE_ON_ERROR"
+keys = ["deleteonerror", "special", "error", "partial"]
+doc = "Delete a target whose recipe failed so a half-written file is never trusted."
+snippet = '''
+.DELETE_ON_ERROR:$0'''
+
+[[entries]]
+name = ".IGNORE"
+keys = ["ignore", "special", "errors"]
+doc = "Ignore recipe errors for the listed targets, or everywhere if none are listed."
+snippet = '''
+.IGNORE: ${1:clean}$0'''
+
+[[entries]]
+name = ".LOW_RESOLUTION_TIME"
+keys = ["lowresolutiontime", "special", "timestamp"]
+doc = "Compare these files' timestamps with one-second resolution only."
+snippet = '''
+.LOW_RESOLUTION_TIME: ${1:stamp}$0'''
+
+[[entries]]
+name = ".SILENT"
+keys = ["silent", "special", "quiet"]
+doc = "Do not echo recipes for the listed targets, or for any target if none are listed."
+snippet = '''
+.SILENT: ${1:help}$0'''
+
+[[entries]]
+name = ".EXPORT_ALL_VARIABLES"
+keys = ["exportallvariables", "special", "environment"]
+doc = "Export every variable to sub-processes."
+snippet = '''
+.EXPORT_ALL_VARIABLES:$0'''
+
+[[entries]]
+name = ".NOTPARALLEL"
+keys = ["notparallel", "special", "serial", "jobs"]
+doc = "Run this makefile serially even under -j, or serialise the listed targets' prerequisites."
+snippet = '''
+.NOTPARALLEL:$0'''
+
+[[entries]]
+name = ".ONESHELL"
+keys = ["oneshell", "special", "shell"]
+doc = "Send each whole recipe to a single shell invocation."
+snippet = '''
+.ONESHELL:$0'''
+
+[[entries]]
+name = ".POSIX"
+keys = ["posix", "special", "portable", "strict"]
+doc = "Ask for POSIX behaviour, including passing -e to the shell for recipes."
+snippet = '''
+.POSIX:$0'''
+
+[[entries]]
+name = ".WAIT"
+keys = ["wait", "special", "parallel", "order"]
+doc = "Finish the prerequisites before .WAIT before starting those after it, even under -j."
+snippet = '''
+${1:all}: ${2:lib} .WAIT ${3:app}$0'''

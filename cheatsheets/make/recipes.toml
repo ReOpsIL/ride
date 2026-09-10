@@ -1,0 +1,187 @@
+title = "Recipes and shell"
+contexts = ["recipe"]
+
+[[entries]]
+name = "silent line @"
+keys = ["@", "silent", "quiet", "echo"]
+doc = "A leading @ stops make from echoing the command before running it."
+snippet = '''
+@${1:echo "Building $@"}$0'''
+
+[[entries]]
+name = "ignore errors -"
+keys = ["-", "ignore", "errors", "continue"]
+doc = "A leading - lets the recipe continue when this command fails."
+snippet = '''
+-${1:rm -r build}$0'''
+
+[[entries]]
+name = "always run +"
+keys = ["+", "always", "dryrun", "touch"]
+doc = "A leading + runs the line even under -n, -t or -q, as $(MAKE) lines do implicitly."
+snippet = '''
++${1:$(MAKE) -C subdir}$0'''
+
+[[entries]]
+name = "multi-line command"
+keys = ["continuation", "backslash", "multiline"]
+doc = "A trailing backslash joins the next line into the same shell command."
+snippet = '''
+${1:$(CC) $(CFLAGS)} \\
+    ${2:-c $< -o $@}$0'''
+
+[[entries]]
+name = "shell if"
+keys = ["if", "shell", "test", "then"]
+doc = "A shell conditional kept on one logical line with ; and backslashes."
+snippet = '''
+if ${1:test -f $@}; then \\
+    ${2:echo up to date}; \\
+else \\
+    ${3:echo missing}; \\
+fi$0'''
+
+[[entries]]
+name = "shell for loop"
+keys = ["for", "loop", "shell", "each"]
+doc = "Iterate in the shell; the loop variable needs $$ to reach the shell."
+snippet = '''
+for f in ${1:$(SRCS)}; do \\
+    ${2:echo $$f}; \\
+done$0'''
+
+[[entries]]
+name = "shell variable"
+keys = ["variable", "shell", "$$", "local"]
+doc = "Set and read a shell variable within one recipe line using $$."
+snippet = '''
+tmp=$$(${1:mktemp -d}); ${2:echo $$tmp}$0'''
+
+[[entries]]
+name = "mkdir -p $(@D)"
+keys = ["mkdir", "directory", "dir", "@d"]
+doc = "Create the target's directory before writing to it."
+snippet = '''
+@mkdir -p $(@D)$0'''
+
+[[entries]]
+name = "compile C object"
+keys = ["compile", "cc", "object", "-c"]
+doc = "Compile one C source into its object file."
+snippet = '''
+$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "compile C++ object"
+keys = ["compile", "cxx", "object", "-c"]
+doc = "Compile one C++ source into its object file."
+snippet = '''
+$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "link program"
+keys = ["link", "ld", "program", "executable"]
+doc = "Link all prerequisites into the target, libraries last."
+snippet = '''
+$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "link C++ program"
+keys = ["link", "cxx", "program", "executable"]
+doc = "Link C++ objects with the C++ driver so the standard library is found."
+snippet = '''
+$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "archive with ar"
+keys = ["ar", "archive", "static", "library"]
+doc = "Create or update a static library from the object files."
+snippet = '''
+$(AR) $(ARFLAGS) $@ $^$0'''
+
+[[entries]]
+name = "install file"
+keys = ["install", "copy", "mode"]
+doc = "Copy a file into place with the given permissions using install(1)."
+snippet = '''
+install -m ${1:755} ${2:$<} ${3:$(DESTDIR)$(PREFIX)/bin/}$0'''
+
+[[entries]]
+name = "rm -f cleanup"
+keys = ["rm", "clean", "remove", "delete"]
+doc = "Remove files without failing when they do not exist."
+snippet = '''
+$(RM) ${1:$(OBJS) $(TARGET)}$0'''
+
+[[entries]]
+name = "echo status"
+keys = ["echo", "status", "message", "print"]
+doc = "Print a short status line instead of the full command."
+snippet = '''
+@echo "  ${1:CC}  $@"$0'''
+
+[[entries]]
+name = "quiet compile with status"
+keys = ["quiet", "pretty", "echo", "compile"]
+doc = "Show a short status line and run the compiler silently."
+snippet = '''
+@echo "  CC  $@"
+@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "fail with message"
+keys = ["fail", "exit", "error", "abort"]
+doc = "Print to stderr and stop the build with a non-zero status."
+snippet = '''
+@echo "${1:error: something is missing}" >&2; exit 1$0'''
+
+[[entries]]
+name = "check exit code"
+keys = ["test", "exit", "status", "check", "||"]
+doc = "Run a check and fail the recipe when it does not succeed."
+snippet = '''
+${1:test -x $<} || exit 1$0'''
+
+[[entries]]
+name = "run program"
+keys = ["run", "exec", "./"]
+doc = "Run the freshly built program with its arguments."
+snippet = '''
+./${1:$<} ${2:$(ARGS)}$0'''
+
+[[entries]]
+name = "cd and run"
+keys = ["cd", "chdir", "directory", "&&"]
+doc = "Change directory for one command; each recipe line starts back in $(CURDIR)."
+snippet = '''
+cd ${1:subdir} && ${2:./configure}$0'''
+
+[[entries]]
+name = "recursive make in recipe"
+keys = ["make", "recursive", "submake", "-c"]
+doc = "Run a sub-make with the parent's flags and jobserver."
+snippet = '''
+$(MAKE) -C ${1:subdir} ${2:$@}$0'''
+
+[[entries]]
+name = "write file with printf"
+keys = ["printf", "write", "generate", "redirect"]
+doc = "Generate the target's contents from the recipe."
+snippet = '''
+printf '%s\\n' ${1:'#define VERSION "$(VERSION)"'} > $@$0'''
+
+[[entries]]
+name = "canned recipe $(cmd)"
+keys = ["canned", "define", "reuse", "sequence"]
+doc = "Expand a define-d command sequence inside a recipe."
+snippet = '''
+$(${1:run-tests})$0'''
+
+[[entries]]
+name = ".ONESHELL recipe"
+keys = ["oneshell", "script", "set -e"]
+doc = "With .ONESHELL every line runs in one shell, so use set -e to stop on the first failure."
+snippet = '''
+set -e
+${1:cd build}
+${2:cmake ..}$0'''

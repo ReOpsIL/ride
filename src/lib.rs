@@ -1,5 +1,6 @@
 uniffi::setup_scaffolding!();
 
+mod cheatsheet;
 mod check;
 mod discover;
 mod engine;
@@ -17,6 +18,7 @@ mod skip;
 mod text;
 mod toolchain;
 
+pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{
     format_clang, format_source, include_dirs, parse_clang, parse_lines, run_check, run_clang_check,
 };
@@ -31,7 +33,7 @@ pub use extract::{
     extract_crate_with_version, extract_source,
 };
 pub use ffi::*;
-pub use highlight::{BufferSession, Lang, Position, Site, SiteAt};
+pub use highlight::{BufferSession, Context, Lang, Position, Site, SiteAt};
 pub use index::{
     DEPRECATED, Manifest, NAME_HUMP, PARENT_PATH, REACHABLE, SCHEMA_VERSION, hump, last_status,
     live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,

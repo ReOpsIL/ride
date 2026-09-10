@@ -1,0 +1,101 @@
+title = "Storage and qualifiers"
+contexts = ["statement", "item"]
+
+[[entries]]
+name = "static local"
+keys = ["static", "local", "persist", "once"]
+doc = "Local that is initialised once and keeps its value across calls."
+snippet = '''
+static ${1:int} ${2:calls} = ${3:0};$0'''
+
+[[entries]]
+name = "static global"
+keys = ["static", "global", "internal", "file scope"]
+doc = "File-scope variable with internal linkage, zero-initialised by default."
+snippet = '''
+static ${1:int} ${2:counter};$0'''
+
+[[entries]]
+name = "static buffer"
+keys = ["static", "buffer", "return", "string"]
+doc = "Returned static buffer outlives the call but is shared and not thread-safe."
+snippet = '''
+static char ${1:buf}[${2:64}];
+$0
+return ${1:buf};'''
+
+[[entries]]
+name = "const parameter"
+keys = ["const", "parameter", "correctness", "readonly", "pointer"]
+doc = "Promise not to modify the pointee, letting callers pass const data."
+snippet = '''
+void ${1:print}(const ${2:struct point} *${3:p}) {
+    $0
+}'''
+
+[[entries]]
+name = "volatile"
+keys = ["volatile", "hardware", "mmio", "register"]
+doc = "Every access hits memory, for MMIO and signal flags; it is not a threading primitive."
+snippet = '''
+volatile ${1:uint32_t} *${2:reg} = (volatile ${1:uint32_t} *)${3:0x40000000};$0'''
+
+[[entries]]
+name = "volatile flag"
+keys = ["volatile", "sig_atomic_t", "flag", "signal"]
+doc = "Flag safely written by a signal handler and polled by the main loop."
+snippet = '''
+static volatile sig_atomic_t ${1:stop} = 0;$0'''
+
+[[entries]]
+name = "restrict"
+keys = ["restrict", "alias", "aliasing", "pointer"]
+doc = "Promise that the pointers do not alias so the compiler can vectorise (C99)."
+snippet = '''
+void ${1:add}(size_t n, float *restrict ${2:out}, const float *restrict ${3:a}) {
+    $0
+}'''
+
+[[entries]]
+name = "register"
+keys = ["register", "hint", "storage"]
+doc = "Storage hint that is mostly ignored and forbids taking the address."
+snippet = '''
+register ${1:int} ${2:i};$0'''
+
+[[entries]]
+name = "inline in header"
+keys = ["inline", "header", "linkage", "c99"]
+doc = "C99 inline in a header emits no symbol; one .c file must provide extern inline or use static inline."
+snippet = '''
+inline ${1:int} ${2:name}(${3:int x}) {
+    $0
+}'''
+
+[[entries]]
+name = "extern inline"
+keys = ["extern", "inline", "linkage", "definition"]
+doc = "Emit the out-of-line copy of a header inline function in this translation unit."
+snippet = '''
+extern inline ${1:int} ${2:name}(${3:int x});$0'''
+
+[[entries]]
+name = "thread_local"
+keys = ["thread_local", "_thread_local", "tls", "thread"]
+doc = "Per-thread storage; a keyword in C23, _Thread_local or the threads.h macro before."
+snippet = '''
+static thread_local ${1:int} ${2:counter};$0'''
+
+[[entries]]
+name = "alignof"
+keys = ["alignof", "_alignof", "alignment"]
+doc = "Alignment requirement of a type in bytes (keyword in C23, stdalign.h before)."
+snippet = '''
+size_t ${1:align} = alignof(${2:max_align_t});$0'''
+
+[[entries]]
+name = "unused"
+keys = ["unused", "void", "parameter", "silence"]
+doc = "Silence an unused-parameter warning by casting to void."
+snippet = '''
+(void)${1:param};$0'''

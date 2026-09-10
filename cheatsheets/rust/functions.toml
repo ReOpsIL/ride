@@ -1,0 +1,214 @@
+title = "Functions"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "fn"
+keys = ["fn", "function", "def"]
+doc = "Define a function with typed parameters and a return type."
+snippet = '''
+fn ${1:name}(${2:arg}: ${3:Type}) -> ${4:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "pub fn"
+keys = ["pub", "fn", "public", "function"]
+doc = "Define a function visible outside its module."
+snippet = '''
+pub fn ${1:name}(${2:arg}: ${3:Type}) -> ${4:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "fn no return"
+keys = ["fn", "function", "unit", "void"]
+doc = "Define a function that returns the unit type."
+snippet = '''
+fn ${1:name}(${2:args}) {
+    $0
+}'''
+
+[[entries]]
+name = "async fn"
+keys = ["async", "fn", "future", "await"]
+doc = "Define a function that returns a future to be awaited."
+snippet = '''
+async fn ${1:name}(${2:args}) -> ${3:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "const fn"
+keys = ["const", "fn", "constexpr", "compile"]
+doc = "Define a function that can be evaluated at compile time."
+snippet = '''
+const fn ${1:name}(${2:args}) -> ${3:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "unsafe fn"
+keys = ["unsafe", "fn"]
+doc = "Define a function whose caller must uphold safety invariants stated in its docs."
+snippet = '''
+/// # Safety
+/// ${1:invariant the caller must uphold}
+unsafe fn ${2:name}(${3:args}) -> ${4:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "extern \"C\" fn"
+keys = ["extern", "fn", "ffi", "c", "export"]
+doc = "Define a function with the C calling convention, exported unmangled for foreign callers."
+snippet = '''
+#[unsafe(no_mangle)]
+pub extern "C" fn ${1:name}(${2:arg}: ${3:i32}) -> ${4:i32} {
+    $0
+}'''
+
+[[entries]]
+name = "generic fn"
+keys = ["fn", "generic", "template", "bound", "t"]
+doc = "Define a function generic over a type that satisfies a trait bound."
+snippet = '''
+fn ${1:name}<T: ${2:Trait}>(${3:value}: T) -> ${4:T} {
+    $0
+}'''
+
+[[entries]]
+name = "fn where clause"
+keys = ["fn", "where", "generic", "bound"]
+doc = "Define a generic function with its bounds listed in a where clause."
+snippet = '''
+fn ${1:name}<T, U>(${2:a}: T, ${3:b}: U) -> ${4:T}
+where
+    T: ${5:Clone},
+    U: ${6:Into<T>},
+{
+    $0
+}'''
+
+[[entries]]
+name = "fn with lifetime"
+keys = ["fn", "lifetime", "borrow", "reference"]
+doc = "Define a function whose returned reference lives as long as its inputs."
+snippet = '''
+fn ${1:name}<'a>(${2:x}: &'a ${3:str}, ${4:y}: &'a ${3:str}) -> &'a ${3:str} {
+    $0
+}'''
+
+[[entries]]
+name = "fn impl Trait arg"
+keys = ["fn", "impl", "trait", "argument", "generic"]
+doc = "Take any type implementing a trait as an anonymous generic parameter."
+snippet = '''
+fn ${1:name}(${2:value}: impl ${3:Display}) -> ${4:String} {
+    $0
+}'''
+
+[[entries]]
+name = "fn impl Trait return"
+keys = ["fn", "impl", "trait", "return", "iterator", "closure"]
+doc = "Return an opaque type known only to implement a trait."
+snippet = '''
+fn ${1:name}(${2:args}) -> impl ${3:Iterator<Item = u32>} {
+    $0
+}'''
+
+[[entries]]
+name = "fn returning Result"
+keys = ["fn", "result", "error", "fallible"]
+doc = "Define a fallible function whose body may use the question-mark operator."
+snippet = '''
+fn ${1:name}(${2:args}) -> Result<${3:T}, ${4:Box<dyn std::error::Error>}> {
+    $0
+    Ok(${5:value})
+}'''
+
+[[entries]]
+name = "fn returning Option"
+keys = ["fn", "option", "maybe", "nullable"]
+doc = "Define a function that may return no value."
+snippet = '''
+fn ${1:name}(${2:args}) -> Option<${3:T}> {
+    $0
+}'''
+
+[[entries]]
+name = "fn taking closure"
+keys = ["fn", "closure", "callback", "fn", "fnmut", "fnonce"]
+doc = "Accept a closure through a generic parameter bounded by Fn, FnMut or FnOnce."
+snippet = '''
+fn ${1:name}<F>(${2:f}: F) -> ${3:R}
+where
+    F: ${4:Fn}(${5:i32}) -> ${6:R},
+{
+    $0
+}'''
+
+[[entries]]
+name = "fn returning closure"
+keys = ["fn", "closure", "return", "factory"]
+doc = "Return a closure as an opaque Fn type, moving captured values into it."
+snippet = '''
+fn ${1:name}(${2:n}: ${3:i32}) -> impl Fn(${4:i32}) -> ${5:i32} {
+    move |${6:x}| $0
+}'''
+
+[[entries]]
+name = "fn dyn Trait arg"
+keys = ["fn", "dyn", "trait", "object", "dispatch"]
+doc = "Take a trait object by reference for dynamic dispatch."
+snippet = '''
+fn ${1:name}(${2:value}: &dyn ${3:Trait}) {
+    $0
+}'''
+
+[[entries]]
+name = "fn pointer arg"
+keys = ["fn", "pointer", "callback", "function"]
+doc = "Take a plain function pointer that captures nothing."
+snippet = '''
+fn ${1:name}(${2:f}: fn(${3:i32}) -> ${4:i32}) -> ${4:i32} {
+    $0
+}'''
+
+[[entries]]
+name = "fn variadic-style slice"
+keys = ["fn", "slice", "args", "variadic"]
+doc = "Take any number of values through a slice parameter."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:T}]) -> ${4:usize} {
+    $0
+}'''
+
+[[entries]]
+name = "main"
+keys = ["main", "entry"]
+doc = "Program entry point."
+snippet = '''
+fn main() {
+    $0
+}'''
+
+[[entries]]
+name = "main returning Result"
+keys = ["main", "result", "error", "entry"]
+doc = "Entry point that may fail, printing the error and exiting non-zero."
+snippet = '''
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "async main (tokio)"
+keys = ["main", "async", "tokio", "runtime"]
+doc = "Async entry point run by the tokio runtime."
+snippet = '''
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''

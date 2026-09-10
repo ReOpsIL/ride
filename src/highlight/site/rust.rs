@@ -5,7 +5,7 @@ use crate::highlight::rust_type_names::enclosing_impl;
 use super::common::{
     PositionWords, head_before, in_open_comment, inside, path_segments, position, word_start,
 };
-use super::{Site, SiteAt, use_path};
+use super::{Position, Site, SiteAt, use_path};
 
 const NO_COMPLETION: &[&str] = &[
     "line_comment",
@@ -29,6 +29,10 @@ const WORDS: PositionWords = PositionWords {
     ],
     transparent: &["&", "mut"],
 };
+
+pub fn is_type_position(head: &str) -> bool {
+    position(head, &WORDS) == Position::Type
+}
 
 pub fn rust(tree: Option<&Tree>, text: &str, at: usize) -> SiteAt {
     let start = word_start(text, at, &[]);

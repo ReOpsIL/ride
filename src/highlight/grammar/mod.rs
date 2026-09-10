@@ -1,6 +1,7 @@
 use tree_sitter::{Language, Node, Tree};
 
 use crate::ffi::OutlineItem;
+use crate::highlight::context::Detector;
 use crate::highlight::includes::IncludeRef;
 use crate::highlight::site::Classifier;
 use crate::highlight::types::TypeTable;
@@ -28,5 +29,6 @@ pub struct Grammar {
     pub type_table: fn(&Tree, &str) -> TypeTable,
     pub includes: fn(&Tree, &str) -> Vec<IncludeRef>,
     pub site: Classifier,
+    pub context: Detector,
     pub imports: fn(&Tree, &str) -> Vec<String>,
 }

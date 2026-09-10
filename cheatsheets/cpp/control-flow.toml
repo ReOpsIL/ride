@@ -1,0 +1,130 @@
+title = "Control flow"
+contexts = ["statement"]
+
+[[entries]]
+name = "if"
+keys = ["if", "cond"]
+doc = "Branch on a boolean condition."
+snippet = """
+if (${1:condition}) {
+    $0
+}"""
+
+[[entries]]
+name = "if else"
+keys = ["if", "else"]
+doc = "Two-way branch."
+snippet = """
+if (${1:condition}) {
+    $2
+} else {
+    $0
+}"""
+
+[[entries]]
+name = "else if"
+keys = ["else", "if", "elif"]
+doc = "Additional branch after an if."
+snippet = """
+else if (${1:condition}) {
+    $0
+}"""
+
+[[entries]]
+name = "if with initializer"
+keys = ["if", "init"]
+doc = "C++17 if with a scoped initializer before the condition."
+snippet = """
+if (${1:auto it = m.find(key)}; ${2:it != m.end()}) {
+    $0
+}"""
+
+[[entries]]
+name = "if constexpr"
+keys = ["if", "constexpr", "compile"]
+doc = "Compile-time branch that discards the untaken side."
+snippet = """
+if constexpr (${1:std::is_integral_v<T>}) {
+    $0
+}"""
+
+[[entries]]
+name = "if consteval"
+keys = ["if", "consteval", "constant"]
+doc = "C++23 branch taken only during constant evaluation."
+snippet = """
+if consteval {
+    $0
+}"""
+
+[[entries]]
+name = "switch"
+keys = ["switch", "case"]
+doc = "Multi-way branch on an integral or enum value."
+snippet = """
+switch (${1:value}) {
+    case ${2:0}:
+        $0
+        break;
+    default:
+        break;
+}"""
+
+[[entries]]
+name = "switch with initializer"
+keys = ["switch", "init"]
+doc = "C++17 switch with a scoped initializer."
+snippet = """
+switch (${1:auto v = get()}; ${2:v}) {
+    case ${3:0}:
+        $0
+        break;
+    default:
+        break;
+}"""
+
+[[entries]]
+name = "case"
+keys = ["case", "switch"]
+doc = "One label inside a switch."
+snippet = """
+case ${1:value}:
+    $0
+    break;"""
+
+[[entries]]
+name = "case fallthrough"
+keys = ["case", "fallthrough", "switch"]
+doc = "Case that intentionally falls into the next label."
+snippet = """
+case ${1:value}:
+    $0
+    [[fallthrough]];"""
+
+[[entries]]
+name = "default case"
+keys = ["default", "case", "switch"]
+doc = "Label taken when no case matches."
+snippet = """
+default:
+    $0
+    break;"""
+
+[[entries]]
+name = "block"
+keys = ["block", "scope", "braces"]
+doc = "Nested scope that ends the lifetime of its locals."
+snippet = """
+{
+    $0
+}"""
+
+[[entries]]
+name = "early return guard"
+keys = ["if", "return", "guard", "early"]
+doc = "Return early when a precondition fails."
+snippet = """
+if (${1:!ok}) {
+    return ${2:};
+}
+$0"""

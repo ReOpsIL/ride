@@ -1,0 +1,193 @@
+title = "Preprocessor"
+contexts = ["preprocessor"]
+
+[[entries]]
+name = "#include <>"
+keys = ["include", "#include", "system", "header"]
+doc = "Include a system or library header searched on the include path."
+snippet = '''
+#include <${1:stdio.h}>$0'''
+
+[[entries]]
+name = "#include \"\""
+keys = ["include", "#include", "local", "header"]
+doc = "Include a project header, searched relative to this file first."
+snippet = '''
+#include "${1:header.h}"$0'''
+
+[[entries]]
+name = "include guard"
+keys = ["guard", "ifndef", "header", "once"]
+doc = "Classic guard that makes a header safe to include twice."
+snippet = '''
+#ifndef ${1:HEADER_H}
+#define ${1:HEADER_H}
+
+$0
+
+#endif /* ${1:HEADER_H} */'''
+
+[[entries]]
+name = "#pragma once"
+keys = ["pragma", "once", "guard", "header"]
+doc = "Non-standard but universal single-line include guard."
+snippet = '''
+#pragma once$0'''
+
+[[entries]]
+name = "#define constant"
+keys = ["define", "#define", "constant", "macro"]
+doc = "Object-like macro replaced textually wherever the name appears."
+snippet = '''
+#define ${1:NAME} ${2:value}$0'''
+
+[[entries]]
+name = "#define function-like"
+keys = ["define", "#define", "macro", "function"]
+doc = "Function-like macro; parenthesise every argument and the whole body."
+snippet = '''
+#define ${1:SQUARE}(x) ((x) * (x))$0'''
+
+[[entries]]
+name = "#define do while(0)"
+keys = ["define", "macro", "multiline", "do while", "statement"]
+doc = "Multi-statement macro that behaves as a single statement, even before an else."
+snippet = '''
+#define ${1:NAME}(x) \
+    do { \
+        ${2:body}; \
+    } while (0)$0'''
+
+[[entries]]
+name = "#undef"
+keys = ["undef", "#undef", "macro", "remove"]
+doc = "Remove a macro definition."
+snippet = '''
+#undef ${1:NAME}$0'''
+
+[[entries]]
+name = "#if"
+keys = ["if", "#if", "conditional"]
+doc = "Compile the block only when the integer constant expression is nonzero."
+snippet = '''
+#if ${1:condition}
+$0
+#endif'''
+
+[[entries]]
+name = "#ifdef"
+keys = ["ifdef", "#ifdef", "defined", "conditional"]
+doc = "Compile the block when the macro is defined."
+snippet = '''
+#ifdef ${1:NAME}
+$0
+#endif'''
+
+[[entries]]
+name = "#ifndef"
+keys = ["ifndef", "#ifndef", "conditional"]
+doc = "Compile the block when the macro is not defined."
+snippet = '''
+#ifndef ${1:NAME}
+$0
+#endif'''
+
+[[entries]]
+name = "#if defined"
+keys = ["if", "defined", "&&", "conditional"]
+doc = "Combine several macro tests in one condition."
+snippet = '''
+#if defined(${1:A}) && !defined(${2:B})
+$0
+#endif'''
+
+[[entries]]
+name = "#elif"
+keys = ["elif", "#elif", "else if"]
+doc = "Another condition in a preprocessor chain."
+snippet = '''
+#elif ${1:condition}
+$0'''
+
+[[entries]]
+name = "#else"
+keys = ["else", "#else"]
+doc = "Fallback branch of a preprocessor conditional."
+snippet = '''
+#else
+$0'''
+
+[[entries]]
+name = "#endif"
+keys = ["endif", "#endif"]
+doc = "Close a preprocessor conditional."
+snippet = '''
+#endif$0'''
+
+[[entries]]
+name = "#elifdef"
+keys = ["elifdef", "elifndef", "#elifdef", "c23"]
+doc = "C23 shorthand for #elif defined(NAME)."
+snippet = '''
+#elifdef ${1:NAME}
+$0'''
+
+[[entries]]
+name = "#if 0"
+keys = ["if 0", "comment", "disable", "block"]
+doc = "Disable a block of code, safely nesting comments and other conditionals."
+snippet = '''
+#if 0
+$0
+#endif'''
+
+[[entries]]
+name = "#error"
+keys = ["error", "#error", "fail", "abort"]
+doc = "Stop compilation with a message."
+snippet = '''
+#error "${1:message}"$0'''
+
+[[entries]]
+name = "#warning"
+keys = ["warning", "#warning", "diagnostic"]
+doc = "Emit a compiler warning during preprocessing (standard since C23)."
+snippet = '''
+#warning "${1:message}"$0'''
+
+[[entries]]
+name = "#pragma pack"
+keys = ["pragma", "pack", "push", "pop", "padding"]
+doc = "Set struct packing for the enclosed definitions, restoring it afterwards."
+snippet = '''
+#pragma pack(push, ${1:1})
+$0
+#pragma pack(pop)'''
+
+[[entries]]
+name = "#pragma GCC diagnostic"
+keys = ["pragma", "diagnostic", "ignored", "warning", "gcc", "clang"]
+doc = "Silence a specific warning for the enclosed region on GCC and Clang."
+snippet = '''
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "${1:-Wunused-parameter}"
+$0
+#pragma GCC diagnostic pop'''
+
+[[entries]]
+name = "#embed"
+keys = ["embed", "#embed", "resource", "binary", "c23"]
+doc = "Expand a file's bytes into an initialiser list (C23)."
+snippet = '''
+static const unsigned char ${1:data}[] = {
+#embed "${2:file.bin}"
+};$0'''
+
+[[entries]]
+name = "__has_include"
+keys = ["has_include", "__has_include", "optional", "header", "c23"]
+doc = "Test whether a header exists before including it (C23, earlier as an extension)."
+snippet = '''
+#if __has_include(<${1:threads.h}>)
+#include <${1:threads.h}>
+#endif$0'''

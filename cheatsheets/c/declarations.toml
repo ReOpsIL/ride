@@ -1,0 +1,158 @@
+title = "Declarations"
+contexts = ["statement", "item"]
+
+[[entries]]
+name = "typedef"
+keys = ["typedef", "alias", "type"]
+doc = "Give an existing type a new name."
+snippet = '''
+typedef ${1:unsigned long} ${2:alias_t};$0'''
+
+[[entries]]
+name = "enum"
+keys = ["enum", "enumeration", "constants"]
+doc = "Named integer constants numbered from zero."
+snippet = '''
+enum ${1:color} { ${2:RED, GREEN, BLUE} };$0'''
+
+[[entries]]
+name = "enum explicit values"
+keys = ["enum", "flags", "bits", "values"]
+doc = "Enumerators with explicit values, here bit flags for OR-ing."
+snippet = '''
+enum ${1:flags} {
+    ${2:FLAG_A} = 1 << 0,
+    ${3:FLAG_B} = 1 << 1,
+};$0'''
+
+[[entries]]
+name = "typedef enum"
+keys = ["typedef", "enum", "state"]
+doc = "Anonymous enum with a typedef name for use without the enum keyword."
+snippet = '''
+typedef enum {
+    ${1:STATE_IDLE},
+    ${2:STATE_RUNNING},
+} ${3:state_t};$0'''
+
+[[entries]]
+name = "enum with fixed type"
+keys = ["enum", "underlying", "fixed", "c23", ":"]
+doc = "C23 enum whose underlying type is chosen explicitly."
+snippet = '''
+enum ${1:kind} : ${2:unsigned char} { ${3:KIND_A, KIND_B} };$0'''
+
+[[entries]]
+name = "enum constant"
+keys = ["enum", "constant", "size", "anonymous"]
+doc = "Anonymous enum giving a true integer constant expression usable as an array bound."
+snippet = '''
+enum { ${1:BUF_SIZE} = ${2:256} };$0'''
+
+[[entries]]
+name = "static_assert"
+keys = ["static_assert", "_static_assert", "assert", "compile"]
+doc = "Compile-time check; the message is optional in C23 and required as _Static_assert in C11."
+snippet = '''
+static_assert(${1:sizeof(int) == 4}, "${2:message}");$0'''
+
+[[entries]]
+name = "alignas"
+keys = ["alignas", "_alignas", "alignment", "aligned"]
+doc = "Force the alignment of an object (keyword in C23, stdalign.h before)."
+snippet = '''
+alignas(${1:16}) ${2:char} ${3:buf}[${4:64}];$0'''
+
+[[entries]]
+name = "compound literal"
+keys = ["compound", "literal", "(type){", "temporary"]
+doc = "Unnamed object of any type created in place, often passed by address."
+snippet = '''
+${1:draw}(&(${2:struct point}){ ${3:.x = 1, .y = 2} });$0'''
+
+[[entries]]
+name = "designated array initializer"
+keys = ["designated", "initializer", "[i] =", "array"]
+doc = "Initialise chosen indices, leaving the rest zero."
+snippet = '''
+${1:int} ${2:table}[${3:16}] = { [${4:0}] = ${5:1}, [${6:15}] = ${7:2} };$0'''
+
+[[entries]]
+name = "zero initializer"
+keys = ["zero", "initializer", "{0}", "init"]
+doc = "Set every member or element to zero, valid for any aggregate."
+snippet = '''
+${1:struct point} ${2:p} = {0};$0'''
+
+[[entries]]
+name = "empty initializer"
+keys = ["empty", "initializer", "{}", "c23", "init"]
+doc = "C23 empty braces zero-initialise any object, including VLAs."
+snippet = '''
+${1:struct point} ${2:p} = {};$0'''
+
+[[entries]]
+name = "VLA"
+keys = ["vla", "variable", "length", "array", "runtime"]
+doc = "Array sized at run time on the stack (C99, optional since C11); avoid for large or untrusted n."
+snippet = '''
+${1:int} ${2:buf}[${3:n}];$0'''
+
+[[entries]]
+name = "_Generic macro"
+keys = ["_generic", "generic", "overload", "dispatch", "type switch"]
+doc = "Select an expression by the type of its argument for overload-like macros (C11)."
+snippet = '''
+#define ${1:type_name}(x) _Generic((x), \
+    int: ${2:"int"}, \
+    double: ${3:"double"}, \
+    default: ${4:"other"})$0'''
+
+[[entries]]
+name = "typeof"
+keys = ["typeof", "__typeof__", "c23", "infer"]
+doc = "Declare with the type of an expression, keeping qualifiers (C23)."
+snippet = '''
+typeof(${1:x}) ${2:copy} = ${1:x};$0'''
+
+[[entries]]
+name = "typeof_unqual"
+keys = ["typeof_unqual", "typeof", "c23", "unqualified"]
+doc = "Type of an expression with const and volatile stripped (C23)."
+snippet = '''
+typeof_unqual(${1:x}) ${2:copy} = ${1:x};$0'''
+
+[[entries]]
+name = "auto"
+keys = ["auto", "infer", "c23", "type inference"]
+doc = "Infer a variable's type from its initialiser (C23)."
+snippet = '''
+auto ${1:value} = ${2:expr};$0'''
+
+[[entries]]
+name = "nullptr"
+keys = ["nullptr", "null", "c23", "nullptr_t"]
+doc = "Typed null pointer constant of type nullptr_t (C23)."
+snippet = '''
+${1:int} *${2:p} = nullptr;$0'''
+
+[[entries]]
+name = "constexpr"
+keys = ["constexpr", "constant", "c23", "compile time"]
+doc = "Object whose value is a constant expression, usable as an array bound (C23)."
+snippet = '''
+constexpr ${1:int} ${2:max_items} = ${3:64};$0'''
+
+[[entries]]
+name = "_BitInt"
+keys = ["_bitint", "bitint", "c23", "bits", "wide"]
+doc = "Integer with an exact number of bits, up to BITINT_MAXWIDTH (C23)."
+snippet = '''
+${1:unsigned }_BitInt(${2:24}) ${3:value} = ${4:0};$0'''
+
+[[entries]]
+name = "multiple declarators"
+keys = ["declarators", "comma", "multiple", "variables"]
+doc = "Declare several variables of one type; note that int *a, b makes only a a pointer."
+snippet = '''
+${1:int} ${2:a} = ${3:0}, ${4:b} = ${5:0};$0'''

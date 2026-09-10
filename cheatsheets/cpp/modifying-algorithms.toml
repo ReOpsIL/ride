@@ -1,0 +1,93 @@
+title = "Modifying algorithms"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "transform"
+keys = ["transform", "map", "apply"]
+doc = "Apply a function to each element, writing the results."
+snippet = """
+std::transform(${1:v}.begin(), ${1:v}.end(), ${2:out}.begin(), [](${3:const auto &x}) { return ${4:x}; });$0"""
+
+[[entries]]
+name = "for_each"
+keys = ["for_each", "each", "apply"]
+doc = "Call a function on every element."
+snippet = """
+std::for_each(${1:v}.begin(), ${1:v}.end(), [](${2:auto &x}) { $0 });"""
+
+[[entries]]
+name = "reverse"
+keys = ["reverse", "flip"]
+doc = "Reverse the order of elements in place."
+snippet = """
+std::reverse(${1:v}.begin(), ${1:v}.end());$0"""
+
+[[entries]]
+name = "unique"
+keys = ["unique", "dedup", "duplicates"]
+doc = "Remove consecutive duplicates (sort first for all duplicates)."
+snippet = """
+${1:v}.erase(std::unique(${1:v}.begin(), ${1:v}.end()), ${1:v}.end());$0"""
+
+[[entries]]
+name = "copy"
+keys = ["copy", "back_inserter"]
+doc = "Copy a range into another container."
+snippet = """
+std::copy(${1:src}.begin(), ${1:src}.end(), std::back_inserter(${2:dst}));$0"""
+
+[[entries]]
+name = "copy_if"
+keys = ["copy_if", "copy", "filter"]
+doc = "Copy elements matching a predicate."
+snippet = """
+std::copy_if(${1:src}.begin(), ${1:src}.end(), std::back_inserter(${2:dst}), [](${3:const auto &x}) { return ${4:cond}; });$0"""
+
+[[entries]]
+name = "fill"
+keys = ["fill", "set", "assign"]
+doc = "Assign a value to every element."
+snippet = """
+std::fill(${1:v}.begin(), ${1:v}.end(), ${2:value});$0"""
+
+[[entries]]
+name = "generate"
+keys = ["generate", "fill", "lambda"]
+doc = "Assign the result of a generator to every element."
+snippet = """
+std::generate(${1:v}.begin(), ${1:v}.end(), [${2:}]() { return ${3:value}; });$0"""
+
+[[entries]]
+name = "iota"
+keys = ["iota", "sequence", "numeric", "range"]
+doc = "Fill a range with increasing values."
+snippet = """
+std::iota(${1:v}.begin(), ${1:v}.end(), ${2:0});$0"""
+
+[[entries]]
+name = "remove_if"
+keys = ["remove_if", "remove", "filter"]
+doc = "Shift elements not matching a predicate to the front, returning the new end."
+snippet = """
+auto ${1:new_end} = std::remove_if(${2:v}.begin(), ${2:v}.end(), [](${3:const auto &x}) { return ${4:cond}; });$0"""
+
+[[entries]]
+name = "partition"
+keys = ["partition", "split", "predicate"]
+doc = "Move elements satisfying a predicate before the rest."
+snippet = """
+auto ${1:mid} = std::partition(${2:v}.begin(), ${2:v}.end(), [](${3:const auto &x}) { return ${4:cond}; });$0"""
+
+[[entries]]
+name = "rotate"
+keys = ["rotate", "shift"]
+doc = "Rotate a range so that a middle element becomes first."
+snippet = """
+std::rotate(${1:v}.begin(), ${1:v}.begin() + ${2:k}, ${1:v}.end());$0"""
+
+[[entries]]
+name = "shuffle"
+keys = ["shuffle", "random"]
+doc = "Randomly reorder a range."
+snippet = """
+std::shuffle(${1:v}.begin(), ${1:v}.end(), std::mt19937{std::random_device{}()});$0"""

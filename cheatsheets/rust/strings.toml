@@ -1,0 +1,207 @@
+title = "Strings"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "String::new"
+keys = ["string", "new", "empty"]
+doc = "Create an empty owned string."
+snippet = '''
+String::new()$0'''
+
+[[entries]]
+name = "String::from"
+keys = ["string", "from", "literal", "owned", "to_string"]
+doc = "Create an owned string from a literal or str."
+snippet = '''
+String::from("${1:text}")$0'''
+
+[[entries]]
+name = "to_string"
+keys = ["to_string", "string", "display", "convert"]
+doc = "Convert any Display value into an owned string."
+snippet = '''
+${1:value}.to_string()$0'''
+
+[[entries]]
+name = "format!"
+keys = ["format", "string", "interpolate", "concat"]
+doc = "Build a string from a format template with inline captured variables."
+snippet = '''
+format!("${1:{name\}}: {${2:value}}")$0'''
+
+[[entries]]
+name = "push_str / push"
+keys = ["push", "append", "string", "add"]
+doc = "Append a str or a single char to a String."
+snippet = '''
+${1:s}.push_str(${2:"text"});$0'''
+
+[[entries]]
+name = "string concat +"
+keys = ["concat", "plus", "join", "string", "add"]
+doc = "Concatenate an owned String with a str, consuming the left operand."
+snippet = '''
+${1:a} + &${2:b}$0'''
+
+[[entries]]
+name = "as_str"
+keys = ["as_str", "str", "borrow", "string"]
+doc = "Borrow a String as a str, useful for matching on literals."
+snippet = '''
+${1:s}.as_str()$0'''
+
+[[entries]]
+name = "parse"
+keys = ["parse", "number", "str", "convert", "fromstr"]
+doc = "Parse a string into any FromStr type, naming the target with turbofish or annotation."
+snippet = '''
+${1:text}.trim().parse::<${2:i32}>()$0'''
+
+[[entries]]
+name = "split"
+keys = ["split", "separator", "tokens", "string"]
+doc = "Iterate over substrings separated by a pattern."
+snippet = '''
+${1:text}.split(${2:','})$0'''
+
+[[entries]]
+name = "split_whitespace"
+keys = ["split", "whitespace", "words", "tokens"]
+doc = "Iterate over words separated by any whitespace."
+snippet = '''
+${1:text}.split_whitespace()$0'''
+
+[[entries]]
+name = "split_once"
+keys = ["split", "once", "pair", "key", "value"]
+doc = "Split into the parts before and after the first occurrence of a pattern."
+snippet = '''
+let Some((${1:key}, ${2:value})) = ${3:text}.split_once(${4:'='}) else {
+    ${5:return None};
+};$0'''
+
+[[entries]]
+name = "lines"
+keys = ["lines", "newline", "split", "string"]
+doc = "Iterate over the lines of a string without their line endings."
+snippet = '''
+${1:text}.lines()$0'''
+
+[[entries]]
+name = "trim"
+keys = ["trim", "strip", "whitespace", "start", "end"]
+doc = "Remove leading and trailing whitespace, or only one side."
+snippet = '''
+${1:text}.${2:trim}()$0'''
+
+[[entries]]
+name = "chars"
+keys = ["chars", "characters", "iterate", "string"]
+doc = "Iterate over the Unicode scalar values of a string."
+snippet = '''
+${1:text}.chars()$0'''
+
+[[entries]]
+name = "bytes / as_bytes"
+keys = ["bytes", "as_bytes", "u8", "ascii", "string"]
+doc = "View a string as its UTF-8 bytes."
+snippet = '''
+${1:text}.as_bytes()$0'''
+
+[[entries]]
+name = "char_indices"
+keys = ["char", "indices", "index", "offset", "chars"]
+doc = "Iterate over chars together with their byte offsets."
+snippet = '''
+${1:text}.char_indices()$0'''
+
+[[entries]]
+name = "contains"
+keys = ["contains", "find", "substring", "includes"]
+doc = "Test whether a string contains a substring, char or predicate."
+snippet = '''
+${1:text}.contains(${2:"needle"})$0'''
+
+[[entries]]
+name = "starts_with / ends_with"
+keys = ["starts", "ends", "with", "prefix", "suffix"]
+doc = "Test for a prefix or suffix."
+snippet = '''
+${1:text}.${2:starts_with}(${3:"prefix"})$0'''
+
+[[entries]]
+name = "strip_prefix / strip_suffix"
+keys = ["strip", "prefix", "suffix", "remove", "option"]
+doc = "Remove a prefix or suffix, giving None if it is absent."
+snippet = '''
+${1:text}.strip_prefix(${2:"prefix"})$0'''
+
+[[entries]]
+name = "find"
+keys = ["find", "index", "position", "substring"]
+doc = "Find the byte index of the first match."
+snippet = '''
+${1:text}.find(${2:'x'})$0'''
+
+[[entries]]
+name = "replace"
+keys = ["replace", "substitute", "string"]
+doc = "Return a new string with every match replaced."
+snippet = '''
+${1:text}.replace(${2:"from"}, ${3:"to"})$0'''
+
+[[entries]]
+name = "to_uppercase / to_lowercase"
+keys = ["upper", "lower", "case", "uppercase", "lowercase"]
+doc = "Return a case-converted copy of a string."
+snippet = '''
+${1:text}.${2:to_uppercase}()$0'''
+
+[[entries]]
+name = "repeat"
+keys = ["repeat", "times", "string"]
+doc = "Repeat a string n times."
+snippet = '''
+${1:"-"}.repeat(${2:n})$0'''
+
+[[entries]]
+name = "len / is_empty"
+keys = ["len", "length", "empty", "size", "bytes"]
+doc = "Byte length of a string, which is not its char count."
+snippet = '''
+${1:text}.${2:len}()$0'''
+
+[[entries]]
+name = "string slice"
+keys = ["slice", "substring", "range", "index"]
+doc = "Take a substring by byte range, which must fall on char boundaries."
+snippet = '''
+&${1:text}[${2:start}..${3:end}]$0'''
+
+[[entries]]
+name = "join"
+keys = ["join", "concat", "separator", "vec", "strings"]
+doc = "Join a slice of strings with a separator."
+snippet = '''
+${1:parts}.join(${2:", "})$0'''
+
+[[entries]]
+name = "char methods"
+keys = ["char", "is_alphabetic", "is_digit", "is_whitespace", "to_digit", "ascii"]
+doc = "Classify or convert a single char."
+snippet = '''
+${1:c}.${2:is_ascii_digit}()$0'''
+
+[[entries]]
+name = "char to_digit / from_digit"
+keys = ["char", "digit", "to_digit", "from_digit", "number"]
+doc = "Convert between a digit char and its numeric value in a radix."
+snippet = '''
+${1:c}.to_digit(${2:10})$0'''
+
+[[entries]]
+name = "String from utf8"
+keys = ["string", "utf8", "from_utf8", "bytes", "decode"]
+doc = "Build a String from bytes, validating or replacing invalid UTF-8."
+snippet = '''
+String::from_utf8${1:_lossy}(${2:bytes})$0'''

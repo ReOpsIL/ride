@@ -1,3 +1,4 @@
+mod cheat;
 mod check;
 mod config;
 mod edit;
@@ -8,6 +9,7 @@ mod session;
 mod symbol;
 mod workspace;
 
+pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
 pub use edit::{SignatureHelp, TextEdit};

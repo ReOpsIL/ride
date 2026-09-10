@@ -1,0 +1,96 @@
+title = "Jumps and termination"
+contexts = ["statement"]
+
+[[entries]]
+name = "break"
+keys = ["break", "exit", "loop"]
+doc = "Leave the innermost loop or switch."
+snippet = '''
+break;$0'''
+
+[[entries]]
+name = "continue"
+keys = ["continue", "skip", "next", "loop"]
+doc = "Jump to the next iteration of the innermost loop."
+snippet = '''
+continue;$0'''
+
+[[entries]]
+name = "goto"
+keys = ["goto", "jump", "label"]
+doc = "Jump to a label in the same function."
+snippet = '''
+goto ${1:label};$0'''
+
+[[entries]]
+name = "label"
+keys = ["label", "goto"]
+doc = "Target for goto; a label must be followed by a statement before C23."
+snippet = '''
+${1:label}:
+    $0'''
+
+[[entries]]
+name = "goto cleanup"
+keys = ["goto", "cleanup", "error", "fail", "out"]
+doc = "Single exit path that releases resources on any failure."
+snippet = '''
+int rc = -1;
+if (${1:!ok}) {
+    goto cleanup;
+}
+rc = 0;
+cleanup:
+    ${2:free(buf);}
+    return rc;$0'''
+
+[[entries]]
+name = "return"
+keys = ["return", "ret"]
+doc = "Return a value from the current function."
+snippet = '''
+return ${1:0};$0'''
+
+[[entries]]
+name = "return void"
+keys = ["return", "ret"]
+doc = "Leave a void function early."
+snippet = '''
+return;$0'''
+
+[[entries]]
+name = "early return guard"
+keys = ["guard", "return", "if", "check", "validate"]
+doc = "Bail out at the top of a function when an argument is invalid."
+snippet = '''
+if (${1:ptr == NULL}) {
+    return ${2:-1};
+}$0'''
+
+[[entries]]
+name = "assert"
+keys = ["assert", "check", "invariant", "assert.h"]
+doc = "Abort with a message when the condition is false unless NDEBUG is defined."
+snippet = '''
+assert(${1:condition});$0'''
+
+[[entries]]
+name = "exit"
+keys = ["exit", "quit", "exit_failure", "exit_success"]
+doc = "Terminate the program after flushing streams and running atexit handlers."
+snippet = '''
+exit(${1:EXIT_FAILURE});$0'''
+
+[[entries]]
+name = "abort"
+keys = ["abort", "crash", "trap"]
+doc = "Terminate abnormally via SIGABRT, without cleanup."
+snippet = '''
+abort();$0'''
+
+[[entries]]
+name = "atexit"
+keys = ["atexit", "exit", "handler", "cleanup"]
+doc = "Register a function to run at normal program termination."
+snippet = '''
+atexit(${1:cleanup});$0'''

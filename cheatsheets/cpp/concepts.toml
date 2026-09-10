@@ -1,0 +1,121 @@
+title = "Concepts"
+contexts = ["item", "type"]
+
+[[entries]]
+name = "concept"
+keys = ["concept", "requires", "constraint"]
+doc = "C++20 named constraint on a type."
+snippet = """
+template <typename ${1:T}>
+concept ${2:Name} = ${3:std::is_integral_v<T>};$0"""
+
+[[entries]]
+name = "concept with requires expression"
+keys = ["concept", "requires", "expression"]
+doc = "Concept defined by expressions that must be valid."
+snippet = """
+template <typename ${1:T}>
+concept ${2:Name} = requires(${1:T} ${3:t}) {
+    { ${4:t.size()} } -> std::convertible_to<${5:std::size_t}>;
+    $0
+};"""
+
+[[entries]]
+name = "requires clause"
+keys = ["requires", "constraint", "template"]
+doc = "Constrain a template with a requires clause."
+snippet = """
+template <typename ${1:T}>
+    requires ${2:std::integral<T>}
+${3:T} ${4:name}(${1:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "trailing requires clause"
+keys = ["requires", "trailing", "constraint"]
+doc = "Requires clause after the parameter list."
+snippet = """
+template <typename ${1:T}>
+${2:void} ${3:name}(${1:T} ${4:value}) requires ${5:std::copyable<T>} {
+    $0
+}"""
+
+[[entries]]
+name = "constrained template parameter"
+keys = ["concept", "template", "constrained"]
+doc = "Use a concept in place of typename."
+snippet = """
+template <${1:std::integral} ${2:T}>
+${3:T} ${4:name}(${2:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "abbreviated function template"
+keys = ["auto", "template", "abbreviated", "generic"]
+doc = "C++20 function template written with auto parameters."
+snippet = """
+${1:auto} ${2:name}(${3:const auto &}${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "constrained auto"
+keys = ["auto", "concept", "constrained"]
+doc = "auto parameter or variable constrained by a concept."
+snippet = """
+${1:std::integral} auto ${2:value}$0"""
+
+[[entries]]
+name = "requires expression"
+keys = ["requires", "expression", "check"]
+doc = "Boolean expression that is true when the body is valid."
+snippet = """
+requires(${1:T} ${2:t}) {
+    ${3:t.foo()};
+    $0
+}"""
+
+[[entries]]
+name = "requires type requirement"
+keys = ["requires", "typename", "nested"]
+doc = "Require that a nested type exists."
+snippet = """
+typename ${1:T}::${2:value_type};$0"""
+
+[[entries]]
+name = "requires compound requirement"
+keys = ["requires", "compound", "convertible"]
+doc = "Require an expression to compile with a given result type."
+snippet = """
+{ ${1:expr} } -> ${2:std::same_as<bool>};$0"""
+
+[[entries]]
+name = "requires nested requirement"
+keys = ["requires", "nested"]
+doc = "Require a constant boolean condition inside a requires expression."
+snippet = """
+requires ${1:sizeof(T) <= 8};$0"""
+
+[[entries]]
+name = "standard concepts"
+keys = ["concepts", "integral", "same_as", "convertible_to", "invocable", "range"]
+doc = "Common library concepts: std::integral, std::same_as, std::convertible_to, std::invocable, std::ranges::range."
+snippet = """
+std::${1:integral}$0"""
+
+[[entries]]
+name = "concept conjunction"
+keys = ["concept", "and", "&&", "combine"]
+doc = "Concept built from other concepts."
+snippet = """
+template <typename ${1:T}>
+concept ${2:Name} = ${3:std::copyable<T>} && ${4:std::default_initializable<T>};$0"""
+
+[[entries]]
+name = "static_assert concept"
+keys = ["static_assert", "concept", "check"]
+doc = "Check a concept at compile time."
+snippet = """
+static_assert(${1:std::integral}<${2:int}>);$0"""

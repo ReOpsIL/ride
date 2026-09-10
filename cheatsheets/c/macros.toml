@@ -1,0 +1,157 @@
+title = "Macros"
+contexts = ["preprocessor"]
+
+[[entries]]
+name = "stringify"
+keys = ["stringify", "#x", "str", "string"]
+doc = "Turn a macro argument into a string literal; the second level expands macros first."
+snippet = '''
+#define STR(x) #x
+#define XSTR(x) STR(x)$0'''
+
+[[entries]]
+name = "token paste"
+keys = ["paste", "concat", "##", "token"]
+doc = "Glue two tokens into one identifier."
+snippet = '''
+#define CONCAT(a, b) a##b$0'''
+
+[[entries]]
+name = "variadic macro"
+keys = ["variadic", "__va_args__", "...", "log"]
+doc = "Macro accepting a variable argument list forwarded via __VA_ARGS__."
+snippet = '''
+#define ${1:LOG}(fmt, ...) fprintf(stderr, fmt "\n", __VA_ARGS__)$0'''
+
+[[entries]]
+name = "__VA_OPT__"
+keys = ["va_opt", "__va_opt__", "variadic", "empty", "c23"]
+doc = "Emit the comma only when variadic arguments are present (C23; GNU uses ##__VA_ARGS__)."
+snippet = '''
+#define ${1:LOG}(fmt, ...) fprintf(stderr, fmt "\n" __VA_OPT__(,) __VA_ARGS__)$0'''
+
+[[entries]]
+name = "debug macro"
+keys = ["debug", "dbg", "ifdef", "conditional", "noop"]
+doc = "Logging macro that compiles to nothing unless DEBUG is defined."
+snippet = '''
+#ifdef ${1:DEBUG}
+#define ${2:DBG}(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define ${2:DBG}(...) ((void)0)
+#endif$0'''
+
+[[entries]]
+name = "__FILE__ __LINE__"
+keys = ["__file__", "__line__", "__func__", "trace", "location"]
+doc = "Print the source location using the predefined macros and __func__."
+snippet = '''
+#define ${1:TRACE}() fprintf(stderr, "%s:%d in %s\n", __FILE__, __LINE__, __func__)$0'''
+
+[[entries]]
+name = "__func__"
+keys = ["__func__", "function", "name", "__function__"]
+doc = "Predefined identifier holding the current function's name (C99)."
+snippet = '''
+fprintf(stderr, "%s: ${1:message}\n", __func__);$0'''
+
+[[entries]]
+name = "__DATE__ __TIME__"
+keys = ["__date__", "__time__", "build", "timestamp"]
+doc = "Compile-time date and time strings."
+snippet = '''
+printf("built %s %s\n", __DATE__, __TIME__);$0'''
+
+[[entries]]
+name = "__STDC_VERSION__"
+keys = ["__stdc_version__", "version", "standard", "c11", "c23"]
+doc = "Gate code on the language standard (199901L, 201112L, 201710L, 202311L)."
+snippet = '''
+#if __STDC_VERSION__ >= ${1:202311L}
+$0
+#endif'''
+
+[[entries]]
+name = "platform check"
+keys = ["platform", "_win32", "__linux__", "__apple__", "os"]
+doc = "Select code per operating system using predefined macros."
+snippet = '''
+#if defined(_WIN32)
+${1:}
+#elif defined(__APPLE__)
+${2:}
+#elif defined(__linux__)
+${3:}
+#endif$0'''
+
+[[entries]]
+name = "compiler check"
+keys = ["compiler", "__gnuc__", "__clang__", "_msc_ver"]
+doc = "Select code per compiler family."
+snippet = '''
+#if defined(__GNUC__) || defined(__clang__)
+${1:}
+#elif defined(_MSC_VER)
+${2:}
+#endif$0'''
+
+[[entries]]
+name = "extern \"C\" guard"
+keys = ["extern", "c++", "cplusplus", "__cplusplus", "header"]
+doc = "Give a C header C linkage when compiled as C++."
+snippet = '''
+#ifdef __cplusplus
+extern "C" {
+#endif
+$0
+#ifdef __cplusplus
+}
+#endif'''
+
+[[entries]]
+name = "X-macro"
+keys = ["x-macro", "xmacro", "list", "table", "generate"]
+doc = "Define a list once and expand it into an enum, strings or tables."
+snippet = '''
+#define ${1:COLORS}(X) \
+    X(${2:RED}) \
+    X(${3:GREEN})
+#define ${4:AS_ENUM}(name) name,
+enum ${5:color} { ${1:COLORS}(${4:AS_ENUM}) };$0'''
+
+[[entries]]
+name = "MIN MAX"
+keys = ["min", "max", "clamp", "macro"]
+doc = "Classic comparison macros; arguments are evaluated twice, so avoid side effects."
+snippet = '''
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))$0'''
+
+[[entries]]
+name = "ARRAY_LEN"
+keys = ["array_len", "array_size", "countof", "length", "sizeof"]
+doc = "Element count of a true array as a compile-time expression."
+snippet = '''
+#define ARRAY_LEN(a) (sizeof(a) / sizeof((a)[0]))$0'''
+
+[[entries]]
+name = "UNUSED"
+keys = ["unused", "void", "parameter", "silence"]
+doc = "Silence unused-parameter warnings portably."
+snippet = '''
+#define UNUSED(x) ((void)(x))$0'''
+
+[[entries]]
+name = "likely unlikely"
+keys = ["likely", "unlikely", "__builtin_expect", "branch", "hint"]
+doc = "Branch prediction hints for GCC and Clang."
+snippet = '''
+#define likely(x) __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)$0'''
+
+[[entries]]
+name = "FREE macro"
+keys = ["free", "null", "safe free", "macro"]
+doc = "Free a pointer and null it in one statement-safe macro."
+snippet = '''
+#define FREE(p) do { free(p); (p) = NULL; } while (0)$0'''

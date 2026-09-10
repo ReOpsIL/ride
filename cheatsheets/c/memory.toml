@@ -1,0 +1,138 @@
+title = "Memory"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "malloc"
+keys = ["malloc", "allocate", "heap", "new"]
+doc = "Allocate an uninitialised array sized from the pointee, and check for NULL."
+snippet = '''
+${1:int} *${2:p} = malloc(${3:n} * sizeof *${2:p});
+if (${2:p} == NULL) {
+    $0
+}'''
+
+[[entries]]
+name = "calloc"
+keys = ["calloc", "allocate", "zero", "heap"]
+doc = "Allocate zero-filled elements with an overflow-checked count."
+snippet = '''
+${1:int} *${2:p} = calloc(${3:n}, sizeof *${2:p});$0'''
+
+[[entries]]
+name = "malloc struct"
+keys = ["malloc", "struct", "allocate", "object"]
+doc = "Allocate one struct using sizeof on the dereferenced pointer so the type is never repeated."
+snippet = '''
+struct ${1:point} *${2:p} = malloc(sizeof *${2:p});$0'''
+
+[[entries]]
+name = "realloc"
+keys = ["realloc", "resize", "grow", "heap"]
+doc = "Resize via a temporary so the original is not leaked when realloc fails."
+snippet = '''
+${1:int} *tmp = realloc(${2:p}, ${3:new_n} * sizeof *${2:p});
+if (tmp == NULL) {
+    $0
+}
+${2:p} = tmp;'''
+
+[[entries]]
+name = "free"
+keys = ["free", "release", "delete", "null"]
+doc = "Release a heap block and null the pointer to prevent double free."
+snippet = '''
+free(${1:p});
+${1:p} = NULL;$0'''
+
+[[entries]]
+name = "growable array"
+keys = ["vector", "dynamic array", "append", "push", "grow", "capacity"]
+doc = "Append with capacity doubling, the C dynamic-array idiom."
+snippet = '''
+if (${1:len} == ${2:cap}) {
+    ${2:cap} = ${2:cap} ? ${2:cap} * 2 : 8;
+    ${3:items} = realloc(${3:items}, ${2:cap} * sizeof *${3:items});
+}
+${3:items}[${1:len}++] = ${4:value};$0'''
+
+[[entries]]
+name = "overflow check"
+keys = ["overflow", "size_max", "multiply", "check", "allocation"]
+doc = "Reject a count that would overflow the byte size before allocating."
+snippet = '''
+if (${1:n} > SIZE_MAX / sizeof *${2:p}) {
+    $0
+}'''
+
+[[entries]]
+name = "memcpy"
+keys = ["memcpy", "copy", "bytes"]
+doc = "Copy bytes between non-overlapping regions."
+snippet = '''
+memcpy(${1:dst}, ${2:src}, ${3:n} * sizeof *${2:src});$0'''
+
+[[entries]]
+name = "memmove"
+keys = ["memmove", "copy", "overlap", "shift"]
+doc = "Copy bytes correctly even when the regions overlap."
+snippet = '''
+memmove(${1:dst}, ${2:src}, ${3:n} * sizeof *${2:src});$0'''
+
+[[entries]]
+name = "memset"
+keys = ["memset", "zero", "clear", "fill"]
+doc = "Fill bytes; sizeof the array itself for arrays, sizeof *p for a pointer to one object."
+snippet = '''
+memset(${1:buf}, ${2:0}, sizeof ${1:buf});$0'''
+
+[[entries]]
+name = "memcmp"
+keys = ["memcmp", "compare", "bytes", "equal"]
+doc = "Compare byte ranges; zero means identical."
+snippet = '''
+memcmp(${1:a}, ${2:b}, ${3:n}) == 0$0'''
+
+[[entries]]
+name = "memchr"
+keys = ["memchr", "find", "byte", "search"]
+doc = "Find a byte in a range of known length, without relying on a terminator."
+snippet = '''
+memchr(${1:buf}, ${2:'\n'}, ${3:len})$0'''
+
+[[entries]]
+name = "aligned_alloc"
+keys = ["aligned_alloc", "aligned", "alignment", "simd"]
+doc = "Allocate with a given alignment; the size must be a multiple of it (C11)."
+snippet = '''
+${1:float} *${2:p} = aligned_alloc(${3:64}, ${4:n} * sizeof *${2:p});$0'''
+
+[[entries]]
+name = "reset object"
+keys = ["reset", "zero", "compound", "clear", "struct"]
+doc = "Zero a struct through a pointer by assigning a zero compound literal."
+snippet = '''
+*${1:p} = (${2:struct point}){0};$0'''
+
+[[entries]]
+name = "qsort"
+keys = ["qsort", "sort", "array"]
+doc = "Sort an array in place with a three-way comparator."
+snippet = '''
+qsort(${1:arr}, ${2:n}, sizeof ${1:arr}[0], ${3:compare});$0'''
+
+[[entries]]
+name = "comparator"
+keys = ["compare", "comparator", "qsort", "bsearch", "cmp"]
+doc = "Three-way comparison callback that avoids overflow from subtraction."
+snippet = '''
+int ${1:compare_int}(const void *a, const void *b) {
+    ${2:int} x = *(const ${2:int} *)a, y = *(const ${2:int} *)b;
+    return (x > y) - (x < y);
+}$0'''
+
+[[entries]]
+name = "bsearch"
+keys = ["bsearch", "binary search", "find", "sorted"]
+doc = "Binary search a sorted array with the same comparator used to sort it."
+snippet = '''
+${1:int} *${2:hit} = bsearch(&${3:key}, ${4:arr}, ${5:n}, sizeof ${4:arr}[0], ${6:compare});$0'''

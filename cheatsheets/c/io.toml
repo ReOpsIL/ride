@@ -1,0 +1,186 @@
+title = "Formatted I/O"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "printf"
+keys = ["printf", "print", "format", "stdout"]
+doc = "Write formatted output to stdout."
+snippet = '''
+printf("${1:%d}\n", ${2:value});$0'''
+
+[[entries]]
+name = "puts"
+keys = ["puts", "print", "line", "string"]
+doc = "Write a string plus a newline to stdout."
+snippet = '''
+puts(${1:"text"});$0'''
+
+[[entries]]
+name = "putchar"
+keys = ["putchar", "char", "print"]
+doc = "Write one character to stdout."
+snippet = '''
+putchar(${1:'\n'});$0'''
+
+[[entries]]
+name = "getchar loop"
+keys = ["getchar", "read", "char", "eof", "stdin"]
+doc = "Read stdin one character at a time; c must be int to distinguish EOF."
+snippet = '''
+int c;
+while ((c = getchar()) != EOF) {
+    $0
+}'''
+
+[[entries]]
+name = "scanf"
+keys = ["scanf", "read", "input", "parse"]
+doc = "Parse stdin, checking that the expected number of items was converted."
+snippet = '''
+if (scanf("${1:%d}", &${2:value}) != ${3:1}) {
+    $0
+}'''
+
+[[entries]]
+name = "scanf string"
+keys = ["scanf", "string", "%s", "bounded", "width"]
+doc = "Read a word with a width one less than the buffer so it cannot overflow."
+snippet = '''
+scanf("%${1:31}s", ${2:buf});$0'''
+
+[[entries]]
+name = "sscanf"
+keys = ["sscanf", "parse", "string", "extract"]
+doc = "Parse fields out of a string, checking the conversion count."
+snippet = '''
+if (sscanf(${1:line}, "${2:%d %d}", &${3:a}, &${4:b}) == ${5:2}) {
+    $0
+}'''
+
+[[entries]]
+name = "fgets line"
+keys = ["fgets", "read", "line", "stdin", "input"]
+doc = "Read one line including its newline, bounded by the buffer size."
+snippet = '''
+if (fgets(${1:line}, sizeof ${1:line}, ${2:stdin}) != NULL) {
+    $0
+}'''
+
+[[entries]]
+name = "fputs"
+keys = ["fputs", "write", "string", "stream"]
+doc = "Write a string to a stream without adding a newline."
+snippet = '''
+fputs(${1:"text"}, ${2:stdout});$0'''
+
+[[entries]]
+name = "fprintf stderr"
+keys = ["fprintf", "stderr", "error", "log", "warn"]
+doc = "Formatted message on the unbuffered error stream."
+snippet = '''
+fprintf(stderr, "${1:error: %s}\n", ${2:msg});$0'''
+
+[[entries]]
+name = "%d"
+keys = ["%d", "%i", "int", "signed", "specifier"]
+doc = "Signed decimal int."
+snippet = '''
+printf("%d\n", ${1:value});$0'''
+
+[[entries]]
+name = "%u"
+keys = ["%u", "unsigned", "specifier"]
+doc = "Unsigned decimal int."
+snippet = '''
+printf("%u\n", ${1:value});$0'''
+
+[[entries]]
+name = "%ld %lld"
+keys = ["%ld", "%lld", "%lu", "%llu", "long", "specifier"]
+doc = "long and long long need the l or ll length modifier."
+snippet = '''
+printf("%lld\n", ${1:value});$0'''
+
+[[entries]]
+name = "%zu"
+keys = ["%zu", "size_t", "%zd", "specifier"]
+doc = "size_t uses the z modifier (C99)."
+snippet = '''
+printf("%zu\n", ${1:size});$0'''
+
+[[entries]]
+name = "%x"
+keys = ["%x", "%#x", "%08x", "hex", "hexadecimal", "specifier"]
+doc = "Unsigned hexadecimal, here zero-padded to eight digits."
+snippet = '''
+printf("0x%08x\n", ${1:value});$0'''
+
+[[entries]]
+name = "%f"
+keys = ["%f", "%.2f", "float", "double", "decimal", "specifier"]
+doc = "Fixed-point double with a chosen precision; float arguments promote to double."
+snippet = '''
+printf("%.${1:2}f\n", ${2:value});$0'''
+
+[[entries]]
+name = "%e %g"
+keys = ["%e", "%g", "scientific", "exponent", "specifier"]
+doc = "Scientific notation, or the shorter of %e and %f with %g."
+snippet = '''
+printf("%${1:g}\n", ${2:value});$0'''
+
+[[entries]]
+name = "%c"
+keys = ["%c", "char", "character", "specifier"]
+doc = "Single character passed as an int."
+snippet = '''
+printf("%c\n", ${1:c});$0'''
+
+[[entries]]
+name = "%s"
+keys = ["%s", "string", "specifier"]
+doc = "NUL-terminated string."
+snippet = '''
+printf("%s\n", ${1:s});$0'''
+
+[[entries]]
+name = "%p"
+keys = ["%p", "pointer", "address", "specifier"]
+doc = "Pointer value, which must be cast to void * for portability."
+snippet = '''
+printf("%p\n", (void *)${1:ptr});$0'''
+
+[[entries]]
+name = "%%"
+keys = ["%%", "percent", "specifier"]
+doc = "Literal percent sign."
+snippet = '''
+printf("%d%%\n", ${1:percent});$0'''
+
+[[entries]]
+name = "width and padding"
+keys = ["width", "padding", "align", "%-10s", "%05d", "justify"]
+doc = "Minimum width with - for left alignment and 0 for zero padding."
+snippet = '''
+printf("%${1:-10}s|%${2:05}d\n", ${3:name}, ${4:num});$0'''
+
+[[entries]]
+name = "%*d"
+keys = ["%*d", "dynamic", "width", "star"]
+doc = "Take the field width from an int argument."
+snippet = '''
+printf("%*d\n", ${1:width}, ${2:value});$0'''
+
+[[entries]]
+name = "%.*s"
+keys = ["%.*s", "precision", "substring", "length", "star"]
+doc = "Print at most len bytes of a string that may not be NUL-terminated."
+snippet = '''
+printf("%.*s\n", (int)${1:len}, ${2:s});$0'''
+
+[[entries]]
+name = "PRId64"
+keys = ["prid64", "priu64", "prix64", "inttypes", "int64_t", "specifier"]
+doc = "Portable specifier macros for fixed-width types from inttypes.h."
+snippet = '''
+printf("%" PRI${1:d64} "\n", ${2:value});$0'''

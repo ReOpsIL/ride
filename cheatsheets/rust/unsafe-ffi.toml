@@ -1,0 +1,195 @@
+title = "Unsafe and FFI"
+contexts = ["statement", "expression", "item"]
+
+[[entries]]
+name = "unsafe block"
+keys = ["unsafe", "block", "raw", "ffi"]
+doc = "Enter unsafe code with a comment explaining why it is sound."
+snippet = '''
+// SAFETY: ${1:why this is sound}
+unsafe {
+    $0
+}'''
+
+[[entries]]
+name = "unsafe fn"
+keys = ["unsafe", "fn", "function", "contract"]
+doc = "Define a function whose caller must uphold documented invariants."
+snippet = '''
+/// # Safety
+/// ${1:invariant}
+pub unsafe fn ${2:name}(${3:args}) -> ${4:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "raw pointer from ref"
+keys = ["raw", "pointer", "ptr", "const", "mut", "cast"]
+doc = "Create a raw pointer from a reference, which is safe."
+snippet = '''
+let ${1:p}: *${2:const} ${3:T} = &${4:value};$0'''
+
+[[entries]]
+name = "&raw const / mut"
+keys = ["raw", "addr_of", "pointer", "field", "packed"]
+doc = "Take a raw pointer to a place without creating an intermediate reference."
+snippet = '''
+&raw ${1:const} ${2:place}$0'''
+
+[[entries]]
+name = "deref raw pointer"
+keys = ["deref", "raw", "pointer", "unsafe", "read"]
+doc = "Read through a raw pointer, which requires unsafe."
+snippet = '''
+unsafe { *${1:ptr} }$0'''
+
+[[entries]]
+name = "ptr::null / is_null"
+keys = ["null", "ptr", "pointer", "is_null", "check"]
+doc = "Create a null pointer or check for one."
+snippet = '''
+std::ptr::null${1:_mut}::<${2:T}>()$0'''
+
+[[entries]]
+name = "ptr add / offset"
+keys = ["ptr", "add", "offset", "arithmetic", "pointer"]
+doc = "Advance a raw pointer by n elements."
+snippet = '''
+unsafe { ${1:ptr}.add(${2:n}) }$0'''
+
+[[entries]]
+name = "ptr read / write"
+keys = ["ptr", "read", "write", "copy", "unaligned"]
+doc = "Read or write a value through a raw pointer without dropping."
+snippet = '''
+unsafe { std::ptr::${1:write}(${2:ptr}${3:, value}) }$0'''
+
+[[entries]]
+name = "slice::from_raw_parts"
+keys = ["slice", "raw", "parts", "pointer", "len", "ffi"]
+doc = "Build a slice from a pointer and a length."
+snippet = '''
+unsafe { std::slice::from_raw_parts${1:_mut}(${2:ptr}, ${3:len}) }$0'''
+
+[[entries]]
+name = "Box into_raw / from_raw"
+keys = ["box", "into_raw", "from_raw", "leak", "ffi", "handle"]
+doc = "Hand a heap object to C as a pointer and reclaim it later."
+snippet = '''
+let ${1:ptr} = Box::into_raw(Box::new(${2:value}));
+let ${3:boxed} = unsafe { Box::from_raw(${1:ptr}) };$0'''
+
+[[entries]]
+name = "transmute"
+keys = ["transmute", "cast", "reinterpret", "bits"]
+doc = "Reinterpret the bits of a value as another type of the same size."
+snippet = '''
+unsafe { std::mem::transmute::<${1:From}, ${2:To}>(${3:value}) }$0'''
+
+[[entries]]
+name = "static mut"
+keys = ["static", "mut", "global", "mutable", "unsafe"]
+doc = "Declare a mutable global, accessed only through raw pointers in edition 2024."
+snippet = '''
+static mut ${1:NAME}: ${2:u32} = ${3:0};
+unsafe { *(&raw mut ${1:NAME}) = ${4:value}; }$0'''
+
+[[entries]]
+name = "extern block"
+keys = ["extern", "c", "ffi", "block", "declare", "foreign"]
+doc = "Declare foreign C functions and statics."
+snippet = '''
+unsafe extern "C" {
+    fn ${1:name}(${2:arg}: ${3:c_int}) -> ${4:c_int};$0
+}'''
+
+[[entries]]
+name = "safe extern item"
+keys = ["extern", "safe", "ffi", "c", "declare"]
+doc = "Declare a foreign function that is sound to call from safe code."
+snippet = '''
+unsafe extern "C" {
+    safe fn ${1:name}(${2:arg}: ${3:c_int}) -> ${4:c_int};$0
+}'''
+
+[[entries]]
+name = "extern \"C\" fn export"
+keys = ["extern", "no_mangle", "export", "c", "fn", "ffi"]
+doc = "Export a Rust function with the C ABI under its plain symbol name."
+snippet = '''
+#[unsafe(no_mangle)]
+pub extern "C" fn ${1:name}(${2:arg}: ${3:std::ffi::c_int}) -> ${4:std::ffi::c_int} {
+    $0
+}'''
+
+[[entries]]
+name = "extern \"C\" callback"
+keys = ["extern", "callback", "c", "fn", "pointer", "ffi"]
+doc = "Define a Rust function that C can call back through a pointer."
+snippet = '''
+extern "C" fn ${1:callback}(${2:data}: *mut std::ffi::c_void) {
+    $0
+}'''
+
+[[entries]]
+name = "#[repr(C)] struct"
+keys = ["repr", "c", "struct", "layout", "ffi"]
+doc = "Define a struct with C-compatible layout for FFI."
+snippet = '''
+#[repr(C)]
+pub struct ${1:Name} {
+    pub ${2:field}: ${3:std::ffi::c_int},$0
+}'''
+
+[[entries]]
+name = "union access"
+keys = ["union", "field", "read", "unsafe"]
+doc = "Read a union field, which requires unsafe."
+snippet = '''
+unsafe { ${1:value}.${2:field} }$0'''
+
+[[entries]]
+name = "CString::new"
+keys = ["cstring", "new", "c", "string", "ffi", "nul"]
+doc = "Build a nul-terminated C string to pass to foreign code."
+snippet = '''
+let ${1:c_str} = std::ffi::CString::new(${2:text})?;
+${3:c_function}(${1:c_str}.as_ptr());$0'''
+
+[[entries]]
+name = "CStr from_ptr"
+keys = ["cstr", "from_ptr", "c", "string", "ffi", "char"]
+doc = "Borrow a C string returned by foreign code and convert it to str."
+snippet = '''
+let ${1:s} = unsafe { std::ffi::CStr::from_ptr(${2:ptr}) }.to_str()?;$0'''
+
+[[entries]]
+name = "c\"literal\""
+keys = ["c", "literal", "cstr", "string", "nul"]
+doc = "C string literal with a trailing nul, typed as &CStr."
+snippet = '''
+c"${1:text}"$0'''
+
+[[entries]]
+name = "MaybeUninit"
+keys = ["maybeuninit", "uninit", "uninitialized", "buffer", "assume_init"]
+doc = "Reserve storage without initializing it, then assume it is initialized."
+snippet = '''
+let mut ${1:slot} = std::mem::MaybeUninit::<${2:T}>::uninit();
+${3:init}(${1:slot}.as_mut_ptr());
+let ${4:value} = unsafe { ${1:slot}.assume_init() };$0'''
+
+[[entries]]
+name = "unsafe impl Send"
+keys = ["unsafe", "impl", "send", "sync", "thread", "pointer"]
+doc = "Assert a type holding raw pointers is safe to move across threads."
+snippet = '''
+unsafe impl Send for ${1:Type} {}
+unsafe impl Sync for ${1:Type} {}$0'''
+
+[[entries]]
+name = "size_of / align_of"
+keys = ["size_of", "align_of", "size", "bytes", "mem", "layout"]
+doc = "Size or alignment of a type in bytes."
+snippet = '''
+std::mem::${1:size_of}::<${2:T}>()$0'''

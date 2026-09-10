@@ -1,0 +1,107 @@
+title = "Bit manipulation"
+contexts = ["expression"]
+
+[[entries]]
+name = "bitwise and"
+keys = ["&", "and", "mask", "bitwise"]
+doc = "Keep only the bits set in the mask."
+snippet = '''
+${1:value} & ${2:MASK}$0'''
+
+[[entries]]
+name = "bitwise or"
+keys = ["|", "or", "combine", "bitwise"]
+doc = "Combine flags."
+snippet = '''
+${1:flags} | ${2:FLAG}$0'''
+
+[[entries]]
+name = "bitwise xor"
+keys = ["^", "xor", "exclusive", "bitwise"]
+doc = "Bits that differ between the operands."
+snippet = '''
+${1:a} ^ ${2:b}$0'''
+
+[[entries]]
+name = "bitwise not"
+keys = ["~", "not", "complement", "invert", "bitwise"]
+doc = "Flip every bit; result has the operand's promoted type."
+snippet = '''
+~${1:mask}$0'''
+
+[[entries]]
+name = "shift left"
+keys = ["<<", "shift", "left", "shl"]
+doc = "Multiply by 2^n; use an unsigned operand to avoid undefined behaviour."
+snippet = '''
+${1:1u} << ${2:n}$0'''
+
+[[entries]]
+name = "shift right"
+keys = [">>", "shift", "right", "shr"]
+doc = "Divide by 2^n; arithmetic or logical for signed values is implementation-defined."
+snippet = '''
+${1:value} >> ${2:n}$0'''
+
+[[entries]]
+name = "set bit"
+keys = ["set", "bit", "|=", "flag"]
+doc = "Turn on bit n."
+snippet = '''
+${1:flags} |= 1u << ${2:n}$0'''
+
+[[entries]]
+name = "clear bit"
+keys = ["clear", "bit", "&= ~", "unset"]
+doc = "Turn off bit n."
+snippet = '''
+${1:flags} &= ~(1u << ${2:n})$0'''
+
+[[entries]]
+name = "toggle bit"
+keys = ["toggle", "bit", "^=", "flip"]
+doc = "Flip bit n."
+snippet = '''
+${1:flags} ^= 1u << ${2:n}$0'''
+
+[[entries]]
+name = "test bit"
+keys = ["test", "bit", "check", "is set"]
+doc = "True when bit n is set."
+snippet = '''
+(${1:flags} >> ${2:n}) & 1u$0'''
+
+[[entries]]
+name = "low bits mask"
+keys = ["mask", "low", "bits", "ones"]
+doc = "Mask with the low n bits set, for n less than the type width."
+snippet = '''
+(1u << ${1:n}) - 1$0'''
+
+[[entries]]
+name = "is power of two"
+keys = ["power", "two", "pow2", "check"]
+doc = "True for nonzero values with a single bit set."
+snippet = '''
+${1:x} != 0 && (${1:x} & (${1:x} - 1)) == 0$0'''
+
+[[entries]]
+name = "align up"
+keys = ["align", "round up", "alignment", "power of two"]
+doc = "Round up to a multiple of a power-of-two alignment."
+snippet = '''
+(${1:x} + ${2:align} - 1) & ~(${2:align} - 1)$0'''
+
+[[entries]]
+name = "popcount"
+keys = ["popcount", "__builtin_popcount", "count bits", "ones"]
+doc = "Number of set bits via the GCC/Clang builtin (stdc_count_ones in C23)."
+snippet = '''
+__builtin_popcount${1:l}(${2:value})$0'''
+
+[[entries]]
+name = "byte swap"
+keys = ["bswap", "__builtin_bswap32", "endian", "swap", "network"]
+doc = "Reverse byte order to convert between endiannesses."
+snippet = '''
+__builtin_bswap${1:32}(${2:value})$0'''

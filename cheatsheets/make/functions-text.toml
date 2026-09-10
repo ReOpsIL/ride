@@ -1,0 +1,107 @@
+title = "Text functions"
+contexts = ["function"]
+
+[[entries]]
+name = "subst"
+keys = ["subst", "replace", "substitute"]
+doc = "Replace every occurrence of a fixed string in the text."
+snippet = '''
+subst ${1:from},${2:to},${3:$(TEXT)})$0'''
+
+[[entries]]
+name = "patsubst"
+keys = ["patsubst", "pattern", "replace", "%"]
+doc = "Replace words matching a % pattern, substituting the stem into the replacement."
+snippet = '''
+patsubst ${1:%.c},${2:%.o},${3:$(SRCS)})$0'''
+
+[[entries]]
+name = "strip"
+keys = ["strip", "whitespace", "trim"]
+doc = "Remove leading and trailing whitespace and collapse internal runs to one space."
+snippet = '''
+strip ${1:$(VAR)})$0'''
+
+[[entries]]
+name = "findstring"
+keys = ["findstring", "contains", "find", "search"]
+doc = "Return the string if it occurs in the text, else nothing."
+snippet = '''
+findstring ${1:needle},${2:$(HAYSTACK)})$0'''
+
+[[entries]]
+name = "filter"
+keys = ["filter", "keep", "select", "match"]
+doc = "Keep only the words that match one of the patterns."
+snippet = '''
+filter ${1:%.c %.h},${2:$(FILES)})$0'''
+
+[[entries]]
+name = "filter-out"
+keys = ["filter-out", "filterout", "exclude", "remove"]
+doc = "Remove the words that match one of the patterns."
+snippet = '''
+filter-out ${1:main.o},${2:$(OBJS)})$0'''
+
+[[entries]]
+name = "sort"
+keys = ["sort", "unique", "uniq", "dedup"]
+doc = "Sort the words lexically and remove duplicates."
+snippet = '''
+sort ${1:$(LIST)})$0'''
+
+[[entries]]
+name = "word"
+keys = ["word", "nth", "index"]
+doc = "Return the n-th word of the text, counting from one."
+snippet = '''
+word ${1:2},${2:$(LIST)})$0'''
+
+[[entries]]
+name = "wordlist"
+keys = ["wordlist", "slice", "range", "words"]
+doc = "Return the words from position s to e inclusive."
+snippet = '''
+wordlist ${1:2},${2:4},${3:$(LIST)})$0'''
+
+[[entries]]
+name = "words"
+keys = ["words", "count", "length", "len"]
+doc = "Return the number of words in the text."
+snippet = '''
+words ${1:$(LIST)})$0'''
+
+[[entries]]
+name = "firstword"
+keys = ["firstword", "first", "head"]
+doc = "Return the first word of the text."
+snippet = '''
+firstword ${1:$(LIST)})$0'''
+
+[[entries]]
+name = "lastword"
+keys = ["lastword", "last", "tail"]
+doc = "Return the last word of the text."
+snippet = '''
+lastword ${1:$(LIST)})$0'''
+
+[[entries]]
+name = "addsuffix"
+keys = ["addsuffix", "suffix", "append"]
+doc = "Append the suffix to each word."
+snippet = '''
+addsuffix ${1:.o},${2:$(NAMES)})$0'''
+
+[[entries]]
+name = "addprefix"
+keys = ["addprefix", "prefix", "prepend"]
+doc = "Prepend the prefix to each word."
+snippet = '''
+addprefix ${1:build/},${2:$(NAMES)})$0'''
+
+[[entries]]
+name = "join"
+keys = ["join", "zip", "pairwise"]
+doc = "Concatenate the two lists word by word."
+snippet = '''
+join ${1:$(DIRS)},${2:$(FILES)})$0'''

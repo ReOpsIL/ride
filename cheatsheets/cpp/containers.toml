@@ -1,0 +1,139 @@
+title = "Containers"
+contexts = ["statement"]
+
+[[entries]]
+name = "vector"
+keys = ["vector", "vec", "std::"]
+doc = "Dynamic array with contiguous storage."
+snippet = """
+std::vector<${1:int}> ${2:v}${3:};$0"""
+
+[[entries]]
+name = "vector with size"
+keys = ["vector", "vec", "size", "fill"]
+doc = "Vector of n copies of a value."
+snippet = """
+std::vector<${1:int}> ${2:v}(${3:n}, ${4:0});$0"""
+
+[[entries]]
+name = "vector with reserve"
+keys = ["vector", "vec", "reserve", "capacity"]
+doc = "Vector with capacity reserved up front."
+snippet = """
+std::vector<${1:int}> ${2:v};
+${2:v}.reserve(${3:n});$0"""
+
+[[entries]]
+name = "array"
+keys = ["array", "std::", "fixed"]
+doc = "Fixed-size array."
+snippet = """
+std::array<${1:int}, ${2:N}> ${3:a} = {${4:}};$0"""
+
+[[entries]]
+name = "deque"
+keys = ["deque", "double", "ended"]
+doc = "Double-ended queue with fast push at both ends."
+snippet = """
+std::deque<${1:int}> ${2:d};$0"""
+
+[[entries]]
+name = "list"
+keys = ["list", "linked"]
+doc = "Doubly linked list."
+snippet = """
+std::list<${1:int}> ${2:l};$0"""
+
+[[entries]]
+name = "forward_list"
+keys = ["forward_list", "list", "singly"]
+doc = "Singly linked list."
+snippet = """
+std::forward_list<${1:int}> ${2:l};$0"""
+
+[[entries]]
+name = "map"
+keys = ["map", "ordered", "tree"]
+doc = "Ordered key/value container."
+snippet = """
+std::map<${1:std::string}, ${2:int}> ${3:m};$0"""
+
+[[entries]]
+name = "unordered_map"
+keys = ["unordered_map", "hash", "map", "dict"]
+doc = "Hash-based key/value container."
+snippet = """
+std::unordered_map<${1:std::string}, ${2:int}> ${3:m};$0"""
+
+[[entries]]
+name = "set"
+keys = ["set", "ordered", "unique"]
+doc = "Ordered set of unique keys."
+snippet = """
+std::set<${1:int}> ${2:s};$0"""
+
+[[entries]]
+name = "unordered_set"
+keys = ["unordered_set", "hash", "set"]
+doc = "Hash-based set of unique keys."
+snippet = """
+std::unordered_set<${1:int}> ${2:s};$0"""
+
+[[entries]]
+name = "multimap"
+keys = ["multimap", "map", "duplicate"]
+doc = "Ordered map that allows duplicate keys."
+snippet = """
+std::multimap<${1:std::string}, ${2:int}> ${3:m};$0"""
+
+[[entries]]
+name = "multiset"
+keys = ["multiset", "set", "duplicate"]
+doc = "Ordered set that allows duplicate keys."
+snippet = """
+std::multiset<${1:int}> ${2:s};$0"""
+
+[[entries]]
+name = "stack"
+keys = ["stack", "lifo", "adapter"]
+doc = "LIFO adapter with push, pop and top."
+snippet = """
+std::stack<${1:int}> ${2:st};$0"""
+
+[[entries]]
+name = "queue"
+keys = ["queue", "fifo", "adapter"]
+doc = "FIFO adapter with push, pop and front."
+snippet = """
+std::queue<${1:int}> ${2:q};$0"""
+
+[[entries]]
+name = "priority_queue"
+keys = ["priority_queue", "heap", "queue"]
+doc = "Max-heap adapter; use std::greater for a min-heap."
+snippet = """
+std::priority_queue<${1:int}${2:, std::vector<int>, std::greater<int>}> ${3:pq};$0"""
+
+[[entries]]
+name = "vector of vectors"
+keys = ["vector", "matrix", "grid", "2d"]
+doc = "Two-dimensional grid initialized to a value."
+snippet = """
+std::vector<std::vector<${1:int}>> ${2:grid}(${3:rows}, std::vector<${1:int}>(${4:cols}, ${5:0}));$0"""
+
+[[entries]]
+name = "map with initializer"
+keys = ["map", "init", "braces"]
+doc = "Map initialized with key/value pairs."
+snippet = """
+std::map<${1:std::string}, ${2:int}> ${3:m} = {
+    {${4:"key"}, ${5:0}},
+    $0
+};"""
+
+[[entries]]
+name = "std::initializer_list parameter"
+keys = ["initializer_list", "braces", "list"]
+doc = "Accept a braced list of values."
+snippet = """
+std::initializer_list<${1:int}> ${2:items}$0"""

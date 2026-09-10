@@ -1,0 +1,167 @@
+title = "Preprocessor"
+contexts = ["preprocessor", "item"]
+
+[[entries]]
+name = "#include system"
+keys = ["include", "header", "<>"]
+doc = "Include a standard or system header."
+snippet = """
+#include <${1:iostream}>$0"""
+
+[[entries]]
+name = "#include local"
+keys = ["include", "header", "quote"]
+doc = "Include a header from the project."
+snippet = """
+#include "${1:header.hpp}"$0"""
+
+[[entries]]
+name = "#pragma once"
+keys = ["pragma", "once", "guard", "header"]
+doc = "Include the header at most once per translation unit."
+snippet = """
+#pragma once
+$0"""
+
+[[entries]]
+name = "include guard"
+keys = ["ifndef", "define", "guard", "header"]
+doc = "Traditional include guard."
+snippet = """
+#ifndef ${1:HEADER_HPP}
+#define ${1:HEADER_HPP}
+
+$0
+
+#endif // ${1:HEADER_HPP}"""
+
+[[entries]]
+name = "#if"
+keys = ["if", "endif", "conditional"]
+doc = "Conditional compilation on an expression."
+snippet = """
+#if ${1:condition}
+$0
+#endif"""
+
+[[entries]]
+name = "#if else"
+keys = ["if", "else", "endif"]
+doc = "Two-way conditional compilation."
+snippet = """
+#if ${1:condition}
+$0
+#else
+#endif"""
+
+[[entries]]
+name = "#elif"
+keys = ["elif", "if", "endif"]
+doc = "Additional preprocessor branch."
+snippet = """
+#elif ${1:condition}
+$0"""
+
+[[entries]]
+name = "#ifdef"
+keys = ["ifdef", "defined", "endif"]
+doc = "Compile only when a macro is defined."
+snippet = """
+#ifdef ${1:NAME}
+$0
+#endif"""
+
+[[entries]]
+name = "#ifndef"
+keys = ["ifndef", "defined", "endif"]
+doc = "Compile only when a macro is not defined."
+snippet = """
+#ifndef ${1:NAME}
+$0
+#endif"""
+
+[[entries]]
+name = "#if defined"
+keys = ["if", "defined", "&&"]
+doc = "Combine macro tests in one condition."
+snippet = """
+#if defined(${1:A}) && !defined(${2:B})
+$0
+#endif"""
+
+[[entries]]
+name = "#else / #endif"
+keys = ["else", "endif"]
+doc = "Close or alternate a preprocessor conditional."
+snippet = """
+#${1:endif}$0"""
+
+[[entries]]
+name = "__cplusplus check"
+keys = ["cplusplus", "version", "standard", "if"]
+doc = "Test the C++ standard version."
+snippet = """
+#if __cplusplus >= ${1:202002L}
+$0
+#endif"""
+
+[[entries]]
+name = "__has_include"
+keys = ["has_include", "include", "optional"]
+doc = "Test whether a header is available."
+snippet = """
+#if __has_include(<${1:format}>)
+#include <${1:format}>
+#endif$0"""
+
+[[entries]]
+name = "#error"
+keys = ["error", "abort", "diagnostic"]
+doc = "Fail compilation with a message."
+snippet = """
+#error "${1:message}"$0"""
+
+[[entries]]
+name = "#warning"
+keys = ["warning", "diagnostic"]
+doc = "Emit a compiler warning (C++23)."
+snippet = """
+#warning "${1:message}"$0"""
+
+[[entries]]
+name = "#line"
+keys = ["line", "file", "diagnostic"]
+doc = "Override the reported line number and file name."
+snippet = """
+#line ${1:100} "${2:file.cpp}"$0"""
+
+[[entries]]
+name = "platform conditional"
+keys = ["platform", "windows", "linux", "apple", "ifdef"]
+doc = "Choose code per operating system."
+snippet = """
+#if defined(_WIN32)
+$0
+#elif defined(__APPLE__)
+#elif defined(__linux__)
+#endif"""
+
+[[entries]]
+name = "compiler conditional"
+keys = ["compiler", "msvc", "gcc", "clang", "ifdef"]
+doc = "Choose code per compiler."
+snippet = """
+#if defined(_MSC_VER)
+$0
+#elif defined(__clang__)
+#elif defined(__GNUC__)
+#endif"""
+
+[[entries]]
+name = "debug conditional"
+keys = ["debug", "ndebug", "ifdef"]
+doc = "Compile only in debug builds."
+snippet = """
+#ifndef NDEBUG
+$0
+#endif"""

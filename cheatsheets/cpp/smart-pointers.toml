@@ -1,0 +1,184 @@
+title = "Smart pointers and RAII"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "unique_ptr"
+keys = ["unique_ptr", "ptr", "make_unique", "owner"]
+doc = "Sole-owner pointer created with make_unique."
+snippet = """
+auto ${1:p} = std::make_unique<${2:T}>(${3:});$0"""
+
+[[entries]]
+name = "unique_ptr declaration"
+keys = ["unique_ptr", "ptr", "declare"]
+doc = "Declare an empty unique_ptr."
+snippet = """
+std::unique_ptr<${1:T}> ${2:p};$0"""
+
+[[entries]]
+name = "unique_ptr array"
+keys = ["unique_ptr", "array", "make_unique"]
+doc = "Owning pointer to a dynamically sized array."
+snippet = """
+auto ${1:buf} = std::make_unique<${2:int}[]>(${3:n});$0"""
+
+[[entries]]
+name = "shared_ptr"
+keys = ["shared_ptr", "ptr", "make_shared", "refcount"]
+doc = "Reference-counted pointer created with make_shared."
+snippet = """
+auto ${1:p} = std::make_shared<${2:T}>(${3:});$0"""
+
+[[entries]]
+name = "shared_ptr declaration"
+keys = ["shared_ptr", "ptr", "declare"]
+doc = "Declare an empty shared_ptr."
+snippet = """
+std::shared_ptr<${1:T}> ${2:p};$0"""
+
+[[entries]]
+name = "weak_ptr"
+keys = ["weak_ptr", "ptr", "weak", "cycle"]
+doc = "Non-owning observer of a shared_ptr."
+snippet = """
+std::weak_ptr<${1:T}> ${2:w} = ${3:p};$0"""
+
+[[entries]]
+name = "weak_ptr lock"
+keys = ["weak_ptr", "lock", "expired"]
+doc = "Promote a weak_ptr to a shared_ptr if the object is alive."
+snippet = """
+if (auto ${1:sp} = ${2:w}.lock()) {
+    $0
+}"""
+
+[[entries]]
+name = "custom deleter"
+keys = ["unique_ptr", "deleter", "fclose", "free"]
+doc = "unique_ptr that calls a custom function to release the resource."
+snippet = """
+std::unique_ptr<${1:FILE}, decltype(&${2:fclose})> ${3:p}(${4:fopen(path, "r")}, &${2:fclose});$0"""
+
+[[entries]]
+name = "custom deleter lambda"
+keys = ["unique_ptr", "deleter", "lambda"]
+doc = "unique_ptr with a lambda deleter."
+snippet = """
+auto ${1:del} = [](${2:T} *p) { ${3:release(p)}; };
+std::unique_ptr<${2:T}, decltype(${1:del})> ${4:p}(${5:acquire()}, ${1:del});$0"""
+
+[[entries]]
+name = "release"
+keys = ["release", "unique_ptr", "raw"]
+doc = "Give up ownership and return the raw pointer."
+snippet = """
+${1:T} *${2:raw} = ${3:p}.release();$0"""
+
+[[entries]]
+name = "reset"
+keys = ["reset", "unique_ptr", "shared_ptr"]
+doc = "Replace the managed object, destroying the old one."
+snippet = """
+${1:p}.reset(${2:});$0"""
+
+[[entries]]
+name = "get"
+keys = ["get", "raw", "pointer"]
+doc = "Raw pointer without transferring ownership."
+snippet = """
+${1:p}.get()$0"""
+
+[[entries]]
+name = "use_count"
+keys = ["use_count", "shared_ptr", "refcount"]
+doc = "Number of shared_ptr owners."
+snippet = """
+${1:p}.use_count()$0"""
+
+[[entries]]
+name = "std::move"
+keys = ["move", "ownership", "transfer"]
+doc = "Cast to an rvalue to transfer ownership."
+snippet = """
+std::move(${1:value})$0"""
+
+[[entries]]
+name = "move ownership"
+keys = ["move", "unique_ptr", "transfer"]
+doc = "Transfer a unique_ptr to another owner."
+snippet = """
+auto ${1:dst} = std::move(${2:src});$0"""
+
+[[entries]]
+name = "std::forward"
+keys = ["forward", "perfect", "forwarding"]
+doc = "Forward an argument preserving its value category."
+snippet = """
+std::forward<${1:T}>(${2:value})$0"""
+
+[[entries]]
+name = "std::exchange"
+keys = ["exchange", "move", "swap", "reset"]
+doc = "Replace a value and return the old one, useful in move constructors."
+snippet = """
+std::exchange(${1:other.ptr_}, nullptr)$0"""
+
+[[entries]]
+name = "RAII guard class"
+keys = ["raii", "guard", "class", "resource"]
+doc = "Class that acquires in the constructor and releases in the destructor."
+snippet = """
+class ${1:Guard} {
+public:
+    explicit ${1:Guard}(${2:Resource &r}) : ${3:r_(r)} { ${4:acquire()}; }
+    ~${1:Guard}() { ${5:release()}; }
+    ${1:Guard}(const ${1:Guard} &) = delete;
+    ${1:Guard} &operator=(const ${1:Guard} &) = delete;
+private:
+    ${6:Resource &r_};
+};$0"""
+
+[[entries]]
+name = "scope_exit idiom"
+keys = ["scope_exit", "defer", "raii", "cleanup", "finally"]
+doc = "Run a lambda when the scope ends."
+snippet = """
+struct ScopeExit {
+    std::function<void()> fn;
+    ~ScopeExit() { fn(); }
+};
+ScopeExit ${1:guard}{[&] { $0 }};"""
+
+[[entries]]
+name = "enable_shared_from_this"
+keys = ["shared_from_this", "shared_ptr", "this"]
+doc = "Let an object obtain a shared_ptr to itself."
+snippet = """
+class ${1:Name} : public std::enable_shared_from_this<${1:Name}> {
+public:
+    std::shared_ptr<${1:Name}> self() { return shared_from_this(); }
+    $0
+};"""
+
+[[entries]]
+name = "dynamic_pointer_cast"
+keys = ["dynamic_pointer_cast", "static_pointer_cast", "shared_ptr", "cast"]
+doc = "Cast a shared_ptr to a derived type."
+snippet = """
+auto ${1:d} = std::${2:dynamic_pointer_cast}<${3:Derived}>(${4:base});$0"""
+
+[[entries]]
+name = "new / delete"
+keys = ["new", "delete", "raw", "heap"]
+doc = "Manual heap allocation (prefer smart pointers)."
+snippet = """
+${1:T} *${2:p} = new ${1:T}(${3:});
+delete ${2:p};$0"""
+
+[[entries]]
+name = "new[] / delete[]"
+keys = ["new", "delete", "array", "heap"]
+doc = "Manual array allocation (prefer std::vector)."
+snippet = """
+${1:int} *${2:arr} = new ${1:int}[${3:n}];
+delete[] ${2:arr};$0"""

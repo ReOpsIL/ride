@@ -1,0 +1,197 @@
+title = "Expressions"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "range .."
+keys = ["range", "exclusive", "dotdot", "half", "open"]
+doc = "Half-open range from start up to but excluding end."
+snippet = '''
+${1:0}..${2:n}$0'''
+
+[[entries]]
+name = "range ..="
+keys = ["range", "inclusive", "dotdoteq", "closed"]
+doc = "Range including both ends."
+snippet = '''
+${1:0}..=${2:n}$0'''
+
+[[entries]]
+name = "range from / to"
+keys = ["range", "from", "to", "open", "slice", "unbounded"]
+doc = "Open-ended range for slicing from an index or up to one."
+snippet = '''
+${1:start}..$0'''
+
+[[entries]]
+name = "as cast"
+keys = ["as", "cast", "convert", "truncate", "numeric"]
+doc = "Numeric cast that truncates or wraps, or pointer cast."
+snippet = '''
+${1:value} as ${2:usize}$0'''
+
+[[entries]]
+name = "checked conversion"
+keys = ["try_into", "try_from", "convert", "checked", "narrow"]
+doc = "Convert between integer types, failing instead of truncating."
+snippet = '''
+${1:u8}::try_from(${2:value})?$0'''
+
+[[entries]]
+name = "from / into"
+keys = ["from", "into", "convert", "widen"]
+doc = "Infallible conversion driven by the target type."
+snippet = '''
+${1:value}.into()$0'''
+
+[[entries]]
+name = "tuple index"
+keys = ["tuple", "index", "dot", "field", "0"]
+doc = "Access a tuple or tuple-struct field by position."
+snippet = '''
+${1:pair}.${2:0}$0'''
+
+[[entries]]
+name = "field access"
+keys = ["field", "dot", "member", "struct"]
+doc = "Access a struct field, auto-dereferencing through references and smart pointers."
+snippet = '''
+${1:value}.${2:field}$0'''
+
+[[entries]]
+name = "method call"
+keys = ["method", "call", "dot", "invoke"]
+doc = "Call a method with auto-ref of the receiver."
+snippet = '''
+${1:value}.${2:method}(${3:args})$0'''
+
+[[entries]]
+name = "associated function call"
+keys = ["associated", "function", "path", "static", "new", "call"]
+doc = "Call an associated function through the type's path."
+snippet = '''
+${1:Type}::${2:new}(${3:args})$0'''
+
+[[entries]]
+name = "turbofish"
+keys = ["turbofish", "generic", "explicit", "type", "collect", "parse"]
+doc = "Give explicit generic arguments to a function or method call."
+snippet = '''
+${1:collect}::<${2:Vec<_>}>()$0'''
+
+[[entries]]
+name = "block expression"
+keys = ["block", "expression", "scope", "braces", "value"]
+doc = "Braces form an expression whose value is the final expression without a semicolon."
+snippet = '''
+let ${1:value} = {
+    ${2:let tmp = compute();}
+    $0
+};'''
+
+[[entries]]
+name = "if as expression"
+keys = ["if", "expression", "ternary", "conditional", "value"]
+doc = "Use if-else as a value, both branches yielding the same type."
+snippet = '''
+let ${1:value} = if ${2:cond} { ${3:a} } else { ${4:b} };$0'''
+
+[[entries]]
+name = "match as expression"
+keys = ["match", "expression", "value", "arms"]
+doc = "Use match as a value with every arm yielding the same type."
+snippet = '''
+let ${1:value} = match ${2:expr} {
+    ${3:pattern} => ${4:a},
+    _ => ${5:b},
+};$0'''
+
+[[entries]]
+name = "labeled block"
+keys = ["label", "block", "break", "value", "early"]
+doc = "Break out of a labeled block early with a value."
+snippet = '''
+let ${1:value} = '${2:block}: {
+    if ${3:cond} {
+        break '${2:block} ${4:early};
+    }
+    $0
+};'''
+
+[[entries]]
+name = "let chain"
+keys = ["let", "chain", "if", "and", "pattern", "condition"]
+doc = "Combine pattern bindings and conditions with && in an if, stable in edition 2024."
+snippet = '''
+if let ${1:Some(x)} = ${2:a} && let ${3:Some(y)} = ${4:b} && ${5:x < y} {
+    $0
+}'''
+
+[[entries]]
+name = "? chain"
+keys = ["question", "chain", "try", "propagate", "method"]
+doc = "Propagate errors from each fallible step in a method chain."
+snippet = '''
+${1:read()}?.${2:parse::<i32>()}?$0'''
+
+[[entries]]
+name = "closure expression"
+keys = ["closure", "lambda", "inline", "expression"]
+doc = "Anonymous function used directly as an argument."
+snippet = '''
+|${1:x}| ${2:x * 2}$0'''
+
+[[entries]]
+name = "unit expression statement"
+keys = ["semicolon", "statement", "discard", "unit"]
+doc = "Turn an expression into a statement, discarding its value."
+snippet = '''
+${1:expr};$0'''
+
+[[entries]]
+name = "let _ = discard"
+keys = ["let", "underscore", "discard", "ignore", "unused", "must_use"]
+doc = "Explicitly discard a must_use value without a warning."
+snippet = '''
+let _ = ${1:expr};$0'''
+
+[[entries]]
+name = "indexing"
+keys = ["index", "subscript", "brackets", "element"]
+doc = "Index a collection, panicking on out-of-bounds."
+snippet = '''
+${1:items}[${2:i}]$0'''
+
+[[entries]]
+name = "slicing"
+keys = ["slice", "range", "subslice", "brackets", "view"]
+doc = "Borrow a contiguous range of a collection or string."
+snippet = '''
+&${1:items}[${2:start}..${3:end}]$0'''
+
+[[entries]]
+name = "reference to temporary"
+keys = ["reference", "temporary", "borrow", "ampersand", "literal"]
+doc = "Borrow a temporary value in place, extending its lifetime for the enclosing let."
+snippet = '''
+&${1:expr}$0'''
+
+[[entries]]
+name = "type ascription via let"
+keys = ["type", "annotate", "infer", "let", "hint"]
+doc = "Pin down an inferred type with an annotation on the binding."
+snippet = '''
+let ${1:value}: ${2:Vec<u8>} = ${3:expr};$0'''
+
+[[entries]]
+name = "Default::default()"
+keys = ["default", "zero", "empty", "construct"]
+doc = "Construct the default value of the inferred type."
+snippet = '''
+Default::default()$0'''
+
+[[entries]]
+name = "Some / None"
+keys = ["some", "none", "option", "construct", "wrap"]
+doc = "Wrap a value in Option or use its absent variant."
+snippet = '''
+Some(${1:value})$0'''

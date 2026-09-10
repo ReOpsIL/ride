@@ -1,0 +1,213 @@
+title = "Traits and generics"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "trait with default method"
+keys = ["trait", "default", "method", "provided"]
+doc = "Define a trait whose method has a default body that implementors may override."
+snippet = '''
+trait ${1:Name} {
+    fn ${2:required}(&self) -> ${3:String};
+
+    fn ${4:provided}(&self) -> ${5:String} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "supertrait"
+keys = ["trait", "supertrait", "inherit", "extends", "bound"]
+doc = "Define a trait that requires implementors to also implement other traits."
+snippet = '''
+trait ${1:Name}: ${2:Debug}${3: + Clone} {
+    $0
+}'''
+
+[[entries]]
+name = "trait with associated type"
+keys = ["trait", "associated", "type", "item", "output"]
+doc = "Define a trait with a type each implementor chooses."
+snippet = '''
+trait ${1:Name} {
+    type ${2:Output};
+
+    fn ${3:method}(&self) -> Self::${2:Output};$0
+}'''
+
+[[entries]]
+name = "trait with associated const"
+keys = ["trait", "associated", "const", "constant"]
+doc = "Define a trait with a constant each implementor provides."
+snippet = '''
+trait ${1:Name} {
+    const ${2:NAME}: ${3:&'static str};$0
+}'''
+
+[[entries]]
+name = "trait with generic method"
+keys = ["trait", "generic", "method", "t"]
+doc = "Define a trait method generic over its argument type."
+snippet = '''
+trait ${1:Name} {
+    fn ${2:method}<T: ${3:Into<String>}>(&self, ${4:value}: T);$0
+}'''
+
+[[entries]]
+name = "trait static constructor"
+keys = ["trait", "static", "new", "constructor", "self"]
+doc = "Define a trait method without a receiver that returns Self."
+snippet = '''
+trait ${1:Name} {
+    fn ${2:new}(${3:args}) -> Self;$0
+}'''
+
+[[entries]]
+name = "trait with generic param"
+keys = ["trait", "generic", "parameter", "rhs", "t"]
+doc = "Define a trait parameterized by a type, like the operator traits."
+snippet = '''
+trait ${1:Name}<${2:Rhs} = Self> {
+    fn ${3:method}(self, ${4:rhs}: ${2:Rhs}) -> ${5:Self};$0
+}'''
+
+[[entries]]
+name = "object-safe trait method"
+keys = ["trait", "dyn", "object", "safe", "where"]
+doc = "Exclude a generic method from a trait's vtable so the trait stays dyn compatible."
+snippet = '''
+fn ${1:method}<T>(&self, ${2:value}: T)
+where
+    Self: Sized,
+{
+    $0
+}'''
+
+[[entries]]
+name = "impl generic Trait for"
+keys = ["impl", "trait", "for", "generic", "t"]
+doc = "Implement a trait for every instantiation of a generic type."
+snippet = '''
+impl<T${1:: Display}> ${2:Trait} for ${3:Type}<T> {
+    $0
+}'''
+
+[[entries]]
+name = "blanket impl"
+keys = ["impl", "blanket", "all", "generic", "trait"]
+doc = "Implement a trait for every type that implements another trait."
+snippet = '''
+impl<T: ${1:Display}> ${2:Trait} for T {
+    $0
+}'''
+
+[[entries]]
+name = "impl with associated type"
+keys = ["impl", "associated", "type", "item"]
+doc = "Implement a trait and pin down its associated type."
+snippet = '''
+impl ${1:Trait} for ${2:Type} {
+    type ${3:Output} = ${4:Self};
+
+    $0
+}'''
+
+[[entries]]
+name = "method &self"
+keys = ["fn", "method", "self", "getter"]
+doc = "Define a method that borrows the receiver immutably."
+snippet = '''
+fn ${1:name}(&self${2:, arg: Type}) -> ${3:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "method &mut self"
+keys = ["fn", "method", "mut", "self", "setter"]
+doc = "Define a method that mutates the receiver."
+snippet = '''
+fn ${1:name}(&mut self${2:, arg: Type}) {
+    $0
+}'''
+
+[[entries]]
+name = "method self"
+keys = ["fn", "method", "self", "consume", "into"]
+doc = "Define a method that consumes the receiver by value."
+snippet = '''
+fn ${1:into_name}(self) -> ${2:ReturnType} {
+    $0
+}'''
+
+[[entries]]
+name = "constructor new"
+keys = ["fn", "new", "constructor", "self"]
+doc = "Define the conventional constructor as an associated function."
+snippet = '''
+pub fn new(${1:args}) -> Self {
+    Self { $0 }
+}'''
+
+[[entries]]
+name = "builder method"
+keys = ["fn", "builder", "with", "chain", "self"]
+doc = "Define a chainable builder method that takes and returns self by value."
+snippet = '''
+pub fn ${1:with_field}(mut self, ${2:value}: ${3:Type}) -> Self {
+    self.${4:field} = ${2:value};
+    self
+}'''
+
+[[entries]]
+name = "generic bound multiple"
+keys = ["generic", "bound", "plus", "traits"]
+doc = "Constrain a type parameter by several traits at once."
+snippet = '''
+<T: ${1:Clone} + ${2:Send} + ${3:'static}>$0'''
+
+[[entries]]
+name = "where clause"
+keys = ["where", "bound", "generic", "clause"]
+doc = "List trait bounds after the signature for readability or complex bounds."
+snippet = '''
+where
+    ${1:T}: ${2:Trait},$0'''
+
+[[entries]]
+name = "derive"
+keys = ["derive", "debug", "clone", "copy", "eq", "hash", "default", "ord"]
+doc = "Auto-implement common traits for a type."
+snippet = '''
+#[derive(${1:Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Default})]$0'''
+
+[[entries]]
+name = "trait alias via supertrait"
+keys = ["trait", "alias", "blanket", "combine"]
+doc = "Combine several bounds under one name with an empty trait and a blanket impl."
+snippet = '''
+trait ${1:Name}: ${2:Send} + ${3:Sync} {}
+impl<T: ${2:Send} + ${3:Sync}> ${1:Name} for T {}$0'''
+
+[[entries]]
+name = "const generic"
+keys = ["const", "generic", "n", "array", "size"]
+doc = "Parameterize a type or function by a constant value such as an array length."
+snippet = '''
+struct ${1:Buffer}<const N: usize> {
+    ${2:data}: [${3:u8}; N],$0
+}'''
+
+[[entries]]
+name = "default type parameter"
+keys = ["generic", "default", "parameter", "t"]
+doc = "Give a type parameter a default so callers may omit it."
+snippet = '''
+struct ${1:Name}<T = ${2:i32}> {
+    ${3:value}: T,$0
+}'''
+
+[[entries]]
+name = "marker trait"
+keys = ["trait", "marker", "empty", "unsafe"]
+doc = "Define an empty trait used only as a bound."
+snippet = '''
+trait ${1:Marker} {}$0'''

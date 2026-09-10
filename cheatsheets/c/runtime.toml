@@ -1,0 +1,101 @@
+title = "Errors, arguments and runtime"
+contexts = ["statement"]
+
+[[entries]]
+name = "perror"
+keys = ["perror", "error", "errno", "message"]
+doc = "Print a prefix and the errno message to stderr."
+snippet = '''
+perror(${1:"fopen"});$0'''
+
+[[entries]]
+name = "strerror"
+keys = ["strerror", "errno", "error", "message"]
+doc = "Format the current errno as text in a custom message."
+snippet = '''
+fprintf(stderr, "${1:open}: %s\n", strerror(errno));$0'''
+
+[[entries]]
+name = "errno check"
+keys = ["errno", "erange", "error", "check"]
+doc = "Clear errno before a call whose failure is only reported through it."
+snippet = '''
+errno = 0;
+${1:long v = strtol(s, NULL, 10);}
+if (errno == ${2:ERANGE}) {
+    $0
+}'''
+
+[[entries]]
+name = "argv loop"
+keys = ["argv", "argc", "arguments", "loop", "args"]
+doc = "Visit each command-line argument, skipping the program name at argv[0]."
+snippet = '''
+for (int i = 1; i < argc; i++) {
+    $0
+}'''
+
+[[entries]]
+name = "getopt"
+keys = ["getopt", "options", "flags", "argv", "optarg"]
+doc = "POSIX option parser; a colon after a letter means it takes a value in optarg."
+snippet = '''
+int opt;
+while ((opt = getopt(argc, argv, "${1:hv:}")) != -1) {
+    switch (opt) {
+    case '${2:v}':
+        ${3:value = optarg;}
+        break;
+    default:
+        ${4:usage();}
+        return 1;
+    }
+}$0'''
+
+[[entries]]
+name = "usage"
+keys = ["usage", "help", "argv", "stderr"]
+doc = "Print a usage line naming the program and fail."
+snippet = '''
+fprintf(stderr, "usage: %s ${1:[options] file}\n", argv[0]);
+return ${2:2};$0'''
+
+[[entries]]
+name = "getenv"
+keys = ["getenv", "environment", "env", "variable"]
+doc = "Read an environment variable, which is NULL when unset."
+snippet = '''
+const char *${1:home} = getenv("${2:HOME}");$0'''
+
+[[entries]]
+name = "signal handler"
+keys = ["signal", "sigint", "handler", "sigaction", "interrupt"]
+doc = "Install a handler that only sets a volatile sig_atomic_t flag."
+snippet = '''
+static volatile sig_atomic_t ${1:stop} = 0;
+static void ${2:on_signal}(int sig) {
+    (void)sig;
+    ${1:stop} = 1;
+}$0'''
+
+[[entries]]
+name = "signal"
+keys = ["signal", "install", "sigint", "sigterm"]
+doc = "Register a handler for a signal; sigaction is the more precise POSIX form."
+snippet = '''
+signal(${1:SIGINT}, ${2:on_signal});$0'''
+
+[[entries]]
+name = "time"
+keys = ["time", "now", "time_t", "epoch"]
+doc = "Current calendar time in seconds since the epoch."
+snippet = '''
+time_t ${1:now} = time(NULL);$0'''
+
+[[entries]]
+name = "strftime"
+keys = ["strftime", "localtime", "format", "date", "time"]
+doc = "Format a calendar time into a text buffer."
+snippet = '''
+char ${1:buf}[${2:32}];
+strftime(${1:buf}, sizeof ${1:buf}, "${3:%Y-%m-%d %H:%M:%S}", localtime(&${4:now}));$0'''

@@ -1,0 +1,203 @@
+title = "Files and I/O"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "fs::read_to_string"
+keys = ["fs", "read", "file", "string", "load"]
+doc = "Read a whole file into a String."
+snippet = '''
+let ${1:text} = std::fs::read_to_string(${2:path})?;$0'''
+
+[[entries]]
+name = "fs::read"
+keys = ["fs", "read", "bytes", "file", "binary"]
+doc = "Read a whole file into a byte vector."
+snippet = '''
+let ${1:bytes} = std::fs::read(${2:path})?;$0'''
+
+[[entries]]
+name = "fs::write"
+keys = ["fs", "write", "file", "save", "create"]
+doc = "Write bytes or text to a file, creating or truncating it."
+snippet = '''
+std::fs::write(${1:path}, ${2:contents})?;$0'''
+
+[[entries]]
+name = "File::open"
+keys = ["file", "open", "read", "handle"]
+doc = "Open an existing file for reading."
+snippet = '''
+let ${1:file} = std::fs::File::open(${2:path})?;$0'''
+
+[[entries]]
+name = "File::create"
+keys = ["file", "create", "write", "truncate"]
+doc = "Create or truncate a file for writing."
+snippet = '''
+let mut ${1:file} = std::fs::File::create(${2:path})?;$0'''
+
+[[entries]]
+name = "OpenOptions append"
+keys = ["openoptions", "append", "open", "file", "options"]
+doc = "Open a file with explicit flags such as append or create."
+snippet = '''
+let mut ${1:file} = std::fs::OpenOptions::new().${2:append}(true).create(true).open(${3:path})?;$0'''
+
+[[entries]]
+name = "BufReader lines"
+keys = ["bufreader", "lines", "read", "file", "buffered", "for"]
+doc = "Read a file line by line through a buffered reader."
+snippet = '''
+let ${1:reader} = std::io::BufReader::new(${2:file});
+for line in ${1:reader}.lines() {
+    let line = line?;
+    $0
+}'''
+
+[[entries]]
+name = "read_to_end"
+keys = ["read", "to_end", "bytes", "reader", "all"]
+doc = "Read every remaining byte from a reader into a vector."
+snippet = '''
+let mut ${1:buf} = Vec::new();
+${2:reader}.read_to_end(&mut ${1:buf})?;$0'''
+
+[[entries]]
+name = "read exact buffer"
+keys = ["read", "exact", "buffer", "bytes", "fixed"]
+doc = "Fill a fixed-size buffer completely from a reader."
+snippet = '''
+let mut ${1:buf} = [0u8; ${2:N}];
+${3:reader}.read_exact(&mut ${1:buf})?;$0'''
+
+[[entries]]
+name = "BufWriter"
+keys = ["bufwriter", "write", "buffered", "file", "flush"]
+doc = "Wrap a writer to batch small writes, flushing at the end."
+snippet = '''
+let mut ${1:writer} = std::io::BufWriter::new(${2:file});
+writeln!(${1:writer}, "${3:text}")?;
+${1:writer}.flush()?;$0'''
+
+[[entries]]
+name = "write_all"
+keys = ["write", "all", "bytes", "writer"]
+doc = "Write an entire byte slice to a writer."
+snippet = '''
+${1:writer}.write_all(${2:bytes})?;$0'''
+
+[[entries]]
+name = "stdin read_line"
+keys = ["stdin", "read_line", "input", "line", "prompt"]
+doc = "Read one line from standard input."
+snippet = '''
+let mut ${1:input} = String::new();
+std::io::stdin().read_line(&mut ${1:input})?;
+let ${1:input} = ${1:input}.trim();$0'''
+
+[[entries]]
+name = "stdin lines"
+keys = ["stdin", "lines", "input", "loop", "for"]
+doc = "Process standard input line by line."
+snippet = '''
+for line in std::io::stdin().lock().lines() {
+    let line = line?;
+    $0
+}'''
+
+[[entries]]
+name = "stdin read all"
+keys = ["stdin", "read", "all", "string", "pipe"]
+doc = "Read all of standard input into a String."
+snippet = '''
+let mut ${1:input} = String::new();
+std::io::stdin().read_to_string(&mut ${1:input})?;$0'''
+
+[[entries]]
+name = "stdout lock"
+keys = ["stdout", "lock", "write", "fast", "output"]
+doc = "Lock stdout once for many writes to avoid per-line locking."
+snippet = '''
+let mut ${1:out} = std::io::stdout().lock();
+writeln!(${1:out}, "${2:text}")?;$0'''
+
+[[entries]]
+name = "io::copy"
+keys = ["io", "copy", "reader", "writer", "stream"]
+doc = "Copy everything from a reader to a writer."
+snippet = '''
+std::io::copy(&mut ${1:reader}, &mut ${2:writer})?;$0'''
+
+[[entries]]
+name = "io::Cursor"
+keys = ["cursor", "io", "memory", "reader", "bytes", "test"]
+doc = "Treat an in-memory buffer as a reader or writer."
+snippet = '''
+std::io::Cursor::new(${1:bytes})$0'''
+
+[[entries]]
+name = "Path::new"
+keys = ["path", "new", "file", "borrow"]
+doc = "Borrow a str as a filesystem path."
+snippet = '''
+std::path::Path::new(${1:"dir/file.txt"})$0'''
+
+[[entries]]
+name = "PathBuf join"
+keys = ["pathbuf", "join", "path", "push", "build"]
+doc = "Build a path by joining components."
+snippet = '''
+${1:dir}.join(${2:"file.txt"})$0'''
+
+[[entries]]
+name = "path parts"
+keys = ["path", "file_name", "extension", "parent", "stem", "parts"]
+doc = "Extract the file name, stem, extension or parent of a path."
+snippet = '''
+${1:path}.${2:extension}().and_then(|s| s.to_str())$0'''
+
+[[entries]]
+name = "path exists / is_file"
+keys = ["path", "exists", "is_file", "is_dir", "check"]
+doc = "Query the filesystem about a path."
+snippet = '''
+${1:path}.${2:exists}()$0'''
+
+[[entries]]
+name = "read_dir"
+keys = ["read_dir", "directory", "list", "entries", "fs", "for"]
+doc = "Iterate over the entries of a directory."
+snippet = '''
+for entry in std::fs::read_dir(${1:dir})? {
+    let ${2:path} = entry?.path();
+    $0
+}'''
+
+[[entries]]
+name = "create_dir_all"
+keys = ["create_dir", "mkdir", "directory", "fs", "all"]
+doc = "Create a directory and all missing parents."
+snippet = '''
+std::fs::create_dir_all(${1:path})?;$0'''
+
+[[entries]]
+name = "remove / rename / copy"
+keys = ["remove_file", "rename", "copy", "delete", "move", "fs"]
+doc = "Delete, rename or copy a file."
+snippet = '''
+std::fs::${1:remove_file}(${2:path})?;$0'''
+
+[[entries]]
+name = "metadata"
+keys = ["metadata", "size", "len", "modified", "fs", "stat"]
+doc = "Read a file's size, type and timestamps."
+snippet = '''
+let ${1:meta} = std::fs::metadata(${2:path})?;
+let ${3:size} = ${1:meta}.len();$0'''
+
+[[entries]]
+name = "io::Error new"
+keys = ["io", "error", "new", "errorkind", "other"]
+doc = "Construct an I/O error with a kind and message."
+snippet = '''
+std::io::Error::new(std::io::ErrorKind::${1:Other}, ${2:"message"})$0'''

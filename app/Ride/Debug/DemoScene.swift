@@ -21,6 +21,9 @@ enum DemoScene {
         case "completion":
             editor(state)
             DemoLaunch.after(1.0) { completion(state) }
+        case "cheatsheet":
+            editor(state)
+            DemoLaunch.after(1.0) { cheatSheet(state) }
         case "hover":
             editor(state)
             DemoLaunch.after(1.0) { hover() }
@@ -85,6 +88,23 @@ enum DemoScene {
         EditorJump.shared.select(NSRange(location: end, length: 0))
         view.insertText("\n    let m: HashM", replacementRange: NSRange(location: end, length: 0))
         DemoLaunch.after(0.1) {
+            CompletionSession.shared.trigger(view: view)
+        }
+    }
+
+    private static func cheatSheet(_ state: AppState) {
+        guard let view = EditorJump.shared.view else {
+            return
+        }
+        let ns = view.string as NSString
+        let anchor = ns.range(of: "counter.record(\"ride\");")
+        guard anchor.location != NSNotFound else {
+            return
+        }
+        let end = NSMaxRange(anchor)
+        EditorJump.shared.select(NSRange(location: end, length: 0))
+        view.insertText("\n    ma", replacementRange: NSRange(location: end, length: 0))
+        DispatchQueue.main.async {
             CompletionSession.shared.trigger(view: view)
         }
     }

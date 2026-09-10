@@ -1,0 +1,149 @@
+title = "Format specifiers"
+contexts = []
+
+[[entries]]
+name = "{} display"
+keys = ["display", "format", "placeholder", "braces"]
+doc = "Format a value using its Display impl."
+snippet = '''
+{${1:value}}$0'''
+
+[[entries]]
+name = "{:?} debug"
+keys = ["debug", "format", "question"]
+doc = "Format a value using its Debug impl."
+snippet = '''
+{${1:value}:?}$0'''
+
+[[entries]]
+name = "{:#?} pretty debug"
+keys = ["pretty", "debug", "format", "multiline"]
+doc = "Format a value with multi-line indented Debug output."
+snippet = '''
+{${1:value}:#?}$0'''
+
+[[entries]]
+name = "positional {0}"
+keys = ["positional", "index", "format", "argument"]
+doc = "Refer to an argument by position, reusable in the template."
+snippet = '''
+{${1:0}}$0'''
+
+[[entries]]
+name = "named {name}"
+keys = ["named", "inline", "capture", "format"]
+doc = "Capture a variable from scope or a named argument."
+snippet = '''
+{${1:name}}$0'''
+
+[[entries]]
+name = "width {:8}"
+keys = ["width", "pad", "align", "format", "columns"]
+doc = "Pad to a minimum width, right-aligned for numbers and left for strings."
+snippet = '''
+{${1:value}:${2:8}}$0'''
+
+[[entries]]
+name = "align {:<8} {:^8} {:>8}"
+keys = ["align", "left", "center", "right", "pad", "format"]
+doc = "Align within a width using <, ^ or >."
+snippet = '''
+{${1:value}:${2:<}${3:8}}$0'''
+
+[[entries]]
+name = "fill {:*^8}"
+keys = ["fill", "pad", "char", "align", "format"]
+doc = "Pad with a chosen character instead of spaces."
+snippet = '''
+{${1:value}:${2:*}${3:^}${4:8}}$0'''
+
+[[entries]]
+name = "zero pad {:08}"
+keys = ["zero", "pad", "leading", "format", "number"]
+doc = "Pad a number with leading zeros."
+snippet = '''
+{${1:value}:0${2:8}}$0'''
+
+[[entries]]
+name = "precision {:.2}"
+keys = ["precision", "decimal", "float", "digits", "format"]
+doc = "Limit a float to a number of decimal places or a string to a max length."
+snippet = '''
+{${1:value}:.${2:2}}$0'''
+
+[[entries]]
+name = "width and precision {:8.2}"
+keys = ["width", "precision", "float", "table", "format"]
+doc = "Combine minimum width with decimal precision."
+snippet = '''
+{${1:value}:${2:8}.${3:2}}$0'''
+
+[[entries]]
+name = "dynamic width {:>width$}"
+keys = ["dynamic", "width", "variable", "runtime", "format"]
+doc = "Take the width or precision from a named argument."
+snippet = '''
+{${1:value}:>${2:width}$}$0'''
+
+[[entries]]
+name = "sign {:+}"
+keys = ["sign", "plus", "positive", "format"]
+doc = "Always show the sign of a number."
+snippet = '''
+{${1:value}:+}$0'''
+
+[[entries]]
+name = "hex {:x} {:X}"
+keys = ["hex", "hexadecimal", "format", "lowercase", "uppercase"]
+doc = "Format an integer in hexadecimal."
+snippet = '''
+{${1:value}:${2:x}}$0'''
+
+[[entries]]
+name = "hex with prefix {:#x}"
+keys = ["hex", "prefix", "0x", "alternate", "format"]
+doc = "Format in hexadecimal with a 0x prefix, padding with {:#010x}."
+snippet = '''
+{${1:value}:#${2:010}x}$0'''
+
+[[entries]]
+name = "binary {:b}"
+keys = ["binary", "bits", "format"]
+doc = "Format an integer in binary, with # for a 0b prefix."
+snippet = '''
+{${1:value}:${2:#}b}$0'''
+
+[[entries]]
+name = "octal {:o}"
+keys = ["octal", "format"]
+doc = "Format an integer in octal."
+snippet = '''
+{${1:value}:o}$0'''
+
+[[entries]]
+name = "scientific {:e}"
+keys = ["scientific", "exponent", "float", "format"]
+doc = "Format a number in scientific notation."
+snippet = '''
+{${1:value}:${2:e}}$0'''
+
+[[entries]]
+name = "escaped braces {{ }}"
+keys = ["escape", "braces", "literal", "format"]
+doc = "Write literal braces inside a format string."
+snippet = '''
+{{${1:text}}}$0'''
+
+[[entries]]
+name = "pointer {:p}"
+keys = ["pointer", "address", "format"]
+doc = "Format a reference or pointer as its address."
+snippet = '''
+{${1:reference}:p}$0'''
+
+[[entries]]
+name = "format_args!"
+keys = ["format_args", "arguments", "fmt", "zero", "copy"]
+doc = "Build formatting Arguments without allocating, to pass to a writer."
+snippet = '''
+format_args!("${1:{value\}}")$0'''

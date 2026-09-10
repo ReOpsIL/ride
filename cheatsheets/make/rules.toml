@@ -1,0 +1,192 @@
+title = "Rules and targets"
+contexts = ["item"]
+
+[[entries]]
+name = "rule"
+keys = ["rule", "target", "recipe"]
+doc = "A target, its prerequisites and a tab-indented recipe."
+snippet = '''
+${1:target}: ${2:prerequisites}
+	${3:command}$0'''
+
+[[entries]]
+name = "rule with several prerequisites"
+keys = ["prerequisites", "deps", "link", "program"]
+doc = "Build one file from several inputs, all of which are passed via $^."
+snippet = '''
+${1:prog}: ${2:main.o} ${3:util.o}
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "rule with variable prerequisites"
+keys = ["objs", "objects", "link"]
+doc = "Link the program from an object list kept in a variable."
+snippet = '''
+${1:prog}: $(${2:OBJS})
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@$0'''
+
+[[entries]]
+name = "multiple targets"
+keys = ["targets", "multiple", "independent"]
+doc = "One rule line that applies the same prerequisites and recipe to each target independently."
+snippet = '''
+${1:a.o b.o}: ${2:common.h}$0'''
+
+[[entries]]
+name = "grouped targets &:"
+keys = ["grouped", "group", "ampersand", "multiple"]
+doc = "Declare that one recipe run produces all of the listed targets together."
+snippet = '''
+${1:parser.c parser.h} &: ${2:parser.y}
+	${3:bison -d $<}$0'''
+
+[[entries]]
+name = "order-only prerequisites |"
+keys = ["order", "orderonly", "pipe", "dir"]
+doc = "Prerequisites after | must exist but their timestamps never trigger a rebuild."
+snippet = '''
+${1:target}: ${2:deps} | ${3:build}
+	$0'''
+
+[[entries]]
+name = ".PHONY"
+keys = ["phony"]
+doc = "Declare targets that are commands, not files, so they always run."
+snippet = '''
+.PHONY: ${1:all clean}$0'''
+
+[[entries]]
+name = "all target"
+keys = ["all", "default"]
+doc = "Conventional first target that builds everything."
+snippet = '''
+.PHONY: all
+all: ${1:prog}$0'''
+
+[[entries]]
+name = "clean target"
+keys = ["clean", "rm"]
+doc = "Conventional target that removes build products."
+snippet = '''
+.PHONY: clean
+clean:
+	$(RM) ${1:*.o prog}$0'''
+
+[[entries]]
+name = "install target"
+keys = ["install", "destdir", "prefix", "bindir"]
+doc = "Copy the built program into $(DESTDIR)$(PREFIX)/bin with install(1)."
+snippet = '''
+PREFIX ?= /usr/local
+.PHONY: install
+install: ${1:prog}
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -m 755 $< $(DESTDIR)$(PREFIX)/bin/$0'''
+
+[[entries]]
+name = "test target"
+keys = ["test", "check"]
+doc = "Conventional target that runs the test suite after building it."
+snippet = '''
+.PHONY: test
+test: ${1:test_runner}
+	./$<$0'''
+
+[[entries]]
+name = "run target"
+keys = ["run", "exec"]
+doc = "Build and run the program with optional arguments."
+snippet = '''
+.PHONY: run
+run: ${1:prog}
+	./$< ${2:$(ARGS)}$0'''
+
+[[entries]]
+name = "help target"
+keys = ["help", "usage"]
+doc = "List targets whose rule line carries a ## comment."
+snippet = '''
+.PHONY: help
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-16s %s\\n", $\$1, $\$2}'$0'''
+
+[[entries]]
+name = "default goal"
+keys = ["default", "goal", "defaultgoal"]
+doc = "Choose the goal built when make is run without arguments, regardless of rule order."
+snippet = '''
+.DEFAULT_GOAL := ${1:all}$0'''
+
+[[entries]]
+name = "rule without recipe"
+keys = ["norecipe", "extra", "dependency"]
+doc = "Add prerequisites to a target whose recipe is given by another rule."
+snippet = '''
+${1:main.o}: ${2:config.h}$0'''
+
+[[entries]]
+name = "double-colon rule"
+keys = ["doublecolon", "colon", "independent"]
+doc = "Each :: rule for a target is independent and runs when its own prerequisites are newer."
+snippet = '''
+${1:target}:: ${2:prereq}
+	${3:command}$0'''
+
+[[entries]]
+name = "static pattern rule"
+keys = ["static", "pattern", "objects"]
+doc = "Apply a pattern to an explicit list of targets, deriving each prerequisite from the stem."
+snippet = '''
+${1:$(OBJS)}: %.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@$0'''
+
+[[entries]]
+name = "empty target"
+keys = ["empty", "touch", "timestamp", "stamp"]
+doc = "A file whose only purpose is to record when its recipe last ran."
+snippet = '''
+${1:print}: ${2:src.c}
+	${3:lpr -p $?}
+	touch $@$0'''
+
+[[entries]]
+name = "recursive make"
+keys = ["recursive", "submake", "subdir", "make", "-c"]
+doc = "Invoke make in a subdirectory through $(MAKE) so flags and the jobserver are inherited."
+snippet = '''
+.PHONY: ${1:subdir}
+${1:subdir}:
+	$(MAKE) -C $@ ${2:all}$0'''
+
+[[entries]]
+name = "recursive make over subdirs"
+keys = ["subdirs", "recursive", "dirs"]
+doc = "Run make in every listed subdirectory, each as its own phony target."
+snippet = '''
+SUBDIRS := ${1:lib app}
+.PHONY: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@$0'''
+
+[[entries]]
+name = "include dependency files"
+keys = ["include", "deps", "depfiles", "mmd"]
+doc = "Pull in compiler-generated .d files without failing when they do not exist yet."
+snippet = '''
+-include $(${1:OBJS}:.o=.d)$0'''
+
+[[entries]]
+name = "dist tarball target"
+keys = ["dist", "tar", "release", "archive"]
+doc = "Pack the sources into a versioned tarball."
+snippet = '''
+.PHONY: dist
+dist:
+	tar czf ${1:$(NAME)-$(VERSION)}.tar.gz ${2:Makefile src include}$0'''
+
+[[entries]]
+name = "comment"
+keys = ["comment", "hash"]
+doc = "Everything after # up to the end of the line is ignored."
+snippet = '''
+# ${1:comment}$0'''

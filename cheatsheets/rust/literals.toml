@@ -1,0 +1,178 @@
+title = "Literals"
+contexts = []
+
+[[entries]]
+name = "integer literal"
+keys = ["int", "number", "literal", "underscore", "suffix"]
+doc = "Decimal integer, with underscores for readability and an optional type suffix."
+snippet = '''
+${1:1_000_000}${2:u64}$0'''
+
+[[entries]]
+name = "hex literal"
+keys = ["hex", "0x", "hexadecimal", "literal"]
+doc = "Hexadecimal integer literal."
+snippet = '''
+0x${1:FF}$0'''
+
+[[entries]]
+name = "octal literal"
+keys = ["octal", "0o", "literal", "permissions"]
+doc = "Octal integer literal."
+snippet = '''
+0o${1:755}$0'''
+
+[[entries]]
+name = "binary literal"
+keys = ["binary", "0b", "bits", "literal"]
+doc = "Binary integer literal."
+snippet = '''
+0b${1:1010_0101}$0'''
+
+[[entries]]
+name = "float literal"
+keys = ["float", "decimal", "f64", "f32", "literal", "exponent"]
+doc = "Floating point literal, with an optional exponent and type suffix."
+snippet = '''
+${1:1.5}${2:e3}${3:f64}$0'''
+
+[[entries]]
+name = "integer limits"
+keys = ["max", "min", "limits", "i32", "u64", "constant"]
+doc = "Largest or smallest value of an integer type."
+snippet = '''
+${1:i32}::${2:MAX}$0'''
+
+[[entries]]
+name = "float constants"
+keys = ["pi", "e", "infinity", "nan", "epsilon", "f64", "constant"]
+doc = "Mathematical and special float constants."
+snippet = '''
+std::f64::consts::${1:PI}$0'''
+
+[[entries]]
+name = "string literal"
+keys = ["string", "str", "literal", "quote", "text"]
+doc = "UTF-8 string literal of type &'static str."
+snippet = '''
+"${1:text}"$0'''
+
+[[entries]]
+name = "raw string"
+keys = ["raw", "string", "r#", "regex", "escape", "literal"]
+doc = "String literal in which backslashes and quotes need no escaping."
+snippet = '''
+r#"${1:text}"#$0'''
+
+[[entries]]
+name = "byte string"
+keys = ["byte", "string", "b\"", "u8", "bytes", "literal"]
+doc = "Byte string literal of type &[u8; N]."
+snippet = '''
+b"${1:bytes}"$0'''
+
+[[entries]]
+name = "raw byte string"
+keys = ["raw", "byte", "string", "br", "literal"]
+doc = "Byte string literal with no escape processing."
+snippet = '''
+br"${1:bytes}"$0'''
+
+[[entries]]
+name = "C string literal"
+keys = ["c", "string", "cstr", "nul", "literal", "ffi"]
+doc = "Nul-terminated literal of type &CStr."
+snippet = '''
+c"${1:text}"$0'''
+
+[[entries]]
+name = "char literal"
+keys = ["char", "character", "single", "quote", "literal"]
+doc = "Single Unicode scalar value in single quotes."
+snippet = '''
+'${1:a}'$0'''
+
+[[entries]]
+name = "byte literal"
+keys = ["byte", "b'", "u8", "ascii", "literal"]
+doc = "Single ASCII byte of type u8."
+snippet = '''
+b'${1:a}'$0'''
+
+[[entries]]
+name = "escape sequences"
+keys = ["escape", "newline", "tab", "backslash", "quote", "unicode"]
+doc = "Escapes for newline, tab, carriage return, backslash, quote, nul, hex and Unicode."
+snippet = '''
+"\\n \\t \\r \\\\ \\" \\0 \\x${1:41} \\u{${2:1F600}}"$0'''
+
+[[entries]]
+name = "multi-line string continuation"
+keys = ["string", "multiline", "continuation", "backslash", "newline"]
+doc = "Backslash at line end joins lines and strips the next line's leading whitespace."
+snippet = '''
+"${1:first part} \\
+    ${2:second part}"$0'''
+
+[[entries]]
+name = "bool literal"
+keys = ["bool", "true", "false", "boolean", "literal"]
+doc = "Boolean literal."
+snippet = '''
+${1:true}$0'''
+
+[[entries]]
+name = "unit"
+keys = ["unit", "empty", "tuple", "void"]
+doc = "The unit value, the only value of type ()."
+snippet = '''
+()$0'''
+
+[[entries]]
+name = "tuple literal"
+keys = ["tuple", "pair", "literal"]
+doc = "Tuple value with heterogeneous elements."
+snippet = '''
+(${1:a}, ${2:b})$0'''
+
+[[entries]]
+name = "array literal"
+keys = ["array", "list", "literal", "brackets"]
+doc = "Fixed-size array from listed elements."
+snippet = '''
+[${1:1, 2, 3}]$0'''
+
+[[entries]]
+name = "array repeat literal"
+keys = ["array", "repeat", "zeros", "n", "literal"]
+doc = "Fixed-size array with n copies of one value."
+snippet = '''
+[${1:0}; ${2:N}]$0'''
+
+[[entries]]
+name = "struct literal"
+keys = ["struct", "literal", "init", "construct", "fields"]
+doc = "Construct a struct, using field shorthand when variables share field names."
+snippet = '''
+${1:Point} { ${2:x}: ${3:0}, ${4:y} }$0'''
+
+[[entries]]
+name = "struct update syntax"
+keys = ["struct", "update", "spread", "default", "rest", "dotdot"]
+doc = "Construct a struct taking unspecified fields from another value."
+snippet = '''
+${1:Config} { ${2:field}: ${3:value}, ..${4:Default::default()} }$0'''
+
+[[entries]]
+name = "tuple struct literal"
+keys = ["tuple", "struct", "newtype", "construct", "literal"]
+doc = "Construct a tuple struct or enum variant positionally."
+snippet = '''
+${1:Meters}(${2:5.0})$0'''
+
+[[entries]]
+name = "enum variant literal"
+keys = ["enum", "variant", "path", "construct", "literal"]
+doc = "Construct an enum variant by path."
+snippet = '''
+${1:Color}::${2:Red}$0'''

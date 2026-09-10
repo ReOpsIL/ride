@@ -1,0 +1,191 @@
+title = "Ranges"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "ranges::sort"
+keys = ["sort", "ranges", "std::ranges"]
+doc = "C++20 sort taking the whole range."
+snippet = """
+std::ranges::sort(${1:v});$0"""
+
+[[entries]]
+name = "ranges::sort by projection"
+keys = ["sort", "ranges", "projection", "member"]
+doc = "Sort by a member using a projection."
+snippet = """
+std::ranges::sort(${1:v}, {}, &${2:Type}::${3:member});$0"""
+
+[[entries]]
+name = "ranges::find"
+keys = ["find", "ranges", "std::ranges"]
+doc = "Find a value in a whole range."
+snippet = """
+auto ${1:it} = std::ranges::find(${2:v}, ${3:value});$0"""
+
+[[entries]]
+name = "ranges::find_if"
+keys = ["find_if", "ranges", "predicate"]
+doc = "Find the first element matching a predicate."
+snippet = """
+auto ${1:it} = std::ranges::find_if(${2:v}, [](${3:const auto &x}) { return ${4:cond}; });$0"""
+
+[[entries]]
+name = "ranges::for_each"
+keys = ["for_each", "ranges", "each"]
+doc = "Call a function on every element of a range."
+snippet = """
+std::ranges::for_each(${1:v}, [](${2:auto &x}) { $0 });"""
+
+[[entries]]
+name = "ranges::transform"
+keys = ["transform", "ranges", "map"]
+doc = "Apply a function to a whole range."
+snippet = """
+std::ranges::transform(${1:v}, ${2:out}.begin(), [](${3:const auto &x}) { return ${4:x}; });$0"""
+
+[[entries]]
+name = "ranges::count_if"
+keys = ["count_if", "ranges", "count"]
+doc = "Count elements matching a predicate."
+snippet = """
+std::ranges::count_if(${1:v}, [](${2:const auto &x}) { return ${3:cond}; })$0"""
+
+[[entries]]
+name = "ranges::any_of"
+keys = ["any_of", "all_of", "none_of", "ranges"]
+doc = "Test a predicate over a whole range."
+snippet = """
+std::ranges::${1:any_of}(${2:v}, [](${3:const auto &x}) { return ${4:cond}; })$0"""
+
+[[entries]]
+name = "ranges::max_element"
+keys = ["max_element", "min_element", "ranges"]
+doc = "Iterator to the largest (or smallest) element."
+snippet = """
+auto ${1:it} = std::ranges::${2:max_element}(${3:v});$0"""
+
+[[entries]]
+name = "ranges::copy"
+keys = ["copy", "ranges", "back_inserter"]
+doc = "Copy a whole range into a container."
+snippet = """
+std::ranges::copy(${1:src}, std::back_inserter(${2:dst}));$0"""
+
+[[entries]]
+name = "views::filter"
+keys = ["filter", "views", "std::views", "where"]
+doc = "Lazy view of elements matching a predicate."
+snippet = """
+${1:v} | std::views::filter([](${2:const auto &x}) { return ${3:cond}; })$0"""
+
+[[entries]]
+name = "views::transform"
+keys = ["transform", "views", "std::views", "map"]
+doc = "Lazy view applying a function to each element."
+snippet = """
+${1:v} | std::views::transform([](${2:const auto &x}) { return ${3:x}; })$0"""
+
+[[entries]]
+name = "views::take"
+keys = ["take", "views", "std::views", "first"]
+doc = "View of the first n elements."
+snippet = """
+${1:v} | std::views::take(${2:n})$0"""
+
+[[entries]]
+name = "views::drop"
+keys = ["drop", "views", "std::views", "skip"]
+doc = "View skipping the first n elements."
+snippet = """
+${1:v} | std::views::drop(${2:n})$0"""
+
+[[entries]]
+name = "views::reverse"
+keys = ["reverse", "views", "std::views"]
+doc = "View iterating a range backwards."
+snippet = """
+${1:v} | std::views::reverse$0"""
+
+[[entries]]
+name = "views::iota"
+keys = ["iota", "views", "std::views", "range", "sequence"]
+doc = "Lazy sequence of increasing integers."
+snippet = """
+std::views::iota(${1:0}, ${2:n})$0"""
+
+[[entries]]
+name = "views::keys / values"
+keys = ["keys", "values", "views", "std::views", "map"]
+doc = "View of the keys or values of a map."
+snippet = """
+${1:m} | std::views::${2:keys}$0"""
+
+[[entries]]
+name = "views::enumerate"
+keys = ["enumerate", "views", "std::views", "index"]
+doc = "C++23 view of (index, element) pairs."
+snippet = """
+for (auto [${1:i}, ${2:x}] : std::views::enumerate(${3:v})) {
+    $0
+}"""
+
+[[entries]]
+name = "views::zip"
+keys = ["zip", "views", "std::views", "pair"]
+doc = "C++23 view pairing elements of several ranges."
+snippet = """
+for (auto [${1:a}, ${2:b}] : std::views::zip(${3:xs}, ${4:ys})) {
+    $0
+}"""
+
+[[entries]]
+name = "views::split"
+keys = ["split", "views", "std::views", "tokenize"]
+doc = "View splitting a range on a delimiter."
+snippet = """
+${1:str} | std::views::split(${2:' '})$0"""
+
+[[entries]]
+name = "views::join"
+keys = ["join", "views", "std::views", "flatten"]
+doc = "Flatten a range of ranges."
+snippet = """
+${1:nested} | std::views::join$0"""
+
+[[entries]]
+name = "views::chunk"
+keys = ["chunk", "views", "std::views", "batch"]
+doc = "C++23 view of consecutive groups of n elements."
+snippet = """
+${1:v} | std::views::chunk(${2:n})$0"""
+
+[[entries]]
+name = "ranges pipeline"
+keys = ["pipeline", "views", "ranges", "|"]
+doc = "Compose views with the pipe operator and iterate lazily."
+snippet = """
+for (auto ${1:x} : ${2:v} | std::views::filter([](${3:const auto &x}) { return ${4:cond}; })
+                          | std::views::transform([](${3:const auto &x}) { return ${5:x}; })) {
+    $0
+}"""
+
+[[entries]]
+name = "ranges::to"
+keys = ["to", "ranges", "collect", "vector"]
+doc = "C++23 materialize a view into a container."
+snippet = """
+auto ${1:out} = ${2:view} | std::ranges::to<std::vector>();$0"""
+
+[[entries]]
+name = "ranges::subrange"
+keys = ["subrange", "ranges", "iterator", "pair"]
+doc = "Range built from an iterator pair."
+snippet = """
+std::ranges::subrange(${1:first}, ${2:last})$0"""
+
+[[entries]]
+name = "ranges::begin / size"
+keys = ["begin", "end", "size", "ranges"]
+doc = "Customization-point access to a range's iterators or size."
+snippet = """
+std::ranges::${1:size}(${2:v})$0"""

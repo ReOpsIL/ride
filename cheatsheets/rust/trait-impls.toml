@@ -1,0 +1,150 @@
+title = "Standard trait impls"
+contexts = ["item"]
+
+[[entries]]
+name = "impl Display"
+keys = ["impl", "display", "fmt", "tostring", "format"]
+doc = "Implement Display so the type can be printed with {} and gets to_string."
+snippet = '''
+impl std::fmt::Display for ${1:Type} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", ${2:self.0})$0
+    }
+}'''
+
+[[entries]]
+name = "impl Debug manual"
+keys = ["impl", "debug", "fmt", "manual"]
+doc = "Implement Debug by hand using the formatter's struct helper."
+snippet = '''
+impl std::fmt::Debug for ${1:Type} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("${1:Type}").field("${2:field}", &self.${2:field}).finish()$0
+    }
+}'''
+
+[[entries]]
+name = "impl Default"
+keys = ["impl", "default", "new"]
+doc = "Implement Default with an explicit default value."
+snippet = '''
+impl Default for ${1:Type} {
+    fn default() -> Self {
+        Self { $0 }
+    }
+}'''
+
+[[entries]]
+name = "impl Clone manual"
+keys = ["impl", "clone", "manual", "copy"]
+doc = "Implement Clone by hand when derive is not possible."
+snippet = '''
+impl Clone for ${1:Type} {
+    fn clone(&self) -> Self {
+        Self { $0 }
+    }
+}'''
+
+[[entries]]
+name = "impl PartialEq"
+keys = ["impl", "partialeq", "eq", "equal", "compare"]
+doc = "Define equality by hand, typically comparing a subset of fields."
+snippet = '''
+impl PartialEq for ${1:Type} {
+    fn eq(&self, other: &Self) -> bool {
+        self.${2:id} == other.${2:id}$0
+    }
+}'''
+
+[[entries]]
+name = "impl PartialOrd"
+keys = ["impl", "partialord", "ord", "compare", "order"]
+doc = "Define a partial ordering by delegating to a field."
+snippet = '''
+impl PartialOrd for ${1:Type} {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.${2:key}.partial_cmp(&other.${2:key})$0
+    }
+}'''
+
+[[entries]]
+name = "impl Ord"
+keys = ["impl", "ord", "compare", "order", "sort"]
+doc = "Define a total ordering, with PartialOrd delegating to it."
+snippet = '''
+impl Ord for ${1:Type} {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.${2:key}.cmp(&other.${2:key})$0
+    }
+}
+impl PartialOrd for ${1:Type} {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}'''
+
+[[entries]]
+name = "impl Hash"
+keys = ["impl", "hash", "hasher", "manual"]
+doc = "Hash a type by feeding chosen fields to the hasher."
+snippet = '''
+impl std::hash::Hash for ${1:Type} {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.${2:id}.hash(state);$0
+    }
+}'''
+
+[[entries]]
+name = "impl From"
+keys = ["impl", "from", "into", "convert", "conversion"]
+doc = "Implement From to get an infallible conversion and a matching Into for free."
+snippet = '''
+impl From<${1:Source}> for ${2:Target} {
+    fn from(${3:value}: ${1:Source}) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl TryFrom"
+keys = ["impl", "tryfrom", "tryinto", "convert", "fallible"]
+doc = "Implement a fallible conversion, giving TryInto for free."
+snippet = '''
+impl TryFrom<${1:Source}> for ${2:Target} {
+    type Error = ${3:String};
+
+    fn try_from(${4:value}: ${1:Source}) -> Result<Self, Self::Error> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl FromStr"
+keys = ["impl", "fromstr", "parse", "str", "string"]
+doc = "Implement FromStr so the type can be produced by str::parse."
+snippet = '''
+impl std::str::FromStr for ${1:Type} {
+    type Err = ${2:String};
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Drop"
+keys = ["impl", "drop", "destructor", "cleanup", "raii"]
+doc = "Run code when a value goes out of scope."
+snippet = '''
+impl Drop for ${1:Type} {
+    fn drop(&mut self) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Error"
+keys = ["impl", "error", "std", "source"]
+doc = "Mark a type as an error, given it already implements Debug and Display."
+snippet = '''
+impl std::error::Error for ${1:Type} {}$0'''

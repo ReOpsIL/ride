@@ -1,0 +1,213 @@
+title = "Control flow"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "if"
+keys = ["if", "cond", "branch"]
+doc = "Branch on a boolean condition."
+snippet = '''
+if ${1:condition} {
+    $0
+}'''
+
+[[entries]]
+name = "if else"
+keys = ["if", "else", "branch"]
+doc = "Branch with a fallback block, usable as an expression when both blocks yield a value."
+snippet = '''
+if ${1:condition} {
+    ${2:then}
+} else {
+    $0
+}'''
+
+[[entries]]
+name = "else if"
+keys = ["else", "if", "elif", "elseif"]
+doc = "Chain another condition after an if block."
+snippet = '''
+if ${1:condition} {
+    ${2:first}
+} else if ${3:other} {
+    ${4:second}
+} else {
+    $0
+}'''
+
+[[entries]]
+name = "if let"
+keys = ["if", "iflet", "let", "some", "ok"]
+doc = "Branch when a value matches one pattern."
+snippet = '''
+if let ${1:Some(value)} = ${2:expr} {
+    $0
+}'''
+
+[[entries]]
+name = "if let else"
+keys = ["if", "iflet", "let", "else"]
+doc = "Branch on a pattern with a fallback block for the non-matching case."
+snippet = '''
+if let ${1:Some(value)} = ${2:expr} {
+    ${3:matched}
+} else {
+    $0
+}'''
+
+[[entries]]
+name = "let else"
+keys = ["let", "else", "letelse", "diverge", "early"]
+doc = "Bind a refutable pattern or run a diverging else block such as return or continue."
+snippet = '''
+let ${1:Some(value)} = ${2:expr} else {
+    ${3:return};
+};
+$0'''
+
+[[entries]]
+name = "match"
+keys = ["match"]
+doc = "Exhaustive pattern match over a value."
+snippet = '''
+match ${1:expr} {
+    ${2:pattern} => $0,
+    _ => {}
+}'''
+
+[[entries]]
+name = "while"
+keys = ["while", "loop", "cond"]
+doc = "Loop while a condition holds."
+snippet = '''
+while ${1:condition} {
+    $0
+}'''
+
+[[entries]]
+name = "while let"
+keys = ["while", "let", "whilelet", "pop", "next"]
+doc = "Loop as long as a value matches a pattern, typically draining a stack or iterator."
+snippet = '''
+while let ${1:Some(item)} = ${2:stack.pop()} {
+    $0
+}'''
+
+[[entries]]
+name = "loop"
+keys = ["loop", "forever", "infinite"]
+doc = "Loop forever until break, which may carry the loop's value."
+snippet = '''
+loop {
+    $0
+}'''
+
+[[entries]]
+name = "loop with break value"
+keys = ["loop", "break", "value", "expression"]
+doc = "Use an infinite loop as an expression that yields the break value."
+snippet = '''
+let ${1:result} = loop {
+    if ${2:done} {
+        break ${3:value};
+    }
+    $0
+};'''
+
+[[entries]]
+name = "labeled loop"
+keys = ["loop", "label", "outer", "nested", "lifetime"]
+doc = "Name a loop so inner loops can break or continue it."
+snippet = '''
+'${1:outer}: loop {
+    $0
+    break '${1:outer};
+}'''
+
+[[entries]]
+name = "for"
+keys = ["for", "each", "foreach", "iter", "in"]
+doc = "Iterate over anything that implements IntoIterator."
+snippet = '''
+for ${1:item} in ${2:iter} {
+    $0
+}'''
+
+[[entries]]
+name = "for range"
+keys = ["for", "range", "count", "index", "in"]
+doc = "Iterate over a half-open range of integers."
+snippet = '''
+for ${1:i} in ${2:0}..${3:n} {
+    $0
+}'''
+
+[[entries]]
+name = "for enumerate"
+keys = ["for", "enumerate", "index", "in"]
+doc = "Iterate with a running index alongside each element."
+snippet = '''
+for (${1:i}, ${2:item}) in ${3:items}.iter().enumerate() {
+    $0
+}'''
+
+[[entries]]
+name = "for by reference"
+keys = ["for", "ref", "borrow", "iter", "in"]
+doc = "Iterate over a collection by shared reference without consuming it."
+snippet = '''
+for ${1:item} in &${2:items} {
+    $0
+}'''
+
+[[entries]]
+name = "for by mutable reference"
+keys = ["for", "mut", "iter_mut", "in"]
+doc = "Iterate over a collection and mutate each element in place."
+snippet = '''
+for ${1:item} in &mut ${2:items} {
+    *${1:item} = $0;
+}'''
+
+[[entries]]
+name = "for reverse"
+keys = ["for", "rev", "reverse", "backwards", "in"]
+doc = "Iterate over a range or iterator backwards."
+snippet = '''
+for ${1:i} in (${2:0}..${3:n}).rev() {
+    $0
+}'''
+
+[[entries]]
+name = "break"
+keys = ["break", "exit"]
+doc = "Exit the innermost loop."
+snippet = '''
+break;$0'''
+
+[[entries]]
+name = "break label"
+keys = ["break", "label", "outer"]
+doc = "Exit the labeled enclosing loop, optionally yielding a value."
+snippet = '''
+break '${1:outer}${2: value};$0'''
+
+[[entries]]
+name = "continue"
+keys = ["continue", "next", "skip"]
+doc = "Skip to the next iteration of the innermost loop."
+snippet = '''
+continue;$0'''
+
+[[entries]]
+name = "continue label"
+keys = ["continue", "label", "outer"]
+doc = "Skip to the next iteration of the labeled enclosing loop."
+snippet = '''
+continue '${1:outer};$0'''
+
+[[entries]]
+name = "return"
+keys = ["return", "ret", "early"]
+doc = "Return early from the current function with a value."
+snippet = '''
+return ${1:value};$0'''

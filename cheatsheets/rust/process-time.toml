@@ -1,0 +1,174 @@
+title = "Process, environment and time"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "env::args"
+keys = ["env", "args", "argv", "arguments", "cli"]
+doc = "Collect command line arguments, the first being the program name."
+snippet = '''
+let ${1:args}: Vec<String> = std::env::args().collect();$0'''
+
+[[entries]]
+name = "env::args skip"
+keys = ["env", "args", "skip", "first", "cli", "nth"]
+doc = "Take the first real command line argument."
+snippet = '''
+let ${1:arg} = std::env::args().nth(${2:1}).${3:expect("usage: prog <arg>")};$0'''
+
+[[entries]]
+name = "env::var"
+keys = ["env", "var", "environment", "variable", "getenv"]
+doc = "Read an environment variable at runtime."
+snippet = '''
+let ${1:value} = std::env::var("${2:NAME}")${3:.unwrap_or_default()};$0'''
+
+[[entries]]
+name = "env::set_var"
+keys = ["env", "set_var", "environment", "setenv"]
+doc = "Set an environment variable for this process, unsafe in edition 2024."
+snippet = '''
+unsafe { std::env::set_var("${1:NAME}", ${2:"value"}) };$0'''
+
+[[entries]]
+name = "env::current_dir"
+keys = ["env", "current_dir", "cwd", "pwd", "directory"]
+doc = "Get the current working directory."
+snippet = '''
+std::env::current_dir()?$0'''
+
+[[entries]]
+name = "process::exit"
+keys = ["process", "exit", "quit", "code", "status"]
+doc = "Terminate the process immediately with an exit code, skipping destructors."
+snippet = '''
+std::process::exit(${1:1});$0'''
+
+[[entries]]
+name = "ExitCode"
+keys = ["exitcode", "main", "exit", "status", "return"]
+doc = "Return an exit status from main without skipping destructors."
+snippet = '''
+fn main() -> std::process::ExitCode {
+    $0
+    std::process::ExitCode::${1:SUCCESS}
+}'''
+
+[[entries]]
+name = "Command output"
+keys = ["command", "output", "process", "run", "spawn", "exec"]
+doc = "Run a program, wait for it and capture its output."
+snippet = '''
+let ${1:output} = std::process::Command::new("${2:ls}")
+    .args([${3:"-l"}])
+    .output()?;
+let ${4:stdout} = String::from_utf8_lossy(&${1:output}.stdout);$0'''
+
+[[entries]]
+name = "Command status"
+keys = ["command", "status", "process", "run", "inherit", "exec"]
+doc = "Run a program with inherited stdio and check its exit status."
+snippet = '''
+let ${1:status} = std::process::Command::new("${2:cargo}")
+    .arg("${3:build}")
+    .status()?;
+if !${1:status}.success() {
+    $0
+}'''
+
+[[entries]]
+name = "Command spawn and wait"
+keys = ["command", "spawn", "wait", "child", "process", "background"]
+doc = "Start a child process and wait for it later."
+snippet = '''
+let mut ${1:child} = std::process::Command::new("${2:prog}")
+    .current_dir(${3:dir})
+    .env("${4:KEY}", ${5:"value"})
+    .spawn()?;
+let ${6:status} = ${1:child}.wait()?;$0'''
+
+[[entries]]
+name = "Command piped stdin"
+keys = ["command", "stdin", "pipe", "stdio", "write", "child"]
+doc = "Feed data to a child process through its standard input."
+snippet = '''
+let mut ${1:child} = std::process::Command::new("${2:prog}")
+    .stdin(std::process::Stdio::piped())
+    .stdout(std::process::Stdio::piped())
+    .spawn()?;
+${1:child}.stdin.take().unwrap().write_all(${3:input})?;
+let ${4:output} = ${1:child}.wait_with_output()?;$0'''
+
+[[entries]]
+name = "process::id"
+keys = ["process", "id", "pid"]
+doc = "Get the current process id."
+snippet = '''
+std::process::id()$0'''
+
+[[entries]]
+name = "Duration::from"
+keys = ["duration", "from_secs", "from_millis", "time", "span"]
+doc = "Create a duration from seconds, milliseconds or another unit."
+snippet = '''
+std::time::Duration::from_${1:millis}(${2:100})$0'''
+
+[[entries]]
+name = "Duration as"
+keys = ["duration", "as_secs", "as_millis", "as_secs_f64", "convert"]
+doc = "Convert a duration into a number of units."
+snippet = '''
+${1:duration}.${2:as_secs_f64}()$0'''
+
+[[entries]]
+name = "Instant elapsed"
+keys = ["instant", "elapsed", "timer", "stopwatch", "now", "benchmark"]
+doc = "Measure how long a section of code takes."
+snippet = '''
+let ${1:start} = std::time::Instant::now();
+$0
+let ${2:elapsed} = ${1:start}.elapsed();'''
+
+[[entries]]
+name = "Instant deadline"
+keys = ["instant", "deadline", "timeout", "duration", "since"]
+doc = "Check whether a deadline computed from an Instant has passed."
+snippet = '''
+let ${1:deadline} = std::time::Instant::now() + std::time::Duration::from_secs(${2:5});
+while std::time::Instant::now() < ${1:deadline} {
+    $0
+}'''
+
+[[entries]]
+name = "SystemTime now"
+keys = ["systemtime", "now", "unix", "epoch", "timestamp", "clock"]
+doc = "Get the current wall-clock time as seconds since the Unix epoch."
+snippet = '''
+let ${1:secs} = std::time::SystemTime::now()
+    .duration_since(std::time::UNIX_EPOCH)?
+    .as_secs();$0'''
+
+[[entries]]
+name = "panic hook"
+keys = ["panic", "hook", "set_hook", "handler", "crash"]
+doc = "Install a custom handler run on every panic."
+snippet = '''
+std::panic::set_hook(Box::new(|${1:info}| {
+    eprintln!("panic: {$1}");$0
+}));'''
+
+[[entries]]
+name = "catch_unwind"
+keys = ["panic", "catch_unwind", "recover", "unwind"]
+doc = "Run a closure and turn a panic into an Err."
+snippet = '''
+let ${1:result} = std::panic::catch_unwind(|| {
+    $0
+});'''
+
+[[entries]]
+name = "ctrl-c / signal (tokio)"
+keys = ["signal", "ctrl", "sigint", "shutdown", "tokio"]
+doc = "Wait for Ctrl-C to trigger a graceful shutdown in an async program."
+snippet = '''
+tokio::signal::ctrl_c().await?;
+$0'''

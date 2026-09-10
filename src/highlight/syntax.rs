@@ -3,6 +3,7 @@ use tree_sitter::InputEdit;
 use crate::error::EngineError;
 use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
+use super::context::Context;
 use super::grammar::{self, Grammar};
 use super::includes::IncludeRef;
 use super::members::Access;
@@ -149,6 +150,9 @@ pub trait Syntax: Send + Sync {
     }
     fn site_at(&self, _text: &str, at: usize) -> SiteAt {
         SiteAt::none(at)
+    }
+    fn context_at(&self, _text: &str, _at: usize) -> Context {
+        Context::Unknown
     }
     fn imports(&self, _text: &str) -> Vec<String> {
         Vec::new()

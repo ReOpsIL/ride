@@ -5,7 +5,7 @@ use crate::ffi::OutlineItem;
 use super::Grammar;
 use crate::highlight::members::{Chain, Root};
 use crate::highlight::symbol::node_text;
-use crate::highlight::{imports, includes, rust_outline, rust_receiver, rust_types, site};
+use crate::highlight::{context, imports, includes, rust_outline, rust_receiver, rust_types, site};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/rust/highlights.scm");
 
@@ -38,6 +38,7 @@ pub fn grammar() -> Grammar {
         type_table: rust_types::build,
         includes: includes::no_includes,
         site: site::rust_site,
+        context: context::rust_context,
         imports: imports::rust_imports,
     }
 }

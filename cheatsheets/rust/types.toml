@@ -1,0 +1,219 @@
+title = "Types"
+contexts = ["type"]
+
+[[entries]]
+name = "integer types"
+keys = ["int", "i32", "u8", "u32", "i64", "u64", "usize", "isize", "primitive"]
+doc = "Fixed-width signed and unsigned integers, with usize and isize sized to a pointer."
+snippet = '''
+${1:i32}$0'''
+
+[[entries]]
+name = "float types"
+keys = ["float", "f32", "f64", "double", "primitive"]
+doc = "IEEE 754 single and double precision floating point."
+snippet = '''
+${1:f64}$0'''
+
+[[entries]]
+name = "bool char unit"
+keys = ["bool", "char", "unit", "primitive", "boolean"]
+doc = "Boolean, a Unicode scalar value, or the empty tuple type."
+snippet = '''
+${1:bool}$0'''
+
+[[entries]]
+name = "&T"
+keys = ["ref", "reference", "borrow", "shared", "ampersand"]
+doc = "Shared reference to a value."
+snippet = '''
+&${1:T}$0'''
+
+[[entries]]
+name = "&mut T"
+keys = ["mut", "reference", "borrow", "exclusive", "ampersand"]
+doc = "Exclusive mutable reference to a value."
+snippet = '''
+&mut ${1:T}$0'''
+
+[[entries]]
+name = "&'a T"
+keys = ["lifetime", "reference", "borrow", "annotated"]
+doc = "Reference with an explicit lifetime parameter."
+snippet = '''
+&'${1:a} ${2:T}$0'''
+
+[[entries]]
+name = "&str"
+keys = ["str", "string", "slice", "text"]
+doc = "Borrowed UTF-8 string slice."
+snippet = '''
+&str$0'''
+
+[[entries]]
+name = "String"
+keys = ["string", "owned", "text"]
+doc = "Owned, growable UTF-8 string."
+snippet = '''
+String$0'''
+
+[[entries]]
+name = "&[T]"
+keys = ["slice", "array", "view"]
+doc = "Borrowed view into a contiguous sequence."
+snippet = '''
+&[${1:T}]$0'''
+
+[[entries]]
+name = "[T; N]"
+keys = ["array", "fixed", "n"]
+doc = "Fixed-size array whose length is part of the type."
+snippet = '''
+[${1:T}; ${2:N}]$0'''
+
+[[entries]]
+name = "tuple"
+keys = ["tuple", "pair", "product"]
+doc = "Anonymous product of heterogeneous types."
+snippet = '''
+(${1:A}, ${2:B})$0'''
+
+[[entries]]
+name = "Option<T>"
+keys = ["option", "maybe", "nullable", "some", "none"]
+doc = "A value that may be absent."
+snippet = '''
+Option<${1:T}>$0'''
+
+[[entries]]
+name = "Result<T, E>"
+keys = ["result", "error", "fallible", "ok", "err"]
+doc = "A success value or an error."
+snippet = '''
+Result<${1:T}, ${2:E}>$0'''
+
+[[entries]]
+name = "Box<T>"
+keys = ["box", "heap", "owned", "pointer"]
+doc = "Owned heap allocation."
+snippet = '''
+Box<${1:T}>$0'''
+
+[[entries]]
+name = "Box<dyn Trait>"
+keys = ["box", "dyn", "trait", "object", "heap"]
+doc = "Owned trait object with dynamic dispatch."
+snippet = '''
+Box<dyn ${1:Trait}>$0'''
+
+[[entries]]
+name = "Box<dyn Error>"
+keys = ["box", "dyn", "error", "anyhow"]
+doc = "Type-erased error that any std error converts into."
+snippet = '''
+Box<dyn std::error::Error${1: + Send + Sync}>$0'''
+
+[[entries]]
+name = "Rc<T>"
+keys = ["rc", "shared", "refcount", "counted", "pointer"]
+doc = "Single-threaded reference-counted shared ownership."
+snippet = '''
+Rc<${1:T}>$0'''
+
+[[entries]]
+name = "Arc<T>"
+keys = ["arc", "shared", "atomic", "thread", "pointer"]
+doc = "Thread-safe reference-counted shared ownership."
+snippet = '''
+Arc<${1:T}>$0'''
+
+[[entries]]
+name = "Weak<T>"
+keys = ["weak", "rc", "arc", "cycle", "pointer"]
+doc = "Non-owning handle to an Rc or Arc allocation."
+snippet = '''
+Weak<${1:T}>$0'''
+
+[[entries]]
+name = "Cell<T>"
+keys = ["cell", "interior", "copy", "mutability"]
+doc = "Interior mutability for Copy values by get and set."
+snippet = '''
+Cell<${1:T}>$0'''
+
+[[entries]]
+name = "RefCell<T>"
+keys = ["refcell", "interior", "borrow", "mutability", "runtime"]
+doc = "Interior mutability with borrow rules checked at runtime."
+snippet = '''
+RefCell<${1:T}>$0'''
+
+[[entries]]
+name = "Rc<RefCell<T>>"
+keys = ["rc", "refcell", "shared", "mutable", "graph"]
+doc = "Shared, mutable, single-threaded ownership."
+snippet = '''
+Rc<RefCell<${1:T}>>$0'''
+
+[[entries]]
+name = "Mutex<T>"
+keys = ["mutex", "lock", "sync", "thread"]
+doc = "Mutual exclusion lock guarding a value."
+snippet = '''
+Mutex<${1:T}>$0'''
+
+[[entries]]
+name = "Arc<Mutex<T>>"
+keys = ["arc", "mutex", "shared", "thread", "lock"]
+doc = "Shared, mutable, thread-safe ownership."
+snippet = '''
+Arc<Mutex<${1:T}>>$0'''
+
+[[entries]]
+name = "RwLock<T>"
+keys = ["rwlock", "lock", "read", "write", "sync"]
+doc = "Lock allowing many readers or one writer."
+snippet = '''
+RwLock<${1:T}>$0'''
+
+[[entries]]
+name = "Vec<T>"
+keys = ["vec", "vector", "list", "array", "dynamic"]
+doc = "Growable heap-allocated array."
+snippet = '''
+Vec<${1:T}>$0'''
+
+[[entries]]
+name = "VecDeque<T>"
+keys = ["vecdeque", "deque", "queue", "ring"]
+doc = "Double-ended queue backed by a ring buffer."
+snippet = '''
+VecDeque<${1:T}>$0'''
+
+[[entries]]
+name = "HashMap<K, V>"
+keys = ["hashmap", "map", "dict", "dictionary", "hash"]
+doc = "Unordered hash map from keys to values."
+snippet = '''
+HashMap<${1:K}, ${2:V}>$0'''
+
+[[entries]]
+name = "HashSet<T>"
+keys = ["hashset", "set", "hash", "unique"]
+doc = "Unordered set of unique values."
+snippet = '''
+HashSet<${1:T}>$0'''
+
+[[entries]]
+name = "BTreeMap<K, V>"
+keys = ["btreemap", "map", "sorted", "ordered", "tree"]
+doc = "Map kept sorted by key, supporting range queries."
+snippet = '''
+BTreeMap<${1:K}, ${2:V}>$0'''
+
+[[entries]]
+name = "BTreeSet<T>"
+keys = ["btreeset", "set", "sorted", "ordered", "tree"]
+doc = "Set kept in sorted order."
+snippet = '''
+BTreeSet<${1:T}>$0'''

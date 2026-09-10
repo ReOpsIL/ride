@@ -7,9 +7,15 @@ enum CompletionPlacement {
         return view.firstRect(forCharacterRange: NSRange(location: caret.location, length: 0), actualRange: &actual)
     }
 
+    static func screen(for view: NSTextView) -> NSRect {
+        view.window?.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
+    }
+
     static func frame(for view: NSTextView, size: NSSize) -> NSRect {
-        let rect = caretRect(in: view)
-        let screen = view.window?.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
+        frame(caret: caretRect(in: view), screen: screen(for: view), size: size)
+    }
+
+    static func frame(caret rect: NSRect, screen: NSRect, size: NSSize) -> NSRect {
         var frame = NSRect(x: rect.minX - Tokens.Space.m, y: rect.minY - size.height - 2, width: size.width, height: size.height)
         if frame.minY < screen.minY {
             frame.origin.y = rect.maxY + 2

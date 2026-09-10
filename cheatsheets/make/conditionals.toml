@@ -1,0 +1,136 @@
+title = "Conditionals"
+contexts = ["item"]
+
+[[entries]]
+name = "ifeq / else / endif"
+keys = ["ifeq", "if", "else", "endif", "equal"]
+doc = "Branch on whether two expanded strings are equal."
+snippet = '''
+ifeq ($(${1:VAR}),${2:value})
+    $0
+else
+    
+endif'''
+
+[[entries]]
+name = "ifneq"
+keys = ["ifneq", "if", "notequal", "differs"]
+doc = "Branch on whether two expanded strings differ."
+snippet = '''
+ifneq ($(${1:VAR}),${2:value})
+    $0
+endif'''
+
+[[entries]]
+name = "ifdef"
+keys = ["ifdef", "defined", "set"]
+doc = "Branch when the variable has a non-empty value (the name is not expanded)."
+snippet = '''
+ifdef ${1:VAR}
+    $0
+endif'''
+
+[[entries]]
+name = "ifndef"
+keys = ["ifndef", "undefined", "unset"]
+doc = "Branch when the variable is empty or undefined."
+snippet = '''
+ifndef ${1:VAR}
+    $0
+endif'''
+
+[[entries]]
+name = "ifeq with strip"
+keys = ["ifeq", "strip", "empty", "blank"]
+doc = "Test for an empty value while ignoring surrounding whitespace."
+snippet = '''
+ifeq ($(strip $(${1:VAR})),)
+    $0
+endif'''
+
+[[entries]]
+name = "ifeq with quotes"
+keys = ["ifeq", "quotes", "string"]
+doc = "The quoted form of ifeq, handy when a value may contain parentheses."
+snippet = '''
+ifeq "$(${1:VAR})" "${2:value}"
+    $0
+endif'''
+
+[[entries]]
+name = "else ifeq chain"
+keys = ["else", "elseif", "elif", "chain", "ifeq"]
+doc = "Chain several conditions without nesting."
+snippet = '''
+ifeq ($(${1:OS}),${2:Linux})
+    $0
+else ifeq ($(${1:OS}),${3:Darwin})
+    
+else
+    
+endif'''
+
+[[entries]]
+name = "ifneq filter"
+keys = ["ifneq", "filter", "contains", "word"]
+doc = "Branch when a word appears in a list."
+snippet = '''
+ifneq ($(filter ${1:clean},$(${2:MAKECMDGOALS})),)
+    $0
+endif'''
+
+[[entries]]
+name = "conditional value $(if)"
+keys = ["if", "conditional", "ternary", "value"]
+doc = "Pick a value inline with the if function rather than a directive."
+snippet = '''
+${1:CFLAGS} += $(if $(${2:DEBUG}),${3:-g -O0},${4:-O2})$0'''
+
+[[entries]]
+name = "platform detection with uname"
+keys = ["uname", "platform", "os", "linux", "darwin", "detect"]
+doc = "Choose settings by operating system name."
+snippet = '''
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    ${1:LDLIBS += -lrt}
+endif
+ifeq ($(UNAME_S),Darwin)
+    ${2:LDFLAGS += -framework CoreFoundation}
+endif$0'''
+
+[[entries]]
+name = "Windows detection"
+keys = ["windows", "os", "detect", "exe"]
+doc = "Branch on the OS variable that Windows sets in the environment."
+snippet = '''
+ifeq ($(OS),Windows_NT)
+    ${1:EXE := .exe}
+endif$0'''
+
+[[entries]]
+name = "require variable"
+keys = ["require", "check", "error", "mandatory", "set"]
+doc = "Fail early with a clear message when a needed variable is not set."
+snippet = '''
+ifndef ${1:VAR}
+    $(error ${1:VAR} is not set)
+endif$0'''
+
+[[entries]]
+name = "top-level make only"
+keys = ["makelevel", "toplevel", "recursion"]
+doc = "Run a block only in the outermost make invocation."
+snippet = '''
+ifeq ($(MAKELEVEL),0)
+    $0
+endif'''
+
+[[entries]]
+name = "require make version"
+keys = ["version", "makeversion", "require", "minimum"]
+doc = "Refuse to run under a make that lacks a needed feature."
+snippet = '''
+ifeq ($(filter ${1:grouped-target},$(.FEATURES)),)
+    $(error GNU make ${2:4.3} or newer is required)
+endif$0'''

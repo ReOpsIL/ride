@@ -1,0 +1,162 @@
+title = "Items"
+contexts = ["item"]
+
+[[entries]]
+name = "enum class"
+keys = ["enum", "class", "scoped"]
+doc = "Scoped enumeration with no implicit conversion to int."
+snippet = """
+enum class ${1:Color} {
+    ${2:Red},
+    ${3:Green},
+    $0
+};"""
+
+[[entries]]
+name = "enum class with underlying type"
+keys = ["enum", "class", "underlying", "uint8"]
+doc = "Scoped enumeration stored in an explicit integer type."
+snippet = """
+enum class ${1:Flag} : ${2:std::uint8_t} {
+    ${3:None} = 0,
+    $0
+};"""
+
+[[entries]]
+name = "enum"
+keys = ["enum", "unscoped"]
+doc = "Unscoped C-style enumeration."
+snippet = """
+enum ${1:Name} {
+    ${2:First},
+    $0
+};"""
+
+[[entries]]
+name = "namespace"
+keys = ["namespace", "ns"]
+doc = "Group declarations under a name."
+snippet = """
+namespace ${1:name} {
+    $0
+}"""
+
+[[entries]]
+name = "nested namespace"
+keys = ["namespace", "nested", "ns"]
+doc = "C++17 shorthand for nested namespaces."
+snippet = """
+namespace ${1:outer}::${2:inner} {
+    $0
+}"""
+
+[[entries]]
+name = "anonymous namespace"
+keys = ["namespace", "anonymous", "unnamed", "static"]
+doc = "Give everything inside internal linkage."
+snippet = """
+namespace {
+    $0
+}"""
+
+[[entries]]
+name = "inline namespace"
+keys = ["namespace", "inline", "version"]
+doc = "Namespace whose members are also visible in the enclosing namespace."
+snippet = """
+inline namespace ${1:v1} {
+    $0
+}"""
+
+[[entries]]
+name = "using alias"
+keys = ["using", "alias", "type"]
+doc = "Introduce a type alias."
+snippet = """
+using ${1:Alias} = ${2:std::vector<int>};$0"""
+
+[[entries]]
+name = "using namespace"
+keys = ["using", "namespace"]
+doc = "Bring every name of a namespace into scope."
+snippet = """
+using namespace ${1:std};$0"""
+
+[[entries]]
+name = "using declaration"
+keys = ["using", "name"]
+doc = "Bring one name from a namespace into scope."
+snippet = """
+using ${1:std::string};$0"""
+
+[[entries]]
+name = "namespace alias"
+keys = ["namespace", "alias"]
+doc = "Short name for a long namespace."
+snippet = """
+namespace ${1:fs} = ${2:std::filesystem};$0"""
+
+[[entries]]
+name = "typedef"
+keys = ["typedef", "alias"]
+doc = "C-style type alias."
+snippet = """
+typedef ${1:unsigned int} ${2:uint};$0"""
+
+[[entries]]
+name = "global variable"
+keys = ["global", "var", "variable"]
+doc = "Variable with external linkage at namespace scope."
+snippet = """
+${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "static variable"
+keys = ["static", "var", "internal"]
+doc = "Namespace-scope variable with internal linkage."
+snippet = """
+static ${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "extern variable"
+keys = ["extern", "var", "declare"]
+doc = "Declare a variable defined in another translation unit."
+snippet = """
+extern ${1:int} ${2:name};$0"""
+
+[[entries]]
+name = "inline variable"
+keys = ["inline", "var", "header"]
+doc = "C++17 variable that can be defined in a header."
+snippet = """
+inline ${1:constexpr int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "constexpr variable"
+keys = ["constexpr", "const", "constant"]
+doc = "Compile-time constant."
+snippet = """
+constexpr ${1:int} ${2:kName} = ${3:0};$0"""
+
+[[entries]]
+name = "extern \"C\""
+keys = ["extern", "c", "linkage"]
+doc = "Give declarations C linkage for use from C code."
+snippet = """
+extern "C" {
+    $0
+}"""
+
+[[entries]]
+name = "forward declaration"
+keys = ["forward", "declare", "class", "struct"]
+doc = "Declare a class name before its definition."
+snippet = """
+class ${1:Name};$0"""
+
+[[entries]]
+name = "static_assert"
+keys = ["static_assert", "assert", "compile"]
+doc = "Compile-time assertion with a message."
+snippet = """
+static_assert(${1:condition}, "${2:message}");$0"""

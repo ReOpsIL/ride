@@ -3,7 +3,9 @@ use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
 
+mod cheat;
 mod complete;
+mod cursor;
 mod out;
 use ride_engine::{EngineConfig, engine_start, last_status, rebuild_index, write_index};
 
@@ -40,6 +42,17 @@ enum Command {
         #[arg(long, default_value_t = 1)]
         repeat: u32,
     },
+    Cheat {
+        file: PathBuf,
+        #[arg(long)]
+        byte: Option<usize>,
+        #[arg(long)]
+        find: Option<String>,
+        #[arg(long)]
+        typed: Option<String>,
+        #[arg(long)]
+        all: bool,
+    },
     Status,
 }
 
@@ -66,8 +79,20 @@ fn main() -> ExitCode {
         }) => complete::run(
             config(cli.index_dir),
             &file,
-            complete::Cursor { byte, find, typed },
+            cursor::Cursor { byte, find, typed },
             repeat,
+        ),
+        Some(Command::Cheat {
+            file,
+            byte,
+            find,
+            typed,
+            all,
+        }) => cheat::run(
+            config(cli.index_dir),
+            &file,
+            cursor::Cursor { byte, find, typed },
+            all,
         ),
         Some(Command::Status) => {
             status_cmd(cli.index_dir);

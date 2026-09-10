@@ -1,0 +1,214 @@
+title = "Expressions and initialization"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "brace initialization"
+keys = ["init", "brace", "uniform", "{}"]
+doc = "Uniform initialization that forbids narrowing."
+snippet = """
+${1:int} ${2:x}{${3:0}};$0"""
+
+[[entries]]
+name = "value initialization"
+keys = ["init", "zero", "value", "{}"]
+doc = "Zero or default initialize with empty braces."
+snippet = """
+${1:T} ${2:x}{};$0"""
+
+[[entries]]
+name = "aggregate initialization"
+keys = ["init", "aggregate", "struct", "braces"]
+doc = "Initialize struct members in declaration order."
+snippet = """
+${1:Point} ${2:p}{${3:1}, ${4:2}};$0"""
+
+[[entries]]
+name = "designated initializers"
+keys = ["init", "designated", "struct", ".x"]
+doc = "C++20 initialize aggregate members by name."
+snippet = """
+${1:Config} ${2:cfg}{.${3:name} = ${4:value}, .${5:other} = ${6:value}};$0"""
+
+[[entries]]
+name = "initializer list"
+keys = ["init", "list", "braces", "vector"]
+doc = "Initialize a container from a braced list."
+snippet = """
+std::vector<${1:int}> ${2:v} = {${3:1, 2, 3}};$0"""
+
+[[entries]]
+name = "CTAD"
+keys = ["ctad", "deduction", "template", "auto"]
+doc = "Class template argument deduction from the initializer."
+snippet = """
+std::${1:pair} ${2:p}{${3:1, 2.0}};$0"""
+
+[[entries]]
+name = "spaceship comparison"
+keys = ["spaceship", "<=>", "compare", "three-way"]
+doc = "Three-way compare yielding an ordering value."
+snippet = """
+(${1:a} <=> ${2:b})$0"""
+
+[[entries]]
+name = "std::strong_ordering"
+keys = ["strong_ordering", "weak_ordering", "partial_ordering", "less", "greater"]
+doc = "Result of a three-way comparison."
+snippet = """
+std::${1:strong_ordering}::${2:less}$0"""
+
+[[entries]]
+name = "sizeof"
+keys = ["sizeof", "size", "bytes"]
+doc = "Size of a type or object in bytes."
+snippet = """
+sizeof(${1:T})$0"""
+
+[[entries]]
+name = "sizeof..."
+keys = ["sizeof", "pack", "variadic", "count"]
+doc = "Number of elements in a parameter pack."
+snippet = """
+sizeof...(${1:Args})$0"""
+
+[[entries]]
+name = "alignof"
+keys = ["alignof", "alignment"]
+doc = "Alignment requirement of a type."
+snippet = """
+alignof(${1:T})$0"""
+
+[[entries]]
+name = "alignas"
+keys = ["alignas", "alignment", "cache"]
+doc = "Request a stronger alignment for a declaration."
+snippet = """
+alignas(${1:64}) ${2:char} ${3:buf}[${4:64}];$0"""
+
+[[entries]]
+name = "typeid"
+keys = ["typeid", "rtti", "type_info", "name"]
+doc = "Runtime type information for a type or expression."
+snippet = """
+typeid(${1:expr}).name()$0"""
+
+[[entries]]
+name = "comma operator"
+keys = ["comma", ",", "sequence"]
+doc = "Evaluate left then right, yielding the right value."
+snippet = """
+(${1:a}, ${2:b})$0"""
+
+[[entries]]
+name = "ternary"
+keys = ["ternary", "conditional", "?:"]
+doc = "Choose between two values by a condition."
+snippet = """
+${1:condition} ? ${2:a} : ${3:b}$0"""
+
+[[entries]]
+name = "bitwise and / or / xor"
+keys = ["bit", "and", "or", "xor", "&", "|", "^"]
+doc = "Bitwise operators: & | ^ ~ << >>."
+snippet = """
+${1:a} ${2:&} ${3:b}$0"""
+
+[[entries]]
+name = "set bit"
+keys = ["bit", "set", "mask", "flag"]
+doc = "Set bit n."
+snippet = """
+${1:x} |= (1u << ${2:n});$0"""
+
+[[entries]]
+name = "clear bit"
+keys = ["bit", "clear", "mask", "unset"]
+doc = "Clear bit n."
+snippet = """
+${1:x} &= ~(1u << ${2:n});$0"""
+
+[[entries]]
+name = "toggle bit"
+keys = ["bit", "toggle", "flip", "xor"]
+doc = "Flip bit n."
+snippet = """
+${1:x} ^= (1u << ${2:n});$0"""
+
+[[entries]]
+name = "test bit"
+keys = ["bit", "test", "check", "mask"]
+doc = "True when bit n is set."
+snippet = """
+((${1:x} >> ${2:n}) & 1u)$0"""
+
+[[entries]]
+name = "std::bitset"
+keys = ["bitset", "bits", "flags"]
+doc = "Fixed-size bit sequence with set, reset, test and count."
+snippet = """
+std::bitset<${1:8}> ${2:bits}(${3:value});$0"""
+
+[[entries]]
+name = "<bit> functions"
+keys = ["popcount", "countl_zero", "countr_zero", "has_single_bit", "bit_width", "rotl"]
+doc = "C++20 bit utilities: popcount, countl_zero, countr_zero, bit_width, rotl, has_single_bit."
+snippet = """
+std::${1:popcount}(${2:value})$0"""
+
+[[entries]]
+name = "std::byteswap"
+keys = ["byteswap", "endian", "bit"]
+doc = "C++23 reverse the byte order of an integer."
+snippet = """
+std::byteswap(${1:value})$0"""
+
+[[entries]]
+name = "std::endian"
+keys = ["endian", "native", "little", "big"]
+doc = "Compile-time query of the platform byte order."
+snippet = """
+std::endian::native == std::endian::${1:little}$0"""
+
+[[entries]]
+name = "enum to underlying"
+keys = ["to_underlying", "enum", "underlying_type", "cast"]
+doc = "C++23 convert an enum to its underlying integer."
+snippet = """
+std::to_underlying(${1:value})$0"""
+
+[[entries]]
+name = "constexpr evaluation"
+keys = ["constexpr", "compile", "evaluate", "constant"]
+doc = "Force evaluation at compile time."
+snippet = """
+constexpr auto ${1:result} = ${2:compute()};$0"""
+
+[[entries]]
+name = "std::is_constant_evaluated"
+keys = ["is_constant_evaluated", "constexpr", "runtime"]
+doc = "Test whether the current evaluation is at compile time."
+snippet = """
+if (std::is_constant_evaluated()) {
+    $0
+}"""
+
+[[entries]]
+name = "pre-increment"
+keys = ["increment", "++", "decrement", "--"]
+doc = "Increment in place (prefer prefix for iterators)."
+snippet = """
+++${1:i}$0"""
+
+[[entries]]
+name = "pointer to member"
+keys = ["member", "pointer", ".*", "->*"]
+doc = "Access a member through a pointer-to-member."
+snippet = """
+(${1:obj}.*${2:member_ptr})$0"""
+
+[[entries]]
+name = "scope resolution"
+keys = ["scope", "::", "global"]
+doc = "Refer to a global name shadowed by a local one."
+snippet = """
+::${1:name}$0"""

@@ -1,0 +1,211 @@
+title = "Strings"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "string"
+keys = ["string", "str", "std::string"]
+doc = "Owning string initialized from a literal."
+snippet = """
+std::string ${1:s} = "${2:}";$0"""
+
+[[entries]]
+name = "substr"
+keys = ["substr", "substring", "slice"]
+doc = "Copy of a substring starting at pos with len characters."
+snippet = """
+${1:s}.substr(${2:pos}, ${3:len})$0"""
+
+[[entries]]
+name = "find"
+keys = ["find", "search", "index", "npos"]
+doc = "Position of a substring, or std::string::npos."
+snippet = """
+if (auto ${1:pos} = ${2:s}.find(${3:"needle"}); ${1:pos} != std::string::npos) {
+    $0
+}"""
+
+[[entries]]
+name = "rfind"
+keys = ["rfind", "find", "last"]
+doc = "Position of the last occurrence of a substring."
+snippet = """
+${1:s}.rfind(${2:"needle"})$0"""
+
+[[entries]]
+name = "replace"
+keys = ["replace", "substitute"]
+doc = "Replace len characters at pos with another string."
+snippet = """
+${1:s}.replace(${2:pos}, ${3:len}, ${4:"new"});$0"""
+
+[[entries]]
+name = "append"
+keys = ["append", "concat", "+="]
+doc = "Append to the end of a string."
+snippet = """
+${1:s} += ${2:"more"};$0"""
+
+[[entries]]
+name = "insert"
+keys = ["insert", "string"]
+doc = "Insert a string at a position."
+snippet = """
+${1:s}.insert(${2:pos}, ${3:"text"});$0"""
+
+[[entries]]
+name = "erase"
+keys = ["erase", "remove", "string"]
+doc = "Erase len characters starting at pos."
+snippet = """
+${1:s}.erase(${2:pos}, ${3:len});$0"""
+
+[[entries]]
+name = "compare"
+keys = ["compare", "strcmp"]
+doc = "Three-way compare returning negative, zero or positive."
+snippet = """
+${1:a}.compare(${2:b})$0"""
+
+[[entries]]
+name = "starts_with / ends_with"
+keys = ["starts_with", "ends_with", "prefix", "suffix"]
+doc = "C++20 prefix or suffix test."
+snippet = """
+${1:s}.${2:starts_with}(${3:"pre"})$0"""
+
+[[entries]]
+name = "contains"
+keys = ["contains", "has", "includes"]
+doc = "C++23 substring presence test."
+snippet = """
+${1:s}.contains(${2:"needle"})$0"""
+
+[[entries]]
+name = "c_str"
+keys = ["c_str", "cstring", "char*"]
+doc = "Null-terminated const char pointer."
+snippet = """
+${1:s}.c_str()$0"""
+
+[[entries]]
+name = "length / empty"
+keys = ["length", "size", "empty"]
+doc = "Number of characters, or whether there are none."
+snippet = """
+${1:s}.${2:size}()$0"""
+
+[[entries]]
+name = "std::to_string"
+keys = ["to_string", "convert", "itoa", "stringify"]
+doc = "Convert a number to a string."
+snippet = """
+std::to_string(${1:value})$0"""
+
+[[entries]]
+name = "std::stoi / std::stod"
+keys = ["stoi", "stod", "stol", "stoul", "parse", "atoi"]
+doc = "Parse a number from a string, throwing on failure."
+snippet = """
+std::${1:stoi}(${2:s})$0"""
+
+[[entries]]
+name = "std::from_chars"
+keys = ["from_chars", "parse", "charconv"]
+doc = "Fast non-throwing parse from a character range."
+snippet = """
+${1:int} ${2:value}{};
+auto [${3:ptr}, ${4:ec}] = std::from_chars(${5:s}.data(), ${5:s}.data() + ${5:s}.size(), ${2:value});$0"""
+
+[[entries]]
+name = "std::to_chars"
+keys = ["to_chars", "format", "charconv"]
+doc = "Fast non-allocating number to characters."
+snippet = """
+char ${1:buf}[${2:32}];
+auto [${3:end}, ${4:ec}] = std::to_chars(${1:buf}, ${1:buf} + sizeof ${1:buf}, ${5:value});$0"""
+
+[[entries]]
+name = "std::format"
+keys = ["format", "fmt", "printf", "interpolate"]
+doc = "C++20 type-safe formatting into a string."
+snippet = """
+std::format("{${1:}}", ${2:value})$0"""
+
+[[entries]]
+name = "std::format_to"
+keys = ["format_to", "format", "back_inserter"]
+doc = "Format into an output iterator."
+snippet = """
+std::format_to(std::back_inserter(${1:out}), "{${2:}}", ${3:value});$0"""
+
+[[entries]]
+name = "string_view remove_prefix"
+keys = ["remove_prefix", "remove_suffix", "string_view", "trim"]
+doc = "Shrink a view from the front or back."
+snippet = """
+${1:sv}.${2:remove_prefix}(${3:n});$0"""
+
+[[entries]]
+name = "char classification"
+keys = ["isdigit", "isalpha", "isspace", "isalnum", "cctype", "char"]
+doc = "Character class tests from <cctype>."
+snippet = """
+std::${1:isdigit}(static_cast<unsigned char>(${2:c}))$0"""
+
+[[entries]]
+name = "toupper / tolower"
+keys = ["toupper", "tolower", "case", "char"]
+doc = "Change the case of a character."
+snippet = """
+static_cast<char>(std::${1:toupper}(static_cast<unsigned char>(${2:c})))$0"""
+
+[[entries]]
+name = "string to uppercase"
+keys = ["toupper", "upper", "transform", "case"]
+doc = "Uppercase every character in place."
+snippet = """
+std::transform(${1:s}.begin(), ${1:s}.end(), ${1:s}.begin(), [](unsigned char c) { return std::toupper(c); });$0"""
+
+[[entries]]
+name = "split string"
+keys = ["split", "tokenize", "delimiter", "getline"]
+doc = "Split a string on a delimiter into tokens."
+snippet = """
+std::vector<std::string> ${1:parts};
+std::stringstream ${2:ss}(${3:s});
+for (std::string ${4:tok}; std::getline(${2:ss}, ${4:tok}, ${5:','});) {
+    ${1:parts}.push_back(${4:tok});
+}$0"""
+
+[[entries]]
+name = "join strings"
+keys = ["join", "concat", "delimiter"]
+doc = "Join strings with a separator."
+snippet = """
+std::string ${1:out};
+for (const auto &${2:part} : ${3:parts}) {
+    if (!${1:out}.empty()) ${1:out} += ${4:", "};
+    ${1:out} += ${2:part};
+}$0"""
+
+[[entries]]
+name = "trim whitespace"
+keys = ["trim", "strip", "whitespace"]
+doc = "Remove leading and trailing whitespace from a view."
+snippet = """
+${1:sv}.remove_prefix(std::min(${1:sv}.find_first_not_of(" \\t\\n"), ${1:sv}.size()));
+${1:sv}.remove_suffix(${1:sv}.size() - ${1:sv}.find_last_not_of(" \\t\\n") - 1);$0"""
+
+[[entries]]
+name = "string literal operator sv"
+keys = ["sv", "literal", "string_view", "operator"]
+doc = "string_view literal from std::literals."
+snippet = """
+"${1:text}"sv$0"""
+
+[[entries]]
+name = "string literal operator s"
+keys = ["s", "literal", "string", "operator"]
+doc = "std::string literal from std::literals."
+snippet = """
+"${1:text}"s$0"""

@@ -1,0 +1,147 @@
+title = "Modules and linkage"
+contexts = ["item"]
+
+[[entries]]
+name = "export module"
+keys = ["export", "module", "interface"]
+doc = "C++20 module interface unit."
+snippet = """
+export module ${1:name};
+
+export $0"""
+
+[[entries]]
+name = "module implementation"
+keys = ["module", "implementation"]
+doc = "Implementation unit of a module."
+snippet = """
+module ${1:name};
+
+$0"""
+
+[[entries]]
+name = "import"
+keys = ["import", "module"]
+doc = "Import a module."
+snippet = """
+import ${1:name};$0"""
+
+[[entries]]
+name = "import std"
+keys = ["import", "std", "module"]
+doc = "C++23 import of the whole standard library."
+snippet = """
+import std;$0"""
+
+[[entries]]
+name = "import header unit"
+keys = ["import", "header", "module"]
+doc = "Import a header as a header unit."
+snippet = """
+import <${1:vector}>;$0"""
+
+[[entries]]
+name = "export declaration"
+keys = ["export", "module", "fn"]
+doc = "Export one declaration from a module."
+snippet = """
+export ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "export block"
+keys = ["export", "module", "block"]
+doc = "Export several declarations at once."
+snippet = """
+export {
+    $0
+}"""
+
+[[entries]]
+name = "export namespace"
+keys = ["export", "namespace", "module"]
+doc = "Export a whole namespace."
+snippet = """
+export namespace ${1:name} {
+    $0
+}"""
+
+[[entries]]
+name = "module partition"
+keys = ["module", "partition", "export", ":"]
+doc = "Interface partition of a module."
+snippet = """
+export module ${1:name}:${2:part};
+
+$0"""
+
+[[entries]]
+name = "import partition"
+keys = ["import", "partition", "export", ":"]
+doc = "Import and re-export a partition from the primary interface."
+snippet = """
+export import :${1:part};$0"""
+
+[[entries]]
+name = "global module fragment"
+keys = ["module", "global", "fragment", "include"]
+doc = "Include legacy headers before the module declaration."
+snippet = """
+module;
+#include <${1:cstdio}>
+export module ${2:name};
+
+$0"""
+
+[[entries]]
+name = "private module fragment"
+keys = ["module", "private", "fragment"]
+doc = "Implementation details kept in the interface file."
+snippet = """
+module :private;
+
+$0"""
+
+[[entries]]
+name = "extern \"C\" function"
+keys = ["extern", "c", "linkage", "fn"]
+doc = "Single function with C linkage."
+snippet = """
+extern "C" ${1:void} ${2:name}(${3:});$0"""
+
+[[entries]]
+name = "extern \"C\" guarded block"
+keys = ["extern", "c", "cplusplus", "header"]
+doc = "C-compatible header block usable from both languages."
+snippet = """
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+$0
+
+#ifdef __cplusplus
+}
+#endif"""
+
+[[entries]]
+name = "[[deprecated]]"
+keys = ["deprecated", "attribute"]
+doc = "Warn when a declaration is used."
+snippet = """
+[[deprecated("${1:reason}")]]$0"""
+
+[[entries]]
+name = "[[maybe_unused]]"
+keys = ["maybe_unused", "attribute", "unused"]
+doc = "Suppress unused warnings for a declaration."
+snippet = """
+[[maybe_unused]]$0"""
+
+[[entries]]
+name = "attribute"
+keys = ["attribute", "[[", "nodiscard", "noreturn"]
+doc = "Standard attribute: nodiscard, noreturn, deprecated, maybe_unused, likely, assume."
+snippet = """
+[[${1:nodiscard}]]$0"""

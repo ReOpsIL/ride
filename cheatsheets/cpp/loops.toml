@@ -1,0 +1,119 @@
+title = "Loops and jumps"
+contexts = ["statement"]
+
+[[entries]]
+name = "while"
+keys = ["while", "loop"]
+doc = "Loop while a condition holds."
+snippet = """
+while (${1:condition}) {
+    $0
+}"""
+
+[[entries]]
+name = "do while"
+keys = ["do", "while", "loop"]
+doc = "Loop that runs the body at least once."
+snippet = """
+do {
+    $0
+} while (${1:condition});"""
+
+[[entries]]
+name = "for"
+keys = ["for", "loop", "index"]
+doc = "Counted loop with an index."
+snippet = """
+for (${1:int} ${2:i} = ${3:0}; ${2:i} < ${4:n}; ++${2:i}) {
+    $0
+}"""
+
+[[entries]]
+name = "for reverse"
+keys = ["for", "loop", "reverse", "down"]
+doc = "Counted loop from n-1 down to 0."
+snippet = """
+for (${1:int} ${2:i} = ${3:n} - 1; ${2:i} >= 0; --${2:i}) {
+    $0
+}"""
+
+[[entries]]
+name = "range for"
+keys = ["for", "range", "foreach", "loop", "each"]
+doc = "Loop over every element of a range."
+snippet = """
+for (${1:const auto &}${2:item} : ${3:container}) {
+    $0
+}"""
+
+[[entries]]
+name = "range for with structured binding"
+keys = ["for", "range", "foreach", "binding", "map", "pair"]
+doc = "Loop over key/value pairs of a map."
+snippet = """
+for (const auto &[${1:key}, ${2:value}] : ${3:map}) {
+    $0
+}"""
+
+[[entries]]
+name = "range for with initializer"
+keys = ["for", "range", "init"]
+doc = "C++20 range for with a scoped initializer."
+snippet = """
+for (${1:auto data = get()}; ${2:const auto &item} : ${3:data}) {
+    $0
+}"""
+
+[[entries]]
+name = "for with iterator"
+keys = ["for", "iterator", "begin", "end", "loop"]
+doc = "Loop with an explicit iterator."
+snippet = """
+for (auto ${1:it} = ${2:v}.begin(); ${1:it} != ${2:v}.end(); ++${1:it}) {
+    $0
+}"""
+
+[[entries]]
+name = "infinite loop"
+keys = ["for", "while", "loop", "forever"]
+doc = "Loop until a break."
+snippet = """
+for (;;) {
+    $0
+}"""
+
+[[entries]]
+name = "break"
+keys = ["break"]
+doc = "Leave the innermost loop or switch."
+snippet = """
+break;$0"""
+
+[[entries]]
+name = "continue"
+keys = ["continue", "next", "skip"]
+doc = "Jump to the next loop iteration."
+snippet = """
+continue;$0"""
+
+[[entries]]
+name = "return"
+keys = ["return", "ret"]
+doc = "Return a value from the function."
+snippet = """
+return ${1:value};$0"""
+
+[[entries]]
+name = "goto"
+keys = ["goto", "label", "jump"]
+doc = "Jump to a label in the same function."
+snippet = """
+goto ${1:label};$0"""
+
+[[entries]]
+name = "label"
+keys = ["label", "goto"]
+doc = "Target for a goto."
+snippet = """
+${1:label}:
+    $0"""
