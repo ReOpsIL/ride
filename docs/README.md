@@ -5,6 +5,7 @@
 | Product and architecture spec | `plan/ride_draft.md` |
 | Roadmap and phases | `plan/roadmap/improve-extend.md` |
 | UI design plan and audit | `plan/roadmap/ui-design.md` |
+| Completion plan (sites, `use`/`#include`, ranking, rows, accept) | `plan/roadmap/completion.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
