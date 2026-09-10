@@ -7,7 +7,9 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
     private(set) var rows: [CheatRow] = []
     private var prefix = ""
     private var selected = -1
+    private var lastClicked = -1
     var onInsert: (() -> Void)?
+    var onBrowse: (() -> Void)?
 
     override init() {
         panel = OverlayPanel.make(size: CheatSheetLayout.initialSize)
@@ -27,6 +29,7 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
         table.allowsEmptySelection = true
         table.target = self
         table.action = #selector(clickRow)
+        table.doubleAction = #selector(doubleClickRow)
         table.backgroundColor = .clear
         table.selectionHighlightStyle = .regular
         layout.scroll.documentView = table
@@ -41,12 +44,13 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
         rows.indices.contains(selected) ? rows[selected].entry : nil
     }
 
-    func show(rows: [CheatRow], prefix: String, keeping name: String?, shared: Bool, frame: (NSSize) -> NSRect) {
+    func show(rows: [CheatRow], prefix: String, keeping name: String?, hints: CheatSheetLayout.Hints, frame: (NSSize) -> NSRect) {
         self.rows = rows
         self.prefix = prefix
         selected = CheatSheetRows.selection(rows, keeping: name) ?? -1
+        lastClicked = -1
         layout.applyTheme()
-        layout.setHints(shared: shared)
+        layout.setHints(hints)
         table.reloadData()
         table.sizeLastColumnToFit()
         select()
@@ -54,6 +58,10 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
         layout.preview.fill(selectedEntry)
         OverlayPanel.present(panel, frame: frame(layout.size(rows: rows)))
         table.scrollRowToVisible(max(selected, 0))
+    }
+
+    func setHints(_ hints: CheatSheetLayout.Hints) {
+        layout.setHints(hints)
     }
 
     func relocate(frame: (NSSize) -> NSRect) {
@@ -72,6 +80,7 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
             return
         }
         selected = next
+        lastClicked = -1
         select()
         table.scrollRowToVisible(selected)
         layout.preview.fill(selectedEntry)
@@ -129,6 +138,21 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
     }
 
     @objc private func clickRow() {
+        let row = table.clickedRow
+        guard rows.indices.contains(row), rows[row].isEntry else {
+            return
+        }
+        selected = row
+        layout.preview.fill(selectedEntry)
+        if row == lastClicked {
+            onInsert?()
+            return
+        }
+        lastClicked = row
+        onBrowse?()
+    }
+
+    @objc private func doubleClickRow() {
         let row = table.clickedRow
         guard rows.indices.contains(row), rows[row].isEntry else {
             return

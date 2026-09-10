@@ -61,7 +61,8 @@ extension RideTextView {
     private func handleCheatSheetKey(_ event: NSEvent) -> Bool {
         let sheet = CheatSheetController.shared
         let shared = CompletionSession.shared.isVisible
-        if shared, !event.modifierFlags.contains(.option) {
+        let takes = !shared || sheet.focused || event.modifierFlags.contains(.option)
+        guard takes else {
             return event.keyCode == 53 && cancelPopups()
         }
         switch event.keyCode {
@@ -76,7 +77,7 @@ extension RideTextView {
         case 36, 76:
             return sheet.insert()
         case 48:
-            return !shared && sheet.insert()
+            return sheet.insert()
         default:
             return false
         }
@@ -112,7 +113,7 @@ extension RideTextView {
     }
 
     override func doCommand(by selector: Selector) {
-        if CheatSheetController.shared.isVisible, !CompletionSession.shared.isVisible {
+        if CheatSheetController.shared.isVisible, !CompletionSession.shared.isVisible || CheatSheetController.shared.focused {
             if selector == #selector(moveUp(_:)) {
                 CheatSheetController.shared.move(-1)
                 return

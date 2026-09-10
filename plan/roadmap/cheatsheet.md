@@ -20,8 +20,8 @@ Goal: while the user types in a Rust, C, C++ or Makefile buffer, a second popup 
 
 - Auto mode (preference "Cheat sheet with completions", on by default): the sheet appears with the completion popup whenever the caret context yields entries, narrows with every keystroke, and hides with the popup.
 - Pinned mode: `⌃⇧Space` opens the sheet on demand (also without completions) and keeps it while the caret moves; a second `⌃⇧Space` or `esc` closes it.
-- Keys while the completion popup is also visible: `⌥↑` / `⌥↓` move the sheet selection, `⌥↩` inserts the selected template; plain arrows and return still drive the completion list. With the sheet alone, arrows, return and tab act on it.
-- Click a row to insert. Insertion replaces the typed prefix with the template and starts a snippet session (tab stops, `⇥` / `⇧⇥`).
+- Browsing is separate from inserting: arrows or a click select a row and the preview pane shows the full example; `↩`, `⇥`, a second click on the selected row or a double-click inserts. Insertion replaces the typed prefix with the template and starts a snippet session (tab stops, `⇥` / `⇧⇥`).
+- Keys while the completion popup is also visible: the completion list owns plain keys until the user browses the sheet with `⌥↑` / `⌥↓` or a click; the sheet is then focused and `↑` / `↓` / `↩` act on it until the next keystroke. `⌥↩` inserts without focusing.
 - Placement: below the completion popup when the popup is below the caret, above it when the popup sits above the caret; alone, like the completion popup at the caret.
 
 ## Sheets

@@ -4,16 +4,28 @@ final class CheatSheetLayout: NSView {
     static let listWidth: CGFloat = 300
     static let entryRow: CGFloat = 38
     static let headerRow: CGFloat = 22
-    static let maxBody: CGFloat = 320
+    static let maxBody: CGFloat = 440
     static let footerHeight: CGFloat = 20
     static let topInset = Tokens.Space.xs
-    static let sharedHints = "⌥↑↓ select   ⌥↩ insert   ⌃⇧space pin   esc close"
-    static let aloneHints = "↑↓ select   ↩ insert   ⌃⇧space close"
+
+    enum Hints {
+        case alone
+        case shared
+        case focused
+
+        var text: String {
+            switch self {
+            case .alone: return "↑↓ select   ↩ insert   click twice to insert   ⌃⇧space close"
+            case .shared: return "⌥↑↓ or click to browse   ⌥↩ insert   ⌃⇧space pin   esc close"
+            case .focused: return "↑↓ select   ↩ insert   click twice to insert   esc close"
+            }
+        }
+    }
 
     let card = OverlayCardView()
     let scroll = NSScrollView()
     let preview = CheatSheetPreview(frame: .zero)
-    private let footer = NSTextField(labelWithString: CheatSheetLayout.sharedHints)
+    private let footer = NSTextField(labelWithString: CheatSheetLayout.Hints.shared.text)
 
     static var initialSize: NSSize {
         NSSize(width: listWidth + CheatSheetPreview.width, height: topInset + entryRow + footerHeight)
@@ -50,8 +62,8 @@ final class CheatSheetLayout: NSView {
         footer.textColor = ThemeStore.shared.chrome.textTertiary
     }
 
-    func setHints(shared: Bool) {
-        footer.stringValue = shared ? Self.sharedHints : Self.aloneHints
+    func setHints(_ hints: Hints) {
+        footer.stringValue = hints.text
     }
 
     static func rowHeight(_ row: CheatRow) -> CGFloat {
@@ -59,7 +71,9 @@ final class CheatSheetLayout: NSView {
     }
 
     static func bodyHeight(rows: [CheatRow]) -> CGFloat {
-        min(max(rows.reduce(0) { $0 + rowHeight($1) }, entryRow), maxBody)
+        let list = rows.reduce(0) { $0 + rowHeight($1) }
+        let preview = rows.compactMap(\.entry).map(CheatSheetPreview.neededHeight).max() ?? 0
+        return min(max(list, preview, entryRow), maxBody)
     }
 
     func size(rows: [CheatRow]) -> NSSize {

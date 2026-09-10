@@ -4,6 +4,7 @@ final class CheatSheetController {
     static let shared = CheatSheetController()
     let popup = CheatSheetPopup()
     private(set) var pinned = false
+    private(set) var focused = false
     private var response: CheatSheetResponse?
     private var work: DispatchWorkItem?
     private var generation: UInt64 = 0
@@ -17,6 +18,9 @@ final class CheatSheetController {
         }
         popup.onInsert = { [weak self] in
             _ = self?.insert()
+        }
+        popup.onBrowse = { [weak self] in
+            self?.focus()
         }
     }
 
@@ -90,7 +94,23 @@ final class CheatSheetController {
     }
 
     func move(_ delta: Int) {
+        focus()
         popup.move(delta)
+    }
+
+    func focus() {
+        guard !focused else {
+            return
+        }
+        focused = true
+        popup.setHints(hints(shared: CompletionSession.shared.isVisible))
+    }
+
+    private func hints(shared: Bool) -> CheatSheetLayout.Hints {
+        if !shared {
+            return .alone
+        }
+        return focused ? .focused : .shared
     }
 
     func insert() -> Bool {
@@ -126,6 +146,7 @@ final class CheatSheetController {
         work?.cancel()
         work = nil
         response = nil
+        focused = false
         popup.hide()
     }
 
@@ -156,12 +177,13 @@ final class CheatSheetController {
             return
         }
         response = resp
+        focused = false
         let anchor = anchor(for: view)
         popup.show(
             rows: CheatSheetRows.rows(resp.sections.map(CheatGroup.init)),
             prefix: resp.prefix,
             keeping: popup.selectedEntry?.name,
-            shared: anchor.completion != nil
+            hints: hints(shared: anchor.completion != nil)
         ) { CheatSheetPlacement.frame(size: $0, anchor: anchor) }
     }
 }

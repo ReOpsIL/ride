@@ -17,7 +17,7 @@ impl Engine {
     }
 }
 
-fn
+
 fn lookup(engine: &Engine, session_id: u64, cursor_byte: u32, all: bool) -> CheatSheetResponse {
     let Some((sheet, site, ctx)) = engine
         .read(|i| {

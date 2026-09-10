@@ -1,53 +1,68 @@
 import AppKit
 
 final class CheatSheetPreview: NSView {
-    static let width: CGFloat = 230
+    static let width: CGFloat = 360
+    static let lineHeight: CGFloat = 15
     private let separator = NSView()
-    private let code = NSTextField(wrappingLabelWithString: "")
-    private let doc = NSTextField(wrappingLabelWithString: "")
+    private let scroll = NSScrollView()
+    private let text = NSTextView()
 
     override init(frame: NSRect) {
         super.init(frame: frame)
         separator.wantsLayer = true
-        code.font = Tokens.nsMono(11)
-        code.maximumNumberOfLines = 12
-        doc.font = Tokens.nsUI(11)
-        doc.maximumNumberOfLines = 6
-        for view in [separator, code, doc] {
-            view.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(view)
-        }
-        let inset = Tokens.Space.l
-        NSLayoutConstraint.activate([
-            separator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            separator.topAnchor.constraint(equalTo: topAnchor),
-            separator.bottomAnchor.constraint(equalTo: bottomAnchor),
-            separator.widthAnchor.constraint(equalToConstant: Tokens.Size.hairline),
-            code.topAnchor.constraint(equalTo: topAnchor, constant: inset),
-            code.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
-            code.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
-            doc.topAnchor.constraint(equalTo: code.bottomAnchor, constant: Tokens.Space.m),
-            doc.leadingAnchor.constraint(equalTo: code.leadingAnchor),
-            doc.trailingAnchor.constraint(equalTo: code.trailingAnchor),
-            doc.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -inset),
-        ])
+        text.isEditable = false
+        text.isSelectable = false
+        text.drawsBackground = false
+        text.textContainerInset = NSSize(width: Tokens.Space.m, height: Tokens.Space.l)
+        text.isVerticallyResizable = true
+        text.isHorizontallyResizable = false
+        text.autoresizingMask = [.width]
+        text.textContainer?.widthTracksTextView = true
+        text.textContainer?.lineFragmentPadding = Tokens.Space.xs
+        scroll.documentView = text
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.borderType = .noBorder
+        scroll.drawsBackground = false
+        addSubview(separator)
+        addSubview(scroll)
     }
 
     required init?(coder: NSCoder) {
         nil
     }
 
+    override func layout() {
+        super.layout()
+        separator.frame = NSRect(x: 0, y: 0, width: Tokens.Size.hairline, height: bounds.height)
+        scroll.frame = NSRect(x: Tokens.Size.hairline, y: 0, width: bounds.width - Tokens.Size.hairline, height: bounds.height)
+        text.frame.size.width = scroll.contentSize.width
+    }
+
     func fill(_ entry: CheatItem?) {
         let chrome = ThemeStore.shared.chrome
         separator.layer?.backgroundColor = chrome.border.cgColor
-        doc.textColor = chrome.textSecondary
+        text.textStorage?.setAttributedString(Self.content(entry, chrome: chrome))
+        text.frame.size.width = scroll.contentSize.width
+        scroll.contentView.scroll(to: .zero)
+    }
+
+    static func neededHeight(_ entry: CheatItem) -> CGFloat {
+        let lines = entry.snippet.split(separator: "\n", omittingEmptySubsequences: false).count
+        let docLines = CGFloat((entry.doc.count / 48) + 1)
+        return CGFloat(lines) * lineHeight + docLines * lineHeight + Tokens.Space.l * 3 + lineHeight * 2
+    }
+
+    static func content(_ entry: CheatItem?, chrome: ChromeColors) -> NSAttributedString {
         guard let entry else {
-            code.stringValue = ""
-            doc.stringValue = "No template"
-            return
+            return NSAttributedString(string: "No template", attributes: [.font: Tokens.nsUI(11), .foregroundColor: chrome.textSecondary])
         }
-        code.attributedStringValue = Self.highlighted(entry.snippet, chrome: chrome)
-        doc.stringValue = entry.doc
+        let out = NSMutableAttributedString()
+        out.append(NSAttributedString(string: entry.name + "\n", attributes: [.font: Tokens.nsUI(11, weight: .semibold), .foregroundColor: chrome.textPrimary]))
+        out.append(NSAttributedString(string: entry.doc + "\n\n", attributes: [.font: Tokens.nsUI(11), .foregroundColor: chrome.textSecondary]))
+        out.append(highlighted(entry.snippet, chrome: chrome))
+        out.append(NSAttributedString(string: "\n\n↩ or click again to insert", attributes: [.font: Tokens.nsUI(10), .foregroundColor: chrome.textTertiary]))
+        return out
     }
 
     static func highlighted(_ snippet: String, chrome: ChromeColors) -> NSAttributedString {
