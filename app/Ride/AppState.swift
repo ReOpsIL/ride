@@ -131,7 +131,7 @@ final class AppState: ObservableObject {
         recents.save(recent)
         quickFiles = []
         showQuickOpen = false
-        CompletionSession.shared.hide()
+        CompletionSession.shared.reset()
         reloadTree()
         watcher.start(path: url.path)
         RideEngineClient.shared.openWorkspace(url)

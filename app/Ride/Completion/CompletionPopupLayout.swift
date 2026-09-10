@@ -4,11 +4,24 @@ final class CompletionPopupLayout: NSView {
     static let listWidth: CGFloat = 520
     static let footerHeight: CGFloat = 20
     static let maxRows = 10
+    static let maxWideHeight: CGFloat = 420
+    static let topInset = Tokens.Space.xs
+    static let hints = "↩ accept   ⇥ accept   esc dismiss   ⌘click source   ⌘I docs"
+    static var initialSize: NSSize {
+        NSSize(width: listWidth, height: topInset + listHeight(rows: 1) + footerHeight)
+    }
+
     let card = OverlayCardView()
     let scroll = NSScrollView()
     let doc = CompletionDocCard(frame: .zero)
-    private let footer = NSTextField(labelWithString: "↩ accept   ⇥ accept   esc dismiss   ⌘click source")
+    private let footer = NSTextField(labelWithString: CompletionPopupLayout.hints)
     var showsDoc = false
+    var wide = false {
+        didSet { doc.expanded = wide }
+    }
+    var truncated = false {
+        didSet { footer.stringValue = truncated ? "…more results, keep typing   ·   " + Self.hints : Self.hints }
+    }
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -24,6 +37,7 @@ final class CompletionPopupLayout: NSView {
         scroll.borderType = .noBorder
         scroll.drawsBackground = false
         footer.font = Tokens.nsUI(10)
+        footer.lineBreakMode = .byTruncatingTail
         card.addSubview(scroll)
         card.addSubview(doc)
         card.addSubview(footer)
@@ -40,15 +54,23 @@ final class CompletionPopupLayout: NSView {
         footer.textColor = ThemeStore.shared.chrome.textTertiary
     }
 
-    static let topInset = Tokens.Space.xs
+    var docWidth: CGFloat {
+        guard showsDoc else {
+            return 0
+        }
+        return wide ? CompletionDocCard.wideWidth : CompletionDocCard.width
+    }
 
     static func listHeight(rows: Int) -> CGFloat {
         CGFloat(min(max(rows, 1), maxRows)) * Tokens.Size.completionRow
     }
 
-    static func size(rows: Int, doc: Bool) -> NSSize {
-        let width = listWidth + (doc ? CompletionDocCard.width : 0)
-        return NSSize(width: width, height: topInset + listHeight(rows: rows) + footerHeight)
+    func size(rows: Int) -> NSSize {
+        var body = Self.listHeight(rows: rows)
+        if showsDoc, wide {
+            body = min(max(body, doc.requiredHeight(width: docWidth)), Self.maxWideHeight)
+        }
+        return NSSize(width: Self.listWidth + docWidth, height: Self.topInset + body + Self.footerHeight)
     }
 
     func configureScrolling(rows: Int) {
@@ -65,10 +87,10 @@ final class CompletionPopupLayout: NSView {
 
     private func place() {
         card.frame = bounds
-        let listHeight = bounds.height - Self.footerHeight - Self.topInset
-        scroll.frame = NSRect(x: 0, y: Self.footerHeight, width: Self.listWidth, height: listHeight)
+        let bodyHeight = bounds.height - Self.footerHeight - Self.topInset
+        scroll.frame = NSRect(x: 0, y: Self.footerHeight, width: Self.listWidth, height: bodyHeight)
         doc.isHidden = !showsDoc
-        doc.frame = NSRect(x: Self.listWidth, y: Self.footerHeight, width: CompletionDocCard.width, height: listHeight)
+        doc.frame = NSRect(x: Self.listWidth, y: Self.footerHeight, width: docWidth, height: bodyHeight)
         footer.frame = NSRect(x: Tokens.Space.l, y: 3, width: bounds.width - Tokens.Space.l * 2, height: 14)
     }
 }

@@ -8,7 +8,7 @@ extension AppState {
         }
         let standard = url.standardizedFileURL
         selectedURL = standard
-        CompletionSession.shared.hide()
+        CompletionSession.shared.reset()
         if let existing = buffers.first(where: { $0.fileURL == standard }) {
             existing.isReadOnly = existing.isReadOnly || readOnly
             activeID = existing.id
@@ -35,7 +35,7 @@ extension AppState {
     }
 
     func selectBuffer(_ id: UUID) {
-        CompletionSession.shared.hide()
+        CompletionSession.shared.reset()
         activeID = id
         selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
@@ -50,7 +50,7 @@ extension AppState {
         if buffer.isDirty, !confirmClose(buffer) {
             return
         }
-        CompletionSession.shared.hide()
+        CompletionSession.shared.reset()
         SessionService.shared.close(buffer)
         buffers.removeAll { $0.id == id }
         if activeID == id {

@@ -116,18 +116,14 @@
 		A000000000000000000000A5 /* SessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000095 /* SessionService.swift */; };
 		A000000000000000000000A6 /* FileOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000096 /* FileOutlineView.swift */; };
 		A000000000000000000000A7 /* SymbolInFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000097 /* SymbolInFile.swift */; };
-		A000000000000000000000B1 /* CompletionTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000098 /* CompletionTokenizer.swift */; };
 		A000000000000000000000B2 /* CompletionPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000099 /* CompletionPopup.swift */; };
 		A000000000000000000000B3 /* CompletionSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009A /* CompletionSession.swift */; };
 		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
 		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
 		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
 		A000000000000000000000B7 /* EditorJump.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009E /* EditorJump.swift */; };
-		A000000000000000000000E1 /* CompletionPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E0 /* CompletionPosition.swift */; };
-		A000000000000000000000E2 /* CompletionPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E0 /* CompletionPosition.swift */; };
 		A000000000000000000000E4 /* CompletionRowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E3 /* CompletionRowStyle.swift */; };
 		A000000000000000000000E6 /* CompletionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E5 /* CompletionRowView.swift */; };
-		A000000000000000000000E8 /* CompletionPositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E7 /* CompletionPositionTests.swift */; };
 		A00000000000000000000101 /* HitNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000100 /* HitNavigation.swift */; };
 		A00000000000000000000103 /* SymbolPickerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000102 /* SymbolPickerModel.swift */; };
 		A00000000000000000000105 /* SymbolPickerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000104 /* SymbolPickerOverlay.swift */; };
@@ -175,6 +171,27 @@
 		D037C8618339D53D0298E7A6 /* PreferenceBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */; };
 		D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */; };
 		D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D073023A1B0A76E5775FC72B /* SettingsPanes.swift */; };
+		E10000000000000000000002 /* CompletionTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000001 /* CompletionTrigger.swift */; };
+		E10000000000000000000003 /* CompletionTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000001 /* CompletionTrigger.swift */; };
+		E10000000000000000000005 /* CompletionNarrowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000004 /* CompletionNarrowing.swift */; };
+		E10000000000000000000006 /* CompletionNarrowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000004 /* CompletionNarrowing.swift */; };
+		E10000000000000000000008 /* SnippetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000007 /* SnippetParser.swift */; };
+		E10000000000000000000009 /* SnippetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000007 /* SnippetParser.swift */; };
+		E1000000000000000000000B /* SnippetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000A /* SnippetSession.swift */; };
+		E1000000000000000000000D /* CompletionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000C /* CompletionList.swift */; };
+		E1000000000000000000000F /* CompletionFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000E /* CompletionFetch.swift */; };
+		E10000000000000000000011 /* CompletionAccept.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000010 /* CompletionAccept.swift */; };
+		E10000000000000000000013 /* SignatureHelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000012 /* SignatureHelpController.swift */; };
+		E10000000000000000000015 /* SignatureHelpPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000014 /* SignatureHelpPlacement.swift */; };
+		E10000000000000000000017 /* SignatureHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000016 /* SignatureHelpView.swift */; };
+		E10000000000000000000019 /* RideTextView+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000018 /* RideTextView+Edit.swift */; };
+		E1000000000000000000001B /* EditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001A /* EditorCoordinator.swift */; };
+		E1000000000000000000001D /* SessionService+Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001C /* SessionService+Query.swift */; };
+		E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001E /* CompletionTriggerTests.swift */; };
+		E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000020 /* CompletionNarrowingTests.swift */; };
+		E10000000000000000000023 /* SnippetParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000022 /* SnippetParserTests.swift */; };
+		E10000000000000000000102 /* CompletionSession+Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000101 /* CompletionSession+Snippet.swift */; };
+		E10000000000000000000104 /* SessionService+Kinds.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000103 /* SessionService+Kinds.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -278,17 +295,14 @@
 		A00000000000000000000095 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
 		A00000000000000000000096 /* FileOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOutlineView.swift; sourceTree = "<group>"; };
 		A00000000000000000000097 /* SymbolInFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolInFile.swift; sourceTree = "<group>"; };
-		A00000000000000000000098 /* CompletionTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionTokenizer.swift; sourceTree = "<group>"; };
 		A00000000000000000000099 /* CompletionPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPopup.swift; sourceTree = "<group>"; };
 		A0000000000000000000009A /* CompletionSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionSession.swift; sourceTree = "<group>"; };
 		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
 		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009E /* EditorJump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorJump.swift; sourceTree = "<group>"; };
-		A000000000000000000000E0 /* CompletionPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPosition.swift; sourceTree = "<group>"; };
 		A000000000000000000000E3 /* CompletionRowStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowStyle.swift; sourceTree = "<group>"; };
 		A000000000000000000000E5 /* CompletionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowView.swift; sourceTree = "<group>"; };
-		A000000000000000000000E7 /* CompletionPositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPositionTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000100 /* HitNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitNavigation.swift; sourceTree = "<group>"; };
 		A00000000000000000000102 /* SymbolPickerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPickerModel.swift; sourceTree = "<group>"; };
 		A00000000000000000000104 /* SymbolPickerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPickerOverlay.swift; sourceTree = "<group>"; };
@@ -330,6 +344,24 @@
 		D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferenceBindings.swift"; sourceTree = "<group>"; };
 		D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeSwatchPicker.swift"; sourceTree = "<group>"; };
 		D073023A1B0A76E5775FC72B /* SettingsPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPanes.swift"; sourceTree = "<group>"; };
+		E10000000000000000000001 /* CompletionTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionTrigger.swift"; sourceTree = "<group>"; };
+		E10000000000000000000004 /* CompletionNarrowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionNarrowing.swift"; sourceTree = "<group>"; };
+		E10000000000000000000007 /* SnippetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParser.swift"; sourceTree = "<group>"; };
+		E1000000000000000000000A /* SnippetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSession.swift"; sourceTree = "<group>"; };
+		E1000000000000000000000C /* CompletionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionList.swift"; sourceTree = "<group>"; };
+		E1000000000000000000000E /* CompletionFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionFetch.swift"; sourceTree = "<group>"; };
+		E10000000000000000000010 /* CompletionAccept.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionAccept.swift"; sourceTree = "<group>"; };
+		E10000000000000000000012 /* SignatureHelpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignatureHelpController.swift"; sourceTree = "<group>"; };
+		E10000000000000000000014 /* SignatureHelpPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignatureHelpPlacement.swift"; sourceTree = "<group>"; };
+		E10000000000000000000016 /* SignatureHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignatureHelpView.swift"; sourceTree = "<group>"; };
+		E10000000000000000000018 /* RideTextView+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Edit.swift"; sourceTree = "<group>"; };
+		E1000000000000000000001A /* EditorCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCoordinator.swift"; sourceTree = "<group>"; };
+		E1000000000000000000001C /* SessionService+Query.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Query.swift"; sourceTree = "<group>"; };
+		E1000000000000000000001E /* CompletionTriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionTriggerTests.swift"; sourceTree = "<group>"; };
+		E10000000000000000000020 /* CompletionNarrowingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionNarrowingTests.swift"; sourceTree = "<group>"; };
+		E10000000000000000000022 /* SnippetParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParserTests.swift"; sourceTree = "<group>"; };
+		E10000000000000000000101 /* CompletionSession+Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Snippet.swift"; sourceTree = "<group>"; };
+		E10000000000000000000103 /* SessionService+Kinds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Kinds.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -392,6 +424,9 @@
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				E1000000000000000000001E /* CompletionTriggerTests.swift */,
+				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
+				E10000000000000000000022 /* SnippetParserTests.swift */,
 				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* CargoWatchTests.swift */,
@@ -405,7 +440,6 @@
 				B1000000000000000000000B /* LineIndexTests.swift */,
 				B1000000000000000000008A /* HeadingLevelTests.swift */,
 				A000000000000000000000C2 /* QueryIdTests.swift */,
-				A000000000000000000000E7 /* CompletionPositionTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -492,6 +526,8 @@
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				E10000000000000000000018 /* RideTextView+Edit.swift */,
+				E1000000000000000000001A /* EditorCoordinator.swift */,
 				C00E2B0384B23C50A5620F92 /* IndentGuides.swift */,
 				B0355AEC5E462433212D91A0 /* TabItem.swift */,
 				A0000000000000000000012B /* Underlines.swift */,
@@ -570,6 +606,8 @@
 		A00000000000000000000059 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				E10000000000000000000103 /* SessionService+Kinds.swift */,
+				E1000000000000000000001C /* SessionService+Query.swift */,
 				A0000000000000000000012D /* SessionService+Paint.swift */,
 				A00000000000000000000126 /* CheckService.swift */,
 				A00000000000000000000084 /* RideEngineClient.swift */,
@@ -600,17 +638,26 @@
 		A0000000000000000000005C /* Completion */ = {
 			isa = PBXGroup;
 			children = (
+				E10000000000000000000101 /* CompletionSession+Snippet.swift */,
+				E10000000000000000000001 /* CompletionTrigger.swift */,
+				E10000000000000000000004 /* CompletionNarrowing.swift */,
+				E10000000000000000000007 /* SnippetParser.swift */,
+				E1000000000000000000000A /* SnippetSession.swift */,
+				E1000000000000000000000C /* CompletionList.swift */,
+				E1000000000000000000000E /* CompletionFetch.swift */,
+				E10000000000000000000010 /* CompletionAccept.swift */,
+				E10000000000000000000012 /* SignatureHelpController.swift */,
+				E10000000000000000000014 /* SignatureHelpPlacement.swift */,
+				E10000000000000000000016 /* SignatureHelpView.swift */,
 				C0E408E8B25CE1E947AA275E /* CompletionPopupLayout.swift */,
 				C09ADDA5838786CF3156310F /* CompletionDocCard.swift */,
 				C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */,
-				A00000000000000000000098 /* CompletionTokenizer.swift */,
 				A00000000000000000000099 /* CompletionPopup.swift */,
 				A0000000000000000000009A /* CompletionSession.swift */,
 				A0000000000000000000009B /* CatalogPath.swift */,
 				A000000000000000000000CF /* CompletionGate.swift */,
 				A000000000000000000000D3 /* CompletionPlacement.swift */,
 				A000000000000000000000D5 /* CompletionLifecycle.swift */,
-				A000000000000000000000E0 /* CompletionPosition.swift */,
 				A000000000000000000000E3 /* CompletionRowStyle.swift */,
 				A000000000000000000000E5 /* CompletionRowView.swift */,
 			);
@@ -745,6 +792,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E10000000000000000000003 /* CompletionTrigger.swift in Sources */,
+				E10000000000000000000006 /* CompletionNarrowing.swift in Sources */,
+				E10000000000000000000009 /* SnippetParser.swift in Sources */,
+				E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */,
+				E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */,
+				E10000000000000000000023 /* SnippetParserTests.swift in Sources */,
 				C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */,
 				C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */,
 				C009D8110230ED36CA278F06 /* Plural.swift in Sources */,
@@ -775,8 +828,6 @@
 				B1000000000000000000000D /* LineIndex.swift in Sources */,
 				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
 				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
-				A000000000000000000000E1 /* CompletionPosition.swift in Sources */,
-				A000000000000000000000E8 /* CompletionPositionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +835,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E10000000000000000000102 /* CompletionSession+Snippet.swift in Sources */,
+				E10000000000000000000104 /* SessionService+Kinds.swift in Sources */,
+				E10000000000000000000002 /* CompletionTrigger.swift in Sources */,
+				E10000000000000000000005 /* CompletionNarrowing.swift in Sources */,
+				E10000000000000000000008 /* SnippetParser.swift in Sources */,
+				E1000000000000000000000B /* SnippetSession.swift in Sources */,
+				E1000000000000000000000D /* CompletionList.swift in Sources */,
+				E1000000000000000000000F /* CompletionFetch.swift in Sources */,
+				E10000000000000000000011 /* CompletionAccept.swift in Sources */,
+				E10000000000000000000013 /* SignatureHelpController.swift in Sources */,
+				E10000000000000000000015 /* SignatureHelpPlacement.swift in Sources */,
+				E10000000000000000000017 /* SignatureHelpView.swift in Sources */,
+				E10000000000000000000019 /* RideTextView+Edit.swift in Sources */,
+				E1000000000000000000001B /* EditorCoordinator.swift in Sources */,
+				E1000000000000000000001D /* SessionService+Query.swift in Sources */,
 				D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */,
 				D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */,
 				D037C8618339D53D0298E7A6 /* PreferenceBindings.swift in Sources */,
@@ -902,7 +968,6 @@
 				A000000000000000000000A5 /* SessionService.swift in Sources */,
 				A000000000000000000000A6 /* FileOutlineView.swift in Sources */,
 				A000000000000000000000A7 /* SymbolInFile.swift in Sources */,
-				A000000000000000000000B1 /* CompletionTokenizer.swift in Sources */,
 				A000000000000000000000B2 /* CompletionPopup.swift in Sources */,
 				A000000000000000000000B3 /* CompletionSession.swift in Sources */,
 				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
@@ -913,7 +978,6 @@
 				A000000000000000000000D4 /* CompletionPlacement.swift in Sources */,
 				A000000000000000000000D6 /* CompletionLifecycle.swift in Sources */,
 				A000000000000000000000D8 /* IndexStatusLabel.swift in Sources */,
-				A000000000000000000000E2 /* CompletionPosition.swift in Sources */,
 				A000000000000000000000E4 /* CompletionRowStyle.swift in Sources */,
 				A000000000000000000000E6 /* CompletionRowView.swift in Sources */,
 			);

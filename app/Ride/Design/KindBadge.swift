@@ -24,6 +24,8 @@ enum KindStyle {
         case .field: return "p"
         case .table: return "["
         case .target: return ">"
+        case .variant: return "V"
+        case .header: return "h"
         }
     }
 

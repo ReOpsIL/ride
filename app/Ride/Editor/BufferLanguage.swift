@@ -77,4 +77,8 @@ enum BufferLanguage {
     var usesClang: Bool {
         self == .c || self == .cpp
     }
+
+    var hasSignatureHelp: Bool {
+        self == .rust || usesClang
+    }
 }

@@ -26,6 +26,8 @@ enum CompletionRowStyle {
         case .field: return "fld"
         case .table: return "tbl"
         case .target: return "tgt"
+        case .variant: return "V"
+        case .header: return "h"
         }
     }
 
@@ -33,8 +35,8 @@ enum CompletionRowStyle {
         switch kind {
         case .keyword: return theme.keyword
         case .local: return theme.variable
-        case .crate, .mod, .namespace, .field: return theme.property
-        case .`struct`, .`enum`, .union, .trait, .type, .`class`, .table: return theme.type
+        case .crate, .mod, .namespace, .field, .header: return theme.property
+        case .`struct`, .`enum`, .union, .trait, .type, .`class`, .table, .variant: return theme.type
         case .fn, .method, .target: return theme.function
         case .macro: return theme.macro
         case .const, .`static`: return theme.constant
@@ -43,6 +45,9 @@ enum CompletionRowStyle {
     }
 
     static func detail(_ hit: CompletionHit) -> String {
+        if !hit.detail.isEmpty {
+            return hit.detail
+        }
         if !hit.signature.isEmpty {
             return hit.signature
         }
@@ -59,11 +64,24 @@ enum CompletionRowStyle {
         return "\(hit.crateName) \(hit.crateVersion)"
     }
 
-    static func name(_ text: String, prefix: String, chrome: ChromeColors) -> NSAttributedString {
+    static func docOrigin(_ hit: CompletionHit) -> String {
+        let crate = origin(hit)
+        if crate.isEmpty {
+            return hit.path
+        }
+        return hit.path.isEmpty ? crate : "\(hit.path) · \(crate)"
+    }
+
+    static func name(_ text: String, prefix: String, chrome: ChromeColors, deprecated: Bool = false) -> NSAttributedString {
         let font = Tokens.nsMono(12, weight: .semibold)
         let out = NSMutableAttributedString(string: text, attributes: [.font: font, .foregroundColor: chrome.textPrimary])
         for range in MatchHighlight.ranges(in: text, query: prefix) {
             out.addAttribute(.foregroundColor, value: chrome.accent, range: range)
+        }
+        if deprecated {
+            let full = NSRange(location: 0, length: out.length)
+            out.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: full)
+            out.addAttribute(.strikethroughColor, value: chrome.textSecondary, range: full)
         }
         return out
     }

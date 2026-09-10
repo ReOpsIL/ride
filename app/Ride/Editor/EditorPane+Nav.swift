@@ -14,6 +14,9 @@ extension EditorPane.Coordinator {
             }
             Definitions.lookup(document: self.document, view: view, utf16: utf16, done: done)
         }
+        view.hooks.binding = { [weak self] in
+            self.map { EditorBinding(document: $0.document, state: $0.state) }
+        }
     }
 
     func flush(_ host: EditorHostView) {

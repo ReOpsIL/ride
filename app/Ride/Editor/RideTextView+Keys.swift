@@ -2,16 +2,24 @@ import AppKit
 
 extension RideTextView {
     override func insertTab(_ sender: Any?) {
-        if CompletionSession.shared.popup.accept() {
+        if CompletionSession.shared.accept() || CompletionSession.shared.snippetNext() {
             return
         }
         insertText(String(repeating: " ", count: tabWidth), replacementRange: selectedRange())
     }
 
-    override func insertNewline(_ sender: Any?) {
-        if CompletionSession.shared.popup.accept() {
+    override func insertBacktab(_ sender: Any?) {
+        if CompletionSession.shared.snippetPrevious() {
             return
         }
+        super.insertBacktab(sender)
+    }
+
+    override func insertNewline(_ sender: Any?) {
+        if CompletionSession.shared.accept() {
+            return
+        }
+        SignatureHelpController.shared.hide()
         super.insertNewline(sender)
     }
 
@@ -20,31 +28,49 @@ extension RideTextView {
             CompletionSession.shared.hide()
             return
         }
+        if SignatureHelpController.shared.isVisible {
+            SignatureHelpController.shared.hide()
+            return
+        }
+        if CompletionSession.shared.endSnippet() {
+            return
+        }
         super.cancelOperation(sender)
     }
 
     override func keyDown(with event: NSEvent) {
         HoverController.shared.hide()
-        if CompletionSession.shared.isVisible {
-            switch event.keyCode {
-            case 126:
-                CompletionSession.shared.popup.move(-1)
-                return
-            case 125:
-                CompletionSession.shared.popup.move(1)
-                return
-            case 53:
-                CompletionSession.shared.hide()
-                return
-            case 36, 76, 48:
-                if CompletionSession.shared.popup.accept() {
-                    return
-                }
-            default:
-                break
-            }
+        if event.keyCode == 49, event.modifierFlags.contains(.control) {
+            CompletionSession.shared.trigger(view: self)
+            return
+        }
+        if CompletionSession.shared.isVisible, handleCompletionKey(event) {
+            return
         }
         super.keyDown(with: event)
+    }
+
+    private func handleCompletionKey(_ event: NSEvent) -> Bool {
+        let popup = CompletionSession.shared.popup
+        if event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "i" {
+            popup.toggleWideDoc()
+            return true
+        }
+        switch event.keyCode {
+        case 126:
+            popup.move(-1)
+            return true
+        case 125:
+            popup.move(1)
+            return true
+        case 53:
+            CompletionSession.shared.hide()
+            return true
+        case 36, 76, 48:
+            return CompletionSession.shared.accept()
+        default:
+            return false
+        }
     }
 
     override func doCommand(by selector: Selector) {
