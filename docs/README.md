@@ -14,7 +14,8 @@
 
 | Module | Responsibility |
 |---|---|
-| `src/discover` | `$CARGO_HOME` registry and git checkouts, rustc sysroot, `cargo metadata` |
+| `src/discover` | `$CARGO_HOME` registry and git checkouts, rustc sysroot, `cargo metadata`, clang system include directories |
+| `src/includes` | `#include` path completion over the including file's directory, compile-database and system include directories |
 | `src/extract` | tree-sitter item extraction with module paths, impls, re-exports |
 | `src/markdown` | pulldown-cmark HTML rendering with token spans for Rust, C and C++ fences |
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
@@ -40,7 +41,13 @@
 
 ### C / C++ headers
 
-A C/C++ session keeps its file path and the include directories from its `compile_commands.json` entry (`-I`, `-iquote`, `-isystem`, resolved against the entry's `directory`). Its `#include` lines (quoted ones relative to the including file first, then the include directories; angled ones only from the include directories) are followed transitively through an engine-wide header cache (`engine/headers.rs`, keyed by path and mtime, at most 64 files per lookup, files over 4 MB skipped). Each cached header holds its outline, its own includes and a `TypeTable`. Definitions of a symbol found in a reachable header come back with `source_path`, and their outline items join buffer-local completion below buffer definitions but above plain identifier mentions. System headers are only reached when an include directory contains them; there is no sysroot probe.
+A C/C++ session keeps its file path and the include directories from its `compile_commands.json` entry (`-I`, `-iquote`, `-isystem`, resolved against the entry's `directory`). Its `#include` lines (quoted ones relative to the including file first, then the include directories; angled ones only from the include directories) are followed transitively through an engine-wide header cache (`engine/headers.rs`, keyed by path and mtime, at most 64 files per lookup, files over 4 MB skipped). Each cached header holds its outline, its own includes and a `TypeTable`. Definitions of a symbol found in a reachable header come back with `source_path`, and their outline items join buffer-local completion below buffer definitions but above plain identifier mentions. System headers are only reached when an include directory contains them; header following does not probe the sysroot.
+
+#### Include completion
+
+`includes::complete` turns an `IncludeRequest` (quoted or angled, the text typed after the delimiter, the including file, the compile-database search dirs and the ranked system dirs) into `CompletionHit`s by listing directories only. The typed text splits at its last `/` into a sub-directory and a prefix; the sub-directory is listed under each root in order (quoted: the including file's directory, then the search dirs, then system dirs; angled: search dirs, then system dirs) and the first root to supply a name wins. Only header-like files (`h hh hpp hxx h++ inl ipp tpp inc` or no extension, so libc++ `vector` appears) and directories are listed; dotfiles are dropped and `__*` names stay hidden until the prefix starts with `_`. Directory rows are `ItemKind::Mod` and end in `/` so accepting one re-triggers; file rows are `ItemKind::Header` and insert the bare name, the caller closes the delimiter. `signature` carries the root directory and `source_path` the absolute path. Scores are tiered: including-file directory 900, search dirs 800, system dirs 700, framework dirs 600, with files 10 above directories, shorter names first and an exact name match +100. Framework directories (`Foo.framework/Headers/X.h`) complete as `Foo/` and then `Foo/X.h`. Listings are cached process-wide by directory and mtime, at most 4000 entries each.
+
+The system directories come from `discover::system_includes::SystemIncludes`, which runs `clang -E -x <c|c++> - -v` once per (language, extra args) and parses the `#include <...> search starts here:` block; framework directories are flagged and sorted last, and a failed probe caches an empty list. `probe_args` keeps only the `-isysroot`, `--sysroot`, `-target` / `--target` and `-stdlib` flags of a compile-database entry so the probe sees the entry's SDK without its warnings and defines.
 
 ### C / C++ member access
 

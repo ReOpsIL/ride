@@ -7,6 +7,7 @@ mod error;
 mod extract;
 mod ffi;
 mod highlight;
+pub mod includes;
 mod index;
 mod markdown;
 mod query;
@@ -17,7 +18,8 @@ pub use check::{
     format_clang, format_source, include_dirs, parse_clang, parse_lines, run_check, run_clang_check,
 };
 pub use discover::{
-    CrateTarball, DiscoveredCrate, Discovery, cargo_home, discover, sysroot_path, workspace_info,
+    CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,
+    sysroot_path, system_includes, workspace_info,
 };
 pub use engine::{Engine, engine_start};
 pub use error::EngineError;

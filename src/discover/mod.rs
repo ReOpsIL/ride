@@ -9,10 +9,12 @@ mod metadata;
 mod name_version;
 mod registry;
 mod sysroot;
+pub mod system_includes;
 
 pub use home::cargo_home;
 pub use metadata::workspace_info;
 pub use sysroot::sysroot_path;
+pub use system_includes::{SystemIncludes, probe_args};
 
 #[derive(Debug, Clone)]
 pub struct DiscoveredCrate {
