@@ -2,7 +2,9 @@ use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
 
+use super::c_member_types::{collect_member_types, enumerators, free_function};
 use super::c_names::{SPECIFIERS, function_name, node_text, plain_name, type_name};
+use super::c_scopes::{namespace, namespace_alias};
 use super::types::TypeTable;
 use super::walk::each_node;
 
@@ -10,8 +12,12 @@ pub fn build(tree: &Tree, text: &str) -> TypeTable {
     let mut table = TypeTable::default();
     each_node(tree.root_node(), &mut |node| match node.kind() {
         k if SPECIFIERS.contains(&k) => specifier(&mut table, node, text, None),
+        "enum_specifier" => enumerators(&mut table, node, text),
         "type_definition" => typedef(&mut table, node, text),
         "alias_declaration" => alias(&mut table, node, text),
+        "namespace_definition" => namespace(&mut table, node, text),
+        "namespace_alias_definition" => namespace_alias(&mut table, node, text),
+        "function_definition" | "declaration" => free_function(&mut table, node, text),
         _ => {}
     });
     table
@@ -31,6 +37,7 @@ fn specifier(table: &mut TypeTable, node: Node<'_>, text: &str, fallback: Option
     let mut items = Vec::new();
     members(body, text, &mut items);
     table.add_members(name.clone(), items);
+    table.add_member_types(name.clone(), collect_member_types(body, text));
     table.add_bases(name, bases(node, text));
 }
 
@@ -99,6 +106,17 @@ fn members(body: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
 }
 
 fn declarators(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
+    if let Some(ty) = node.child_by_field_name("type")
+        && ty.child_by_field_name("body").is_some()
+    {
+        let kind = match ty.kind() {
+            "enum_specifier" => ItemKind::Enum,
+            "class_specifier" => ItemKind::Class,
+            "union_specifier" => ItemKind::Union,
+            _ => ItemKind::Struct,
+        };
+        named(ty, kind, text, out);
+    }
     let mut cursor = node.walk();
     for declarator in node.children_by_field_name("declarator", &mut cursor) {
         if let Some((name, _)) = function_name(declarator, text) {

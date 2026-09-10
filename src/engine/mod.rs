@@ -16,6 +16,7 @@ use crate::highlight::BufferSession;
 mod access;
 mod edits;
 mod header_hits;
+mod header_store;
 mod headers;
 mod identifier;
 mod include_graph;
@@ -24,6 +25,7 @@ mod lists;
 mod merge;
 mod paths;
 mod query;
+mod reach;
 mod sessions;
 mod snapshot;
 mod symbols;
@@ -43,6 +45,7 @@ pub(crate) struct Inner {
     pub(crate) index: Option<Index>,
     pub(crate) reader: Option<IndexReader>,
     pub(crate) headers: Arc<headers::HeaderCache>,
+    pub(crate) scopes: reach::ScopeCache,
     pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
 }
 
@@ -58,6 +61,7 @@ impl Engine {
             .flatten()
             .map(|s| s.join("lib/rustlib/src/rust/library/std").is_dir())
             .unwrap_or(false);
+        let header_store = Path::new(&config.index_dir).join("headers");
         Self {
             inner: RwLock::new(Inner {
                 config,
@@ -71,7 +75,8 @@ impl Engine {
                 generation: 0,
                 index: None,
                 reader: None,
-                headers: Arc::default(),
+                headers: Arc::new(headers::HeaderCache::new(Some(header_store))),
+                scopes: reach::ScopeCache::default(),
                 system_includes: Arc::default(),
             }),
         }

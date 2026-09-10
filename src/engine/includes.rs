@@ -8,7 +8,7 @@ use super::snapshot::Snapshot;
 
 pub fn hits(snap: &Snapshot, q: &CompletionQuery, quoted: bool, dir: &str) -> CompletionResponse {
     let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
-    let Some(scope) = snap.scope.as_ref() else {
+    let Some(scope) = snap.scope() else {
         return CompletionResponse::empty(q.query_id);
     };
     let system: Vec<(PathBuf, bool)> = snap

@@ -1,93 +1,81 @@
 use tree_sitter::{Node, Tree};
 
-use super::c_names::{SPECIFIERS, WRAPPERS, node_text, plain_name, type_name, wrapped};
-use super::walk::each_node;
+use super::c_decls::{Declared, declared, enclosing_type};
+use super::c_names::{node_text, plain_name, type_name};
+use super::members::{Chain, MAX_CHAIN, Root, Step};
 
-const DECLARATIONS: &[&str] = &[
-    "declaration",
-    "parameter_declaration",
-    "optional_parameter_declaration",
-    "field_declaration",
+const CASTS: &[&str] = &[
+    "static_cast",
+    "dynamic_cast",
+    "reinterpret_cast",
+    "const_cast",
 ];
 
-pub fn receiver_type(tree: &Tree, text: &str, receiver: Node<'_>) -> Option<String> {
-    if receiver.kind() == "this" {
-        return enclosing_type(receiver, text);
-    }
-    if receiver.kind() != "identifier" {
+const TRANSPARENT: &[&str] = &[
+    "subscript_expression",
+    "pointer_expression",
+    "parenthesized_expression",
+    "unary_expression",
+];
+
+pub fn receiver_chain(tree: &Tree, text: &str, expr: Node<'_>) -> Option<Chain> {
+    chain(tree, text, expr, 0)
+}
+
+fn chain(tree: &Tree, text: &str, expr: Node<'_>, depth: usize) -> Option<Chain> {
+    if depth > MAX_CHAIN {
         return None;
     }
-    let name = node_text(receiver, text);
-    let at = receiver.start_byte();
-    let mut before: Option<(usize, Node<'_>)> = None;
-    let mut first: Option<Node<'_>> = None;
-    each_node(tree.root_node(), &mut |node| {
-        if !DECLARATIONS.contains(&node.kind()) || !declares(node, text, &name) {
-            return;
+    match expr.kind() {
+        "identifier" => match declared(tree, text, expr)? {
+            Declared::Type(name) => Some(Chain::root(Root::Type(name))),
+            Declared::Init(value) => chain(tree, text, value, depth + 1),
+        },
+        "this" => enclosing_type(expr, text).map(|t| Chain::root(Root::Type(t))),
+        "field_expression" => {
+            let argument = expr.child_by_field_name("argument")?;
+            let field = plain_name(expr.child_by_field_name("field")?, text)?;
+            chain(tree, text, argument, depth + 1)?.then(Step::Field(field))
         }
-        let Some(ty) = node.child_by_field_name("type") else {
-            return;
-        };
-        first.get_or_insert(ty);
-        if node.start_byte() < at && before.is_none_or(|(b, _)| node.start_byte() > b) {
-            before = Some((node.start_byte(), ty));
+        "call_expression" => call(tree, text, expr, depth),
+        "cast_expression" | "compound_literal_expression" | "new_expression" => expr
+            .child_by_field_name("type")
+            .and_then(|t| type_name(t, text))
+            .map(|t| Chain::root(Root::Type(t))),
+        kind if TRANSPARENT.contains(&kind) => {
+            let inner = expr
+                .child_by_field_name("argument")
+                .or_else(|| expr.named_child(0))?;
+            chain(tree, text, inner, depth + 1)
         }
-    });
-    let ty = before.map(|(_, ty)| ty).or(first)?;
-    type_name(ty, text)
-}
-
-fn declares(node: Node<'_>, text: &str, name: &str) -> bool {
-    let mut cursor = node.walk();
-    node.children_by_field_name("declarator", &mut cursor)
-        .any(|d| plain_name(d, text).as_deref() == Some(name))
-}
-
-fn enclosing_type(node: Node<'_>, text: &str) -> Option<String> {
-    let mut current = node.parent();
-    while let Some(parent) = current {
-        if SPECIFIERS.contains(&parent.kind()) {
-            return parent
-                .child_by_field_name("name")
-                .map(|n| node_text(n, text));
-        }
-        if parent.kind() == "function_definition"
-            && let Some(scope) = definition_scope(parent, text)
-        {
-            return Some(scope);
-        }
-        current = parent.parent();
+        _ => None,
     }
-    None
 }
 
-fn definition_scope(definition: Node<'_>, text: &str) -> Option<String> {
-    let mut node = definition.child_by_field_name("declarator")?;
-    while WRAPPERS.contains(&node.kind()) {
-        node = wrapped(node)?;
-    }
-    let inner = node.child_by_field_name("declarator")?;
-    if inner.kind() != "qualified_identifier" {
-        return None;
-    }
-    let scope = inner.child_by_field_name("scope")?;
-    type_name(scope, text).or_else(|| Some(node_text(scope, text)))
-}
-
-pub fn no_receiver(_: &Tree, _: &str, _: Node<'_>) -> Option<String> {
-    None
-}
-
-pub fn declares_local(node: Node<'_>, _: &str) -> bool {
-    let mut current = node;
-    for _ in 0..4 {
-        let Some(parent) = current.parent() else {
-            return false;
-        };
-        if DECLARATIONS.contains(&parent.kind()) {
-            return super::locals::within_field(parent, "declarator", node);
+fn call(tree: &Tree, text: &str, expr: Node<'_>, depth: usize) -> Option<Chain> {
+    let function = expr.child_by_field_name("function")?;
+    match function.kind() {
+        "identifier" => Some(Chain::root(Root::Call(node_text(function, text)))),
+        "field_expression" => {
+            let argument = function.child_by_field_name("argument")?;
+            let field = plain_name(function.child_by_field_name("field")?, text)?;
+            chain(tree, text, argument, depth + 1)?.then(Step::Call(field))
         }
-        current = parent;
+        "qualified_identifier" => {
+            let scope = function.child_by_field_name("scope")?;
+            let name = plain_name(function.child_by_field_name("name")?, text)?;
+            let owner = type_name(scope, text).unwrap_or_else(|| node_text(scope, text));
+            Chain::root(Root::Type(owner)).then(Step::Call(name))
+        }
+        "template_function" => {
+            let name = node_text(function.child_by_field_name("name")?, text);
+            if CASTS.contains(&name.as_str()) {
+                let args = function.child_by_field_name("arguments")?;
+                let target = args.named_child(0).and_then(|t| type_name(t, text))?;
+                return Some(Chain::root(Root::Type(target)));
+            }
+            Some(Chain::root(Root::Call(name)))
+        }
+        _ => None,
     }
-    false
 }

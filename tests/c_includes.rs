@@ -190,6 +190,56 @@ fn header_edits_are_picked_up_on_the_next_lookup() {
 }
 
 #[test]
+fn cached_header_scope_is_reused_until_a_header_changes_or_disappears() {
+    let dir = project();
+    let root = dir.path();
+    let engine = engine();
+    let open = engine
+        .open_session(
+            "c".into(),
+            Some(root.join("main.c").display().to_string()),
+            MAIN_C.into(),
+            None,
+        )
+        .unwrap();
+    let id = open.session_id;
+    let names = |engine: &ride_engine::Engine| -> Vec<String> {
+        ["shape_sides(&s)", "ext_value()"]
+            .into_iter()
+            .flat_map(|anchor| {
+                let at = MAIN_C.find(anchor).unwrap();
+                engine
+                    .query_completions(query(id, &anchor[..4], at))
+                    .hits
+                    .into_iter()
+                    .map(|h| h.name)
+            })
+            .collect()
+    };
+    let first = names(&engine);
+    assert!(first.contains(&"shape_sides".to_string()), "{first:?}");
+    assert!(first.contains(&"ext_value".to_string()), "{first:?}");
+    assert_eq!(names(&engine), first);
+    let edit = ride_engine::InputEditFfi {
+        start_byte: 0,
+        old_end_byte: 0,
+        new_end_byte: 0,
+        start_row: 0,
+        start_column: 0,
+        old_end_row: 0,
+        old_end_column: 0,
+        new_end_row: 0,
+        new_end_column: 0,
+    };
+    engine.apply_edit(id, edit, String::new(), None).unwrap();
+    assert_eq!(names(&engine), first);
+    fs::remove_file(root.join("include/ext.h")).unwrap();
+    let after = names(&engine);
+    assert!(after.contains(&"shape_sides".to_string()), "{after:?}");
+    assert!(!after.contains(&"ext_value".to_string()), "{after:?}");
+}
+
+#[test]
 fn a_header_with_cpp_markers_opens_as_cpp() {
     let engine = engine();
     let cpp = engine

@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use crate::error::EngineError;
 use crate::ffi::{
@@ -6,23 +7,15 @@ use crate::ffi::{
 };
 
 use super::edit::{apply_replica, to_ts_edit};
-use super::includes::IncludeRef;
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{subtract, union_into};
+use super::scope::{ScopeCache, SourceScope};
 use super::site::SiteAt;
 use super::syntax::{Lang, LocalHits, LocalQuery, Syntax};
-use super::types::TypeTable;
-
-#[derive(Debug, Clone, Default)]
-pub struct SourceScope {
-    pub path: Option<PathBuf>,
-    pub search_dirs: Vec<PathBuf>,
-    pub includes: Vec<IncludeRef>,
-    pub types: TypeTable,
-}
 
 pub struct BufferSession {
     pub generation: u64,
+    edits: u64,
     lang: Lang,
     path: Option<PathBuf>,
     search_dirs: Vec<PathBuf>,
@@ -30,6 +23,7 @@ pub struct BufferSession {
     syntax: Box<dyn Syntax>,
     already_covered: Vec<ByteRange>,
     last_outline: Vec<OutlineItem>,
+    scope_cache: ScopeCache,
 }
 
 impl BufferSession {
@@ -48,15 +42,16 @@ impl BufferSession {
     pub fn locate(&mut self, path: &Path, search_dirs: Vec<PathBuf>) {
         self.path = Some(path.to_path_buf());
         self.search_dirs = search_dirs;
+        self.edits += 1;
     }
 
-    pub fn scope(&self) -> SourceScope {
-        SourceScope {
+    pub fn scope(&self) -> Arc<SourceScope> {
+        self.scope_cache.get_or_build(self.edits, || SourceScope {
             path: self.path.clone(),
             search_dirs: self.search_dirs.clone(),
             includes: self.syntax.includes(&self.replica),
             types: self.syntax.type_table(&self.replica),
-        }
+        })
     }
 
     pub fn local_hits(&self, q: &LocalQuery<'_>) -> LocalHits {
@@ -104,6 +99,7 @@ impl BufferSession {
         let errors = syntax.errors();
         let session = Self {
             generation: 1,
+            edits: 1,
             lang,
             path: None,
             search_dirs: Vec::new(),
@@ -111,6 +107,7 @@ impl BufferSession {
             syntax,
             already_covered: painted.clone(),
             last_outline: outline.clone(),
+            scope_cache: ScopeCache::default(),
         };
         Ok((
             session,
@@ -133,6 +130,7 @@ impl BufferSession {
         apply_replica(&mut self.replica, &edit, inserted)?;
         let changed = self.syntax.edit(&to_ts_edit(&edit), &self.replica)?;
         self.generation += 1;
+        self.edits += 1;
         self.already_covered = subtract(&self.already_covered, &changed);
         let to_style = clip_changed(&changed, visible, self.replica.len());
         union_into(&mut self.already_covered, &to_style);
@@ -161,6 +159,7 @@ impl BufferSession {
         self.replica = text;
         self.syntax.parse_full(&self.replica)?;
         self.generation += 1;
+        self.edits += 1;
         self.already_covered.clear();
         let painted = paint_range(self.replica.len(), visible);
         union_into(&mut self.already_covered, &painted);

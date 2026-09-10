@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::{c_members, imports, includes, site, toml_outline, types};
+use crate::highlight::{imports, includes, members, site, toml_outline, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/toml/highlights.scm");
 
@@ -83,7 +83,7 @@ pub fn grammar() -> Grammar {
         outline: toml_outline::outline,
         member_ops: &[],
         member_kinds: &[],
-        receiver_type: c_members::no_receiver,
+        receiver: members::no_receiver,
         type_table: types::empty_table,
         includes: includes::no_includes,
         site: site::plain_site,

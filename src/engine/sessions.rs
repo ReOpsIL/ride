@@ -104,6 +104,7 @@ impl Engine {
         let _ = self.write(|i| {
             i.sessions.remove(&session_id);
             i.latest_query_id.remove(&session_id);
+            i.scopes.remove(session_id);
         });
     }
 }

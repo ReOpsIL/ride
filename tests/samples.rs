@@ -160,6 +160,27 @@ fn cpp_demo_resolves_classes_bases_this_and_sniffed_headers() {
         definition(&engine, id, &text, "Registry registry"),
         (ItemKind::Class, registry)
     );
+    let geo = members(&engine, id, &text, "    geo::");
+    for expected in [
+        "Circle",
+        "Rect",
+        "Registry",
+        "Shape",
+        "scale_all",
+        "total_area",
+    ] {
+        assert!(
+            geo.contains(&expected.to_string()),
+            "{expected} missing in {geo:?}"
+        );
+    }
+    let (id, text, _) = open(&engine, &root.join("src/registry.cpp"));
+    let registry_members = members(&engine, id, &text, "void Registry::");
+    assert_eq!(
+        registry_members,
+        vec!["add", "find", "size", "shapes_"],
+        "{registry_members:?}"
+    );
 
     let (id, text, lang) = open(&engine, &root.join("src/shapes.cpp"));
     assert_eq!(lang, Lang::Cpp);

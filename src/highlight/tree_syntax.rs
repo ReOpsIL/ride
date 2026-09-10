@@ -1,3 +1,5 @@
+use std::sync::OnceLock;
+
 use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
@@ -15,7 +17,7 @@ use super::{errors, locals, spans, symbol};
 pub struct TreeSyntax {
     grammar: Grammar,
     parser: Parser,
-    query: Query,
+    query: OnceLock<Option<Query>>,
     tree: Option<Tree>,
 }
 
@@ -23,13 +25,22 @@ impl TreeSyntax {
     pub fn new(grammar: Grammar) -> Result<Self, EngineError> {
         let mut parser = Parser::new();
         parser.set_language(&grammar.language).map_err(lang_err)?;
-        let query = Query::new(&grammar.language, grammar.highlights).map_err(query_err)?;
         Ok(Self {
             grammar,
             parser,
-            query,
+            query: OnceLock::new(),
             tree: None,
         })
+    }
+
+    fn query(&self) -> Option<&Query> {
+        self.query
+            .get_or_init(|| {
+                Query::new(&self.grammar.language, self.grammar.highlights)
+                    .map_err(query_err)
+                    .ok()
+            })
+            .as_ref()
     }
 
     pub fn set_included_ranges(&mut self, ranges: &[Range]) -> Result<(), EngineError> {
@@ -72,7 +83,8 @@ impl Syntax for TreeSyntax {
     fn highlights(&self, text: &str, ranges: &[ByteRange]) -> Vec<HighlightSpan> {
         self.tree
             .as_ref()
-            .map(|t| spans::highlights(&self.query, t, text, ranges))
+            .zip(self.query())
+            .map(|(t, query)| spans::highlights(query, t, text, ranges))
             .unwrap_or_default()
     }
 
@@ -99,7 +111,7 @@ impl Syntax for TreeSyntax {
             Some(receiver) => LocalHits {
                 hits: members::fallback_hits(tree, text, outline, q.prefix, limit, &self.grammar),
                 access: Some(Access {
-                    type_name: receiver.and_then(|r| (self.grammar.receiver_type)(tree, text, r)),
+                    chain: receiver.and_then(|r| (self.grammar.receiver)(tree, text, r)),
                 }),
             },
             None => LocalHits {

@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use tree_sitter::{Node, Tree};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IncludeRef {
     pub name: String,
     pub quoted: bool,
