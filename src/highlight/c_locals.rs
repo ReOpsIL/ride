@@ -18,10 +18,6 @@ const SKIPPED: &[&str] = &[
     "attribute_declaration",
 ];
 
-pub fn declares_local(node: Node<'_>, _: &str) -> bool {
-    owner(node).is_some()
-}
-
 pub fn detail(node: Node<'_>, text: &str) -> Option<String> {
     let owner = owner(node)?;
     let mut cursor = owner.walk();

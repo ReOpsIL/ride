@@ -12,7 +12,8 @@ use crate::highlight::{
 use crate::query::IndexSrc;
 
 use super::Engine;
-use super::headers::HeaderCache;
+use super::headers::Header;
+use super::reach::Reach;
 
 pub struct Catalog {
     pub index_dir: String,
@@ -34,15 +35,30 @@ pub struct Snapshot {
     pub lang: Lang,
     pub site: Option<SiteAt>,
     pub local: Option<LocalHits>,
-    pub literal: Option<LiteralState>,
-    pub scope: Option<SourceScope>,
+    pub reach: Option<Reach>,
     pub imports: Vec<String>,
+    pub literal: Option<LiteralState>,
     pub postfix_receiver: Option<(usize, usize)>,
     pub receiver_text: Option<String>,
-    pub headers: Arc<HeaderCache>,
     pub system_includes: Arc<SystemIncludes>,
     pub catalog: Catalog,
     pub workspace: Option<WorkspaceInfo>,
+}
+
+impl Snapshot {
+    pub fn scope(&self) -> Option<&Arc<SourceScope>> {
+        self.reach.as_ref().map(Reach::scope)
+    }
+
+    pub fn headers(&self) -> &[Arc<Header>] {
+        self.reach.as_ref().map(Reach::headers).unwrap_or(&[])
+    }
+
+    pub fn remember(&self, engine: &Engine) {
+        if let Some(reach) = &self.reach {
+            reach.remember(engine);
+        }
+    }
 }
 
 pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
@@ -70,6 +86,12 @@ pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot
                         at: at.replace_start as u32,
                     })
                 });
+            let literal = session
+                .zip(site.as_ref())
+                .filter(|(_, at)| matches!(at.site, Site::StructLiteral(_)))
+                .map(|(s, at)| {
+                    literal_state(s.replica(), at.replace_start, q.cursor_byte as usize)
+                });
             let postfix_receiver = session
                 .zip(site.as_ref())
                 .filter(|(s, at)| s.lang() == Lang::Rust && matches!(at.site, Site::MemberAccess))
@@ -77,22 +99,15 @@ pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot
             let receiver_text = postfix_receiver
                 .zip(session)
                 .map(|((a, b), s)| s.replica()[a..b].to_string());
-            let literal = session
-                .zip(site.as_ref())
-                .filter(|(_, at)| matches!(at.site, Site::StructLiteral(_)))
-                .map(|(s, at)| {
-                    literal_state(s.replica(), at.replace_start, q.cursor_byte as usize)
-                });
             Some(Snapshot {
                 lang,
                 site,
                 local,
+                literal,
                 postfix_receiver,
                 receiver_text,
-                literal,
-                scope: session.map(|s| s.scope()),
+                reach: session.map(|s| Reach::take(i, q.session_id, s)),
                 imports: session.map(|s| s.imports()).unwrap_or_default(),
-                headers: i.headers.clone(),
                 system_includes: i.system_includes.clone(),
                 catalog: Catalog {
                     index_dir: i.config.index_dir.clone(),

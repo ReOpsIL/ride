@@ -5,8 +5,9 @@ use crate::highlight::CallSite;
 use crate::params;
 use crate::query::exact_search;
 
+use super::reach::Reach;
 use super::snapshot::Catalog;
-use super::{Engine, header_hits, include_graph};
+use super::{Engine, header_hits};
 
 const CALLABLE: &[ItemKind] = &[ItemKind::Fn, ItemKind::Method, ItemKind::Macro];
 
@@ -40,8 +41,7 @@ fn help(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<SignatureH
                 call,
                 local,
                 session.lang().has_catalog(),
-                session.scope(),
-                i.headers.clone(),
+                Reach::take(i, session_id, session),
                 Catalog {
                     index_dir: i.config.index_dir.clone(),
                     index: i.index.clone(),
@@ -52,11 +52,10 @@ fn help(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<SignatureH
         })
         .ok()
         .flatten()?;
-    let (call, mut hits, catalog, scope, headers, cat) = snap;
+    let (call, mut hits, catalog, reach, cat) = snap;
     if hits.iter().all(|h| h.signature.is_empty()) {
-        let reachable = include_graph::reachable(&headers, &scope);
         hits.extend(
-            header_hits::definitions(&reachable, &call.name)
+            header_hits::definitions(reach.headers(), &call.name)
                 .into_iter()
                 .filter(|h| CALLABLE.contains(&h.item_kind)),
         );

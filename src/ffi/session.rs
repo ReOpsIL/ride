@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use super::kind::{CaptureKind, ItemKind};
 use crate::highlight::Lang;
 
@@ -27,7 +29,7 @@ pub struct HighlightSpan {
     pub capture: CaptureKind,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, uniffi::Record)]
 pub struct OutlineItem {
     pub name: String,
     pub kind: ItemKind,

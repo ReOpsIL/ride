@@ -1,16 +1,22 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
+use serde::{Deserialize, Serialize};
 use tree_sitter::Tree;
 
 use crate::ffi::OutlineItem;
 
-const MAX_DEPTH: usize = 6;
+use super::members::Chain;
+use super::type_lookup;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct TypeTable {
     origin: Option<PathBuf>,
-    members: HashMap<String, Vec<Member>>,
+    members: HashMap<String, Vec<OutlineItem>>,
+    member_types: HashMap<String, HashMap<String, String>>,
+    member_details: HashMap<String, HashMap<String, String>>,
+    scopes: HashMap<String, Vec<OutlineItem>>,
+    functions: HashMap<String, String>,
     bases: HashMap<String, Vec<String>>,
     aliases: HashMap<String, String>,
 }
@@ -18,18 +24,9 @@ pub struct TypeTable {
 #[derive(Debug, Clone)]
 pub struct Member {
     pub item: OutlineItem,
-    pub detail: String,
     pub origin: Option<PathBuf>,
-}
-
-impl Member {
-    pub fn new(item: OutlineItem, detail: String) -> Self {
-        Self {
-            item,
-            detail,
-            origin: None,
-        }
-    }
+    pub type_name: Option<String>,
+    pub detail: String,
 }
 
 impl TypeTable {
@@ -38,8 +35,32 @@ impl TypeTable {
         self
     }
 
-    pub fn add_members(&mut self, name: String, items: Vec<Member>) {
+    pub fn add_members(&mut self, name: String, items: Vec<OutlineItem>) {
         self.members.entry(name).or_default().extend(items);
+    }
+
+    pub fn add_member_types(&mut self, name: String, types: Vec<(String, String)>) {
+        if !types.is_empty() {
+            self.member_types.entry(name).or_default().extend(types);
+        }
+    }
+
+    pub fn add_member_details(&mut self, name: String, details: Vec<(String, String)>) {
+        if !details.is_empty() {
+            self.member_details.entry(name).or_default().extend(details);
+        }
+    }
+
+    pub fn defines(&self, name: &str) -> bool {
+        self.members.contains_key(name)
+    }
+
+    pub fn add_scope(&mut self, path: String, items: Vec<OutlineItem>) {
+        self.scopes.entry(path).or_default().extend(items);
+    }
+
+    pub fn add_function(&mut self, name: String, returns: String) {
+        self.functions.entry(name).or_insert(returns);
     }
 
     pub fn add_bases(&mut self, name: String, bases: Vec<String>) {
@@ -54,52 +75,55 @@ impl TypeTable {
         }
     }
 
-    pub fn defines(&self, name: &str) -> bool {
-        self.members.contains_key(name)
-    }
-
     pub fn is_empty(&self) -> bool {
-        self.members.is_empty() && self.aliases.is_empty()
+        self.members.is_empty() && self.aliases.is_empty() && self.scopes.is_empty()
     }
 
     pub fn resolve(tables: &[&TypeTable], name: &str) -> Vec<Member> {
-        let mut out = Vec::new();
-        let mut seen = HashSet::new();
-        collect(tables, name, 0, &mut seen, &mut out);
-        out
+        type_lookup::resolve(tables, name)
+    }
+
+    pub fn scoped(tables: &[&TypeTable], segments: &[String]) -> Vec<Member> {
+        type_lookup::scoped(tables, segments)
+    }
+
+    pub fn follow(tables: &[&TypeTable], chain: &Chain) -> Option<String> {
+        type_lookup::follow(tables, chain)
+    }
+
+    pub(super) fn origin(&self) -> Option<&PathBuf> {
+        self.origin.as_ref()
+    }
+
+    pub(super) fn members_of(&self, name: &str) -> Option<&Vec<OutlineItem>> {
+        self.members.get(name)
+    }
+
+    pub(super) fn member_type(&self, type_name: &str, member: &str) -> Option<&String> {
+        self.member_types.get(type_name)?.get(member)
+    }
+
+    pub(super) fn member_detail(&self, type_name: &str, member: &str) -> Option<&String> {
+        self.member_details.get(type_name)?.get(member)
+    }
+
+    pub(super) fn scope(&self, path: &str) -> Option<&Vec<OutlineItem>> {
+        self.scopes.get(path)
+    }
+
+    pub(super) fn function(&self, name: &str) -> Option<&String> {
+        self.functions.get(name)
+    }
+
+    pub(super) fn bases_of(&self, name: &str) -> Option<&Vec<String>> {
+        self.bases.get(name)
+    }
+
+    pub(super) fn alias_of(&self, name: &str) -> Option<&String> {
+        self.aliases.get(name)
     }
 }
 
 pub fn empty_table(_: &Tree, _: &str) -> TypeTable {
     TypeTable::default()
-}
-
-fn collect(
-    tables: &[&TypeTable],
-    name: &str,
-    depth: usize,
-    seen: &mut HashSet<String>,
-    out: &mut Vec<Member>,
-) {
-    if depth > MAX_DEPTH || !seen.insert(name.to_string()) {
-        return;
-    }
-    for table in tables {
-        if let Some(target) = table.aliases.get(name) {
-            collect(tables, target, depth + 1, seen, out);
-        }
-    }
-    for table in tables {
-        if let Some(items) = table.members.get(name) {
-            out.extend(items.iter().map(|member| Member {
-                origin: table.origin.clone(),
-                ..member.clone()
-            }));
-        }
-        if let Some(bases) = table.bases.get(name) {
-            for base in bases {
-                collect(tables, base, depth + 1, seen, out);
-            }
-        }
-    }
 }

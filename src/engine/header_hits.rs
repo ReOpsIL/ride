@@ -1,8 +1,7 @@
 use std::collections::HashSet;
-use std::path::Path;
 use std::sync::Arc;
 
-use crate::ffi::CompletionHit;
+use crate::ffi::{CompletionHit, OutlineItem};
 use crate::highlight::{Member, TypeTable};
 
 use super::headers::Header;
@@ -33,7 +32,10 @@ pub fn completions(headers: &[Arc<Header>], prefix: &str, limit: usize) -> Vec<C
             if out.len() >= limit {
                 return out;
             }
-            if matches(&item.name, &p) && seen.insert(item.name.clone()) {
+            if matches(&item.name, &p)
+                && !reserved(&item.name, prefix)
+                && seen.insert(item.name.clone())
+            {
                 out.push(item_hit(header, item, COMPLETION_SCORE));
             }
         }
@@ -41,24 +43,45 @@ pub fn completions(headers: &[Arc<Header>], prefix: &str, limit: usize) -> Vec<C
     out
 }
 
+pub fn tables<'a>(local: &'a TypeTable, headers: &'a [Arc<Header>]) -> Vec<&'a TypeTable> {
+    let mut tables: Vec<&TypeTable> = vec![local];
+    tables.extend(headers.iter().map(|h| &h.summary.types));
+    tables
+}
+
 pub fn members(
-    local: &TypeTable,
-    headers: &[Arc<Header>],
+    tables: &[&TypeTable],
     type_name: &str,
     prefix: &str,
     limit: usize,
 ) -> Vec<CompletionHit> {
-    let mut tables: Vec<&TypeTable> = vec![local];
-    tables.extend(headers.iter().map(|h| &h.summary.types));
+    member_hits(TypeTable::resolve(tables, type_name), prefix, limit)
+}
+
+pub fn scoped(
+    tables: &[&TypeTable],
+    segments: &[String],
+    prefix: &str,
+    limit: usize,
+) -> Vec<CompletionHit> {
+    member_hits(TypeTable::scoped(tables, segments), prefix, limit)
+}
+
+fn member_hits(members: Vec<Member>, prefix: &str, limit: usize) -> Vec<CompletionHit> {
     let p = prefix.to_ascii_lowercase();
     let mut seen = HashSet::new();
-    TypeTable::resolve(&tables, type_name)
+    members
         .into_iter()
-        .filter(|m| matches(&m.item.name, &p) && seen.insert(m.item.name.clone()))
+        .filter(|m| matches(&m.item.name, &p))
+        .filter(|m| m.origin.is_none() || !reserved(&m.item.name, prefix))
+        .filter(|m| seen.insert(m.item.name.clone()))
         .take(limit)
         .map(|m: Member| {
-            let origin = m.origin.map(|o| o.display().to_string());
-            let mut hit = CompletionHit::from_outline(&m.item, MEMBER_SCORE, origin);
+            let mut hit = CompletionHit::from_outline(
+                &m.item,
+                MEMBER_SCORE,
+                m.origin.map(|o| o.display().to_string()),
+            );
             hit.detail = m.detail;
             hit
         })
@@ -69,14 +92,23 @@ fn matches(name: &str, prefix_lower: &str) -> bool {
     prefix_lower.is_empty() || name.to_ascii_lowercase().starts_with(prefix_lower)
 }
 
-fn item_hit(header: &Header, item: &crate::ffi::OutlineItem, score: f32) -> CompletionHit {
-    let mut hit = CompletionHit::from_outline(item, score, Some(header.path.display().to_string()));
-    hit.detail = file_name(&header.path);
-    hit
+fn reserved(name: &str, prefix: &str) -> bool {
+    if prefix.starts_with('_') {
+        return false;
+    }
+    let mut chars = name.chars();
+    chars.next() == Some('_')
+        && chars
+            .next()
+            .is_some_and(|c| c == '_' || c.is_ascii_uppercase())
 }
 
-fn file_name(path: &Path) -> String {
-    path.file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_default()
+fn item_hit(header: &Header, item: &OutlineItem, score: f32) -> CompletionHit {
+    let mut hit = CompletionHit::from_outline(item, score, Some(header.path.display().to_string()));
+    hit.detail = header
+        .path
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_default();
+    hit
 }

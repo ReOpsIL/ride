@@ -120,3 +120,70 @@ fn cpp_member_access_follows_bases_and_this_in_out_of_class_methods() {
         .collect();
     assert!(plain.contains(&"Widget".to_string()), "{plain:?}");
 }
+
+const C_CHAINS: &str = "typedef struct point { int x; int y; } point_t;\nstruct rect { point_t origin; int width; };\nstruct rect *find_rect(void);\nstruct rect make_rect(void);\nint main(void) {\n    struct rect box;\n    struct rect *rp = &box;\n    struct rect list[4];\n    box.origin.x = 1;\n    rp->origin.y = 2;\n    list[0].origin.x = 3;\n    (*rp).width = 4;\n    find_rect()->width = 5;\n    make_rect().origin.x = 6;\n    return 0;\n}\n";
+
+const CPP_AUTO: &str = "struct Item { int id; int size() const; };\nstruct Bag { Item first; Item *pick(); Item items[3]; static Bag &instance(); };\nBag make_bag();\nint main() {\n    Bag bag;\n    auto copy = bag;\n    auto made = make_bag();\n    auto lit = Item{1};\n    auto casted = (Item)lit;\n    auto picked = bag.pick();\n    auto &inst = Bag::instance();\n    auto sc = static_cast<Item>(lit);\n    bag.items[1].id = 2;\n    bag.pick()->size();\n    copy.first.id = made.first.id + lit.id + casted.id + picked->id + inst.first.id + sc.id;\n    return 0;\n}\n";
+
+fn plain(engine: &ride_engine::Engine, session: u64, src: &str, after: &str) -> Vec<String> {
+    names(engine, session, src, after, "")
+        .into_iter()
+        .map(|(n, _)| n)
+        .collect()
+}
+
+#[test]
+fn c_field_chains_calls_arrays_and_dereferences_resolve_through_the_type_table() {
+    let engine = engine();
+    let id = engine
+        .open_session(
+            "c".into(),
+            Some("/tmp/chains.c".into()),
+            C_CHAINS.into(),
+            None,
+        )
+        .unwrap()
+        .session_id;
+    let point = vec!["x".to_string(), "y".to_string()];
+    let rect = vec!["origin".to_string(), "width".to_string()];
+    assert_eq!(plain(&engine, id, C_CHAINS, "box.origin."), point);
+    assert_eq!(plain(&engine, id, C_CHAINS, "rp->origin."), point);
+    assert_eq!(plain(&engine, id, C_CHAINS, "list[0]."), rect);
+    assert_eq!(plain(&engine, id, C_CHAINS, "list[0].origin."), point);
+    assert_eq!(plain(&engine, id, C_CHAINS, "(*rp)."), rect);
+    assert_eq!(plain(&engine, id, C_CHAINS, "find_rect()->"), rect);
+    assert_eq!(plain(&engine, id, C_CHAINS, "make_rect().origin."), point);
+}
+
+#[test]
+fn cpp_auto_locals_take_the_type_of_their_initializer() {
+    let engine = engine();
+    let id = engine
+        .open_session(
+            "cc".into(),
+            Some("/tmp/auto.cc".into()),
+            CPP_AUTO.into(),
+            None,
+        )
+        .unwrap()
+        .session_id;
+    let item = vec!["id".to_string(), "size".to_string()];
+    let bag: Vec<String> = ["first", "pick", "items", "instance"]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    assert_eq!(plain(&engine, id, CPP_AUTO, "    copy."), bag);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "= made."), bag);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "+ lit."), item);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "+ casted."), item);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "+ picked->"), item);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "+ inst."), bag);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "+ sc."), item);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "bag.items[1]."), item);
+    assert_eq!(plain(&engine, id, CPP_AUTO, "bag.pick()->"), item);
+    let kinds = names(&engine, id, CPP_AUTO, "bag.pick()->", "");
+    assert!(
+        kinds.contains(&("size".to_string(), ItemKind::Method)),
+        "{kinds:?}"
+    );
+}

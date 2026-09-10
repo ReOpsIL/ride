@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::ffi::{CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, ItemKind};
-use crate::highlight::Site;
+use crate::highlight::{Root, Site};
 use crate::query;
 
 use super::snapshot::Snapshot;
@@ -27,21 +27,21 @@ pub fn try_hits(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionRespon
 }
 
 pub fn buffer_members(snap: &Snapshot, type_name: &str, prefix: &str) -> Vec<CompletionHit> {
-    snap.scope
-        .as_ref()
-        .map(|scope| header_hits::members(&scope.types, &[], type_name, prefix, usize::MAX))
+    snap.scope()
+        .map(|scope| header_hits::members(&[&scope.types], type_name, prefix, usize::MAX))
         .unwrap_or_default()
 }
 
 fn members(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionResponse> {
-    let type_name = snap.local.as_ref()?.access.as_ref()?.type_name.as_deref()?;
+    let chain = snap.local.as_ref()?.access.as_ref()?.chain.as_ref()?;
+    let type_name = match (&chain.root, chain.steps.is_empty()) {
+        (Root::Type(name), true) => name.as_str(),
+        _ => return None,
+    };
     let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
     let mut pool = buffer_members(snap, type_name, &q.prefix);
     merge::keep_order(&mut pool, &q.prefix);
-    let defined_here = snap
-        .scope
-        .as_ref()
-        .is_some_and(|s| s.types.defines(type_name))
+    let defined_here = snap.scope().is_some_and(|s| s.types.defines(type_name))
         && !snap.imports.iter().any(|i| i == type_name);
     let workspace: Vec<String> = snap
         .workspace

@@ -4,7 +4,7 @@ use crate::ffi::{ItemKind, OutlineItem};
 
 use super::rust_type_names::type_name;
 use super::symbol::node_text;
-use super::types::{Member, TypeTable};
+use super::types::TypeTable;
 use super::walk::each_node;
 
 pub fn build(tree: &Tree, text: &str) -> TypeTable {
@@ -66,10 +66,45 @@ fn register(table: &mut TypeTable, node: Node<'_>, text: &str, kind: fn(&str) ->
                 .child_by_field_name("type")
                 .map(|t| node_text(t, text))
                 .unwrap_or_default();
-            Some(Member::new(item, detail))
+            Some((item, detail))
         })
+        .collect::<Vec<(OutlineItem, String)>>();
+    let details: Vec<(String, String)> = items
+        .iter()
+        .filter(|(_, d)| !d.is_empty())
+        .map(|(i, d)| (i.name.clone(), d.clone()))
         .collect();
-    table.add_members(name, items);
+    let types: Vec<(String, String)> = items
+        .iter()
+        .filter_map(|(i, d)| type_name_of(d).map(|t| (i.name.clone(), t)))
+        .collect();
+    table.add_members(name.clone(), items.into_iter().map(|(i, _)| i).collect());
+    table.add_member_types(name.clone(), types);
+    table.add_member_details(name, details);
+}
+
+fn type_name_of(detail: &str) -> Option<String> {
+    let mut rest = detail.trim();
+    loop {
+        let before = rest;
+        rest = rest.trim_start_matches(['&', '*']).trim_start();
+        for prefix in ["mut ", "const ", "dyn ", "impl "] {
+            rest = rest.strip_prefix(prefix).unwrap_or(rest).trim_start();
+        }
+        if rest.starts_with('\'') {
+            rest = rest.trim_start_matches(|c: char| c == '\'' || c.is_alphanumeric() || c == '_');
+            rest = rest.trim_start();
+        }
+        if rest == before {
+            break;
+        }
+    }
+    let end = rest
+        .find(|c: char| !(c.is_alphanumeric() || c == '_' || c == ':'))
+        .unwrap_or(rest.len());
+    let path = &rest[..end];
+    let name = path.rsplit("::").next().unwrap_or(path);
+    (!name.is_empty()).then(|| name.to_string())
 }
 
 fn head_text(node: Node<'_>, text: &str) -> String {

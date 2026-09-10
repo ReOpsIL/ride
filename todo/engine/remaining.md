@@ -21,7 +21,6 @@
 # C / C++ (added 2026-09-10)
 
 - check: `run_check_c` is per saved file; a header edit does not re-check the sources that include it, and there is no whole-project C check (`compile_commands.json` walk)
-- highlight: member access types only a plain identifier or `this`; field chains (`a.b.`), call results and `auto` stay on the field-name fallback
-- highlight: header lookups stop at 64 files and never probe the compiler's system include dirs; ask `clang -E -v` once per compile database if `<vector>`-style completion matters
 - highlight: go-to-definition on an `#include "x.h"` line should open the header
-- highlight: the include graph is walked on every completion query; cache the resolved header list per session and invalidate on edit or header mtime change if it shows up in profiles
+- highlight: the include walk follows both branches of an `#if`, so libc++'s frozen `__cxx03/` copies share the 512-file system budget with the live headers; evaluate `__cplusplus`-style guards or skip `__cxx03/` if `std::` names go missing
+- highlight: range-for over a template container (`for (auto &s : shapes)`) and iterator results stay on the field-name fallback; element typing needs template-argument tracking in the `TypeTable`

@@ -3,6 +3,7 @@ use tree_sitter::{Language, Node, Tree};
 use crate::ffi::OutlineItem;
 
 use super::Grammar;
+use crate::highlight::members::{Chain, Root};
 use crate::highlight::symbol::node_text;
 use crate::highlight::{imports, includes, rust_outline, rust_receiver, rust_types, site};
 
@@ -33,7 +34,7 @@ pub fn grammar() -> Grammar {
         outline,
         member_ops: &["."],
         member_kinds: &["field_identifier"],
-        receiver_type: rust_receiver::receiver_type,
+        receiver: receiver_chain,
         type_table: rust_types::build,
         includes: includes::no_includes,
         site: site::rust_site,
@@ -61,4 +62,13 @@ fn qualifier(node: Node<'_>, text: &str) -> Option<String> {
         .child_by_field_name("path")
         .map(|p| node_text(p, text))
         .filter(|q| !q.is_empty())
+}
+
+fn receiver_chain(tree: &Tree, text: &str, node: Node<'_>) -> Option<Chain> {
+    let leaf = match node.kind() {
+        "field_expression" => node.child_by_field_name("field")?,
+        "identifier" | "self" | "field_identifier" => node,
+        _ => return None,
+    };
+    rust_receiver::receiver_type(tree, text, leaf).map(|t| Chain::root(Root::Type(t)))
 }

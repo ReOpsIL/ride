@@ -4,8 +4,8 @@ use crate::ffi::{CompletionContext, CompletionHit, CompletionQuery, CompletionRe
 use crate::query;
 use crate::score::{KEYWORD, case_bonus};
 
-use super::merge;
 use super::snapshot::Snapshot;
+use super::{header_hits, merge};
 
 const ROOTS: &[&str] = &["crate", "self", "super", "std", "core", "alloc"];
 const IN_GROUP: &[&str] = &["self", "*"];
@@ -26,10 +26,24 @@ pub fn scoped_hits(
     q: &CompletionQuery,
     segments: &[String],
 ) -> CompletionResponse {
+    if !snap.lang.has_catalog() {
+        return scoped_tables(snap, q, segments);
+    }
     if segments.is_empty() {
         return crates(snap, q);
     }
     let pool = children(snap, q, segments);
+    merge::finish(q, pool, false)
+}
+
+fn scoped_tables(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> CompletionResponse {
+    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let Some(scope) = snap.scope().filter(|_| !segments.is_empty()) else {
+        return CompletionResponse::empty(q.query_id);
+    };
+    let tables = header_hits::tables(&scope.types, snap.headers());
+    let mut pool = header_hits::scoped(&tables, segments, &q.prefix, limit);
+    merge::keep_order(&mut pool, &q.prefix);
     merge::finish(q, pool, false)
 }
 
@@ -101,7 +115,7 @@ fn resolve(snap: &Snapshot, segments: &[String]) -> Option<String> {
 fn module_path(snap: &Snapshot) -> Option<Vec<String>> {
     let workspace = snap.workspace.as_ref()?;
     let package = workspace.package_name.clone()?;
-    let file = snap.scope.as_ref()?.path.clone()?;
+    let file = snap.scope()?.path.clone()?;
     let rel = file.strip_prefix(Path::new(&workspace.root)).ok()?;
     let mut parts: Vec<String> = rel
         .components()

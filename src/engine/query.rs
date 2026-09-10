@@ -26,6 +26,7 @@ pub fn run(engine: &Engine, mut q: CompletionQuery) -> CompletionResponse {
             &snap.catalog.overlay,
         ),
     };
+    snap.remember(engine);
     if !snapshot::is_latest(engine, session_id, query_id) {
         return CompletionResponse::empty(query_id);
     }

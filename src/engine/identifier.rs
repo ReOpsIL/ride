@@ -2,7 +2,7 @@ use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, QueryMode};
 use crate::query;
 
 use super::snapshot::Snapshot;
-use super::{header_hits, include_graph, merge};
+use super::{header_hits, merge};
 
 const CATALOG_MIN_CHARS: usize = 2;
 
@@ -14,9 +14,8 @@ pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
     if let Some(local) = &snap.local {
         pool.extend(local.hits.iter().cloned());
     }
-    if let Some(scope) = snap.scope.as_ref().filter(|s| !s.includes.is_empty()) {
-        let headers = include_graph::reachable(&snap.headers, scope);
-        pool.extend(header_hits::completions(&headers, prefix, limit));
+    if snap.scope().is_some_and(|s| !s.includes.is_empty()) {
+        pool.extend(header_hits::completions(snap.headers(), prefix, limit));
     }
     merge::tier_all(&mut pool, prefix);
     pool.extend(query::keyword_hits(

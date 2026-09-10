@@ -4,7 +4,8 @@ use std::path::Path;
 use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem};
 use crate::query::{IndexSrc, exact_search};
 
-use super::{Engine, header_hits, include_graph};
+use super::reach::Reach;
+use super::{Engine, header_hits};
 
 const LOCAL_SCORE: f32 = 2000.0;
 
@@ -34,20 +35,18 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
             symbol,
             local,
             session.lang().has_catalog(),
-            session.scope(),
-            i.headers.clone(),
+            Reach::take(i, session_id, session),
             i.config.index_dir.clone(),
             i.index.clone(),
             i.reader.clone(),
         ))
     });
-    let Ok(Some((symbol, mut hits, catalog, scope, headers, index_dir, index, reader))) = snap
-    else {
+    let Ok(Some((symbol, mut hits, catalog, reach, index_dir, index, reader))) = snap else {
         return DefinitionResponse::empty();
     };
     if !catalog {
-        let reachable = include_graph::reachable(&headers, &scope);
-        hits.extend(header_hits::definitions(&reachable, &symbol.name));
+        hits.extend(header_hits::definitions(reach.headers(), &symbol.name));
+        reach.remember(engine);
         return DefinitionResponse {
             symbol: Some(symbol),
             hits,
