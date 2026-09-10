@@ -7,6 +7,7 @@ struct Preferences: Codable, Equatable {
     var autoSave: Bool
     var completions: Bool
     var cheatSheet: Bool
+    var softWrap: Bool
     var outlinePanel: Bool
     var visibleWhitespace: Bool
     var showHidden: Bool
@@ -34,7 +35,8 @@ struct Preferences: Codable, Equatable {
         outlineWidth: 220,
         problemsHeight: 180,
         previewWidth: 460,
-        cheatSheet: true
+        cheatSheet: true,
+        softWrap: true
     )
 
     init(
@@ -53,7 +55,8 @@ struct Preferences: Codable, Equatable {
         outlineWidth: Double = 220,
         problemsHeight: Double = 180,
         previewWidth: Double = 460,
-        cheatSheet: Bool = true
+        cheatSheet: Bool = true,
+        softWrap: Bool = true
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -71,6 +74,7 @@ struct Preferences: Codable, Equatable {
         self.problemsHeight = problemsHeight
         self.previewWidth = previewWidth
         self.cheatSheet = cheatSheet
+        self.softWrap = softWrap
     }
 
     init(from decoder: Decoder) throws {
@@ -82,6 +86,7 @@ struct Preferences: Codable, Equatable {
         autoSave = try c.decodeIfPresent(Bool.self, forKey: .autoSave) ?? d.autoSave
         completions = try c.decodeIfPresent(Bool.self, forKey: .completions) ?? d.completions
         cheatSheet = try c.decodeIfPresent(Bool.self, forKey: .cheatSheet) ?? d.cheatSheet
+        softWrap = try c.decodeIfPresent(Bool.self, forKey: .softWrap) ?? d.softWrap
         outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
         visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
@@ -96,7 +101,7 @@ struct Preferences: Codable, Equatable {
 
     var clamped: Preferences {
         var next = self
-        next.fontSize = min(18, max(11, fontSize))
+        next.fontSize = min(24, max(10, fontSize))
         next.tabWidth = min(8, max(2, tabWidth))
         next.sidebarWidth = min(420, max(180, sidebarWidth))
         next.outlineWidth = min(420, max(160, outlineWidth))

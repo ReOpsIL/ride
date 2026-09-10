@@ -8,6 +8,7 @@ extension AppState {
     }
 
     func jumpTo(byte: UInt32) {
+        recordLocation()
         EditorJump.shared.jump(byte: byte)
     }
 
@@ -41,5 +42,7 @@ extension AppState {
         showSymbolInFile = false
         showSymbolPicker = false
         showProjectFind = false
+        showGoToLine = false
+        showRecentFiles = false
     }
 }

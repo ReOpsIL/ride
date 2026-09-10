@@ -1,0 +1,44 @@
+{
+  "/Users/dovcaspi/develop/ride/app/Ride/Design/MatchHighlight.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlight.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlight.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlight.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlight.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlight.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Design/Plural.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Plural.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Plural.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Plural.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Plural.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Plural.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/BracketPairingTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairingTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairingTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairingTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairingTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairingTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/CommentToggleTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentToggleTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentToggleTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentToggleTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentToggleTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentToggleTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/MatchHighlightTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlightTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlightTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlightTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlightTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/MatchHighlightTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/SmartIndentTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndentTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndentTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndentTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndentTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndentTests.swiftdeps"
+  }
+}

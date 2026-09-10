@@ -1,0 +1,44 @@
+{
+  "/Users/dovcaspi/develop/ride/app/Ride/CheatSheet/CheatSheetPlacement.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetPlacement.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetPlacement.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetPlacement.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetPlacement.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetPlacement.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/CheatSheet/CheatSheetRows.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetRows.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetRows.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetRows.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetRows.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CheatSheetRows.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Completion/CompletionNarrowing.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionNarrowing.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionNarrowing.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionNarrowing.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionNarrowing.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionNarrowing.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Completion/CompletionTrigger.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionTrigger.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionTrigger.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionTrigger.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionTrigger.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CompletionTrigger.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Completion/SnippetParser.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SnippetParser.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SnippetParser.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SnippetParser.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SnippetParser.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SnippetParser.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Design/DesignTokens.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DesignTokens.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DesignTokens.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DesignTokens.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DesignTokens.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DesignTokens.swiftdeps"
+  }
+}

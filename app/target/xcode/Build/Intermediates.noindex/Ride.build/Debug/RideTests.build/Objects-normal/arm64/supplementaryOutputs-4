@@ -1,0 +1,44 @@
+{
+  "/Users/dovcaspi/develop/ride/app/Ride/Editing/AutoIndent.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/AutoIndent.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/AutoIndent.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/AutoIndent.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/AutoIndent.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/AutoIndent.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editing/BracketPairing.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairing.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairing.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairing.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairing.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BracketPairing.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editing/CommentPrefix.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentPrefix.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentPrefix.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentPrefix.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentPrefix.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CommentPrefix.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editing/SmartIndent.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndent.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndent.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndent.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndent.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/SmartIndent.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/EditingFixtures.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/EditingFixtures.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/EditingFixtures.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/EditingFixtures.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/EditingFixtures.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/EditingFixtures.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/LineOpsTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/LineOpsTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/LineOpsTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/LineOpsTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/LineOpsTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/LineOpsTests.swiftdeps"
+  }
+}

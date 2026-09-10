@@ -1,0 +1,44 @@
+{
+  "/Users/dovcaspi/develop/ride/app/Ride/Design/Contrast.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Contrast.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Contrast.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Contrast.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Contrast.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Contrast.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editor/BufferLanguage.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BufferLanguage.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BufferLanguage.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BufferLanguage.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BufferLanguage.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/BufferLanguage.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editor/DiagnosticRange.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DiagnosticRange.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DiagnosticRange.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DiagnosticRange.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DiagnosticRange.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/DiagnosticRange.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Editor/RangeShift.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/RangeShift.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/RangeShift.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/RangeShift.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/RangeShift.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/RangeShift.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/Ride/Workspace/CargoManifest.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CargoManifest.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CargoManifest.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CargoManifest.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CargoManifest.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/CargoManifest.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/ContrastTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ContrastTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ContrastTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ContrastTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ContrastTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ContrastTests.swiftdeps"
+  }
+}

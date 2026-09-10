@@ -1,29 +1,11 @@
 import Foundation
 
 enum FindCount {
-    static func matches(in text: String, query: String) -> [NSRange] {
-        guard !query.isEmpty else {
-            return []
-        }
-        let ns = text as NSString
-        var out: [NSRange] = []
-        var start = 0
-        while start < ns.length {
-            let found = ns.range(of: query, options: .caseInsensitive, range: NSRange(location: start, length: ns.length - start))
-            if found.location == NSNotFound {
-                break
-            }
-            out.append(found)
-            start = found.location + max(found.length, 1)
-        }
-        return out
-    }
-
-    static func label(current: NSRange?, in text: String, query: String) -> String? {
-        let all = matches(in: text, query: query)
+    static func label(current: NSRange?, in text: String, query: String, options: FindOptions = .defaults) -> String? {
         if query.isEmpty {
             return nil
         }
+        let all = FindMatcher.matches(in: text, query: query, options: options)
         if all.isEmpty {
             return "No results"
         }

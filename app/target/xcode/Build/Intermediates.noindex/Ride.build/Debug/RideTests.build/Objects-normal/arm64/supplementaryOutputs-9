@@ -1,0 +1,37 @@
+{
+  "/Users/dovcaspi/develop/ride/app/Ride/Editor/Utf16.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/NavigationTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/NavigationTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/NavigationTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/NavigationTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/NavigationTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/NavigationTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/ProjectFindTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ProjectFindTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ProjectFindTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ProjectFindTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ProjectFindTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/ProjectFindTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/QueryIdTests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/QueryIdTests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/QueryIdTests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/QueryIdTests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/QueryIdTests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/QueryIdTests.swiftdeps"
+  },
+  "/Users/dovcaspi/develop/ride/app/RideTests/Utf16Tests.swift" : {
+    "const-values" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16Tests.swiftconstvalues",
+    "dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16Tests.d",
+    "diagnostics" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16Tests.dia",
+    "object" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16Tests.o",
+    "swift-dependencies" : "/Users/dovcaspi/develop/ride/app/target/xcode/Build/Intermediates.noindex/Ride.build/Debug/RideTests.build/Objects-normal/arm64/Utf16Tests.swiftdeps"
+  }
+}

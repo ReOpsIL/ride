@@ -54,4 +54,33 @@ enum TreeActions {
     static func reveal(_ url: URL) {
         NSWorkspace.shared.activateFileViewerSelecting([url])
     }
+
+    static func duplicate(_ url: URL) {
+        let ext = url.pathExtension
+        let base = url.deletingPathExtension().lastPathComponent
+        var index = 2
+        var dest = url.deletingLastPathComponent().appendingPathComponent("\(base) copy")
+        while true {
+            let candidate = ext.isEmpty ? dest : dest.appendingPathExtension(ext)
+            if !FileManager.default.fileExists(atPath: candidate.path) {
+                try? FileManager.default.copyItem(at: url, to: candidate)
+                RideEngineClient.shared.engine?.workspaceFileChanged(path: candidate.path)
+                return
+            }
+            dest = url.deletingLastPathComponent().appendingPathComponent("\(base) copy \(index)")
+            index += 1
+        }
+    }
+
+    static func copyPath(_ url: URL, root: URL?) {
+        let text = root.map { WorkspaceFS.relativePath(root: $0, file: url) } ?? url.path
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    static func openInTerminal(_ url: URL, isDirectory: Bool) {
+        let dir = WorkspaceFS.parentDir(for: url, isDirectory: isDirectory)
+        let terminal = URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app")
+        NSWorkspace.shared.open([dir], withApplicationAt: terminal, configuration: NSWorkspace.OpenConfiguration())
+    }
 }

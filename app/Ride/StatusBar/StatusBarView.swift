@@ -17,6 +17,9 @@ struct StatusBarView: View {
             Spacer(minLength: 0)
             CheckStatusView()
             IndexStatusView()
+            if let buffer = state.activeBuffer {
+                StatusSegment(text: buffer.lineEnding, help: "Line endings")
+            }
             StatusSegment(text: "Spaces: \(state.prefs.tabWidth)", help: "Indentation")
         }
         .padding(.horizontal, Tokens.Space.s)

@@ -17,6 +17,10 @@ enum DemoLaunch {
         value(after: "--file")
     }
 
+    static var report: String? {
+        value(after: "--report")
+    }
+
     static var scroll: Bool {
         CommandLine.arguments.contains("--scroll")
     }

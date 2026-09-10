@@ -24,6 +24,10 @@
 - highlight: the include walk follows both branches of an `#if`, so libc++'s frozen `__cxx03/` copies share the 512-file system budget with the live headers; evaluate `__cplusplus`-style guards or skip `__cxx03/` if `std::` names go missing
 - highlight: range-for over a template container (`for (auto &s : shapes)`) and iterator results stay on the field-name fallback; element typing needs template-argument tracking in the `TypeTable`
 
+# Languages (added 2026-09-10, see plan/roadmap/next.md 1.1-9)
+
+- highlight: an extension-less libc++ header (`memory`, `vector`) opened as a buffer gets no language (`Lang::for_path` falls back to Rust, the app to plain) although `headers.rs::load_system` already parses it as C++; sniff by system include directory or C++ markers in `Lang::for_buffer`
+
 # Cheat sheet (added 2026-09-10, see plan/roadmap/cheatsheet.md)
 
 - cheatsheet: no sheets for TOML (Cargo manifest keys) and CMake yet; `Lang::Toml` / `Lang::Cmake` answer with no sections

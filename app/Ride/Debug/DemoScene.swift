@@ -24,6 +24,18 @@ enum DemoScene {
         case "cheatsheet":
             editor(state)
             DemoLaunch.after(1.0) { cheatSheet(state) }
+        case "unformatted":
+            editor(state)
+            DemoLaunch.after(1.5) {
+                guard let view = EditorJump.shared.view else {
+                    return
+                }
+                let anchor = (view.string as NSString).range(of: "counter.record(\"ride\");")
+                view.replaceText(in: anchor, with: "counter.record(   \"ride\"  );")
+            }
+        case "selftest":
+            editor(state)
+            DemoLaunch.after(1.5) { DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt") }
         case "hover":
             editor(state)
             DemoLaunch.after(1.0) { hover() }

@@ -206,6 +206,68 @@
 		E30000000000000000000002 /* CheatSheetPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000007 /* CheatSheetPlacement.swift */; };
 		E30000000000000000000003 /* CompletionPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000D3 /* CompletionPlacement.swift */; };
 		E30000000000000000000009 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
+		E40000000000000000000002 /* MenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40000000000000000000001 /* MenuModel.swift */; };
+		E50000000000000000000101 /* TextChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000001 /* TextChange.swift */; };
+		E50000000000000000000102 /* LineSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000002 /* LineSpan.swift */; };
+		E50000000000000000000103 /* CommentTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000003 /* CommentTokens.swift */; };
+		E50000000000000000000104 /* LineOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000004 /* LineOps.swift */; };
+		E50000000000000000000105 /* LineOps+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000005 /* LineOps+Move.swift */; };
+		E50000000000000000000106 /* LineOps+Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000006 /* LineOps+Case.swift */; };
+		E50000000000000000000107 /* CommentToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000007 /* CommentToggle.swift */; };
+		E50000000000000000000108 /* CommentPrefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000008 /* CommentPrefix.swift */; };
+		E50000000000000000000109 /* SmartIndent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000009 /* SmartIndent.swift */; };
+		E5000000000000000000010A /* AutoIndent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000A /* AutoIndent.swift */; };
+		E5000000000000000000010B /* BracketPairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000B /* BracketPairing.swift */; };
+		E50000000000000000000201 /* TextChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000001 /* TextChange.swift */; };
+		E50000000000000000000202 /* LineSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000002 /* LineSpan.swift */; };
+		E50000000000000000000203 /* CommentTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000003 /* CommentTokens.swift */; };
+		E50000000000000000000204 /* LineOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000004 /* LineOps.swift */; };
+		E50000000000000000000205 /* LineOps+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000005 /* LineOps+Move.swift */; };
+		E50000000000000000000206 /* LineOps+Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000006 /* LineOps+Case.swift */; };
+		E50000000000000000000207 /* CommentToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000007 /* CommentToggle.swift */; };
+		E50000000000000000000208 /* CommentPrefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000008 /* CommentPrefix.swift */; };
+		E50000000000000000000209 /* SmartIndent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000009 /* SmartIndent.swift */; };
+		E5000000000000000000020A /* AutoIndent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000A /* AutoIndent.swift */; };
+		E5000000000000000000020B /* BracketPairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000B /* BracketPairing.swift */; };
+		E5000000000000000000020C /* EditingFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000C /* EditingFixtures.swift */; };
+		E5000000000000000000020D /* LineOpsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000D /* LineOpsTests.swift */; };
+		E5000000000000000000020E /* CommentToggleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000E /* CommentToggleTests.swift */; };
+		E5000000000000000000020F /* SmartIndentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5000000000000000000000F /* SmartIndentTests.swift */; };
+		E50000000000000000000210 /* BracketPairingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000010 /* BracketPairingTests.swift */; };
+		E60000000000000000000003 /* NavigationHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000002 /* NavigationHistory.swift */; };
+		E60000000000000000000004 /* NavigationHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000002 /* NavigationHistory.swift */; };
+		E60000000000000000000006 /* SiblingSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000005 /* SiblingSource.swift */; };
+		E60000000000000000000007 /* SiblingSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000005 /* SiblingSource.swift */; };
+		E60000000000000000000009 /* AppState+Navigate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000008 /* AppState+Navigate.swift */; };
+		E6000000000000000000000B /* AppState+Jumps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000000A /* AppState+Jumps.swift */; };
+		E6000000000000000000000D /* GoToLineOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000000C /* GoToLineOverlay.swift */; };
+		E6000000000000000000000F /* RecentFilesOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000000E /* RecentFilesOverlay.swift */; };
+		E60000000000000000000011 /* FileCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000010 /* FileCommands.swift */; };
+		E60000000000000000000013 /* EditCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000012 /* EditCommands.swift */; };
+		E60000000000000000000015 /* ViewCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000014 /* ViewCommands.swift */; };
+		E60000000000000000000017 /* NavigateCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000016 /* NavigateCommands.swift */; };
+		E60000000000000000000019 /* CodeCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000018 /* CodeCommands.swift */; };
+		E6000000000000000000001B /* EditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001A /* EditorCommand.swift */; };
+		E6000000000000000000001D /* EditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001C /* EditorCommands.swift */; };
+		E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001E /* EditorCommands+Selection.swift */; };
+		E60000000000000000000021 /* SurroundWith.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000020 /* SurroundWith.swift */; };
+		E60000000000000000000023 /* FoldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000022 /* FoldController.swift */; };
+		E60000000000000000000025 /* FoldLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000024 /* FoldLayout.swift */; };
+		E60000000000000000000027 /* FoldSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000026 /* FoldSet.swift */; };
+		E60000000000000000000028 /* FoldSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000026 /* FoldSet.swift */; };
+		E6000000000000000000002A /* Buffers+File.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000029 /* Buffers+File.swift */; };
+		E6000000000000000000002C /* RideTextView+Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000002B /* RideTextView+Clipboard.swift */; };
+		E6000000000000000000002E /* FindMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000002D /* FindMatcher.swift */; };
+		E6000000000000000000002F /* FindMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000002D /* FindMatcher.swift */; };
+		E60000000000000000000031 /* AppState+View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000030 /* AppState+View.swift */; };
+		E60000000000000000000033 /* NavigationHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000032 /* NavigationHistoryTests.swift */; };
+		E60000000000000000000035 /* SiblingSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000034 /* SiblingSourceTests.swift */; };
+		E60000000000000000000037 /* FindMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000036 /* FindMatcherTests.swift */; };
+		E60000000000000000000039 /* FoldSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000038 /* FoldSetTests.swift */; };
+		E70000000000000000000002 /* RideTextView+Typing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000001 /* RideTextView+Typing.swift */; };
+		E80000000000000000000002 /* DemoSelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80000000000000000000001 /* DemoSelfTest.swift */; };
+		E80000000000000000000004 /* SelfTestSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80000000000000000000003 /* SelfTestSteps.swift */; };
+		E90000000000000000000002 /* NoticeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90000000000000000000001 /* NoticeBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -386,6 +448,53 @@
 		E2000000000000000000000F /* CheatSheetRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRows.swift"; sourceTree = "<group>"; };
 		E20000000000000000000011 /* SnippetInsert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetInsert.swift"; sourceTree = "<group>"; };
 		E20000000000000000000013 /* CheatSheetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRowsTests.swift"; sourceTree = "<group>"; };
+		E40000000000000000000001 /* MenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuModel.swift"; sourceTree = "<group>"; };
+		E50000000000000000000001 /* TextChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextChange.swift"; sourceTree = "<group>"; };
+		E50000000000000000000002 /* LineSpan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineSpan.swift"; sourceTree = "<group>"; };
+		E50000000000000000000003 /* CommentTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentTokens.swift"; sourceTree = "<group>"; };
+		E50000000000000000000004 /* LineOps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOps.swift"; sourceTree = "<group>"; };
+		E50000000000000000000005 /* LineOps+Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOps+Move.swift"; sourceTree = "<group>"; };
+		E50000000000000000000006 /* LineOps+Case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOps+Case.swift"; sourceTree = "<group>"; };
+		E50000000000000000000007 /* CommentToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentToggle.swift"; sourceTree = "<group>"; };
+		E50000000000000000000008 /* CommentPrefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentPrefix.swift"; sourceTree = "<group>"; };
+		E50000000000000000000009 /* SmartIndent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SmartIndent.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000A /* AutoIndent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AutoIndent.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000B /* BracketPairing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BracketPairing.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000C /* EditingFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditingFixtures.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000D /* LineOpsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOpsTests.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000E /* CommentToggleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentToggleTests.swift"; sourceTree = "<group>"; };
+		E5000000000000000000000F /* SmartIndentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SmartIndentTests.swift"; sourceTree = "<group>"; };
+		E50000000000000000000010 /* BracketPairingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BracketPairingTests.swift"; sourceTree = "<group>"; };
+		E60000000000000000000002 /* NavigationHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NavigationHistory.swift"; sourceTree = "<group>"; };
+		E60000000000000000000005 /* SiblingSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SiblingSource.swift"; sourceTree = "<group>"; };
+		E60000000000000000000008 /* AppState+Navigate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Navigate.swift"; sourceTree = "<group>"; };
+		E6000000000000000000000A /* AppState+Jumps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Jumps.swift"; sourceTree = "<group>"; };
+		E6000000000000000000000C /* GoToLineOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GoToLineOverlay.swift"; sourceTree = "<group>"; };
+		E6000000000000000000000E /* RecentFilesOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecentFilesOverlay.swift"; sourceTree = "<group>"; };
+		E60000000000000000000010 /* FileCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileCommands.swift"; sourceTree = "<group>"; };
+		E60000000000000000000012 /* EditCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditCommands.swift"; sourceTree = "<group>"; };
+		E60000000000000000000014 /* ViewCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewCommands.swift"; sourceTree = "<group>"; };
+		E60000000000000000000016 /* NavigateCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NavigateCommands.swift"; sourceTree = "<group>"; };
+		E60000000000000000000018 /* CodeCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CodeCommands.swift"; sourceTree = "<group>"; };
+		E6000000000000000000001A /* EditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommand.swift"; sourceTree = "<group>"; };
+		E6000000000000000000001C /* EditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands.swift"; sourceTree = "<group>"; };
+		E6000000000000000000001E /* EditorCommands+Selection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands+Selection.swift"; sourceTree = "<group>"; };
+		E60000000000000000000020 /* SurroundWith.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurroundWith.swift"; sourceTree = "<group>"; };
+		E60000000000000000000022 /* FoldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldController.swift"; sourceTree = "<group>"; };
+		E60000000000000000000024 /* FoldLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldLayout.swift"; sourceTree = "<group>"; };
+		E60000000000000000000026 /* FoldSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldSet.swift"; sourceTree = "<group>"; };
+		E60000000000000000000029 /* Buffers+File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Buffers+File.swift"; sourceTree = "<group>"; };
+		E6000000000000000000002B /* RideTextView+Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Clipboard.swift"; sourceTree = "<group>"; };
+		E6000000000000000000002D /* FindMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindMatcher.swift"; sourceTree = "<group>"; };
+		E60000000000000000000030 /* AppState+View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+View.swift"; sourceTree = "<group>"; };
+		E60000000000000000000032 /* NavigationHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NavigationHistoryTests.swift"; sourceTree = "<group>"; };
+		E60000000000000000000034 /* SiblingSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SiblingSourceTests.swift"; sourceTree = "<group>"; };
+		E60000000000000000000036 /* FindMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindMatcherTests.swift"; sourceTree = "<group>"; };
+		E60000000000000000000038 /* FoldSetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldSetTests.swift"; sourceTree = "<group>"; };
+		E70000000000000000000001 /* RideTextView+Typing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Typing.swift"; sourceTree = "<group>"; };
+		E80000000000000000000001 /* DemoSelfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoSelfTest.swift"; sourceTree = "<group>"; };
+		E80000000000000000000003 /* SelfTestSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps.swift"; sourceTree = "<group>"; };
+		E90000000000000000000001 /* NoticeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NoticeBar.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -415,6 +524,7 @@
 				D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */,
 				D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */,
 				D011963E31E5B2B0818804D2 /* KeyCap.swift */,
+				E90000000000000000000001 /* NoticeBar.swift */,
 				C039A840F2495FAE0FFB2AD3 /* PickerRow.swift */,
 				C0598608D033648D3A46F5CC /* PickerCard.swift */,
 				C0B9BD2ABAE7F615B48FB940 /* MatchHighlight.swift */,
@@ -451,7 +561,16 @@
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
+				E60000000000000000000032 /* NavigationHistoryTests.swift */,
+				E60000000000000000000034 /* SiblingSourceTests.swift */,
+				E60000000000000000000036 /* FindMatcherTests.swift */,
+				E60000000000000000000038 /* FoldSetTests.swift */,
 				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
+				E5000000000000000000000C /* EditingFixtures.swift */,
+				E5000000000000000000000D /* LineOpsTests.swift */,
+				E5000000000000000000000E /* CommentToggleTests.swift */,
+				E5000000000000000000000F /* SmartIndentTests.swift */,
+				E50000000000000000000010 /* BracketPairingTests.swift */,
 				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* CargoWatchTests.swift */,
@@ -484,6 +603,7 @@
 			isa = PBXGroup;
 			children = (
 				B0901DA538FDB916C2AF040F /* AppState+Layout.swift */,
+				E60000000000000000000030 /* AppState+View.swift */,
 				B1000000000000000000007A /* AppState+Preview.swift */,
 				B1000000000000000000009A /* Preview */,
 				B0BFC2E56FBC0D62926D318D /* Design */,
@@ -493,6 +613,7 @@
 				A00000000000000000000134 /* AppState+Check.swift */,
 				A00000000000000000000011 /* RideApp.swift */,
 				A00000000000000000000012 /* AppState.swift */,
+				E40000000000000000000001 /* MenuModel.swift */,
 				A0000000000000000000009D /* AppState+Nav.swift */,
 				A00000000000000000000013 /* RootView.swift */,
 				A00000000000000000000053 /* StatusBar */,
@@ -504,6 +625,9 @@
 				A00000000000000000000059 /* Engine */,
 				A0000000000000000000005B /* Outline */,
 				A0000000000000000000005C /* Completion */,
+				E6000000000000000000003A /* Navigate */,
+				E6000000000000000000003B /* Menus */,
+				E50000000000000000000300 /* Editing */,
 				E20000000000000000000015 /* CheatSheet */,
 				A00000000000000000000131 /* Problems */,
 				A00000000000000000000905 /* Debug */,
@@ -575,6 +699,9 @@
 				A0000000000000000000001D /* GutterView.swift */,
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
+				E70000000000000000000001 /* RideTextView+Typing.swift */,
+				E60000000000000000000029 /* Buffers+File.swift */,
+				E6000000000000000000002B /* RideTextView+Clipboard.swift */,
 				A00000000000000000000906 /* SaveLanguagePicker.swift */,
 				A00000000000000000000092 /* Utf16.swift */,
 				B1000000000000000000002A /* HeadingLevel.swift */,
@@ -593,6 +720,7 @@
 			children = (
 				C0D75BC74B6B7741BF5AE184 /* FindRows.swift */,
 				B00E834049D45F687C4E4144 /* FindCount.swift */,
+				E6000000000000000000002D /* FindMatcher.swift */,
 				A00000000000000000000100 /* HitNavigation.swift */,
 				A00000000000000000000102 /* SymbolPickerModel.swift */,
 				A00000000000000000000104 /* SymbolPickerOverlay.swift */,
@@ -704,6 +832,8 @@
 			children = (
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
+				E80000000000000000000003 /* SelfTestSteps.swift */,
+				E80000000000000000000001 /* DemoSelfTest.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -732,6 +862,56 @@
 				E2000000000000000000000F /* CheatSheetRows.swift */,
 			);
 			path = CheatSheet;
+			sourceTree = "<group>";
+		};
+		E50000000000000000000300 /* Editing */ = {
+			isa = PBXGroup;
+			children = (
+				E50000000000000000000001 /* TextChange.swift */,
+				E50000000000000000000002 /* LineSpan.swift */,
+				E50000000000000000000003 /* CommentTokens.swift */,
+				E50000000000000000000004 /* LineOps.swift */,
+				E6000000000000000000001A /* EditorCommand.swift */,
+				E6000000000000000000001C /* EditorCommands.swift */,
+				E6000000000000000000001E /* EditorCommands+Selection.swift */,
+				E60000000000000000000020 /* SurroundWith.swift */,
+				E60000000000000000000022 /* FoldController.swift */,
+				E60000000000000000000024 /* FoldLayout.swift */,
+				E60000000000000000000026 /* FoldSet.swift */,
+				E50000000000000000000005 /* LineOps+Move.swift */,
+				E50000000000000000000006 /* LineOps+Case.swift */,
+				E50000000000000000000007 /* CommentToggle.swift */,
+				E50000000000000000000008 /* CommentPrefix.swift */,
+				E50000000000000000000009 /* SmartIndent.swift */,
+				E5000000000000000000000A /* AutoIndent.swift */,
+				E5000000000000000000000B /* BracketPairing.swift */,
+			);
+			path = Editing;
+			sourceTree = "<group>";
+		};
+		E6000000000000000000003A /* Navigate */ = {
+			isa = PBXGroup;
+			children = (
+				E60000000000000000000002 /* NavigationHistory.swift */,
+				E60000000000000000000005 /* SiblingSource.swift */,
+				E60000000000000000000008 /* AppState+Navigate.swift */,
+				E6000000000000000000000A /* AppState+Jumps.swift */,
+				E6000000000000000000000C /* GoToLineOverlay.swift */,
+				E6000000000000000000000E /* RecentFilesOverlay.swift */,
+			);
+			path = Navigate;
+			sourceTree = "<group>";
+		};
+		E6000000000000000000003B /* Menus */ = {
+			isa = PBXGroup;
+			children = (
+				E60000000000000000000010 /* FileCommands.swift */,
+				E60000000000000000000012 /* EditCommands.swift */,
+				E60000000000000000000014 /* ViewCommands.swift */,
+				E60000000000000000000016 /* NavigateCommands.swift */,
+				E60000000000000000000018 /* CodeCommands.swift */,
+			);
+			path = Menus;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -844,7 +1024,31 @@
 				E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */,
 				E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */,
 				E10000000000000000000023 /* SnippetParserTests.swift in Sources */,
+				E60000000000000000000004 /* NavigationHistory.swift in Sources */,
+				E60000000000000000000007 /* SiblingSource.swift in Sources */,
+				E60000000000000000000028 /* FoldSet.swift in Sources */,
+				E6000000000000000000002F /* FindMatcher.swift in Sources */,
+				E60000000000000000000033 /* NavigationHistoryTests.swift in Sources */,
+				E60000000000000000000035 /* SiblingSourceTests.swift in Sources */,
+				E60000000000000000000037 /* FindMatcherTests.swift in Sources */,
+				E60000000000000000000039 /* FoldSetTests.swift in Sources */,
 				E20000000000000000000014 /* CheatSheetRowsTests.swift in Sources */,
+				E50000000000000000000201 /* TextChange.swift in Sources */,
+				E50000000000000000000202 /* LineSpan.swift in Sources */,
+				E50000000000000000000203 /* CommentTokens.swift in Sources */,
+				E50000000000000000000204 /* LineOps.swift in Sources */,
+				E50000000000000000000205 /* LineOps+Move.swift in Sources */,
+				E50000000000000000000206 /* LineOps+Case.swift in Sources */,
+				E50000000000000000000207 /* CommentToggle.swift in Sources */,
+				E50000000000000000000208 /* CommentPrefix.swift in Sources */,
+				E50000000000000000000209 /* SmartIndent.swift in Sources */,
+				E5000000000000000000020A /* AutoIndent.swift in Sources */,
+				E5000000000000000000020B /* BracketPairing.swift in Sources */,
+				E5000000000000000000020C /* EditingFixtures.swift in Sources */,
+				E5000000000000000000020D /* LineOpsTests.swift in Sources */,
+				E5000000000000000000020E /* CommentToggleTests.swift in Sources */,
+				E5000000000000000000020F /* SmartIndentTests.swift in Sources */,
+				E50000000000000000000210 /* BracketPairingTests.swift in Sources */,
 				C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */,
 				C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */,
 				C009D8110230ED36CA278F06 /* Plural.swift in Sources */,
@@ -910,6 +1114,32 @@
 				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
 				C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */,
 				C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */,
+				E90000000000000000000002 /* NoticeBar.swift in Sources */,
+				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
+				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,
+				E70000000000000000000002 /* RideTextView+Typing.swift in Sources */,
+				E60000000000000000000003 /* NavigationHistory.swift in Sources */,
+				E60000000000000000000006 /* SiblingSource.swift in Sources */,
+				E60000000000000000000009 /* AppState+Navigate.swift in Sources */,
+				E6000000000000000000000B /* AppState+Jumps.swift in Sources */,
+				E6000000000000000000000D /* GoToLineOverlay.swift in Sources */,
+				E6000000000000000000000F /* RecentFilesOverlay.swift in Sources */,
+				E60000000000000000000011 /* FileCommands.swift in Sources */,
+				E60000000000000000000013 /* EditCommands.swift in Sources */,
+				E60000000000000000000015 /* ViewCommands.swift in Sources */,
+				E60000000000000000000017 /* NavigateCommands.swift in Sources */,
+				E60000000000000000000019 /* CodeCommands.swift in Sources */,
+				E6000000000000000000001B /* EditorCommand.swift in Sources */,
+				E6000000000000000000001D /* EditorCommands.swift in Sources */,
+				E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */,
+				E60000000000000000000021 /* SurroundWith.swift in Sources */,
+				E60000000000000000000023 /* FoldController.swift in Sources */,
+				E60000000000000000000025 /* FoldLayout.swift in Sources */,
+				E60000000000000000000027 /* FoldSet.swift in Sources */,
+				E6000000000000000000002A /* Buffers+File.swift in Sources */,
+				E6000000000000000000002C /* RideTextView+Clipboard.swift in Sources */,
+				E6000000000000000000002E /* FindMatcher.swift in Sources */,
+				E60000000000000000000031 /* AppState+View.swift in Sources */,
 				E20000000000000000000002 /* CheatSheetController.swift in Sources */,
 				E20000000000000000000004 /* CheatSheetFetch.swift in Sources */,
 				E20000000000000000000006 /* CheatSheetLayout.swift in Sources */,
@@ -984,7 +1214,19 @@
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,
 				A00000000000000000000021 /* RideApp.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
+				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
+				E50000000000000000000101 /* TextChange.swift in Sources */,
+				E50000000000000000000102 /* LineSpan.swift in Sources */,
+				E50000000000000000000103 /* CommentTokens.swift in Sources */,
+				E50000000000000000000104 /* LineOps.swift in Sources */,
+				E50000000000000000000105 /* LineOps+Move.swift in Sources */,
+				E50000000000000000000106 /* LineOps+Case.swift in Sources */,
+				E50000000000000000000107 /* CommentToggle.swift in Sources */,
+				E50000000000000000000108 /* CommentPrefix.swift in Sources */,
+				E50000000000000000000109 /* SmartIndent.swift in Sources */,
+				E5000000000000000000010A /* AutoIndent.swift in Sources */,
+				E5000000000000000000010B /* BracketPairing.swift in Sources */,
 				A00000000000000000000024 /* StatusBarView.swift in Sources */,
 				A00000000000000000000025 /* Workspace.swift in Sources */,
 				A00000000000000000000026 /* ProjectTreeView.swift in Sources */,

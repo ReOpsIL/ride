@@ -2,6 +2,7 @@ mod cheat;
 mod check;
 mod config;
 mod edit;
+mod editing;
 mod index;
 mod kind;
 mod query;
@@ -13,6 +14,7 @@ pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
 pub use edit::{SignatureHelp, TextEdit};
+pub use editing::{BracketPair, FoldRange};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use kind::{CaptureKind, ItemKind};
 pub use query::{

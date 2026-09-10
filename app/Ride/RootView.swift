@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct RootView: View {
@@ -21,6 +22,11 @@ struct RootView: View {
             AppToolbar(state: state, hasWorkspace: state.workspaceRoot != nil, markdown: state.previewAvailable)
         }
         .toolbarBackground(.visible, for: .windowToolbar)
+        .preferredColorScheme(state.isLightTheme ? .light : .dark)
+        .onAppear {
+            NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)
+            DemoLaunch.start(state: state)
+        }
         .overlay {
             if state.showQuickOpen {
                 QuickOpenOverlay()
@@ -33,6 +39,12 @@ struct RootView: View {
             }
             if state.showProjectFind {
                 ProjectFindOverlay(model: state.projectFind)
+            }
+            if state.showGoToLine {
+                GoToLineOverlay()
+            }
+            if state.showRecentFiles {
+                RecentFilesOverlay()
             }
         }
     }
@@ -56,6 +68,9 @@ struct DetailColumn: View {
             TabStrip()
             if state.showFind {
                 FindBar()
+            }
+            if let notice = state.notice {
+                NoticeBar(text: notice) { state.notice = nil }
             }
             VSplitView {
                 editorRow

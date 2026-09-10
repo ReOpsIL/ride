@@ -18,6 +18,8 @@ final class BufferDocument: ObservableObject, Identifiable {
     var visibleWork: DispatchWorkItem?
     var isReadOnly = false
     var detectedLanguage: BufferLanguage?
+    var usesCRLF = false
+    var changedOnDisk = false
 
     var hasCompletions: Bool {
         language.hasCompletions
@@ -34,11 +36,39 @@ final class BufferDocument: ObservableObject, Identifiable {
     init(url: URL) {
         fileURL = url.standardizedFileURL
         untitledIndex = nil
-        if let data = try? Data(contentsOf: url.standardizedFileURL) {
-            text = String(decoding: data, as: UTF8.self)
-        } else {
-            text = ""
+        let loaded = Self.load(url.standardizedFileURL)
+        text = loaded?.text ?? ""
+        usesCRLF = loaded?.crlf ?? false
+    }
+
+    static func load(_ url: URL) -> (text: String, crlf: Bool)? {
+        guard let data = try? Data(contentsOf: url) else {
+            return nil
         }
+        let raw = String(decoding: data, as: UTF8.self)
+        let crlf = raw.contains("\r\n")
+        return (crlf ? raw.replacingOccurrences(of: "\r\n", with: "\n") : raw, crlf)
+    }
+
+    func reload() -> Bool {
+        guard let fileURL, let loaded = Self.load(fileURL) else {
+            return false
+        }
+        text = loaded.text
+        usesCRLF = loaded.crlf
+        isDirty = false
+        return true
+    }
+
+    func differsFromDisk() -> Bool {
+        guard let fileURL, let loaded = Self.load(fileURL) else {
+            return false
+        }
+        return loaded.text != text
+    }
+
+    var lineEnding: String {
+        usesCRLF ? "CRLF" : "LF"
     }
 
     init(untitled index: Int) {
@@ -58,6 +88,8 @@ final class BufferDocument: ObservableObject, Identifiable {
     }
 
     func bind(_ textView: RideTextView) {
+        textView.folds.removeAll()
+        textView.selectionStack = []
         textView.string = text
         textView.lines.invalidate()
         isDirty = false
@@ -82,7 +114,9 @@ final class BufferDocument: ObservableObject, Identifiable {
         guard let fileURL, !isReadOnly else {
             return
         }
-        try text.write(to: fileURL, atomically: true, encoding: .utf8)
+        let output = usesCRLF ? text.replacingOccurrences(of: "\n", with: "\r\n") : text
+        try output.write(to: fileURL, atomically: true, encoding: .utf8)
+        changedOnDisk = false
         isDirty = false
         RideEngineClient.shared.engine?.workspaceFileChanged(path: fileURL.path)
     }

@@ -1,6 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
+use crate::highlight::editing::{EditingKinds, toml_folds};
 use crate::highlight::{context, imports, includes, members, site, toml_outline, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/toml/highlights.scm");
@@ -90,6 +91,12 @@ pub fn grammar() -> Grammar {
         site: site::plain_site,
         context: context::unknown,
         imports: imports::no_imports,
+        editing: EditingKinds {
+            strings: &["string"],
+            comments: &["comment"],
+            bodies: &["inline_table", "array"],
+            folds: toml_folds,
+        },
     }
 }
 

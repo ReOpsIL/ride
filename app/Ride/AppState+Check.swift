@@ -83,6 +83,7 @@ extension AppState {
         case .success(let formatted):
             formatError = nil
             guard formatted != buffer.text else {
+                showNotice("\(buffer.displayName) is already formatted", seconds: 2)
                 return
             }
             applyText = formatted
@@ -94,6 +95,7 @@ extension AppState {
             } else {
                 formatError = "\(error)"
             }
+            showNotice("\(buffer.language.usesClang ? "clang-format" : "rustfmt") could not format \(buffer.displayName): \(formatError ?? "")")
         }
     }
 }

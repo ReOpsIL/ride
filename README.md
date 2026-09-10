@@ -6,6 +6,8 @@ Native macOS IDE for Rust, with C and C++ editing. A SwiftUI/AppKit shell (`app/
 
 Completions come from the open buffer, the workspace and every crate already on disk, including the rustc sysroot, in under a millisecond. Rows carry the signature, origin crate and an `use` tag when accepting will add the import; the doc card on the right shows the documentation of the selected row.
 
+Editing basics follow RustRover's menus: smart Enter, Tab and ⇧Tab on a selection, ⌘/ comments, bracket pairing, duplicate, delete, join and move lines, extend selection (⌥↑), matching brace, folding, Surround With, Back/Forward (⌘[ / ⌘]), Go to Line (⌘L), Recent Files (⌘E), next problem (F2) and header/source switch. ⌘? lists every shortcut.
+
 ## Cheat sheet
 
 A second popup shows the part of the language cheat sheet that fits the caret: items at file level, statements inside a body, patterns in a `match` arm, `$(...)` functions in a Makefile. Rust, C, C++ and GNU Make each ship a full sheet (about 1,900 templates in total) as TOML data under `cheatsheets/`.
@@ -86,5 +88,7 @@ Screenshots come from the demo scenes: `Ride.app --args --open <folder> --demo <
 - `plan/ride_draft.md` — product and architecture spec (authoritative)
 - `plan/roadmap/improve-extend.md` — current roadmap
 - `plan/roadmap/cheatsheet.md` — cheat sheet design
+- `plan/roadmap/must_have.md` — must-have editor commands (first priority)
+- `plan/roadmap/next.md` — next features and releases
 - `todo/` — open follow-ups per module
 - `AGENTS.md` — engineering rules for this repo

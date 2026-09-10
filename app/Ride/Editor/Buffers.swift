@@ -9,6 +9,10 @@ extension AppState {
         let standard = url.standardizedFileURL
         selectedURL = standard
         CompletionSession.shared.reset()
+        noteOpened(standard)
+        if activeBuffer?.fileURL != standard {
+            recordLocation()
+        }
         if let existing = buffers.first(where: { $0.fileURL == standard }) {
             existing.isReadOnly = existing.isReadOnly || readOnly
             activeID = existing.id
@@ -36,6 +40,7 @@ extension AppState {
 
     func selectBuffer(_ id: UUID) {
         CompletionSession.shared.reset()
+        recordLocation()
         activeID = id
         selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
@@ -52,6 +57,7 @@ extension AppState {
         }
         CompletionSession.shared.reset()
         SessionService.shared.close(buffer)
+        history.forget(bufferID: id)
         buffers.removeAll { $0.id == id }
         if activeID == id {
             activeID = buffers.last?.id
@@ -60,7 +66,7 @@ extension AppState {
     }
 
     func saveActive() {
-        guard let buffer = activeBuffer else {
+        guard let buffer = activeBuffer, confirmOverwrite(buffer) else {
             return
         }
         if buffer.isReadOnly || buffer.fileURL == nil {
@@ -101,7 +107,7 @@ extension AppState {
     }
 
     func autoSaveActive() {
-        guard let buffer = activeBuffer, buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly else {
+        guard let buffer = activeBuffer, buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly, !buffer.changedOnDisk else {
             return
         }
         try? buffer.save(from: nil)

@@ -115,7 +115,12 @@ struct TreeRow: View {
         Button("New File") { TreeActions.newFile(in: dir) }
         Button("New Folder") { TreeActions.newFolder(in: dir) }
         Button("Rename") { TreeActions.rename(node.url) }
+        Button("Duplicate") { TreeActions.duplicate(node.url) }
         Button("Delete") { TreeActions.trash(node.url) }
+        Divider()
+        Button("Copy Path") { TreeActions.copyPath(node.url, root: nil) }
+        Button("Copy Relative Path") { TreeActions.copyPath(node.url, root: state.workspaceRoot) }
         Button("Reveal in Finder") { TreeActions.reveal(node.url) }
+        Button("Open in Terminal") { TreeActions.openInTerminal(node.url, isDirectory: node.isDirectory) }
     }
 }

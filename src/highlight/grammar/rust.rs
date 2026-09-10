@@ -3,6 +3,7 @@ use tree_sitter::{Language, Node, Tree};
 use crate::ffi::OutlineItem;
 
 use super::Grammar;
+use crate::highlight::editing::{EditingKinds, rust_folds};
 use crate::highlight::members::{Chain, Root};
 use crate::highlight::symbol::node_text;
 use crate::highlight::{context, imports, includes, rust_outline, rust_receiver, rust_types, site};
@@ -40,6 +41,18 @@ pub fn grammar() -> Grammar {
         site: site::rust_site,
         context: context::rust_context,
         imports: imports::rust_imports,
+        editing: EditingKinds {
+            strings: &["string_literal", "raw_string_literal", "char_literal"],
+            comments: &["line_comment", "block_comment"],
+            bodies: &[
+                "block",
+                "declaration_list",
+                "field_declaration_list",
+                "enum_variant_list",
+                "match_block",
+            ],
+            folds: rust_folds,
+        },
     }
 }
 

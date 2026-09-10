@@ -2,26 +2,24 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate, SymbolAt, TextEdit};
+use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate};
 
-use super::context::Context;
 use super::edit::{apply_replica, to_ts_edit};
 use super::paint::{HUGE, clip_changed, expand, paint_range};
 use super::ranges::{subtract, union_into};
 use super::scope::{ScopeCache, SourceScope};
-use super::site::SiteAt;
-use super::syntax::{Lang, LocalHits, LocalQuery, Syntax};
+use super::syntax::{Lang, Syntax};
 
 pub struct BufferSession {
     pub generation: u64,
     edits: u64,
-    lang: Lang,
+    pub(super) lang: Lang,
     path: Option<PathBuf>,
     search_dirs: Vec<PathBuf>,
-    replica: String,
-    syntax: Box<dyn Syntax>,
+    pub(super) replica: String,
+    pub(super) syntax: Box<dyn Syntax>,
     already_covered: Vec<ByteRange>,
-    last_outline: Vec<OutlineItem>,
+    pub(super) last_outline: Vec<OutlineItem>,
     scope_cache: ScopeCache,
 }
 
@@ -51,41 +49,6 @@ impl BufferSession {
             includes: self.syntax.includes(&self.replica),
             types: self.syntax.type_table(&self.replica),
         })
-    }
-
-    pub fn local_hits(&self, q: &LocalQuery<'_>) -> LocalHits {
-        self.syntax.local_hits(&self.replica, &self.last_outline, q)
-    }
-
-    pub fn site_at(&self, byte: u32) -> SiteAt {
-        self.syntax.site_at(&self.replica, byte as usize)
-    }
-
-    pub fn context_at(&self, byte: u32) -> Context {
-        self.syntax.context_at(&self.replica, byte as usize)
-    }
-
-    pub fn imports(&self) -> Vec<String> {
-        self.syntax.imports(&self.replica)
-    }
-
-    pub fn import_edit(&self, import_path: &str) -> Option<TextEdit> {
-        if self.lang != Lang::Rust {
-            return None;
-        }
-        super::rust_import::edit(&self.replica, import_path)
-    }
-
-    pub fn call_site(&self, byte: u32) -> Option<super::call_site::CallSite> {
-        super::call_site::find(&self.replica, byte as usize)
-    }
-
-    pub fn postfix_receiver(&self, replace_start: usize) -> Option<(usize, usize)> {
-        self.syntax.postfix_receiver(&self.replica, replace_start)
-    }
-
-    pub fn symbol_at(&self, byte: u32) -> Option<SymbolAt> {
-        self.syntax.symbol_at(&self.replica, byte)
     }
 
     pub fn open(

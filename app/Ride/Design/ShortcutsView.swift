@@ -8,28 +8,49 @@ struct ShortcutEntry: Identifiable {
 
 enum Shortcuts {
     static let entries: [ShortcutEntry] = [
-        ShortcutEntry(id: "open", name: "Open Folder", keys: "⌘O"),
-        ShortcutEntry(id: "new", name: "New Buffer", keys: "⌘N"),
-        ShortcutEntry(id: "save", name: "Save", keys: "⌘S"),
-        ShortcutEntry(id: "close", name: "Close Editor", keys: "⌘W"),
-        ShortcutEntry(id: "quick", name: "Open Quickly", keys: "⌘P"),
-        ShortcutEntry(id: "find", name: "Find", keys: "⌘F"),
+        ShortcutEntry(id: "open", name: "Open…", keys: "⌘O"),
+        ShortcutEntry(id: "new", name: "New File / New Buffer", keys: "⌘N · ⌥⌘N"),
+        ShortcutEntry(id: "save", name: "Save / Save As / Save All", keys: "⌘S · ⇧⌘S · ⌥⌘S"),
+        ShortcutEntry(id: "close", name: "Close Editor / Close All", keys: "⌘W · ⌥⌘W"),
+        ShortcutEntry(id: "dup", name: "Duplicate / Delete Line", keys: "⌘D · ⌘⌫"),
+        ShortcutEntry(id: "move", name: "Move Line Up / Down", keys: "⌥⇧↑ · ⌥⇧↓"),
+        ShortcutEntry(id: "join", name: "Join Lines", keys: "⌃⇧J"),
+        ShortcutEntry(id: "newline", name: "Start New Line / Before", keys: "⇧↩ · ⌥⌘↩"),
+        ShortcutEntry(id: "sel", name: "Extend / Shrink Selection", keys: "⌥↑ · ⌥↓"),
+        ShortcutEntry(id: "selline", name: "Select Line / Word", keys: "⇧⌘L · ⌃W"),
+        ShortcutEntry(id: "case", name: "Toggle Case", keys: "⇧⌘U"),
+        ShortcutEntry(id: "comment", name: "Comment Line / Block", keys: "⌘/ · ⌥⌘/"),
+        ShortcutEntry(id: "indent", name: "Indent / Unindent Selection", keys: "⇥ · ⇧⇥"),
+        ShortcutEntry(id: "autoindent", name: "Auto-Indent Lines", keys: "⌃⌥I"),
+        ShortcutEntry(id: "format", name: "Reformat Document", keys: "⌃⇧I"),
+        ShortcutEntry(id: "surround", name: "Surround With", keys: "⌥⌘T"),
+        ShortcutEntry(id: "fold", name: "Fold / Unfold", keys: "⌥⌘← · ⌥⌘→"),
+        ShortcutEntry(id: "foldall", name: "Fold All / Unfold All", keys: "⇧⌥⌘← · ⇧⌥⌘→"),
+        ShortcutEntry(id: "find", name: "Find / Find and Replace", keys: "⌘F · ⌥⌘F"),
         ShortcutEntry(id: "next", name: "Find Next / Previous", keys: "⌘G · ⇧⌘G"),
         ShortcutEntry(id: "pfind", name: "Find in Project", keys: "⇧⌘F"),
-        ShortcutEntry(id: "sym", name: "Go to Symbol in File", keys: "⌘R"),
-        ShortcutEntry(id: "psym", name: "Go to Symbol in Project", keys: "⇧⌘R"),
+        ShortcutEntry(id: "quick", name: "Open Quickly / Recent Files", keys: "⌘P · ⌘E"),
+        ShortcutEntry(id: "back", name: "Back / Forward", keys: "⌘[ · ⌘]"),
+        ShortcutEntry(id: "lastedit", name: "Last Edit Location", keys: "⇧⌘⌫"),
+        ShortcutEntry(id: "line", name: "Go to Line", keys: "⌘L"),
+        ShortcutEntry(id: "sym", name: "Go to Symbol in File / Project", keys: "⌘R · ⇧⌘R"),
         ShortcutEntry(id: "def", name: "Go to Definition", keys: "F12"),
-        ShortcutEntry(id: "check", name: "Check", keys: "⌘B"),
-        ShortcutEntry(id: "problems", name: "Show Problems", keys: "⇧⌘M"),
-        ShortcutEntry(id: "format", name: "Format Document", keys: "⌃⇧I"),
-        ShortcutEntry(id: "sidebar", name: "Toggle Sidebar", keys: "⌃⌘S"),
+        ShortcutEntry(id: "header", name: "Switch Header / Source", keys: "⌃⌥↑"),
+        ShortcutEntry(id: "problem", name: "Next / Previous Problem", keys: "F2 · ⇧F2"),
+        ShortcutEntry(id: "method", name: "Next / Previous Method", keys: "⌃↓ · ⌃↑"),
+        ShortcutEntry(id: "brace", name: "Matching Brace", keys: "⌃M"),
+        ShortcutEntry(id: "complete", name: "Trigger Completion", keys: "⌃Space"),
         ShortcutEntry(id: "cheat", name: "Cheat Sheet", keys: "⌃⇧Space"),
-        ShortcutEntry(id: "help", name: "Keyboard Shortcuts", keys: "⌘/"),
+        ShortcutEntry(id: "doc", name: "Quick Documentation / Signature", keys: "⌃J · ⇧⌘Space"),
+        ShortcutEntry(id: "check", name: "Check", keys: "⌘B"),
+        ShortcutEntry(id: "panels", name: "Sidebar / Problems / Outline", keys: "⌘1 · ⌘6 · ⌘7"),
+        ShortcutEntry(id: "zoom", name: "Zoom In / Out / Reset", keys: "⌘= · ⌘− · ⌃⌘0"),
+        ShortcutEntry(id: "help", name: "Keyboard Shortcuts", keys: "⌘?"),
     ]
 
     static var columns: [[ShortcutEntry]] {
-        let half = (entries.count + 1) / 2
-        return [Array(entries.prefix(half)), Array(entries.dropFirst(half))]
+        let third = (entries.count + 2) / 3
+        return stride(from: 0, to: entries.count, by: third).map { Array(entries[$0..<min($0 + third, entries.count)]) }
     }
 }
 

@@ -1,8 +1,11 @@
 use tree_sitter::{InputEdit, Node, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt};
+use crate::ffi::{
+    ByteRange, FoldRange, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt,
+};
 
+use super::editing::{markdown_enclosing, markdown_folds};
 use super::fences::Fences;
 use super::ranges::from_ts;
 use super::spans::highlights_in;
@@ -122,6 +125,20 @@ impl Syntax for MarkdownSyntax {
 
     fn symbol_at(&self, _: &str, _: u32) -> Option<SymbolAt> {
         None
+    }
+
+    fn enclosing_ranges(&self, text: &str, range: ByteRange) -> Vec<ByteRange> {
+        self.block_tree
+            .as_ref()
+            .map(|t| markdown_enclosing(t.root_node(), text, range))
+            .unwrap_or_default()
+    }
+
+    fn fold_ranges(&self, text: &str) -> Vec<FoldRange> {
+        self.block_tree
+            .as_ref()
+            .map(|t| markdown_folds(t.root_node(), text))
+            .unwrap_or_default()
     }
 }
 

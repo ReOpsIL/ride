@@ -28,12 +28,18 @@ extension EditorPane {
             }
             document.text = view.string
             document.isDirty = true
+            state.noteEdit(view)
             view.updateCurrentLineHighlight()
             host?.syncGutter()
             publishCursor(view)
             let pending = document.pending
             document.pending = nil
             if let pending {
+                let folds = view.folds
+                view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
+                if folds != view.folds {
+                    view.refreshFolds()
+                }
                 Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
                 let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
                 SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
@@ -56,6 +62,11 @@ extension EditorPane {
 
         func textViewDidChangeSelection(_ notification: Notification) {
             if let view = notification.object as? RideTextView {
+                let caret = view.selectedRange()
+                if caret.length == 0, view.folds.clampCaret(caret.location) != caret.location {
+                    view.setSelectedRange(NSRange(location: view.folds.clampCaret(caret.location), length: 0))
+                    return
+                }
                 view.updateCurrentLineHighlight()
                 publishCursor(view)
                 CompletionSession.shared.selectionChanged(view: view)

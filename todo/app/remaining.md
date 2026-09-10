@@ -10,3 +10,12 @@
 - Problems panel keeps a C file's diagnostics until that file is checked again; drop them when the buffer closes or the file is deleted
 - Cheat sheet pinned mode refetches on every caret move (one engine call each); add a per-line debounce if it shows up in profiles
 - Cheat sheet rows show the template's first lines joined with ⏎; a syntax-highlighted preview through the engine's highlighter would read better
+
+# Must-have follow-ups (2026-09-10, see plan/roadmap/must_have.md)
+
+- Folding: gutter chevrons and a fold-state indicator; folds are only reachable from the Code menu and ⌥⌘← / ⌥⌘→ today
+- Matching brace: highlight the pair under the caret as a rendering attribute (the jump exists)
+- Reformat Selection (`clang-format --lines`, rustfmt on the enclosing item), Move Statement, Complete Current Statement
+- Replace in Project with a preview sheet
+- Project tree: ⌫ deletes and ↩ renames the selected node; Recent Locations picker
+- Line endings: a preference to convert CRLF to LF on save (today the original ending is preserved)

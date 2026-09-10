@@ -3,6 +3,7 @@ import Foundation
 extension AppState {
     func filesChanged(_ paths: [String]) {
         reloadTree()
+        diskChanged(paths: paths)
         guard let root = workspaceRoot else {
             return
         }

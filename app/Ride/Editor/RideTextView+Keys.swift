@@ -2,14 +2,15 @@ import AppKit
 
 extension RideTextView {
     override func insertTab(_ sender: Any?) {
-        if CompletionSession.shared.accept() || CompletionSession.shared.snippetNext() {
+        if CompletionSession.shared.accept() || CompletionSession.shared.snippetNext() || indentSelection(unindent: false) {
             return
         }
-        insertText(String(repeating: " ", count: tabWidth), replacementRange: selectedRange())
+        let unit = hooks.binding?()?.document.language == .make ? "\t" : String(repeating: " ", count: tabWidth)
+        super.insertText(unit, replacementRange: selectedRange())
     }
 
     override func insertBacktab(_ sender: Any?) {
-        if CompletionSession.shared.snippetPrevious() {
+        if CompletionSession.shared.snippetPrevious() || indentSelection(unindent: true) {
             return
         }
         super.insertBacktab(sender)
@@ -20,6 +21,9 @@ extension RideTextView {
             return
         }
         SignatureHelpController.shared.hide()
+        if smartNewline() {
+            return
+        }
         super.insertNewline(sender)
     }
 

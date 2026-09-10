@@ -30,6 +30,9 @@ final class RideTextView: NSTextView {
     }
     var hooks = EditorHooks()
     var hoverArea: NSTrackingArea?
+    var selectionStack: [NSRange] = []
+    var folds = FoldSet()
+    let foldDelegate = FoldLayoutDelegate()
     private var currentLineUTF16 = NSRange(location: 0, length: 0)
 
     override init(frame frameRect: NSRect, textContainer container: NSTextContainer?) {
@@ -89,6 +92,7 @@ final class RideTextView: NSTextView {
             showIndentGuides = prefs.indentGuides
             needsDisplay = true
         }
+        applySoftWrap(prefs.softWrap)
         if tabWidth == prefs.tabWidth, appliedFontSize == prefs.fontSize {
             return
         }
@@ -109,13 +113,35 @@ final class RideTextView: NSTextView {
         self.font = font
     }
 
+    func applySoftWrap(_ wrap: Bool) {
+        guard let container = textContainer, let scroll = enclosingScrollView else {
+            return
+        }
+        if wrap == container.widthTracksTextView, wrap != scroll.hasHorizontalScroller {
+            return
+        }
+        container.widthTracksTextView = wrap
+        isHorizontallyResizable = !wrap
+        scroll.hasHorizontalScroller = !wrap
+        if wrap {
+            container.size = NSSize(width: scroll.contentSize.width, height: CGFloat.greatestFiniteMagnitude)
+            frame.size.width = scroll.contentSize.width
+        } else {
+            container.size = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        }
+        needsLayout = true
+    }
+
     static func makeTK2() -> RideTextView {
         let storage = NSTextContentStorage()
         let layout = NSTextLayoutManager()
         storage.addTextLayoutManager(layout)
         let container = NSTextContainer(size: NSSize(width: 0, height: 1e7))
         layout.textContainer = container
-        return RideTextView(frame: .zero, textContainer: container)
+        let view = RideTextView(frame: .zero, textContainer: container)
+        view.foldDelegate.view = view
+        layout.delegate = view.foldDelegate
+        return view
     }
 
     override func draw(_ dirtyRect: NSRect) {

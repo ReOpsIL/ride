@@ -1,7 +1,10 @@
 use tree_sitter::InputEdit;
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, CompletionHit, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
+use crate::ffi::{
+    BracketPair, ByteRange, CompletionHit, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan,
+    SymbolAt,
+};
 
 use super::context::Context;
 use super::grammar::{self, Grammar};
@@ -158,6 +161,15 @@ pub trait Syntax: Send + Sync {
         Vec::new()
     }
     fn postfix_receiver(&self, _text: &str, _replace_start: usize) -> Option<(usize, usize)> {
+        None
+    }
+    fn enclosing_ranges(&self, _text: &str, _range: ByteRange) -> Vec<ByteRange> {
+        Vec::new()
+    }
+    fn fold_ranges(&self, _text: &str) -> Vec<FoldRange> {
+        Vec::new()
+    }
+    fn bracket_pair(&self, _text: &str, _byte: usize) -> Option<BracketPair> {
         None
     }
 }

@@ -1,6 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
+use crate::highlight::editing::{EditingKinds, c_folds};
 use crate::highlight::{
     c_decls, c_locals, c_members, c_outline, c_types, context, imports, includes, site,
 };
@@ -147,6 +148,12 @@ pub fn grammar() -> Grammar {
         site: site::cpp_site,
         context: context::c_context,
         imports: imports::no_imports,
+        editing: EditingKinds {
+            strings: &["string_literal", "char_literal", "raw_string_literal"],
+            comments: &["comment"],
+            bodies: super::c::BODIES,
+            folds: c_folds,
+        },
     }
 }
 

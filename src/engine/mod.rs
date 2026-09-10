@@ -15,6 +15,7 @@ use crate::highlight::BufferSession;
 
 mod access;
 mod cheat;
+mod editing;
 mod edits;
 mod header_hits;
 mod header_store;

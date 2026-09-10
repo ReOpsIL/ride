@@ -1,6 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
+use crate::highlight::editing::{EditingKinds, c_folds};
 use crate::highlight::{
     c_decls, c_locals, c_members, c_outline, c_types, context, imports, includes, site,
 };
@@ -70,6 +71,13 @@ pub const LOCAL_KINDS: &[&str] = &["identifier", "type_identifier", "field_ident
 pub const MEMBER_OPS: &[&str] = &["->", "."];
 pub const MEMBER_KINDS: &[&str] = &["field_identifier"];
 
+pub const BODIES: &[&str] = &[
+    "compound_statement",
+    "declaration_list",
+    "field_declaration_list",
+    "enumerator_list",
+];
+
 pub const SYMBOL_KINDS: &[&str] = &[
     "identifier",
     "type_identifier",
@@ -97,6 +105,12 @@ pub fn grammar() -> Grammar {
         site: site::c_site,
         context: context::c_context,
         imports: imports::no_imports,
+        editing: EditingKinds {
+            strings: &["string_literal", "char_literal"],
+            comments: &["comment"],
+            bodies: BODIES,
+            folds: c_folds,
+        },
     }
 }
 

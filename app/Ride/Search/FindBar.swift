@@ -4,7 +4,6 @@ struct FindBar: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
     @FocusState private var focused: Bool
-    @State private var showReplace = false
 
     var body: some View {
         HStack(spacing: Tokens.Space.m) {
@@ -20,10 +19,19 @@ struct FindBar: View {
             IconButton(symbol: "chevron.down", help: "Next (⌘G)") {
                 state.findNext()
             }
-            IconButton(symbol: "arrow.left.arrow.right", help: "Replace", active: showReplace) {
-                showReplace.toggle()
+            IconButton(symbol: "textformat", help: "Match case", active: state.findOptions.caseSensitive) {
+                state.findOptions.caseSensitive.toggle()
             }
-            if showReplace {
+            IconButton(symbol: "textformat.abc.dottedunderline", help: "Whole word", active: state.findOptions.wholeWord) {
+                state.findOptions.wholeWord.toggle()
+            }
+            IconButton(symbol: "asterisk", help: "Regular expression", active: state.findOptions.regex) {
+                state.findOptions.regex.toggle()
+            }
+            IconButton(symbol: "arrow.left.arrow.right", help: "Replace (⌥⌘F)", active: state.showReplaceField) {
+                state.showReplaceField.toggle()
+            }
+            if state.showReplaceField {
                 field(icon: "pencil", placeholder: "Replace", text: $state.replaceQuery, trailing: nil)
                     .frame(width: 200)
                 Button("Replace") {
@@ -58,7 +66,7 @@ struct FindBar: View {
         guard let text = state.activeBuffer?.text else {
             return nil
         }
-        return FindCount.label(current: state.findRange, in: text, query: state.findQuery)
+        return FindCount.label(current: state.findRange, in: text, query: state.findQuery, options: state.findOptions)
     }
 
     private func field(icon: String, placeholder: String, text: Binding<String>, trailing: String?) -> some View {

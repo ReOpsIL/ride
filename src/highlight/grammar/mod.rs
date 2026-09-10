@@ -2,6 +2,7 @@ use tree_sitter::{Language, Node, Tree};
 
 use crate::ffi::OutlineItem;
 use crate::highlight::context::Detector;
+use crate::highlight::editing::EditingKinds;
 use crate::highlight::includes::IncludeRef;
 use crate::highlight::site::Classifier;
 use crate::highlight::types::TypeTable;
@@ -31,4 +32,5 @@ pub struct Grammar {
     pub site: Classifier,
     pub context: Detector,
     pub imports: fn(&Tree, &str) -> Vec<String>,
+    pub editing: EditingKinds,
 }

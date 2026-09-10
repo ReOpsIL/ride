@@ -39,6 +39,17 @@ struct TabItem: View {
         .onTapGesture {
             state.selectBuffer(buffer.id)
         }
+        .contextMenu {
+            Button("Close") { state.closeBuffer(buffer.id) }
+            Button("Close Others") { state.closeOthers(keeping: buffer.id) }
+            Button("Close All") { state.closeAll() }
+            if let url = buffer.fileURL {
+                Divider()
+                Button("Copy Path") { TreeActions.copyPath(url, root: nil) }
+                Button("Copy Relative Path") { TreeActions.copyPath(url, root: state.workspaceRoot) }
+                Button("Reveal in Finder") { TreeActions.reveal(url) }
+            }
+        }
         .help(buffer.fileURL?.path ?? buffer.displayName)
     }
 

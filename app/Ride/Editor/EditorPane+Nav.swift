@@ -27,6 +27,7 @@ extension EditorPane.Coordinator {
         if let byte = state.pendingJump {
             state.pendingJump = nil
             EditorJump.shared.jump(byte: byte)
+            state.recordLocation()
         }
     }
 

@@ -3,7 +3,9 @@ use std::sync::OnceLock;
 use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{ByteRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
+use crate::ffi::{
+    BracketPair, ByteRange, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt,
+};
 
 use super::context::Context;
 use super::grammar::Grammar;
@@ -13,7 +15,7 @@ use super::ranges::from_ts;
 use super::site::SiteAt;
 use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
 use super::types::TypeTable;
-use super::{errors, locals, spans, symbol};
+use super::{editing, errors, locals, spans, symbol};
 
 pub struct TreeSyntax {
     grammar: Grammar,
@@ -176,5 +178,22 @@ impl Syntax for TreeSyntax {
             self.grammar.symbol_kinds,
             self.grammar.qualifier,
         )
+    }
+
+    fn enclosing_ranges(&self, text: &str, range: ByteRange) -> Vec<ByteRange> {
+        let Some(tree) = self.tree.as_ref() else {
+            return Vec::new();
+        };
+        editing::enclosing_ranges(tree.root_node(), text, range, &self.grammar.editing)
+    }
+
+    fn fold_ranges(&self, text: &str) -> Vec<FoldRange> {
+        let folds = self.grammar.editing.folds;
+        self.tree.as_ref().map_or_else(Vec::new, |t| folds(t, text))
+    }
+
+    fn bracket_pair(&self, text: &str, byte: usize) -> Option<BracketPair> {
+        let tree = self.tree.as_ref()?;
+        editing::bracket_pair(tree.root_node(), text, byte, &self.grammar.editing)
     }
 }

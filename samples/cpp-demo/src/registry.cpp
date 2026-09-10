@@ -16,3 +16,4 @@ std::size_t Registry::size() const {
 }
 
 }
+

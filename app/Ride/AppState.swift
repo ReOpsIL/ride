@@ -3,16 +3,26 @@ import Combine
 import SwiftUI
 
 final class AppState: ObservableObject {
-    @Published var workspaceRoot: URL?
+    @Published var workspaceRoot: URL? {
+        didSet { syncMenu() }
+    }
     @Published var rootNodes: [FileNode] = []
     @Published var selectedURL: URL?
     @Published var expanded: Set<URL> = []
-    @Published var recent: [URL] = []
-    @Published var buffers: [BufferDocument] = []
-    @Published var activeID: UUID?
+    @Published var recent: [URL] = [] {
+        didSet { menu.recent = recent }
+    }
+    @Published var buffers: [BufferDocument] = [] {
+        didSet { syncMenu() }
+    }
+    @Published var activeID: UUID? {
+        didSet { syncMenu() }
+    }
     @Published var cursorLine = 1
     @Published var cursorColumn = 1
-    @Published var prefs = Preferences.defaults
+    @Published var prefs = Preferences.defaults {
+        didSet { syncMenu() }
+    }
     @Published var showQuickOpen = false
     @Published var showFind = false
     @Published var quickQuery = ""
@@ -27,14 +37,31 @@ final class AppState: ObservableObject {
     @Published var symbolSelection: UInt32?
     @Published var showSymbolPicker = false
     @Published var showProjectFind = false
-    @Published var showProblems = false
-    @Published var showSidebar = true
+    @Published var showProblems = false {
+        didSet { syncMenu() }
+    }
+    @Published var showSidebar = true {
+        didSet { syncMenu() }
+    }
     @Published var showPreview = false
     @Published var formatError: String?
+    @Published var notice: String?
+    var noticeWork: DispatchWorkItem?
+    @Published var showGoToLine = false
+    @Published var goToLineQuery = ""
+    @Published var showRecentFiles = false
+    @Published var recentQuery = ""
+    @Published var recentSelection: URL?
+    @Published var findOptions = FindOptions.defaults
+    @Published var showReplaceField = false
+    var recentFiles: [URL] = []
+    var zoomBefore = 0
+    let history = NavigationHistory()
     let symbolPicker = SymbolPickerModel()
     let projectFind = ProjectFindModel()
     let preview = PreviewModel()
     let git = GitStatusService()
+    let menu = MenuModel()
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?
@@ -55,9 +82,14 @@ final class AppState: ObservableObject {
         buffers.first { $0.id == activeID }
     }
 
+    func syncMenu() {
+        menu.sync(from: self)
+    }
+
     init() {
         prefs = PreferencesStore.load()
         recent = recents.load()
+        menu.recent = recent
         ThemeStore.shared.apply(name: prefs.theme)
         watcher.handler = { [weak self] paths in
             self?.filesChanged(paths)
