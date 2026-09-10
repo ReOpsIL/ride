@@ -26,6 +26,8 @@ cargo clippy --all-targets -- -D warnings
 ./scripts/run.sh [folder]        # build Ride.app and open a folder
 ```
 
+Two sample projects exercise the C and C++ support end to end (member completion through headers, go to definition into `include/`, `compile_commands.json`-driven diagnostics, clang-format): `./scripts/run.sh samples/c-demo` or `samples/cpp-demo`, each with a README checklist.
+
 The one-shot indexer writes to `~/Library/Application Support/Ride/index/`:
 
 ```sh

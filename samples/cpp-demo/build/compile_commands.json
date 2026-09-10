@@ -1,0 +1,5 @@
+[
+  {"directory": "..", "file": "src/main.cpp", "command": "clang++ -std=c++20 -Wall -Wextra -Iinclude -c src/main.cpp -o build/main.o"},
+  {"directory": "..", "file": "src/shapes.cpp", "command": "clang++ -std=c++20 -Wall -Wextra -Iinclude -c src/shapes.cpp -o build/shapes.o"},
+  {"directory": "..", "file": "src/registry.cpp", "command": "clang++ -std=c++20 -Wall -Wextra -Iinclude -c src/registry.cpp -o build/registry.o"}
+]

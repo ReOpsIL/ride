@@ -1,0 +1,5 @@
+[
+  {"directory": "..", "file": "src/main.c", "command": "clang -std=c17 -Wall -Wextra -Iinclude -c src/main.c -o build/main.o"},
+  {"directory": "..", "file": "src/geometry.c", "command": "clang -std=c17 -Wall -Wextra -Iinclude -c src/geometry.c -o build/geometry.o"},
+  {"directory": "..", "file": "src/util.c", "command": "clang -std=c17 -Wall -Wextra -Iinclude -c src/util.c -o build/util.o"}
+]

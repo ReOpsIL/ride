@@ -1,6 +1,6 @@
 use tree_sitter::{Node, Tree};
 
-use super::c_names::{SPECIFIERS, WRAPPERS, node_text, plain_name, type_name};
+use super::c_names::{SPECIFIERS, WRAPPERS, node_text, plain_name, type_name, wrapped};
 use super::walk::each_node;
 
 const DECLARATIONS: &[&str] = &[
@@ -64,7 +64,7 @@ fn enclosing_type(node: Node<'_>, text: &str) -> Option<String> {
 fn definition_scope(definition: Node<'_>, text: &str) -> Option<String> {
     let mut node = definition.child_by_field_name("declarator")?;
     while WRAPPERS.contains(&node.kind()) {
-        node = node.child_by_field_name("declarator")?;
+        node = wrapped(node)?;
     }
     let inner = node.child_by_field_name("declarator")?;
     if inner.kind() != "qualified_identifier" {

@@ -61,7 +61,8 @@ fn same_file(a: &str, b: &Path) -> bool {
 #[test]
 fn include_dirs_come_from_the_compile_database_entry_of_the_same_language() {
     let dir = project();
-    let root = dir.path();
+    let root = dir.path().canonicalize().unwrap();
+    let root = root.as_path();
     let dirs = include_dirs(&root.join("main.c"));
     assert_eq!(
         dirs,

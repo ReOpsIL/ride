@@ -20,7 +20,7 @@ pub const SPECIFIERS: [&str; 3] = ["struct_specifier", "class_specifier", "union
 pub fn function_name(declarator: Node<'_>, text: &str) -> Option<(String, bool)> {
     let mut node = declarator;
     while WRAPPERS.contains(&node.kind()) {
-        node = node.child_by_field_name("declarator")?;
+        node = wrapped(node)?;
     }
     if node.kind() != "function_declarator" {
         return None;
@@ -37,7 +37,7 @@ pub fn plain_name(declarator: Node<'_>, text: &str) -> Option<String> {
             return Some(node_text(node, text));
         }
         node = match node.kind() {
-            k if WRAPPERS.contains(&k) => node.child_by_field_name("declarator")?,
+            k if WRAPPERS.contains(&k) => wrapped(node)?,
             "array_declarator" | "attributed_declarator" | "init_declarator" => {
                 node.child_by_field_name("declarator")?
             }
@@ -47,6 +47,13 @@ pub fn plain_name(declarator: Node<'_>, text: &str) -> Option<String> {
             _ => return None,
         };
     }
+}
+
+pub fn wrapped(node: Node<'_>) -> Option<Node<'_>> {
+    node.child_by_field_name("declarator").or_else(|| {
+        let mut cursor = node.walk();
+        node.named_children(&mut cursor).last()
+    })
 }
 
 pub fn type_name(node: Node<'_>, text: &str) -> Option<String> {

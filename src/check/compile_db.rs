@@ -37,25 +37,32 @@ fn databases(file: &Path) -> impl Iterator<Item = PathBuf> + '_ {
 fn best_entry(db: &Path, file: &Path, lang: Lang) -> Option<CompileCommand> {
     let text = std::fs::read_to_string(db).ok()?;
     let entries: Vec<Entry> = serde_json::from_str(&text).ok()?;
-    let sources: Vec<(PathBuf, &Entry)> = entries
+    let base = db.parent().unwrap_or(Path::new("."));
+    let sources: Vec<(PathBuf, PathBuf, &Entry)> = entries
         .iter()
-        .map(|e| (Path::new(&e.directory).join(&e.file), e))
+        .map(|e| {
+            let dir = base.join(&e.directory);
+            let dir = dir.canonicalize().unwrap_or(dir);
+            (dir.join(&e.file), dir, e)
+        })
         .collect();
     let exact = sources
         .iter()
-        .find(|(src, _)| src.canonicalize().ok().as_deref() == Some(file));
+        .find(|(src, _, _)| src.canonicalize().ok().as_deref() == Some(file));
     let siblings = || {
-        sources.iter().filter(|(src, _)| {
+        sources.iter().filter(|(src, _, _)| {
             src.parent().and_then(|p| p.canonicalize().ok()).as_deref() == file.parent()
         })
     };
-    let same_lang = || siblings().find(|(src, _)| Lang::for_path(src.to_str()) == lang);
-    let (src, entry, keep_std) = match exact.or_else(same_lang) {
-        Some((src, entry)) => (src, *entry, true),
-        None => siblings().next().map(|(src, entry)| (src, *entry, false))?,
+    let same_lang = || siblings().find(|(src, _, _)| Lang::for_path(src.to_str()) == lang);
+    let (src, dir, entry, keep_std) = match exact.or_else(same_lang) {
+        Some((src, dir, entry)) => (src, dir, *entry, true),
+        None => siblings()
+            .next()
+            .map(|(src, dir, entry)| (src, dir, *entry, false))?,
     };
     Some(CompileCommand {
-        directory: PathBuf::from(&entry.directory),
+        directory: dir.clone(),
         args: strip(argv(entry)?, src, keep_std),
     })
 }
