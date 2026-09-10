@@ -261,3 +261,38 @@ fn a_header_with_cpp_markers_opens_as_cpp() {
         .unwrap();
     assert_eq!(c.lang, Lang::C);
 }
+
+#[test]
+fn definition_on_an_include_line_opens_the_header() {
+    let dir = project();
+    let root = dir.path();
+    let engine = engine();
+    let open = engine
+        .open_session(
+            "c".into(),
+            Some(root.join("main.c").display().to_string()),
+            MAIN_C.into(),
+            None,
+        )
+        .unwrap();
+    let at = MAIN_C.find("shapes.h").unwrap() + 3;
+    let resp = engine.find_definitions(open.session_id, at as u32);
+    let symbol = resp.symbol.expect("include symbol");
+    assert_eq!(symbol.name, "shapes.h");
+    assert_eq!(
+        &MAIN_C[symbol.start_byte as usize..symbol.end_byte as usize],
+        "shapes.h"
+    );
+    assert_eq!(resp.hits.len(), 1, "{:?}", resp.hits);
+    assert_eq!(resp.hits[0].item_kind, ItemKind::Header);
+    assert!(same_file(
+        resp.hits[0].source_path.as_deref().unwrap(),
+        &root.join("shapes.h")
+    ));
+    let at = MAIN_C.find("ext.h").unwrap();
+    let resp = engine.find_definitions(open.session_id, at as u32);
+    assert!(same_file(
+        resp.hits[0].source_path.as_deref().unwrap(),
+        &root.join("include/ext.h")
+    ));
+}

@@ -128,13 +128,16 @@ fn cpp_demo_resolves_classes_bases_this_and_sniffed_headers() {
     let circle = members(&engine, id, &text, "circle.");
     assert!(
         circle.starts_with(&[
-            "Circle".into(),
             "area".into(),
             "perimeter".into(),
             "scale".into(),
             "radius".into(),
             "radius_".into()
         ]),
+        "{circle:?}"
+    );
+    assert!(
+        circle.iter().position(|n| n == "Circle") > circle.iter().position(|n| n == "describe"),
         "{circle:?}"
     );
     assert!(

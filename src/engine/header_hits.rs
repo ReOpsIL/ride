@@ -55,7 +55,12 @@ pub fn members(
     prefix: &str,
     limit: usize,
 ) -> Vec<CompletionHit> {
-    member_hits(TypeTable::resolve(tables, type_name), prefix, limit)
+    member_hits(
+        TypeTable::resolve(tables, type_name),
+        prefix,
+        limit,
+        Some(type_name),
+    )
 }
 
 pub fn scoped(
@@ -64,18 +69,22 @@ pub fn scoped(
     prefix: &str,
     limit: usize,
 ) -> Vec<CompletionHit> {
-    member_hits(TypeTable::scoped(tables, segments), prefix, limit)
+    member_hits(TypeTable::scoped(tables, segments), prefix, limit, None)
 }
 
-fn member_hits(members: Vec<Member>, prefix: &str, limit: usize) -> Vec<CompletionHit> {
+fn member_hits(
+    members: Vec<Member>,
+    prefix: &str,
+    limit: usize,
+    owner: Option<&str>,
+) -> Vec<CompletionHit> {
     let p = prefix.to_ascii_lowercase();
     let mut seen = HashSet::new();
-    members
+    let mut hits: Vec<CompletionHit> = members
         .into_iter()
         .filter(|m| matches(&m.item.name, &p))
         .filter(|m| m.origin.is_none() || !reserved(&m.item.name, prefix))
         .filter(|m| seen.insert(m.item.name.clone()))
-        .take(limit)
         .map(|m: Member| {
             let mut hit = CompletionHit::from_outline(
                 &m.item,
@@ -85,7 +94,14 @@ fn member_hits(members: Vec<Member>, prefix: &str, limit: usize) -> Vec<Completi
             hit.detail = m.detail;
             hit
         })
-        .collect()
+        .collect();
+    hits.sort_by_key(|h| special(&h.name, owner));
+    hits.truncate(limit);
+    hits
+}
+
+fn special(name: &str, owner: Option<&str>) -> bool {
+    name.starts_with('~') || name.starts_with("operator") || owner == Some(name)
 }
 
 fn matches(name: &str, prefix_lower: &str) -> bool {

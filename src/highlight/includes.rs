@@ -24,6 +24,34 @@ pub fn c_includes(tree: &Tree, text: &str) -> Vec<IncludeRef> {
     out
 }
 
+pub fn include_on_line(text: &str, at: usize) -> Option<(IncludeRef, usize, usize)> {
+    let at = at.min(text.len());
+    let start = text[..at].rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let end = text[at..].find('\n').map(|i| at + i).unwrap_or(text.len());
+    let line = &text[start..end];
+    let rest = line.trim_start().strip_prefix('#')?.trim_start();
+    let rest = ["include_next", "include", "import"]
+        .iter()
+        .find_map(|d| rest.strip_prefix(d))?
+        .trim_start();
+    let (open, close) = match rest.chars().next()? {
+        '<' => ('<', '>'),
+        '"' => ('"', '"'),
+        _ => return None,
+    };
+    let body = &rest[1..];
+    let len = body.find(close)?;
+    let name_start = end - rest.len() + 1;
+    Some((
+        IncludeRef {
+            name: body[..len].to_string(),
+            quoted: open == '"',
+        },
+        name_start,
+        name_start + len,
+    ))
+}
+
 pub fn no_includes(_: &Tree, _: &str) -> Vec<IncludeRef> {
     Vec::new()
 }

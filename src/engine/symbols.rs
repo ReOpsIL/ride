@@ -1,7 +1,8 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem};
+use crate::ffi::{CompletionHit, DefinitionResponse, ItemKind, OutlineItem, SymbolAt};
+use crate::highlight::include_on_line;
 use crate::query::{IndexSrc, exact_search};
 
 use super::reach::Reach;
@@ -22,6 +23,9 @@ impl Engine {
 }
 
 fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
+    if let Some(resp) = include_definition(engine, session_id, cursor_byte) {
+        return resp;
+    }
     let snap = engine.read(|i| {
         let session = i.sessions.get(&session_id)?;
         let symbol = session.symbol_at(cursor_byte)?;
@@ -66,6 +70,45 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
         symbol: Some(symbol),
         hits,
     }
+}
+
+fn include_definition(
+    engine: &Engine,
+    session_id: u64,
+    cursor_byte: u32,
+) -> Option<DefinitionResponse> {
+    let (include, start, end, reach) = engine
+        .read(|i| {
+            let session = i.sessions.get(&session_id)?;
+            session.lang().clang_name()?;
+            let (include, start, end) = include_on_line(session.replica(), cursor_byte as usize)?;
+            Some((include, start, end, Reach::take(i, session_id, session)))
+        })
+        .ok()
+        .flatten()?;
+    let suffix = Path::new(&include.name);
+    let header = reach
+        .headers()
+        .iter()
+        .find(|h| h.path.ends_with(suffix))
+        .map(|h| h.path.display().to_string());
+    reach.remember(engine);
+    let mut hits = Vec::new();
+    if let Some(path) = header {
+        let mut hit =
+            CompletionHit::local(&include.name, ItemKind::Header, LOCAL_SCORE, Some((0, 0)));
+        hit.source_path = Some(path);
+        hits.push(hit);
+    }
+    Some(DefinitionResponse {
+        symbol: Some(SymbolAt {
+            name: include.name,
+            start_byte: start as u32,
+            end_byte: end as u32,
+            qualifier: None,
+        }),
+        hits,
+    })
 }
 
 fn outline_hit(item: &OutlineItem) -> CompletionHit {

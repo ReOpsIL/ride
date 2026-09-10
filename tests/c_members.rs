@@ -187,3 +187,21 @@ fn cpp_auto_locals_take_the_type_of_their_initializer() {
         "{kinds:?}"
     );
 }
+
+#[test]
+fn cpp_constructors_destructors_and_operators_come_last() {
+    let engine = engine();
+    let src = "struct Buf {\n    Buf();\n    ~Buf();\n    Buf &operator=(const Buf &);\n    int len;\n    void clear();\n};\nint main() { Buf b; b. return 0; }\n";
+    let open = engine
+        .open_session("cc".into(), Some("/tmp/order.cc".into()), src.into(), None)
+        .unwrap();
+    let names: Vec<String> = names(&engine, open.session_id, src, "Buf b; b.", "")
+        .into_iter()
+        .map(|(n, _)| n)
+        .collect();
+    assert_eq!(
+        names,
+        vec!["len", "clear", "Buf", "~Buf", "operator="],
+        "{names:?}"
+    );
+}

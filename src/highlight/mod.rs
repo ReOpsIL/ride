@@ -47,7 +47,7 @@ mod types;
 mod walk;
 
 pub use call_site::CallSite;
-pub use includes::IncludeRef;
+pub use includes::{IncludeRef, include_on_line};
 pub use members::Root;
 pub use scope::SourceScope;
 pub use scrub::scrub_macros;
