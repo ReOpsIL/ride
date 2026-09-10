@@ -19,10 +19,13 @@
 | `src/extract` | tree-sitter item extraction with module paths, impls, re-exports |
 | `src/markdown` | pulldown-cmark HTML rendering with token spans for Rust, C and C++ fences |
 | `src/index` | Tantivy schema, one-shot writer, generations, manifest, status and warnings logs |
-| `src/query` | prefix / BM25 completion search, crate prefix, keyword hits |
-| `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline, parse errors |
+| `src/query` | prefix / hump / BM25 catalog search, path children and crate listings, keyword hits, best-per-name collector with the reachability filter |
+| `src/score` | shared score tiers and bonuses used by buffer, header and catalog hits |
+| `src/params` | parameter-list parsing of signatures for call snippets and signature help |
+| `src/text` | shared text helpers: first sentence, whitespace collapse, caps |
+| `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline (with signature and doc), parse errors, completion sites (`site/`), imports, call sites, Rust/C type tables and receiver typing, postfix receivers |
 | `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
-| `src/engine` | in-process `Engine`: sessions, query routing, definitions, tools, manifest watch |
+| `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), definitions, import edits, signature help, tools, manifest watch |
 | `src/ffi` | UniFFI records, enums and listener traits |
 
 ## Languages
