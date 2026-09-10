@@ -25,14 +25,36 @@ extension AppState {
         updatePrefs { $0.indentGuides.toggle() }
     }
 
-    func showNotice(_ text: String, seconds: Double = 6) {
+    func showNotice(_ text: String, seconds: Double = 6, action: (title: String, run: () -> Void)? = nil) {
         notice = text
+        noticeAction = action
         noticeWork?.cancel()
         let work = DispatchWorkItem { [weak self] in
             self?.notice = nil
+            self?.noticeAction = nil
         }
         noticeWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
+    }
+
+    func checkTools() {
+        guard prefs.askMissingTools, !DemoLaunch.isDemo else {
+            return
+        }
+        ToolsModel.shared.refresh { [weak self] in
+            guard let self else {
+                return
+            }
+            let missing = ToolsModel.shared.missing.map(\.info.name)
+            guard !missing.isEmpty else {
+                return
+            }
+            let names = missing.joined(separator: ", ")
+            showNotice("Missing tools: \(names)", seconds: 20, action: ("Install…", { [weak self] in
+                self?.notice = nil
+                self?.showToolsSheet = true
+            }))
+        }
     }
 
     func toggleOutlinePanel() {

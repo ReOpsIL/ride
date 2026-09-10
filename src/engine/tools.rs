@@ -1,9 +1,12 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::check::{format_clang, format_source, run_check, run_clang_check};
+use crate::check::{
+    Formatter, format_clang, format_document, format_source, run_check, run_clang_check,
+};
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
+use crate::highlight::Lang;
 
 use super::Engine;
 
@@ -25,6 +28,10 @@ impl Engine {
         }
     }
 
+    pub fn tool_status(&self) -> Vec<crate::ffi::ToolInfo> {
+        crate::discover::tool_status()
+    }
+
     pub fn has_tool(&self, name: String) -> bool {
         crate::toolchain::tool_path(&name).is_file()
     }
@@ -44,6 +51,28 @@ impl Engine {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
         }
+    }
+
+    pub fn format_buffer(
+        &self,
+        path: Option<String>,
+        text: String,
+        edition: Option<String>,
+    ) -> Result<String, EngineError> {
+        let lang = Lang::for_buffer(path.as_deref(), &text);
+        match catch_unwind(AssertUnwindSafe(|| {
+            format_document(lang, &text, path.as_deref(), edition.as_deref())
+        })) {
+            Ok(r) => r,
+            Err(p) => Err(EngineError::from_panic(p)),
+        }
+    }
+
+    pub fn formatter_name(&self, path: Option<String>, text: String) -> String {
+        Formatter::for_lang(Lang::for_buffer(path.as_deref(), &text))
+            .filter(|f| f.available())
+            .map(|f| f.name().to_string())
+            .unwrap_or_default()
     }
 
     pub fn format_c(

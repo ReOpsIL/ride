@@ -20,11 +20,12 @@ mod toolchain;
 
 pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{
-    format_clang, format_source, include_dirs, parse_clang, parse_lines, run_check, run_clang_check,
+    Formatter, format_clang, format_document, format_make, format_source, include_dirs,
+    parse_clang, parse_lines, run_check, run_clang_check,
 };
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,
-    sysroot_path, system_includes, workspace_info,
+    sysroot_path, system_includes, tool_status, workspace_info,
 };
 pub use engine::{Engine, engine_start};
 pub use error::EngineError;

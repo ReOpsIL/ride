@@ -54,6 +54,7 @@ enum Command {
         all: bool,
     },
     Status,
+    Tools,
 }
 
 fn main() -> ExitCode {
@@ -96,6 +97,20 @@ fn main() -> ExitCode {
         ),
         Some(Command::Status) => {
             status_cmd(cli.index_dir);
+            ExitCode::SUCCESS
+        }
+        Some(Command::Tools) => {
+            for tool in ride_engine::tool_status() {
+                match tool.path {
+                    Some(path) => println!("{:<14} {path}", tool.name),
+                    None => println!(
+                        "{:<14} missing  ({}; {})",
+                        tool.name,
+                        tool.install.unwrap_or_else(|| "no installer found".into()),
+                        tool.hint
+                    ),
+                }
+            }
             ExitCode::SUCCESS
         }
     }

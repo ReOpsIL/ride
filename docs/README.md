@@ -8,7 +8,7 @@
 | Completion plan (sites, `use`/`#include`, ranking, rows, accept) | `plan/roadmap/completion.md` |
 | Cheat sheet plan (contexts, sheet data, popup) | `plan/roadmap/cheatsheet.md` |
 | Must-have editor functionality (Edit / View / Navigate / Code menus), first priority | `plan/roadmap/must_have.md` |
-| Next features and releases 1.1 / 1.2 / 2.0 | `plan/roadmap/next.md` |
+| Next features and releases 1.1 / 1.2 / 1.3 / 2.0 (revised against RustRover) | `plan/roadmap/next.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
@@ -37,11 +37,11 @@
 | Language | Extensions | Highlight | Outline | Completion | Definitions | Format |
 |---|---|---|---|---|---|---|
 | Rust | `rs` | tree-sitter-rust | `extract` items | keywords and keyword snippets, buffer locals, crate catalog, `use` paths (crates, then children), `Type::` / `module::` children, typed members after `.` (buffer types + catalog), struct-literal fields, `#[derive(…)]` and attribute names, postfix templates after `.`, call snippets, auto-import edits | buffer outline + catalog | rustfmt |
-| C | `c`, `h` | tree-sitter-c | functions, prototypes, structs/enums/unions, typedefs, globals, `#define` | keywords and snippets, buffer locals, included headers, struct members after `.` / `->`, `#include <…>` / `"…"` header paths, `#` directives | buffer outline + included headers | clang-format |
-| C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords and snippets, buffer locals, included headers, class members after `.` / `->` / `this->` (bases followed), `#include` header paths, `#` directives | buffer outline + included headers, `a::b::c` qualifier | clang-format |
-| TOML | `toml` | tree-sitter-toml-ng | tables and table arrays | Cargo manifest table and key names, keys in the buffer | buffer outline | none |
-| Makefile | `Makefile`, `GNUmakefile`, `mk`, `mak`, `make` | tree-sitter-make | targets, variable and `define` assignments | GNU make directives, functions, builtin variables and special targets, buffer targets and variables | buffer outline | none |
-| CMake | `CMakeLists.txt`, `cmake` | tree-sitter-cmake | project, `add_executable` / `add_library` / `add_custom_target` targets, `set` variables, `option`s, functions, macros | common commands, variables and argument keywords, buffer functions, targets and variables | buffer outline | none |
+| C | `c`, `h` | tree-sitter-c | functions, prototypes, structs/enums/unions, typedefs, globals, `#define` | keywords and snippets, buffer locals, included headers, struct members after `.` / `->`, `#include <…>` / `"…"` header paths, `#` directives | buffer outline + included headers | clang-format (found on PATH, in the Xcode or Command Line Tools toolchain, or Homebrew LLVM) |
+| C++ | `cpp`, `cc`, `cxx`, `c++`, `hpp`, `hh`, `hxx`, `h++`, `inl`, `ipp`, `tpp`, `cppm`, `ixx` | tree-sitter-cpp (C query + C++ additions) | C items plus classes, methods, namespaces, `using` aliases, concepts | keywords and snippets, buffer locals, included headers, class members after `.` / `->` / `this->` (bases followed), `#include` header paths, `#` directives | buffer outline + included headers, `a::b::c` qualifier | clang-format (same lookup) |
+| TOML | `toml` | tree-sitter-toml-ng | tables and table arrays | Cargo manifest table and key names, keys in the buffer | buffer outline | taplo when installed |
+| Makefile | `Makefile`, `GNUmakefile`, `mk`, `mak`, `make` | tree-sitter-make | targets, variable and `define` assignments | GNU make directives, functions, builtin variables and special targets, buffer targets and variables | buffer outline | built-in: recipe lines get one tab, trailing whitespace and repeated blank lines are dropped, `define` bodies untouched |
+| CMake | `CMakeLists.txt`, `cmake` | tree-sitter-cmake | project, `add_executable` / `add_library` / `add_custom_target` targets, `set` variables, `option`s, functions, macros | common commands, variables and argument keywords, buffer functions, targets and variables | buffer outline | cmake-format or gersemi when installed |
 | Markdown | `md`, `markdown` | tree-sitter-md | headings | none | none | none |
 
 `Lang::for_path` checks the file name before the extension (`Makefile`, `GNUmakefile`, `CMakeLists.txt`). A buffer item whose name equals a keyword wins the name dedupe, so `[dependencies]` completes as the buffer's table rather than the manifest keyword. Non-Rust sessions never touch the crate index (`Lang::has_catalog`), and `find_definitions` skips it for them. `.h` opens as C unless the first 64 KB contain a C++ marker (`namespace`, `class`, `template`, `using`, an access specifier, `extern "C++"`, or an `#include <name>` without a dot), in which case it opens as C++. `SessionOpen.lang` carries the language the engine chose so the app can relabel a sniffed header.
@@ -118,7 +118,7 @@ Once a type name is known, the buffer's Rust `TypeTable` (`highlight/rust_types.
 
 `run_check_c` runs `clang -fsyntax-only` on one saved file and parses the `path:line:col:{ranges}: level: message [-Wflag]` lines into the same `Diagnostic` record `cargo check` produces, with byte offsets computed from the file on disk. Flags come from the nearest `compile_commands.json` (searched upward from the file in `.`, `build/`, `out/` and `cmake-build-debug/`): the entry for the file, or for a source in the same directory when the file is a header (a source of the same language is preferred; borrowing a sibling of the other language also drops its `-std=` flag), with the compiler, `-c`, `-o` and dependency-file flags stripped. Without a database the fallback is `-std=c23` / `-std=c++23 -Wall -I<file dir>`. The app runs it on save and on Check (⌘B) for C/C++ buffers instead of `cargo check`, and keeps the diagnostics of each source (cargo or file path) separately in the Problems panel.
 
-Format on save for C/C++ runs only when `has_tool("clang-format")` is true, so a machine without clang-format saves silently.
+Format on save runs only when `formatter_name` reports a tool for the buffer, so a machine without clang-format or taplo saves silently; Reformat Document on such a buffer shows the install hint in the notice bar.
 
 ## App command layer
 
@@ -162,6 +162,8 @@ Two extraction changes ship with the bump: enum variants are emitted as `variant
 | `run_check_c` | `clang -fsyntax-only` diagnostics for one C or C++ file, flags from `compile_commands.json` |
 | `has_tool` | whether a toolchain binary (`clang-format`, …) is on PATH or in the usual install dirs |
 | `format_c` | clang-format a C or C++ buffer (`--assume-filename` from the buffer path so `.clang-format` is honoured) |
+| `tool_status` | every external tool Ride can use (rustfmt, cargo-clippy, clang, clang-format, taplo, cmake-format or gersemi, git) with its resolved path, purpose, an install command chosen from the package managers present (rustup, Homebrew, cargo, pipx, `xcode-select --install`) and a hint; the app checks it two seconds after launch, shows a notice bar with an Install… button when something is missing (preference "Check for missing tools at launch"), and Build ▸ Install Tools… opens the sheet that runs the selected commands in the login shell and shows their output. `ride-engine tools` prints the same table |
+| `format_buffer` / `formatter_name` | format any buffer by its language (rustfmt, clang-format, taplo, cmake-format or gersemi, the built-in Makefile formatter) and report which tool would run; a missing tool fails with an install hint. Tools are looked up on PATH, then `~/.cargo/bin`, `~/.local/bin`, the `xcode-select` developer directory and `/Library/Developer/CommandLineTools`, then Homebrew and LLVM prefixes (`src/toolchain.rs`) |
 | `import_edit` | the `use` line to insert for a hit's `import_path`, as a `TextEdit` the app applies after accepting the hit (caret shifted past the inserted text) |
 | `signature_help` | signature of the call around the caret with parameter byte ranges and the active index; the app queries it after accepting a fn/method/macro hit, on `(` and `,` in Rust/C/C++, and on every caret move while its popup is visible |
 | `cheat_sheet` | cheat sheet sections for the caret context and typed prefix (`all` ignores the context), with the replace start byte and snippets indented like the caret line |

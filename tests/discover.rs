@@ -83,3 +83,19 @@ fn engine_starts_idle() {
     engine.close_session(session.session_id);
     engine.close_workspace();
 }
+
+#[test]
+fn tool_status_lists_every_tool_with_a_hint() {
+    let tools = ride_engine::tool_status();
+    let names: Vec<&str> = tools.iter().map(|t| t.name.as_str()).collect();
+    assert!(
+        names.contains(&"rustfmt") && names.contains(&"clang-format") && names.contains(&"taplo")
+    );
+    assert!(
+        tools
+            .iter()
+            .all(|t| !t.purpose.is_empty() && !t.hint.is_empty())
+    );
+    let git = tools.iter().find(|t| t.name == "git").unwrap();
+    assert!(git.path.is_some());
+}

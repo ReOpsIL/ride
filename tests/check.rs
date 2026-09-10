@@ -60,3 +60,32 @@ fn tools_resolve_without_path() {
     assert!(rustc.is_absolute(), "{rustc:?}");
     assert!(cargo.is_file() && rustc.is_file());
 }
+
+#[test]
+fn makefile_formatter_normalizes_recipes() {
+    let src = "CC := cc\n\n\n\nall: main.o\n    $(CC) -o app main.o   \n  @echo done\n\nifeq ($(OS),Windows_NT)\n    EXE := .exe\nendif\n\ndefine msg\n    echo hi\nendef\n";
+    let out = ride_engine::format_make(src);
+    assert_eq!(
+        out,
+        "CC := cc\n\nall: main.o\n\t$(CC) -o app main.o\n\t@echo done\n\nifeq ($(OS),Windows_NT)\n    EXE := .exe\nendif\n\ndefine msg\n    echo hi\nendef\n"
+    );
+    assert_eq!(ride_engine::format_make(&out), out);
+}
+
+#[test]
+fn formatter_lookup_reports_tools_and_hints() {
+    use ride_engine::{Formatter, Lang, format_document};
+    assert_eq!(Formatter::for_lang(Lang::Make), Some(Formatter::Builtin));
+    assert!(Formatter::Builtin.available());
+    assert!(Formatter::for_lang(Lang::Markdown).is_none());
+    let err = format_document(Lang::Markdown, "x", None, None).unwrap_err();
+    assert!(format!("{err:?}").contains("no formatter"));
+    if std::path::Path::new("/Applications/Xcode.app").exists() {
+        assert!(
+            Formatter::ClangFormat.available(),
+            "clang-format should be found in the Xcode toolchain"
+        );
+        let out = format_document(Lang::C, "int  main( ){return 0;}", Some("a.c"), None).unwrap();
+        assert!(out.contains("int main()"));
+    }
+}

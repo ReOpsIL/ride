@@ -1,10 +1,11 @@
 #include <shapes.hpp>
-
 #include <iostream>
 #include <memory>
 #include <vector>
 
-int main() {
+int main()
+
+{
     geo::Circle circle("wheel", 2.0);
     geo::Rect rect("door", 1.0, 2.0);
     geo::Rect square("tile", 3.0, 3.0);

@@ -3,6 +3,8 @@ import SwiftUI
 struct NoticeBar: View {
     @ObservedObject private var ts = ThemeStore.shared
     let text: String
+    var actionTitle: String?
+    var action: (() -> Void)?
     let dismiss: () -> Void
 
     var body: some View {
@@ -15,6 +17,10 @@ struct NoticeBar: View {
                 .foregroundStyle(ts.ui.textPrimary)
                 .lineLimit(2)
                 .textSelection(.enabled)
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .controlSize(.small)
+            }
             Spacer(minLength: 0)
             IconButton(symbol: "xmark", help: "Dismiss", size: 9, action: dismiss)
         }

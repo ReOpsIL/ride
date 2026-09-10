@@ -46,6 +46,8 @@ final class AppState: ObservableObject {
     @Published var showPreview = false
     @Published var formatError: String?
     @Published var notice: String?
+    @Published var noticeAction: (title: String, run: () -> Void)?
+    @Published var showToolsSheet = false
     var noticeWork: DispatchWorkItem?
     @Published var showGoToLine = false
     @Published var goToLineQuery = ""
@@ -112,6 +114,9 @@ final class AppState: ObservableObject {
         }
         if let url = Self.launchFolder() {
             open(url)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            self?.checkTools()
         }
     }
 

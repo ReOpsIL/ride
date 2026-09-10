@@ -268,6 +268,9 @@
 		E80000000000000000000002 /* DemoSelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80000000000000000000001 /* DemoSelfTest.swift */; };
 		E80000000000000000000004 /* SelfTestSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80000000000000000000003 /* SelfTestSteps.swift */; };
 		E90000000000000000000002 /* NoticeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90000000000000000000001 /* NoticeBar.swift */; };
+		EA0000000000000000000002 /* ToolsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000001 /* ToolsModel.swift */; };
+		EA0000000000000000000004 /* ToolInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000003 /* ToolInstaller.swift */; };
+		EA0000000000000000000006 /* ToolsInstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000005 /* ToolsInstallView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -495,6 +498,9 @@
 		E80000000000000000000001 /* DemoSelfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoSelfTest.swift"; sourceTree = "<group>"; };
 		E80000000000000000000003 /* SelfTestSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps.swift"; sourceTree = "<group>"; };
 		E90000000000000000000001 /* NoticeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NoticeBar.swift"; sourceTree = "<group>"; };
+		EA0000000000000000000001 /* ToolsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolsModel.swift"; sourceTree = "<group>"; };
+		EA0000000000000000000003 /* ToolInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolInstaller.swift"; sourceTree = "<group>"; };
+		EA0000000000000000000005 /* ToolsInstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolsInstallView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -625,6 +631,7 @@
 				A00000000000000000000059 /* Engine */,
 				A0000000000000000000005B /* Outline */,
 				A0000000000000000000005C /* Completion */,
+				EA0000000000000000000007 /* Tools */,
 				E6000000000000000000003A /* Navigate */,
 				E6000000000000000000003B /* Menus */,
 				E50000000000000000000300 /* Editing */,
@@ -914,6 +921,16 @@
 			path = Menus;
 			sourceTree = "<group>";
 		};
+		EA0000000000000000000007 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				EA0000000000000000000001 /* ToolsModel.swift */,
+				EA0000000000000000000003 /* ToolInstaller.swift */,
+				EA0000000000000000000005 /* ToolsInstallView.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1114,6 +1131,9 @@
 				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
 				C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */,
 				C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */,
+				EA0000000000000000000002 /* ToolsModel.swift in Sources */,
+				EA0000000000000000000004 /* ToolInstaller.swift in Sources */,
+				EA0000000000000000000006 /* ToolsInstallView.swift in Sources */,
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
 				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,

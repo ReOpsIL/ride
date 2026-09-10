@@ -33,6 +33,9 @@ enum DemoScene {
                 let anchor = (view.string as NSString).range(of: "counter.record(\"ride\");")
                 view.replaceText(in: anchor, with: "counter.record(   \"ride\"  );")
             }
+        case "tools":
+            editor(state)
+            DemoLaunch.after(1.0) { state.showToolsSheet = true }
         case "selftest":
             editor(state)
             DemoLaunch.after(1.5) { DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt") }

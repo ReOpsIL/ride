@@ -8,6 +8,7 @@ mod kind;
 mod query;
 mod session;
 mod symbol;
+mod tools;
 mod workspace;
 
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
@@ -25,4 +26,5 @@ pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
 pub use symbol::{DefinitionResponse, SymbolAt};
+pub use tools::ToolInfo;
 pub use workspace::WorkspaceInfo;

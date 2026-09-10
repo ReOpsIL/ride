@@ -22,6 +22,9 @@ struct RootView: View {
             AppToolbar(state: state, hasWorkspace: state.workspaceRoot != nil, markdown: state.previewAvailable)
         }
         .toolbarBackground(.visible, for: .windowToolbar)
+        .sheet(isPresented: $state.showToolsSheet) {
+            ToolsInstallView().environmentObject(state)
+        }
         .preferredColorScheme(state.isLightTheme ? .light : .dark)
         .onAppear {
             NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)
@@ -70,7 +73,10 @@ struct DetailColumn: View {
                 FindBar()
             }
             if let notice = state.notice {
-                NoticeBar(text: notice) { state.notice = nil }
+                NoticeBar(text: notice, actionTitle: state.noticeAction?.title, action: state.noticeAction?.run) {
+                    state.notice = nil
+                    state.noticeAction = nil
+                }
             }
             VSplitView {
                 editorRow

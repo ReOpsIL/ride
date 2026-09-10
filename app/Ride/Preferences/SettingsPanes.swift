@@ -55,6 +55,7 @@ struct ToolsSettings: View {
             }
             Section("rustfmt") {
                 Toggle("Format on save", isOn: bind.bool(\.formatOnSave))
+                Toggle("Check for missing tools at launch", isOn: bind.bool(\.askMissingTools))
             }
         }
         .formStyle(.grouped)

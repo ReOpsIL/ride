@@ -41,6 +41,8 @@ struct CodeCommands: Commands {
         CommandMenu("Build") {
             Button("Check") { state.runCheck() }
                 .keyboardShortcut("b", modifiers: .command)
+            Divider()
+            Button("Install Tools…") { state.showToolsSheet = true }
         }
     }
 }

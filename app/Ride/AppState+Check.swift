@@ -10,7 +10,7 @@ extension AppState {
     }
 
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
-        if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer.language) {
+        if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer) {
             formatActive(thenSave: true)
         }
         guard prefs.checkOnSave else {
@@ -23,12 +23,11 @@ extension AppState {
         }
     }
 
-    private func formatsOnSave(_ language: BufferLanguage) -> Bool {
-        switch language {
-        case .rust: return true
-        case .c, .cpp: return RideEngineClient.shared.engine?.hasTool(name: "clang-format") ?? false
-        case .toml, .make, .cmake, .markdown, .plain: return false
+    private func formatsOnSave(_ buffer: BufferDocument) -> Bool {
+        guard let engine = RideEngineClient.shared.engine else {
+            return false
         }
+        return !engine.formatterName(path: buffer.fileURL?.path, text: buffer.text).isEmpty
     }
 
     func checkFinished(_ diagnostics: [Diagnostic]) {
@@ -59,16 +58,10 @@ extension AppState {
         }
         let text = buffer.text
         let edition = workspaceRoot.flatMap(cargoEdition)
-        let language = buffer.language
-        let path = buffer.fileURL?.path
+        let path = buffer.fileURL?.path ?? "untitled.\(buffer.language.fileExtension)"
         let id = buffer.id
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let result = Result {
-                switch language {
-                case .c, .cpp: try engine.formatC(text: text, assumeFilename: path)
-                default: try engine.formatRust(text: text, edition: edition)
-                }
-            }
+            let result = Result { try engine.formatBuffer(path: path, text: text, edition: edition) }
             DispatchQueue.main.async {
                 self?.formatFinished(result, bufferID: id, thenSave: thenSave)
             }
@@ -95,7 +88,7 @@ extension AppState {
             } else {
                 formatError = "\(error)"
             }
-            showNotice("\(buffer.language.usesClang ? "clang-format" : "rustfmt") could not format \(buffer.displayName): \(formatError ?? "")")
+            showNotice("Could not format \(buffer.displayName): \(formatError ?? "")")
         }
     }
 }

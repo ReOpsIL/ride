@@ -39,6 +39,10 @@ struct StatusBarView: View {
     }
 
     private var formatter: String {
-        state.activeBuffer?.language.usesClang == true ? "clang-format" : "rustfmt"
+        guard let buffer = state.activeBuffer, let engine = RideEngineClient.shared.engine else {
+            return "format"
+        }
+        let name = engine.formatterName(path: buffer.fileURL?.path, text: buffer.text)
+        return name.isEmpty ? "format" : name
     }
 }
