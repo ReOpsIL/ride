@@ -43,9 +43,15 @@ fn members(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionResponse> {
         .as_ref()
         .is_some_and(|s| s.types.defines(type_name))
         && !snap.imports.iter().any(|i| i == type_name);
-    if defined_here {
-        return (!pool.is_empty()).then(|| merge::finish(q, pool, false));
-    }
+    let workspace: Vec<String> = snap
+        .workspace
+        .as_ref()
+        .map(|w| {
+            let mut names = w.members.clone();
+            names.extend(w.package_name.clone());
+            names
+        })
+        .unwrap_or_default();
     let taken: HashSet<String> = pool.iter().map(|h| h.name.clone()).collect();
     let catalog = query::children(
         snap.catalog.src(),
@@ -57,7 +63,8 @@ fn members(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionResponse> {
     pool.extend(
         catalog
             .into_iter()
-            .filter(|h| CATALOG_KINDS.contains(&h.item_kind) && !taken.contains(&h.name)),
+            .filter(|h| CATALOG_KINDS.contains(&h.item_kind) && !taken.contains(&h.name))
+            .filter(|h| !defined_here || workspace.contains(&h.crate_name)),
     );
     (!pool.is_empty()).then(|| merge::finish(q, pool, false))
 }
