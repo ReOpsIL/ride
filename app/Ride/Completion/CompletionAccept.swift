@@ -11,7 +11,7 @@ extension CompletionSession {
         }
         hide()
         let caret = view.selectedRange().location
-        let start = min(list.replaceUtf16, caret)
+        let start = min(Self.replaceStart(for: hit, list: list, in: view), caret)
         editSource = .completion
         insert(hit, replacing: NSRange(location: start, length: caret - start), in: view)
         if list.site == .include, hit.itemKind == .header {
@@ -28,6 +28,13 @@ extension CompletionSession {
             SignatureHelpController.shared.show(document: binding.document, view: view)
         }
         return true
+    }
+
+    private static func replaceStart(for hit: CompletionHit, list: CompletionList, in view: RideTextView) -> Int {
+        guard let byte = hit.replaceStartByte else {
+            return list.replaceUtf16
+        }
+        return Utf16.utf16Offset(in: view.string, utf8: Int(byte))
     }
 
     private func insert(_ hit: CompletionHit, replacing range: NSRange, in view: RideTextView) {
