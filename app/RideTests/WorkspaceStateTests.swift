@@ -12,9 +12,11 @@ final class WorkspaceStateTests: XCTestCase {
                 sidebarWidth: 240,
                 outlineWidth: 200,
                 problemsHeight: 160,
+                runOutputHeight: 220,
                 previewWidth: 400,
                 showSidebar: false,
                 showProblems: true,
+                showRunOutput: true,
                 showPreview: true,
                 outlinePanel: false
             ),

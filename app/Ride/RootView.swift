@@ -83,6 +83,12 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.problemsHeight, fromEnd: true))
                         .reportSize(.height) { problemsHeight.wrappedValue = $0 }
                 }
+                if state.showRunOutput {
+                    RunOutputPanel(output: state.runOutput)
+                        .frame(minHeight: 80, idealHeight: state.prefs.runOutputHeight, maxHeight: 480)
+                        .background(SplitPositioner(position: state.prefs.runOutputHeight, fromEnd: true))
+                        .reportSize(.height) { runOutputHeight.wrappedValue = $0 }
+                }
             }
 
             StatusBarView()
@@ -125,6 +131,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.problemsHeight },
             set: { value in state.saveLayout { $0.problemsHeight = value } }
+        )
+    }
+
+    private var runOutputHeight: Binding<Double> {
+        Binding(
+            get: { state.prefs.runOutputHeight },
+            set: { value in state.saveLayout { $0.runOutputHeight = value } }
         )
     }
 

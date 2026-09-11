@@ -43,6 +43,9 @@ final class AppState: ObservableObject {
     @Published var showProblems = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var showRunOutput = false {
+        didSet { syncMenu(); scheduleWorkspaceSave() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -70,6 +73,7 @@ final class AppState: ObservableObject {
     let git = GitStatusService()
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
+    let runOutput = RunOutput()
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?
@@ -108,6 +112,9 @@ final class AppState: ObservableObject {
             self?.objectWillChange.send()
         }
         projectModel.onChange = { [weak self] in
+            self?.syncMenu()
+        }
+        runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
         CheckService.shared.onFinished = { [weak self] diagnostics in

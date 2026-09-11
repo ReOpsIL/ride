@@ -86,6 +86,9 @@ extension SelfTestSteps {
                 )
             }),
             projectTargets(state: state, e: e),
+            runEcho(state: state, e: e),
+            runOutputLinks(state: state, e: e),
+            runOutputClose(state: state, e: e),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
             workspaceOpenSecond(state: state, e: e, file: file),
             workspaceRestore(state: state, e: e, file: file),
