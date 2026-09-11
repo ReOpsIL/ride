@@ -55,6 +55,16 @@ final class DiagnosticStoreTests: XCTestCase {
         XCTAssertEqual(store.snapshot.map(\.message), ["only-b"])
     }
 
+    func testReplaceAllClangDropsPreviousClangAndKeepsCargo() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/a.c", 1, "old-a"), item("/h.h", 2, "old-h")])
+        store.replaceCargo([item("/r.rs", 3, "cargo")])
+        store.replaceAllClang(from: "clang-project", with: [item("/b.c", 4, "new-b")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["new-b", "cargo"])
+        store.replaceAllClang(from: "clang-project", with: [])
+        XCTAssertEqual(store.snapshot.map(\.message), ["cargo"])
+    }
+
     func testSnapshotOrderedByPathThenByte() {
         var store = DiagnosticStore()
         store.insert(item("/b.c", 10, "b10"))

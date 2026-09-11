@@ -62,6 +62,12 @@ struct DiagnosticStore {
         cargo = items
     }
 
+    mutating func replaceAllClang(from source: String, with items: [StoredDiagnostic]) {
+        clang.removeAll()
+        owner.removeAll()
+        replace(from: source, with: items)
+    }
+
     var snapshot: [StoredDiagnostic] {
         (clang.values.flatMap { $0 } + cargo).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)

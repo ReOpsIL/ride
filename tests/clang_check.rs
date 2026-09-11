@@ -1,7 +1,10 @@
 use std::fs;
 use std::path::PathBuf;
 
-use ride_engine::{DiagnosticLevel, Lang, parse_clang, run_clang_check, tool_path};
+use ride_engine::{
+    DiagnosticLevel, Lang, parse_clang, run_check_c_project, run_clang_check, sources_including,
+    tool_path,
+};
 
 fn scratch(name: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("ride-clang-{}-{name}", std::process::id()));
@@ -156,6 +159,77 @@ fn compile_database_supplies_flags_for_the_file_and_its_headers() {
     assert!(!dir.join("main.o").exists());
     let header = run_clang_check(&hdr).unwrap();
     assert!(header.success, "{:?}", header.stderr_tail);
+}
+
+fn cpp_demo() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/cpp-demo")
+}
+
+fn copy_tree(src: &std::path::Path, dst: &std::path::Path) {
+    fs::create_dir_all(dst).unwrap();
+    for entry in fs::read_dir(src).unwrap() {
+        let entry = entry.unwrap();
+        let to = dst.join(entry.file_name());
+        if entry.file_type().unwrap().is_dir() {
+            copy_tree(&entry.path(), &to);
+        } else {
+            fs::copy(entry.path(), to).unwrap();
+        }
+    }
+}
+
+fn names(paths: &[PathBuf]) -> Vec<String> {
+    paths
+        .iter()
+        .filter_map(|p| p.file_name().map(|n| n.to_string_lossy().into_owned()))
+        .collect()
+}
+
+#[test]
+fn sources_including_shapes_header_lists_cpp_demo_users() {
+    let header = cpp_demo().join("include/shapes.hpp");
+    let listed = names(&sources_including(&header));
+    assert!(listed.contains(&"shapes.cpp".into()), "{listed:?}");
+    assert!(listed.contains(&"main.cpp".into()), "{listed:?}");
+}
+
+#[test]
+fn editing_cpp_demo_header_yields_diagnostic_from_including_source() {
+    if !clang_available() {
+        return;
+    }
+    let tmp = scratch("header-recheck");
+    let root = tmp.join("cpp-demo");
+    copy_tree(&cpp_demo(), &root);
+    let header = root.join("include/shapes.hpp");
+    let mut text = fs::read_to_string(&header).unwrap();
+    text.push_str("\nint ride_header_error = ;\n");
+    fs::write(&header, text).unwrap();
+    let sources = sources_including(&header);
+    let cpp = sources
+        .iter()
+        .find(|p| p.ends_with("src/shapes.cpp"))
+        .unwrap_or_else(|| panic!("expected shapes.cpp in {sources:?}"));
+    let result = run_clang_check(cpp).unwrap();
+    assert!(!result.success);
+    assert!(
+        result.diagnostics.iter().any(|d| {
+            d.level == DiagnosticLevel::Error
+                && (d.path.ends_with("shapes.hpp") || d.path.ends_with("shapes.cpp"))
+        }),
+        "{:?}",
+        result.diagnostics
+    );
+}
+
+#[test]
+fn project_check_on_clean_cpp_demo_has_no_diagnostics() {
+    if !clang_available() {
+        return;
+    }
+    let result = run_check_c_project(&cpp_demo()).unwrap();
+    assert!(result.success, "{}", result.stderr_tail);
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
 }
 
 #[test]

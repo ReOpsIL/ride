@@ -10,7 +10,7 @@ struct CheckStatusView: View {
             if check.running {
                 ProgressView()
                     .controlSize(.mini)
-                Text("Checking…")
+                Text(check.progress.isEmpty ? "Checking…" : check.progress)
             } else if check.hasRun {
                 Image(systemName: symbol)
                     .font(.system(size: 10, weight: .semibold))

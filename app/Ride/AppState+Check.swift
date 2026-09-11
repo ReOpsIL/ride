@@ -9,6 +9,13 @@ extension AppState {
         }
     }
 
+    func runProjectCheck() {
+        guard let root = workspaceRoot else {
+            return
+        }
+        CheckService.shared.runProject(root: root)
+    }
+
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
         if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer) {
             formatActive(thenSave: true)
@@ -17,7 +24,11 @@ extension AppState {
             return
         }
         if buffer.language.usesClang, let url = buffer.fileURL {
-            CheckService.shared.schedule(file: url)
+            if ["h", "hpp"].contains(url.pathExtension.lowercased()) {
+                CheckService.shared.scheduleIncluding(header: url)
+            } else {
+                CheckService.shared.schedule(file: url)
+            }
         } else if let root = workspaceRoot {
             CheckService.shared.schedule(root: root)
         }

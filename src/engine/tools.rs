@@ -3,7 +3,7 @@ use std::path::Path;
 
 use crate::check::{
     Formatter, format_clang, format_document, format_range, format_source, run_check,
-    run_clang_check, selection_span,
+    run_check_c_project, run_clang_check, selection_span, sources_including,
 };
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
@@ -27,6 +27,23 @@ impl Engine {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
         }
+    }
+
+    pub fn run_check_c_project(&self, root: String) -> Result<CheckResult, EngineError> {
+        match catch_unwind(AssertUnwindSafe(|| run_check_c_project(Path::new(&root)))) {
+            Ok(r) => r,
+            Err(p) => Err(EngineError::from_panic(p)),
+        }
+    }
+
+    pub fn sources_including(&self, header: String) -> Vec<String> {
+        catch_unwind(AssertUnwindSafe(|| {
+            sources_including(Path::new(&header))
+                .into_iter()
+                .map(|p| p.display().to_string())
+                .collect()
+        }))
+        .unwrap_or_default()
     }
 
     pub fn tool_status(&self) -> Vec<crate::ffi::ToolInfo> {

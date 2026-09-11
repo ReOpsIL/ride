@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
@@ -25,6 +26,49 @@ pub struct CompileCommand {
 pub fn lookup(file: &Path, lang: Lang) -> Option<CompileCommand> {
     let file = file.canonicalize().ok()?;
     databases(&file).find_map(|db| best_entry(&db, &file, lang))
+}
+
+pub fn sources_near(file: &Path) -> Vec<PathBuf> {
+    databases(file)
+        .find_map(|db| listed(&db))
+        .unwrap_or_default()
+}
+
+pub fn sources_in(root: &Path) -> Vec<PathBuf> {
+    let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
+    DB_DIRS
+        .iter()
+        .map(|d| {
+            if d.is_empty() {
+                root.join(DB_NAME)
+            } else {
+                root.join(d).join(DB_NAME)
+            }
+        })
+        .find(|p| p.is_file())
+        .and_then(|db| listed(&db))
+        .unwrap_or_default()
+}
+
+fn listed(db: &Path) -> Option<Vec<PathBuf>> {
+    let text = std::fs::read_to_string(db).ok()?;
+    let entries: Vec<Entry> = serde_json::from_str(&text).ok()?;
+    let base = db.parent().unwrap_or(Path::new("."));
+    let mut seen = HashSet::new();
+    let mut files = Vec::new();
+    for entry in &entries {
+        let dir = base.join(&entry.directory);
+        let dir = dir.canonicalize().unwrap_or(dir);
+        let src = dir.join(&entry.file);
+        let key = src.canonicalize().unwrap_or(src);
+        if Lang::for_path(key.to_str()).clang_name().is_none() {
+            continue;
+        }
+        if seen.insert(key.clone()) {
+            files.push(key);
+        }
+    }
+    Some(files)
 }
 
 fn databases(file: &Path) -> impl Iterator<Item = PathBuf> + '_ {

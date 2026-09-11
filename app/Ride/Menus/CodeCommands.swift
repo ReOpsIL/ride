@@ -45,6 +45,9 @@ struct CodeCommands: Commands {
         CommandMenu("Build") {
             Button("Check") { state.runCheck() }
                 .keyboardShortcut("b", modifiers: .command)
+            Button("Check Project") { state.runProjectCheck() }
+                .keyboardShortcut("b", modifiers: [.command, .shift])
+                .disabled(!menu.hasWorkspace)
             Divider()
             Button("Install Tools…") { state.showToolsSheet = true }
         }

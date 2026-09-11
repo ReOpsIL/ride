@@ -33,6 +33,7 @@
 		F2E1DB1A0ED5F5517F13DD75 /* SplitHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */; };
 		0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA11C41B82C43461193C957 /* SizeReporter.swift */; };
 		A00000000000000000000127 /* CheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000126 /* CheckService.swift */; };
+		H16000000000000000000011 /* CheckConvert.swift in Sources */ = {isa = PBXBuildFile; fileRef = H16000000000000000000010 /* CheckConvert.swift */; };
 		A00000000000000000000129 /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
 		A0000000000000000000012A /* DiagnosticRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000128 /* DiagnosticRange.swift */; };
 		A0000000000000000000012C /* Underlines.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012B /* Underlines.swift */; };
@@ -327,6 +328,7 @@
 		0CDB09AAE8CE95F21B15AE1D /* SplitHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitHandle.swift"; sourceTree = "<group>"; };
 		5EA11C41B82C43461193C957 /* SizeReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SizeReporter.swift"; sourceTree = "<group>"; };
 		A00000000000000000000126 /* CheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckService.swift"; sourceTree = "<group>"; };
+		H16000000000000000000010 /* CheckConvert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckConvert.swift"; sourceTree = "<group>"; };
 		A00000000000000000000128 /* DiagnosticRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRange.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012B /* Underlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Underlines.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012D /* SessionService+Paint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Paint.swift"; sourceTree = "<group>"; };
@@ -839,6 +841,7 @@
 				E1000000000000000000001C /* SessionService+Query.swift */,
 				A0000000000000000000012D /* SessionService+Paint.swift */,
 				A00000000000000000000126 /* CheckService.swift */,
+				H16000000000000000000010 /* CheckConvert.swift */,
 				A00000000000000000000084 /* RideEngineClient.swift */,
 				A00000000000000000000086 /* IndexerProcess.swift */,
 				A00000000000000000000095 /* SessionService.swift */,
@@ -1293,6 +1296,7 @@
 				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,
+				H16000000000000000000011 /* CheckConvert.swift in Sources */,
 				A00000000000000000000129 /* DiagnosticRange.swift in Sources */,
 				A0000000000000000000012C /* Underlines.swift in Sources */,
 				A0000000000000000000012E /* SessionService+Paint.swift in Sources */,
