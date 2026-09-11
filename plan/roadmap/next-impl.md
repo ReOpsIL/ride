@@ -392,6 +392,14 @@ Builds started from Q3 run Cargo with `--message-format=json-diagnostic-rendered
 
 `src/run/single.rs` (new `src/run/` module): `Engine::single_file_command(path) -> Result<SingleRun, EngineError>` returning `{ compile: Vec<String>, run: Vec<String>, output: String }` for `.c` (`clang`), `.cpp`/`.cc` (`clang++ -std=c++20`) and `.rs` (`rustc --edition 2021`) into `<support dir>/single/<hash>/` (the app passes the directory), using the toolchain lookup in `src/toolchain.rs`; `Engine::recompile_command(path) -> Option<Vec<String>>` from the compile database entry for that file. App: Run File (⌃⇧R) and Recompile File (⇧⌘F9) in Q3's menu; both go through the Q2 runner; compile errors go through Q4. Tests: `tests/single.rs` compiles and runs a temp `hello.c`, `hello.cpp` and `hello.rs` when the tools exist.
 
+### Q4b Build diagnostics into Problems, app half — Tier B, after Q3
+
+Engine first: `Engine::parse_clang_output(text, base_dir: String)` resolves relative diagnostic paths against `base_dir` before reading byte offsets (`src/check/clang_parse.rs` / `offsets.rs` take the base; the existing `run_check_c` passes the compile database entry's directory), with a `tests/build_output.rs` case using a relative path and a base. App: `DiagnosticStore` gains a `build` owner distinct from the check owners; a build started from Q3 streams its output through `parseCargoLine` (Cargo builds run with `--message-format=json-diagnostic-rendered-ansi`, the rendered text goes to the panel) or `parseClangOutput` with the build's working directory; the set replaces the previous build's diagnostics when the build ends; the Problems panel shows a "build" badge on those rows. RideTests `DiagnosticStoreTests` for the build owner; self-test step: a build of `samples/rust-demo` after inserting a type error at line 13 shows one build diagnostic, and a clean rebuild clears it.
+
+### Q5b Single-file run and Recompile File, app half — Tier A, after Q3
+
+Engine first: `recompile_command` returns a `RecompileCommand { argv: Vec<String>, directory: String }` record (`src/ffi/run.rs`) so the runner has its working directory; update `tests/single.rs`. App: Run File (⌃⇧R) and Recompile File (⇧⌘F9) in the Run menu through `MenuModel`; Run File asks the engine for `single_file_command(path, <support dir>/single/<sha256 of path>)`, runs the compile argv through the Q2 runner in the file's directory, then the run argv; compile errors go through Q4b's clang parser with the file's directory as base. Recompile File runs the record's argv in its directory. Self-test steps on `samples/cpp-demo`: Run File on `src/main.cpp` fails to link alone (expected: the panel shows the linker error), Recompile File on `src/shapes.cpp` exits 0.
+
 ## 7. Batch log
 
 | Batch | Cards | Result |
@@ -403,7 +411,7 @@ Builds started from Q3 run Cargo with `--message-format=json-diagnostic-rendered
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
-| 9 | Q1, Q4, Q5 in parallel; then R18 and Q2; then Q3 | running |
+| 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1, Q4, Q5 merged and reviewed (all merge); Q2 running |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.
