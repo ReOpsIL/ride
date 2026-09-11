@@ -5,41 +5,54 @@ extension AppState {
         let model = projectFind
         let query = model.query.trimmingCharacters(in: .whitespaces)
         let options = model.options
-        let hits = currentHits(model.chosenHits, query: query, options: options)
-        let edits = ProjectReplace.edits(
+        let hits = ProjectReplace.refresh(model.chosenHits, query: query, options: options, text: liveText)
+        let planned = ProjectReplace.edits(
             hits: hits,
             query: query,
             replacement: model.replacement,
             options: options
         )
-        var paths: [String] = []
-        for edit in edits where write(edit) {
-            paths.append(edit.file.path)
-        }
+        let saved = saveEdits(planned.edits)
         model.showPreview = false
         showProjectFind = false
-        if !paths.isEmpty {
-            filesChanged(paths)
-            let matches = hits.reduce(0) { $0 + $1.ranges.count }
-            notice = "Replaced \(Plural.count(matches, "match", plural: "matches")) in \(Plural.count(edits.count, "file"))"
+        if !saved.written.isEmpty {
+            filesChanged(saved.written.map(\.path))
+        }
+        let written = Set(saved.written)
+        let matches = hits.reduce(0) { count, hit in
+            written.contains(hit.file) ? count + hit.ranges.count : count
+        }
+        if let text = ProjectReplace.summary(
+            matches: matches,
+            files: saved.written.count,
+            skipped: planned.skipped,
+            failed: saved.failed
+        ) {
+            notice = text
         }
     }
 
-    private func currentHits(_ hits: [FileHit], query: String, options: FindOptions) -> [FileHit] {
-        hits.map { hit in
-            guard let buffer = buffers.first(where: { $0.fileURL == hit.file }) else {
-                return hit
-            }
+    private func liveText(_ file: URL) -> String? {
+        if let buffer = buffers.first(where: { $0.fileURL == file }) {
             if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
                 buffer.capture(view)
             }
-            let text = buffer.text
-            return FileHit(
-                file: hit.file,
-                text: text,
-                ranges: FindMatcher.matches(in: text, query: query, options: options)
-            )
+            return buffer.text
         }
+        return ProjectFind.readText(file)
+    }
+
+    private func saveEdits(_ edits: [FileEdit]) -> (written: [URL], failed: [URL]) {
+        var written: [URL] = []
+        var failed: [URL] = []
+        for edit in edits {
+            if write(edit) {
+                written.append(edit.file)
+            } else {
+                failed.append(edit.file)
+            }
+        }
+        return (written, failed)
     }
 
     private func write(_ edit: FileEdit) -> Bool {
@@ -53,8 +66,16 @@ extension AppState {
         guard !buffer.isReadOnly, buffer.fileURL != nil else {
             return false
         }
+        let previous = buffer.text
+        let dirty = buffer.isDirty
         buffer.text = text
-        try? buffer.save(from: nil)
+        do {
+            try buffer.save(from: nil)
+        } catch {
+            buffer.text = previous
+            buffer.isDirty = dirty
+            return false
+        }
         if buffer.id == activeID {
             applyText = text
             applyThenSave = false
