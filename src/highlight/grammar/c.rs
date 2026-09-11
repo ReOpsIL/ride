@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::editing::{EditingKinds, c_folds};
+use crate::highlight::editing::{EditingKinds, c_folds, c_statement};
 use crate::highlight::{
     c_decls, c_locals, c_members, c_outline, c_types, context, imports, includes, site,
 };
@@ -110,6 +110,7 @@ pub fn grammar() -> Grammar {
             comments: &["comment"],
             bodies: BODIES,
             folds: c_folds,
+            is_statement: c_statement,
         },
     }
 }

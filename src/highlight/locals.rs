@@ -6,12 +6,44 @@ use crate::ffi::{CompletionHit, ItemKind, OutlineItem};
 use crate::score::{TIER_DECLARED, TIER_ITEM, TIER_MENTION};
 
 use super::grammar::Grammar;
-use super::members::matches;
-use super::syntax::LocalQuery;
+use super::members::{self, Access, matches};
+use super::syntax::{LocalHits, LocalQuery};
 use super::walk::each_node;
 
 pub type Declares = fn(Node<'_>, &str) -> bool;
 pub type LocalDetail = fn(Node<'_>, &str) -> Option<String>;
+
+pub fn hits_with_access(
+    tree: Option<&Tree>,
+    text: &str,
+    outline: &[OutlineItem],
+    q: &LocalQuery<'_>,
+    grammar: &Grammar,
+) -> LocalHits {
+    let Some(tree) = tree else {
+        return LocalHits::default();
+    };
+    match members::access_before(tree, text, q.at as usize, grammar.member_ops) {
+        Some(receiver) => LocalHits {
+            hits: members::fallback_hits(
+                tree,
+                text,
+                outline,
+                q.prefix,
+                q.limit as usize,
+                grammar,
+                q.at as usize,
+            ),
+            access: Some(Access {
+                chain: receiver.and_then(|r| (grammar.receiver)(tree, text, r)),
+            }),
+        },
+        None => LocalHits {
+            hits: hits(tree, text, outline, q, grammar),
+            access: None,
+        },
+    }
+}
 
 pub fn hits(
     tree: &Tree,

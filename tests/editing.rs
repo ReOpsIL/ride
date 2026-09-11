@@ -404,4 +404,197 @@ fn engine_exports_editor_queries() {
     assert!(engine.enclosing_ranges(999, 0, 0).is_empty());
     assert!(engine.fold_ranges(999).is_empty());
     assert!(engine.bracket_pair(999, 0).is_none());
+    let let_at = src.find("s = ").unwrap() as u32;
+    assert_eq!(
+        span(src, engine.statement_range(open.session_id, let_at)).as_deref(),
+        Some("let s = (1);")
+    );
+    assert_eq!(
+        span(
+            src,
+            engine.sibling_statement_range(open.session_id, let_at, false)
+        )
+        .as_deref(),
+        Some("g();")
+    );
+    assert!(engine.statement_range(999, 0).is_none());
+    assert!(engine.sibling_statement_range(999, 0, true).is_none());
+}
+
+fn statement(lang: Lang, src: &str) -> Option<String> {
+    let (text, at) = caret(src);
+    let (session, _) = BufferSession::open_lang(lang, text.clone(), None).unwrap();
+    span(&text, session.statement_range(at.start_byte))
+}
+
+fn sibling(lang: Lang, src: &str, up: bool) -> Option<String> {
+    let (text, at) = caret(src);
+    let (session, _) = BufferSession::open_lang(lang, text.clone(), None).unwrap();
+    span(&text, session.sibling_statement(at.start_byte, up))
+}
+
+fn span(text: &str, range: Option<ByteRange>) -> Option<String> {
+    range.map(|r| text[r.start_byte as usize..r.end_byte as usize].to_string())
+}
+
+#[test]
+fn rust_statement_range_covers_each_kind() {
+    assert_eq!(
+        statement(Lang::Rust, "fn f() {\n    let x| = 1;\n    g();\n}\n").as_deref(),
+        Some("let x = 1;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "fn f() {\n    let x = 1;\n    g|();\n}\n").as_deref(),
+        Some("g();")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "fn a() {}\nfn b|() {}\n").as_deref(),
+        Some("fn b() {}")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "struct S| { x: u8 }\n").as_deref(),
+        Some("struct S { x: u8 }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "enum E| { A }\n").as_deref(),
+        Some("enum E { A }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "union U| { x: u8 }\n").as_deref(),
+        Some("union U { x: u8 }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "trait T| { fn t(&self); }\n").as_deref(),
+        Some("trait T { fn t(&self); }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "impl S| { fn g() {} }\n").as_deref(),
+        Some("impl S { fn g() {} }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "const C|: u8 = 1;\n").as_deref(),
+        Some("const C: u8 = 1;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "static S|: u8 = 1;\n").as_deref(),
+        Some("static S: u8 = 1;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "type T| = u8;\n").as_deref(),
+        Some("type T = u8;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "mod m| { fn a() {} }\n").as_deref(),
+        Some("mod m { fn a() {} }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "use foo::bar|;\n").as_deref(),
+        Some("use foo::bar;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "extern crate foo|;\n").as_deref(),
+        Some("extern crate foo;")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "macro_rules! m| { () => {}; }\n").as_deref(),
+        Some("macro_rules! m { () => {}; }")
+    );
+    assert_eq!(
+        statement(Lang::Rust, "trait T { type Item|; }\n").as_deref(),
+        Some("type Item;")
+    );
+}
+
+#[test]
+fn c_and_cpp_statement_range_covers_each_kind() {
+    assert_eq!(
+        statement(Lang::C, "int f(void) {\n    g|();\n    return 0;\n}\n").as_deref(),
+        Some("g();")
+    );
+    assert_eq!(
+        statement(
+            Lang::C,
+            "int f(void) {\n    int x| = 1;\n    return x;\n}\n"
+        )
+        .as_deref(),
+        Some("int x = 1;")
+    );
+    assert_eq!(
+        statement(
+            Lang::C,
+            "int f(void) {\n    int x = 1;\n    ret|urn x;\n}\n"
+        )
+        .as_deref(),
+        Some("return x;")
+    );
+    assert_eq!(
+        statement(
+            Lang::C,
+            "int f(int a) {\n    if (a|) { return 1; }\n    return 0;\n}\n"
+        )
+        .as_deref(),
+        Some("if (a) { return 1; }")
+    );
+    assert_eq!(
+        statement(Lang::C, "int f(void) {\n    whi|le (1) { break; }\n}\n").as_deref(),
+        Some("while (1) { break; }")
+    );
+    assert_eq!(
+        statement(Lang::C, "int f(void) {\n    fo|r (;;) { break; }\n}\n").as_deref(),
+        Some("for (;;) { break; }")
+    );
+    assert_eq!(
+        statement(
+            Lang::C,
+            "int f(void) {\n    swi|tch (1) { default: break; }\n}\n"
+        )
+        .as_deref(),
+        Some("switch (1) { default: break; }")
+    );
+    assert_eq!(
+        statement(Lang::C, "int a() { return 1; }\nint b|() { return 2; }\n").as_deref(),
+        Some("int b() { return 2; }")
+    );
+    assert_eq!(
+        statement(Lang::C, "int a| = 1;\nint b = 2;\n").as_deref(),
+        Some("int a = 1;")
+    );
+    assert_eq!(
+        statement(
+            Lang::Cpp,
+            "void f() {\n    for (auto x : v|) {}\n    int y = 1;\n}\n"
+        )
+        .as_deref(),
+        Some("for (auto x : v) {}")
+    );
+    assert_eq!(
+        statement(Lang::Cpp, "void f() {\n    th|row 1;\n    int y = 1;\n}\n").as_deref(),
+        Some("throw 1;")
+    );
+}
+
+#[test]
+fn statement_range_none_for_other_languages() {
+    assert_eq!(statement(Lang::Toml, "name = \"ri|de\"\n"), None);
+    assert_eq!(statement(Lang::Make, "all:\n\t@ec|ho\n"), None);
+    assert_eq!(statement(Lang::Cmake, "set(x| 1)\n"), None);
+    assert_eq!(statement(Lang::Markdown, "hel|lo\n"), None);
+}
+
+#[test]
+fn sibling_statement_skips_comments_and_stops_at_edges() {
+    let src = "fn main() {\n    let a = 1;\n    let b| = 2;\n}\n";
+    assert_eq!(
+        sibling(Lang::Rust, src, true).as_deref(),
+        Some("let a = 1;")
+    );
+    assert_eq!(sibling(Lang::Rust, src, false), None);
+    let src = "fn a|() {}\n// skip\nfn b() {}\n";
+    assert_eq!(
+        sibling(Lang::Rust, src, false).as_deref(),
+        Some("fn b() {}")
+    );
+    assert_eq!(sibling(Lang::Rust, src, true), None);
+    let src = "int f(void) {\n    int a| = 1;\n    return a;\n}\n";
+    assert_eq!(sibling(Lang::C, src, false).as_deref(), Some("return a;"));
 }

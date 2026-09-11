@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::editing::{EditingKinds, cmake_folds};
+use crate::highlight::editing::{EditingKinds, cmake_folds, no_statement};
 use crate::highlight::{cmake_outline, context, imports, includes, members, site, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/cmake/highlights.scm");
@@ -168,6 +168,7 @@ pub fn grammar() -> Grammar {
             comments: &["line_comment", "bracket_comment"],
             bodies: &[],
             folds: cmake_folds,
+            is_statement: no_statement,
         },
     }
 }

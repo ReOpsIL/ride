@@ -62,6 +62,12 @@ pub trait Syntax: Send + Sync {
     fn bracket_pair(&self, _text: &str, _byte: usize) -> Option<BracketPair> {
         None
     }
+    fn statement_range(&self, _text: &str, _byte: u32) -> Option<ByteRange> {
+        None
+    }
+    fn sibling_statement(&self, _text: &str, _byte: u32, _up: bool) -> Option<ByteRange> {
+        None
+    }
 }
 
 pub fn parse_failed() -> EngineError {

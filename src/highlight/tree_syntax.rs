@@ -10,7 +10,6 @@ use crate::ffi::{
 use super::context::Context;
 use super::grammar::Grammar;
 use super::includes::IncludeRef;
-use super::members::{self, Access};
 use super::ranges::from_ts;
 use super::site::SiteAt;
 use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
@@ -106,30 +105,7 @@ impl Syntax for TreeSyntax {
     }
 
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits {
-        let Some(tree) = self.tree.as_ref() else {
-            return LocalHits::default();
-        };
-        let limit = q.limit as usize;
-        match members::access_before(tree, text, q.at as usize, self.grammar.member_ops) {
-            Some(receiver) => LocalHits {
-                hits: members::fallback_hits(
-                    tree,
-                    text,
-                    outline,
-                    q.prefix,
-                    limit,
-                    &self.grammar,
-                    q.at as usize,
-                ),
-                access: Some(Access {
-                    chain: receiver.and_then(|r| (self.grammar.receiver)(tree, text, r)),
-                }),
-            },
-            None => LocalHits {
-                hits: locals::hits(tree, text, outline, q, &self.grammar),
-                access: None,
-            },
-        }
+        locals::hits_with_access(self.tree.as_ref(), text, outline, q, &self.grammar)
     }
 
     fn includes(&self, text: &str) -> Vec<IncludeRef> {
@@ -195,5 +171,20 @@ impl Syntax for TreeSyntax {
     fn bracket_pair(&self, text: &str, byte: usize) -> Option<BracketPair> {
         let tree = self.tree.as_ref()?;
         editing::bracket_pair(tree.root_node(), text, byte, &self.grammar.editing)
+    }
+
+    fn statement_range(&self, _text: &str, byte: u32) -> Option<ByteRange> {
+        let tree = self.tree.as_ref()?;
+        editing::statement_range(tree.root_node(), byte, self.grammar.editing.is_statement)
+    }
+
+    fn sibling_statement(&self, _text: &str, byte: u32, up: bool) -> Option<ByteRange> {
+        let tree = self.tree.as_ref()?;
+        editing::sibling_statement(
+            tree.root_node(),
+            byte,
+            up,
+            self.grammar.editing.is_statement,
+        )
     }
 }

@@ -53,4 +53,12 @@ impl BufferSession {
     pub fn bracket_pair(&self, byte: u32) -> Option<BracketPair> {
         self.syntax.bracket_pair(&self.replica, byte as usize)
     }
+
+    pub fn statement_range(&self, byte: u32) -> Option<ByteRange> {
+        self.syntax.statement_range(&self.replica, byte)
+    }
+
+    pub fn sibling_statement(&self, byte: u32, up: bool) -> Option<ByteRange> {
+        self.syntax.sibling_statement(&self.replica, byte, up)
+    }
 }

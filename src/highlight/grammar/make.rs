@@ -1,7 +1,7 @@
 use tree_sitter::{Language, Node};
 
 use super::Grammar;
-use crate::highlight::editing::{EditingKinds, make_folds};
+use crate::highlight::editing::{EditingKinds, make_folds, no_statement};
 use crate::highlight::{context, imports, includes, make_outline, members, site, types};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/make/highlights.scm");
@@ -111,6 +111,7 @@ pub fn grammar() -> Grammar {
             comments: &["comment"],
             bodies: &[],
             folds: make_folds,
+            is_statement: no_statement,
         },
     }
 }

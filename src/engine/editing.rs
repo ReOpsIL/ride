@@ -54,4 +54,37 @@ impl Engine {
         .ok()
         .flatten()
     }
+
+    pub fn statement_range(&self, session_id: u64, byte: u32) -> Option<ByteRange> {
+        catch_unwind(AssertUnwindSafe(|| {
+            self.read(|i| {
+                i.sessions
+                    .get(&session_id)
+                    .and_then(|s| s.statement_range(byte))
+            })
+            .ok()
+            .flatten()
+        }))
+        .ok()
+        .flatten()
+    }
+
+    pub fn sibling_statement_range(
+        &self,
+        session_id: u64,
+        byte: u32,
+        up: bool,
+    ) -> Option<ByteRange> {
+        catch_unwind(AssertUnwindSafe(|| {
+            self.read(|i| {
+                i.sessions
+                    .get(&session_id)
+                    .and_then(|s| s.sibling_statement(byte, up))
+            })
+            .ok()
+            .flatten()
+        }))
+        .ok()
+        .flatten()
+    }
 }

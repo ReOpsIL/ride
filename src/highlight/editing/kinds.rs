@@ -7,4 +7,5 @@ pub struct EditingKinds {
     pub comments: &'static [&'static str],
     pub bodies: &'static [&'static str],
     pub folds: fn(&Tree, &str) -> Vec<FoldRange>,
+    pub is_statement: fn(&str) -> bool,
 }

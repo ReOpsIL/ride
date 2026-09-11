@@ -68,6 +68,20 @@ final class LineOpsTests: XCTestCase {
         XCTAssertEqual(move("a\nb\n|", up: false), "a\nb\n|")
     }
 
+    func testMoveStatementSwapsGivenRanges() {
+        XCTAssertEqual(moveStatement("let a = 1;\nlet b| = 2;\n", current: (11, 10), other: (0, 10)), "let b| = 2;\nlet a = 1;\n")
+        XCTAssertEqual(moveStatement("let a| = 1;\nlet b = 2;\n", current: (0, 10), other: (11, 10)), "let b = 2;\nlet a| = 1;\n")
+        XCTAssertEqual(moveStatement("[let a = 1;]\nlet b = 2;\n", current: (0, 10), other: (11, 10)), "let b = 2;\n[let a = 1;]\n")
+        XCTAssertEqual(moveStatement("aaa\n\nbb|b", current: (5, 3), other: (0, 3)), "bb|b\n\naaa")
+    }
+
+    func testMoveStatementKeepsWhenRangesCannotSwap() {
+        XCTAssertEqual(moveStatement("a|bc", current: (0, 1), other: (0, 1)), "a|bc")
+        XCTAssertEqual(moveStatement("a|bc", current: (0, 2), other: (1, 2)), "a|bc")
+        XCTAssertEqual(moveStatement("a|bc", current: (0, 0), other: (1, 1)), "a|bc")
+        XCTAssertEqual(moveStatement("a|bc", current: (0, 1), other: (2, 0)), "a|bc")
+    }
+
     func testNewLineAfterAndBefore() {
         let after = Fixture.apply("a|b\nc") { LineOps.newLineAfter($0, caret: $1.location, indent: "  ") }
         XCTAssertEqual(after, "ab\n  |\nc")
@@ -111,6 +125,17 @@ final class LineOpsTests: XCTestCase {
 
     private func move(_ fixture: String, up: Bool) -> String {
         Fixture.apply(fixture) { LineOps.moveLines($0, selection: $1, up: up) }
+    }
+
+    private func moveStatement(_ fixture: String, current: (Int, Int), other: (Int, Int)) -> String {
+        Fixture.apply(fixture) {
+            LineOps.moveStatement(
+                $0,
+                current: NSRange(location: current.0, length: current.1),
+                other: NSRange(location: other.0, length: other.1),
+                selection: $1
+            )
+        }
     }
 
     private func toggleCase(_ fixture: String) -> String {

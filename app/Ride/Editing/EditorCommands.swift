@@ -57,6 +57,26 @@ enum EditorCommands {
         run { LineOps.moveLines($0.text, selection: $0.selection, up: up) }
     }
 
+    static func moveStatement(up: Bool) {
+        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+            return
+        }
+        let text = target.text
+        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
+        guard let current = engine.statementRange(sessionId: id, byte: byte),
+              let other = engine.siblingStatementRange(sessionId: id, byte: byte, up: up)
+        else {
+            return
+        }
+        let result = LineOps.moveStatement(
+            text,
+            current: Utf16.nsRange(in: text, startByte: current.startByte, endByte: current.endByte),
+            other: Utf16.nsRange(in: text, startByte: other.startByte, endByte: other.endByte),
+            selection: target.selection
+        )
+        EditorCommand.apply(result, to: target.view)
+    }
+
     static func newLine(before: Bool) {
         run { target in
             let ns = target.text as NSString

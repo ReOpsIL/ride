@@ -17,6 +17,10 @@ struct EditCommands: Commands {
                 .keyboardShortcut(.upArrow, modifiers: [.option, .shift])
             Button("Move Line Down") { EditorCommands.moveLines(up: false) }
                 .keyboardShortcut(.downArrow, modifiers: [.option, .shift])
+            Button("Move Statement Up") { EditorCommands.moveStatement(up: true) }
+                .keyboardShortcut(.upArrow, modifiers: [.command, .shift])
+            Button("Move Statement Down") { EditorCommands.moveStatement(up: false) }
+                .keyboardShortcut(.downArrow, modifiers: [.command, .shift])
             Button("Start New Line") { EditorCommands.newLine(before: false) }
                 .keyboardShortcut(.return, modifiers: .shift)
             Button("Start New Line Before") { EditorCommands.newLine(before: true) }

@@ -43,6 +43,24 @@ extension LineOps {
         return NSRange(location: location, length: min(selection.length, length - location))
     }
 
+    static func moveStatement(_ text: String, current: NSRange, other: NSRange, selection: NSRange) -> EditResult {
+        guard current.length > 0, other.length > 0, NSIntersectionRange(current, other).length == 0 else {
+            return .keep(selection)
+        }
+        let first = current.location < other.location ? current : other
+        let second = current.location < other.location ? other : current
+        guard first.upperBound <= second.location else {
+            return .keep(selection)
+        }
+        let source = text as NSString
+        let gap = NSRange(location: first.upperBound, length: second.location - first.upperBound)
+        let swapped = source.substring(with: second) + source.substring(with: gap) + source.substring(with: first)
+        let span = NSRange(location: first.location, length: second.upperBound - first.location)
+        let change = TextChange(range: span, text: swapped)
+        let delta = current.location < other.location ? second.length + gap.length : -(first.length + gap.length)
+        return EditResult(changes: [change], selection: shifted(selection, by: delta, in: source, change: change))
+    }
+
     static func newLineAfter(_ text: String, caret: Int, indent: String) -> EditResult {
         let source = text as NSString
         let end = LineSpan.lineEnd(source, at: caret)
