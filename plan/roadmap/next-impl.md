@@ -374,6 +374,7 @@ The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the
 | 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | 14 commits, reviewed; R8–R10, R14 |
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
-| 7 | R17, R16, P1–P5 | running |
+| 7 | R17, R16, P1 | 3 commits (Grok balance exhausted after P1; P1 passes fmt, clippy and tests/project.rs) |
+| 8 | P2–P5 | waiting for Grok balance: `~/ride-batch8.sh` |
 
 The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.
