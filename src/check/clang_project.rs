@@ -1,4 +1,4 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
@@ -12,6 +12,9 @@ use super::output::stderr_tail;
 
 const WORKERS: usize = 4;
 
+type IndexedFile = (usize, PathBuf);
+type IndexedResult = (usize, Result<CheckResult, EngineError>);
+
 pub fn run_check_c_project(root: &Path) -> Result<CheckResult, EngineError> {
     let files = compile_db::sources_in(root);
     if files.is_empty() {
@@ -22,13 +25,21 @@ pub fn run_check_c_project(root: &Path) -> Result<CheckResult, EngineError> {
     gather(files)
 }
 
+pub fn merge_indexed(jobs: impl IntoIterator<Item = (usize, CheckResult)>) -> CheckResult {
+    let mut merged = Merge::default();
+    for (index, check) in jobs {
+        merged.push(index, check);
+    }
+    merged.finish()
+}
+
 fn gather(files: Vec<PathBuf>) -> Result<CheckResult, EngineError> {
     let (rx, threads) = start_pool(files);
     let mut merged = Merge::default();
     let mut first_err = None;
-    for item in rx {
+    for (index, item) in rx {
         match item {
-            Ok(check) => merged.push(check),
+            Ok(check) => merged.push(index, check),
             Err(e) if first_err.is_none() => first_err = Some(e),
             Err(_) => {}
         }
@@ -42,15 +53,12 @@ fn gather(files: Vec<PathBuf>) -> Result<CheckResult, EngineError> {
     }
 }
 
-fn start_pool(
-    files: Vec<PathBuf>,
-) -> (
-    mpsc::Receiver<Result<CheckResult, EngineError>>,
-    Vec<thread::JoinHandle<()>>,
-) {
+fn start_pool(files: Vec<PathBuf>) -> (mpsc::Receiver<IndexedResult>, Vec<thread::JoinHandle<()>>) {
     let jobs = files.len().min(WORKERS);
     let (tx, rx) = mpsc::channel();
-    let work = Arc::new(Mutex::new(VecDeque::from(files)));
+    let work = Arc::new(Mutex::new(
+        files.into_iter().enumerate().collect::<VecDeque<_>>(),
+    ));
     let mut threads = Vec::new();
     for i in 0..jobs {
         let work = Arc::clone(&work);
@@ -70,60 +78,64 @@ fn start_pool(
     (rx, threads)
 }
 
-fn drain(work: Arc<Mutex<VecDeque<PathBuf>>>, tx: mpsc::Sender<Result<CheckResult, EngineError>>) {
+fn drain(work: Arc<Mutex<VecDeque<IndexedFile>>>, tx: mpsc::Sender<IndexedResult>) {
     loop {
         let next = work.lock().ok().and_then(|mut q| q.pop_front());
-        let Some(file) = next else {
+        let Some((index, file)) = next else {
             break;
         };
-        if tx.send(run_clang_check(&file)).is_err() {
+        if tx.send((index, run_clang_check(&file))).is_err() {
             break;
         }
     }
 }
 
+#[derive(Default)]
 struct Merge {
-    success: bool,
-    diagnostics: Vec<Diagnostic>,
-    seen: HashSet<(String, u32, String)>,
-    tails: String,
-}
-
-impl Default for Merge {
-    fn default() -> Self {
-        Self {
-            success: true,
-            diagnostics: Vec::new(),
-            seen: HashSet::new(),
-            tails: String::new(),
-        }
-    }
+    jobs: BTreeMap<usize, CheckResult>,
 }
 
 impl Merge {
-    fn push(&mut self, check: CheckResult) {
-        self.success &= check.success;
-        for d in check.diagnostics {
-            if self
-                .seen
-                .insert((d.path.clone(), d.byte_start, d.message.clone()))
-            {
-                self.diagnostics.push(d);
-            }
-        }
-        if !check.stderr_tail.is_empty() {
-            if !self.tails.is_empty() {
-                self.tails.push('\n');
-            }
-            self.tails.push_str(&check.stderr_tail);
-        }
+    fn push(&mut self, index: usize, check: CheckResult) {
+        self.jobs.insert(index, check);
     }
 
     fn finish(self) -> CheckResult {
+        let mut success = true;
+        let mut diagnostics = Vec::new();
+        let mut seen = HashSet::new();
+        let mut tails = String::new();
+        for check in self.jobs.into_values() {
+            success &= check.success;
+            take_diagnostics(&mut diagnostics, &mut seen, check.diagnostics);
+            take_tail(&mut tails, &check.stderr_tail);
+        }
         CheckResult {
-            success: self.success,
-            diagnostics: self.diagnostics,
-            stderr_tail: stderr_tail(&self.tails),
+            success,
+            diagnostics,
+            stderr_tail: stderr_tail(&tails),
         }
     }
+}
+
+fn take_diagnostics(
+    diagnostics: &mut Vec<Diagnostic>,
+    seen: &mut HashSet<(String, u32, String)>,
+    incoming: Vec<Diagnostic>,
+) {
+    for d in incoming {
+        if seen.insert((d.path.clone(), d.byte_start, d.message.clone())) {
+            diagnostics.push(d);
+        }
+    }
+}
+
+fn take_tail(tails: &mut String, tail: &str) {
+    if tail.is_empty() {
+        return;
+    }
+    if !tails.is_empty() {
+        tails.push('\n');
+    }
+    tails.push_str(tail);
 }

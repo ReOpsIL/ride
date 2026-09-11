@@ -2,8 +2,8 @@ use std::fs;
 use std::path::PathBuf;
 
 use ride_engine::{
-    DiagnosticLevel, Lang, parse_clang, run_check_c_project, run_clang_check, sources_including,
-    tool_path,
+    CheckResult, Diagnostic, DiagnosticLevel, Lang, merge_indexed, parse_clang,
+    run_check_c_project, run_clang_check, sources_including, tool_path,
 };
 
 fn scratch(name: &str) -> PathBuf {
@@ -220,6 +220,44 @@ fn editing_cpp_demo_header_yields_diagnostic_from_including_source() {
         "{:?}",
         result.diagnostics
     );
+}
+
+fn indexed_check(path: &str, tail: &str) -> CheckResult {
+    CheckResult {
+        success: false,
+        diagnostics: vec![Diagnostic {
+            path: path.into(),
+            byte_start: 0,
+            byte_end: 1,
+            line: 1,
+            column: 1,
+            level: DiagnosticLevel::Error,
+            message: path.into(),
+            code: None,
+        }],
+        stderr_tail: tail.into(),
+    }
+}
+
+#[test]
+fn shuffled_job_order_yields_the_same_project_check() {
+    let a = indexed_check("a.c", "ta");
+    let b = indexed_check("b.c", "tb");
+    let c = indexed_check("c.c", "tc");
+    let first = merge_indexed([(2, c.clone()), (0, a.clone()), (1, b.clone())]);
+    let second = merge_indexed([(1, b), (2, c), (0, a)]);
+    assert_eq!(first.success, second.success);
+    assert_eq!(first.diagnostics, second.diagnostics);
+    assert_eq!(first.stderr_tail, second.stderr_tail);
+    assert_eq!(
+        first
+            .diagnostics
+            .iter()
+            .map(|d| d.path.as_str())
+            .collect::<Vec<_>>(),
+        ["a.c", "b.c", "c.c"]
+    );
+    assert_eq!(first.stderr_tail, "ta\ntb\ntc");
 }
 
 #[test]

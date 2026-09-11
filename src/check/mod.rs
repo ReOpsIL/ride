@@ -16,7 +16,7 @@ mod run;
 
 pub use clang::run_clang_check;
 pub use clang_parse::parse_clang;
-pub use clang_project::run_check_c_project;
+pub use clang_project::{merge_indexed, run_check_c_project};
 pub use fmt::{
     Formatter, format_clang, format_document, format_range, format_source, selection_span,
 };
