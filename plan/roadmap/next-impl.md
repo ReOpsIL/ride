@@ -332,6 +332,10 @@ A `BufferDocument` bound to two `EditorHostView`s does not sync (`EditorCoordina
 
 Ride opened no window at all on the maintainer's machine after the batch runs: macOS state restoration replayed a record left by a killed or `exit(1)`-terminated Ride, and SwiftUI restored "no windows". Launching with `-ApplePersistenceIgnoreState YES` opens normally; a clean quit repairs the record. Ride restores its own workspace (1.1-2), so macOS restoration is redundant: `WindowConfigurator` (RootView.swift) sets `window.isRestorable = false` on the main window, and every `NSPanel` (`OverlayPanel.make`, `DocPanel`, `PeekPanel`, `ShortcutsPanel`) sets `isRestorable = false`. `DemoSelfTest.finish` never calls `exit`; it writes the report, appends a final `EXIT 0` or `EXIT 1` line, and terminates normally. The CI job (1.1-8b) greps `^FAIL` and the `EXIT` line instead of the process status and passes `-ApplePersistenceIgnoreState YES` on every launch. Observed on 2026-09-11: launches with the record present opened no window (RootView `onAppear` never fired, main thread idle); `defaults write dev.ride.Ride NSQuitAlwaysKeepsWindows -bool false` did not help, `-ApplePersistenceIgnoreState YES` (also as a per-app default) did. The maintainer's machine currently has that default set; the code fix must work with the default deleted. Acceptance: with `defaults delete dev.ride.Ride ApplePersistenceIgnoreState`, the scene runs to completion twice in a row with a `kill -9` of an unrelated plain launch in between.
 
+### R16 Doc popup leftovers and catalog hit offsets (R12, R11) — Tier A
+
+Three leftovers from batch 6. (1) `CompletionPopupLayout.wide` and `CompletionDocCard.wideWidth` are now permanently false/unused after the wide-doc toggle was removed; delete the state and the layout branch. (2) `DocWebView.swift` builds its base URL with a force-unwrap; use a static `URL` built through a failable path that falls back to `about:blank` without `!`. (3) `SessionService+Query.swift` relocates the doc cursor by searching the hit's name after `byteStart` because catalog hits point at the item start (`pub struct`), not the name; fix the engine instead: `CompletionHit` gains `name_byte: Option<u32>` filled by `src/engine/symbols.rs` and `query` hits from the outline's name span (`OutlineItem` already carries `start_byte`; add `name_start_byte` in `src/highlight/symbol.rs` and the extract path), `quick_doc` and `quick_definition` accept either byte, and the Swift search fallback is deleted. Test in `tests/definition.rs`: a catalog hit's `name_byte` lands on the identifier. Also `SplitState.tabs(ids:leftover:)` in `WorkspaceState.swift` dedupes a path listed in two saved panes (first pane wins) with a `WorkspaceStateTests` case.
+
 ## 9. Release 1.2 cards — project model (2026-09-11)
 
 The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the app only renders. Everything lives under `src/project/` (new module, listed in `src/lib.rs`), exposed through one `Engine::project_model(root: String) -> Result<ProjectModel, EngineError>` and re-read on `Engine::reload_project(root)`.
@@ -365,7 +369,7 @@ The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the
 | strong model | 1.1-1a pane registry, `samples/rust-demo` fixture | commit on this branch; 141 RideTests, self-test 51/52 (R7 pre-existing) |
 | 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | 14 commits, reviewed; R8–R10, R14 |
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
-| 6 | R8–R15 | 8 commits, under review |
-| 7 | batch 6 fixes, P1–P3 | next |
+| 6 | R8–R15 | 8 commits, reviewed; R16 |
+| 7 | R16, P1–P5 | pending |
 
 The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.
