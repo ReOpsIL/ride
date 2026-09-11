@@ -404,6 +404,20 @@ Engine first: `Engine::parse_clang_output(text, base_dir: String)` resolves rela
 
 Engine first: `recompile_command` returns a `RecompileCommand { argv: Vec<String>, directory: String }` record (`src/ffi/run.rs`) so the runner has its working directory; update `tests/single.rs`. App: Run File (⌃⇧R) and Recompile File (⇧⌘F9) in the Run menu through `MenuModel`; Run File asks the engine for `single_file_command(path, <support dir>/single/<sha256 of path>)`, runs the compile argv through the Q2 runner in the file's directory, then the run argv; compile errors go through Q4b's clang parser with the file's directory as base. Recompile File runs the record's argv in its directory. Self-test steps on `samples/cpp-demo`: Run File on `src/main.cpp` fails to link alone (expected: the panel shows the linker error), Recompile File on `src/shapes.cpp` exits 0.
 
+## 11. Release 1.2 cards — test runner and terminal (2026-09-12)
+
+### T1 Test output parsers — Tier A
+
+`src/run/tests/` with one parser per framework, all producing `TestEvent { suite: Option<String>, name: String, status: Passed|Failed|Ignored|Started, output: String, duration_ms: Option<u64> }` and `TestCase { suite, name, file: Option<String>, line: Option<u32> }` (records in `src/ffi/tests.rs`): `cargo.rs` parses the stable human output of `cargo test` (`test name ... ok|FAILED|ignored`, the `---- name stdout ----` blocks, and `test result:` lines; JSON output needs nightly and is out of scope) and lists tests from `cargo test -- --list` (`name: test` lines); `gtest.rs` parses `--gtest_list_tests` (suite lines ending in `.`, indented case names) and the `[ RUN ]`/`[ OK ]`/`[ FAILED ]` result lines with the output between them; `catch2.rs` parses `--list-tests` and the `-r compact` reporter; `ctest.rs` parses `ctest --show-only=json-v1` and `ctest --output-on-failure` results. `Engine::list_tests(kind, text)` and `Engine::parse_test_output(kind, text) -> Vec<TestEvent>` over a `TestFramework` enum; the commands to produce the text come from a pure `test_commands(target, framework) -> (list: Vec<String>, run: Vec<String>)`. Fixtures under `tests/fixtures/tests/` captured from real runs (the demo crate for cargo; write a ten-line GoogleTest and Catch2 program each, build them only if the frameworks are installed, otherwise commit the captured output text); tests in `tests/test_output.rs`.
+
+### T2 Gutter run markers and the Tests panel — Tier B, after T1 and Q4b
+
+Engine: `Engine::test_markers(session_id) -> Vec<TestMarker { name, byte_start, framework }>` from the outline: Rust `#[test]` functions and `fn main`, C++ `TEST(` / `TEST_F(` / `TEST_CASE(` calls (tree-sitter call expressions at file scope). App: `GutterView` draws ▶ on marker lines and a click runs that test (`cargo test <name> -- --exact`, `--gtest_filter=Suite.Name`, `"<name>"` for Catch2) through the Q2 runner; `app/Ride/Tests/TestsPanel.swift` as a bottom panel tab next to Run Output with a pass/fail tree (`TestTree.swift`, pure, RideTests: grouping by suite, counts, filter), output per test on selection, Rerun Failed and a filter field; `Run Tests` (⇧⌘R from Q3) now streams through `parse_test_output` and fills the panel while the raw text still goes to the run output. Self-test steps on `samples/rust-demo` (add one `#[test]` in `util.rs` below the impl so line numbers in `main.rs` are untouched): Run Tests shows one passed test in the tree.
+
+### S1 Terminal panel on SwiftTerm — Tier B
+
+Add SwiftTerm as a Swift package (pin the latest 1.x); `app/Ride/Terminal/TerminalTab.swift` hosts `LocalProcessTerminalView` running the user's login shell (`SHELL` or `/bin/zsh -l`) with `cwd` = workspace root and the app's environment plus `TERM=xterm-256color`; `TerminalPanel.swift` is a bottom panel tab with multiple terminals (tab strip, New Terminal, close, ⌥F12 toggles the panel and focuses the terminal); Open in Terminal from the project tree opens a new tab in that directory; theme colors from `ThemeStore`; terminals are killed on workspace close and quit. The panel joins the bottom `VSplitView` with the same height persistence as Run Output. RideTests for the pure `TerminalTabs.swift` model (add, close, select fallback). Self-test step: open a terminal tab, assert the model has one tab; do not type into it.
+
 ## 7. Batch log
 
 | Batch | Cards | Result |
@@ -415,7 +429,8 @@ Engine first: `recompile_command` returns a `RecompileCommand { argv: Vec<String
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
-| 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1, Q4, Q5 merged and reviewed (all merge); Q2 merged, reviewed: R19; Q3 running |
+| 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b running, then Q5b |
+| 10 | T1, S1 in parallel; then T2 | next |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.
