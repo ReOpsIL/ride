@@ -2,9 +2,15 @@ import Foundation
 
 struct FoldSet: Equatable {
     private(set) var ranges: [NSRange] = []
+    private var startLines: Set<Int> = []
+    private(set) var startsDirty = true
 
     var isEmpty: Bool {
         ranges.isEmpty
+    }
+
+    static func == (lhs: FoldSet, rhs: FoldSet) -> Bool {
+        lhs.ranges == rhs.ranges
     }
 
     mutating func add(_ range: NSRange) {
@@ -27,6 +33,8 @@ struct FoldSet: Equatable {
 
     mutating func removeAll() {
         ranges = []
+        startLines = []
+        startsDirty = true
     }
 
     func hides(_ range: NSRange) -> Bool {
@@ -35,6 +43,15 @@ struct FoldSet: Equatable {
 
     func startsFold(at range: NSRange) -> Bool {
         ranges.contains { $0.location >= range.location && $0.location < NSMaxRange(range) }
+    }
+
+    func isFoldStart(line: Int) -> Bool {
+        startLines.contains(line)
+    }
+
+    mutating func setStartLines(_ lines: Set<Int>) {
+        startLines = lines
+        startsDirty = false
     }
 
     func clampCaret(_ location: Int) -> Int {
@@ -55,5 +72,7 @@ struct FoldSet: Equatable {
             }
             return nil
         }
+        startLines = []
+        startsDirty = true
     }
 }

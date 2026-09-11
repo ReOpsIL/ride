@@ -58,6 +58,10 @@ enum SelfTestSteps {
             }, check: { e.expect(e.line(10) == "    counter.record(\"ride\");" && state.formatError == nil, "line 10: \(e.line(10)) error \(state.formatError ?? "-")") }),
             SelfTestStep(name: "fold", run: { e.caret(line: 9); FoldController.shared.fold() }, check: { e.expect(e.view?.folds.ranges.count == 1, "folds \(e.view?.folds.ranges.count ?? -1)") }),
             SelfTestStep(name: "unfold all", run: { FoldController.shared.unfoldAll() }, check: { e.expect(e.view?.folds.isEmpty == true, "folds remain") }),
+            SelfTestStep(name: "gutter fold", run: { FoldController.shared.toggle(line: 8) }, check: {
+                e.expect(e.view?.folds.ranges.count == 1 && e.view?.folds.isFoldStart(line: 8) == true, "folds \(e.view?.folds.ranges.count ?? -1) start \(e.view?.folds.isFoldStart(line: 8) ?? false)")
+            }),
+            SelfTestStep(name: "gutter unfold", run: { FoldController.shared.toggle(line: 8) }, check: { e.expect(e.view?.folds.isEmpty == true, "folds remain") }),
             SelfTestStep(name: "surround", run: { e.caret(line: 10, column: 24); EditorCommands.selectWord(); if let t = EditorCommands.target() { EditorCommand.apply(SurroundWith.apply(SurroundTemplate(title: "(", open: "(", close: ")"), to: t), to: t.view) } }, check: { e.expect(e.line(10).contains("\"(ride)\"") && e.selectedText == "ride", "line 10: \(e.line(10)) sel \(e.selectedText)") }),
             SelfTestStep(name: "zoom", run: { let before = state.prefs.fontSize; state.zoom(1); state.zoomBefore = before }, check: { e.expect(state.prefs.fontSize == state.zoomBefore + 1, "font \(state.prefs.fontSize)") }),
             SelfTestStep(name: "zoom reset", run: { state.resetZoom() }, check: { e.expect(state.prefs.fontSize == Preferences.defaults.fontSize, "font \(state.prefs.fontSize)") }),

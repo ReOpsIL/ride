@@ -24,4 +24,21 @@ final class FoldSetTests: XCTestCase {
         XCTAssertTrue(folds.remove(containing: 55))
         XCTAssertTrue(folds.isEmpty)
     }
+
+    func testIsFoldStartLine() {
+        var folds = FoldSet()
+        XCTAssertFalse(folds.isFoldStart(line: 2))
+        folds.setStartLines([2, 8, 15])
+        XCTAssertTrue(folds.isFoldStart(line: 2))
+        XCTAssertTrue(folds.isFoldStart(line: 8))
+        XCTAssertFalse(folds.isFoldStart(line: 1))
+        XCTAssertFalse(folds.isFoldStart(line: 9))
+        folds.add(NSRange(location: 10, length: 20))
+        XCTAssertTrue(folds.isFoldStart(line: 8))
+        folds.textChanged(range: NSRange(location: 0, length: 0), insertedLength: 1)
+        XCTAssertFalse(folds.isFoldStart(line: 8))
+        folds.setStartLines([8])
+        folds.removeAll()
+        XCTAssertFalse(folds.isFoldStart(line: 8))
+    }
 }

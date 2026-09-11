@@ -21,6 +21,7 @@ final class GutterView: NSView {
     func attach(textView: RideTextView) {
         self.textView = textView
         viewport = textView.textLayoutManager?.textViewportLayoutController
+        FoldController.shared.refreshStarts(textView)
         needsDisplay = true
     }
 
@@ -28,33 +29,19 @@ final class GutterView: NSView {
         let theme = ThemeStore.shared.theme
         theme.editor.background.setFill()
         dirtyRect.fill()
-        guard let textView, let tlm = textView.textLayoutManager else {
+        if let textView, textView.folds.startsDirty {
+            FoldController.shared.refreshStarts(textView)
+        }
+        guard let textView else {
             return
         }
-        let storage = textView.textContentStorage
-        let origin = textView.textContainerOrigin
         let index = textView.lineIndex()
         let currentLine = index.line(at: textView.selectedRange().location)
         let attrs: [NSAttributedString.Key: Any] = [.font: Self.font, .foregroundColor: theme.editor.gutterText]
         let currentAttrs: [NSAttributedString.Key: Any] = [.font: Self.currentFont, .foregroundColor: theme.editor.gutterCurrent]
-        let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
-        tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
-            let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
-            let lineNo = index.line(at: utf16)
-            if let lineFragment = fragment.textLineFragments.first {
-                var r = lineFragment.typographicBounds
-                r.origin.x = 0
-                r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
-                r.size.width = bounds.width
-                let dest = convert(r, from: textView)
-                if dest.intersects(dirtyRect) {
-                    drawLine(lineNo, at: dest, attrs: lineNo == currentLine ? currentAttrs : attrs, theme: theme)
-                }
-            }
-            if let end = viewport?.viewportRange?.endLocation,
-               fragment.rangeInElement.endLocation.compare(end) != .orderedAscending
-            {
-                return false
+        enumerateVisibleLines { lineNo, dest in
+            if dest.intersects(dirtyRect) {
+                drawLine(lineNo, at: dest, attrs: lineNo == currentLine ? currentAttrs : attrs, theme: theme)
             }
             return true
         }
@@ -65,6 +52,61 @@ final class GutterView: NSView {
         edge.stroke()
     }
 
+    override func mouseDown(with event: NSEvent) {
+        let point = convert(event.locationInWindow, from: nil)
+        guard point.x < Self.glyphColumn, let line = line(at: point), let textView else {
+            return
+        }
+        if textView.folds.startsDirty {
+            FoldController.shared.refreshStarts(textView)
+        }
+        guard textView.folds.isFoldStart(line: line) else {
+            return
+        }
+        FoldController.shared.toggle(line: line)
+    }
+
+    private func line(at point: NSPoint) -> Int? {
+        var found: Int?
+        enumerateVisibleLines { lineNo, dest in
+            guard point.y >= dest.minY, point.y < dest.maxY else {
+                return true
+            }
+            found = lineNo
+            return false
+        }
+        return found
+    }
+
+    private func enumerateVisibleLines(_ body: (Int, NSRect) -> Bool) {
+        guard let textView, let tlm = textView.textLayoutManager else {
+            return
+        }
+        let storage = textView.textContentStorage
+        let origin = textView.textContainerOrigin
+        let index = textView.lineIndex()
+        let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
+        tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
+            let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
+            let lineNo = index.line(at: utf16)
+            if let lineFragment = fragment.textLineFragments.first {
+                var r = lineFragment.typographicBounds
+                r.origin.x = 0
+                r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
+                r.size.width = bounds.width
+                if !body(lineNo, convert(r, from: textView)) {
+                    return false
+                }
+            }
+            if let end = viewport?.viewportRange?.endLocation,
+               fragment.rangeInElement.endLocation.compare(end) != .orderedAscending
+            {
+                return false
+            }
+            return true
+        }
+    }
+
     private func drawLine(_ lineNo: Int, at dest: NSRect, attrs: [NSAttributedString.Key: Any], theme: Theme) {
         let label = "\(lineNo)" as NSString
         let size = label.size(withAttributes: attrs)
@@ -72,10 +114,41 @@ final class GutterView: NSView {
             at: CGPoint(x: bounds.width - size.width - Self.trailing, y: dest.midY - size.height / 2),
             withAttributes: attrs
         )
-        if let level = diagnosticLines[lineNo] {
+        if let textView, textView.folds.isFoldStart(line: lineNo) {
+            let collapsed = textView.folds.startsFold(at: lineRange(lineNo, in: textView))
+            drawChevron(collapsed: collapsed, at: dest, color: collapsed ? theme.chrome.accent : theme.editor.gutterText)
+        } else if let level = diagnosticLines[lineNo] {
             let color = level == .error ? theme.chrome.error : theme.chrome.warning
             color.setFill()
             NSBezierPath(ovalIn: NSRect(x: 5, y: dest.midY - 3, width: 6, height: 6)).fill()
         }
+    }
+
+    private func lineRange(_ line: Int, in view: RideTextView) -> NSRange {
+        let starts = view.lineIndex().starts
+        guard line >= 1, line <= starts.count else {
+            return NSRange(location: 0, length: 0)
+        }
+        let start = starts[line - 1]
+        let end = line < starts.count ? starts[line] : (view.string as NSString).length
+        return NSRange(location: start, length: max(0, end - start))
+    }
+
+    private func drawChevron(collapsed: Bool, at dest: NSRect, color: NSColor) {
+        let cx = Self.glyphColumn / 2
+        let cy = dest.midY
+        let path = NSBezierPath()
+        if collapsed {
+            path.move(to: CGPoint(x: cx - 2, y: cy - 3.5))
+            path.line(to: CGPoint(x: cx + 3, y: cy))
+            path.line(to: CGPoint(x: cx - 2, y: cy + 3.5))
+        } else {
+            path.move(to: CGPoint(x: cx - 3.5, y: cy - 2))
+            path.line(to: CGPoint(x: cx + 3.5, y: cy - 2))
+            path.line(to: CGPoint(x: cx, y: cy + 3))
+        }
+        path.close()
+        color.setFill()
+        path.fill()
     }
 }
