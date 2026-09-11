@@ -100,22 +100,7 @@ pub fn byte_range(node: tree_sitter::Node<'_>) -> (u32, u32) {
     (node.start_byte() as u32, node.end_byte() as u32)
 }
 
-pub fn name_start_byte(node: tree_sitter::Node<'_>, name: &str, source: &str) -> u32 {
-    let mut cur = node.child_by_field_name("name");
-    while let Some(n) = cur {
-        match n.child_by_field_name("name") {
-            Some(inner) => cur = Some(inner),
-            None => return n.start_byte() as u32,
-        }
-    }
-    let start = node.start_byte();
-    let end = node.end_byte().min(source.len());
-    source
-        .get(start..end)
-        .and_then(|s| s.find(name))
-        .map(|i| (start + i) as u32)
-        .unwrap_or(start as u32)
-}
+pub use crate::highlight::symbol::name_start_byte;
 
 pub fn field_text(node: tree_sitter::Node<'_>, field: &str, source: &str) -> Option<String> {
     node.child_by_field_name(field)

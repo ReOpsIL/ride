@@ -42,7 +42,7 @@ mod site;
 mod spans;
 mod struct_literal;
 mod summary;
-mod symbol;
+pub mod symbol;
 mod syntax;
 mod toml_outline;
 mod tree_syntax;
