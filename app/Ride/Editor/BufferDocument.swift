@@ -20,6 +20,9 @@ final class BufferDocument: ObservableObject, Identifiable {
     var detectedLanguage: BufferLanguage?
     var usesCRLF = false
     var changedOnDisk = false
+    var caretByte: UInt32 = 0
+    var scrollLine: UInt32 = 1
+    var foldStarts: [UInt32] = []
 
     var hasCompletions: Bool {
         language.hasCompletions
@@ -95,7 +98,20 @@ final class BufferDocument: ObservableObject, Identifiable {
         isDirty = false
         updateLabel(textView)
         textView.isEditable = !isReadOnly
+        restoreCaretAndScroll(textView)
         textView.updateCurrentLineHighlight()
+    }
+
+    private func restoreCaretAndScroll(_ textView: RideTextView) {
+        let ns = text as NSString
+        let loc = min(Utf16.utf16Offset(in: text, utf8: Int(caretByte)), ns.length)
+        textView.setSelectedRange(NSRange(location: loc, length: 0))
+        let starts = textView.lineIndex().starts
+        guard !starts.isEmpty else {
+            return
+        }
+        let line = min(max(Int(scrollLine), 1), starts.count)
+        textView.scrollRangeToVisible(NSRange(location: starts[line - 1], length: 1))
     }
 
     func updateLabel(_ textView: RideTextView) {
@@ -105,6 +121,11 @@ final class BufferDocument: ObservableObject, Identifiable {
 
     func capture(_ textView: RideTextView) {
         text = textView.string
+        caretByte = UInt32(Utf16.utf8Offset(in: text, utf16: textView.selectedRange().location))
+        scrollLine = UInt32(max(1, textView.firstVisibleLine()))
+        foldStarts = textView.folds.ranges.map { range in
+            UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
+        }
     }
 
     func save(from textView: RideTextView?) throws {

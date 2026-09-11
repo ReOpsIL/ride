@@ -13,10 +13,10 @@ final class AppState: ObservableObject {
         didSet { menu.recent = recent }
     }
     @Published var buffers: [BufferDocument] = [] {
-        didSet { syncMenu(); dropClosedClangDiagnostics(from: oldValue) }
+        didSet { syncMenu(); dropClosedClangDiagnostics(from: oldValue); scheduleWorkspaceSave() }
     }
     @Published var activeID: UUID? {
-        didSet { syncMenu() }
+        didSet { syncMenu(); scheduleWorkspaceSave() }
     }
     @Published var cursorLine = 1
     @Published var cursorColumn = 1
@@ -38,12 +38,14 @@ final class AppState: ObservableObject {
     @Published var showSymbolPicker = false
     @Published var showProjectFind = false
     @Published var showProblems = false {
-        didSet { syncMenu() }
+        didSet { syncMenu(); scheduleWorkspaceSave() }
     }
     @Published var showSidebar = true {
-        didSet { syncMenu() }
+        didSet { syncMenu(); scheduleWorkspaceSave() }
     }
-    @Published var showPreview = false
+    @Published var showPreview = false {
+        didSet { scheduleWorkspaceSave() }
+    }
     @Published var formatError: String?
     @Published var notice: String?
     @Published var noticeAction: (title: String, run: () -> Void)?
@@ -70,6 +72,8 @@ final class AppState: ObservableObject {
     var gitSink: AnyCancellable?
     var layoutSaveWork: DispatchWorkItem?
     var persistLayout = true
+    var restoringWorkspace = false
+    let workspaceStore = WorkspaceStateStore()
 
     private let recents = RecentProjects()
     private let watcher = FileWatcher()
@@ -103,6 +107,7 @@ final class AppState: ObservableObject {
             self?.checkFinished(diagnostics)
         }
         _ = RideEngineClient.shared
+        watchWorkspaceQuit()
         NotificationCenter.default.addObserver(
             forName: .rideOpenCatalog,
             object: nil,
@@ -154,6 +159,7 @@ final class AppState: ObservableObject {
     }
 
     func open(_ url: URL) {
+        flushWorkspace()
         workspaceRoot = url.standardizedFileURL
         selectedURL = nil
         for buffer in buffers {
@@ -174,6 +180,7 @@ final class AppState: ObservableObject {
         RideEngineClient.shared.openWorkspace(url)
         git.clear()
         git.refresh(root: url, delay: 0)
+        restoreOpenedWorkspace()
     }
 
     func reindex() {
@@ -188,6 +195,7 @@ final class AppState: ObservableObject {
         edit(&prefs)
         prefs = prefs.clamped
         PreferencesStore.save(prefs)
+        scheduleWorkspaceSave()
         if before.showHidden != prefs.showHidden {
             quickFiles = []
             reloadTree()

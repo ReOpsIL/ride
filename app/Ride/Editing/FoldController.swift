@@ -107,10 +107,48 @@ final class FoldController {
         return NSRange(location: start, length: max(0, end - start))
     }
 
+    func restore(document: BufferDocument, view: RideTextView) {
+        refreshStarts(view)
+        applyStoredFolds(document: document, view: view)
+    }
+
+    private func applyStoredFolds(document: BufferDocument, view: RideTextView) {
+        guard !document.foldStarts.isEmpty,
+              let id = document.sessionId,
+              let engine = RideEngineClient.shared.engine
+        else {
+            return
+        }
+        let text = view.string
+        let wanted = Set(document.foldStarts)
+        let ranges = engine.foldRanges(sessionId: id)
+        view.folds.removeAll()
+        for range in ranges where wanted.contains(range.startByte) {
+            view.folds.add(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte))
+        }
+        document.foldStarts = view.folds.ranges.map { range in
+            UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
+        }
+        view.refreshFolds()
+        (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
+    }
+
     private func after(_ view: RideTextView, caret: Int) {
         view.setSelectedRange(NSRange(location: caret, length: 0))
         refreshStarts(view)
         view.refreshFolds()
         (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
+        rememberFolds(view)
+    }
+
+    private func rememberFolds(_ view: RideTextView) {
+        guard let binding = view.hooks.binding?() else {
+            return
+        }
+        let text = view.string
+        binding.document.foldStarts = view.folds.ranges.map { range in
+            UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
+        }
+        binding.state.scheduleWorkspaceSave()
     }
 }

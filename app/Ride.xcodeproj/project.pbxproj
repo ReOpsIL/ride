@@ -283,6 +283,11 @@
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
 		A00000000000000000000187 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
 		A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000188 /* DiagnosticStoreTests.swift */; };
+		F11000000000000000000002 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
+		F11000000000000000000003 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
+		F11000000000000000000005 /* WorkspaceStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000004 /* WorkspaceStateStore.swift */; };
+		F11000000000000000000007 /* AppState+Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000006 /* AppState+Workspace.swift */; };
+		F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000008 /* WorkspaceStateTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -408,6 +413,10 @@
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
+		F11000000000000000000001 /* WorkspaceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceState.swift; sourceTree = "<group>"; };
+		F11000000000000000000004 /* WorkspaceStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateStore.swift; sourceTree = "<group>"; };
+		F11000000000000000000006 /* AppState+Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Workspace.swift"; sourceTree = "<group>"; };
+		F11000000000000000000008 /* WorkspaceStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
@@ -604,6 +613,7 @@
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
+				F11000000000000000000008 /* WorkspaceStateTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
@@ -632,6 +642,7 @@
 		A00000000000000000000051 /* Ride */ = {
 			isa = PBXGroup;
 			children = (
+				F11000000000000000000006 /* AppState+Workspace.swift */,
 				B0901DA538FDB916C2AF040F /* AppState+Layout.swift */,
 				E60000000000000000000030 /* AppState+View.swift */,
 				B1000000000000000000007A /* AppState+Preview.swift */,
@@ -695,6 +706,8 @@
 				A0000000000000000000013E /* GitStatus.swift */,
 				A0000000000000000000013B /* CargoWatch.swift */,
 				A00000000000000000000138 /* CargoManifest.swift */,
+				F11000000000000000000001 /* WorkspaceState.swift */,
+				F11000000000000000000004 /* WorkspaceStateStore.swift */,
 				A00000000000000000000015 /* Workspace.swift */,
 				A00000000000000000000016 /* ProjectTreeView.swift */,
 				A00000000000000000000017 /* FileWatcher.swift */,
@@ -1104,6 +1117,8 @@
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
 				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
+				F11000000000000000000003 /* WorkspaceState.swift in Sources */,
+				F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */,
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
@@ -1215,6 +1230,9 @@
 				C019B157FD40DB9A5A0EE158 /* OverlayCardView.swift in Sources */,
 				C0E180C6B1920BAFEC114F49 /* IndentGuides.swift in Sources */,
 				C03211A346C3ECBAB127B8A6 /* Plural.swift in Sources */,
+				F11000000000000000000007 /* AppState+Workspace.swift in Sources */,
+				F11000000000000000000002 /* WorkspaceState.swift in Sources */,
+				F11000000000000000000005 /* WorkspaceStateStore.swift in Sources */,
 				B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */,
 				B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */,
 				B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */,

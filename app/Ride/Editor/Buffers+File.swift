@@ -54,6 +54,7 @@ extension AppState {
     }
 
     func closeWorkspace() {
+        flushWorkspace()
         guard closeAll() else {
             return
         }

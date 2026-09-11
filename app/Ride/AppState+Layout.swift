@@ -12,6 +12,7 @@ extension AppState {
                 return
             }
             PreferencesStore.save(self.prefs)
+            self.scheduleWorkspaceSave()
         }
         layoutSaveWork = item
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: item)

@@ -74,6 +74,60 @@ enum SelfTestSteps {
                 )
             }),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
+            workspaceOpenSecond(state: state, e: e),
+            workspaceRestore(state: state, e: e),
         ]
+    }
+
+    private static func workspaceOpenSecond(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "workspace second file", wait: 0.6, run: {
+            guard let second = siblingFile(state: state) else {
+                return
+            }
+            state.openFile(second)
+            if let main = state.workspaceRoot?.appendingPathComponent("src/main.rs") {
+                state.openFile(main)
+            }
+        }, check: {
+            let names = state.buffers.compactMap { $0.fileURL?.lastPathComponent }
+            return e.expect(names.count >= 2 && names.contains("main.rs"), "tabs \(names)")
+        })
+    }
+
+    private static func workspaceRestore(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "workspace restore", wait: 1.0, run: {
+            e.caret(line: 10)
+            guard let data = try? JSONEncoder().encode(state.captureWorkspace()),
+                  let loaded = WorkspaceState.decode(data)
+            else {
+                return
+            }
+            state.restoreWorkspace(loaded)
+        }, check: {
+            let names = state.buffers.compactMap { $0.fileURL?.lastPathComponent }
+            return e.expect(
+                names.count >= 2 && names.contains("main.rs") && e.caretLine == 10,
+                "tabs \(names) caret \(e.caretLine)"
+            )
+        })
+    }
+
+    private static func siblingFile(state: AppState) -> URL? {
+        guard let current = state.activeBuffer?.fileURL else {
+            return nil
+        }
+        let dir = current.deletingLastPathComponent()
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? []
+        return names.sorted().compactMap { name -> URL? in
+            if name == current.lastPathComponent || name.hasPrefix(".") {
+                return nil
+            }
+            let url = dir.appendingPathComponent(name)
+            var isDir: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), !isDir.boolValue else {
+                return nil
+            }
+            return url
+        }.first
     }
 }

@@ -80,29 +80,34 @@ extension EditorPane {
 
         func publishCursor(_ view: NSTextView) {
             let loc = view.selectedRange().location
-            guard let index = (view as? RideTextView)?.lineIndex() else {
+            guard let ride = view as? RideTextView else {
                 return
             }
+            let index = ride.lineIndex()
             let line = index.line(at: loc)
             let column = index.column(at: loc)
+            document.caretByte = UInt32(Utf16.utf8Offset(in: ride.string, utf16: loc))
             if state.cursorLine != line {
                 state.cursorLine = line
             }
             if state.cursorColumn != column {
                 state.cursorColumn = column
             }
+            state.scheduleWorkspaceSave()
         }
 
         func viewportChanged() {
             guard let view = textView else {
                 return
             }
+            document.scrollLine = UInt32(max(1, view.firstVisibleLine()))
             SessionService.shared.setVisible(document: document, view: view)
             CompletionSession.shared.viewportChanged(view: view)
             CheatSheetController.shared.viewportChanged(view: view)
             SignatureHelpController.shared.relocate(in: view)
             HoverController.shared.hide()
             state.previewViewport(line: view.firstVisibleLine())
+            state.scheduleWorkspaceSave()
         }
     }
 }

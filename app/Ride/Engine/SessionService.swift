@@ -44,6 +44,7 @@ final class SessionService {
                 visible: nil
             )
             resync(document: document, view: view)
+            FoldController.shared.restore(document: document, view: view)
         }
     }
 
@@ -140,6 +141,7 @@ final class SessionService {
                     document.updateLabel(view)
                 }
                 self.paint(opened?.update, document: document, view: view, text: view.string)
+                FoldController.shared.restore(document: document, view: view)
             }
         }
     }
