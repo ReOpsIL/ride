@@ -37,7 +37,7 @@ extension AppState {
     }
 
     func captureWorkspace() -> WorkspaceState {
-        if !restoringWorkspace, let view = EditorJump.shared.view, let buffer = activeBuffer, buffer.id == activeID {
+        if !restoringWorkspace, let view = EditorPanes.shared.focusedView, let buffer = activeBuffer, buffer.id == activeID {
             buffer.capture(view)
         }
         return WorkspaceState(
@@ -57,7 +57,7 @@ extension AppState {
         applyLayout(saved.layout)
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored
-        activeID = focusedID(saved.focusedPath, in: restored) ?? restored.last?.id
+        paneLayout.reset(tabs: restored.map(\.id), active: focusedID(saved.focusedPath, in: restored))
         selectedURL = activeBuffer?.fileURL
         cursorLine = 1
         cursorColumn = 1

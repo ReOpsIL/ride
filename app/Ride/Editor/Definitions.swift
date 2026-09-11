@@ -22,7 +22,7 @@ enum Definitions {
 
 extension AppState {
     func goToDefinition() {
-        guard let view = EditorJump.shared.view, let document = activeBuffer else {
+        guard let view = EditorPanes.shared.focusedView, let document = activeBuffer else {
             return
         }
         goToDefinition(document: document, view: view, utf16: view.selectedRange().location)

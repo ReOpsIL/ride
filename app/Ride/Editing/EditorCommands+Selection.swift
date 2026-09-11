@@ -51,6 +51,6 @@ extension EditorCommands {
         let caret = target.selection.location
         let destination = abs(caret - open) <= 1 ? close : open
         target.state.recordLocation()
-        EditorJump.shared.select(NSRange(location: destination, length: 0))
+        EditorPanes.shared.focused?.select(NSRange(location: destination, length: 0))
     }
 }

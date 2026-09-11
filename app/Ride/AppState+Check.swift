@@ -78,7 +78,7 @@ extension AppState {
     }
 
     private func refreshDiagnosticUnderlines() {
-        if let view = EditorJump.shared.view, let buffer = activeBuffer {
+        if let view = EditorPanes.shared.focusedView, let buffer = activeBuffer {
             Underlines.apply(document: buffer, view: view, parseErrors: nil)
         }
     }
@@ -88,8 +88,8 @@ extension AppState {
     }
 
     func formatSelection() {
-        let text = EditorJump.shared.view?.string ?? activeBuffer?.text ?? ""
-        let sel = EditorJump.shared.view?.selectedRange() ?? NSRange(location: 0, length: 0)
+        let text = EditorPanes.shared.focusedView?.string ?? activeBuffer?.text ?? ""
+        let sel = EditorPanes.shared.focusedView?.selectedRange() ?? NSRange(location: 0, length: 0)
         let start = UInt32(Utf16.utf8Offset(in: text, utf16: sel.location))
         let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(sel)))
         formatNow(thenSave: false, startByte: start, endByte: end)
@@ -99,7 +99,7 @@ extension AppState {
         guard let buffer = activeBuffer, !buffer.isReadOnly, let engine = RideEngineClient.shared.engine else {
             return
         }
-        if let view = EditorJump.shared.view {
+        if let view = EditorPanes.shared.focusedView {
             buffer.text = view.string
         }
         let text = buffer.text

@@ -121,7 +121,6 @@
 		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
 		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
 		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
-		A000000000000000000000B7 /* EditorJump.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009E /* EditorJump.swift */; };
 		A000000000000000000000E4 /* CompletionRowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E3 /* CompletionRowStyle.swift */; };
 		A000000000000000000000E6 /* CompletionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000E5 /* CompletionRowView.swift */; };
 		A00000000000000000000101 /* HitNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000100 /* HitNavigation.swift */; };
@@ -137,6 +136,12 @@
 		A00000000000000000000114 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
 		A00000000000000000000115 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
 		A00000000000000000000117 /* HoverPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* HoverPanel.swift */; };
+		F10000000000000000000002 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
+		F10000000000000000000003 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
+		F10000000000000000000005 /* EditorPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* EditorPanes.swift */; };
+		F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* EditorHostView+Jump.swift */; };
+		F10000000000000000000009 /* AppState+Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* AppState+Panes.swift */; };
+		F1000000000000000000000B /* PaneLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PaneLayoutTests.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
 		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
@@ -396,7 +401,6 @@
 		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
 		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
-		A0000000000000000000009E /* EditorJump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorJump.swift; sourceTree = "<group>"; };
 		A000000000000000000000E3 /* CompletionRowStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowStyle.swift; sourceTree = "<group>"; };
 		A000000000000000000000E5 /* CompletionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRowView.swift; sourceTree = "<group>"; };
 		A00000000000000000000100 /* HitNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitNavigation.swift; sourceTree = "<group>"; };
@@ -422,6 +426,11 @@
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		A00000000000000000000113 /* IdentifierRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierRange.swift; sourceTree = "<group>"; };
 		A00000000000000000000116 /* HoverPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverPanel.swift; sourceTree = "<group>"; };
+		F10000000000000000000001 /* PaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayout.swift"; sourceTree = "<group>"; };
+		F10000000000000000000004 /* EditorPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPanes.swift"; sourceTree = "<group>"; };
+		F10000000000000000000006 /* EditorHostView+Jump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Jump.swift"; sourceTree = "<group>"; };
+		F10000000000000000000008 /* AppState+Panes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Panes.swift"; sourceTree = "<group>"; };
+		F1000000000000000000000A /* PaneLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayoutTests.swift"; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
 		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
@@ -619,6 +628,7 @@
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
 				A00000000000000000000183 /* TreeModelTests.swift */,
+				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
@@ -643,6 +653,7 @@
 			isa = PBXGroup;
 			children = (
 				F11000000000000000000006 /* AppState+Workspace.swift */,
+				F10000000000000000000008 /* AppState+Panes.swift */,
 				B0901DA538FDB916C2AF040F /* AppState+Layout.swift */,
 				E60000000000000000000030 /* AppState+View.swift */,
 				B1000000000000000000007A /* AppState+Preview.swift */,
@@ -733,6 +744,9 @@
 				A00000000000000000000111 /* Definitions.swift */,
 				A00000000000000000000113 /* IdentifierRange.swift */,
 				A00000000000000000000116 /* HoverPanel.swift */,
+				F10000000000000000000001 /* PaneLayout.swift */,
+				F10000000000000000000004 /* EditorPanes.swift */,
+				F10000000000000000000006 /* EditorHostView+Jump.swift */,
 				A00000000000000000000118 /* HoverController.swift */,
 				A0000000000000000000011A /* HoverText.swift */,
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
@@ -756,7 +770,6 @@
 				A00000000000000000000093 /* EditBuild.swift */,
 				A00000000000000000000094 /* HighlightApply.swift */,
 				A0000000000000000000009C /* RideTextView+Keys.swift */,
-				A0000000000000000000009E /* EditorJump.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -1134,6 +1147,8 @@
 				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
 				A00000000000000000000182 /* TreeModel.swift in Sources */,
 				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
+				F10000000000000000000003 /* PaneLayout.swift in Sources */,
+				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -1287,6 +1302,10 @@
 				A00000000000000000000112 /* Definitions.swift in Sources */,
 				A00000000000000000000114 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000117 /* HoverPanel.swift in Sources */,
+				F10000000000000000000002 /* PaneLayout.swift in Sources */,
+				F10000000000000000000005 /* EditorPanes.swift in Sources */,
+				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,
+				F10000000000000000000009 /* AppState+Panes.swift in Sources */,
 				A00000000000000000000119 /* HoverController.swift in Sources */,
 				A0000000000000000000011B /* HoverText.swift in Sources */,
 				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
@@ -1351,7 +1370,6 @@
 				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
 				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
 				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,
-				A000000000000000000000B7 /* EditorJump.swift in Sources */,
 				A000000000000000000000D2 /* CompletionGate.swift in Sources */,
 				A000000000000000000000D4 /* CompletionPlacement.swift in Sources */,
 				A000000000000000000000D6 /* CompletionLifecycle.swift in Sources */,

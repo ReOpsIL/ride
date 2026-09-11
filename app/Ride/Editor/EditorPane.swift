@@ -5,6 +5,7 @@ final class EditorHostView: NSView {
     let gutter = GutterView()
     let scroll = NSScrollView()
     let textView: RideTextView
+    var paneID = UUID()
     var onViewport: (() -> Void)?
     private var gutterWidth: NSLayoutConstraint!
 
@@ -74,6 +75,7 @@ final class EditorHostView: NSView {
 struct EditorPane: NSViewRepresentable {
     @ObservedObject var document: BufferDocument
     @ObservedObject var state: AppState
+    let paneID: UUID
 
     func makeCoordinator() -> Coordinator {
         Coordinator(document: document, state: state)
@@ -81,6 +83,7 @@ struct EditorPane: NSViewRepresentable {
 
     func makeNSView(context: Context) -> EditorHostView {
         let host = EditorHostView()
+        host.paneID = paneID
         host.textView.applyDefaults()
         host.textView.delegate = context.coordinator
         context.coordinator.textView = host.textView
@@ -92,7 +95,7 @@ struct EditorPane: NSViewRepresentable {
             coordinator?.viewportChanged()
         }
         SessionService.shared.attach(document: document, view: host.textView)
-        EditorJump.shared.attach(host: host)
+        EditorPanes.shared.attach(host, pane: paneID)
         context.coordinator.installHooks(host.textView)
         host.syncGutter()
         return host
@@ -109,12 +112,13 @@ struct EditorPane: NSViewRepresentable {
             context.coordinator.publishCursor(host.textView)
             host.syncGutter()
             SessionService.shared.attach(document: document, view: host.textView)
-            EditorJump.shared.attach(host: host)
+            EditorPanes.shared.attach(host, pane: paneID)
         }
         context.coordinator.flush(host)
     }
 
     static func dismantleNSView(_ host: EditorHostView, coordinator: Coordinator) {
         coordinator.document.capture(host.textView)
+        EditorPanes.shared.detach(host)
     }
 }

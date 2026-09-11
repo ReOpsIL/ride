@@ -22,7 +22,7 @@ struct GoToLineOverlay: View {
     }
 
     private var lineCount: Int {
-        EditorJump.shared.view?.lineIndex().lineCount ?? 0
+        EditorPanes.shared.focusedView?.lineIndex().lineCount ?? 0
     }
 
     private var hint: String {

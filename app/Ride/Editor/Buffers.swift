@@ -41,7 +41,7 @@ extension AppState {
     func selectBuffer(_ id: UUID) {
         CompletionSession.shared.reset()
         recordLocation()
-        activeID = id
+        paneLayout.select(id)
         selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
         cursorColumn = 1
@@ -59,10 +59,7 @@ extension AppState {
         SessionService.shared.close(buffer)
         history.forget(bufferID: id)
         buffers.removeAll { $0.id == id }
-        if activeID == id {
-            activeID = buffers.last?.id
-            selectedURL = activeBuffer?.fileURL
-        }
+        selectedURL = activeBuffer?.fileURL
     }
 
     func saveActive() {
@@ -82,7 +79,7 @@ extension AppState {
             buffer.fileURL = url
             buffer.detectedLanguage = nil
             buffer.isReadOnly = false
-            if buffer.language != previous, let view = EditorJump.shared.view {
+            if buffer.language != previous, let view = EditorPanes.shared.focusedView {
                 SessionService.shared.close(buffer)
                 SessionService.shared.attach(document: buffer, view: view)
             }

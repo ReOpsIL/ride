@@ -1,14 +1,15 @@
 import SwiftUI
 
 struct TabStrip: View {
+    let pane: Pane
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(state.buffers) { buffer in
-                    TabItem(buffer: buffer, selected: buffer.id == state.activeID)
+                ForEach(pane.tabs.compactMap(state.buffer)) { buffer in
+                    TabItem(buffer: buffer, selected: buffer.id == pane.activeID)
                 }
             }
         }

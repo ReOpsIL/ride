@@ -68,7 +68,7 @@ extension AppState {
 
     func saveAll() {
         for buffer in buffers where buffer.isDirty && buffer.fileURL != nil && !buffer.isReadOnly {
-            if buffer.id == activeID, let view = EditorJump.shared.view {
+            if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
                 buffer.capture(view)
             }
             try? buffer.save(from: nil)
@@ -94,7 +94,7 @@ extension AppState {
         buffer.fileURL = url.standardizedFileURL
         buffer.detectedLanguage = nil
         buffer.isReadOnly = false
-        if let view = EditorJump.shared.view {
+        if let view = EditorPanes.shared.focusedView {
             buffer.capture(view)
             if buffer.language != previous {
                 SessionService.shared.close(buffer)
@@ -152,7 +152,7 @@ extension AppState {
             history.forget(bufferID: buffer.id)
         }
         buffers = []
-        activeID = nil
+        paneLayout = PaneLayout()
         return true
     }
 

@@ -9,7 +9,7 @@ extension AppState {
 
     func jumpTo(byte: UInt32) {
         recordLocation()
-        EditorJump.shared.jump(byte: byte)
+        EditorPanes.shared.focused?.jump(byte: byte)
     }
 
     func toggleSymbolInFile() {

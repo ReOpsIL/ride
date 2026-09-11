@@ -176,7 +176,7 @@ Each letter is its own PR. Pure text logic lives in `app/Ride/Editing/` and join
 
 **8a Ranking goldens.** `tests/ranking.rs` exists; add `tests/goldens/<site>.txt` files (one per completion site kind) recording the top five hit names for a fixed caret in `samples/c-demo`, `samples/cpp-demo` and the demo crate; a test compares and prints a diff on mismatch; `RIDE_UPDATE_GOLDENS=1` rewrites them. Acceptance: goldens committed, test green, one deliberate ranking change fails it locally.
 
-**8b Self-test in CI.** The scene is launched as `Ride --demo selftest --file <path> --report <path>` (flags in `app/Ride/Debug/DemoLaunch.swift`); it writes one `PASS`/`FAIL` line per step to the report and always exits 0 (`DemoSelfTest.finish`). Change `finish()` to call `exit(1)` when any line starts with `FAIL`, keep `NSApp.terminate` for the clean case. Add a `selftest` job to `.github/workflows/engine.yml` after `app`: launch the Debug build's binary from `target/xcode/Build/Products/Debug/Ride.app/Contents/MacOS/Ride` twice, once with `--file samples/cpp-demo/src/geo.cpp` and once with a file in the demo crate, each with `--report target/selftest-<n>.txt`, `cat` the reports into the log, and fail on a non-zero exit or on `grep -q '^FAIL'`. Acceptance: CI green; forcing one step to fail locally turns the job red.
+**8b Self-test in CI.** The scene is launched as `Ride --demo selftest --open <crate> --report <path>` (flags in `app/Ride/Debug/DemoLaunch.swift` and `AppState+Launch.swift`); it writes one `PASS`/`FAIL` line per step to the report and always exits 0 (`DemoSelfTest.finish`). The crate is `samples/rust-demo`; the scene saves its edits, so every run must use a fresh copy (`cp -R samples/rust-demo "$TMPDIR/demo"`). Change `finish()` to call `exit(1)` when any line starts with `FAIL`, keep `NSApp.terminate` for the clean case. Add a `selftest` job to `.github/workflows/engine.yml` after `app`: launch the Debug build's binary from `target/xcode/Build/Products/Debug/Ride.app/Contents/MacOS/Ride` on a copy of `samples/rust-demo` and on a copy of `samples/cpp-demo` with `--file src/geo.cpp`, each with `--report target/selftest-<n>.txt`, `cat` the reports into the log, and fail on a non-zero exit or on `grep -q '^FAIL'`. Acceptance: CI green; forcing one step to fail locally turns the job red.
 
 ### 1.1-9 Quick Documentation
 
@@ -291,3 +291,19 @@ Reviews of the thirteen executor commits found the bugs below. Each is one card 
 ### R6 CI asserts the universal slice (1.1-3a) — Tier A
 
 `.github/workflows/engine.yml` `xcframework` job: after `build-engine.sh`, run `lipo -info` on the static library inside `app/RideEngine.xcframework` and fail unless the output contains both `x86_64` and `arm64`.
+
+### R7 Workspace restore loses the caret (1.1-2) — Tier B
+
+`Ride --demo selftest --open <copy of samples/rust-demo>` fails its last step, `workspace restore`: after `captureWorkspace()` and `restoreWorkspace()` on the same state the caret sits on line 20 instead of the captured line 10 (reproduced on commit 79726a8, before the pane registry). Trace the caret from `BufferDocument.capture` through `TabState`, `buffer(from:)` and `BufferDocument.bind` into the new editor host, find which later step moves it (session attach, fold restore, highlight apply or scroll restore are the candidates) and fix that root cause, not the test. Acceptance: the self-test scene reports 52 PASS and 0 FAIL on a fresh copy of the crate.
+
+## 7. Batch log
+
+| Batch | Cards | Result |
+|---|---|---|
+| 1 | 1.1-7 ×2, 1.1-5, 1.1-8a, 1.1-3a | 5 commits, reviewed; R1, R6 |
+| 2 | 1.1-4 a b c f g, 1.1-6a, 1.1-2, 1.1-9a | 8 commits, reviewed; R2–R5, R7 |
+| strong model | 1.1-1a pane registry, `samples/rust-demo` fixture | commit on this branch; 141 RideTests, self-test 51/52 (R7 pre-existing) |
+| 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | pending |
+| 5 | 1.1-1b, 1.1-9b, 1.1-10 | after 3+4 |
+
+The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.

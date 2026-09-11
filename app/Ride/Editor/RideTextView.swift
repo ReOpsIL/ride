@@ -149,6 +149,14 @@ final class RideTextView: NSTextView {
         super.draw(dirtyRect)
     }
 
+    override func becomeFirstResponder() -> Bool {
+        let became = super.becomeFirstResponder()
+        if became {
+            EditorPanes.shared.focus(view: self)
+        }
+        return became
+    }
+
     override func paste(_ sender: Any?) {
         pasteAsPlainText(sender)
     }

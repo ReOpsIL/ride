@@ -27,7 +27,7 @@ enum DemoScene {
         case "unformatted":
             editor(state)
             DemoLaunch.after(1.5) {
-                guard let view = EditorJump.shared.view else {
+                guard let view = EditorPanes.shared.focusedView else {
                     return
                 }
                 let anchor = (view.string as NSString).range(of: "counter.record(\"ride\");")
@@ -76,7 +76,7 @@ enum DemoScene {
         guard step < 40 else {
             return
         }
-        EditorJump.shared.jump(toLine: 1 + step * 400)
+        EditorPanes.shared.focused?.jump(toLine: 1 + step * 400)
         DemoLaunch.after(0.1) { autoScroll(step: step + 1) }
     }
 
@@ -86,12 +86,12 @@ enum DemoScene {
         }
         state.openFile(root.appendingPathComponent(file))
         DemoLaunch.after(0.6) {
-            EditorJump.shared.jump(toLine: line)
+            EditorPanes.shared.focused?.jump(toLine: line)
         }
     }
 
     private static func completion(_ state: AppState) {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         let ns = view.string as NSString
@@ -100,7 +100,7 @@ enum DemoScene {
             return
         }
         let end = NSMaxRange(anchor)
-        EditorJump.shared.select(NSRange(location: end, length: 0))
+        EditorPanes.shared.focused?.select(NSRange(location: end, length: 0))
         view.insertText("\n    let m: HashM", replacementRange: NSRange(location: end, length: 0))
         DemoLaunch.after(0.1) {
             CompletionSession.shared.trigger(view: view)
@@ -108,7 +108,7 @@ enum DemoScene {
     }
 
     private static func cheatSheet(_ state: AppState) {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         let ns = view.string as NSString
@@ -117,7 +117,7 @@ enum DemoScene {
             return
         }
         let end = NSMaxRange(anchor)
-        EditorJump.shared.select(NSRange(location: end, length: 0))
+        EditorPanes.shared.focused?.select(NSRange(location: end, length: 0))
         view.insertText("\n    ma", replacementRange: NSRange(location: end, length: 0))
         DispatchQueue.main.async {
             CompletionSession.shared.trigger(view: view)
@@ -125,7 +125,7 @@ enum DemoScene {
     }
 
     private static func hover() {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         let range = (view.string as NSString).range(of: "HashMap")

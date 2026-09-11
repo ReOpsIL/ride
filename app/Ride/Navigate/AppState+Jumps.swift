@@ -7,7 +7,7 @@ extension AppState {
             return
         }
         let path = activeBuffer?.fileURL?.path ?? ""
-        let byte = EditorJump.shared.view.map { UInt32(Utf16.utf8Offset(in: $0.string, utf16: $0.selectedRange().location)) } ?? 0
+        let byte = EditorPanes.shared.focusedView.map { UInt32(Utf16.utf8Offset(in: $0.string, utf16: $0.selectedRange().location)) } ?? 0
         let index: Int
         if delta > 0 {
             index = all.firstIndex { ($0.path, $0.byteStart) > (path, byte) } ?? 0
@@ -19,7 +19,7 @@ extension AppState {
     }
 
     func nextMethod(_ delta: Int) {
-        guard let buffer = activeBuffer, let view = EditorJump.shared.view else {
+        guard let buffer = activeBuffer, let view = EditorPanes.shared.focusedView else {
             return
         }
         let starts = buffer.outline.map(\.startByte).sorted()
@@ -48,7 +48,7 @@ extension AppState {
     }
 
     func showQuickDocumentation() {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         let caret = view.selectedRange().location
@@ -59,7 +59,7 @@ extension AppState {
     }
 
     func showSignatureHelp() {
-        guard let view = EditorJump.shared.view, let buffer = activeBuffer else {
+        guard let view = EditorPanes.shared.focusedView, let buffer = activeBuffer else {
             return
         }
         SignatureHelpController.shared.show(document: buffer, view: view)

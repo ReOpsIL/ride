@@ -30,7 +30,7 @@ extension AppState {
             guard let buffer = buffers.first(where: { $0.fileURL == hit.file }) else {
                 return hit
             }
-            if buffer.id == activeID, let view = EditorJump.shared.view {
+            if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
                 buffer.capture(view)
             }
             let text = buffer.text

@@ -18,7 +18,7 @@ struct EditorTarget {
 
 enum EditorCommands {
     static func target() -> EditorTarget? {
-        guard let view = EditorJump.shared.view, view.window?.firstResponder === view, view.isEditable,
+        guard let view = EditorPanes.shared.focusedView, view.window?.firstResponder === view, view.isEditable,
               let binding = view.hooks.binding?()
         else {
             return nil
@@ -88,14 +88,14 @@ enum EditorCommands {
     }
 
     static func triggerCompletion() {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         CompletionSession.shared.trigger(view: view)
     }
 
     static func toggleCheatSheet() {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         CheatSheetController.shared.toggle(view: view)

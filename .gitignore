@@ -10,3 +10,4 @@ xcuserdata
 *.profraw
 /samples/*/build/*
 !/samples/*/build/compile_commands.json
+/samples/*/target/

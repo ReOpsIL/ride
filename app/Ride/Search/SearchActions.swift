@@ -60,12 +60,12 @@ extension AppState {
         showFind.toggle()
         if showFind {
             showReplaceField = replace
-            findOrigin = EditorJump.shared.view?.selectedRange().location ?? 0
+            findOrigin = EditorPanes.shared.focusedView?.selectedRange().location ?? 0
         }
     }
 
     func useSelectionForFind() {
-        guard let view = EditorJump.shared.view, view.selectedRange().length > 0 else {
+        guard let view = EditorPanes.shared.focusedView, view.selectedRange().length > 0 else {
             return
         }
         findQuery = (view.string as NSString).substring(with: view.selectedRange())
@@ -81,7 +81,7 @@ extension AppState {
     }
 
     func replaceOne() {
-        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorJump.shared.view else {
+        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
             return
         }
         var range = findRange
@@ -105,7 +105,7 @@ extension AppState {
     }
 
     func replaceAll() {
-        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorJump.shared.view else {
+        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
             return
         }
         let text = view.string
@@ -129,7 +129,7 @@ extension AppState {
     }
 
     private func find(backwards: Bool) {
-        guard let view = EditorJump.shared.view, !findQuery.isEmpty else {
+        guard let view = EditorPanes.shared.focusedView, !findQuery.isEmpty else {
             return
         }
         let origin = backwards ? (findRange?.location ?? findOrigin) : findOrigin
@@ -139,6 +139,6 @@ extension AppState {
         }
         findRange = found
         findOrigin = NSMaxRange(found)
-        EditorJump.shared.select(found)
+        EditorPanes.shared.focused?.select(found)
     }
 }

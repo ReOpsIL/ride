@@ -49,7 +49,7 @@ struct SelfTestEditor {
     let state: AppState
 
     var view: RideTextView? {
-        EditorJump.shared.view
+        EditorPanes.shared.focusedView
     }
 
     var text: String {

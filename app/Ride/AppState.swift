@@ -13,9 +13,9 @@ final class AppState: ObservableObject {
         didSet { menu.recent = recent }
     }
     @Published var buffers: [BufferDocument] = [] {
-        didSet { syncMenu(); dropClosedClangDiagnostics(from: oldValue); scheduleWorkspaceSave() }
+        didSet { paneLayout.retain(Set(buffers.map(\.id))); syncMenu(); dropClosedClangDiagnostics(from: oldValue); scheduleWorkspaceSave() }
     }
-    @Published var activeID: UUID? {
+    @Published var paneLayout = PaneLayout() {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
     @Published var cursorLine = 1
@@ -107,6 +107,9 @@ final class AppState: ObservableObject {
             self?.checkFinished(diagnostics)
         }
         _ = RideEngineClient.shared
+        EditorPanes.shared.onFocus = { [weak self] pane in
+            self?.paneFocused(pane)
+        }
         watchWorkspaceQuit()
         NotificationCenter.default.addObserver(
             forName: .rideOpenCatalog,
@@ -166,7 +169,7 @@ final class AppState: ObservableObject {
             SessionService.shared.close(buffer)
         }
         buffers = []
-        activeID = nil
+        paneLayout = PaneLayout()
         cursorLine = 1
         cursorColumn = 1
         expanded = []

@@ -2,7 +2,7 @@ import AppKit
 
 extension AppState {
     var currentLocation: NavLocation? {
-        guard let id = activeID, let view = EditorJump.shared.view else {
+        guard let id = activeID, let view = EditorPanes.shared.focusedView else {
             return nil
         }
         return NavLocation(bufferID: id, utf16: view.selectedRange().location)
@@ -58,7 +58,7 @@ extension AppState {
         if activeID != target.bufferID {
             switchBuffer(target.bufferID)
         }
-        EditorJump.shared.select(NSRange(location: target.utf16, length: 0))
+        EditorPanes.shared.focused?.select(NSRange(location: target.utf16, length: 0))
         syncMenu()
     }
 
@@ -79,7 +79,7 @@ extension AppState {
     func confirmGoToLine() {
         let parts = goToLineQuery.split(separator: ":").map { Int($0.trimmingCharacters(in: .whitespaces)) }
         showGoToLine = false
-        guard let line = parts.first ?? nil, let view = EditorJump.shared.view else {
+        guard let line = parts.first ?? nil, let view = EditorPanes.shared.focusedView else {
             return
         }
         recordLocation()
@@ -88,7 +88,7 @@ extension AppState {
         let column = (parts.count > 1 ? parts[1] : nil) ?? 1
         let lineEnd = (view.string as NSString).lineRange(for: NSRange(location: start, length: 0))
         let location = min(start + max(column - 1, 0), NSMaxRange(lineEnd))
-        EditorJump.shared.select(NSRange(location: location, length: 0))
+        EditorPanes.shared.focused?.select(NSRange(location: location, length: 0))
         view.window?.makeFirstResponder(view)
     }
 

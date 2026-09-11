@@ -46,7 +46,7 @@ final class FoldController {
     }
 
     func toggle(line: Int) {
-        guard let view = EditorJump.shared.view else {
+        guard let view = EditorPanes.shared.focusedView else {
             return
         }
         view.window?.makeFirstResponder(view)

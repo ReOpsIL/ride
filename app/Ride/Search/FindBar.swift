@@ -58,7 +58,7 @@ struct FindBar: View {
         }
         .onExitCommand {
             state.showFind = false
-            EditorJump.shared.view?.window?.makeFirstResponder(EditorJump.shared.view)
+            EditorPanes.shared.focusedView?.window?.makeFirstResponder(EditorPanes.shared.focusedView)
         }
     }
 

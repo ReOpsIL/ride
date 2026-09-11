@@ -26,7 +26,7 @@ extension EditorPane.Coordinator {
         }
         if let byte = state.pendingJump {
             state.pendingJump = nil
-            EditorJump.shared.jump(byte: byte)
+            host.jump(byte: byte)
             state.recordLocation()
         }
     }
@@ -35,8 +35,8 @@ extension EditorPane.Coordinator {
         let view = host.textView
         let line = view.lineIndex().line(at: view.selectedRange().location)
         document.text = text
-        EditorJump.shared.replaceText(text)
-        EditorJump.shared.jump(toLine: line)
+        host.replaceText(text)
+        host.jump(toLine: line)
         SessionService.shared.resync(document: document, view: view)
         if state.applyThenSave {
             state.applyThenSave = false
