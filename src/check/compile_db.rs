@@ -1,9 +1,11 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
-use serde::Deserialize;
-
 use crate::highlight::Lang;
+
+mod entry;
+
+pub use entry::Entry;
 
 const DB_NAME: &str = "compile_commands.json";
 const DB_DIRS: &[&str] = &[
@@ -17,14 +19,6 @@ const DB_DIRS: &[&str] = &[
 ];
 const SKIP_WITH_VALUE: &[&str] = &["-o", "-MF", "-MT", "-MQ"];
 const SKIP_ALONE: &[&str] = &["-c", "-M", "-MD", "-MM", "-MMD"];
-
-#[derive(Deserialize)]
-struct Entry {
-    directory: String,
-    file: String,
-    command: Option<String>,
-    arguments: Option<Vec<String>>,
-}
 
 pub struct CompileCommand {
     pub directory: PathBuf,
@@ -125,7 +119,7 @@ fn best_entry(db: &Path, file: &Path, lang: Lang) -> Option<CompileCommand> {
     };
     Some(CompileCommand {
         directory: dir.clone(),
-        args: strip(argv(entry)?, src, keep_std),
+        args: strip(entry.argv()?, src, keep_std),
     })
 }
 
@@ -143,19 +137,11 @@ fn exact_argv(db: &Path, file: &Path) -> Option<Vec<String>> {
         let dir = dir.canonicalize().unwrap_or(dir);
         let src = dir.join(&entry.file);
         if src.canonicalize().ok().as_deref() == Some(file) {
-            argv(entry)
+            entry.argv()
         } else {
             None
         }
     })
-}
-
-fn argv(entry: &Entry) -> Option<Vec<String>> {
-    match (&entry.arguments, &entry.command) {
-        (Some(args), _) => Some(args.clone()),
-        (None, Some(cmd)) => shlex::split(cmd),
-        (None, None) => None,
-    }
 }
 
 fn strip(args: Vec<String>, source: &Path, keep_std: bool) -> Vec<String> {
