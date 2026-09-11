@@ -12,7 +12,7 @@ pub mod includes;
 mod index;
 mod markdown;
 mod params;
-mod project;
+pub mod project;
 mod query;
 mod score;
 mod skip;

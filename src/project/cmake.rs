@@ -18,17 +18,30 @@ impl Detect for CMake {
         let Some(mut model) = model::marked(root, ProjectKind::CMake, &["CMakeLists.txt"]) else {
             return Ok(None);
         };
-        model.profiles = PROFILES.iter().map(|p| (*p).to_string()).collect();
         if find_tool("cmake").is_none() {
-            model.notice = Some(MISSING.to_string());
-            return Ok(Some(model));
+            return Ok(None);
         }
+        model.profiles = profiles();
         match load(root, DEFAULT_PROFILE) {
             Ok(targets) => model.targets = targets,
             Err(notice) => model.notice = Some(notice),
         }
         Ok(Some(model))
     }
+}
+
+pub fn without_cmake(root: &Path) -> Option<ProjectModel> {
+    if find_tool("cmake").is_some() {
+        return None;
+    }
+    let mut model = model::marked(root, ProjectKind::CMake, &["CMakeLists.txt"])?;
+    model.profiles = profiles();
+    model.notice = Some(MISSING.to_string());
+    Some(model)
+}
+
+fn profiles() -> Vec<String> {
+    PROFILES.iter().map(|p| (*p).to_string()).collect()
 }
 
 pub fn build_dir(profile: &str) -> String {

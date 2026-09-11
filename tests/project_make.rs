@@ -105,3 +105,24 @@ fn a_cargo_manifest_beside_a_makefile_is_not_a_make_project() {
     fs::write(root.path().join("Cargo.toml"), "[package]\nname = \"x\"\n").unwrap();
     assert_eq!(model(root.path()).kind, ProjectKind::Cargo);
 }
+
+#[test]
+fn the_make_detector_reads_the_real_cpp_demo_beside_its_cmake_lists() {
+    use ride_engine::project::{Detect, make::Make};
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("samples/cpp-demo");
+    let config = EngineConfig {
+        index_dir: tempfile::tempdir().unwrap().path().display().to_string(),
+        cargo_home: None,
+        sysroot: None,
+        offline_metadata: true,
+    };
+    let model = Make::detect(&root, &config).unwrap().unwrap();
+    assert_eq!(model.kind, ProjectKind::Make);
+    let names: Vec<&str> = model.targets.iter().map(|t| t.name.as_str()).collect();
+    for expected in ["all", "run", "clean", "compile_commands", "build/demo"] {
+        assert!(
+            names.contains(&expected),
+            "{expected} missing from {names:?}"
+        );
+    }
+}

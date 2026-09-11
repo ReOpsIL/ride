@@ -3,7 +3,7 @@ mod cmake;
 mod cmake_api;
 mod cmake_targets;
 mod compile_db;
-mod make;
+pub mod make;
 mod model;
 
 use std::path::Path;
@@ -28,6 +28,9 @@ pub fn detect(root: &Path, config: &EngineConfig) -> Result<ProjectModel, Engine
         return Ok(model);
     }
     if let Some(model) = compile_db::CompileDb::detect(root, config)? {
+        return Ok(model);
+    }
+    if let Some(model) = cmake::without_cmake(root) {
         return Ok(model);
     }
     Ok(model::unmatched(root))
