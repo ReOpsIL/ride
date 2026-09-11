@@ -91,6 +91,8 @@ final class BufferDocument: ObservableObject, Identifiable {
     }
 
     func bind(_ textView: RideTextView) {
+        let caret = caretByte
+        let scroll = scrollLine
         textView.folds.removeAll()
         textView.selectionStack = []
         textView.string = text
@@ -98,6 +100,8 @@ final class BufferDocument: ObservableObject, Identifiable {
         isDirty = false
         updateLabel(textView)
         textView.isEditable = !isReadOnly
+        caretByte = caret
+        scrollLine = scroll
         restoreCaretAndScroll(textView)
         textView.updateCurrentLineHighlight()
     }
@@ -105,13 +109,12 @@ final class BufferDocument: ObservableObject, Identifiable {
     private func restoreCaretAndScroll(_ textView: RideTextView) {
         let ns = text as NSString
         let loc = min(Utf16.utf16Offset(in: text, utf8: Int(caretByte)), ns.length)
-        textView.setSelectedRange(NSRange(location: loc, length: 0))
         let starts = textView.lineIndex().starts
-        guard !starts.isEmpty else {
-            return
+        if !starts.isEmpty {
+            let line = min(max(Int(scrollLine), 1), starts.count)
+            textView.scrollRangeToVisible(NSRange(location: starts[line - 1], length: 1))
         }
-        let line = min(max(Int(scrollLine), 1), starts.count)
-        textView.scrollRangeToVisible(NSRange(location: starts[line - 1], length: 1))
+        textView.setSelectedRange(NSRange(location: loc, length: 0))
     }
 
     func updateLabel(_ textView: RideTextView) {
