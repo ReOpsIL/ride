@@ -336,6 +336,10 @@ Ride opened no window at all on the maintainer's machine after the batch runs: m
 
 Three leftovers from batch 6. (1) `CompletionPopupLayout.wide` and `CompletionDocCard.wideWidth` are now permanently false/unused after the wide-doc toggle was removed; delete the state and the layout branch. (2) `DocWebView.swift` builds its base URL with a force-unwrap; use a static `URL` built through a failable path that falls back to `about:blank` without `!`. (3) `SessionService+Query.swift` relocates the doc cursor by searching the hit's name after `byteStart` because catalog hits point at the item start (`pub struct`), not the name; fix the engine instead: `CompletionHit` gains `name_byte: Option<u32>` filled by `src/engine/symbols.rs` and `query` hits from the outline's name span (`OutlineItem` already carries `start_byte`; add `name_start_byte` in `src/highlight/symbol.rs` and the extract path), `quick_doc` and `quick_definition` accept either byte, and the Swift search fallback is deleted. Test in `tests/definition.rs`: a catalog hit's `name_byte` lands on the identifier. Also `SplitState.tabs(ids:leftover:)` in `WorkspaceState.swift` dedupes a path listed in two saved panes (first pane wins) with a `WorkspaceStateTests` case.
 
+### R17 Demo launches still open no window without the persistence flag (R15) — Tier B
+
+R15's delegate refusal and `isRestorable = false` did not meet its acceptance. Verified on 2026-09-11 with `defaults delete dev.ride.Ride ApplePersistenceIgnoreState`: a plain `Ride --open <crate>` launch opens a window, but `Ride --demo selftest --open <copy> --report <file>` opens none, writes no report and never terminates (RootView `onAppear` never runs; main thread idle). The same command with `-ApplePersistenceIgnoreState YES` passes 60/60. Fix so the flag is unnecessary: in `RideApp.init`, before anything else, `UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])` and also `set(true, forKey:)` so AppKit sees it from the first launch on; keep R15's delegate and `isRestorable` changes. Then find why the demo path differs from the plain path (the only differences are `DemoLaunch.isDemo` gating `restoreOpenedWorkspace`/`canPersistWorkspace` and `DemoLaunch.start` in `RootView.onAppear`): instrument with `FileHandle.standardError` prints during the investigation and remove them before the hand-back. Acceptance, run by hand and pasted: `defaults delete dev.ride.Ride ApplePersistenceIgnoreState`, then the self-test scene on a fresh copy of `samples/rust-demo` WITHOUT the flag completes twice in a row with `EXIT 0`, and a plain launch in between still opens a window. Re-run the CI job definition locally (`.github/workflows/engine.yml` selftest steps) to confirm it still passes.
+
 ## 9. Release 1.2 cards — project model (2026-09-11)
 
 The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the app only renders. Everything lives under `src/project/` (new module, listed in `src/lib.rs`), exposed through one `Engine::project_model(root: String) -> Result<ProjectModel, EngineError>` and re-read on `Engine::reload_project(root)`.
@@ -370,6 +374,6 @@ The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the
 | 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | 14 commits, reviewed; R8–R10, R14 |
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
-| 7 | R16, P1–P5 | pending |
+| 7 | R17, R16, P1–P5 | running |
 
 The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.
