@@ -4,6 +4,7 @@ extension AppState {
     func filesChanged(_ paths: [String]) {
         reloadTree()
         diskChanged(paths: paths)
+        dropMissingClangDiagnostics()
         guard let root = workspaceRoot else {
             return
         }

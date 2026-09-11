@@ -34,8 +34,28 @@ extension AppState {
         if diagnostics.contains(where: { $0.level == .error }) {
             showProblems = true
         }
-        if let view = EditorJump.shared.view, let buffer = activeBuffer {
-            Underlines.apply(document: buffer, view: view, parseErrors: nil)
+        refreshDiagnosticUnderlines()
+    }
+
+    func dropClosedClangDiagnostics(from previous: [BufferDocument]) {
+        let open = Set(buffers.compactMap { $0.fileURL?.path })
+        let closed = previous.compactMap { buffer -> String? in
+            guard let path = buffer.fileURL?.path, !open.contains(path) else {
+                return nil
+            }
+            return path
+        }
+        CheckService.shared.dropClang(paths: closed)
+        if !closed.isEmpty {
+            refreshDiagnosticUnderlines()
+        }
+    }
+
+    func dropMissingClangDiagnostics() {
+        let gone = CheckService.shared.clangPaths.filter { !FileManager.default.fileExists(atPath: $0) }
+        CheckService.shared.dropClang(paths: gone)
+        if !gone.isEmpty {
+            refreshDiagnosticUnderlines()
         }
     }
 
@@ -44,9 +64,23 @@ extension AppState {
     }
 
     func openDiagnostic(_ diag: Diagnostic) {
-        let url = URL(fileURLWithPath: diag.path).standardizedFileURL
-        pendingJump = diag.byteStart
+        jumpToDiagnostic(path: diag.path, byteStart: diag.byteStart)
+    }
+
+    func openDiagnostic(_ diag: StoredDiagnostic) {
+        jumpToDiagnostic(path: diag.path, byteStart: diag.byteStart)
+    }
+
+    private func jumpToDiagnostic(path: String, byteStart: UInt32) {
+        let url = URL(fileURLWithPath: path).standardizedFileURL
+        pendingJump = byteStart
         openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
+    }
+
+    private func refreshDiagnosticUnderlines() {
+        if let view = EditorJump.shared.view, let buffer = activeBuffer {
+            Underlines.apply(document: buffer, view: view, parseErrors: nil)
+        }
     }
 
     func formatActive(thenSave: Bool = false) {

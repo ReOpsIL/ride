@@ -11,9 +11,17 @@ final class CheckService: ObservableObject {
     @Published private(set) var version: UInt64 = 0
     var onFinished: (([Diagnostic]) -> Void)?
     private let queue = DispatchQueue(label: "dev.ride.check")
-    private var bySource: [String: [Diagnostic]] = [:]
+    private var store = DiagnosticStore()
     private var generations: [String: UInt64] = [:]
     private var pending: DispatchWorkItem?
+
+    var snapshot: [StoredDiagnostic] {
+        store.snapshot
+    }
+
+    var clangPaths: [String] {
+        store.clangPaths
+    }
 
     var errorCount: Int {
         diagnostics.filter { $0.level == .error }.count
@@ -44,6 +52,20 @@ final class CheckService: ObservableObject {
     func run(file: URL) {
         start(source: file.path) { engine in
             try engine.runCheckC(path: file.path)
+        }
+    }
+
+    func dropClang(path: String) {
+        dropClang(paths: [path])
+    }
+
+    func dropClang(paths: [String]) {
+        var any = false
+        for path in paths {
+            any = store.remove(path: path) || any
+        }
+        if any {
+            publish()
         }
     }
 
@@ -78,10 +100,13 @@ final class CheckService: ObservableObject {
         hasRun = true
         switch result {
         case .success(let check):
-            let mine = check.diagnostics.filter { $0.level == .error || $0.level == .warning }
-            bySource[source] = mine
-            version += 1
-            diagnostics = bySource.values.flatMap { $0 }.sorted { ($0.path, $0.byteStart) < ($1.path, $1.byteStart) }
+            let mine = check.diagnostics.compactMap(Self.stored)
+            if source == Self.cargoSource {
+                store.replaceCargo(mine)
+            } else {
+                ingestClang(source: source, items: mine)
+            }
+            publish()
             failure = check.success || !mine.isEmpty ? nil : lastLine(check.stderrTail)
             stderrTail = failure == nil ? "" : check.stderrTail
             onFinished?(diagnostics)
@@ -91,7 +116,57 @@ final class CheckService: ObservableObject {
         }
     }
 
+    private func ingestClang(source: String, items: [StoredDiagnostic]) {
+        var grouped = Dictionary(grouping: items, by: \.path)
+        if grouped[source] == nil {
+            grouped[source] = []
+        }
+        for (path, items) in grouped {
+            store.replace(path: path, with: items)
+        }
+    }
+
+    private func publish() {
+        version += 1
+        diagnostics = store.snapshot.map(Self.ffi)
+    }
+
     private func lastLine(_ text: String) -> String? {
         text.split(separator: "\n").last.map { String($0).trimmingCharacters(in: .whitespaces) }
+    }
+
+    private static func stored(_ diag: Diagnostic) -> StoredDiagnostic? {
+        let level: ProblemLevel
+        switch diag.level {
+        case .error:
+            level = .error
+        case .warning:
+            level = .warning
+        case .note, .help:
+            return nil
+        }
+        return StoredDiagnostic(
+            path: diag.path,
+            byteStart: diag.byteStart,
+            byteEnd: diag.byteEnd,
+            line: diag.line,
+            column: diag.column,
+            level: level,
+            message: diag.message,
+            code: diag.code
+        )
+    }
+
+    private static func ffi(_ item: StoredDiagnostic) -> Diagnostic {
+        Diagnostic(
+            path: item.path,
+            byteStart: item.byteStart,
+            byteEnd: item.byteEnd,
+            line: item.line,
+            column: item.column,
+            level: item.level == .error ? .error : .warning,
+            message: item.message,
+            code: item.code
+        )
     }
 }

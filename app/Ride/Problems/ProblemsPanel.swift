@@ -30,8 +30,8 @@ struct ProblemsPanel: View {
         .background(ts.ui.bgBase)
     }
 
-    private var visible: [Diagnostic] {
-        check.diagnostics.filter { ($0.level == .error && showErrors) || ($0.level != .error && showWarnings) }
+    private var visible: [StoredDiagnostic] {
+        check.snapshot.filter { ($0.level == .error && showErrors) || ($0.level != .error && showWarnings) }
     }
 
     private var badges: [PanelBadge] {
@@ -70,7 +70,7 @@ struct ProblemsPanel: View {
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(Array(visible.enumerated()), id: \.offset) { index, diag in
+                    ForEach(Array(visible.enumerated()), id: \.element) { index, diag in
                         ProblemRow(diag: diag, location: location(diag), selected: selected == index) {
                             selected = index
                             state.openDiagnostic(diag)
@@ -82,7 +82,7 @@ struct ProblemsPanel: View {
         }
     }
 
-    private func location(_ diag: Diagnostic) -> String {
+    private func location(_ diag: StoredDiagnostic) -> String {
         let url = URL(fileURLWithPath: diag.path)
         let rel = state.workspaceRoot.map { WorkspaceFS.relativePath(root: $0, file: url) } ?? url.lastPathComponent
         return "\(rel):\(diag.line):\(diag.column)"
@@ -90,7 +90,7 @@ struct ProblemsPanel: View {
 }
 
 struct ProblemRow: View {
-    let diag: Diagnostic
+    let diag: StoredDiagnostic
     let location: String
     let selected: Bool
     let action: () -> Void

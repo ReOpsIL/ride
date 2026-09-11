@@ -280,6 +280,9 @@
 		A00000000000000000000181 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
 		A00000000000000000000182 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
 		A00000000000000000000184 /* TreeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000183 /* TreeModelTests.swift */; };
+		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
+		A00000000000000000000187 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
+		A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000188 /* DiagnosticStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -403,6 +406,8 @@
 		A00000000000000000000167 /* ProjectReplaceApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceApply.swift; sourceTree = "<group>"; };
 		A00000000000000000000180 /* TreeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModel.swift; sourceTree = "<group>"; };
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
+		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
+		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
@@ -598,6 +603,7 @@
 				A0000000000000000000014D /* CargoWatchTests.swift */,
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
+				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
@@ -853,6 +859,7 @@
 			isa = PBXGroup;
 			children = (
 				A0000000000000000000012F /* ProblemsPanel.swift */,
+				A00000000000000000000185 /* DiagnosticStore.swift */,
 			);
 			path = Problems;
 			sourceTree = "<group>";
@@ -1095,6 +1102,8 @@
 				B04310B616ED144666AD4307 /* Contrast.swift in Sources */,
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
+				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
+				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
@@ -1236,6 +1245,7 @@
 				A0000000000000000000012C /* Underlines.swift in Sources */,
 				A0000000000000000000012E /* SessionService+Paint.swift in Sources */,
 				A00000000000000000000130 /* ProblemsPanel.swift in Sources */,
+				A00000000000000000000186 /* DiagnosticStore.swift in Sources */,
 				A00000000000000000000133 /* CheckStatusView.swift in Sources */,
 				A00000000000000000000135 /* AppState+Check.swift in Sources */,
 				A00000000000000000000137 /* AppState+Launch.swift in Sources */,

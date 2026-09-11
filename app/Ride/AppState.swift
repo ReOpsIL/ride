@@ -13,7 +13,7 @@ final class AppState: ObservableObject {
         didSet { menu.recent = recent }
     }
     @Published var buffers: [BufferDocument] = [] {
-        didSet { syncMenu() }
+        didSet { syncMenu(); dropClosedClangDiagnostics(from: oldValue) }
     }
     @Published var activeID: UUID? {
         didSet { syncMenu() }
