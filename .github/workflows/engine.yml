@@ -29,6 +29,12 @@ jobs:
           targets: aarch64-apple-darwin, x86_64-apple-darwin
       - name: build-engine
         run: bash scripts/build-engine.sh
+      - name: lipo-info
+        run: |
+          info=$(lipo -info app/RideEngine.xcframework/*/libride_engine.a)
+          echo "$info"
+          echo "$info" | grep -q x86_64
+          echo "$info" | grep -q arm64
 
   app:
     runs-on: macos-latest
