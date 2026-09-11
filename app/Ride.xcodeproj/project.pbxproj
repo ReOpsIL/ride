@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		S10000000000000000000002 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
+		S10000000000000000000010 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = S10000000000000000000012 /* Sparkle */; };
 		B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0901DA538FDB916C2AF040F /* AppState+Layout.swift */; };
 		B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00E834049D45F687C4E4144 /* FindCount.swift */; };
 		B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E018E55E618A879AC6440A /* IndexStatusView.swift */; };
@@ -358,6 +360,8 @@
 		A000000000000000000000D7 /* IndexStatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexStatusLabel.swift; sourceTree = "<group>"; };
 		A00000000000000000000010 /* Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ride.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000011 /* RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideApp.swift; sourceTree = "<group>"; };
+		S10000000000000000000001 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
+		S10000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00000000000000000000012 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		A00000000000000000000013 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		A00000000000000000000014 /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
@@ -567,6 +571,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00000000000000000000081 /* RideEngine.xcframework in Frameworks */,
+				S10000000000000000000010 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -678,6 +683,8 @@
 				A00000000000000000000136 /* AppState+Launch.swift */,
 				A00000000000000000000134 /* AppState+Check.swift */,
 				A00000000000000000000011 /* RideApp.swift */,
+				S10000000000000000000001 /* UpdateController.swift */,
+				S10000000000000000000003 /* Info.plist */,
 				A00000000000000000000012 /* AppState.swift */,
 				E40000000000000000000001 /* MenuModel.swift */,
 				A0000000000000000000009D /* AppState+Nav.swift */,
@@ -1038,6 +1045,9 @@
 			dependencies = (
 			);
 			name = Ride;
+			packageProductDependencies = (
+				S10000000000000000000012 /* Sparkle */,
+			);
 			productName = Ride;
 			productReference = A00000000000000000000010 /* Ride.app */;
 			productType = "com.apple.product-type.application";
@@ -1069,6 +1079,9 @@
 				Base,
 			);
 			mainGroup = A00000000000000000000050;
+			packageReferences = (
+				S10000000000000000000011 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			productRefGroup = A00000000000000000000052 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1334,6 +1347,7 @@
 				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,
 				A00000000000000000000021 /* RideApp.swift in Sources */,
+				S10000000000000000000002 /* UpdateController.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
 				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
@@ -1506,6 +1520,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Ride/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Ride;
 				INFOPLIST_KEY_CFBundleName = Ride;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -1550,6 +1565,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Ride/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Ride;
 				INFOPLIST_KEY_CFBundleName = Ride;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -1614,6 +1630,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		S10000000000000000000011 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		S10000000000000000000012 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = S10000000000000000000011 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A00000000000000000000001 /* Project object */;
 }

@@ -4,12 +4,14 @@ import SwiftUI
 @main
 struct RideApp: App {
     private let state: AppState
+    private let updater: UpdateController
     @ObservedObject private var menu: MenuModel
 
     init() {
         NSWindow.allowsAutomaticWindowTabbing = false
         let state = AppState()
         self.state = state
+        self.updater = UpdateController()
         _menu = ObservedObject(wrappedValue: state.menu)
     }
 
@@ -23,6 +25,9 @@ struct RideApp: App {
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button("About Ride") { AboutPanel.show() }
+            }
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") { updater.checkForUpdates() }
             }
             CommandGroup(replacing: .help) {
                 Button("Keyboard Shortcuts") { ShortcutsPanel.show() }
