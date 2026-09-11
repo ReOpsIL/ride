@@ -1,40 +1,12 @@
 use std::path::Path;
 
-use serde::Deserialize;
-
 use crate::error::EngineError;
 use crate::extract::Scope;
 use crate::ffi::{EngineConfig, WorkspaceInfo};
 
 use super::DiscoveredCrate;
+use super::metadata_json::{Metadata, cargo_metadata};
 use super::sysroot::{rust_src_available, sysroot_path};
-
-#[derive(Debug, Deserialize)]
-struct Metadata {
-    packages: Vec<MetaPackage>,
-    workspace_members: Vec<String>,
-    resolve: Option<Resolve>,
-}
-
-#[derive(Debug, Deserialize)]
-struct MetaPackage {
-    name: String,
-    version: String,
-    id: String,
-    manifest_path: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct Resolve {
-    nodes: Vec<ResolveNode>,
-    root: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-struct ResolveNode {
-    id: String,
-    dependencies: Vec<String>,
-}
 
 pub struct MetadataResult {
     pub info: WorkspaceInfo,
@@ -142,45 +114,37 @@ fn direct_dep_ids(meta: &Metadata) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn cargo_metadata(
-    manifest: &Path,
-    offline: bool,
-    no_deps: bool,
-) -> Result<(Metadata, bool), EngineError> {
-    match run_cargo_metadata(manifest, offline, no_deps) {
-        Ok(meta) => Ok((meta, false)),
-        Err(e) if offline => {
-            let meta = run_cargo_metadata(manifest, false, no_deps)?;
-            let _ = e;
-            Ok((meta, true))
-        }
-        Err(e) => Err(e),
-    }
+pub struct PackageTargets {
+    pub name: String,
+    pub targets: Vec<CrateTarget>,
 }
 
-fn run_cargo_metadata(
+pub struct CrateTarget {
+    pub name: String,
+    pub kinds: Vec<String>,
+    pub src_path: String,
+}
+
+pub fn workspace_targets(
     manifest: &Path,
     offline: bool,
-    no_deps: bool,
-) -> Result<Metadata, EngineError> {
-    let mut cmd = crate::toolchain::tool("cargo");
-    cmd.args(["metadata", "--format-version", "1", "--manifest-path"])
-        .arg(manifest);
-    if offline {
-        cmd.arg("--offline");
-    }
-    if no_deps {
-        cmd.arg("--no-deps");
-    }
-    let output = cmd.output().map_err(|e| EngineError::Metadata {
-        message: format!("cargo metadata: {e}"),
-    })?;
-    if !output.status.success() {
-        return Err(EngineError::Metadata {
-            message: String::from_utf8_lossy(&output.stderr).trim().to_string(),
-        });
-    }
-    serde_json::from_slice(&output.stdout).map_err(|e| EngineError::Metadata {
-        message: format!("parse cargo metadata: {e}"),
-    })
+) -> Result<Vec<PackageTargets>, EngineError> {
+    let (meta, _) = cargo_metadata(manifest, offline, true)?;
+    Ok(meta
+        .packages
+        .iter()
+        .filter(|pkg| meta.workspace_members.contains(&pkg.id))
+        .map(|pkg| PackageTargets {
+            name: pkg.name.clone(),
+            targets: pkg
+                .targets
+                .iter()
+                .map(|t| CrateTarget {
+                    name: t.name.clone(),
+                    kinds: t.kind.clone(),
+                    src_path: t.src_path.clone(),
+                })
+                .collect(),
+        })
+        .collect())
 }
