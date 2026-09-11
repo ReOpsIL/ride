@@ -117,13 +117,7 @@ final class CheckService: ObservableObject {
     }
 
     private func ingestClang(source: String, items: [StoredDiagnostic]) {
-        var grouped = Dictionary(grouping: items, by: \.path)
-        if grouped[source] == nil {
-            grouped[source] = []
-        }
-        for (path, items) in grouped {
-            store.replace(path: path, with: items)
-        }
+        store.replace(from: source, with: items)
     }
 
     private func publish() {

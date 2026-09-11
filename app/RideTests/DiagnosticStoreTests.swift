@@ -32,6 +32,29 @@ final class DiagnosticStoreTests: XCTestCase {
         XCTAssertEqual(store.snapshot.map(\.message), ["clang-b", "next"])
     }
 
+    func testRecheckDropsPathsOwnedBySource() {
+        var store = DiagnosticStore()
+        store.replace(
+            from: "/a.c",
+            with: [item("/a.c", 1, "in-source"), item("/h.h", 2, "in-header")]
+        )
+        store.replace(from: "/b.c", with: [item("/b.c", 3, "keep-b")])
+        XCTAssertEqual(messages(store, "/h.h"), ["in-header"])
+        store.replace(from: "/a.c", with: [])
+        XCTAssertEqual(store.snapshot.map(\.message), ["keep-b"])
+        XCTAssertEqual(store.clangPaths, ["/b.c"])
+    }
+
+    func testRecheckLeavesHeaderOwnedByOtherSource() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/h.h", 1, "from-a")])
+        store.replace(from: "/b.c", with: [item("/h.h", 2, "from-b")])
+        store.replace(from: "/a.c", with: [])
+        XCTAssertEqual(messages(store, "/h.h"), ["from-b"])
+        store.replace(from: "/b.c", with: [item("/b.c", 4, "only-b")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["only-b"])
+    }
+
     func testSnapshotOrderedByPathThenByte() {
         var store = DiagnosticStore()
         store.insert(item("/b.c", 10, "b10"))

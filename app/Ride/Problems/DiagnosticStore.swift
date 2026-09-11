@@ -19,23 +19,43 @@ struct StoredDiagnostic: Equatable, Hashable {
 struct DiagnosticStore {
     private var clang: [String: [StoredDiagnostic]] = [:]
     private var cargo: [StoredDiagnostic] = []
+    private var owner: [String: String] = [:]
 
     mutating func insert(_ item: StoredDiagnostic) {
         clang[item.path, default: []].append(item)
+        if owner[item.path] == nil {
+            owner[item.path] = item.path
+        }
     }
 
     mutating func replace(path: String, with items: [StoredDiagnostic]) {
         let mine = items.filter { $0.path == path }
         if mine.isEmpty {
             clang.removeValue(forKey: path)
+            owner.removeValue(forKey: path)
         } else {
             clang[path] = mine
+            if owner[path] == nil {
+                owner[path] = path
+            }
+        }
+    }
+
+    mutating func replace(from source: String, with items: [StoredDiagnostic]) {
+        for path in owner.compactMap({ $0.value == source ? $0.key : nil }) {
+            clang.removeValue(forKey: path)
+            owner.removeValue(forKey: path)
+        }
+        for (path, group) in Dictionary(grouping: items, by: \.path) {
+            clang[path] = group
+            owner[path] = source
         }
     }
 
     @discardableResult
     mutating func remove(path: String) -> Bool {
-        clang.removeValue(forKey: path) != nil
+        owner.removeValue(forKey: path)
+        return clang.removeValue(forKey: path) != nil
     }
 
     mutating func replaceCargo(_ items: [StoredDiagnostic]) {
