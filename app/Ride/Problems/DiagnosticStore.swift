@@ -5,6 +5,11 @@ enum ProblemLevel: Equatable, Hashable {
     case warning
 }
 
+enum DiagnosticOrigin: Equatable, Hashable {
+    case check
+    case build
+}
+
 struct StoredDiagnostic: Equatable, Hashable {
     var path: String
     var byteStart: UInt32
@@ -14,11 +19,13 @@ struct StoredDiagnostic: Equatable, Hashable {
     var level: ProblemLevel
     var message: String
     var code: String?
+    var origin: DiagnosticOrigin = .check
 }
 
 struct DiagnosticStore {
     private var clang: [String: [StoredDiagnostic]] = [:]
     private var cargo: [StoredDiagnostic] = []
+    private var build: [StoredDiagnostic] = []
     private var owner: [String: String] = [:]
 
     mutating func insert(_ item: StoredDiagnostic) {
@@ -62,6 +69,14 @@ struct DiagnosticStore {
         cargo = items
     }
 
+    mutating func replaceBuild(_ items: [StoredDiagnostic]) {
+        build = items.map {
+            var item = $0
+            item.origin = .build
+            return item
+        }
+    }
+
     mutating func replaceAllClang(from source: String, with items: [StoredDiagnostic]) {
         clang.removeAll()
         owner.removeAll()
@@ -69,12 +84,16 @@ struct DiagnosticStore {
     }
 
     var snapshot: [StoredDiagnostic] {
-        (clang.values.flatMap { $0 } + cargo).sorted {
+        (clang.values.flatMap { $0 } + cargo + build).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)
         }
     }
 
     var clangPaths: [String] {
         Array(clang.keys)
+    }
+
+    var buildDiagnostics: [StoredDiagnostic] {
+        build
     }
 }

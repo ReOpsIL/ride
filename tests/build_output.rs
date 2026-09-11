@@ -76,7 +76,7 @@ fn clang_output_yields_warning_error_and_note() {
     let engine = engine();
     let source = fixtures().join("demo.cpp");
     let text = fixture("clang-output.txt").replace("demo.cpp:", &format!("{}:", source.display()));
-    let diags = engine.parse_clang_output(text);
+    let diags = engine.parse_clang_output(text, String::new());
     assert_eq!(diags.len(), 3);
     let levels: Vec<_> = diags.iter().map(|d| d.level).collect();
     assert_eq!(
@@ -102,9 +102,23 @@ fn clang_output_without_locations_is_empty() {
     let engine = engine();
     assert!(
         engine
-            .parse_clang_output("1 warning and 1 error generated.\n".into())
+            .parse_clang_output("1 warning and 1 error generated.\n".into(), String::new())
             .is_empty()
     );
+}
+
+#[test]
+fn clang_relative_paths_resolve_against_the_base_dir() {
+    let engine = engine();
+    let source = fixtures().join("demo.cpp");
+    let diags = engine.parse_clang_output(
+        fixture("clang-output.txt"),
+        fixtures().display().to_string(),
+    );
+    assert_eq!(diags.len(), 3);
+    assert!(diags.iter().all(|d| d.path == source.display().to_string()));
+    assert_eq!(byte_of(&source, 7, 12), diags[1].byte_start);
+    assert_eq!(diags[0].message, "unused variable 'unused_local'");
 }
 
 fn byte_of(path: &Path, line: u32, column: u32) -> u32 {

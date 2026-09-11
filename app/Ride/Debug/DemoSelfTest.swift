@@ -170,6 +170,7 @@ struct SelfTestEditor {
 final class SelfTestScratch {
     var body = ""
     var next = ""
+    var buildLine = ""
 }
 
 struct SelfTestOpened {

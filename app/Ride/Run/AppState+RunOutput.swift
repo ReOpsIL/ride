@@ -1,16 +1,18 @@
 import AppKit
 
 extension AppState {
-    func runInOutput(_ invocation: RunInvocation) {
+    @discardableResult
+    func runInOutput(_ invocation: RunInvocation) -> Bool {
         showRunOutput = true
         guard runOutput.isRunning else {
             runOutput.start(invocation)
-            return
+            return true
         }
         guard confirmStopAndRerun() else {
-            return
+            return false
         }
         runOutput.stopAndStart(invocation)
+        return true
     }
 
     func rerunOutput() {

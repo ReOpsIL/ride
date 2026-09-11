@@ -65,6 +65,37 @@ final class DiagnosticStoreTests: XCTestCase {
         XCTAssertEqual(store.snapshot.map(\.message), ["cargo"])
     }
 
+    func testBuildOwnerIsSeparateFromCheckOwners() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/a.c", 1, "check-a")])
+        store.replaceCargo([item("/r.rs", 2, "cargo")])
+        store.replaceBuild([item("/a.c", 5, "build-a"), item("/b.c", 1, "build-b")])
+        XCTAssertEqual(store.buildDiagnostics.map(\.message), ["build-a", "build-b"])
+        XCTAssertTrue(store.buildDiagnostics.allSatisfy { $0.origin == .build })
+        XCTAssertEqual(store.snapshot.map(\.message), ["check-a", "build-a", "build-b", "cargo"])
+        XCTAssertEqual(store.clangPaths, ["/a.c"])
+    }
+
+    func testBuildDiagnosticsAreReplacedWholesale() {
+        var store = DiagnosticStore()
+        store.replaceBuild([item("/a.c", 1, "first"), item("/b.c", 1, "second")])
+        store.replaceBuild([item("/c.c", 1, "third")])
+        XCTAssertEqual(store.buildDiagnostics.map(\.message), ["third"])
+        XCTAssertEqual(store.snapshot.map(\.message), ["third"])
+        store.replaceBuild([])
+        XCTAssertTrue(store.snapshot.isEmpty)
+    }
+
+    func testRecheckAndRemoveLeaveBuildDiagnostics() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/a.c", 1, "check-a")])
+        store.replaceBuild([item("/a.c", 2, "build-a")])
+        store.replace(from: "/a.c", with: [])
+        XCTAssertFalse(store.remove(path: "/a.c"))
+        store.replaceAllClang(from: "clang-project", with: [])
+        XCTAssertEqual(store.snapshot.map(\.message), ["build-a"])
+    }
+
     func testSnapshotOrderedByPathThenByte() {
         var store = DiagnosticStore()
         store.insert(item("/b.c", 10, "b10"))

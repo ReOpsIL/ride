@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use ride_engine::{
     CheckResult, Diagnostic, DiagnosticLevel, Lang, merge_indexed, parse_clang,
@@ -59,7 +59,7 @@ fn parses_clang_lines_with_ranges_codes_and_notes() {
          {path}:3:10:{{3:10-3:11}}: error: use of undeclared identifier 'y'\n\
          2 diagnostics generated.\n"
     );
-    let diags = parse_clang(&text);
+    let diags = parse_clang(&text, Path::new(""));
     assert_eq!(diags.len(), 3, "{diags:?}");
     let warn = &diags[0];
     assert_eq!(warn.level, DiagnosticLevel::Warning);

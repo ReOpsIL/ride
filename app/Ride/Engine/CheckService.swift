@@ -19,6 +19,7 @@ final class CheckService: ObservableObject {
 
     var snapshot: [StoredDiagnostic] { store.snapshot }
     var clangPaths: [String] { store.clangPaths }
+    var buildDiagnostics: [StoredDiagnostic] { store.buildDiagnostics }
     var errorCount: Int { diagnostics.filter { $0.level == .error }.count }
     var warningCount: Int { diagnostics.filter { $0.level == .warning }.count }
 
@@ -66,6 +67,13 @@ final class CheckService: ObservableObject {
                 self?.finishIncluding(results, source: source, generation: gen)
             }
         }
+    }
+
+    func replaceBuild(_ items: [Diagnostic]) {
+        store.replaceBuild(items.compactMap(CheckConvert.stored))
+        hasRun = true
+        publish()
+        onFinished?(diagnostics)
     }
 
     func dropClang(path: String) {

@@ -36,7 +36,7 @@ pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
     };
     cmd.args(DIAG_FLAGS).arg(file);
     if cwd.is_dir() {
-        cmd.current_dir(cwd);
+        cmd.current_dir(&cwd);
     }
     let output = cmd.output().map_err(|e| EngineError::Tool {
         message: format!("clang: {e}"),
@@ -44,7 +44,7 @@ pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
     let stderr = String::from_utf8_lossy(&output.stderr);
     Ok(CheckResult {
         success: output.status.success(),
-        diagnostics: parse_clang(&stderr),
+        diagnostics: parse_clang(&stderr, &cwd),
         stderr_tail: stderr_tail(&stderr),
     })
 }
