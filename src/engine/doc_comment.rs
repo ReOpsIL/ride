@@ -35,14 +35,21 @@ pub fn c(node: Node<'_>, source: &str) -> String {
 
 fn preceding(node: Node<'_>, source: &str) -> String {
     let mut chunks = Vec::new();
+    let mut next = node;
     let mut sib = node.prev_named_sibling();
     while let Some(s) = sib {
         match s.kind() {
-            "line_comment" | "block_comment" => match comment(s, source, false) {
-                Some(text) => chunks.push(text),
-                None => break,
-            },
-            "attribute_item" | "inner_attribute_item" => {}
+            "line_comment" | "block_comment" => {
+                if !adjacent(s, next, source) {
+                    break;
+                }
+                match comment(s, source, false) {
+                    Some(text) => chunks.push(text),
+                    None => break,
+                }
+                next = s;
+            }
+            "attribute_item" | "inner_attribute_item" => next = s,
             _ => break,
         }
         sib = s.prev_named_sibling();
@@ -135,18 +142,24 @@ fn c_anchor(node: Node<'_>) -> Node<'_> {
 }
 
 fn adjacent(comment: Node<'_>, next: Node<'_>, text: &str) -> bool {
-    let Some(gap) = text.get(comment.end_byte()..next.start_byte()) else {
+    let start = comment.start_byte();
+    let Some(prefix) = text.get(..start) else {
         return false;
     };
-    let line_start = text
-        .get(..comment.start_byte())
-        .and_then(|s| s.rfind('\n'))
-        .map_or(0, |i| i + 1);
-    gap.chars().all(char::is_whitespace)
+    let line_start = prefix.rfind('\n').map_or(0, |i| i + 1);
+    let Some(indent) = text.get(line_start..start) else {
+        return false;
+    };
+    let Some(body) = text.get(..comment.end_byte()) else {
+        return false;
+    };
+    let content_end = body.trim_end_matches(['\n', '\r']).len();
+    let Some(gap) = text.get(content_end..next.start_byte()) else {
+        return false;
+    };
+    indent.chars().all(char::is_whitespace)
+        && gap.chars().all(char::is_whitespace)
         && gap.matches('\n').count() <= 1
-        && text
-            .get(line_start..comment.start_byte())
-            .is_some_and(|s| s.chars().all(char::is_whitespace))
 }
 
 fn c_strip(raw: &str) -> String {

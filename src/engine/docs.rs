@@ -102,7 +102,7 @@ fn assemble(hit: &CompletionHit, ctx: &Ctx, loaded: &Loaded, lifted: Option<Lift
     QuickDoc {
         title: hit.name.clone(),
         signature: hit.signature.clone(),
-        html: wrap(&hit.name, &crate::markdown::render(&rewritten.markdown)),
+        html: crate::markdown::render(&rewritten.markdown),
         origin_path: origin(hit, loaded),
         origin_line: origin_line(&lifted, hit, loaded),
         links: rewritten.links,
@@ -124,23 +124,6 @@ fn origin(hit: &CompletionHit, loaded: &Loaded) -> String {
     } else {
         loaded.path.clone()
     }
-}
-
-fn wrap(title: &str, body: &str) -> String {
-    format!("<h1>{}</h1>\n{body}", escape(title))
-}
-
-fn escape(text: &str) -> String {
-    let mut out = String::with_capacity(text.len());
-    for c in text.chars() {
-        match c {
-            '&' => out.push_str("&amp;"),
-            '<' => out.push_str("&lt;"),
-            '>' => out.push_str("&gt;"),
-            _ => out.push(c),
-        }
-    }
-    out
 }
 
 fn resolve(path: &str, ctx: &Ctx) -> Option<String> {

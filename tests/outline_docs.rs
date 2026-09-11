@@ -17,6 +17,10 @@ const SHAPES_H: &str = "#pragma once\nstruct shape { int sides; double area; };\
 const MAIN_C: &str =
     "#include \"shapes.h\"\nint main(void) {\n    shape_t s;\n    return shape_sides(&s);\n}\n";
 
+const BLANK_LINE_SRC: &str = "/// Orphaned notes about nothing.\n\n/// Real docs for Item.\npub struct Item {\n    n: u32,\n}\n\nfn main() {\n    let x = Item { n: 1 };\n}\n";
+
+const MODULE_SRC: &str = "mod widget {\n    //! A widget module.\n    //!\n    //! Builds widgets.\n    pub fn make() -> u32 {\n        1\n    }\n}\n\nfn main() {\n    let n = widget::make();\n}\n";
+
 fn engine() -> std::sync::Arc<ride_engine::Engine> {
     engine_start(EngineConfig {
         index_dir: tempfile::tempdir().unwrap().path().display().to_string(),
@@ -196,7 +200,7 @@ fn quick(ext: &str, src: &str, needle: &str) -> QuickDoc {
 fn quick_doc_renders_fenced_example() {
     let doc = quick("rs", RUST_SRC, "Counter {");
     assert_eq!(doc.title, "Counter");
-    assert!(doc.html.contains("<h1>Counter</h1>"), "{}", doc.html);
+    assert!(!doc.html.contains("<h1>"), "{}", doc.html);
     assert!(doc.html.contains("<pre>"), "{}", doc.html);
     assert!(
         doc.html.contains("tk-keyword") || doc.html.contains("tk-function"),
@@ -250,4 +254,20 @@ fn quick_doc_unknown_link_stays_code() {
         "{:?}",
         doc.links
     );
+}
+
+#[test]
+fn quick_doc_skips_rust_docs_across_a_blank_line() {
+    let doc = quick("rs", BLANK_LINE_SRC, "Item {");
+    assert_eq!(doc.title, "Item");
+    assert!(doc.html.contains("Real docs for Item"), "{}", doc.html);
+    assert!(!doc.html.contains("Orphaned notes"), "{}", doc.html);
+}
+
+#[test]
+fn quick_doc_includes_module_inner_docs() {
+    let doc = quick("rs", MODULE_SRC, "widget {");
+    assert_eq!(doc.title, "widget");
+    assert!(doc.html.contains("A widget module"), "{}", doc.html);
+    assert!(doc.html.contains("Builds widgets"), "{}", doc.html);
 }
