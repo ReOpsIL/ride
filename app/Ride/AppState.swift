@@ -69,6 +69,7 @@ final class AppState: ObservableObject {
     let preview = PreviewModel()
     let git = GitStatusService()
     let menu = MenuModel()
+    let projectModel = ProjectModelStore()
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?
@@ -105,6 +106,9 @@ final class AppState: ObservableObject {
         }
         gitSink = git.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
+        }
+        projectModel.onChange = { [weak self] in
+            self?.syncMenu()
         }
         CheckService.shared.onFinished = { [weak self] diagnostics in
             self?.checkFinished(diagnostics)

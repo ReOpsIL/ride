@@ -11,6 +11,7 @@ struct SidebarView: View {
             ScrollView {
                 ProjectTreeView()
             }
+            TargetsPanel(store: state.projectModel)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(ts.ui.bgBase)
