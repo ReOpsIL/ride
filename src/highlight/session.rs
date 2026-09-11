@@ -36,6 +36,10 @@ impl BufferSession {
         &self.last_outline
     }
 
+    pub fn path(&self) -> Option<&Path> {
+        self.path.as_deref()
+    }
+
     pub fn locate(&mut self, path: &Path, search_dirs: Vec<PathBuf>) {
         self.path = Some(path.to_path_buf());
         self.search_dirs = search_dirs;

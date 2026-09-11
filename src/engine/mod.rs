@@ -15,6 +15,11 @@ use crate::highlight::BufferSession;
 
 mod access;
 mod cheat;
+mod doc_block;
+mod doc_comment;
+mod doc_links;
+mod docs;
+mod doxygen;
 mod editing;
 mod edits;
 mod header_hits;

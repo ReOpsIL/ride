@@ -2,10 +2,12 @@ use std::fs;
 
 use ride_engine::{
     BufferSession, CompletionContext, CompletionHit, CompletionQuery, EngineConfig, ItemKind, Lang,
-    OutlineItem, QueryMode, engine_start,
+    OutlineItem, QueryMode, QuickDoc, engine_start,
 };
 
-const RUST_SRC: &str = "/// A counter.\n///\n/// Counts things.\npub struct Counter {\n    n: u32,\n}\n\nimpl Counter {\n    /// Makes a counter.\n    pub fn new() -> Self {\n        Counter { n: 0 }\n    }\n}\n\nfn main() {\n    let n: u32 = 1;\n    let total = n;\n}\n";
+const RUST_SRC: &str = "/// A counter.\n///\n/// Counts things.\n///\n/// ```\n/// let c = Counter::new();\n/// ```\n///\n/// See [`Counter::new`] and [`NoSuchType`].\n/// More in [the ctor](Counter::new).\npub struct Counter {\n    n: u32,\n}\n\nimpl Counter {\n    /// Makes a counter.\n    pub fn new() -> Self {\n        Counter { n: 0 }\n    }\n}\n\nfn main() {\n    let n: u32 = 1;\n    let total = n;\n}\n";
+
+const DOXY_C: &str = "/**\n * @brief Area of the shape.\n *\n * Uses the sides.\n * @param s The shape.\n * @param scale Unused.\n * @return Area value.\n */\ndouble shape_area(const struct shape *s) { return 0; }\n\nint main(void) {\n    return shape_area(0);\n}\n";
 
 const C_SRC: &str = "/// Number of sides of a shape.\n/// Always positive.\nint shape_sides(const struct shape *s);\n\n/**\n * @brief Area of the shape.\n *\n * Uses the sides.\n */\ndouble shape_area(const struct shape *s) { return 0; }\n\n#define MAX_SIDES 12\n#define SQUARE(x) ((x) * (x))\n\n// A polygon.\nstruct shape { int sides; double area; const char *label; };\nint main(void) {\n    struct shape s;\n    s.sides = 1;\n    const char *name = \"x\";\n    return name[0];\n}\n";
 
@@ -174,4 +176,78 @@ fn header_items_carry_signature_doc_and_file_name() {
     let def = engine.find_definitions(open.session_id, at as u32);
     assert_eq!(def.hits[0].signature, "int shape_sides(const shape_t *s)");
     assert_eq!(def.hits[0].detail, "shapes.h");
+}
+
+fn quick(ext: &str, src: &str, needle: &str) -> QuickDoc {
+    let engine = engine();
+    let open = engine
+        .open_session(
+            ext.into(),
+            Some(format!("/tmp/outline_docs.{ext}")),
+            src.into(),
+            None,
+        )
+        .unwrap();
+    let at = src.find(needle).expect("needle") as u32;
+    engine.quick_doc(open.session_id, at).expect("quick_doc")
+}
+
+#[test]
+fn quick_doc_renders_fenced_example() {
+    let doc = quick("rs", RUST_SRC, "Counter {");
+    assert_eq!(doc.title, "Counter");
+    assert!(doc.html.contains("<h1>Counter</h1>"), "{}", doc.html);
+    assert!(doc.html.contains("<pre>"), "{}", doc.html);
+    assert!(
+        doc.html.contains("tk-keyword") || doc.html.contains("tk-function"),
+        "{}",
+        doc.html
+    );
+}
+
+#[test]
+fn quick_doc_doxygen_brief_and_params() {
+    let doc = quick("c", DOXY_C, "shape_area(0)");
+    let brief = doc
+        .html
+        .find("Area of the shape")
+        .unwrap_or_else(|| panic!("{}", doc.html));
+    let list = doc
+        .html
+        .find("<ul>")
+        .or_else(|| doc.html.find("<li>"))
+        .unwrap_or_else(|| panic!("{}", doc.html));
+    assert!(brief < list, "{}", doc.html);
+    assert!(doc.html.contains("<li>"), "{}", doc.html);
+    assert!(doc.html.contains("The shape"), "{}", doc.html);
+    assert!(doc.html.contains("scale"), "{}", doc.html);
+}
+
+#[test]
+fn quick_doc_resolves_intra_doc_link() {
+    let doc = quick("rs", RUST_SRC, "Counter {");
+    assert!(
+        doc.html.contains("ride-doc://") && doc.html.contains("Counter::new"),
+        "{}",
+        doc.html
+    );
+    assert!(
+        doc.links
+            .iter()
+            .any(|l| l.url.contains("ride-doc://") && l.label.contains("new")),
+        "{:?}",
+        doc.links
+    );
+}
+
+#[test]
+fn quick_doc_unknown_link_stays_code() {
+    let doc = quick("rs", RUST_SRC, "Counter {");
+    assert!(doc.html.contains("<code>NoSuchType</code>"), "{}", doc.html);
+    assert!(!doc.html.contains("ride-doc://NoSuchType"), "{}", doc.html);
+    assert!(
+        doc.links.iter().all(|l| !l.label.contains("NoSuchType")),
+        "{:?}",
+        doc.links
+    );
 }

@@ -1,6 +1,7 @@
 mod cheat;
 mod check;
 mod config;
+mod docs;
 mod edit;
 mod editing;
 mod index;
@@ -14,6 +15,7 @@ mod workspace;
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
+pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
