@@ -6,7 +6,15 @@ use serde::Deserialize;
 use crate::highlight::Lang;
 
 const DB_NAME: &str = "compile_commands.json";
-const DB_DIRS: &[&str] = &["", "build", "out", "cmake-build-debug"];
+const DB_DIRS: &[&str] = &[
+    "",
+    "build/Debug",
+    "build/Release",
+    "build/RelWithDebInfo",
+    "build",
+    "out",
+    "cmake-build-debug",
+];
 const SKIP_WITH_VALUE: &[&str] = &["-o", "-MF", "-MT", "-MQ"];
 const SKIP_ALONE: &[&str] = &["-c", "-M", "-MD", "-MM", "-MMD"];
 
@@ -25,12 +33,12 @@ pub struct CompileCommand {
 
 pub fn lookup(file: &Path, lang: Lang) -> Option<CompileCommand> {
     let file = file.canonicalize().ok()?;
-    databases(&file).find_map(|db| best_entry(&db, &file, lang))
+    databases(&file).find_map(|(_, db)| best_entry(&db, &file, lang))
 }
 
 pub fn sources_near(file: &Path) -> Vec<PathBuf> {
     databases(file)
-        .find_map(|db| listed(&db))
+        .find_map(|(root, db)| under(&root, listed(&db)?))
         .unwrap_or_default()
 }
 
@@ -45,9 +53,15 @@ pub fn sources_in(root: &Path) -> Vec<PathBuf> {
                 root.join(d).join(DB_NAME)
             }
         })
-        .find(|p| p.is_file())
-        .and_then(|db| listed(&db))
+        .filter(|p| p.is_file())
+        .find_map(|db| under(&root, listed(&db)?))
         .unwrap_or_default()
+}
+
+fn under(root: &Path, files: Vec<PathBuf>) -> Option<Vec<PathBuf>> {
+    let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
+    let kept: Vec<PathBuf> = files.into_iter().filter(|f| f.starts_with(&root)).collect();
+    (!kept.is_empty()).then_some(kept)
 }
 
 fn listed(db: &Path) -> Option<Vec<PathBuf>> {
@@ -71,11 +85,15 @@ fn listed(db: &Path) -> Option<Vec<PathBuf>> {
     Some(files)
 }
 
-fn databases(file: &Path) -> impl Iterator<Item = PathBuf> + '_ {
+fn databases(file: &Path) -> impl Iterator<Item = (PathBuf, PathBuf)> + '_ {
     file.ancestors()
         .skip(1)
-        .flat_map(|dir| DB_DIRS.iter().map(move |d| dir.join(d).join(DB_NAME)))
-        .filter(|p| p.is_file())
+        .flat_map(|dir| {
+            DB_DIRS
+                .iter()
+                .map(move |d| (dir.to_path_buf(), dir.join(d).join(DB_NAME)))
+        })
+        .filter(|(_, db)| db.is_file())
 }
 
 fn best_entry(db: &Path, file: &Path, lang: Lang) -> Option<CompileCommand> {

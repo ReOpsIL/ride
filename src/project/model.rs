@@ -9,6 +9,7 @@ pub fn unmatched(root: &Path) -> ProjectModel {
         targets: Vec::new(),
         profiles: Vec::new(),
         manifest: String::new(),
+        notice: None,
     }
 }
 
@@ -23,5 +24,6 @@ pub fn marked(root: &Path, kind: ProjectKind, names: &[&str]) -> Option<ProjectM
             targets: Vec::new(),
             profiles: Vec::new(),
             manifest: path.display().to_string(),
+            notice: None,
         })
 }
