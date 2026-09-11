@@ -310,6 +310,12 @@
 		A00000000000000000000166 /* ProjectReplacePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000165 /* ProjectReplacePreview.swift */; };
 		A00000000000000000000168 /* ProjectReplaceApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000167 /* ProjectReplaceApply.swift */; };
 		A00000000000000000000181 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
+		P20000000000000000000002 /* TargetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000001 /* TargetRows.swift */; };
+		P20000000000000000000004 /* ProjectModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000003 /* ProjectModelStore.swift */; };
+		P20000000000000000000006 /* TargetsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000005 /* TargetsPanel.swift */; };
+		P20000000000000000000008 /* ManifestWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000007 /* ManifestWatch.swift */; };
+		P2000000000000000000000A /* TargetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000001 /* TargetRows.swift */; };
+		P2000000000000000000000B /* TargetRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000009 /* TargetRowsTests.swift */; };
 		A00000000000000000000182 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
 		A00000000000000000000184 /* TreeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000183 /* TreeModelTests.swift */; };
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
@@ -449,6 +455,11 @@
 		A00000000000000000000165 /* ProjectReplacePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplacePreview.swift; sourceTree = "<group>"; };
 		A00000000000000000000167 /* ProjectReplaceApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceApply.swift; sourceTree = "<group>"; };
 		A00000000000000000000180 /* TreeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModel.swift; sourceTree = "<group>"; };
+		P20000000000000000000001 /* TargetRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetRows.swift; sourceTree = "<group>"; };
+		P20000000000000000000003 /* ProjectModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectModelStore.swift; sourceTree = "<group>"; };
+		P20000000000000000000005 /* TargetsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsPanel.swift; sourceTree = "<group>"; };
+		P20000000000000000000007 /* ManifestWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestWatch.swift; sourceTree = "<group>"; };
+		P20000000000000000000009 /* TargetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetRowsTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
@@ -697,6 +708,7 @@
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
 				A00000000000000000000183 /* TreeModelTests.swift */,
+				P20000000000000000000009 /* TargetRowsTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
@@ -745,6 +757,7 @@
 				A00000000000000000000013 /* RootView.swift */,
 				A00000000000000000000053 /* StatusBar */,
 				A00000000000000000000054 /* Workspace */,
+				P20000000000000000000010 /* Project */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
@@ -784,6 +797,16 @@
 			path = StatusBar;
 			sourceTree = "<group>";
 		};
+		P20000000000000000000010 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				P20000000000000000000001 /* TargetRows.swift */,
+				P20000000000000000000003 /* ProjectModelStore.swift */,
+				P20000000000000000000005 /* TargetsPanel.swift */,
+			);
+			path = Project;
+			sourceTree = "<group>";
+		};
 		A00000000000000000000054 /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
@@ -800,6 +823,7 @@
 				A00000000000000000000018 /* RecentProjects.swift */,
 				A00000000000000000000019 /* TreeActions.swift */,
 				A00000000000000000000180 /* TreeModel.swift */,
+				P20000000000000000000007 /* ManifestWatch.swift */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -1250,6 +1274,8 @@
 				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
 				A00000000000000000000182 /* TreeModel.swift in Sources */,
 				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
+				P2000000000000000000000A /* TargetRows.swift in Sources */,
+				P2000000000000000000000B /* TargetRowsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1457,6 +1483,10 @@
 				A00000000000000000000028 /* RecentProjects.swift in Sources */,
 				A00000000000000000000029 /* TreeActions.swift in Sources */,
 				A00000000000000000000181 /* TreeModel.swift in Sources */,
+				P20000000000000000000002 /* TargetRows.swift in Sources */,
+				P20000000000000000000004 /* ProjectModelStore.swift in Sources */,
+				P20000000000000000000006 /* TargetsPanel.swift in Sources */,
+				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
 				A0000000000000000000090B /* BufferLanguage.swift in Sources */,

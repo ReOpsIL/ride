@@ -14,6 +14,7 @@ final class MenuModel: ObservableObject {
     @Published var outlinePanel = true
     @Published var showProblems = false
     @Published var hasSplit = false
+    @Published var selectedTarget: String?
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -28,6 +29,7 @@ final class MenuModel: ObservableObject {
         set(\.outlinePanel, state.prefs.outlinePanel)
         set(\.showProblems, state.showProblems)
         set(\.hasSplit, state.splitLayout.isSplit)
+        set(\.selectedTarget, state.projectModel.selected?.name)
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

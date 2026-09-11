@@ -85,6 +85,7 @@ extension SelfTestSteps {
                     "delete \(String(describing: TreeModel.action(keyCode: TreeModel.delete))) return \(String(describing: TreeModel.action(keyCode: TreeModel.return)))"
                 )
             }),
+            projectTargets(state: state, e: e),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
             workspaceOpenSecond(state: state, e: e, file: file),
             workspaceRestore(state: state, e: e, file: file),
@@ -102,6 +103,18 @@ extension SelfTestSteps {
             quickDefinition(state: state, e: e),
             peekCleanup(),
         ]
+    }
+
+    private static func projectTargets(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "project targets", wait: 1.0, run: {
+            state.projectModel.select(state.projectModel.rows.first { $0.kind == .bin })
+        }, check: {
+            let bins = state.projectModel.rows.filter { $0.kind == .bin }
+            return e.expect(
+                bins.count == 1 && state.menu.selectedTarget == bins.first?.name,
+                "targets \(state.projectModel.rows.map(\.id)) selected \(state.menu.selectedTarget ?? "nil")"
+            )
+        })
     }
 
     private static func outerSignatureAfterClose(e: SelfTestEditor) -> SelfTestStep {

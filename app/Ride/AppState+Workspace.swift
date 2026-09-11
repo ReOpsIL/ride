@@ -68,6 +68,7 @@ extension AppState {
         reloadTree()
         watcher.start(path: url.path)
         RideEngineClient.shared.openWorkspace(url)
+        projectModel.load(root: url)
         git.clear()
         git.refresh(root: url, delay: 0)
         restoreOpenedWorkspace()
