@@ -2,15 +2,24 @@ import AppKit
 
 extension SelfTestSteps {
     static func rust(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
-        rustEdit(e: e, file: file, scratch: scratch)
+        [setup(e: e, file: file, scratch: scratch)]
+            + rustRun(state: state, e: e)
+            + rustEdit(e: e, file: file, scratch: scratch)
             + rustSelect(e: e)
             + rustTools(state: state, e: e, file: file)
             + rustClose(state: state, e: e, file: file)
     }
 
+    private static func rustRun(state: AppState, e: SelfTestEditor) -> [SelfTestStep] {
+        [
+            projectTargets(state: state, e: e),
+            buildTarget(state: state, e: e),
+            runTarget(state: state, e: e),
+        ]
+    }
+
     private static func rustEdit(e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
         [
-            setup(e: e, file: file, scratch: scratch),
             indentKeeps(e: e, file: file, scratch: scratch),
             unindentKeeps(e: e, file: file, scratch: scratch),
             tabInserts(e: e, file: file, scratch: scratch),
@@ -85,7 +94,6 @@ extension SelfTestSteps {
                     "delete \(String(describing: TreeModel.action(keyCode: TreeModel.delete))) return \(String(describing: TreeModel.action(keyCode: TreeModel.return)))"
                 )
             }),
-            projectTargets(state: state, e: e),
             runEcho(state: state, e: e),
             runOutputLinks(state: state, e: e),
             runOutputClose(state: state, e: e),
@@ -109,9 +117,8 @@ extension SelfTestSteps {
     }
 
     private static func projectTargets(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "project targets", wait: 1.0, run: {
-            state.projectModel.select(state.projectModel.rows.first { $0.kind == .bin })
-        }, check: {
+        SelfTestStep(name: "project targets", wait: 0.5, until: { !state.projectModel.rows.isEmpty }, timeout: 60, run: {}, check: {
+            state.selectTarget(state.projectModel.rows.first { $0.kind == .bin })
             let bins = state.projectModel.rows.filter { $0.kind == .bin }
             return e.expect(
                 bins.count == 1 && state.menu.selectedTarget == bins.first?.name,

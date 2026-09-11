@@ -17,6 +17,9 @@ final class MenuModel: ObservableObject {
     @Published var isRunning = false
     @Published var hasSplit = false
     @Published var selectedTarget: String?
+    @Published var canBuild = false
+    @Published var canRunTarget = false
+    @Published var canRunTests = false
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -34,6 +37,9 @@ final class MenuModel: ObservableObject {
         set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)
+        set(\.canBuild, state.canRun(.build))
+        set(\.canRunTarget, state.canRun(.run))
+        set(\.canRunTests, state.canRun(.test))
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

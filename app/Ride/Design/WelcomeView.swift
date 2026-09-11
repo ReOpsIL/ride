@@ -77,9 +77,9 @@ struct WelcomeView: View {
 
     private static let hints = [
         ("⌘P", "Open quickly"),
-        ("⇧⌘R", "Go to symbol in project"),
+        ("⇧⌥⌘O", "Go to symbol in project"),
         ("⇧⌘F", "Find in project"),
-        ("⌘B", "Check with cargo"),
+        ("⌘B", "Build the selected target"),
         ("F12", "Go to definition"),
         ("⌘/", "All shortcuts"),
     ]

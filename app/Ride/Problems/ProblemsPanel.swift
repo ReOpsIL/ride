@@ -17,7 +17,7 @@ struct ProblemsPanel: View {
                 IconButton(symbol: "exclamationmark.triangle", help: "Show warnings", tint: showWarnings ? ts.ui.warning : nil, active: showWarnings) {
                     showWarnings.toggle()
                 }
-                IconButton(symbol: "arrow.clockwise", help: "Check (⌘B)") {
+                IconButton(symbol: "arrow.clockwise", help: "Check (⌥⌘B)") {
                     state.runCheck()
                 }
                 IconButton(symbol: "xmark", help: "Hide Problems", size: 9) {
@@ -62,7 +62,7 @@ struct ProblemsPanel: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(Tokens.Space.l)
         } else if visible.isEmpty {
-            Text(check.hasRun ? "No problems" : "Run Check (⌘B) to see problems")
+            Text(check.hasRun ? "No problems" : "Run Check (⌥⌘B) to see problems")
                 .font(Tokens.ui(12))
                 .foregroundStyle(ts.ui.textTertiary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

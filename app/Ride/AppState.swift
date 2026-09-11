@@ -56,6 +56,10 @@ final class AppState: ObservableObject {
     @Published var notice: String?
     @Published var noticeAction: (title: String, run: () -> Void)?
     @Published var showToolsSheet = false
+    @Published var showRunConfigSheet = false
+    @Published var runConfigs: [RunConfig] = [] {
+        didSet { scheduleWorkspaceSave() }
+    }
     var noticeWork: DispatchWorkItem?
     @Published var showGoToLine = false
     @Published var goToLineQuery = ""

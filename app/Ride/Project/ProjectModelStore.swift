@@ -7,6 +7,7 @@ final class ProjectModelStore: ObservableObject {
     @Published private(set) var notice: String?
     @Published private(set) var selected: TargetRow?
     @Published var profile = ""
+    @Published private(set) var model: ProjectModel?
 
     var onChange: (() -> Void)?
     private var root: URL?
@@ -34,6 +35,7 @@ final class ProjectModelStore: ObservableObject {
         profile = ""
         notice = nil
         selected = nil
+        model = nil
         onChange?()
     }
 
@@ -65,6 +67,7 @@ final class ProjectModelStore: ObservableObject {
         guard let model else {
             return
         }
+        self.model = model
         rows = model.targets.map(ProjectModelStore.row(from:))
         kindLabel = ProjectModelStore.label(model.kind)
         profiles = model.profiles
@@ -81,20 +84,9 @@ final class ProjectModelStore: ObservableObject {
     private static func row(from target: Target) -> TargetRow {
         TargetRow(
             name: target.name,
-            kind: kind(target.kind),
+            kind: TargetRowKind(target.kind),
             detail: target.build.joined(separator: " ")
         )
-    }
-
-    private static func kind(_ kind: TargetKind) -> TargetRowKind {
-        switch kind {
-        case .bin: .bin
-        case .lib: .lib
-        case .test: .test
-        case .bench: .bench
-        case .example: .example
-        case .custom: .custom
-        }
     }
 
     private static func label(_ kind: ProjectKind) -> String {

@@ -3,6 +3,8 @@ import AppKit
 struct SelfTestStep {
     let name: String
     var wait: Double = 0.25
+    var until: (() -> Bool)?
+    var timeout: Double = 0
     let run: () -> Void
     let check: () -> String?
 }
@@ -28,7 +30,15 @@ final class DemoSelfTest {
         }
         let step = steps.removeFirst()
         step.run()
+        settle(step, state: state, deadline: Date().addingTimeInterval(step.timeout))
+    }
+
+    private func settle(_ step: SelfTestStep, state: AppState, deadline: Date) {
         DemoLaunch.after(step.wait) { [self] in
+            if let until = step.until, !until(), Date() < deadline {
+                settle(step, state: state, deadline: deadline)
+                return
+            }
             if let failure = step.check() {
                 let e = SelfTestEditor(state: state)
                 let dump = (8...13).map { "\($0): \(e.line($0))" }.joined(separator: " ¶ ")

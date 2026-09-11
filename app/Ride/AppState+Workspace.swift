@@ -91,7 +91,9 @@ extension AppState {
             tabs: buffers.compactMap(tabState(of:)),
             focusedPath: activeBuffer?.fileURL?.standardizedFileURL.path,
             layout: currentLayout(),
-            split: capturedSplit()
+            split: capturedSplit(),
+            runConfigs: runConfigs,
+            selectedTarget: projectModel.selected?.name
         )
     }
 
@@ -103,6 +105,7 @@ extension AppState {
             history.forget(bufferID: buffer.id)
         }
         applyLayout(saved.layout)
+        runConfigs = saved.runConfigs
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored
         restoreSplit(saved, restored)
