@@ -1,9 +1,10 @@
+import Combine
 import Foundation
 
 final class RunOutput: ObservableObject {
     static let maxLines = 5000
 
-    @Published private(set) var lines: [String] = []
+    @Published private(set) var buffer = RunOutputBuffer(maxLines: RunOutput.maxLines)
     @Published private(set) var isRunning = false
     @Published private(set) var status: String?
     @Published private(set) var command: String?
@@ -12,9 +13,14 @@ final class RunOutput: ObservableObject {
     private let runner = ProcessRunner()
     private var last: RunInvocation?
     private var queued: RunInvocation?
+    private var workspaceSink: AnyCancellable?
+
+    var lines: [String] {
+        buffer.lines
+    }
 
     var text: String {
-        lines.map { AnsiSpans.plain($0) }.joined(separator: "\n")
+        buffer.lines.map { AnsiSpans.plain($0) }.joined(separator: "\n")
     }
 
     var canRerun: Bool {
@@ -26,7 +32,7 @@ final class RunOutput: ObservableObject {
             return
         }
         last = invocation
-        lines = []
+        buffer.clear()
         status = nil
         command = invocation.argv.joined(separator: " ")
         isRunning = true
@@ -60,14 +66,17 @@ final class RunOutput: ObservableObject {
     }
 
     func clear() {
-        lines = []
+        buffer.clear()
         status = nil
     }
 
     func append(_ line: String) {
-        lines.append(line)
-        if lines.count > Self.maxLines {
-            lines.removeFirst(lines.count - Self.maxLines)
+        buffer.append(line)
+    }
+
+    func observeWorkspace(_ publisher: Published<URL?>.Publisher) {
+        workspaceSink = publisher.dropFirst().sink { [weak self] _ in
+            self?.stop()
         }
     }
 

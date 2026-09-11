@@ -330,6 +330,14 @@
 		Q20000000000000000000016 /* ConsoleLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000014 /* ConsoleLinks.swift */; };
 		Q20000000000000000000022 /* AnsiSpansTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000021 /* AnsiSpansTests.swift */; };
 		Q20000000000000000000024 /* ConsoleLinksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000023 /* ConsoleLinksTests.swift */; };
+		Q40000000000000000000002 /* LineSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000001 /* LineSplitter.swift */; };
+		Q40000000000000000000003 /* LineSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000001 /* LineSplitter.swift */; };
+		Q40000000000000000000005 /* RunOutputBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000004 /* RunOutputBuffer.swift */; };
+		Q40000000000000000000006 /* RunOutputBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000004 /* RunOutputBuffer.swift */; };
+		Q40000000000000000000008 /* RunOutputAppend.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000007 /* RunOutputAppend.swift */; };
+		Q40000000000000000000009 /* RunOutputAppend.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q40000000000000000000007 /* RunOutputAppend.swift */; };
+		Q40000000000000000000010 /* LineSplitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q4000000000000000000000A /* LineSplitterTests.swift */; };
+		Q40000000000000000000011 /* RunOutputBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q4000000000000000000000C /* RunOutputBufferTests.swift */; };
 		Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
 		Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000005 /* RunConfig+Engine.swift */; };
 		Q10000000000000000000008 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
@@ -501,6 +509,11 @@
 		Q20000000000000000000014 /* ConsoleLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLinks.swift; sourceTree = "<group>"; };
 		Q20000000000000000000021 /* AnsiSpansTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnsiSpansTests.swift; sourceTree = "<group>"; };
 		Q20000000000000000000023 /* ConsoleLinksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLinksTests.swift; sourceTree = "<group>"; };
+		Q40000000000000000000001 /* LineSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSplitter.swift; sourceTree = "<group>"; };
+		Q40000000000000000000004 /* RunOutputBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputBuffer.swift; sourceTree = "<group>"; };
+		Q40000000000000000000007 /* RunOutputAppend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputAppend.swift; sourceTree = "<group>"; };
+		Q4000000000000000000000A /* LineSplitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSplitterTests.swift; sourceTree = "<group>"; };
+		Q4000000000000000000000C /* RunOutputBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputBufferTests.swift; sourceTree = "<group>"; };
 		Q10000000000000000000003 /* RunConfig+Sanitizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Sanitizers.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000005 /* RunConfig+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Engine.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000007 /* RunConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigTests.swift; sourceTree = "<group>"; };
@@ -775,6 +788,8 @@
 				A000000000000000000000C2 /* QueryIdTests.swift */,
 				Q20000000000000000000021 /* AnsiSpansTests.swift */,
 				Q20000000000000000000023 /* ConsoleLinksTests.swift */,
+				Q4000000000000000000000A /* LineSplitterTests.swift */,
+				Q4000000000000000000000C /* RunOutputBufferTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -869,6 +884,9 @@
 				Q2000000000000000000000B /* AppState+RunOutput.swift */,
 				Q20000000000000000000011 /* AnsiSpans.swift */,
 				Q20000000000000000000014 /* ConsoleLinks.swift */,
+				Q40000000000000000000001 /* LineSplitter.swift */,
+				Q40000000000000000000004 /* RunOutputBuffer.swift */,
+				Q40000000000000000000007 /* RunOutputAppend.swift */,
 				Q30000000000000000000001 /* RunPlan.swift */,
 				Q30000000000000000000005 /* RunPlan+Engine.swift */,
 				Q30000000000000000000007 /* AppState+Run.swift */,
@@ -1370,6 +1388,11 @@
 				Q20000000000000000000016 /* ConsoleLinks.swift in Sources */,
 				Q20000000000000000000022 /* AnsiSpansTests.swift in Sources */,
 				Q20000000000000000000024 /* ConsoleLinksTests.swift in Sources */,
+				Q40000000000000000000003 /* LineSplitter.swift in Sources */,
+				Q40000000000000000000006 /* RunOutputBuffer.swift in Sources */,
+				Q40000000000000000000009 /* RunOutputAppend.swift in Sources */,
+				Q40000000000000000000010 /* LineSplitterTests.swift in Sources */,
+				Q40000000000000000000011 /* RunOutputBufferTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1600,6 +1623,9 @@
 				Q2000000000000000000000E /* SelfTestSteps+Run.swift in Sources */,
 				Q20000000000000000000012 /* AnsiSpans.swift in Sources */,
 				Q20000000000000000000015 /* ConsoleLinks.swift in Sources */,
+				Q40000000000000000000002 /* LineSplitter.swift in Sources */,
+				Q40000000000000000000005 /* RunOutputBuffer.swift in Sources */,
+				Q40000000000000000000008 /* RunOutputAppend.swift in Sources */,
 				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,

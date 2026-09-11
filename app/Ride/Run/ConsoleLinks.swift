@@ -13,6 +13,13 @@ enum ConsoleLinks {
 
     private static let regex: NSRegularExpression? = try? NSRegularExpression(pattern: pattern)
 
+    static let sourceExtensions: Set<String> = [
+        "c", "cc", "cpp", "cxx", "c++", "h", "hh", "hpp", "hxx", "inc", "ipp",
+        "rs", "swift", "m", "mm", "go", "java", "kt", "py", "rb", "js", "jsx", "ts", "tsx",
+        "sh", "bash", "zsh", "pl", "lua", "cmake", "mk", "make", "toml", "yml", "yaml",
+        "json", "md", "txt", "s", "asm", "glsl", "metal", "proto", "sql", "css", "html",
+    ]
+
     static func links(in text: String) -> [ConsoleLink] {
         guard let regex else {
             return []
@@ -20,7 +27,8 @@ enum ConsoleLinks {
         let ns = text as NSString
         let matches = regex.matches(in: text, range: NSRange(location: 0, length: ns.length))
         return matches.compactMap { match in
-            guard let path = group(match, 1, ns), let line = group(match, 2, ns).flatMap({ Int($0) }), line > 0 else {
+            guard let path = group(match, 1, ns), isSource(path),
+                  let line = group(match, 2, ns).flatMap({ Int($0) }), line > 0 else {
                 return nil
             }
             let column = group(match, 3, ns).flatMap { Int($0) }
@@ -43,6 +51,10 @@ enum ConsoleLinks {
             return path
         }
         return ((root as NSString).appendingPathComponent(path) as NSString).standardizingPath
+    }
+
+    private static func isSource(_ path: String) -> Bool {
+        sourceExtensions.contains((path as NSString).pathExtension.lowercased())
     }
 
     private static func group(_ match: NSTextCheckingResult, _ index: Int, _ text: NSString) -> String? {

@@ -26,6 +26,10 @@ extension AppState {
         runOutput.stop()
     }
 
+    func stopRunOnWorkspaceChange() {
+        runOutput.observeWorkspace($workspaceRoot)
+    }
+
     func openConsoleLink(_ link: ConsoleLink) {
         let path = ConsoleLinks.absolutePath(link, root: workspaceRoot?.path)
         let url = URL(fileURLWithPath: path).standardizedFileURL

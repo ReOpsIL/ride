@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 struct RunOutputText: NSViewRepresentable {
-    let lines: [String]
+    let buffer: RunOutputBuffer
     let theme: Theme
     let fontSize: CGFloat
     let onLink: (ConsoleLink) -> Void
@@ -33,7 +33,7 @@ struct RunOutputText: NSViewRepresentable {
         scroll.backgroundColor = theme.editor.background
         context.coordinator.view?.backgroundColor = theme.editor.background
         context.coordinator.onLink = onLink
-        context.coordinator.render(lines: lines, theme: theme, fontSize: fontSize)
+        context.coordinator.render(buffer: buffer, theme: theme, fontSize: fontSize)
     }
 }
 
@@ -41,35 +41,58 @@ final class RunOutputCoordinator: NSObject, NSTextViewDelegate {
     weak var view: NSTextView?
     var onLink: (ConsoleLink) -> Void
     private var rendered = 0
+    private var storedFirst = 0
+    private var lengths: [Int] = []
     private var signature = ""
 
     init(onLink: @escaping (ConsoleLink) -> Void) {
         self.onLink = onLink
     }
 
-    func render(lines: [String], theme: Theme, fontSize: CGFloat) {
+    func render(buffer: RunOutputBuffer, theme: Theme, fontSize: CGFloat) {
         guard let storage = view?.textStorage else {
             return
         }
         let stamp = "\(theme.name)-\(fontSize)"
-        let reset = stamp != signature || lines.count < rendered
-        if reset {
-            storage.setAttributedString(NSAttributedString())
-            rendered = 0
-            signature = stamp
-        }
-        guard lines.count > rendered else {
+        let plan = RunOutputAppend.plan(
+            first: buffer.first,
+            end: buffer.end,
+            rendered: rendered,
+            storedFirst: storedFirst,
+            restyle: stamp != signature
+        )
+        signature = stamp
+        apply(plan, storage: storage, first: buffer.first)
+        rendered = plan.rendered
+        let from = plan.reset ? 0 : plan.appendFrom
+        guard from < buffer.lines.count else {
             return
         }
-        let added = lines[rendered...]
         let text = NSMutableAttributedString()
-        for line in added {
-            text.append(RunOutputRender.line(line, theme: theme, fontSize: fontSize))
+        for line in buffer.lines[from...] {
+            let piece = RunOutputRender.line(line, theme: theme, fontSize: fontSize)
+            lengths.append(piece.length + 1)
+            text.append(piece)
             text.append(NSAttributedString(string: "\n"))
         }
         storage.append(text)
-        rendered = lines.count
         view?.scrollRangeToVisible(NSRange(location: storage.length, length: 0))
+    }
+
+    private func apply(_ plan: RunOutputAppend.Plan, storage: NSTextStorage, first: Int) {
+        if plan.reset {
+            storage.setAttributedString(NSAttributedString())
+            lengths = []
+            storedFirst = first
+            return
+        }
+        guard plan.dropLines > 0, plan.dropLines <= lengths.count else {
+            return
+        }
+        let dropped = lengths[..<plan.dropLines].reduce(0, +)
+        storage.deleteCharacters(in: NSRange(location: 0, length: dropped))
+        lengths.removeFirst(plan.dropLines)
+        storedFirst += plan.dropLines
     }
 
     func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {

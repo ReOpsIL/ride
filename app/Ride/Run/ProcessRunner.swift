@@ -21,7 +21,7 @@ enum RunFinish: Equatable {
 final class ProcessRunner {
     private var process: Process?
     private var killWork: DispatchWorkItem?
-    private var pending = ""
+    private var splitter = LineSplitter()
     private let queue = DispatchQueue(label: "ride.run.output")
 
     var isRunning: Bool {
@@ -51,7 +51,7 @@ final class ProcessRunner {
         let pipe = Pipe()
         task.standardOutput = pipe
         task.standardError = pipe
-        pending = ""
+        splitter = LineSplitter()
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
             guard !data.isEmpty else {
@@ -93,28 +93,24 @@ final class ProcessRunner {
     }
 
     private func receive(_ data: Data, onLine: @escaping (String) -> Void) {
-        let text = String(decoding: data, as: UTF8.self)
-        queue.sync {
-            pending += text
-            let lines = pending.components(separatedBy: "\n")
-            pending = lines.last ?? ""
-            for line in lines.dropLast() {
-                DispatchQueue.main.async { onLine(line) }
+        let lines = queue.sync { splitter.take([UInt8](data)) }
+        guard !lines.isEmpty else {
+            return
+        }
+        DispatchQueue.main.async {
+            for line in lines {
+                onLine(line)
             }
         }
     }
 
     private func finish(_ task: Process, onLine: @escaping (String) -> Void, onFinish: @escaping (RunFinish) -> Void) {
-        let tail = queue.sync { () -> String in
-            let value = pending
-            pending = ""
-            return value
-        }
+        let tail = queue.sync { splitter.flush() }
         let status: RunFinish = task.terminationReason == .uncaughtSignal
             ? .signalled(task.terminationStatus)
             : .exited(task.terminationStatus)
         DispatchQueue.main.async { [weak self] in
-            if !tail.isEmpty {
+            if let tail {
                 onLine(tail)
             }
             self?.killWork?.cancel()
