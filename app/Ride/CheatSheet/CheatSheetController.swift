@@ -123,11 +123,8 @@ final class CheatSheetController {
         let caret = view.selectedRange().location
         let start = min(Utf16.utf16Offset(in: view.string, utf8: Int(response.replaceStartByte)), caret)
         session.editSource = .completion
-        let snippet = SnippetInsert.insert(entry.snippet, snippet: true, replacing: NSRange(location: start, length: caret - start), in: view)
+        session.insertSnippet(entry.snippet, snippet: true, replacing: NSRange(location: start, length: caret - start), in: view)
         session.editSource = .user
-        if let snippet {
-            session.snippet = snippet
-        }
         return true
     }
 

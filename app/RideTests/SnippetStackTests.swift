@@ -17,6 +17,21 @@ final class SnippetStackTests: XCTestCase {
         XCTAssertEqual(stack.selection, NSRange(location: 8, length: 1))
     }
 
+    func testCheatSheetInsertPushesOntoOuterStack() {
+        var stack = SnippetStack()
+        XCTAssertTrue(stack.push(outer, replacing: NSRange(location: 0, length: 0)))
+        XCTAssertEqual(stack.depth, 1)
+        let placeholder = NSRange(location: 4, length: 1)
+        XCTAssertTrue(stack.contains(placeholder))
+        XCTAssertTrue(stack.push(SnippetParser.parse("vec![${1:elem}]$0"), replacing: placeholder))
+        XCTAssertEqual(stack.depth, 2)
+        XCTAssertEqual(stack.selection, NSRange(location: 9, length: 4))
+        XCTAssertEqual(stack.next(), .select(NSRange(location: 16, length: 1)))
+        XCTAssertEqual(stack.depth, 1)
+        XCTAssertEqual(stack.next(), .caret(18))
+        XCTAssertTrue(stack.isEmpty)
+    }
+
     func testInnerNextPopsAndAdvancesOuterWithRangeShift() {
         var stack = nested()
         let later = NSRange(location: 7, length: 1)
