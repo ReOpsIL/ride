@@ -1,0 +1,10 @@
+demo.cpp:2:9: warning: unused variable 'unused_local' [-Wunused-variable]
+    2 |     int unused_local = 0;
+      |         ^~~~~~~~~~~~
+demo.cpp:7:12: error: redefinition of 'twice'
+    7 | static int twice(int b) { return b * 2; }
+      |            ^
+demo.cpp:6:12: note: previous definition is here
+    6 | static int twice(int a) { return a + a; }
+      |            ^
+1 warning and 1 error generated.
