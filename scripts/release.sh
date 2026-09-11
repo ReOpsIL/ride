@@ -7,6 +7,11 @@ ARCHIVE="$OUT/Ride.xcarchive"
 IDENTITY="${RIDE_SIGN_IDENTITY:--}"
 VERSION="$(grep -m1 '^version' "$ROOT/Cargo.toml" | sed 's/.*"\(.*\)".*/\1/')"
 
+if [[ -n "${RIDE_SPARKLE_PRIVATE_KEY_FILE:-}" && -z "${RIDE_SPARKLE_PUBLIC_KEY:-}" ]]; then
+  echo "release: RIDE_SPARKLE_PRIVATE_KEY_FILE set but RIDE_SPARKLE_PUBLIC_KEY is not" >&2
+  exit 1
+fi
+
 cd "$ROOT"
 "$ROOT/scripts/build-engine.sh"
 

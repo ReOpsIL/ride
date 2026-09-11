@@ -27,8 +27,10 @@ struct RideApp: App {
             CommandGroup(replacing: .appInfo) {
                 Button("About Ride") { AboutPanel.show() }
             }
-            CommandGroup(after: .appInfo) {
-                Button("Check for Updates…") { updater.checkForUpdates() }
+            if updater.isConfigured {
+                CommandGroup(after: .appInfo) {
+                    Button("Check for Updates…") { updater.checkForUpdates() }
+                }
             }
             CommandGroup(replacing: .help) {
                 Button("Keyboard Shortcuts") { ShortcutsPanel.show() }

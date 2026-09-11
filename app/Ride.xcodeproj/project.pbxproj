@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		S10000000000000000000002 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
 		S10000000000000000000010 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = S10000000000000000000012 /* Sparkle */; };
+		S10000000000000000000020 /* Sparkle in Embed Frameworks */ = {isa = PBXBuildFile; productRef = S10000000000000000000012 /* Sparkle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		S10000000000000000000022 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
+		S10000000000000000000024 /* UpdateController+Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000023 /* UpdateController+Sparkle.swift */; };
+		S10000000000000000000026 /* UpdateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000025 /* UpdateControllerTests.swift */; };
 		B0A09790054D85F64A538F57 /* AppState+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0901DA538FDB916C2AF040F /* AppState+Layout.swift */; };
 		B0913E8240EC543FF29A9756 /* FindCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00E834049D45F687C4E4144 /* FindCount.swift */; };
 		B07F78728E81894E1091F9B2 /* IndexStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E018E55E618A879AC6440A /* IndexStatusView.swift */; };
@@ -376,6 +380,8 @@
 		A00000000000000000000011 /* RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideApp.swift; sourceTree = "<group>"; };
 		S10000000000000000000001 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		S10000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		S10000000000000000000023 /* UpdateController+Sparkle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateController+Sparkle.swift"; sourceTree = "<group>"; };
+		S10000000000000000000025 /* UpdateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateControllerTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000012 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		A00000000000000000000013 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		A00000000000000000000014 /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
@@ -603,6 +609,20 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		S10000000000000000000021 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				S10000000000000000000020 /* Sparkle in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXGroup section */
 		B0BFC2E56FBC0D62926D318D /* Design */ = {
 			isa = PBXGroup;
@@ -677,6 +697,7 @@
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
+				S10000000000000000000025 /* UpdateControllerTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
 				B1000000000000000000008A /* HeadingLevelTests.swift */,
@@ -712,6 +733,7 @@
 				A00000000000000000000134 /* AppState+Check.swift */,
 				A00000000000000000000011 /* RideApp.swift */,
 				S10000000000000000000001 /* UpdateController.swift */,
+				S10000000000000000000023 /* UpdateController+Sparkle.swift */,
 				S10000000000000000000003 /* Info.plist */,
 				A00000000000000000000012 /* AppState.swift */,
 				E40000000000000000000001 /* MenuModel.swift */,
@@ -1076,6 +1098,9 @@
 				A00000000000000000000003 /* Sources */,
 				A00000000000000000000040 /* Frameworks */,
 				A00000000000000000000041 /* Resources */,
+				S10000000000000000000030 /* Prepare Sparkle embed */,
+				S10000000000000000000021 /* Embed Frameworks */,
+				S10000000000000000000031 /* Finish Sparkle embed */,
 				A00000000000000000000090 /* Copy ride-engine */,
 			);
 			buildRules = (
@@ -1238,6 +1263,8 @@
 				B1000000000000000000000D /* LineIndex.swift in Sources */,
 				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
 				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
+				S10000000000000000000022 /* UpdateController.swift in Sources */,
+				S10000000000000000000026 /* UpdateControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1400,6 +1427,7 @@
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,
 				A00000000000000000000021 /* RideApp.swift in Sources */,
 				S10000000000000000000002 /* UpdateController.swift in Sources */,
+				S10000000000000000000024 /* UpdateController+Sparkle.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
 				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
@@ -1472,6 +1500,45 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		S10000000000000000000030 /* Prepare Sparkle embed */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/Sparkle.framework",
+			);
+			name = "Prepare Sparkle embed";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/Sparkle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -d \"$BUILT_PRODUCTS_DIR/Sparkle.framework\" ]; then\n  rm -rf \"$BUILT_PRODUCTS_DIR/Sparkle\"\n  ditto \"$BUILT_PRODUCTS_DIR/Sparkle.framework\" \"$BUILT_PRODUCTS_DIR/Sparkle\"\nfi\n";
+		};
+		S10000000000000000000031 /* Finish Sparkle embed */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Finish Sparkle embed";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FW=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH\"\nif [ -e \"$FW/Sparkle\" ]; then\n  rm -rf \"$FW/Sparkle.framework\"\n  mv \"$FW/Sparkle\" \"$FW/Sparkle.framework\"\nfi\n";
+		};
 		A00000000000000000000090 /* Copy ride-engine */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
