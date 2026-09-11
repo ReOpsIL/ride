@@ -50,6 +50,18 @@ extension AppState {
     }
 
     func formatActive(thenSave: Bool = false) {
+        formatNow(thenSave: thenSave, startByte: nil, endByte: nil)
+    }
+
+    func formatSelection() {
+        let text = EditorJump.shared.view?.string ?? activeBuffer?.text ?? ""
+        let sel = EditorJump.shared.view?.selectedRange() ?? NSRange(location: 0, length: 0)
+        let start = UInt32(Utf16.utf8Offset(in: text, utf16: sel.location))
+        let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(sel)))
+        formatNow(thenSave: false, startByte: start, endByte: end)
+    }
+
+    private func formatNow(thenSave: Bool, startByte: UInt32?, endByte: UInt32?) {
         guard let buffer = activeBuffer, !buffer.isReadOnly, let engine = RideEngineClient.shared.engine else {
             return
         }
@@ -59,13 +71,56 @@ extension AppState {
         let text = buffer.text
         let edition = workspaceRoot.flatMap(cargoEdition)
         let path = buffer.fileURL?.path ?? "untitled.\(buffer.language.fileExtension)"
+        let language = buffer.language
         let id = buffer.id
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let result = Result { try engine.formatBuffer(path: path, text: text, edition: edition) }
+            let result = Result {
+                try Self.invokeFormat(
+                    engine: engine,
+                    language: language,
+                    path: path,
+                    text: text,
+                    edition: edition,
+                    startByte: startByte,
+                    endByte: endByte
+                )
+            }
             DispatchQueue.main.async {
                 self?.formatFinished(result, bufferID: id, thenSave: thenSave)
             }
         }
+    }
+
+    private static func invokeFormat(
+        engine: Engine,
+        language: BufferLanguage,
+        path: String,
+        text: String,
+        edition: String?,
+        startByte: UInt32?,
+        endByte: UInt32?
+    ) throws -> String {
+        if let startByte, let endByte {
+            switch language {
+            case .c, .cpp:
+                return try engine.formatC(
+                    text: text,
+                    assumeFilename: path,
+                    startByte: startByte,
+                    endByte: endByte
+                )
+            case .rust:
+                return try engine.formatRust(
+                    text: text,
+                    edition: edition,
+                    startByte: startByte,
+                    endByte: endByte
+                )
+            default:
+                break
+            }
+        }
+        return try engine.formatBuffer(path: path, text: text, edition: edition)
     }
 
     private func formatFinished(_ result: Result<String, Error>, bufferID: UUID, thenSave: Bool) {

@@ -1,6 +1,9 @@
 use std::path::{Path, PathBuf};
 
-use ride_engine::{DiagnosticLevel, format_source, parse_lines, run_check};
+use ride_engine::{
+    DiagnosticLevel, Formatter, Lang, format_document, format_range, format_source, parse_lines,
+    run_check,
+};
 
 fn fixtures() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
@@ -73,8 +76,45 @@ fn makefile_formatter_normalizes_recipes() {
 }
 
 #[test]
+fn clang_format_selection_changes_only_selected_function() {
+    if !Formatter::ClangFormat.available() {
+        return;
+    }
+    let src = "int  foo( ){return 1;}\nint  bar( ){return 2;}\n";
+    let foo_end = src.find('\n').unwrap() as u32;
+    let out = format_range(Lang::C, src, Some("a.c"), None, 0, foo_end).unwrap();
+    assert!(out.contains("int foo()"), "{out}");
+    assert!(
+        out.contains("int  bar( ){return 2;}"),
+        "unselected function changed:\n{out}"
+    );
+    assert!(!out.contains("int  foo( )"), "{out}");
+}
+
+#[test]
+fn rustfmt_selection_formats_enclosing_fn_only() {
+    let src = "fn  foo(){let x=1;}\nfn  bar(){let y=2;}\n";
+    let caret = src.find("x=1").unwrap() as u32;
+    let out = format_range(Lang::Rust, src, Some("a.rs"), None, caret, caret).unwrap();
+    assert!(
+        out.contains("fn foo() {\n    let x = 1;\n}"),
+        "enclosing fn not formatted:\n{out}"
+    );
+    assert!(
+        out.contains("fn  bar(){let y=2;}"),
+        "unselected fn changed:\n{out}"
+    );
+}
+
+#[test]
+fn format_range_makefile_formats_whole_file() {
+    let src = "all: x\n    cc x\n";
+    let out = format_range(Lang::Make, src, Some("Makefile"), None, 0, 3).unwrap();
+    assert_eq!(out, ride_engine::format_make(src));
+}
+
+#[test]
 fn formatter_lookup_reports_tools_and_hints() {
-    use ride_engine::{Formatter, Lang, format_document};
     assert_eq!(Formatter::for_lang(Lang::Make), Some(Formatter::Builtin));
     assert!(Formatter::Builtin.available());
     assert!(Formatter::for_lang(Lang::Markdown).is_none());

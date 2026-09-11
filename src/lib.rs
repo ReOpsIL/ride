@@ -20,8 +20,8 @@ mod toolchain;
 
 pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{
-    Formatter, format_clang, format_document, format_make, format_source, include_dirs,
-    parse_clang, parse_lines, run_check, run_clang_check,
+    Formatter, format_clang, format_document, format_make, format_range, format_source,
+    include_dirs, parse_clang, parse_lines, run_check, run_clang_check,
 };
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,

@@ -17,6 +17,8 @@ struct CodeCommands: Commands {
                 .keyboardShortcut("i", modifiers: [.control, .option])
             Button("Reformat Document") { state.formatActive() }
                 .keyboardShortcut("i", modifiers: [.control, .shift])
+            Button("Reformat Selection") { state.formatSelection() }
+                .keyboardShortcut("l", modifiers: [.command, .option])
             Divider()
             Button("Surround With…") { EditorCommands.surroundWith() }
                 .keyboardShortcut("t", modifiers: [.command, .option])

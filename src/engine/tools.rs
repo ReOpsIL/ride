@@ -2,7 +2,8 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
 use crate::check::{
-    Formatter, format_clang, format_document, format_source, run_check, run_clang_check,
+    Formatter, format_clang, format_document, format_range, format_source, run_check,
+    run_clang_check, selection_span,
 };
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
@@ -44,9 +45,16 @@ impl Engine {
         &self,
         text: String,
         edition: Option<String>,
+        start_byte: Option<u32>,
+        end_byte: Option<u32>,
     ) -> Result<String, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            format_source(&text, edition.as_deref())
+            match selection_span(start_byte, end_byte) {
+                Some((start, end)) => {
+                    format_range(Lang::Rust, &text, None, edition.as_deref(), start, end)
+                }
+                None => format_source(&text, edition.as_deref()),
+            }
         })) {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
@@ -79,9 +87,16 @@ impl Engine {
         &self,
         text: String,
         assume_filename: Option<String>,
+        start_byte: Option<u32>,
+        end_byte: Option<u32>,
     ) -> Result<String, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            format_clang(&text, assume_filename.as_deref())
+            match selection_span(start_byte, end_byte) {
+                Some((start, end)) => {
+                    format_range(Lang::C, &text, assume_filename.as_deref(), None, start, end)
+                }
+                None => format_clang(&text, assume_filename.as_deref()),
+            }
         })) {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),

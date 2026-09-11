@@ -1,10 +1,9 @@
-use std::io::Write;
-use std::process::{Command, Stdio};
-
 use crate::error::EngineError;
 use crate::highlight::Lang;
-use crate::toolchain::{find_tool, install_hint};
+use crate::toolchain::find_tool;
 
+use super::fmt_run::run;
+use super::fmt_rust;
 use super::make_fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -73,17 +72,56 @@ pub fn format_document(
     }
 }
 
+pub fn format_range(
+    lang: Lang,
+    text: &str,
+    path: Option<&str>,
+    edition: Option<&str>,
+    start_byte: u32,
+    end_byte: u32,
+) -> Result<String, EngineError> {
+    match Formatter::for_lang(lang) {
+        Some(Formatter::ClangFormat) => {
+            let (from, to) = line_range(text, start_byte, end_byte);
+            format_clang_lines(text, path, from, to)
+        }
+        Some(Formatter::Rustfmt) => fmt_rust::format_range(text, edition, start_byte, end_byte),
+        _ => format_document(lang, text, path, edition),
+    }
+}
+
 pub fn format_source(text: &str, edition: Option<&str>) -> Result<String, EngineError> {
-    run(
-        "rustfmt",
-        ["--emit", "stdout", "--edition", edition.unwrap_or("2024")],
-        text,
-    )
+    fmt_rust::format_source(text, edition)
 }
 
 pub fn format_clang(text: &str, assume_filename: Option<&str>) -> Result<String, EngineError> {
+    clang(text, assume_filename, None)
+}
+
+fn format_clang_lines(
+    text: &str,
+    assume_filename: Option<&str>,
+    from: u32,
+    to: u32,
+) -> Result<String, EngineError> {
+    clang(text, assume_filename, Some((from, to)))
+}
+
+fn clang(
+    text: &str,
+    assume_filename: Option<&str>,
+    lines: Option<(u32, u32)>,
+) -> Result<String, EngineError> {
     let assume = assume_filename.map(|name| format!("--assume-filename={name}"));
-    run("clang-format", assume.iter().map(String::as_str), text)
+    let span = lines.map(|(from, to)| format!("--lines={from}:{to}"));
+    let mut args = Vec::new();
+    if let Some(flag) = assume.as_deref() {
+        args.push(flag);
+    }
+    if let Some(flag) = span.as_deref() {
+        args.push(flag);
+    }
+    run("clang-format", args, text)
 }
 
 fn format_cmake(text: &str) -> Result<String, EngineError> {
@@ -93,44 +131,33 @@ fn format_cmake(text: &str) -> Result<String, EngineError> {
     run("gersemi", ["-"], text)
 }
 
-fn run<'a>(
-    name: &str,
-    args: impl IntoIterator<Item = &'a str>,
-    text: &str,
-) -> Result<String, EngineError> {
-    let Some(path) = find_tool(name) else {
-        return Err(EngineError::Tool {
-            message: format!("{name} is not installed: {}", install_hint(name)),
-        });
-    };
-    let mut cmd = Command::new(path);
-    cmd.args(args);
-    pipe(cmd, name, text)
+pub fn selection_span(start: Option<u32>, end: Option<u32>) -> Option<(u32, u32)> {
+    match (start, end) {
+        (None, None) => None,
+        (Some(s), Some(e)) => Some((s.min(e), s.max(e))),
+        (Some(s), None) | (None, Some(s)) => Some((s, s)),
+    }
 }
 
-fn pipe(mut cmd: Command, name: &str, text: &str) -> Result<String, EngineError> {
-    let mut child = cmd
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|e| EngineError::Tool {
-            message: format!("{name}: {e}"),
-        })?;
-    if let Some(mut stdin) = child.stdin.take() {
-        stdin
-            .write_all(text.as_bytes())
-            .map_err(|e| EngineError::Tool {
-                message: format!("{name} stdin: {e}"),
-            })?;
+fn line_range(text: &str, start_byte: u32, end_byte: u32) -> (u32, u32) {
+    let start = clamp_byte(text, start_byte);
+    let end = clamp_byte(text, end_byte).max(start);
+    let last = if end > start { end - 1 } else { start };
+    (line_at(text, start), line_at(text, last))
+}
+
+fn line_at(text: &str, byte: usize) -> u32 {
+    let n = text.as_bytes()[..byte.min(text.len())]
+        .iter()
+        .filter(|b| **b == b'\n')
+        .count() as u32;
+    n + 1
+}
+
+fn clamp_byte(text: &str, byte: u32) -> usize {
+    let mut b = (byte as usize).min(text.len());
+    while b > 0 && !text.is_char_boundary(b) {
+        b -= 1;
     }
-    let output = child.wait_with_output().map_err(|e| EngineError::Tool {
-        message: format!("{name}: {e}"),
-    })?;
-    if !output.status.success() {
-        return Err(EngineError::Tool {
-            message: String::from_utf8_lossy(&output.stderr).trim().to_string(),
-        });
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+    b
 }
