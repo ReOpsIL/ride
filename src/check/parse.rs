@@ -8,12 +8,18 @@ use super::message::{CargoLine, CompilerMessage};
 pub fn parse_lines(root: &Path, text: &str) -> Vec<Diagnostic> {
     let mut seen = HashSet::new();
     text.lines()
-        .filter_map(|line| serde_json::from_str::<CargoLine>(line).ok())
-        .filter(|l| l.reason == "compiler-message")
-        .filter_map(|l| l.message)
-        .flat_map(|m| diagnostics(root, m))
+        .flat_map(|line| parse_message_line(root, line))
         .filter(|d| seen.insert((d.path.clone(), d.byte_start, d.message.clone())))
         .collect()
+}
+
+pub fn parse_message_line(root: &Path, line: &str) -> Vec<Diagnostic> {
+    serde_json::from_str::<CargoLine>(line)
+        .ok()
+        .filter(|l| l.reason == "compiler-message")
+        .and_then(|l| l.message)
+        .map(|m| diagnostics(root, m))
+        .unwrap_or_default()
 }
 
 fn diagnostics(root: &Path, m: CompilerMessage) -> Vec<Diagnostic> {

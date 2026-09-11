@@ -23,5 +23,5 @@ pub use fmt::{
 pub use include_dirs::include_dirs;
 pub use including::sources_including;
 pub use make_fmt::format as format_make;
-pub use parse::parse_lines;
+pub use parse::{parse_lines, parse_message_line};
 pub use run::run_check;

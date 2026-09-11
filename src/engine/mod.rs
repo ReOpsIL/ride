@@ -14,6 +14,7 @@ use crate::ffi::{
 use crate::highlight::BufferSession;
 
 mod access;
+mod build_output;
 mod cheat;
 mod definition;
 mod doc_block;
