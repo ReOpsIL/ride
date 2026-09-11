@@ -364,6 +364,30 @@ The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the
 
 `src/project/compile_db.rs`: when only `compile_commands.json` exists (root or `build/`), every source file is a `Custom` target with `build` equal to that entry's command split by `shell-words` (add the crate) and `working_dir` its `directory`; `run = None`. App: `app/Ride/Project/ProjectModelStore.swift` (fetches `project_model` on workspace open and on manifest change through `ManifestWatch`, a generalisation of `Workspace/CargoWatch.swift` that also watches `CMakeLists.txt` and `Makefile`), `Project/TargetsPanel.swift` (a sidebar section listing targets grouped by kind with the profile picker for CMake), `Project/TargetRows.swift` (pure row model in RideTests: grouping, sort, display names). Selecting a target publishes `MenuModel.selectedTarget`; nothing runs yet (1.2-2). Acceptance: RideTests `TargetRowsTests`; self-test step on `samples/rust-demo`: the store reports one `Bin` target after open.
 
+## 10. Release 1.2 cards — run configurations and run output (2026-09-11)
+
+1.2-2 and the console half of 1.2-3, ordered so every card ships something usable. SwiftTerm and the shell terminal stay in a later card; the run output view here is an `NSTextView` that 1.2-3 replaces.
+
+### Q1 Run configuration model — Tier A
+
+`app/Ride/Run/RunConfig.swift` (pure, RideTests): `struct RunConfig: Codable, Equatable { var target: String; var args: [String]; var env: [String: String]; var workingDir: String?; var rustBacktrace: Bool; var sanitizers: Set<Sanitizer> }`, `enum Sanitizer: String, Codable, CaseIterable { address, undefined, thread }`. `RunConfig+Sanitizers.swift` (pure): `func flags(for kind: ProjectKind) -> (env: [String: String], args: [String])` where Cargo gets `RUSTFLAGS=-Zsanitizer=<name>` plus `--target <host triple>` on nightly only (leave a `requiresNightly` flag the caller shows), and CMake gets `-DCMAKE_CXX_FLAGS=-fsanitize=<names>` at configure time. Because `ProjectKind` is an FFI enum, the pure file takes its own `enum RunProjectKind` mirror and `RunConfig+Engine.swift` (app target) maps between them. `WorkspaceState` gains `runConfigs: [RunConfig]` and `selectedTarget: String?` with defaults so older files decode. Tests: `RunConfigTests` (round trip, sanitizer flags per kind, default config for a target has no args and inherits the model's `working_dir`).
+
+### Q2 Process runner and run output panel — Tier B
+
+`app/Ride/Run/ProcessRunner.swift`: runs an argv vector with `Foundation.Process` in a working directory with a merged environment, streams stdout and stderr lines through a callback on the main queue, exposes `stop()` (SIGTERM, then SIGKILL after 3 s) and the exit status; one runner per workspace, a second run while one is active asks "Stop and rerun?". `app/Ride/Run/RunOutputPanel.swift`: a bottom panel tab next to Problems (`AppState.showRunOutput`, persisted in `LayoutState`) with a monospaced `NSTextView`, ANSI SGR colors reduced to the theme's eight colors through a pure `AnsiSpans.swift` (RideTests), a toolbar with Stop, Rerun and Clear, and `path:line:col` links detected by a pure `ConsoleLinks.swift` (RideTests: `src/main.rs:10:5`, `src/geo.cpp:12:3: error:`, absolute and relative paths) that open the file at the line through the focused pane. Menu items go through `MenuModel.isRunning`. Acceptance: `AnsiSpansTests`, `ConsoleLinksTests`; self-test step that runs `["echo","hello"]` through the runner and asserts the panel text.
+
+### Q3 Run, Build and Test commands with the target picker — Tier B
+
+`app/Ride/Run/RunCommands.swift` (`.commands`, MenuModel only): Build ⌘B, Run ⌘R, Run Tests ⇧⌘R, Stop ⌘. , Edit Configurations…; `AppToolbar` gets a target picker fed by `ProjectModelStore` (P5) that writes `WorkspaceState.selectedTarget`. `AppState+Run.swift`: resolves the selected target's `RunConfig` (or the default), builds the argv: Build uses `target.build`, Run uses `target.run` (disabled when nil), Run Tests uses the project's `Test` target (Cargo: `cargo test -p pkg`; CMake: `ctest --test-dir build/<profile>`; Make: `make test` when such a target exists) and appends the config's args, env, `RUST_BACKTRACE=1` when set, and the sanitizer flags from Q1. `RunConfigSheet.swift`: a sheet editing args, env (key/value table), working dir, backtrace and sanitizers for the selected target. Acceptance: RideTests `RunPlanTests` on a pure `RunPlan.swift` that turns (target, config, kind) into (argv, env, cwd); self-test steps on `samples/rust-demo`: Build runs `cargo build` to exit 0 and the panel shows `Finished`; Run shows `ride: 1`.
+
+### Q4 Build diagnostics into Problems — Tier A
+
+Builds started from Q3 run Cargo with `--message-format=json-diagnostic-rendered-ansi` and feed each JSON line to the existing `src/check/parse.rs` path through a new `Engine::parse_cargo_line(line) -> Vec<Diagnostic>`; the rendered text is what the panel shows. CMake and Make builds stream through `Engine::parse_clang_output(text) -> Vec<Diagnostic>` over `src/check/clang_parse.rs`. Diagnostics replace the previous build's set (a `build` owner in `DiagnosticStore`, distinct from the check owners), and the Problems panel shows them with a "build" badge. Tests: `tests/check.rs` cases for both parsers on captured output fixtures under `tests/fixtures/build/`; RideTests `DiagnosticStoreTests` for the build owner.
+
+### Q5 Single-file run and Recompile File (1.2-5) — Tier A
+
+`src/run/single.rs` (new `src/run/` module): `Engine::single_file_command(path) -> Result<SingleRun, EngineError>` returning `{ compile: Vec<String>, run: Vec<String>, output: String }` for `.c` (`clang`), `.cpp`/`.cc` (`clang++ -std=c++20`) and `.rs` (`rustc --edition 2021`) into `<support dir>/single/<hash>/` (the app passes the directory), using the toolchain lookup in `src/toolchain.rs`; `Engine::recompile_command(path) -> Option<Vec<String>>` from the compile database entry for that file. App: Run File (⌃⇧R) and Recompile File (⇧⌘F9) in Q3's menu; both go through the Q2 runner; compile errors go through Q4. Tests: `tests/single.rs` compiles and runs a temp `hello.c`, `hello.cpp` and `hello.rs` when the tools exist.
+
 ## 7. Batch log
 
 | Batch | Cards | Result |
@@ -375,6 +399,7 @@ The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
+| 9 | Q1–Q5 | next, after P5 |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.
