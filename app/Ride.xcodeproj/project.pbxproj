@@ -277,6 +277,9 @@
 		A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000163 /* ProjectReplaceTests.swift */; };
 		A00000000000000000000166 /* ProjectReplacePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000165 /* ProjectReplacePreview.swift */; };
 		A00000000000000000000168 /* ProjectReplaceApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000167 /* ProjectReplaceApply.swift */; };
+		A00000000000000000000181 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
+		A00000000000000000000182 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
+		A00000000000000000000184 /* TreeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000183 /* TreeModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -398,6 +401,8 @@
 		A00000000000000000000163 /* ProjectReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000165 /* ProjectReplacePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplacePreview.swift; sourceTree = "<group>"; };
 		A00000000000000000000167 /* ProjectReplaceApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceApply.swift; sourceTree = "<group>"; };
+		A00000000000000000000180 /* TreeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModel.swift; sourceTree = "<group>"; };
+		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
@@ -597,6 +602,7 @@
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
+				A00000000000000000000183 /* TreeModelTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
@@ -688,6 +694,7 @@
 				A00000000000000000000017 /* FileWatcher.swift */,
 				A00000000000000000000018 /* RecentProjects.swift */,
 				A00000000000000000000019 /* TreeActions.swift */,
+				A00000000000000000000180 /* TreeModel.swift */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -1101,6 +1108,8 @@
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
 				A00000000000000000000162 /* ProjectReplace.swift in Sources */,
 				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
+				A00000000000000000000182 /* TreeModel.swift in Sources */,
+				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -1275,6 +1284,7 @@
 				A00000000000000000000027 /* FileWatcher.swift in Sources */,
 				A00000000000000000000028 /* RecentProjects.swift in Sources */,
 				A00000000000000000000029 /* TreeActions.swift in Sources */,
+				A00000000000000000000181 /* TreeModel.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
 				A0000000000000000000090B /* BufferLanguage.swift in Sources */,

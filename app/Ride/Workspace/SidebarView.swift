@@ -9,12 +9,7 @@ struct SidebarView: View {
             header
             ts.ui.border.frame(height: Tokens.Size.hairline)
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(state.rootNodes) { node in
-                        TreeRow(node: node, depth: 0)
-                    }
-                }
-                .padding(.vertical, Tokens.Space.xs)
+                ProjectTreeView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

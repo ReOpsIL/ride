@@ -47,8 +47,38 @@ enum TreeActions {
     }
 
     static func trash(_ url: URL) {
+        guard confirmTrash(url) else {
+            return
+        }
         NSWorkspace.shared.recycle([url], completionHandler: nil)
         RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
+    }
+
+    static func run(_ action: TreeAction, url: URL) {
+        switch action {
+        case .rename:
+            rename(url)
+        case .trash:
+            trash(url)
+        }
+    }
+
+    static func handleKey(keyCode: UInt16, url: URL?) -> Bool {
+        guard let url, let action = TreeModel.action(keyCode: keyCode) else {
+            return false
+        }
+        run(action, url: url)
+        return true
+    }
+
+    private static func confirmTrash(_ url: URL) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = "Delete \(url.lastPathComponent)?"
+        alert.informativeText = "The item will be moved to the Trash."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Delete")
+        alert.addButton(withTitle: "Cancel")
+        return alert.runModal() == .alertFirstButtonReturn
     }
 
     static func reveal(_ url: URL) {

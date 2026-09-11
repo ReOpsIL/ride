@@ -66,6 +66,13 @@ enum SelfTestSteps {
             SelfTestStep(name: "zoom", run: { let before = state.prefs.fontSize; state.zoom(1); state.zoomBefore = before }, check: { e.expect(state.prefs.fontSize == state.zoomBefore + 1, "font \(state.prefs.fontSize)") }),
             SelfTestStep(name: "zoom reset", run: { state.resetZoom() }, check: { e.expect(state.prefs.fontSize == Preferences.defaults.fontSize, "font \(state.prefs.fontSize)") }),
             SelfTestStep(name: "recent files", run: {}, check: { e.expect(state.recentFiles.first?.lastPathComponent == "main.rs", "recent \(state.recentFiles)") }),
+            SelfTestStep(name: "tree keys", run: {}, check: {
+                e.expect(
+                    TreeModel.action(keyCode: TreeModel.delete) == .trash
+                        && TreeModel.action(keyCode: TreeModel.return) == .rename,
+                    "delete \(String(describing: TreeModel.action(keyCode: TreeModel.delete))) return \(String(describing: TreeModel.action(keyCode: TreeModel.return)))"
+                )
+            }),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
         ]
     }

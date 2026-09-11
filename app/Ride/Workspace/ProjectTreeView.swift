@@ -1,4 +1,23 @@
+import AppKit
 import SwiftUI
+
+struct ProjectTreeView: View {
+    @EnvironmentObject private var state: AppState
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(state.rootNodes) { node in
+                    TreeRow(node: node, depth: 0)
+                }
+            }
+            .padding(.vertical, Tokens.Space.xs)
+            TreeKeyHost()
+                .frame(width: 1, height: 1)
+                .allowsHitTesting(false)
+        }
+    }
+}
 
 struct TreeRow: View {
     @ObservedObject var node: FileNode
@@ -90,6 +109,7 @@ struct TreeRow: View {
 
     private func select() {
         state.selectedURL = node.url
+        TreeKeyFocus.select(node.url)
     }
 
     private func activate() {
@@ -114,13 +134,59 @@ struct TreeRow: View {
         let dir = WorkspaceFS.parentDir(for: node.url, isDirectory: node.isDirectory)
         Button("New File") { TreeActions.newFile(in: dir) }
         Button("New Folder") { TreeActions.newFolder(in: dir) }
-        Button("Rename") { TreeActions.rename(node.url) }
+        Button("Rename") { TreeActions.run(.rename, url: node.url) }
         Button("Duplicate") { TreeActions.duplicate(node.url) }
-        Button("Delete") { TreeActions.trash(node.url) }
+        Button("Delete") { TreeActions.run(.trash, url: node.url) }
         Divider()
         Button("Copy Path") { TreeActions.copyPath(node.url, root: nil) }
         Button("Copy Relative Path") { TreeActions.copyPath(node.url, root: state.workspaceRoot) }
         Button("Reveal in Finder") { TreeActions.reveal(node.url) }
         Button("Open in Terminal") { TreeActions.openInTerminal(node.url, isDirectory: node.isDirectory) }
+    }
+}
+
+enum TreeKeyFocus {
+    static weak var view: TreeKeyView?
+    static var url: URL?
+
+    static func select(_ url: URL) {
+        self.url = url
+        DispatchQueue.main.async {
+            view?.window?.makeFirstResponder(view)
+        }
+    }
+}
+
+struct TreeKeyHost: NSViewRepresentable {
+    func makeNSView(context: Context) -> TreeKeyView {
+        let view = TreeKeyView()
+        TreeKeyFocus.view = view
+        return view
+    }
+
+    func updateNSView(_ view: TreeKeyView, context: Context) {
+        TreeKeyFocus.view = view
+    }
+}
+
+final class TreeKeyView: NSView {
+    override var acceptsFirstResponder: Bool { true }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window != nil {
+            TreeKeyFocus.view = self
+        }
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        nil
+    }
+
+    override func keyDown(with event: NSEvent) {
+        if TreeActions.handleKey(keyCode: event.keyCode, url: TreeKeyFocus.url) {
+            return
+        }
+        super.keyDown(with: event)
     }
 }
