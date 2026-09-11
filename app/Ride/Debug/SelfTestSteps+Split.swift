@@ -9,9 +9,10 @@ extension SelfTestSteps {
                 state.switchHeaderSource()
                 return
             }
-            state.toggleSplit()
             if let other = state.buffers.first(where: { $0.id != state.activeID }) {
                 state.openInSplit(other.id)
+            } else {
+                state.toggleSplit()
             }
         }, check: {
             let paths = state.paneLayout.panes.compactMap { state.buffer($0.activeID)?.fileURL?.path }

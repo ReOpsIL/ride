@@ -119,6 +119,15 @@ struct SelfTestEditor {
         view.window?.makeFirstResponder(view)
     }
 
+    func activate() {
+        guard let view else {
+            return
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        view.window?.makeKeyAndOrderFront(nil)
+        view.window?.makeFirstResponder(view)
+    }
+
     func type(_ text: String) {
         guard let view else {
             return
@@ -131,7 +140,45 @@ struct SelfTestEditor {
         }
     }
 
+    func place(on needle: String, atEnd: Bool = false) {
+        guard let view else {
+            return
+        }
+        let range = (view.string as NSString).range(of: needle)
+        guard range.location != NSNotFound else {
+            return
+        }
+        let loc = atEnd ? NSMaxRange(range) : range.location
+        view.setSelectedRange(NSRange(location: loc, length: 0))
+    }
+
     func expect(_ condition: Bool, _ message: @autoclosure () -> String) -> String? {
         condition ? nil : message()
+    }
+}
+
+final class SelfTestScratch {
+    var body = ""
+    var next = ""
+}
+
+struct SelfTestOpened {
+    let bodyLine: Int
+    let goToLine: Int
+    let fileName: String
+    let filePath: String
+
+    static func from(_ state: AppState) -> SelfTestOpened {
+        let url = state.activeBuffer?.fileURL
+        let name = url?.lastPathComponent ?? "main.rs"
+        let relative = url.flatMap { file in
+            state.workspaceRoot.map { WorkspaceFS.relativePath(root: $0, file: file) }
+        }
+        switch state.activeBuffer?.language ?? BufferLanguage.of(url) {
+        case .c, .cpp:
+            return SelfTestOpened(bodyLine: 15, goToLine: 30, fileName: name, filePath: relative ?? "src/shapes.cpp")
+        default:
+            return SelfTestOpened(bodyLine: 10, goToLine: 15, fileName: name, filePath: relative ?? "src/main.rs")
+        }
     }
 }

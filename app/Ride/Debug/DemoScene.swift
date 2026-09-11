@@ -37,7 +37,7 @@ enum DemoScene {
             editor(state)
             DemoLaunch.after(1.0) { state.showToolsSheet = true }
         case "selftest":
-            editor(state, file: DemoLaunch.file ?? "src/main.rs")
+            editor(state, file: DemoLaunch.file ?? defaultEditorFile(state))
             DemoLaunch.after(1.5) { DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt") }
         case "hover":
             editor(state)
@@ -78,6 +78,14 @@ enum DemoScene {
         }
         EditorPanes.shared.focused?.jump(toLine: 1 + step * 400)
         DemoLaunch.after(0.1) { autoScroll(step: step + 1) }
+    }
+
+    private static func defaultEditorFile(_ state: AppState) -> String {
+        guard let root = state.workspaceRoot else {
+            return "src/main.rs"
+        }
+        let candidates = ["src/main.rs", "src/shapes.cpp", "src/main.cpp"]
+        return candidates.first { FileManager.default.fileExists(atPath: root.appendingPathComponent($0).path) } ?? "src/main.rs"
     }
 
     private static func editor(_ state: AppState, file: String = "src/main.rs", line: Int = 9) {

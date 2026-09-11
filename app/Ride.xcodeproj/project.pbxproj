@@ -152,6 +152,8 @@
 		D19100000000000000000002 /* PeekPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000001 /* PeekPanel.swift */; };
 		D19100000000000000000004 /* PeekController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000003 /* PeekController.swift */; };
 		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
+		D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000001 /* SelfTestSteps+Rust.swift */; };
+		D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000003 /* SelfTestSteps+Cpp.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
 		F10000000000000000000002 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
@@ -467,6 +469,8 @@
 		D19100000000000000000001 /* PeekPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekPanel.swift; sourceTree = "<group>"; };
 		D19100000000000000000003 /* PeekController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekController.swift; sourceTree = "<group>"; };
 		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
+		D19200000000000000000001 /* SelfTestSteps+Rust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rust.swift"; sourceTree = "<group>"; };
+		D19200000000000000000003 /* SelfTestSteps+Cpp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Cpp.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
 		F10000000000000000000001 /* PaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayout.swift"; sourceTree = "<group>"; };
@@ -978,6 +982,8 @@
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
+				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
+				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
@@ -1307,6 +1313,8 @@
 				EA0000000000000000000006 /* ToolsInstallView.swift in Sources */,
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
+				D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */,
+				D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
 				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,
