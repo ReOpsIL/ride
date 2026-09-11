@@ -8,6 +8,7 @@ mod index;
 mod kind;
 mod project;
 mod query;
+mod run;
 mod session;
 mod symbol;
 mod tools;
@@ -26,6 +27,7 @@ pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,
     QueryMode,
 };
+pub use run::SingleRun;
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
