@@ -53,10 +53,9 @@ extension SessionService {
         }
     }
 
-    func quickDoc(path: String, byte: UInt32, name: String? = nil, done: @escaping (QuickDoc?) -> Void) {
+    func quickDoc(path: String, byte: UInt32, done: @escaping (QuickDoc?) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             let text = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
-            let at = Self.nameByte(in: text, name: name, from: byte)
             let engine = RideEngineClient.shared.engine
             let opened = try? engine?.openSession(
                 bufferId: UUID().uuidString,
@@ -64,7 +63,7 @@ extension SessionService {
                 text: text,
                 visible: nil
             )
-            let doc = opened.flatMap { engine?.quickDoc(sessionId: $0.sessionId, cursorByte: at) }
+            let doc = opened.flatMap { engine?.quickDoc(sessionId: $0.sessionId, cursorByte: byte) }
             if let id = opened?.sessionId {
                 engine?.closeSession(sessionId: id)
             }
@@ -72,18 +71,5 @@ extension SessionService {
                 done(doc)
             }
         }
-    }
-
-    private static func nameByte(in text: String, name: String?, from byte: UInt32) -> UInt32 {
-        guard let name, !name.isEmpty else {
-            return byte
-        }
-        let ns = text as NSString
-        let from = min(Utf16.utf16Offset(in: text, utf8: Int(byte)), ns.length)
-        let range = ns.range(of: name, options: [], range: NSRange(location: from, length: ns.length - from))
-        guard range.location != NSNotFound else {
-            return byte
-        }
-        return UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
     }
 }

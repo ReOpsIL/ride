@@ -40,6 +40,7 @@ pub fn to_document(fields: &IndexFields, item: &ItemDoc, hash: &str) -> TantivyD
         fields.source_path => source_path.as_str(),
         fields.byte_start => u64::from(item.byte_range.0),
         fields.byte_end => u64::from(item.byte_range.1),
+        fields.name_byte => u64::from(item.name_start_byte),
         fields.content_hash => hash,
         fields.scope => scope_label(item.scope),
         fields.name_prefix => item.name.as_str(),

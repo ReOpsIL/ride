@@ -44,6 +44,7 @@ pub fn doc_hit(
         source_path: field("source_path"),
         byte_start: field_u32(&doc, schema, "byte_start"),
         byte_end: field_u32(&doc, schema, "byte_end"),
+        name_byte: field_u32(&doc, schema, "name_byte"),
         score,
     })
 }

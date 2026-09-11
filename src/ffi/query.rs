@@ -65,6 +65,7 @@ pub struct CompletionHit {
     pub source_path: Option<String>,
     pub byte_start: Option<u32>,
     pub byte_end: Option<u32>,
+    pub name_byte: Option<u32>,
     pub score: f32,
 }
 
@@ -89,6 +90,7 @@ impl CompletionHit {
         hit.doc_first_sentence = first_sentence(&item.doc);
         hit.doc_paragraph = item.doc.clone();
         hit.source_path = source_path;
+        hit.name_byte = Some(item.name_start_byte);
         hit
     }
 
@@ -111,6 +113,7 @@ impl CompletionHit {
             source_path: None,
             byte_start: range.map(|r| r.0),
             byte_end: range.map(|r| r.1),
+            name_byte: range.map(|r| r.0),
             score,
         }
     }

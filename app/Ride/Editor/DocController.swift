@@ -70,12 +70,13 @@ final class DocController {
             return
         }
         openedAt = IdentifierRange.at(view.string as NSString, index: view.selectedRange().location)
-        if let path = hit.sourcePath, let byte = hit.byteStart, !Self.same(path, binding.document.fileURL?.path) {
-            fetch(path: path, byte: byte, name: hit.name, view: view)
+        let byte = hit.nameByte ?? hit.byteStart
+        if let path = hit.sourcePath, let byte, !Self.same(path, binding.document.fileURL?.path) {
+            fetch(path: path, byte: byte, view: view)
             return
         }
         let caret = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
-        fetch(document: binding.document, view: view, byte: hit.byteStart ?? caret)
+        fetch(document: binding.document, view: view, byte: byte ?? caret)
     }
 
     func showExternal(in view: RideTextView) {
@@ -156,10 +157,10 @@ final class DocController {
         }
     }
 
-    private func fetch(path: String, byte: UInt32, name: String, view: RideTextView) {
+    private func fetch(path: String, byte: UInt32, view: RideTextView) {
         generation += 1
         let expected = generation
-        SessionService.shared.quickDoc(path: path, byte: byte, name: name) { [weak self, weak view] doc in
+        SessionService.shared.quickDoc(path: path, byte: byte) { [weak self, weak view] doc in
             guard let self, let view, expected == self.generation, let doc else {
                 return
             }

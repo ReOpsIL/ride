@@ -98,12 +98,14 @@ pub fn enumerators(table: &mut TypeTable, node: Node<'_>, text: &str) {
         .filter(|c| c.kind() == "enumerator")
         .filter_map(|c| c.child_by_field_name("name").map(|n| (c, n)))
         .map(|(c, n)| {
-            OutlineItem::new(
+            let mut item = OutlineItem::new(
                 node_text(n, text),
                 ItemKind::Variant,
                 c.start_byte() as u32,
                 c.end_byte() as u32,
-            )
+            );
+            item.name_start_byte = n.start_byte() as u32;
+            item
         })
         .collect();
     table.add_members(node_text(name, text), items);

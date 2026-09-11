@@ -40,6 +40,7 @@ pub struct ItemDoc {
     pub source_chunk: String,
     pub source_path: PathBuf,
     pub byte_range: (u32, u32),
+    pub name_start_byte: u32,
     pub edition: Option<String>,
     pub features: Vec<String>,
     pub visibility: Visibility,
@@ -55,6 +56,7 @@ pub struct ItemParts {
     pub vis: Visibility,
     pub source_path: PathBuf,
     pub byte_range: (u32, u32),
+    pub name_start_byte: u32,
     pub signature: String,
     pub doc: String,
     pub chunk: String,
@@ -75,6 +77,7 @@ impl ItemDoc {
             source_chunk: parts.chunk,
             source_path: parts.source_path,
             byte_range: parts.byte_range,
+            name_start_byte: parts.name_start_byte,
             edition: ctx.edition.clone(),
             features: ctx.features.clone(),
             visibility: parts.vis,
@@ -95,6 +98,23 @@ pub fn join_path(module: &[String], name: &str) -> String {
 
 pub fn byte_range(node: tree_sitter::Node<'_>) -> (u32, u32) {
     (node.start_byte() as u32, node.end_byte() as u32)
+}
+
+pub fn name_start_byte(node: tree_sitter::Node<'_>, name: &str, source: &str) -> u32 {
+    let mut cur = node.child_by_field_name("name");
+    while let Some(n) = cur {
+        match n.child_by_field_name("name") {
+            Some(inner) => cur = Some(inner),
+            None => return n.start_byte() as u32,
+        }
+    }
+    let start = node.start_byte();
+    let end = node.end_byte().min(source.len());
+    source
+        .get(start..end)
+        .and_then(|s| s.find(name))
+        .map(|i| (start + i) as u32)
+        .unwrap_or(start as u32)
 }
 
 pub fn field_text(node: tree_sitter::Node<'_>, field: &str, source: &str) -> Option<String> {

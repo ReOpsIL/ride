@@ -35,6 +35,7 @@ pub struct OutlineItem {
     pub kind: ItemKind,
     pub start_byte: u32,
     pub end_byte: u32,
+    pub name_start_byte: u32,
     pub signature: String,
     pub doc: String,
 }
@@ -46,6 +47,7 @@ impl OutlineItem {
             kind,
             start_byte,
             end_byte,
+            name_start_byte: start_byte,
             signature: String::new(),
             doc: String::new(),
         }

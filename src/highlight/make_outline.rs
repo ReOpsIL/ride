@@ -44,11 +44,13 @@ fn targets(rule: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
 
 fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if !name.is_empty() {
+        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
         out.push(OutlineItem {
             name,
             kind,
             start_byte: node.start_byte() as u32,
             end_byte: node.end_byte() as u32,
+            name_start_byte,
             signature: first_line(&node_text(node, text)),
             doc: String::new(),
         });

@@ -174,11 +174,13 @@ fn headings(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
             .unwrap_or("")
             .trim()
             .to_string();
+        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
         out.push(OutlineItem {
             name,
             kind: ItemKind::Heading,
             start_byte: node.start_byte() as u32,
             end_byte: node.end_byte() as u32,
+            name_start_byte,
             signature: String::new(),
             doc: String::new(),
         });

@@ -30,3 +30,19 @@ pub fn node_text(node: Node<'_>, text: &str) -> String {
         .unwrap_or_default()
         .to_string()
 }
+
+pub fn name_start_byte(node: Node<'_>, name: &str, text: &str) -> u32 {
+    let mut cur = node.child_by_field_name("name");
+    while let Some(n) = cur {
+        match n.child_by_field_name("name") {
+            Some(inner) => cur = Some(inner),
+            None => return n.start_byte() as u32,
+        }
+    }
+    let start = node.start_byte();
+    let end = node.end_byte().min(text.len());
+    text.get(start..end)
+        .and_then(|s| s.find(name))
+        .map(|i| (start + i) as u32)
+        .unwrap_or(start as u32)
+}

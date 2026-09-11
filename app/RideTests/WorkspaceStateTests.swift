@@ -119,4 +119,12 @@ final class WorkspaceStateTests: XCTestCase {
         let legacy = SplitState(ratio: 0.5)
         XCTAssertEqual(legacy.tabs(ids: ids, leftover: [a, b, c]), [[a, b, c], []])
     }
+
+    func testSplitStateDedupesPathListedInTwoPanes() {
+        let a = UUID()
+        let b = UUID()
+        let split = SplitState(panes: [["/a.rs", "/b.rs"], ["/a.rs"]], focused: 1, ratio: 0.5)
+        let ids = ["/a.rs": a, "/b.rs": b]
+        XCTAssertEqual(split.tabs(ids: ids, leftover: [a]), [[a, b], []])
+    }
 }

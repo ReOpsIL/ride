@@ -116,7 +116,10 @@ struct SplitState: Codable, Equatable {
     }
 
     func tabs(ids: [String: UUID], leftover: [UUID]) -> [[UUID]] {
-        var tabs = panes.map { $0.compactMap { ids[$0] } }
+        var seen = Set<String>()
+        var tabs = panes.map { pane in
+            pane.filter { seen.insert($0).inserted }.compactMap { ids[$0] }
+        }
         if tabs.count < 2 {
             tabs += Array(repeating: [], count: 2 - tabs.count)
         }

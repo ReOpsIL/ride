@@ -2,7 +2,10 @@ import AppKit
 import WebKit
 
 final class DocWebView: NSObject, WKNavigationDelegate {
-    private static let baseURL = URL(string: "https://ride.invalid/")!
+    private static let baseURL =
+        URL(string: "https://ride.invalid/")
+        ?? URL(string: "about:blank")
+        ?? URL(fileURLWithPath: "/")
     let view: WKWebView
     var onLink: ((String) -> Void)?
     private let proxy: DocScriptProxy

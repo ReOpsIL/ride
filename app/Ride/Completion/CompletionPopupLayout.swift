@@ -4,7 +4,6 @@ final class CompletionPopupLayout: NSView {
     static let listWidth: CGFloat = 520
     static let footerHeight: CGFloat = 20
     static let maxRows = 10
-    static let maxWideHeight: CGFloat = 420
     static let topInset = Tokens.Space.xs
     static let hints = "↩ accept   ⇥ accept   esc dismiss   ⌘click source   ⌘I docs"
     static var initialSize: NSSize {
@@ -16,9 +15,6 @@ final class CompletionPopupLayout: NSView {
     let doc = CompletionDocCard(frame: .zero)
     private let footer = NSTextField(labelWithString: CompletionPopupLayout.hints)
     var showsDoc = false
-    var wide = false {
-        didSet { doc.expanded = wide }
-    }
     var truncated = false {
         didSet { footer.stringValue = truncated ? "…more results, keep typing   ·   " + Self.hints : Self.hints }
     }
@@ -58,7 +54,7 @@ final class CompletionPopupLayout: NSView {
         guard showsDoc else {
             return 0
         }
-        return wide ? CompletionDocCard.wideWidth : CompletionDocCard.width
+        return CompletionDocCard.width
     }
 
     static func listHeight(rows: Int) -> CGFloat {
@@ -66,10 +62,7 @@ final class CompletionPopupLayout: NSView {
     }
 
     func size(rows: Int) -> NSSize {
-        var body = Self.listHeight(rows: rows)
-        if showsDoc, wide {
-            body = min(max(body, doc.requiredHeight(width: docWidth)), Self.maxWideHeight)
-        }
+        let body = Self.listHeight(rows: rows)
         return NSSize(width: Self.listWidth + docWidth, height: Self.topInset + body + Self.footerHeight)
     }
 

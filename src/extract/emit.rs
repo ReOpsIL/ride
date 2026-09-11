@@ -8,6 +8,7 @@ use super::attrs::{derive_name, has_attr, is_deprecated};
 use super::docs::{preceding_docs, signature, source_chunk};
 use super::item::{
     CrateContext, ItemDoc, ItemParts, Visibility, byte_range, field_text, join_path,
+    name_start_byte,
 };
 use super::reach::Assoc;
 use super::vis::{effective_vis, visibility};
@@ -103,6 +104,7 @@ pub fn make_item(
     vis: Visibility,
     node: Node<'_>,
 ) -> ItemDoc {
+    let name_at = name_start_byte(node, &name, args.source);
     ItemDoc::from_ctx(
         args.ctx,
         ItemParts {
@@ -112,6 +114,7 @@ pub fn make_item(
             vis,
             source_path: args.file.to_path_buf(),
             byte_range: byte_range(node),
+            name_start_byte: name_at,
             signature: signature(node, args.source),
             doc: preceding_docs(node, args.source),
             chunk: source_chunk(node, args.source),

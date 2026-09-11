@@ -54,6 +54,10 @@ fn catalog_symbol_resolves_to_source() {
             .ends_with("collections.rs")
     );
     assert!(hit.byte_end.unwrap() > hit.byte_start.unwrap());
+    let src = std::fs::read_to_string(hit.source_path.as_deref().unwrap()).unwrap();
+    let at = hit.name_byte.expect("name_byte") as usize;
+    assert_eq!(src.get(at..at + hit.name.len()), Some("HashMap"));
+    assert_ne!(hit.name_byte, hit.byte_start);
 }
 
 #[test]
@@ -67,6 +71,7 @@ fn local_definition_comes_first() {
     assert_eq!(hit.name, "helper");
     assert!(hit.source_path.is_none());
     assert_eq!(hit.byte_start, Some(TEXT.find("fn helper").unwrap() as u32));
+    assert_eq!(hit.name_byte, Some(TEXT.find("helper").unwrap() as u32));
 }
 
 #[test]
@@ -148,4 +153,33 @@ fn long_function_is_truncated() {
     assert!(got[0].truncated);
     assert_eq!(got[0].text.lines().count(), 60);
     assert!(got[0].text.starts_with("fn huge()"));
+}
+
+#[test]
+fn catalog_hit_name_byte_is_identifier() {
+    let (_dir, engine) = engine();
+    let open = engine
+        .open_session("buf".into(), None, TEXT.into(), None)
+        .unwrap();
+    let resp = engine.find_definitions(open.session_id, byte_of("HashMap<", 0));
+    let hit = &resp.hits[0];
+    let path = hit.source_path.clone().expect("source_path");
+    let src = std::fs::read_to_string(&path).unwrap();
+    let name_at = hit.name_byte.expect("name_byte");
+    let at = name_at as usize;
+    assert_eq!(src.get(at..at + hit.name.len()), Some("HashMap"));
+    let src_open = engine
+        .open_session("src".into(), Some(path), src, None)
+        .unwrap();
+    assert!(engine.quick_doc(src_open.session_id, name_at).is_some());
+    assert!(
+        engine
+            .quick_doc(src_open.session_id, hit.byte_start.unwrap())
+            .is_some()
+    );
+    assert!(
+        !engine
+            .quick_definition(src_open.session_id, hit.byte_start.unwrap())
+            .is_empty()
+    );
 }

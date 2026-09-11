@@ -2,16 +2,12 @@ import AppKit
 
 final class CompletionDocCard: NSView {
     static let width: CGFloat = 300
-    static let wideWidth: CGFloat = 450
     private let signature = NSTextField(wrappingLabelWithString: "")
     private let doc = NSTextField(wrappingLabelWithString: "")
     private let origin = NSTextField(labelWithString: "")
     private let hint = NSTextField(labelWithString: "⌘-click to open")
     private let footer = NSStackView()
     private let separator = NSView()
-    var expanded = false {
-        didSet { doc.maximumNumberOfLines = expanded ? 0 : 8 }
-    }
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -74,19 +70,5 @@ final class CompletionDocCard: NSView {
         doc.stringValue = text.isEmpty ? "No documentation" : text
         origin.stringValue = CompletionRowStyle.docOrigin(hit)
         hint.isHidden = hit.sourcePath == nil
-    }
-
-    func requiredHeight(width: CGFloat) -> CGFloat {
-        let inset = Tokens.Space.l
-        let textWidth = width - inset * 2
-        var height = inset * 2 + origin.intrinsicContentSize.height
-        if !hint.isHidden {
-            height += hint.intrinsicContentSize.height + Tokens.Space.xxs
-        }
-        for field in [signature, doc] where !field.stringValue.isEmpty {
-            field.preferredMaxLayoutWidth = textWidth
-            height += field.sizeThatFits(NSSize(width: textWidth, height: 4000)).height + Tokens.Space.m
-        }
-        return height
     }
 }

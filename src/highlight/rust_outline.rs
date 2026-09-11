@@ -36,6 +36,7 @@ pub fn from_source(text: &str) -> Option<Vec<OutlineItem>> {
             kind: i.item_kind,
             start_byte: i.byte_range.0,
             end_byte: i.byte_range.1,
+            name_start_byte: i.name_start_byte,
             signature: i.signature,
             doc: i.doc_first_paragraph,
         })

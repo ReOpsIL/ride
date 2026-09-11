@@ -97,7 +97,7 @@ fn function(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     if let Some(declarator) = node.child_by_field_name("declarator")
         && let Some((name, _)) = function_name(declarator, text)
     {
-        push(node, name, ItemKind::Fn, out);
+        push(node, name, ItemKind::Fn, text, out);
     }
 }
 
@@ -110,9 +110,9 @@ fn declaration(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     let mut cursor = node.walk();
     for declarator in node.children_by_field_name("declarator", &mut cursor) {
         if let Some((name, _)) = function_name(declarator, text) {
-            push(node, name, ItemKind::Fn, out);
+            push(node, name, ItemKind::Fn, text, out);
         } else if let Some(name) = plain_name(declarator, text) {
-            push(node, name, ItemKind::Static, out);
+            push(node, name, ItemKind::Static, text, out);
         }
     }
 }
@@ -121,24 +121,23 @@ fn typedef(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     let mut cursor = node.walk();
     for declarator in node.children_by_field_name("declarator", &mut cursor) {
         if let Some(name) = plain_name(declarator, text) {
-            push(node, name, ItemKind::Type, out);
+            push(node, name, ItemKind::Type, text, out);
         }
     }
 }
 
 fn named(node: Node<'_>, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if let Some(name) = node.child_by_field_name("name") {
-        push(node, node_text(name, text), kind, out);
+        push(node, node_text(name, text), kind, text, out);
     }
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, out: &mut Vec<OutlineItem>) {
+fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
     if !name.is_empty() {
-        out.push(OutlineItem::new(
-            name,
-            kind,
-            node.start_byte() as u32,
-            node.end_byte() as u32,
-        ));
+        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
+        let mut item =
+            OutlineItem::new(name, kind, node.start_byte() as u32, node.end_byte() as u32);
+        item.name_start_byte = name_start_byte;
+        out.push(item);
     }
 }

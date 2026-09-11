@@ -61,6 +61,7 @@ fn register(table: &mut TypeTable, node: Node<'_>, text: &str, kind: fn(&str) ->
                 child.start_byte() as u32,
                 child.end_byte() as u32,
             );
+            item.name_start_byte = name.start_byte() as u32;
             item.signature = head_text(child, text);
             let detail = child
                 .child_by_field_name("type")

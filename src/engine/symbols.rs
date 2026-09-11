@@ -28,7 +28,9 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
     }
     let snap = engine.read(|i| {
         let session = i.sessions.get(&session_id)?;
-        let symbol = session.symbol_at(cursor_byte)?;
+        let symbol = session
+            .symbol_at(cursor_byte)
+            .or_else(|| outline_symbol(session.outline(), cursor_byte))?;
         let local: Vec<CompletionHit> = session
             .outline()
             .iter()
@@ -113,4 +115,17 @@ fn include_definition(
 
 fn outline_hit(item: &OutlineItem) -> CompletionHit {
     CompletionHit::from_outline(item, LOCAL_SCORE, None)
+}
+
+fn outline_symbol(outline: &[OutlineItem], byte: u32) -> Option<SymbolAt> {
+    let item = outline
+        .iter()
+        .find(|o| o.name_start_byte == byte || o.start_byte == byte)?;
+    let start = item.name_start_byte;
+    Some(SymbolAt {
+        name: item.name.clone(),
+        start_byte: start,
+        end_byte: start.saturating_add(item.name.len() as u32),
+        qualifier: None,
+    })
 }

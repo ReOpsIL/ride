@@ -184,6 +184,7 @@ fn crate_item(pkg: &Package, crate_root: &Path, ctx: &CrateContext) -> ItemDoc {
             vis: Visibility::Pub,
             source_path: crate_root.join("Cargo.toml"),
             byte_range: (0, 0),
+            name_start_byte: 0,
             signature: String::new(),
             doc: pkg.description.clone().unwrap_or_default(),
             chunk: String::new(),

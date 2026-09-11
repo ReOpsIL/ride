@@ -3,7 +3,7 @@ use tantivy::schema::{
     TextOptions,
 };
 
-pub const SCHEMA_VERSION: u32 = 11;
+pub const SCHEMA_VERSION: u32 = 12;
 pub const PREFIX_TOKENIZER: &str = "edge_ngram";
 pub const MAX_GRAM: usize = 20;
 pub const PARENT_PATH: &str = "parent_path";
@@ -29,6 +29,7 @@ pub struct IndexFields {
     pub source_path: Field,
     pub byte_start: Field,
     pub byte_end: Field,
+    pub name_byte: Field,
     pub content_hash: Field,
     pub scope: Field,
     pub name_prefix: Field,
@@ -68,7 +69,8 @@ pub fn build_fields() -> IndexFields {
         visibility: b.add_text_field("visibility", STRING | STORED),
         source_path: b.add_text_field("source_path", STRING | STORED),
         byte_start: b.add_u64_field("byte_start", u64_stored.clone()),
-        byte_end: b.add_u64_field("byte_end", u64_stored),
+        byte_end: b.add_u64_field("byte_end", u64_stored.clone()),
+        name_byte: b.add_u64_field("name_byte", u64_stored),
         content_hash: b.add_text_field("content_hash", STRING | STORED),
         scope: b.add_text_field("scope", STRING | STORED),
         name_prefix: b.add_text_field("name_prefix", prefix.clone()),

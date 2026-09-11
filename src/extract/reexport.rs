@@ -105,6 +105,7 @@ fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
         source_chunk: String::new(),
         source_path: re.source_path.clone(),
         byte_range: re.byte_range,
+        name_start_byte: re.byte_range.0,
         edition: items.first().and_then(|i| i.edition.clone()),
         features: Vec::new(),
         visibility: re.vis,
