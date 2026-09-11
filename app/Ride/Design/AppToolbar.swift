@@ -22,6 +22,9 @@ struct AppToolbar: ToolbarContent {
                 Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
             }
         }
+        ToolbarItem(placement: .automatic) {
+            TargetPicker(state: state, store: state.projectModel)
+        }
         ToolbarItemGroup(placement: .primaryAction) {
             if markdown {
                 Button {
@@ -38,7 +41,7 @@ struct AppToolbar: ToolbarContent {
                 Image(systemName: "play.circle")
             }
             .disabled(!hasWorkspace)
-            .help("Check (⌘B)")
+            .help("Check (⌥⌘B)")
             .accessibilityLabel("Check")
             Button {
                 state.toggleProblems()

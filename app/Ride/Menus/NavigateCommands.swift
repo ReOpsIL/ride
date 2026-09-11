@@ -24,9 +24,9 @@ struct NavigateCommands: Commands {
                 .disabled(!menu.hasEditor)
             Divider()
             Button("Go to Symbol in File…") { state.toggleSymbolInFile() }
-                .keyboardShortcut("r", modifiers: .command)
+                .keyboardShortcut("o", modifiers: [.command, .option])
             Button("Go to Symbol in Project…") { state.toggleSymbolPicker() }
-                .keyboardShortcut("r", modifiers: [.command, .shift])
+                .keyboardShortcut("o", modifiers: [.command, .option, .shift])
             Button("Go to Definition") { state.goToDefinition() }
                 .keyboardShortcut(FunctionKeys.f12, modifiers: [])
             Button("Switch Header / Source") { state.switchHeaderSource() }

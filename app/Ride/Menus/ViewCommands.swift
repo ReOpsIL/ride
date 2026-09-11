@@ -12,6 +12,8 @@ struct ViewCommands: Commands {
                 .keyboardShortcut("7", modifiers: .command)
             Toggle("Problems", isOn: Binding(get: { menu.showProblems }, set: { _ in state.toggleProblems() }))
                 .keyboardShortcut("6", modifiers: .command)
+            Toggle("Run Output", isOn: Binding(get: { menu.showRunOutput }, set: { _ in state.toggleRunOutput() }))
+                .keyboardShortcut("4", modifiers: .command)
             Button("Toggle Markdown Preview") { state.togglePreview() }
                 .keyboardShortcut("v", modifiers: [.command, .shift])
                 .disabled(!menu.previewAvailable)

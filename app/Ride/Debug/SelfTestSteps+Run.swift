@@ -12,6 +12,28 @@ extension SelfTestSteps {
         })
     }
 
+    static func buildTarget(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "build target", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 180, run: {
+            state.runAction(.build)
+        }, check: {
+            e.expect(
+                state.runOutput.status == "exit 0" && state.runOutput.text.contains("Finished"),
+                "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(200))"
+            )
+        })
+    }
+
+    static func runTarget(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "run target", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 120, run: {
+            state.runAction(.run)
+        }, check: {
+            e.expect(
+                state.runOutput.status == "exit 0" && state.runOutput.text.contains("ride: 1"),
+                "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(200))"
+            )
+        })
+    }
+
     static func runOutputLinks(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "run output link", wait: 0.4, run: {
             state.runOutput.append("  --> src/main.rs:12:5")

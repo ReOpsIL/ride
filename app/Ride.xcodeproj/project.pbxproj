@@ -335,6 +335,16 @@
 		Q10000000000000000000008 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
 		Q10000000000000000000009 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
 		Q1000000000000000000000A /* RunConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000007 /* RunConfigTests.swift */; };
+		Q30000000000000000000002 /* RunPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000001 /* RunPlan.swift */; };
+		Q30000000000000000000006 /* RunPlan+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000005 /* RunPlan+Engine.swift */; };
+		Q30000000000000000000008 /* AppState+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000007 /* AppState+Run.swift */; };
+		Q3000000000000000000000A /* RunCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000009 /* RunCommands.swift */; };
+		Q3000000000000000000000C /* RunConfigSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000B /* RunConfigSheet.swift */; };
+		Q3000000000000000000000E /* RunConfigDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000D /* RunConfigDraft.swift */; };
+		Q30000000000000000000010 /* ProjectModelStore+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000F /* ProjectModelStore+Run.swift */; };
+		Q30000000000000000000012 /* TargetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000011 /* TargetPicker.swift */; };
+		Q30000000000000000000003 /* RunPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000001 /* RunPlan.swift */; };
+		Q30000000000000000000014 /* RunPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000013 /* RunPlanTests.swift */; };
 		A00000000000000000000182 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
 		A00000000000000000000184 /* TreeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000183 /* TreeModelTests.swift */; };
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
@@ -494,6 +504,15 @@
 		Q10000000000000000000003 /* RunConfig+Sanitizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Sanitizers.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000005 /* RunConfig+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Engine.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000007 /* RunConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigTests.swift; sourceTree = "<group>"; };
+		Q30000000000000000000001 /* RunPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunPlan.swift; sourceTree = "<group>"; };
+		Q30000000000000000000005 /* RunPlan+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunPlan+Engine.swift"; sourceTree = "<group>"; };
+		Q30000000000000000000007 /* AppState+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Run.swift"; sourceTree = "<group>"; };
+		Q30000000000000000000009 /* RunCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunCommands.swift; sourceTree = "<group>"; };
+		Q3000000000000000000000B /* RunConfigSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigSheet.swift; sourceTree = "<group>"; };
+		Q3000000000000000000000D /* RunConfigDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigDraft.swift; sourceTree = "<group>"; };
+		Q3000000000000000000000F /* ProjectModelStore+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectModelStore+Run.swift"; sourceTree = "<group>"; };
+		Q30000000000000000000011 /* TargetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPicker.swift; sourceTree = "<group>"; };
+		Q30000000000000000000013 /* RunPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunPlanTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
@@ -744,6 +763,7 @@
 				A00000000000000000000183 /* TreeModelTests.swift */,
 				P20000000000000000000009 /* TargetRowsTests.swift */,
 				Q10000000000000000000007 /* RunConfigTests.swift */,
+				Q30000000000000000000013 /* RunPlanTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
@@ -849,6 +869,12 @@
 				Q2000000000000000000000B /* AppState+RunOutput.swift */,
 				Q20000000000000000000011 /* AnsiSpans.swift */,
 				Q20000000000000000000014 /* ConsoleLinks.swift */,
+				Q30000000000000000000001 /* RunPlan.swift */,
+				Q30000000000000000000005 /* RunPlan+Engine.swift */,
+				Q30000000000000000000007 /* AppState+Run.swift */,
+				Q30000000000000000000009 /* RunCommands.swift */,
+				Q3000000000000000000000B /* RunConfigSheet.swift */,
+				Q3000000000000000000000D /* RunConfigDraft.swift */,
 			);
 			path = Run;
 			sourceTree = "<group>";
@@ -859,6 +885,8 @@
 				P20000000000000000000001 /* TargetRows.swift */,
 				P20000000000000000000003 /* ProjectModelStore.swift */,
 				P20000000000000000000005 /* TargetsPanel.swift */,
+				Q3000000000000000000000F /* ProjectModelStore+Run.swift */,
+				Q30000000000000000000011 /* TargetPicker.swift */,
 			);
 			path = Project;
 			sourceTree = "<group>";
@@ -1336,6 +1364,8 @@
 				Q10000000000000000000008 /* RunConfig.swift in Sources */,
 				Q10000000000000000000009 /* RunConfig+Sanitizers.swift in Sources */,
 				Q1000000000000000000000A /* RunConfigTests.swift in Sources */,
+				Q30000000000000000000003 /* RunPlan.swift in Sources */,
+				Q30000000000000000000014 /* RunPlanTests.swift in Sources */,
 				Q20000000000000000000013 /* AnsiSpans.swift in Sources */,
 				Q20000000000000000000016 /* ConsoleLinks.swift in Sources */,
 				Q20000000000000000000022 /* AnsiSpansTests.swift in Sources */,
@@ -1553,6 +1583,14 @@
 				Q10000000000000000000002 /* RunConfig.swift in Sources */,
 				Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */,
 				Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */,
+				Q30000000000000000000002 /* RunPlan.swift in Sources */,
+				Q30000000000000000000006 /* RunPlan+Engine.swift in Sources */,
+				Q30000000000000000000008 /* AppState+Run.swift in Sources */,
+				Q3000000000000000000000A /* RunCommands.swift in Sources */,
+				Q3000000000000000000000C /* RunConfigSheet.swift in Sources */,
+				Q3000000000000000000000E /* RunConfigDraft.swift in Sources */,
+				Q30000000000000000000010 /* ProjectModelStore+Run.swift in Sources */,
+				Q30000000000000000000012 /* TargetPicker.swift in Sources */,
 				Q20000000000000000000002 /* ProcessRunner.swift in Sources */,
 				Q20000000000000000000004 /* RunOutput.swift in Sources */,
 				Q20000000000000000000006 /* RunOutputPanel.swift in Sources */,

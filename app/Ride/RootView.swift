@@ -25,6 +25,9 @@ struct RootView: View {
         .sheet(isPresented: $state.showToolsSheet) {
             ToolsInstallView().environmentObject(state)
         }
+        .sheet(isPresented: $state.showRunConfigSheet) {
+            RunConfigSheet().environmentObject(state)
+        }
         .preferredColorScheme(state.isLightTheme ? .light : .dark)
         .onAppear {
             NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)

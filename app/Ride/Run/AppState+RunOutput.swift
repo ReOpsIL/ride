@@ -18,6 +18,10 @@ extension AppState {
         runOutput.rerun()
     }
 
+    func toggleRunOutput() {
+        showRunOutput.toggle()
+    }
+
     func stopRun() {
         runOutput.stop()
     }
