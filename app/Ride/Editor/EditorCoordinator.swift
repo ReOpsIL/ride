@@ -32,7 +32,6 @@ extension EditorPane {
             document.text = view.string
             document.isDirty = true
             state.noteEdit(view)
-            view.updateCurrentLineHighlight()
             host?.syncGutter()
             publishCursor(view)
             let pending = document.pending
@@ -50,6 +49,7 @@ extension EditorPane {
             } else {
                 CompletionSession.shared.reset()
             }
+            BracketHighlight.update(document: document, view: view)
             state.previewTextChanged(document, text: view.string)
             state.scheduleAutoSave()
         }
@@ -70,7 +70,7 @@ extension EditorPane {
                     view.setSelectedRange(NSRange(location: view.folds.clampCaret(caret.location), length: 0))
                     return
                 }
-                view.updateCurrentLineHighlight()
+                BracketHighlight.update(document: document, view: view)
                 publishCursor(view)
                 CompletionSession.shared.selectionChanged(view: view)
                 SignatureHelpController.shared.caretMoved(document: document, view: view)

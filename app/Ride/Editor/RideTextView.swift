@@ -173,6 +173,7 @@ final class RideTextView: NSTextView {
                 for: next
             )
         }
+        BracketHighlight.restore(self)
     }
 
     private func lineNSRange() -> NSRange {

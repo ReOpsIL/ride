@@ -186,6 +186,7 @@
 		E10000000000000000000017 /* SignatureHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000016 /* SignatureHelpView.swift */; };
 		E10000000000000000000019 /* RideTextView+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000018 /* RideTextView+Edit.swift */; };
 		E1000000000000000000001B /* EditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001A /* EditorCoordinator.swift */; };
+		EB0000000000000000000002 /* BracketHighlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0000000000000000000001 /* BracketHighlight.swift */; };
 		E1000000000000000000001D /* SessionService+Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001C /* SessionService+Query.swift */; };
 		E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000001E /* CompletionTriggerTests.swift */; };
 		E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000020 /* CompletionNarrowingTests.swift */; };
@@ -435,6 +436,7 @@
 		E10000000000000000000016 /* SignatureHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignatureHelpView.swift"; sourceTree = "<group>"; };
 		E10000000000000000000018 /* RideTextView+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Edit.swift"; sourceTree = "<group>"; };
 		E1000000000000000000001A /* EditorCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCoordinator.swift"; sourceTree = "<group>"; };
+		EB0000000000000000000001 /* BracketHighlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BracketHighlight.swift; sourceTree = "<group>"; };
 		E1000000000000000000001C /* SessionService+Query.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Query.swift"; sourceTree = "<group>"; };
 		E1000000000000000000001E /* CompletionTriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionTriggerTests.swift"; sourceTree = "<group>"; };
 		E10000000000000000000020 /* CompletionNarrowingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionNarrowingTests.swift"; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 			children = (
 				E10000000000000000000018 /* RideTextView+Edit.swift */,
 				E1000000000000000000001A /* EditorCoordinator.swift */,
+				EB0000000000000000000001 /* BracketHighlight.swift */,
 				C00E2B0384B23C50A5620F92 /* IndentGuides.swift */,
 				B0355AEC5E462433212D91A0 /* TabItem.swift */,
 				A0000000000000000000012B /* Underlines.swift */,
@@ -1117,6 +1120,7 @@
 				E10000000000000000000017 /* SignatureHelpView.swift in Sources */,
 				E10000000000000000000019 /* RideTextView+Edit.swift in Sources */,
 				E1000000000000000000001B /* EditorCoordinator.swift in Sources */,
+				EB0000000000000000000002 /* BracketHighlight.swift in Sources */,
 				E1000000000000000000001D /* SessionService+Query.swift in Sources */,
 				D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */,
 				D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */,

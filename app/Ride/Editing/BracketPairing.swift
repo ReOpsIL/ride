@@ -7,10 +7,18 @@ enum PairAction: Equatable {
     case none
 }
 
+struct BracketMatch: Equatable {
+    let open: Int
+    let close: Int
+}
+
 enum BracketPairing {
     static let pairs: [String: String] = ["(": ")", "[": "]", "{": "}", "\"": "\"", "'": "'"]
     static let closers: Set<String> = [")", "]", "}", "\"", "'"]
     static let pairableFollowers: Set<String> = [")", "]", "}", ";", ",", " ", "\t", "\n"]
+    static let matchers: [(open: String, close: String)] = [
+        ("(", ")"), ("[", "]"), ("{", "}"), ("<", ">"),
+    ]
 
     static func onType(_ typed: String, text: String, selection: NSRange, language: BufferLanguage) -> PairAction {
         if typed == "'", language == .rust {
@@ -44,6 +52,17 @@ enum BracketPairing {
         return character(source, at: caret) == close
     }
 
+    static func pair(in text: String, caret: Int) -> BracketMatch? {
+        let source = text as NSString
+        let at = [caret, caret - 1].first { loc in
+            character(source, at: loc).flatMap(matcher) != nil
+        }
+        guard let at, let ch = character(source, at: at), let match = matcher(ch) else {
+            return nil
+        }
+        return scan(source, from: at, open: match.open, close: match.close, step: match.opens ? 1 : -1)
+    }
+
     static func isQuote(_ typed: String) -> Bool {
         typed == "\"" || typed == "'"
     }
@@ -57,5 +76,39 @@ enum BracketPairing {
             return nil
         }
         return text.substring(with: NSRange(location: location, length: 1))
+    }
+
+    private static func matcher(_ ch: String) -> (open: String, close: String, opens: Bool)? {
+        if let pair = matchers.first(where: { $0.open == ch }) {
+            return (pair.open, pair.close, true)
+        }
+        if let pair = matchers.first(where: { $0.close == ch }) {
+            return (pair.open, pair.close, false)
+        }
+        return nil
+    }
+
+    private static func scan(
+        _ text: NSString,
+        from start: Int,
+        open: String,
+        close: String,
+        step: Int
+    ) -> BracketMatch? {
+        var depth = 0
+        var i = start
+        while i >= 0, i < text.length {
+            let ch = text.substring(with: NSRange(location: i, length: 1))
+            if ch == open {
+                depth += step
+            } else if ch == close {
+                depth -= step
+            }
+            if depth == 0 {
+                return BracketMatch(open: min(start, i), close: max(start, i))
+            }
+            i += step
+        }
+        return nil
     }
 }
