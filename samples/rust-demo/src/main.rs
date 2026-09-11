@@ -2,7 +2,7 @@ mod util;
 
 use std::collections::HashMap;
 
-use util::Counter;
+use util::{Counter, Recorder};
 
 /// Records a few events and prints the totals.
 fn main() {

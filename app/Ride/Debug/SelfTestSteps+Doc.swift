@@ -70,16 +70,29 @@ extension SelfTestSteps {
         })
     }
 
+    static func quickDefinitionOpen(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "quick definition open", wait: 0.8, run: {
+            if let util = state.workspaceRoot?.appendingPathComponent("src/util.rs") {
+                state.openFile(util)
+            }
+        }, check: {
+            e.expect(e.text.contains("fn record") && e.text.contains("impl Recorder"), "no Recorder impl")
+        })
+    }
+
     static func quickDefinition(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "quick definition", wait: 1.2, run: {
-            placeCaret(e, on: "record")
+            placeCaret(e, on: "record(&mut")
             state.showQuickDefinition()
         }, check: {
             let peek = EditorPanes.shared.focused?.peek
             let text = peek?.excerptText ?? ""
             let labels = peek?.labels ?? []
             return e.expect(
-                peek?.isVisible == true && text.contains("fn record") && labels.count == 2,
+                peek?.isVisible == true
+                    && text.contains("fn record")
+                    && labels.contains("trait")
+                    && labels.contains("impl for Counter"),
                 "visible \(peek?.isVisible ?? false) labels \(labels) text \(text.prefix(160))"
             )
         })
