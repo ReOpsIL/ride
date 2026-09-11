@@ -17,6 +17,7 @@ enum OverlayPanel {
         panel.hasShadow = true
         panel.backgroundColor = .clear
         panel.isOpaque = false
+        panel.isRestorable = false
         return panel
     }
 

@@ -27,6 +27,7 @@ final class PeekPanel {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.isMovableByWindowBackground = true
+        panel.isRestorable = false
         panel.minSize = NSSize(width: 280, height: 160)
         chrome.autoresizingMask = [.width, .height]
         scroll.drawsBackground = false

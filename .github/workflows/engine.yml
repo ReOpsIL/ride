@@ -75,20 +75,23 @@ jobs:
           run() {
             local n="$1" src="$2"
             shift 2
-            local dir report ec
+            local dir report
             dir="$(mktemp -d "${TMPDIR:-/tmp}/ride-selftest-$n.XXXXXX")"
             cp -R "$src" "$dir/demo"
             report="$PWD/target/selftest-$n.txt"
             set +e
-            "$bin" --demo selftest --open "$dir/demo" --report "$report" "$@"
-            ec=$?
+            "$bin" -ApplePersistenceIgnoreState YES --demo selftest --open "$dir/demo" --report "$report" "$@"
             set -e
-            echo "===== $report exit=$ec ====="
-            cat "$report"
-            if [ "$ec" -ne 0 ]; then
-              exit "$ec"
+            echo "===== $report ====="
+            if [ ! -f "$report" ]; then
+              echo "missing report"
+              exit 1
             fi
+            cat "$report"
             if grep -q '^FAIL' "$report"; then
+              exit 1
+            fi
+            if ! grep -q '^EXIT 0$' "$report"; then
               exit 1
             fi
           }

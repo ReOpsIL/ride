@@ -25,6 +25,7 @@ final class DocPanel {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.isMovableByWindowBackground = true
+        panel.isRestorable = false
         panel.minSize = NSSize(width: 280, height: 160)
         chrome.autoresizingMask = [.width, .height]
         chrome.web = web.view

@@ -3,6 +3,7 @@ import SwiftUI
 
 @main
 struct RideApp: App {
+    @NSApplicationDelegateAdaptor(RideAppDelegate.self) private var appDelegate
     private let state: AppState
     private let updater: UpdateController
     @ObservedObject private var menu: MenuModel
@@ -43,5 +44,15 @@ struct RideApp: App {
             PreferencesView()
                 .environmentObject(state)
         }
+    }
+}
+
+final class RideAppDelegate: NSObject, NSApplicationDelegate {
+    func application(_ app: NSApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+        false
+    }
+
+    func application(_ app: NSApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+        false
     }
 }

@@ -40,8 +40,10 @@ final class DemoSelfTest {
     }
 
     private func finish() {
+        let code = results.contains(where: { $0.hasPrefix("FAIL") }) ? 1 : 0
+        results.append("EXIT \(code)")
         writeReport()
-        exit(results.contains(where: { $0.hasPrefix("FAIL") }) ? 1 : 0)
+        NSApp.terminate(nil)
     }
 
     private func writeReport() {

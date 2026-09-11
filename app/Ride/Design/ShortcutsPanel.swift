@@ -20,6 +20,7 @@ enum ShortcutsPanel {
         panel.title = "Keyboard Shortcuts"
         panel.contentView = hosting
         panel.isReleasedWhenClosed = false
+        panel.isRestorable = false
         panel.appearance = NSAppearance(named: ThemeStore.shared.theme.isDark ? .darkAqua : .aqua)
         panel.backgroundColor = ThemeStore.shared.chrome.bgRaised
         panel.center()

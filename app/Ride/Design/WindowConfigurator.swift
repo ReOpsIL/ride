@@ -13,6 +13,7 @@ struct WindowConfigurator: NSViewRepresentable {
     }
 
     func updateNSView(_ view: NSView, context: Context) {
+        view.window?.isRestorable = false
         guard let window = view.window, window.backgroundColor != ts.chrome.bgBase else {
             return
         }
@@ -31,5 +32,6 @@ struct WindowConfigurator: NSViewRepresentable {
         window.isOpaque = true
         window.minSize = NSSize(width: 860, height: 520)
         window.appearance = NSAppearance(named: ts.theme.isDark ? .darkAqua : .aqua)
+        window.isRestorable = false
     }
 }
