@@ -6,6 +6,7 @@ mod edit;
 mod editing;
 mod index;
 mod kind;
+mod project;
 mod query;
 mod session;
 mod symbol;
@@ -20,6 +21,7 @@ pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use kind::{CaptureKind, ItemKind};
+pub use project::{ProjectKind, ProjectModel, Target, TargetKind};
 pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,
     QueryMode,

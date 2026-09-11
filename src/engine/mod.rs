@@ -9,7 +9,7 @@ use crate::discover::workspace_info;
 use crate::error::EngineError;
 use crate::ffi::{
     CompletionQuery, CompletionResponse, EngineConfig, IndexStatus, IndexStatusListener,
-    WorkspaceInfo,
+    ProjectModel, WorkspaceInfo,
 };
 use crate::highlight::BufferSession;
 
@@ -33,6 +33,7 @@ mod lists;
 mod merge;
 mod paths;
 mod postfix;
+mod project;
 mod query;
 mod reach;
 mod rust_members;
@@ -61,6 +62,7 @@ pub(crate) struct Inner {
     pub(crate) headers: Arc<headers::HeaderCache>,
     pub(crate) scopes: reach::ScopeCache,
     pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
+    pub(crate) projects: HashMap<String, ProjectModel>,
 }
 
 #[derive(uniffi::Object)]
@@ -92,6 +94,7 @@ impl Engine {
                 headers: Arc::new(headers::HeaderCache::new(Some(header_store))),
                 scopes: reach::ScopeCache::default(),
                 system_includes: Arc::default(),
+                projects: HashMap::new(),
             }),
         }
     }
