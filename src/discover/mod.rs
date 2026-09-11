@@ -5,7 +5,8 @@ use crate::extract::Scope;
 use crate::ffi::{EngineConfig, WorkspaceInfo};
 
 mod home;
-mod metadata;
+pub(crate) mod metadata;
+mod metadata_json;
 mod name_version;
 mod registry;
 mod sysroot;
