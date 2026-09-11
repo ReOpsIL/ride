@@ -3,18 +3,20 @@ import AppKit
 extension SelfTestSteps {
     static func rust(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
         [setup(e: e, file: file, scratch: scratch)]
-            + rustRun(state: state, e: e)
+            + rustRun(state: state, e: e, scratch: scratch)
             + rustEdit(e: e, file: file, scratch: scratch)
             + rustSelect(e: e)
             + rustTools(state: state, e: e, file: file)
             + rustClose(state: state, e: e, file: file)
     }
 
-    private static func rustRun(state: AppState, e: SelfTestEditor) -> [SelfTestStep] {
+    private static func rustRun(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {
         [
             projectTargets(state: state, e: e),
             buildTarget(state: state, e: e),
             runTarget(state: state, e: e),
+            buildDiagnostic(state: state, e: e, scratch: scratch),
+            buildDiagnosticCleared(state: state, e: e, scratch: scratch),
         ]
     }
 

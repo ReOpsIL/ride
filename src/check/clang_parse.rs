@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::ffi::{Diagnostic, DiagnosticLevel};
 
@@ -19,21 +19,22 @@ struct Location {
     end: Option<(u32, u32)>,
 }
 
-pub fn parse_clang(text: &str) -> Vec<Diagnostic> {
+pub fn parse_clang(text: &str, base: &Path) -> Vec<Diagnostic> {
     let mut offsets = LineOffsets::default();
     let mut seen = HashSet::new();
     text.lines()
-        .filter_map(|line| parse_line(line, &mut offsets))
+        .filter_map(|line| parse_line(line, base, &mut offsets))
         .filter(|d| seen.insert((d.path.clone(), d.byte_start, d.message.clone())))
         .collect()
 }
 
-fn parse_line(line: &str, offsets: &mut LineOffsets) -> Option<Diagnostic> {
+fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diagnostic> {
     let (at, marker, level) = LEVELS
         .iter()
         .filter_map(|(m, l)| line.find(m).map(|i| (i, *m, *l)))
         .min_by_key(|(i, _, _)| *i)?;
-    let loc = location(&line[..at])?;
+    let mut loc = location(&line[..at])?;
+    loc.path = resolve(loc.path, base);
     let (message, code) = split_code(&line[at + marker.len()..]);
     let byte_start = offsets.byte_at(&loc.path, loc.line, loc.column);
     let byte_end = loc
@@ -51,6 +52,13 @@ fn parse_line(line: &str, offsets: &mut LineOffsets) -> Option<Diagnostic> {
         message: message.to_string(),
         code,
     })
+}
+
+fn resolve(path: PathBuf, base: &Path) -> PathBuf {
+    if path.is_absolute() || base.as_os_str().is_empty() {
+        return path;
+    }
+    base.join(path)
 }
 
 fn location(loc: &str) -> Option<Location> {

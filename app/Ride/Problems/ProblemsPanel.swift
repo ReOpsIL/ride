@@ -111,6 +111,13 @@ struct ProblemRow: View {
                 .font(Tokens.mono(11))
                 .foregroundStyle(ts.ui.textTertiary)
                 .lineLimit(1)
+            if diag.origin == .build {
+                Text("build")
+                    .font(Tokens.mono(10))
+                    .foregroundStyle(ts.ui.textTertiary)
+                    .padding(.horizontal, Tokens.Space.xs)
+                    .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
+            }
             if let code = diag.code {
                 Text(code)
                     .font(Tokens.mono(10))

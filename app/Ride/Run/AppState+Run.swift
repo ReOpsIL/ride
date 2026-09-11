@@ -34,7 +34,14 @@ extension AppState {
             showNotice("Nothing to \(action.rawValue) for this project")
             return
         }
-        runInOutput(RunInvocation(argv: plan.argv, workingDir: plan.cwd, env: plan.env))
+        let kind = projectModel.runKind
+        let building = action == .build
+        let argv = building && kind == .cargo ? BuildParse.cargoArgv(plan.argv) : plan.argv
+        BuildSession.shared.cancel()
+        let started = runInOutput(RunInvocation(argv: argv, workingDir: plan.cwd, env: plan.env))
+        if started, building {
+            BuildSession.shared.begin(kind: kind, baseDir: plan.cwd ?? workspaceRoot?.path ?? "")
+        }
     }
 
     func editRunConfig() {

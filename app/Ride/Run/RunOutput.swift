@@ -10,6 +10,8 @@ final class RunOutput: ObservableObject {
     @Published private(set) var command: String?
 
     var onChange: (() -> Void)?
+    var lineFilter: ((String) -> String?)?
+    var onFinish: ((RunFinish) -> Void)?
     private let runner = ProcessRunner()
     private var last: RunInvocation?
     private var queued: RunInvocation?
@@ -71,7 +73,13 @@ final class RunOutput: ObservableObject {
     }
 
     func append(_ line: String) {
-        buffer.append(line)
+        guard let filter = lineFilter else {
+            buffer.append(line)
+            return
+        }
+        if let shown = filter(line) {
+            buffer.append(shown)
+        }
     }
 
     func observeWorkspace(_ publisher: Published<URL?>.Publisher) {
@@ -91,6 +99,7 @@ final class RunOutput: ObservableObject {
             status = message
             append(message)
         }
+        onFinish?(finish)
         onChange?()
         if let next = queued {
             queued = nil

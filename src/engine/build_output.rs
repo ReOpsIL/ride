@@ -13,8 +13,9 @@ impl Engine {
         catch_unwind(AssertUnwindSafe(|| parse_message_line(&root, &line))).unwrap_or_default()
     }
 
-    pub fn parse_clang_output(&self, text: String) -> Vec<Diagnostic> {
-        catch_unwind(AssertUnwindSafe(|| parse_clang(&text))).unwrap_or_default()
+    pub fn parse_clang_output(&self, text: String, base_dir: String) -> Vec<Diagnostic> {
+        let base = PathBuf::from(base_dir);
+        catch_unwind(AssertUnwindSafe(|| parse_clang(&text, &base))).unwrap_or_default()
     }
 }
 

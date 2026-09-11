@@ -34,6 +34,45 @@ extension SelfTestSteps {
         })
     }
 
+    static let buildErrorLine = 13
+    static let buildErrorSuffix = " let _ride_bad: u32 = \"x\";"
+
+    static func buildDiagnostic(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "build diagnostic", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
+            scratch.buildLine = e.line(buildErrorLine)
+            replaceLine(e, buildErrorLine, scratch.buildLine + buildErrorSuffix)
+            state.saveAll()
+            state.runAction(.build)
+        }, check: {
+            let built = CheckService.shared.buildDiagnostics
+            return e.expect(
+                built.count == 1 && built.first?.line == UInt32(buildErrorLine) && built.first?.origin == .build,
+                "built \(built.map { "\($0.line):\($0.message)" }) status \(state.runOutput.status ?? "nil")"
+            )
+        })
+    }
+
+    static func buildDiagnosticCleared(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "build diagnostic cleared", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
+            replaceLine(e, buildErrorLine, scratch.buildLine)
+            state.saveAll()
+            state.runAction(.build)
+        }, check: {
+            e.expect(
+                CheckService.shared.buildDiagnostics.isEmpty
+                    && state.runOutput.status == "exit 0"
+                    && e.line(buildErrorLine) == scratch.buildLine,
+                "built \(CheckService.shared.buildDiagnostics.count) status \(state.runOutput.status ?? "nil") line \(e.line(buildErrorLine))"
+            )
+        })
+    }
+
+    private static func replaceLine(_ e: SelfTestEditor, _ number: Int, _ text: String) {
+        let range = e.lineRange(number)
+        e.view?.setSelectedRange(range)
+        e.view?.insertText(text + "\n", replacementRange: range)
+    }
+
     static func targetSelectionRestore(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "target selection restore", wait: 0.5, run: {
             state.selectTarget(state.projectModel.rows.first { $0.kind == .bin })
