@@ -8,6 +8,7 @@ final class EditorHostView: NSView {
     var paneID = UUID()
     var onViewport: (() -> Void)?
     var docsStorage: DocController?
+    var peekStorage: PeekController?
     private var gutterWidth: NSLayoutConstraint!
 
     override init(frame frameRect: NSRect) {

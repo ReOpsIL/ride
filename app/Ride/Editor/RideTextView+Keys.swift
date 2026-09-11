@@ -37,9 +37,15 @@ extension RideTextView {
             SignatureHelpController.shared.hide()
             return
         }
-        if let docs = EditorPanes.shared.host(for: self)?.docs, docs.isVisible {
-            docs.hide()
-            return
+        if let host = EditorPanes.shared.host(for: self) {
+            if host.peek.isVisible {
+                host.peek.hide()
+                return
+            }
+            if host.docs.isVisible {
+                host.docs.hide()
+                return
+            }
         }
         if CompletionSession.shared.endSnippet() {
             return
@@ -56,6 +62,10 @@ extension RideTextView {
             } else {
                 CompletionSession.shared.trigger(view: self)
             }
+            return
+        }
+        if event.keyCode == 49, event.modifierFlags.contains(.option) {
+            PeekController.showFocused()
             return
         }
         if CheatSheetController.shared.isVisible, handleCheatSheetKey(event) {

@@ -59,6 +59,27 @@ extension SelfTestSteps {
         }, check: { nil })
     }
 
+    static func quickDefinition(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "quick definition", wait: 1.2, run: {
+            placeCaret(e, on: "record")
+            state.showQuickDefinition()
+        }, check: {
+            let peek = EditorPanes.shared.focused?.peek
+            let text = peek?.excerptText ?? ""
+            let labels = peek?.labels ?? []
+            return e.expect(
+                peek?.isVisible == true && text.contains("fn record") && labels.count == 2,
+                "visible \(peek?.isVisible ?? false) labels \(labels) text \(text.prefix(160))"
+            )
+        })
+    }
+
+    static func peekCleanup() -> SelfTestStep {
+        SelfTestStep(name: "peek cleanup", wait: 0.2, run: {
+            EditorPanes.shared.focused?.closeDocs()
+        }, check: { nil })
+    }
+
     static func docPin(e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "doc pin", wait: 0.4, run: {
             EditorPanes.shared.focused?.docs.pin()

@@ -10,15 +10,27 @@ extension EditorHostView {
         return created
     }
 
+    var peek: PeekController {
+        if let peekStorage {
+            return peekStorage
+        }
+        let created = PeekController()
+        peekStorage = created
+        return created
+    }
+
     func closeDocs() {
         docsStorage?.hide()
+        peekStorage?.hide()
     }
 
     func docsCaretMoved() {
         docsStorage?.caretMoved()
+        peekStorage?.caretMoved()
     }
 
     func hideUnpinnedDocs() {
         docsStorage?.hideIfUnpinned()
+        peekStorage?.hideIfUnpinned()
     }
 }

@@ -22,6 +22,9 @@ enum Definitions {
 
 extension AppState {
     func goToDefinition() {
+        if EditorPanes.shared.focused?.peek.openIfVisible() == true {
+            return
+        }
         guard let view = EditorPanes.shared.focusedView, let document = activeBuffer else {
             return
         }

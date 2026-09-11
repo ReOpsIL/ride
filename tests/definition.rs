@@ -91,3 +91,61 @@ fn whitespace_has_no_symbol() {
     assert!(resp.symbol.is_none());
     assert!(resp.hits.is_empty());
 }
+
+fn fresh() -> (tempfile::TempDir, Arc<Engine>) {
+    let dir = tempfile::tempdir().unwrap();
+    let engine = engine_start(EngineConfig {
+        index_dir: dir.path().display().to_string(),
+        cargo_home: None,
+        sysroot: None,
+        offline_metadata: true,
+    });
+    (dir, engine)
+}
+
+fn excerpts(src: &str, path: &str, needle: &str) -> Vec<ride_engine::DefinitionExcerpt> {
+    let (_dir, engine) = fresh();
+    let open = engine
+        .open_session("buf".into(), Some(path.into()), src.into(), None)
+        .unwrap();
+    let at = src.find(needle).expect(needle) as u32 + 1;
+    engine.quick_definition(open.session_id, at)
+}
+
+#[test]
+fn c_prototype_then_definition() {
+    let src = "int add(int a, int b);\nint add(int a, int b) { return a + b; }\nint main(void) { return add(1, 2); }\n";
+    let got = excerpts(src, "/tmp/t.c", "add(1");
+    assert_eq!(got.len(), 2, "{got:?}");
+    assert_eq!(got[0].label, "declaration");
+    assert!(got[0].text.contains("int add(int a, int b);"));
+    assert!(!got[0].text.contains('{'));
+    assert_eq!(got[1].label, "definition");
+    assert!(got[1].text.contains("return a + b"));
+    assert!(!got[0].truncated && !got[1].truncated);
+}
+
+#[test]
+fn rust_trait_method_two_impls() {
+    let src = "trait Znarf { fn znarf(&self); }\nstruct ZA;\nstruct ZB;\nimpl Znarf for ZA { fn znarf(&self) {} }\nimpl Znarf for ZB { fn znarf(&self) {} }\nfn main() { let a = ZA; a.znarf(); }\n";
+    let got = excerpts(src, "/tmp/t.rs", "znarf();");
+    assert_eq!(got.len(), 3, "{got:?}");
+    assert_eq!(got[0].label, "trait");
+    assert!(got[0].text.contains("fn znarf(&self);"));
+    assert_eq!(got[1].label, "impl for ZA");
+    assert_eq!(got[2].label, "impl for ZB");
+}
+
+#[test]
+fn long_function_is_truncated() {
+    let mut src = String::from("fn huge() {\n");
+    for i in 0..198 {
+        src.push_str(&format!("    let v{i} = {i};\n"));
+    }
+    src.push_str("}\nfn main() { huge(); }\n");
+    let got = excerpts(&src, "/tmp/t.rs", "huge();");
+    assert_eq!(got.len(), 1, "{got:?}");
+    assert!(got[0].truncated);
+    assert_eq!(got[0].text.lines().count(), 60);
+    assert!(got[0].text.starts_with("fn huge()"));
+}

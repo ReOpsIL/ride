@@ -71,14 +71,24 @@ fn markdown(lang: Lang, node: Node<'_>, source: &str) -> Option<String> {
     }
 }
 
-fn parse(lang: Lang, source: &str) -> Option<Tree> {
+pub(crate) fn item_range(lang: Lang, source: &str, byte: usize) -> Option<(usize, usize)> {
+    if source.is_empty() {
+        return None;
+    }
+    let tree = parse(lang, source)?;
+    let last = source.len().saturating_sub(1);
+    let node = item_at(tree.root_node(), byte.min(last))?;
+    Some((node.start_byte(), node.end_byte().min(source.len())))
+}
+
+pub(crate) fn parse(lang: Lang, source: &str) -> Option<Tree> {
     let grammar = lang.grammar()?;
     let mut parser = Parser::new();
     parser.set_language(&grammar.language).ok()?;
     parser.parse(source, None)
 }
 
-fn item_at<'a>(root: Node<'a>, byte: usize) -> Option<Node<'a>> {
+pub(crate) fn item_at<'a>(root: Node<'a>, byte: usize) -> Option<Node<'a>> {
     let mut node = root.descendant_for_byte_range(byte, byte)?;
     loop {
         if ITEMS.contains(&node.kind()) {

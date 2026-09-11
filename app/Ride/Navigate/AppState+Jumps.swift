@@ -55,6 +55,10 @@ extension AppState {
         DocController.showFocused()
     }
 
+    func showQuickDefinition() {
+        PeekController.showFocused()
+    }
+
     func showExternalDocumentation() {
         DocController.showExternalFocused()
     }

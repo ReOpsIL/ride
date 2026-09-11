@@ -1,4 +1,5 @@
 use super::query::CompletionHit;
+use super::session::HighlightSpan;
 
 #[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
 pub struct SymbolAt {
@@ -21,4 +22,15 @@ impl DefinitionResponse {
             hits: Vec::new(),
         }
     }
+}
+
+#[derive(Debug, Clone, uniffi::Record)]
+pub struct DefinitionExcerpt {
+    pub path: String,
+    pub line: u32,
+    pub text: String,
+    pub truncated: bool,
+    pub label: String,
+    pub highlights: Vec<HighlightSpan>,
+    pub byte_start: u32,
 }

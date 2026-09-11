@@ -6,6 +6,11 @@ pub struct Counter {
     counts: HashMap<String, u32>,
 }
 
+/// Records a named event.
+pub trait Recorder {
+    fn record(&mut self, name: &str);
+}
+
 impl Counter {
     /// Creates an empty counter.
     pub fn new() -> Self {

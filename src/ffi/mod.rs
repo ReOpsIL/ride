@@ -27,6 +27,6 @@ pub use query::{
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
-pub use symbol::{DefinitionResponse, SymbolAt};
+pub use symbol::{DefinitionExcerpt, DefinitionResponse, SymbolAt};
 pub use tools::ToolInfo;
 pub use workspace::WorkspaceInfo;

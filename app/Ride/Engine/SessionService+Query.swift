@@ -40,6 +40,19 @@ extension SessionService {
         }
     }
 
+    func quickDefinition(document: BufferDocument, cursorByte: UInt32, done: @escaping ([DefinitionExcerpt]) -> Void) {
+        guard let id = document.sessionId else {
+            done([])
+            return
+        }
+        queue(id).async {
+            let excerpts = RideEngineClient.shared.engine?.quickDefinition(sessionId: id, cursorByte: cursorByte) ?? []
+            DispatchQueue.main.async {
+                done(excerpts)
+            }
+        }
+    }
+
     func quickDoc(path: String, byte: UInt32, done: @escaping (QuickDoc?) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             let text = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""

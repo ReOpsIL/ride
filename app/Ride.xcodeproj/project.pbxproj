@@ -145,6 +145,8 @@
 		D19000000000000000000005 /* DocPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000004 /* DocPanel.swift */; };
 		D19000000000000000000007 /* DocWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000006 /* DocWebView.swift */; };
 		D19000000000000000000009 /* DocController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000008 /* DocController.swift */; };
+		D19100000000000000000002 /* PeekPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000001 /* PeekPanel.swift */; };
+		D19100000000000000000004 /* PeekController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000003 /* PeekController.swift */; };
 		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
@@ -456,6 +458,8 @@
 		D19000000000000000000004 /* DocPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPanel.swift; sourceTree = "<group>"; };
 		D19000000000000000000006 /* DocWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocWebView.swift; sourceTree = "<group>"; };
 		D19000000000000000000008 /* DocController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocController.swift; sourceTree = "<group>"; };
+		D19100000000000000000001 /* PeekPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekPanel.swift; sourceTree = "<group>"; };
+		D19100000000000000000003 /* PeekController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekController.swift; sourceTree = "<group>"; };
 		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
@@ -793,6 +797,8 @@
 				D19000000000000000000004 /* DocPanel.swift */,
 				D19000000000000000000006 /* DocWebView.swift */,
 				D19000000000000000000008 /* DocController.swift */,
+				D19100000000000000000001 /* PeekPanel.swift */,
+				D19100000000000000000003 /* PeekController.swift */,
 				D1900000000000000000000E /* EditorHostView+Docs.swift */,
 				F10000000000000000000001 /* PaneLayout.swift */,
 				F12000000000000000000001 /* SplitLayout.swift */,
@@ -1380,6 +1386,8 @@
 				D19000000000000000000005 /* DocPanel.swift in Sources */,
 				D19000000000000000000007 /* DocWebView.swift in Sources */,
 				D19000000000000000000009 /* DocController.swift in Sources */,
+				D19100000000000000000002 /* PeekPanel.swift in Sources */,
+				D19100000000000000000004 /* PeekController.swift in Sources */,
 				D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */,
 				F10000000000000000000002 /* PaneLayout.swift in Sources */,
 				F12000000000000000000002 /* SplitLayout.swift in Sources */,

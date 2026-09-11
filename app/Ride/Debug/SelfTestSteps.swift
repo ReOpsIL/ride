@@ -85,6 +85,8 @@ enum SelfTestSteps {
             completionDocTrigger(e: e),
             completionDoc(e: e),
             docCleanup(),
+            quickDefinition(state: state, e: e),
+            peekCleanup(),
         ]
     }
 

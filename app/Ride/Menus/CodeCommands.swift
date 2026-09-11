@@ -43,6 +43,9 @@ struct CodeCommands: Commands {
             Button("Quick Documentation") { DocController.showFocused() }
                 .keyboardShortcut(FunctionKeys.f1, modifiers: [])
                 .disabled(!menu.hasEditor)
+            Button("Quick Definition") { PeekController.showFocused() }
+                .keyboardShortcut(.space, modifiers: .option)
+                .disabled(!menu.hasEditor)
             Button("External Documentation") { DocController.showExternalFocused() }
                 .keyboardShortcut(FunctionKeys.f1, modifiers: .shift)
                 .disabled(!menu.hasEditor)

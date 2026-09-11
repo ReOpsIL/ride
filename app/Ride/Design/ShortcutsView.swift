@@ -42,6 +42,7 @@ enum Shortcuts {
         ShortcutEntry(id: "complete", name: "Trigger Completion", keys: "⌃Space"),
         ShortcutEntry(id: "cheat", name: "Cheat Sheet", keys: "⌃⇧Space"),
         ShortcutEntry(id: "doc", name: "Quick Documentation / Signature", keys: "⌃J · ⇧⌘Space"),
+        ShortcutEntry(id: "peek", name: "Quick Definition", keys: "⌥Space"),
         ShortcutEntry(id: "check", name: "Check", keys: "⌘B"),
         ShortcutEntry(id: "panels", name: "Sidebar / Problems / Outline", keys: "⌘1 · ⌘6 · ⌘7"),
         ShortcutEntry(id: "zoom", name: "Zoom In / Out / Reset", keys: "⌘= · ⌘− · ⌃⌘0"),
