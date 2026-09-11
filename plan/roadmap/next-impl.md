@@ -348,6 +348,10 @@ Four findings on commit 2e15771. (1) `app/Ride/Workspace/ManifestWatch.swift` ig
 
 Three defects on commit f7b3484. (1) `ProcessRunner.receive` decodes each pipe chunk on its own, so a multi-byte UTF-8 character split across two reads becomes U+FFFD; keep a byte buffer, decode only up to the last complete line, and carry the remainder (RideTests on a pure `LineSplitter.swift` with a chunk boundary inside a 3-byte character). (2) Once `RunOutput.lines` reaches `maxLines` and rolls, `RunOutputText`'s `rendered` count never falls below `lines.count`, so the view stops appending; track a monotonically increasing line sequence number instead of the array count, drop from the text storage what the model dropped, and replace `removeFirst` with a ring or a chunked drop so the cap is O(1) per line. (3) Nothing stops a running process on workspace switch or close: `open(_:)`, `closeWorkspace` and `watchWorkspaceQuit` call `runOutput.stop()` first. Also narrow `ConsoleLinks` so `host:port` forms with a dotted host (`example.com:8080`) are not links. Acceptance: RideTests for the splitter, the sequence-number append logic (pure part extracted) and the link filter; self-test step: a run of `["sh","-c","seq 1 7000"]` ends with the panel showing line 7000.
 
+### R20 Build session lifecycle (Q4b) — Tier A, after Q5b
+
+`BuildSession.finish()` runs on every run finish regardless of which run produced it and of how it ended: Stop (⌘.) during a build publishes the partial diagnostic set, and "Stop and rerun" lets the old process's finish land on the new session. Fix: `RunOutput` hands each run a monotonically increasing run id and passes it with the exit status to `onFinish`; `BuildSession.begin` records the id it belongs to; `finish` ignores any other id and any `.signalled`/stopped status (it leaves the previous diagnostics untouched); `stopRun` cancels the session explicitly. RideTests on the pure part (extract `BuildSessionState.swift`: begin/finish/cancel with ids and statuses). Self-test step: start a Build, stop it within 200 ms, assert no build diagnostics were published and the panel status says stopped.
+
 ## 9. Release 1.2 cards — project model (2026-09-11)
 
 The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the app only renders. Everything lives under `src/project/` (new module, listed in `src/lib.rs`), exposed through one `Engine::project_model(root: String) -> Result<ProjectModel, EngineError>` and re-read on `Engine::reload_project(root)`.
@@ -429,7 +433,7 @@ Add SwiftTerm as a Swift package (pin the latest 1.x); `app/Ride/Terminal/Termin
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
-| 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b running, then Q5b |
+| 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b merged, reviewed: R20; Q5b and S1 running |
 | 10 | T1, S1 in parallel; then T2 | next |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
