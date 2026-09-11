@@ -261,3 +261,33 @@ Start the executor on cards that are independent of 1.1-1a so the strong model c
 4. After 1.1-1a: 1.1-1b, 1.1-9b, 1.1-10, 1.1-4 d/h/i, 1.1-6b, 1.1-8b, 1.1-3b.
 
 Review checklist for every hand-back: gates pasted; no comments in source; no file grew past ~200 lines; RideTests Sources phase updated for new pure files; no `.commands` block reads `AppState`; no `unwrap` outside `tests/`; the card's "out of scope" list was respected.
+
+---
+
+## 6. Review fixes after batches 1 and 2 (2026-09-11)
+
+Reviews of the thirteen executor commits found the bugs below. Each is one card and one commit, same contract as section 1. Everything not listed was accepted.
+
+### R1 System include detection through the engine (1.1-5) — Tier A
+
+`app/Ride/Editor/BufferLanguage.swift` `isSystemInclude` hardcodes path fragments and every caller passes no directories, so the engine's `SystemIncludes` cache (`src/engine/sessions.rs`) is never consulted. Add `Engine::is_system_path(path: String) -> bool` in `src/engine/sessions.rs` (or a new `system_paths.rs`) backed by that cache, expose it through `src/ffi`, rebuild the engine, and make `BufferLanguage.isReadOnly` and the language sniff call it; delete the hardcoded fragment list. Test in `tests/system_headers.rs`. Also fix `opening_libcxx_vector_is_cpp_with_class_outline`: the libc++ `vector` file is a wrapper include, so assert `Lang::Cpp` on it and assert the `class vector` outline on `<sysroot>/c++/v1/__vector/vector.h` when that file exists, skip otherwise; drop the synthetic snippet.
+
+### R2 Replace in Project safety (1.1-4f) — Tier B
+
+`app/Ride/Search/ProjectReplaceApply.swift`: `writeBuffer` swallows a failed save and reports success while the buffer stays mutated; hits for closed files are applied from the preview-time snapshot. Fix: apply computes each closed file's edits from the file's current contents at apply time, skips a file whose text no longer contains the match and lists it in the result; a failed save leaves the buffer untouched (apply the edit only after a successful write, or revert on failure) and the summary names the files that failed. Extend `ProjectReplaceTests` with a changed-on-disk file being skipped.
+
+### R3 Header-attributed diagnostics are never cleared (1.1-6a) — Tier B
+
+`app/Ride/Engine/CheckService.swift` `ingestClang` replaces only the paths present in the new result, so a diagnostic once attributed to a header stays after the including source is rechecked clean. Fix: `DiagnosticStore` records which source file's check produced each path's C diagnostics; a recheck of source A first drops every path owned by A, then inserts the new ones. Cover it in `DiagnosticStoreTests`.
+
+### R4 Empty workspace snapshot after open (1.1-2) — Tier B
+
+`app/Ride/AppState.swift` `open(_:)` clears `buffers` and `activeID` after `workspaceRoot` already points at the new root; each clear schedules a save, and `restoringWorkspace` then suppresses the saves that would replace it, so 500 ms after opening a workspace the restored tabs are overwritten with an empty snapshot. Fix in `AppState+Workspace.swift`: cancel the pending save work item when the root changes, never schedule while `restoringWorkspace` is set, and schedule one save when restore finishes. Add a test on the pure part if any; otherwise a self-test step: open, restore, wait 1 s, read the state file and assert the tab list is not empty.
+
+### R5 Rust doc block adjacency and HTML shape (1.1-9a) — Tier A
+
+`src/engine/doc_comment.rs` `preceding` merges a doc comment separated by a blank line from the item; the C path's `adjacent` already refuses that. Share the adjacency rule between both paths. `src/engine/docs.rs` `wrap` concatenates an `<h1>` around the rendered body; instead `QuickDoc.html` is exactly `crate::markdown::render(body)` and the title stays in `QuickDoc.title` for the app to render. Add tests in `tests/outline_docs.rs` for the blank-line boundary and for `//!` module docs.
+
+### R6 CI asserts the universal slice (1.1-3a) — Tier A
+
+`.github/workflows/engine.yml` `xcframework` job: after `build-engine.sh`, run `lipo -info` on the static library inside `app/RideEngine.xcframework` and fail unless the output contains both `x86_64` and `arm64`.
