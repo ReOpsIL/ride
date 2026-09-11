@@ -32,7 +32,7 @@ struct TabStrip: View {
             ts.ui.border.frame(height: Tokens.Size.hairline)
         }
         .contentShape(Rectangle())
-        .onDrop(of: [.utf8PlainText, .plainText], isTargeted: nil) { providers in
+        .onDrop(of: [TabPasteboard.type], isTargeted: nil) { providers in
             TabPasteboard.take(providers) { id in
                 state.moveTab(id, to: pane.id)
             }
@@ -41,16 +41,28 @@ struct TabStrip: View {
 }
 
 enum TabPasteboard {
+    static let type = UTType(exportedAs: "dev.ride.tab-id")
+
     static func provider(_ id: UUID) -> NSItemProvider {
-        NSItemProvider(object: id.uuidString as NSString)
+        let provider = NSItemProvider()
+        provider.registerDataRepresentation(forTypeIdentifier: type.identifier, visibility: .ownProcess) { completion in
+            completion(id.uuidString.data(using: .utf8), nil)
+            return nil
+        }
+        return provider
     }
 
     static func take(_ providers: [NSItemProvider], done: @escaping (UUID) -> Void) -> Bool {
-        guard let provider = providers.first else {
+        guard let provider = providers.first,
+              provider.hasItemConformingToTypeIdentifier(type.identifier)
+        else {
             return false
         }
-        _ = provider.loadObject(ofClass: NSString.self) { object, _ in
-            guard let string = object as? String, let id = UUID(uuidString: string) else {
+        provider.loadDataRepresentation(forTypeIdentifier: type.identifier) { data, _ in
+            guard let data,
+                  let string = String(data: data, encoding: .utf8),
+                  let id = UUID(uuidString: string)
+            else {
                 return
             }
             DispatchQueue.main.async {

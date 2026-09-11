@@ -90,7 +90,7 @@ extension AppState {
             tabs: buffers.compactMap(tabState(of:)),
             focusedPath: activeBuffer?.fileURL?.standardizedFileURL.path,
             layout: currentLayout(),
-            split: splitLayout.snapshot
+            split: capturedSplit()
         )
     }
 
@@ -104,18 +104,8 @@ extension AppState {
         applyLayout(saved.layout)
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored
-        paneLayout.reset(tabs: restored.map(\.id), active: focusedID(saved.focusedPath, in: restored))
-        splitLayout = SplitLayout.restore(saved.split)
-        if splitLayout.isSplit {
-            let current = paneLayout.activeID
-            let right = paneLayout.split()
-            if let current {
-                paneLayout.open(current, in: right)
-            }
-            if let left = paneLayout.panes.first?.id {
-                paneLayout.focus(left)
-            }
-        }
+        restoreSplit(saved, restored)
+        syncSplitFocus()
         selectedURL = activeBuffer?.fileURL
         cursorLine = 1
         cursorColumn = 1
@@ -124,33 +114,31 @@ extension AppState {
         scheduleWorkspaceSave()
     }
 
-    private func currentLayout() -> LayoutState {
-        LayoutState(
-            sidebarWidth: prefs.sidebarWidth,
-            outlineWidth: prefs.outlineWidth,
-            problemsHeight: prefs.problemsHeight,
-            previewWidth: prefs.previewWidth,
-            showSidebar: showSidebar,
-            showProblems: showProblems,
-            showPreview: showPreview,
-            outlinePanel: prefs.outlinePanel
+    private func capturedSplit() -> SplitState? {
+        guard splitLayout.isSplit else {
+            return nil
+        }
+        return SplitState.from(
+            ratio: splitLayout.ratio,
+            panes: paneLayout.panes,
+            focused: paneLayout.focusedID,
+            pathOf: { buffer($0)?.fileURL?.standardizedFileURL.path }
         )
     }
 
-    private func applyLayout(_ layout: LayoutState) {
-        let persist = persistLayout
-        persistLayout = false
-        prefs.sidebarWidth = layout.sidebarWidth
-        prefs.outlineWidth = layout.outlineWidth
-        prefs.problemsHeight = layout.problemsHeight
-        prefs.previewWidth = layout.previewWidth
-        prefs.outlinePanel = layout.outlinePanel
-        prefs = prefs.clamped
-        showSidebar = layout.showSidebar
-        showProblems = layout.showProblems
-        showPreview = layout.showPreview
-        persistLayout = persist
-        syncMenu()
+    private func restoreSplit(_ saved: WorkspaceState, _ restored: [BufferDocument]) {
+        splitLayout = SplitLayout.restore(saved.split)
+        guard let split = saved.split, splitLayout.isSplit else {
+            paneLayout.reset(tabs: restored.map(\.id), active: focusedID(saved.focusedPath, in: restored))
+            return
+        }
+        let ids = Dictionary(uniqueKeysWithValues: restored.compactMap { buffer in
+            buffer.fileURL.map { ($0.standardizedFileURL.path, buffer.id) }
+        })
+        paneLayout.restorePanes(split.tabs(ids: ids, leftover: restored.map(\.id)), focused: split.focused)
+        if let focused = focusedID(saved.focusedPath, in: restored) {
+            paneLayout.select(focused)
+        }
     }
 
     private func tabState(of buffer: BufferDocument) -> TabState? {

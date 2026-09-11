@@ -30,6 +30,16 @@ final class SplitLayoutTests: XCTestCase {
         XCTAssertEqual(layout.focused, .left)
     }
 
+    func testRestoreUsesFocusedSideAndRatio() {
+        let right = SplitLayout.restore(SplitState(focused: 1, ratio: 0.4))
+        XCTAssertEqual(right.split, .horizontal(ratio: 0.4))
+        XCTAssertEqual(right.focused, .right)
+        let left = SplitLayout.restore(SplitState(ratio: 0.5))
+        XCTAssertEqual(left.split, .horizontal(ratio: 0.5))
+        XCTAssertEqual(left.focused, .left)
+        XCTAssertEqual(SplitLayout.restore(nil).split, .single)
+    }
+
     func testRatioClamped() {
         var layout = SplitLayout(split: .horizontal(ratio: 0.05))
         XCTAssertEqual(layout.split, .horizontal(ratio: SplitLayout.minRatio))

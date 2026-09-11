@@ -30,8 +30,6 @@ struct NavigateCommands: Commands {
             Button("Go to Definition") { state.goToDefinition() }
                 .keyboardShortcut(FunctionKeys.f12, modifiers: [])
             Button("Switch Header / Source") { state.switchHeaderSource() }
-                .keyboardShortcut(.upArrow, modifiers: [.control, .option])
-            Button("Switch Header / Source") { state.switchHeaderSource() }
                 .keyboardShortcut(FunctionKeys.f10, modifiers: [])
             Divider()
             Button("Next Problem") { state.nextProblem(1) }

@@ -31,7 +31,7 @@ struct ViewCommands: Commands {
                 .disabled(!menu.hasEditor)
             Button("Toggle Split") { state.toggleSplit() }
                 .keyboardShortcut("\\", modifiers: .command)
-                .disabled(!menu.hasEditor)
+                .disabled(!menu.hasEditor && !menu.hasSplit)
             Button("Close Split") { state.closeSplit() }
                 .disabled(!menu.hasSplit)
         }

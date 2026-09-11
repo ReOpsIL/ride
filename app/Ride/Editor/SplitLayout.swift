@@ -45,15 +45,6 @@ struct SplitLayout: Equatable {
         }
     }
 
-    var snapshot: SplitState? {
-        switch split {
-        case .single:
-            return nil
-        case .horizontal(let ratio):
-            return SplitState(ratio: ratio)
-        }
-    }
-
     mutating func toggle() {
         if isSplit {
             closeRight()
@@ -87,6 +78,7 @@ struct SplitLayout: Equatable {
         guard let state else {
             return SplitLayout()
         }
-        return SplitLayout(split: .horizontal(ratio: state.ratio), focused: .left)
+        let side: SplitSide = state.focused == 1 ? .right : .left
+        return SplitLayout(split: .horizontal(ratio: state.ratio), focused: side)
     }
 }

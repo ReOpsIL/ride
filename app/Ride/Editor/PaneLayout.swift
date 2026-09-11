@@ -59,6 +59,10 @@ struct PaneLayout: Equatable {
     }
 
     mutating func open(_ bufferID: UUID, in paneID: UUID) {
+        guard pane(paneID) != nil else {
+            return
+        }
+        remove(bufferID, except: paneID)
         update(paneID) { pane in
             if !pane.tabs.contains(bufferID) {
                 pane.tabs.append(bufferID)
@@ -104,19 +108,19 @@ struct PaneLayout: Equatable {
     }
 
     mutating func move(_ bufferID: UUID, to paneID: UUID) {
-        guard pane(paneID) != nil else {
-            return
-        }
-        for pane in panes where pane.id != paneID {
-            update(pane.id) { current in
-                current.tabs.removeAll { $0 == bufferID }
-                if current.activeID == bufferID {
-                    current.activeID = current.tabs.last
-                }
-            }
-        }
         open(bufferID, in: paneID)
-        focusedID = paneID
+        if pane(paneID) != nil {
+            focusedID = paneID
+        }
+    }
+
+    mutating func restorePanes(_ tabs: [[UUID]], focused: Int) {
+        let leftTabs = tabs.first ?? []
+        let rightTabs = tabs.count > 1 ? tabs[1] : []
+        let left = Pane(tabs: leftTabs, activeID: leftTabs.last)
+        let right = Pane(tabs: rightTabs, activeID: rightTabs.last)
+        panes = [left, right]
+        focusedID = focused == 1 ? right.id : left.id
     }
 
     @discardableResult
@@ -148,6 +152,17 @@ struct PaneLayout: Equatable {
         }
         if focusedID == paneID {
             focusedID = target.id
+        }
+    }
+
+    private mutating func remove(_ bufferID: UUID, except paneID: UUID) {
+        for pane in panes where pane.id != paneID {
+            update(pane.id) { current in
+                current.tabs.removeAll { $0 == bufferID }
+                if current.activeID == bufferID {
+                    current.activeID = current.tabs.last
+                }
+            }
         }
     }
 

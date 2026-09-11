@@ -59,13 +59,30 @@ final class PaneLayoutTests: XCTestCase {
         XCTAssertEqual(layout.pane(first)?.tabs, [a, c])
     }
 
+    func testOpenRemovesTabFromOtherPanes() {
+        var layout = PaneLayout()
+        layout.activeID = a
+        layout.activeID = b
+        let first = layout.focusedID
+        let second = layout.split()
+        layout.open(a, in: second)
+        XCTAssertEqual(layout.pane(first)?.tabs, [b])
+        XCTAssertEqual(layout.pane(first)?.activeID, b)
+        XCTAssertEqual(layout.pane(second)?.tabs, [a])
+        XCTAssertEqual(layout.pane(second)?.activeID, a)
+        layout.activeID = b
+        XCTAssertEqual(layout.pane(first)?.tabs, [])
+        XCTAssertNil(layout.pane(first)?.activeID)
+        XCTAssertEqual(layout.pane(second)?.tabs, [a, b])
+        XCTAssertEqual(layout.activeID, b)
+    }
+
     func testClosePaneMergesTabsIntoNeighbour() {
         var layout = PaneLayout()
         layout.activeID = a
         let first = layout.focusedID
         let second = layout.split()
         layout.activeID = b
-        layout.activeID = a
         layout.closePane(second)
         XCTAssertEqual(layout.panes.count, 1)
         XCTAssertEqual(layout.focusedID, first)
@@ -102,5 +119,22 @@ final class PaneLayoutTests: XCTestCase {
         XCTAssertEqual(layout.panes.count, 1)
         XCTAssertEqual(layout.focused.tabs, [b, c])
         XCTAssertEqual(layout.activeID, c)
+    }
+
+    func testRestorePanesAssignsTabsAndFocus() {
+        var layout = PaneLayout()
+        layout.restorePanes([[a, b], [c]], focused: 1)
+        XCTAssertEqual(layout.panes.count, 2)
+        XCTAssertEqual(layout.panes[0].tabs, [a, b])
+        XCTAssertEqual(layout.panes[0].activeID, b)
+        XCTAssertEqual(layout.panes[1].tabs, [c])
+        XCTAssertEqual(layout.panes[1].activeID, c)
+        XCTAssertEqual(layout.focusedID, layout.panes[1].id)
+        XCTAssertEqual(layout.activeID, c)
+        layout.restorePanes([[a], []], focused: 0)
+        XCTAssertEqual(layout.panes[0].tabs, [a])
+        XCTAssertEqual(layout.panes[1].tabs, [])
+        XCTAssertNil(layout.panes[1].activeID)
+        XCTAssertEqual(layout.focusedID, layout.panes[0].id)
     }
 }

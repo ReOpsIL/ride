@@ -68,6 +68,13 @@ extension RideTextView {
             PeekController.showFocused()
             return
         }
+        if event.keyCode == 126,
+           event.modifierFlags.contains(.control),
+           event.modifierFlags.contains(.option)
+        {
+            hooks.binding?()?.state.switchHeaderSource()
+            return
+        }
         if CheatSheetController.shared.isVisible, handleCheatSheetKey(event) {
             return
         }

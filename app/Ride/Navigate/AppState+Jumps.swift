@@ -40,15 +40,21 @@ extension AppState {
     }
 
     func switchHeaderSource() {
-        guard let url = activeBuffer?.fileURL, let sibling = SiblingSource.existing(for: url) else {
+        let source = activeBuffer
+            ?? paneLayout.neighbour(of: paneLayout.focusedID).flatMap { buffer($0.activeID) }
+        guard let url = source?.fileURL, let sibling = SiblingSource.existing(for: url) else {
             return
         }
         recordLocation()
-        if splitLayout.isSplit, let other = paneLayout.neighbour(of: paneLayout.focusedID) {
-            paneLayout.focus(other.id)
-            syncSplitFocus()
+        if splitLayout.isSplit {
+            let sourcePane = source.flatMap { paneLayout.pane(showing: $0.id) } ?? paneLayout.focused
+            if let other = paneLayout.neighbour(of: sourcePane.id) {
+                paneLayout.focus(other.id)
+                syncSplitFocus()
+            }
         }
         openFile(sibling)
+        makeFocusedEditorFirstResponder()
     }
 
     func showQuickDocumentation() {

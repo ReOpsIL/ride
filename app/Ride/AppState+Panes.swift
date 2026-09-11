@@ -11,20 +11,20 @@ extension AppState {
     }
 
     func paneFocused(_ paneID: UUID) {
-        guard paneLayout.focusedID != paneID else {
-            return
+        if paneLayout.focusedID != paneID {
+            CompletionSession.shared.reset()
+            paneLayout.focus(paneID)
+            syncSplitFocus()
+            selectedURL = activeBuffer?.fileURL
+            if let view = EditorPanes.shared.host(paneID)?.textView {
+                let index = view.lineIndex()
+                let loc = view.selectedRange().location
+                cursorLine = index.line(at: loc)
+                cursorColumn = index.column(at: loc)
+            }
+            refreshPreview()
         }
-        CompletionSession.shared.reset()
-        paneLayout.focus(paneID)
-        syncSplitFocus()
-        selectedURL = activeBuffer?.fileURL
-        if let view = EditorPanes.shared.focusedView {
-            let index = view.lineIndex()
-            let loc = view.selectedRange().location
-            cursorLine = index.line(at: loc)
-            cursorColumn = index.column(at: loc)
-        }
-        refreshPreview()
+        makeFocusedEditorFirstResponder()
     }
 
     func toggleSplit() {
@@ -39,13 +39,10 @@ extension AppState {
         guard !splitLayout.isSplit else {
             return
         }
-        let current = paneLayout.activeID
         splitLayout.toggle()
-        let paneID = paneLayout.split()
-        if let current {
-            paneLayout.open(current, in: paneID)
-        }
+        _ = paneLayout.split()
         syncSplitFocus()
+        makeFocusedEditorFirstResponder()
     }
 
     func closeSplit() {
@@ -53,6 +50,7 @@ extension AppState {
             paneLayout.closePane(paneLayout.panes[1].id)
         }
         splitLayout.closeRight()
+        makeFocusedEditorFirstResponder()
     }
 
     func openInSplit(_ bufferID: UUID? = nil) {
@@ -61,21 +59,19 @@ extension AppState {
             return
         }
         if !splitLayout.isSplit {
-            let current = paneLayout.activeID
             openSplit()
-            if id != current {
-                paneLayout.open(id, in: paneLayout.focusedID)
-            }
+            paneLayout.move(id, to: paneLayout.focusedID)
             selectedURL = buffer(id)?.fileURL
+            makeFocusedEditorFirstResponder()
             return
         }
         guard let other = paneLayout.neighbour(of: paneLayout.focusedID) else {
             return
         }
-        paneLayout.open(id, in: other.id)
-        paneLayout.focus(other.id)
+        paneLayout.move(id, to: other.id)
         selectedURL = buffer(id)?.fileURL
         syncSplitFocus()
+        makeFocusedEditorFirstResponder()
     }
 
     func moveTab(_ bufferID: UUID, to paneID: UUID) {
@@ -86,6 +82,7 @@ extension AppState {
         selectedURL = buffer(bufferID)?.fileURL
         syncSplitFocus()
         refreshPreview()
+        makeFocusedEditorFirstResponder()
     }
 
     func setSplitRatio(_ ratio: Double) {
@@ -104,5 +101,15 @@ extension AppState {
         if next != splitLayout {
             splitLayout = next
         }
+    }
+
+    func makeFocusedEditorFirstResponder() {
+        if let view = EditorPanes.shared.host(paneLayout.focusedID)?.textView {
+            if view.window?.firstResponder !== view {
+                view.window?.makeFirstResponder(view)
+            }
+            return
+        }
+        EditorPanes.shared.focusedView?.window?.makeFirstResponder(nil)
     }
 }
