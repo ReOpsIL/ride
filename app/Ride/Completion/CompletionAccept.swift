@@ -38,9 +38,7 @@ extension CompletionSession {
     }
 
     private func insert(_ hit: CompletionHit, replacing range: NSRange, in view: RideTextView) {
-        if let session = SnippetInsert.insert(hit.insertText, snippet: hit.snippet, replacing: range, in: view) {
-            snippet = session
-        }
+        insertSnippet(hit.insertText, snippet: hit.snippet, replacing: range, in: view)
     }
 
     private static func closeInclude(in view: RideTextView, before start: Int) {

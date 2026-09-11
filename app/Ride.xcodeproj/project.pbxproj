@@ -184,6 +184,9 @@
 		E10000000000000000000008 /* SnippetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000007 /* SnippetParser.swift */; };
 		E10000000000000000000009 /* SnippetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000007 /* SnippetParser.swift */; };
 		E1000000000000000000000B /* SnippetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000A /* SnippetSession.swift */; };
+		H11000000000000000000002 /* SnippetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = H11000000000000000000001 /* SnippetStack.swift */; };
+		H11000000000000000000003 /* SnippetStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = H11000000000000000000001 /* SnippetStack.swift */; };
+		H11000000000000000000005 /* SnippetStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = H11000000000000000000004 /* SnippetStackTests.swift */; };
 		E1000000000000000000000D /* CompletionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000C /* CompletionList.swift */; };
 		E1000000000000000000000F /* CompletionFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000E /* CompletionFetch.swift */; };
 		E10000000000000000000011 /* CompletionAccept.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000010 /* CompletionAccept.swift */; };
@@ -470,6 +473,8 @@
 		E10000000000000000000004 /* CompletionNarrowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionNarrowing.swift"; sourceTree = "<group>"; };
 		E10000000000000000000007 /* SnippetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParser.swift"; sourceTree = "<group>"; };
 		E1000000000000000000000A /* SnippetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSession.swift"; sourceTree = "<group>"; };
+		H11000000000000000000001 /* SnippetStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetStack.swift"; sourceTree = "<group>"; };
+		H11000000000000000000004 /* SnippetStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetStackTests.swift"; sourceTree = "<group>"; };
 		E1000000000000000000000C /* CompletionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionList.swift"; sourceTree = "<group>"; };
 		E1000000000000000000000E /* CompletionFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionFetch.swift"; sourceTree = "<group>"; };
 		E10000000000000000000010 /* CompletionAccept.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionAccept.swift"; sourceTree = "<group>"; };
@@ -611,6 +616,7 @@
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
+				H11000000000000000000004 /* SnippetStackTests.swift */,
 				E60000000000000000000032 /* NavigationHistoryTests.swift */,
 				E60000000000000000000034 /* SiblingSourceTests.swift */,
 				E60000000000000000000036 /* FindMatcherTests.swift */,
@@ -866,6 +872,7 @@
 				E10000000000000000000004 /* CompletionNarrowing.swift */,
 				E10000000000000000000007 /* SnippetParser.swift */,
 				E1000000000000000000000A /* SnippetSession.swift */,
+				H11000000000000000000001 /* SnippetStack.swift */,
 				E1000000000000000000000C /* CompletionList.swift */,
 				E1000000000000000000000E /* CompletionFetch.swift */,
 				E10000000000000000000010 /* CompletionAccept.swift */,
@@ -1104,6 +1111,8 @@
 				E1000000000000000000001F /* CompletionTriggerTests.swift in Sources */,
 				E10000000000000000000021 /* CompletionNarrowingTests.swift in Sources */,
 				E10000000000000000000023 /* SnippetParserTests.swift in Sources */,
+				H11000000000000000000003 /* SnippetStack.swift in Sources */,
+				H11000000000000000000005 /* SnippetStackTests.swift in Sources */,
 				E60000000000000000000004 /* NavigationHistory.swift in Sources */,
 				E60000000000000000000007 /* SiblingSource.swift in Sources */,
 				E60000000000000000000028 /* FoldSet.swift in Sources */,
@@ -1184,6 +1193,7 @@
 				E10000000000000000000005 /* CompletionNarrowing.swift in Sources */,
 				E10000000000000000000008 /* SnippetParser.swift in Sources */,
 				E1000000000000000000000B /* SnippetSession.swift in Sources */,
+				H11000000000000000000002 /* SnippetStack.swift in Sources */,
 				E1000000000000000000000D /* CompletionList.swift in Sources */,
 				E1000000000000000000000F /* CompletionFetch.swift in Sources */,
 				E10000000000000000000011 /* CompletionAccept.swift in Sources */,
