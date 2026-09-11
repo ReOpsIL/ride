@@ -24,7 +24,7 @@ struct RunOutputPanel: View {
                 }
             }
             RunOutputText(
-                lines: output.lines,
+                buffer: output.buffer,
                 theme: ts.theme,
                 fontSize: CGFloat(state.prefs.fontSize),
                 onLink: { link in state.openConsoleLink(link) }

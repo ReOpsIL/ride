@@ -42,6 +42,16 @@ final class ConsoleLinksTests: XCTestCase {
         XCTAssertEqual(links.map(\.path), ["src/a.rs", "src/b.rs"])
     }
 
+    func testHostAndPortIsNotALink() {
+        XCTAssertTrue(ConsoleLinks.links(in: "listening on example.com:8080").isEmpty)
+        XCTAssertTrue(ConsoleLinks.links(in: "proxy to api.internal.dev:443/health").isEmpty)
+    }
+
+    func testKnownSourceExtensionsStayLinks() {
+        XCTAssertEqual(ConsoleLinks.links(in: "build.rs:3:1").first?.path, "build.rs")
+        XCTAssertEqual(ConsoleLinks.links(in: "CMakeLists.txt:9:").first?.line, 9)
+    }
+
     func testAbsolutePathResolutionKeepsAbsolute() {
         let link = ConsoleLink(path: "/tmp/demo/src/main.rs", line: 1, column: nil, start: 0, length: 0)
         XCTAssertEqual(ConsoleLinks.absolutePath(link, root: "/other"), "/tmp/demo/src/main.rs")

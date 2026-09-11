@@ -48,6 +48,19 @@ extension SelfTestSteps {
         })
     }
 
+    static func runBigOutput(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "run output cap", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 60, run: {
+            state.runInOutput(RunInvocation(argv: ["sh", "-c", "seq 1 7000"], workingDir: state.workspaceRoot?.path))
+        }, check: {
+            e.expect(
+                state.runOutput.status == "exit 0" && state.runOutput.buffer.last == "7000"
+                    && state.runOutput.buffer.end == 7000 && state.runOutput.buffer.first > 0,
+                "status \(state.runOutput.status ?? "nil") last \(state.runOutput.buffer.last ?? "nil") "
+                    + "range \(state.runOutput.buffer.first)..\(state.runOutput.buffer.end)"
+            )
+        })
+    }
+
     static func runOutputClose(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "run output close", run: {
             state.runOutput.clear()
