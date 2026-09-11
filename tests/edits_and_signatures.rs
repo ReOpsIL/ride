@@ -143,6 +143,28 @@ fn c_signature_help_from_buffer_prototype() {
 }
 
 #[test]
+fn signature_help_outer_call_after_inner_close() {
+    let (_dir, engine) = engine();
+    let src = "fn f(a: i32, b: i32) {}\nfn g(x: i32) {}\nfn main() { f(g(1)| }\n";
+    let (id, at, _) = open(&engine, "/w/src/main.rs", src);
+    let help = engine
+        .signature_help(id, at as u32)
+        .expect("outer signature");
+    assert_eq!(help.name, "f");
+    assert_eq!(help.active_parameter, 0);
+    let src = "fn f(a: i32, b: i32) {}\nfn g(x: i32) {}\nfn main() { f(g(1), | }\n";
+    let (id, at, _) = open(&engine, "/w/src/main.rs", src);
+    let help = engine
+        .signature_help(id, at as u32)
+        .expect("outer after comma");
+    assert_eq!(help.name, "f");
+    assert_eq!(help.active_parameter, 1);
+    let src = "fn f(a: i32, b: i32) {}\nfn g(x: i32) {}\nfn main() { f(g(1))| }\n";
+    let (id, at, _) = open(&engine, "/w/src/main.rs", src);
+    assert!(engine.signature_help(id, at as u32).is_none());
+}
+
+#[test]
 fn call_snippets_and_keyword_templates() {
     let (_dir, engine) = engine();
     let resp = complete(&engine, "/w/src/main.rs", "fn main() { sample::free_f| }");

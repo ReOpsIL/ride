@@ -77,6 +77,7 @@ enum SelfTestSteps {
             workspaceOpenSecond(state: state, e: e),
             workspaceRestore(state: state, e: e),
             workspaceSnapshotAfterOpen(state: state, e: e),
+            outerSignatureAfterClose(e: e),
         ]
     }
 
@@ -129,6 +130,25 @@ enum SelfTestSteps {
             }
             let tabs = state.workspaceStore.load(root: root)?.tabs ?? []
             return e.expect(!tabs.isEmpty, "tabs \(tabs.map(\.path))")
+        })
+    }
+
+    private static func outerSignatureAfterClose(e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "outer signature after )", wait: 1.0, run: {
+            guard let view = e.view else {
+                return
+            }
+            let prefix = "\nfn f(a: i32, b: i32) {}\nfn g(x: i32) {}\nfn _sig() { "
+            let start = (view.string as NSString).length
+            view.insertText(prefix, replacementRange: NSRange(location: start, length: 0))
+            view.setSelectedRange(NSRange(location: start + (prefix as NSString).length, length: 0))
+            e.type("f(g(1), ")
+        }, check: {
+            let name = SignatureHelpController.shared.activeName ?? "nil"
+            return e.expect(
+                SignatureHelpController.shared.isVisible && SignatureHelpController.shared.activeName == "f",
+                "sig \(name) visible \(SignatureHelpController.shared.isVisible)"
+            )
         })
     }
 

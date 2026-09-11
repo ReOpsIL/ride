@@ -20,13 +20,15 @@ final class SignatureHelpController {
         panel.isVisible
     }
 
+    private(set) var activeName: String?
+
     func textChanged(document: BufferDocument, view: RideTextView, inserted: String) {
         guard document.language.hasSignatureHelp else {
             return
         }
-        if inserted == "(" || inserted == "," {
+        if inserted == "(" || inserted == "," || inserted == ")" {
             show(document: document, view: view)
-        } else if inserted == ")" || inserted.contains("\n") {
+        } else if inserted.contains("\n") {
             hide()
         }
     }
@@ -59,6 +61,7 @@ final class SignatureHelpController {
 
     func hide() {
         generation += 1
+        activeName = nil
         view = nil
         panel.orderOut(nil)
     }
@@ -76,6 +79,7 @@ final class SignatureHelpController {
 
     private func present(_ help: SignatureHelp, in view: RideTextView) {
         self.view = view
+        activeName = help.name
         let size = content.fill(help)
         OverlayPanel.present(panel, frame: frame(size: size, in: view))
     }

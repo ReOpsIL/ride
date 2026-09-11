@@ -105,6 +105,18 @@ struct SelfTestEditor {
         view.window?.makeFirstResponder(view)
     }
 
+    func type(_ text: String) {
+        guard let view else {
+            return
+        }
+        for ch in text {
+            let s = String(ch)
+            let loc = view.selectedRange().location
+            view.insertText(s, replacementRange: NSRange(location: loc, length: 0))
+            view.setSelectedRange(NSRange(location: loc + (s as NSString).length, length: 0))
+        }
+    }
+
     func expect(_ condition: Bool, _ message: @autoclosure () -> String) -> String? {
         condition ? nil : message()
     }
