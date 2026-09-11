@@ -272,6 +272,11 @@
 		EA0000000000000000000002 /* ToolsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000001 /* ToolsModel.swift */; };
 		EA0000000000000000000004 /* ToolInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000003 /* ToolInstaller.swift */; };
 		EA0000000000000000000006 /* ToolsInstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0000000000000000000005 /* ToolsInstallView.swift */; };
+		A00000000000000000000161 /* ProjectReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000160 /* ProjectReplace.swift */; };
+		A00000000000000000000162 /* ProjectReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000160 /* ProjectReplace.swift */; };
+		A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000163 /* ProjectReplaceTests.swift */; };
+		A00000000000000000000166 /* ProjectReplacePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000165 /* ProjectReplacePreview.swift */; };
+		A00000000000000000000168 /* ProjectReplaceApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000167 /* ProjectReplaceApply.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -389,6 +394,10 @@
 		A00000000000000000000106 /* ProjectFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFind.swift; sourceTree = "<group>"; };
 		A00000000000000000000109 /* ProjectFindModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindModel.swift; sourceTree = "<group>"; };
 		A0000000000000000000010B /* ProjectFindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindView.swift; sourceTree = "<group>"; };
+		A00000000000000000000160 /* ProjectReplace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplace.swift; sourceTree = "<group>"; };
+		A00000000000000000000163 /* ProjectReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceTests.swift; sourceTree = "<group>"; };
+		A00000000000000000000165 /* ProjectReplacePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplacePreview.swift; sourceTree = "<group>"; };
+		A00000000000000000000167 /* ProjectReplaceApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectReplaceApply.swift; sourceTree = "<group>"; };
 		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
@@ -587,6 +596,7 @@
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
+				A00000000000000000000163 /* ProjectReplaceTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
@@ -737,6 +747,9 @@
 				A00000000000000000000106 /* ProjectFind.swift */,
 				A00000000000000000000109 /* ProjectFindModel.swift */,
 				A0000000000000000000010B /* ProjectFindView.swift */,
+				A00000000000000000000160 /* ProjectReplace.swift */,
+				A00000000000000000000165 /* ProjectReplacePreview.swift */,
+				A00000000000000000000167 /* ProjectReplaceApply.swift */,
 				A00000000000000000000060 /* QuickOpen.swift */,
 				A00000000000000000000061 /* FindBar.swift */,
 				A00000000000000000000062 /* FileIndex.swift */,
@@ -1086,6 +1099,8 @@
 				A0000000000000000000014C /* GitStatusTests.swift in Sources */,
 				A0000000000000000000014E /* CargoWatchTests.swift in Sources */,
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
+				A00000000000000000000162 /* ProjectReplace.swift in Sources */,
+				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -1227,6 +1242,9 @@
 				A00000000000000000000107 /* ProjectFind.swift in Sources */,
 				A0000000000000000000010A /* ProjectFindModel.swift in Sources */,
 				A0000000000000000000010C /* ProjectFindView.swift in Sources */,
+				A00000000000000000000161 /* ProjectReplace.swift in Sources */,
+				A00000000000000000000166 /* ProjectReplacePreview.swift in Sources */,
+				A00000000000000000000168 /* ProjectReplaceApply.swift in Sources */,
 				A0000000000000000000010E /* EditorHooks.swift in Sources */,
 				A00000000000000000000110 /* EditorPane+Nav.swift in Sources */,
 				A00000000000000000000112 /* Definitions.swift in Sources */,

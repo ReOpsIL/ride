@@ -19,7 +19,11 @@ struct ProjectFindOverlay: View {
             onSubmit: submit,
             onDismiss: { state.showProjectFind = false }
         ) {
-            results
+            VStack(spacing: 0) {
+                replaceRow
+                ts.ui.border.frame(height: Tokens.Size.hairline)
+                results
+            }
         }
         .onKeyPress(.downArrow) {
             model.move(1)
@@ -28,6 +32,14 @@ struct ProjectFindOverlay: View {
         .onKeyPress(.upArrow) {
             model.move(-1)
             return .handled
+        }
+        .sheet(isPresented: $model.showPreview) {
+            ProjectReplacePreview(
+                model: model,
+                root: state.workspaceRoot,
+                onApply: { state.applyProjectReplace() },
+                onCancel: { model.showPreview = false }
+            )
         }
     }
 
@@ -41,6 +53,39 @@ struct ProjectFindOverlay: View {
         let files = Set(model.matches.map(\.file)).count
         let count = Plural.count(model.matches.count, "match", plural: "matches")
         return "\(count) in \(Plural.count(files, "file"))\(model.truncated ? " (truncated)" : "")"
+    }
+
+    private var replaceRow: some View {
+        HStack(spacing: Tokens.Space.m) {
+            Image(systemName: "pencil")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(ts.ui.textTertiary)
+            TextField("Replace", text: $model.replacement)
+                .textFieldStyle(.plain)
+                .font(Tokens.ui(16))
+                .foregroundStyle(ts.ui.textPrimary)
+                .onSubmit(preview)
+            optionButtons
+            Button("Replace…") { preview() }
+                .controlSize(.small)
+                .disabled(model.query.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .padding(.horizontal, Tokens.Space.xl)
+        .frame(height: 44)
+    }
+
+    private var optionButtons: some View {
+        HStack(spacing: Tokens.Space.xs) {
+            IconButton(symbol: "textformat", help: "Match case", active: model.options.caseSensitive) {
+                model.options.caseSensitive.toggle()
+            }
+            IconButton(symbol: "textformat.abc.dottedunderline", help: "Whole word", active: model.options.wholeWord) {
+                model.options.wholeWord.toggle()
+            }
+            IconButton(symbol: "asterisk", help: "Regular expression", active: model.options.regex) {
+                model.options.regex.toggle()
+            }
+        }
     }
 
     @ViewBuilder
@@ -88,6 +133,15 @@ struct ProjectFindOverlay: View {
         if let match = model.selected {
             open(match)
         }
+    }
+
+    private func preview() {
+        if model.needsRun || model.matches.isEmpty {
+            model.pendingPreview = true
+            model.run(root: state.workspaceRoot, showHidden: state.prefs.showHidden)
+            return
+        }
+        model.requestPreview()
     }
 
     private func open(_ match: ProjectFindMatch) {

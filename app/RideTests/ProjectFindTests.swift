@@ -23,7 +23,7 @@ final class ProjectFindTests: XCTestCase {
         let result = ProjectFind.search(root: root, query: "NEEDLE", showHidden: false)
         XCTAssertFalse(result.truncated)
         XCTAssertEqual(result.matches.map(\.line), [2, 4])
-        XCTAssertEqual(result.matches[0].byte, 12)
+        XCTAssertEqual(result.matches[0].byte, 20)
         XCTAssertEqual(result.matches[0].preview, "let needle = 1;")
         XCTAssertTrue(result.matches.allSatisfy { $0.file.lastPathComponent == "main.rs" })
     }

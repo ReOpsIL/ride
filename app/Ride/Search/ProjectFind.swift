@@ -10,9 +10,10 @@ struct ProjectFindMatch: Identifiable, Hashable {
 
 struct ProjectFindResult {
     let matches: [ProjectFindMatch]
+    let hits: [FileHit]
     let truncated: Bool
 
-    static let empty = ProjectFindResult(matches: [], truncated: false)
+    static let empty = ProjectFindResult(matches: [], hits: [], truncated: false)
 }
 
 enum ProjectFind {
@@ -20,45 +21,56 @@ enum ProjectFind {
     static let cap = 2000
     static let previewLength = 160
 
-    static func search(root: URL, query: String, showHidden: Bool, cap: Int = cap) -> ProjectFindResult {
-        let needle = query.trimmingCharacters(in: .whitespaces).lowercased()
+    static func search(
+        root: URL,
+        query: String,
+        showHidden: Bool,
+        options: FindOptions = .defaults,
+        cap: Int = cap
+    ) -> ProjectFindResult {
+        let needle = query.trimmingCharacters(in: .whitespaces)
         guard !needle.isEmpty else {
             return .empty
         }
-        var out: [ProjectFindMatch] = []
+        var matches: [ProjectFindMatch] = []
+        var hits: [FileHit] = []
         let files = FileIndex.list(root: root, showHidden: showHidden)
             .sorted { $0.path < $1.path }
         for url in files {
             guard let text = readText(url) else {
                 continue
             }
-            if scan(text, needle: needle, file: url, into: &out, cap: cap) {
-                return ProjectFindResult(matches: out, truncated: true)
+            let ranges = FindMatcher.matches(in: text, query: needle, options: options)
+            if ranges.isEmpty {
+                continue
             }
-        }
-        return ProjectFindResult(matches: out, truncated: false)
-    }
-
-    static func scan(_ text: String, needle: String, file: URL, into out: inout [ProjectFindMatch], cap: Int) -> Bool {
-        var byte = 0
-        var number = 0
-        for line in text.split(separator: "\n", omittingEmptySubsequences: false) {
-            number += 1
-            if line.lowercased().contains(needle) {
-                out.append(ProjectFindMatch(
-                    id: out.count,
-                    file: file,
-                    line: number,
-                    byte: UInt32(byte),
-                    preview: preview(line)
-                ))
-                if out.count >= cap {
-                    return true
+            var taken: [NSRange] = []
+            for range in ranges {
+                matches.append(makeMatch(text: text, range: range, file: url, id: matches.count))
+                taken.append(range)
+                if matches.count >= cap {
+                    hits.append(FileHit(file: url, text: text, ranges: taken))
+                    return ProjectFindResult(matches: matches, hits: hits, truncated: true)
                 }
             }
-            byte += line.utf8.count + 1
+            hits.append(FileHit(file: url, text: text, ranges: taken))
         }
-        return false
+        return ProjectFindResult(matches: matches, hits: hits, truncated: false)
+    }
+
+    private static func makeMatch(text: String, range: NSRange, file: URL, id: Int) -> ProjectFindMatch {
+        let utf8 = Utf16.utf8Offset(in: text, utf16: range.location)
+        let (row, _) = Utf16.point(in: text, utf8: utf8)
+        let ns = text as NSString
+        let lineRange = ns.lineRange(for: NSRange(location: range.location, length: 0))
+        let line = ns.substring(with: lineRange).trimmingCharacters(in: .newlines)
+        return ProjectFindMatch(
+            id: id,
+            file: file,
+            line: Int(row) + 1,
+            byte: UInt32(utf8),
+            preview: preview(Substring(line))
+        )
     }
 
     static func readText(_ url: URL) -> String? {

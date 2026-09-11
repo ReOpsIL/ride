@@ -42,6 +42,7 @@ extension AppState {
         showSymbolInFile = false
         showSymbolPicker = false
         showProjectFind = false
+        projectFind.showPreview = false
         showGoToLine = false
         showRecentFiles = false
     }
