@@ -77,6 +77,22 @@ enum EditorCommands {
         EditorCommand.apply(result, to: target.view)
     }
 
+    static func completeStatement() {
+        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+            return
+        }
+        let text = target.text
+        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
+        guard let edit = engine.completeStatement(sessionId: id, byte: byte) else {
+            return
+        }
+        let range = Utf16.nsRange(in: text, startByte: edit.startByte, endByte: edit.endByte)
+        let change = TextChange(range: range, text: edit.text)
+        let applied = EditResult.applying([change], to: text)
+        let caret = Utf16.utf16Offset(in: applied, utf8: Int(edit.caretByte))
+        EditorCommand.apply(EditResult(changes: [change], selection: NSRange(location: caret, length: 0)), to: target.view)
+    }
+
     static func newLine(before: Bool) {
         run { target in
             let ns = target.text as NSString

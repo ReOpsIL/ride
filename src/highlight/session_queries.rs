@@ -61,4 +61,8 @@ impl BufferSession {
     pub fn sibling_statement(&self, byte: u32, up: bool) -> Option<ByteRange> {
         self.syntax.sibling_statement(&self.replica, byte, up)
     }
+
+    pub fn complete_statement(&self, byte: u32) -> TextEdit {
+        self.syntax.complete_statement(&self.replica, byte)
+    }
 }

@@ -1,4 +1,4 @@
-use ride_engine::{BufferSession, ByteRange, Lang, engine_start};
+use ride_engine::{BufferSession, ByteRange, Lang, TextEdit, engine_start};
 
 fn caret(src: &str) -> (String, ByteRange) {
     let at = src.find('|').expect("caret") as u32;
@@ -433,6 +433,19 @@ fn sibling(lang: Lang, src: &str, up: bool) -> Option<String> {
     span(&text, session.sibling_statement(at.start_byte, up))
 }
 
+fn complete(lang: Lang, src: &str) -> String {
+    let (text, at) = caret(src);
+    let (session, _) = BufferSession::open_lang(lang, text.clone(), None).unwrap();
+    mark(&text, &session.complete_statement(at.start_byte))
+}
+
+fn mark(text: &str, edit: &TextEdit) -> String {
+    let mut out = text.to_string();
+    out.replace_range(edit.start_byte as usize..edit.end_byte as usize, &edit.text);
+    let at = edit.caret_byte as usize;
+    format!("{}|{}", &out[..at], &out[at..])
+}
+
 fn span(text: &str, range: Option<ByteRange>) -> Option<String> {
     range.map(|r| text[r.start_byte as usize..r.end_byte as usize].to_string())
 }
@@ -597,4 +610,95 @@ fn sibling_statement_skips_comments_and_stops_at_edges() {
     assert_eq!(sibling(Lang::Rust, src, true), None);
     let src = "int f(void) {\n    int a| = 1;\n    return a;\n}\n";
     assert_eq!(sibling(Lang::C, src, false).as_deref(), Some("return a;"));
+}
+
+#[test]
+fn rust_complete_statement_semicolon_header_and_new_line() {
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    let x = |1\n}\n"),
+        "fn main() {\n    let x = 1;|\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    g|()\n}\n"),
+        "fn main() {\n    g();|\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    if x|\n}\n"),
+        "fn main() {\n    if x {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    for x in y|\n}\n"),
+        "fn main() {\n    for x in y {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    while x|\n}\n"),
+        "fn main() {\n    while x {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn foo|()\n"),
+        "fn foo() {\n    |\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Rust, "fn main() {\n    let x = 1;|\n}\n"),
+        "fn main() {\n    let x = 1;\n    |\n}\n"
+    );
+}
+
+#[test]
+fn c_complete_statement_semicolon_header_and_new_line() {
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    int x = |1\n}\n"),
+        "int f(void) {\n    int x = 1;|\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    g|()\n}\n"),
+        "int f(void) {\n    g();|\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    return |1\n}\n"),
+        "int f(void) {\n    return 1;|\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    if (x|)\n}\n"),
+        "int f(void) {\n    if (x) {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    for (;;)|\n}\n"),
+        "int f(void) {\n    for (;;) {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    while (1|)\n}\n"),
+        "int f(void) {\n    while (1) {\n        |\n    }\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f|(void)\n"),
+        "int f(void) {\n    |\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::C, "int f(void) {\n    int x = 1;|\n}\n"),
+        "int f(void) {\n    int x = 1;\n    |\n}\n"
+    );
+    assert_eq!(
+        complete(Lang::Cpp, "void f() {\n    for (auto x : v|)\n}\n"),
+        "void f() {\n    for (auto x : v) {\n        |\n    }\n}\n"
+    );
+}
+
+#[test]
+fn complete_statement_engine_none_without_session() {
+    let dir = tempfile::tempdir().unwrap();
+    let engine = engine_start(ride_engine::EngineConfig {
+        index_dir: dir.path().display().to_string(),
+        cargo_home: None,
+        sysroot: None,
+        offline_metadata: true,
+    });
+    assert!(engine.complete_statement(999, 0).is_none());
+    let src = "fn main() {\n    let x = 1\n}\n";
+    let open = engine
+        .open_session("t".into(), Some("main.rs".into()), src.into(), None)
+        .unwrap();
+    let at = src.find('1').unwrap() as u32;
+    let edit = engine.complete_statement(open.session_id, at).unwrap();
+    assert_eq!(mark(src, &edit), "fn main() {\n    let x = 1;|\n}\n");
 }

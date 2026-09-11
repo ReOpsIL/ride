@@ -12,6 +12,7 @@ pub fn edit(text: &str, import_path: &str) -> Option<TextEdit> {
             start_byte: pos as u32,
             end_byte: pos as u32,
             text: format!("{line}\n"),
+            caret_byte: pos as u32,
         });
     }
     let pos = after_prelude(text);
@@ -25,6 +26,7 @@ pub fn edit(text: &str, import_path: &str) -> Option<TextEdit> {
         start_byte: pos as u32,
         end_byte: pos as u32,
         text: insert,
+        caret_byte: pos as u32,
     })
 }
 

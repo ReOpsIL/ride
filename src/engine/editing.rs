@@ -1,6 +1,6 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
-use crate::ffi::{BracketPair, ByteRange, FoldRange};
+use crate::ffi::{BracketPair, ByteRange, FoldRange, TextEdit};
 
 use super::Engine;
 
@@ -80,6 +80,20 @@ impl Engine {
                 i.sessions
                     .get(&session_id)
                     .and_then(|s| s.sibling_statement(byte, up))
+            })
+            .ok()
+            .flatten()
+        }))
+        .ok()
+        .flatten()
+    }
+
+    pub fn complete_statement(&self, session_id: u64, byte: u32) -> Option<TextEdit> {
+        catch_unwind(AssertUnwindSafe(|| {
+            self.read(|i| {
+                i.sessions
+                    .get(&session_id)
+                    .map(|s| s.complete_statement(byte))
             })
             .ok()
             .flatten()

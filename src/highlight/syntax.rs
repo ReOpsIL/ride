@@ -3,7 +3,7 @@ use tree_sitter::InputEdit;
 use crate::error::EngineError;
 use crate::ffi::{
     BracketPair, ByteRange, CompletionHit, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan,
-    SymbolAt,
+    SymbolAt, TextEdit,
 };
 
 use super::context::Context;
@@ -67,6 +67,9 @@ pub trait Syntax: Send + Sync {
     }
     fn sibling_statement(&self, _text: &str, _byte: u32, _up: bool) -> Option<ByteRange> {
         None
+    }
+    fn complete_statement(&self, text: &str, byte: u32) -> TextEdit {
+        super::editing::new_line(text, byte)
     }
 }
 

@@ -5,6 +5,7 @@ use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
 use crate::error::EngineError;
 use crate::ffi::{
     BracketPair, ByteRange, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt,
+    TextEdit,
 };
 
 use super::context::Context;
@@ -185,6 +186,13 @@ impl Syntax for TreeSyntax {
             byte,
             up,
             self.grammar.editing.is_statement,
+        )
+    }
+
+    fn complete_statement(&self, text: &str, byte: u32) -> TextEdit {
+        self.tree.as_ref().map_or_else(
+            || editing::new_line(text, byte),
+            |tree| editing::complete(tree.root_node(), text, byte),
         )
     }
 }
