@@ -296,6 +296,38 @@ Reviews of the thirteen executor commits found the bugs below. Each is one card 
 
 `Ride --demo selftest --open <copy of samples/rust-demo>` fails its last step, `workspace restore`: after `captureWorkspace()` and `restoreWorkspace()` on the same state the caret sits on line 20 instead of the captured line 10 (reproduced on commit 79726a8, before the pane registry). Trace the caret from `BufferDocument.capture` through `TabState`, `buffer(from:)` and `BufferDocument.bind` into the new editor host, find which later step moves it (session attach, fold restore, highlight apply or scroll restore are the candidates) and fix that root cause, not the test. Acceptance: the self-test scene reports 52 PASS and 0 FAIL on a fresh copy of the crate.
 
+## 8. Review fixes after batches 3, 4 and 5 (2026-09-11)
+
+R1–R7 and cards 1.1-4d, 1.1-4e, 1.1-4i passed review. The rest need the fixes below; same contract, one card per commit.
+
+### R8 Cheat sheet insert must push onto the snippet stack (1.1-4h) — Tier A
+
+`app/Ride/CheatSheet/CheatSheetController.swift` `insert` still calls `SnippetInsert.insert` and assigns `session.snippet`, so a cheat-sheet insert inside a placeholder discards the outer stops. Route it through `CompletionSession.insertSnippet` (the push path from `CompletionSession+Snippet.swift`); `hide()` must not clear the stack. Add a `SnippetStackTests` case for push-from-cheat-sheet through the same API.
+
+### R9 Deterministic project check output (1.1-6b) — Tier A
+
+`src/check/clang_project.rs` `Merge` appends diagnostics and stderr in worker receive order. Tag each job with its compile-database index, collect into a `BTreeMap<usize, _>` and emit in index order; a test with a shuffled fake job order asserts the same output twice.
+
+### R10 Sparkle embedding and placeholder key guard (1.1-3b) — Tier B
+
+Two defects in `fac57d6`. (1) Sparkle is linked but no embed phase copies `Sparkle.framework` into `Ride.app/Contents/Frameworks`; add the `PBXCopyFilesBuildPhase` (destination frameworks, code sign on copy) in `app/Ride.xcodeproj/project.pbxproj` and confirm the Debug app launches (`otool -L` shows `@rpath/Sparkle.framework` and `--demo selftest` runs). (2) `Info.plist` ships the all-zero `SUPublicEDKey`; `UpdateController` must not start `SPUStandardUpdaterController`, and `RideApp` must not show "Check for Updates…", unless the key differs from the placeholder (`UpdateController.isConfigured`, a pure check in RideTests). `scripts/release.sh` exits non-zero when `RIDE_SPARKLE_PRIVATE_KEY_FILE` is set but `RIDE_SPARKLE_PUBLIC_KEY` is not.
+
+### R11 One buffer per pane and per-pane restore (1.1-1b) — Tier B
+
+A `BufferDocument` bound to two `EditorHostView`s does not sync (`EditorCoordinator.textDidChange` writes `document.text` from whichever view typed last), so showing one buffer in both panes loses edits. Until the panes share one `NSTextContentStorage` (recorded in `todo/app/remaining.md`), a buffer lives in exactly one pane: `PaneLayout.open(_:in:)` removes the tab from every other pane (`move` semantics, update `PaneLayoutTests`), `openSplit` creates an empty pane and focuses it (the pane column shows `WelcomeView`), `openInSplit` moves the buffer, and F10 moves the sibling. `SplitState` stores `panes: [[path]]`, `focused: Int` and `ratio`; `captureWorkspace` and `restoreWorkspace` round-trip it (test in `WorkspaceStateTests`). Also: `closeSplit` and `paneFocused` make the surviving pane's text view first responder; `TabStrip.onDrop` returns `false` for a payload that is not a tab id; one "Switch Header / Source" menu row.
+
+### R12 Doc popup leaks, focus and content policy (1.1-9b) — Tier B
+
+`app/Ride/Editor/DocWebView.swift`: the `WKScriptMessageHandler` registration retains the view (cycle through the configuration); register a weak proxy object instead and assert in a RideTests-free way that `deinit` runs (a `weak` reference test in the app target's self-test step is acceptable). `RideTextView+Keys.swift` `cancelOperation` and `PeekController.present` use the lazy `docs` accessor to test visibility and so construct a panel and web view on every Escape; use the nil-checking storage. `AppState+Panes.swift` `paneFocused` hides the previous pane's doc and peek panels unless pinned. `DocWebView` loads with a base URL and a `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">` in `PreviewTemplate.popup`. Remove the dead `toggleWideDoc`/`wideDoc` code in `CompletionPopup.swift`. Make the `completion doc trigger` self-test step pass on a copy of `samples/rust-demo` (place the caret where a `Counter` hit exists, or open the completion on `Cou`); the scene must end with 0 FAIL and always write its report.
+
+### R13 Demo fixture: a real trait and impl for `record` (1.1-10) — Tier A
+
+`samples/rust-demo/src/util.rs` gained a dangling `Recorder` trait so `record` has two hits. Make it real: `pub trait Recorder { fn record(&mut self, name: &str); }` with `impl Recorder for Counter` holding the body, no inherent `record`; `src/main.rs` line 5 becomes `use util::{Counter, Recorder};` so the line count and every self-test line number stay the same. Run the self-test scene on a copy and confirm the Quick Definition step still sees two segments.
+
+### R14 C++ self-test steps (1.1-8b) — Tier B
+
+`SelfTestSteps` is Rust-only, so the CI job cannot run `samples/cpp-demo`. Split it into `SelfTestSteps` (language-neutral: setup, indent, undo, duplicate, move line, go to line, back/forward, zoom, workspace) plus `SelfTestSteps+Rust.swift` and `SelfTestSteps+Cpp.swift`, chosen by the opened buffer's language. The C++ set on `samples/cpp-demo/src/shapes.cpp`: `//` comment toggle, matching brace, header/source switch to `include/shapes.hpp`, Complete Statement adding `;`, fold, Quick Definition on a method declared in the header. Add the second run to the `selftest` CI job on a fresh copy of `samples/cpp-demo`. Acceptance: both runs 0 FAIL.
+
 ## 7. Batch log
 
 | Batch | Cards | Result |
@@ -303,7 +335,8 @@ Reviews of the thirteen executor commits found the bugs below. Each is one card 
 | 1 | 1.1-7 ×2, 1.1-5, 1.1-8a, 1.1-3a | 5 commits, reviewed; R1, R6 |
 | 2 | 1.1-4 a b c f g, 1.1-6a, 1.1-2, 1.1-9a | 8 commits, reviewed; R2–R5, R7 |
 | strong model | 1.1-1a pane registry, `samples/rust-demo` fixture | commit on this branch; 141 RideTests, self-test 51/52 (R7 pre-existing) |
-| 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | pending |
-| 5 | 1.1-1b, 1.1-9b, 1.1-10 | after 3+4 |
+| 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | 14 commits, reviewed; R8–R10, R14 |
+| 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
+| 6 | R8–R14 | pending |
 
 The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.
