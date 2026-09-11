@@ -15,8 +15,7 @@ for card in "$@"; do
   changed="$(git status --short -- . ':!.claude' | wc -l | tr -d ' ')"
   if [[ "$changed" != "0" ]]; then
     git add -A -- . ':!.claude'
-    git commit -q -m "card $card (executor)
-
+    git commit -q -m "card $card (executor)"
     sha="$(git rev-parse --short HEAD)"
   else
     sha="no-changes"
