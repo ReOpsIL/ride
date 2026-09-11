@@ -37,7 +37,7 @@ enum DemoScene {
             editor(state)
             DemoLaunch.after(1.0) { state.showToolsSheet = true }
         case "selftest":
-            editor(state)
+            editor(state, file: DemoLaunch.file ?? "src/main.rs")
             DemoLaunch.after(1.5) { DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt") }
         case "hover":
             editor(state)

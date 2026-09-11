@@ -50,3 +50,46 @@ jobs:
           xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
             -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
             CODE_SIGNING_ALLOWED=NO build test
+
+  selftest:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+          components: rustfmt
+      - name: build-engine
+        run: bash scripts/build-engine.sh
+      - name: xcodebuild
+        run: |
+          xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
+            -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
+            CODE_SIGNING_ALLOWED=NO build
+      - name: selftest
+        timeout-minutes: 20
+        run: |
+          set -euo pipefail
+          bin=target/xcode/Build/Products/Debug/Ride.app/Contents/MacOS/Ride
+          mkdir -p target
+          run() {
+            local n="$1" src="$2"
+            shift 2
+            local dir report ec
+            dir="$(mktemp -d "${TMPDIR:-/tmp}/ride-selftest-$n.XXXXXX")"
+            cp -R "$src" "$dir/demo"
+            report="$PWD/target/selftest-$n.txt"
+            set +e
+            "$bin" --demo selftest --open "$dir/demo" --report "$report" "$@"
+            ec=$?
+            set -e
+            echo "===== $report exit=$ec ====="
+            cat "$report"
+            if [ "$ec" -ne 0 ]; then
+              exit "$ec"
+            fi
+            if grep -q '^FAIL' "$report"; then
+              exit 1
+            fi
+          }
+          run 1 samples/rust-demo
