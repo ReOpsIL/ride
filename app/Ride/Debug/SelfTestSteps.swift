@@ -76,6 +76,7 @@ enum SelfTestSteps {
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
             workspaceOpenSecond(state: state, e: e),
             workspaceRestore(state: state, e: e),
+            workspaceSnapshotAfterOpen(state: state, e: e),
         ]
     }
 
@@ -109,6 +110,25 @@ enum SelfTestSteps {
                 names.count >= 2 && names.contains("main.rs") && e.caretLine == 10,
                 "tabs \(names) caret \(e.caretLine)"
             )
+        })
+    }
+
+    private static func workspaceSnapshotAfterOpen(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "workspace snapshot after open", wait: 1.0, run: {
+            guard let root = state.workspaceRoot else {
+                return
+            }
+            let filled = state.captureWorkspace()
+            let empty = WorkspaceState(tabs: [], focusedPath: nil, layout: filled.layout, split: filled.split)
+            state.workspaceStore.save(filled, root: root)
+            state.workspaceStore.scheduleSave(empty, root: root)
+            state.restoreWorkspace(filled)
+        }, check: {
+            guard let root = state.workspaceRoot else {
+                return e.expect(false, "no workspace")
+            }
+            let tabs = state.workspaceStore.load(root: root)?.tabs ?? []
+            return e.expect(!tabs.isEmpty, "tabs \(tabs.map(\.path))")
         })
     }
 

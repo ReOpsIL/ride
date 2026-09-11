@@ -292,8 +292,10 @@
 		F11000000000000000000002 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
 		F11000000000000000000003 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
 		F11000000000000000000005 /* WorkspaceStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000004 /* WorkspaceStateStore.swift */; };
+		F1100000000000000000000A /* WorkspaceStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000004 /* WorkspaceStateStore.swift */; };
 		F11000000000000000000007 /* AppState+Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000006 /* AppState+Workspace.swift */; };
 		F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000008 /* WorkspaceStateTests.swift */; };
+		F1100000000000000000000C /* WorkspaceStateStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1100000000000000000000B /* WorkspaceStateStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -423,6 +425,7 @@
 		F11000000000000000000004 /* WorkspaceStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateStore.swift; sourceTree = "<group>"; };
 		F11000000000000000000006 /* AppState+Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Workspace.swift"; sourceTree = "<group>"; };
 		F11000000000000000000008 /* WorkspaceStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateTests.swift; sourceTree = "<group>"; };
+		F1100000000000000000000B /* WorkspaceStateStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateStoreTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000010D /* EditorHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHooks.swift; sourceTree = "<group>"; };
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
@@ -625,6 +628,7 @@
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
 				F11000000000000000000008 /* WorkspaceStateTests.swift */,
+				F1100000000000000000000B /* WorkspaceStateStoreTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
@@ -1134,7 +1138,9 @@
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
 				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
 				F11000000000000000000003 /* WorkspaceState.swift in Sources */,
+				F1100000000000000000000A /* WorkspaceStateStore.swift in Sources */,
 				F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */,
+				F1100000000000000000000C /* WorkspaceStateStoreTests.swift in Sources */,
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,

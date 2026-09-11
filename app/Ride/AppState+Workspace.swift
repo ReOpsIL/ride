@@ -15,6 +15,10 @@ extension AppState {
         persistLayout && !DemoLaunch.isDemo && workspaceRoot != nil
     }
 
+    func workspaceRootDidChange() {
+        workspaceStore.cancelPending()
+    }
+
     func scheduleWorkspaceSave() {
         guard !restoringWorkspace, canPersistWorkspace, let root = workspaceRoot else {
             return
@@ -27,6 +31,47 @@ extension AppState {
             return
         }
         workspaceStore.save(captureWorkspace(), root: root)
+    }
+
+    func openFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.canCreateDirectories = false
+        panel.message = "Open a Cargo project or folder"
+        guard panel.runModal() == .OK, let url = panel.url else {
+            return
+        }
+        open(url)
+    }
+
+    func open(_ url: URL) {
+        flushWorkspace()
+        restoringWorkspace = true
+        workspaceRoot = url.standardizedFileURL
+        selectedURL = nil
+        for buffer in buffers {
+            SessionService.shared.close(buffer)
+        }
+        buffers = []
+        paneLayout = PaneLayout()
+        cursorLine = 1
+        cursorColumn = 1
+        expanded = []
+        recent = recents.adding(url, to: recent)
+        recents.save(recent)
+        quickFiles = []
+        showQuickOpen = false
+        CompletionSession.shared.reset()
+        reloadTree()
+        watcher.start(path: url.path)
+        RideEngineClient.shared.openWorkspace(url)
+        git.clear()
+        git.refresh(root: url, delay: 0)
+        restoreOpenedWorkspace()
+        restoringWorkspace = false
+        scheduleWorkspaceSave()
     }
 
     func restoreOpenedWorkspace() {
@@ -50,6 +95,7 @@ extension AppState {
 
     func restoreWorkspace(_ saved: WorkspaceState) {
         restoringWorkspace = true
+        workspaceStore.cancelPending()
         for buffer in buffers {
             SessionService.shared.close(buffer)
             history.forget(bufferID: buffer.id)
@@ -63,6 +109,7 @@ extension AppState {
         cursorColumn = 1
         refreshPreview()
         restoringWorkspace = false
+        scheduleWorkspaceSave()
     }
 
     private func currentLayout() -> LayoutState {

@@ -2,11 +2,12 @@ import CryptoKit
 import Foundation
 
 final class WorkspaceStateStore {
-    private let delay: TimeInterval = 0.5
+    private let delay: TimeInterval
     private let supportDir: URL
     private var work: DispatchWorkItem?
 
-    init(supportDir: URL? = nil) {
+    init(supportDir: URL? = nil, delay: TimeInterval = 0.5) {
+        self.delay = delay
         if let supportDir {
             self.supportDir = supportDir
         } else {
@@ -28,8 +29,13 @@ final class WorkspaceStateStore {
         return WorkspaceState.decode(data)
     }
 
-    func scheduleSave(_ state: WorkspaceState, root: URL) {
+    func cancelPending() {
         work?.cancel()
+        work = nil
+    }
+
+    func scheduleSave(_ state: WorkspaceState, root: URL) {
+        cancelPending()
         let item = DispatchWorkItem { [weak self] in
             self?.save(state, root: root)
         }
@@ -38,8 +44,7 @@ final class WorkspaceStateStore {
     }
 
     func save(_ state: WorkspaceState, root: URL) {
-        work?.cancel()
-        work = nil
+        cancelPending()
         let url = fileURL(for: root)
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         let encoder = JSONEncoder()
