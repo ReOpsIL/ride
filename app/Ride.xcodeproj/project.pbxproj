@@ -317,6 +317,19 @@
 		P2000000000000000000000A /* TargetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000001 /* TargetRows.swift */; };
 		P2000000000000000000000B /* TargetRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000009 /* TargetRowsTests.swift */; };
 		Q10000000000000000000002 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
+		Q20000000000000000000002 /* ProcessRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000001 /* ProcessRunner.swift */; };
+		Q20000000000000000000004 /* RunOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000003 /* RunOutput.swift */; };
+		Q20000000000000000000006 /* RunOutputPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000005 /* RunOutputPanel.swift */; };
+		Q20000000000000000000008 /* RunOutputText.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000007 /* RunOutputText.swift */; };
+		Q2000000000000000000000A /* RunOutputRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000009 /* RunOutputRender.swift */; };
+		Q2000000000000000000000C /* AppState+RunOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q2000000000000000000000B /* AppState+RunOutput.swift */; };
+		Q2000000000000000000000E /* SelfTestSteps+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q2000000000000000000000D /* SelfTestSteps+Run.swift */; };
+		Q20000000000000000000012 /* AnsiSpans.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000011 /* AnsiSpans.swift */; };
+		Q20000000000000000000013 /* AnsiSpans.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000011 /* AnsiSpans.swift */; };
+		Q20000000000000000000015 /* ConsoleLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000014 /* ConsoleLinks.swift */; };
+		Q20000000000000000000016 /* ConsoleLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000014 /* ConsoleLinks.swift */; };
+		Q20000000000000000000022 /* AnsiSpansTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000021 /* AnsiSpansTests.swift */; };
+		Q20000000000000000000024 /* ConsoleLinksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000023 /* ConsoleLinksTests.swift */; };
 		Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
 		Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000005 /* RunConfig+Engine.swift */; };
 		Q10000000000000000000008 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
@@ -467,6 +480,17 @@
 		P20000000000000000000007 /* ManifestWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestWatch.swift; sourceTree = "<group>"; };
 		P20000000000000000000009 /* TargetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetRowsTests.swift; sourceTree = "<group>"; };
 		Q10000000000000000000001 /* RunConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfig.swift; sourceTree = "<group>"; };
+		Q20000000000000000000001 /* ProcessRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRunner.swift; sourceTree = "<group>"; };
+		Q20000000000000000000003 /* RunOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutput.swift; sourceTree = "<group>"; };
+		Q20000000000000000000005 /* RunOutputPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputPanel.swift; sourceTree = "<group>"; };
+		Q20000000000000000000007 /* RunOutputText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputText.swift; sourceTree = "<group>"; };
+		Q20000000000000000000009 /* RunOutputRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputRender.swift; sourceTree = "<group>"; };
+		Q2000000000000000000000B /* AppState+RunOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+RunOutput.swift"; sourceTree = "<group>"; };
+		Q2000000000000000000000D /* SelfTestSteps+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Run.swift"; sourceTree = "<group>"; };
+		Q20000000000000000000011 /* AnsiSpans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnsiSpans.swift; sourceTree = "<group>"; };
+		Q20000000000000000000014 /* ConsoleLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLinks.swift; sourceTree = "<group>"; };
+		Q20000000000000000000021 /* AnsiSpansTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnsiSpansTests.swift; sourceTree = "<group>"; };
+		Q20000000000000000000023 /* ConsoleLinksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLinksTests.swift; sourceTree = "<group>"; };
 		Q10000000000000000000003 /* RunConfig+Sanitizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Sanitizers.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000005 /* RunConfig+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Engine.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000007 /* RunConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigTests.swift; sourceTree = "<group>"; };
@@ -729,6 +753,8 @@
 				B1000000000000000000000B /* LineIndexTests.swift */,
 				B1000000000000000000008A /* HeadingLevelTests.swift */,
 				A000000000000000000000C2 /* QueryIdTests.swift */,
+				Q20000000000000000000021 /* AnsiSpansTests.swift */,
+				Q20000000000000000000023 /* ConsoleLinksTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -815,6 +841,14 @@
 				Q10000000000000000000001 /* RunConfig.swift */,
 				Q10000000000000000000003 /* RunConfig+Sanitizers.swift */,
 				Q10000000000000000000005 /* RunConfig+Engine.swift */,
+				Q20000000000000000000001 /* ProcessRunner.swift */,
+				Q20000000000000000000003 /* RunOutput.swift */,
+				Q20000000000000000000005 /* RunOutputPanel.swift */,
+				Q20000000000000000000007 /* RunOutputText.swift */,
+				Q20000000000000000000009 /* RunOutputRender.swift */,
+				Q2000000000000000000000B /* AppState+RunOutput.swift */,
+				Q20000000000000000000011 /* AnsiSpans.swift */,
+				Q20000000000000000000014 /* ConsoleLinks.swift */,
 			);
 			path = Run;
 			sourceTree = "<group>";
@@ -1031,6 +1065,7 @@
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
+				Q2000000000000000000000D /* SelfTestSteps+Run.swift */,
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
 			);
@@ -1301,6 +1336,10 @@
 				Q10000000000000000000008 /* RunConfig.swift in Sources */,
 				Q10000000000000000000009 /* RunConfig+Sanitizers.swift in Sources */,
 				Q1000000000000000000000A /* RunConfigTests.swift in Sources */,
+				Q20000000000000000000013 /* AnsiSpans.swift in Sources */,
+				Q20000000000000000000016 /* ConsoleLinks.swift in Sources */,
+				Q20000000000000000000022 /* AnsiSpansTests.swift in Sources */,
+				Q20000000000000000000024 /* ConsoleLinksTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1514,6 +1553,15 @@
 				Q10000000000000000000002 /* RunConfig.swift in Sources */,
 				Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */,
 				Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */,
+				Q20000000000000000000002 /* ProcessRunner.swift in Sources */,
+				Q20000000000000000000004 /* RunOutput.swift in Sources */,
+				Q20000000000000000000006 /* RunOutputPanel.swift in Sources */,
+				Q20000000000000000000008 /* RunOutputText.swift in Sources */,
+				Q2000000000000000000000A /* RunOutputRender.swift in Sources */,
+				Q2000000000000000000000C /* AppState+RunOutput.swift in Sources */,
+				Q2000000000000000000000E /* SelfTestSteps+Run.swift in Sources */,
+				Q20000000000000000000012 /* AnsiSpans.swift in Sources */,
+				Q20000000000000000000015 /* ConsoleLinks.swift in Sources */,
 				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,

@@ -38,9 +38,11 @@ struct LayoutState: Codable, Equatable {
     var sidebarWidth: Double
     var outlineWidth: Double
     var problemsHeight: Double
+    var runOutputHeight: Double
     var previewWidth: Double
     var showSidebar: Bool
     var showProblems: Bool
+    var showRunOutput: Bool
     var showPreview: Bool
     var outlinePanel: Bool
 
@@ -48,9 +50,11 @@ struct LayoutState: Codable, Equatable {
         sidebarWidth: 230,
         outlineWidth: 220,
         problemsHeight: 180,
+        runOutputHeight: 200,
         previewWidth: 460,
         showSidebar: true,
         showProblems: false,
+        showRunOutput: false,
         showPreview: false,
         outlinePanel: true
     )
@@ -59,18 +63,22 @@ struct LayoutState: Codable, Equatable {
         sidebarWidth: Double,
         outlineWidth: Double,
         problemsHeight: Double,
+        runOutputHeight: Double,
         previewWidth: Double,
         showSidebar: Bool,
         showProblems: Bool,
+        showRunOutput: Bool,
         showPreview: Bool,
         outlinePanel: Bool
     ) {
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
+        self.runOutputHeight = runOutputHeight
         self.previewWidth = previewWidth
         self.showSidebar = showSidebar
         self.showProblems = showProblems
+        self.showRunOutput = showRunOutput
         self.showPreview = showPreview
         self.outlinePanel = outlinePanel
     }
@@ -81,9 +89,11 @@ struct LayoutState: Codable, Equatable {
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
+        runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
         showSidebar = try c.decodeIfPresent(Bool.self, forKey: .showSidebar) ?? d.showSidebar
         showProblems = try c.decodeIfPresent(Bool.self, forKey: .showProblems) ?? d.showProblems
+        showRunOutput = try c.decodeIfPresent(Bool.self, forKey: .showRunOutput) ?? d.showRunOutput
         showPreview = try c.decodeIfPresent(Bool.self, forKey: .showPreview) ?? d.showPreview
         outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
     }

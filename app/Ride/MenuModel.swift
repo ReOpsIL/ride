@@ -13,6 +13,8 @@ final class MenuModel: ObservableObject {
     @Published var showSidebar = true
     @Published var outlinePanel = true
     @Published var showProblems = false
+    @Published var showRunOutput = false
+    @Published var isRunning = false
     @Published var hasSplit = false
     @Published var selectedTarget: String?
 
@@ -28,6 +30,8 @@ final class MenuModel: ObservableObject {
         set(\.showSidebar, state.showSidebar)
         set(\.outlinePanel, state.prefs.outlinePanel)
         set(\.showProblems, state.showProblems)
+        set(\.showRunOutput, state.showRunOutput)
+        set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)
     }

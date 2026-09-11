@@ -18,6 +18,7 @@ struct Preferences: Codable, Equatable {
     var sidebarWidth: Double
     var outlineWidth: Double
     var problemsHeight: Double
+    var runOutputHeight: Double
     var previewWidth: Double
 
     static let defaults = Preferences(
@@ -35,6 +36,7 @@ struct Preferences: Codable, Equatable {
         sidebarWidth: 230,
         outlineWidth: 220,
         problemsHeight: 180,
+        runOutputHeight: 200,
         previewWidth: 460,
         cheatSheet: true,
         softWrap: true,
@@ -56,6 +58,7 @@ struct Preferences: Codable, Equatable {
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
         problemsHeight: Double = 180,
+        runOutputHeight: Double = 200,
         previewWidth: Double = 460,
         cheatSheet: Bool = true,
         softWrap: Bool = true,
@@ -75,6 +78,7 @@ struct Preferences: Codable, Equatable {
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
+        self.runOutputHeight = runOutputHeight
         self.previewWidth = previewWidth
         self.cheatSheet = cheatSheet
         self.softWrap = softWrap
@@ -101,6 +105,7 @@ struct Preferences: Codable, Equatable {
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
+        runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
     }
 
@@ -111,6 +116,7 @@ struct Preferences: Codable, Equatable {
         next.sidebarWidth = min(420, max(180, sidebarWidth))
         next.outlineWidth = min(420, max(160, outlineWidth))
         next.problemsHeight = min(480, max(80, problemsHeight))
+        next.runOutputHeight = min(480, max(80, runOutputHeight))
         next.previewWidth = min(900, max(260, previewWidth))
         if next.theme != "light" {
             next.theme = "dark"
