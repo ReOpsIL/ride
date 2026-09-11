@@ -41,6 +41,7 @@ mod snapshot;
 mod snippets;
 mod struct_literal;
 mod symbols;
+mod system_paths;
 mod tools;
 mod watch;
 

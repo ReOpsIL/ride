@@ -34,7 +34,7 @@ pub use extract::{
     extract_crate_with_version, extract_source,
 };
 pub use ffi::*;
-pub use highlight::{BufferSession, Context, Lang, Position, Site, SiteAt};
+pub use highlight::{BufferSession, Context, Lang, Position, Site, SiteAt, scrub_macros};
 pub use index::{
     DEPRECATED, Manifest, NAME_HUMP, PARENT_PATH, REACHABLE, SCHEMA_VERSION, hump, last_status,
     live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,

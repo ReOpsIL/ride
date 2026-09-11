@@ -90,6 +90,7 @@
 		A0000000000000000000002B /* BufferDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001B /* BufferDocument.swift */; };
 		A0000000000000000000090B /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
 		A0000000000000000000090C /* BufferLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090A /* BufferLanguage.swift */; };
+		R11000000000000000000011 /* BufferLanguage+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = R11000000000000000000010 /* BufferLanguage+Engine.swift */; };
 		A0000000000000000000090E /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
 		A0000000000000000000090F /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
 		A00000000000000000000911 /* RangeShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000910 /* RangeShiftTests.swift */; };
@@ -361,6 +362,7 @@
 		A0000000000000000000001A /* RideTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTextView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001B /* BufferDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferDocument.swift; sourceTree = "<group>"; };
 		A0000000000000000000090A /* BufferLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferLanguage.swift; sourceTree = "<group>"; };
+		R11000000000000000000010 /* BufferLanguage+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BufferLanguage+Engine.swift"; sourceTree = "<group>"; };
 		A0000000000000000000090D /* RangeShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShift.swift; sourceTree = "<group>"; };
 		A00000000000000000000910 /* RangeShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShiftTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
@@ -754,6 +756,7 @@
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000090A /* BufferLanguage.swift */,
+				R11000000000000000000010 /* BufferLanguage+Engine.swift */,
 				A0000000000000000000090D /* RangeShift.swift */,
 				A0000000000000000000001C /* EditorPane.swift */,
 				A0000000000000000000001D /* GutterView.swift */,
@@ -1335,6 +1338,7 @@
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
 				A0000000000000000000090B /* BufferLanguage.swift in Sources */,
+				R11000000000000000000011 /* BufferLanguage+Engine.swift in Sources */,
 				A0000000000000000000090E /* RangeShift.swift in Sources */,
 				A0000000000000000000002C /* EditorPane.swift in Sources */,
 				A0000000000000000000002D /* GutterView.swift in Sources */,

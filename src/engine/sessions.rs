@@ -1,25 +1,11 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::error::EngineError;
 use crate::ffi::{ByteRange, InputEditFfi, SessionOpen, SessionUpdate};
 use crate::highlight::{BufferSession, Lang};
 
 use super::Engine;
-
-fn system_dirs(engine: &Engine, path: Option<&str>) -> Vec<PathBuf> {
-    if !Lang::extensionless_path(path) {
-        return Vec::new();
-    }
-    engine
-        .read(|i| i.system_includes.clone())
-        .map(|sys| {
-            let mut dirs = sys.dirs("c++", &[]);
-            dirs.extend(sys.dirs("c", &[]));
-            dirs
-        })
-        .unwrap_or_default()
-}
 
 #[uniffi::export]
 impl Engine {
@@ -31,7 +17,10 @@ impl Engine {
         visible: Option<ByteRange>,
     ) -> Result<SessionOpen, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            let lang = Lang::sniff(path.as_deref(), &text, &system_dirs(self, path.as_deref()));
+            let is_system = path
+                .as_deref()
+                .is_some_and(|p| self.is_system_path(p.to_string()));
+            let lang = Lang::sniff(path.as_deref(), &text, is_system);
             let (mut session, update) = BufferSession::open_lang(lang, text, visible)?;
             if let Some(path) = path.as_deref().map(Path::new)
                 && lang.clang_name().is_some()

@@ -1,5 +1,3 @@
-use std::path::{Path, PathBuf};
-
 use super::grammar::{self, Grammar};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
@@ -49,17 +47,11 @@ impl Lang {
         }
     }
 
-    pub fn sniff(path: Option<&str>, text: &str, system_dirs: &[PathBuf]) -> Lang {
-        if is_extensionless(path)
-            && (under_system(path, system_dirs) || super::header::is_cpp_header(text))
-        {
+    pub fn sniff(path: Option<&str>, text: &str, is_system: bool) -> Lang {
+        if is_extensionless(path) && (is_system || super::header::is_cpp_header(text)) {
             return Lang::Cpp;
         }
         Self::for_buffer(path, text)
-    }
-
-    pub(crate) fn extensionless_path(path: Option<&str>) -> bool {
-        is_extensionless(path)
     }
 
     pub fn clang_name(self) -> Option<&'static str> {
@@ -129,12 +121,4 @@ fn is_header(path: Option<&str>) -> bool {
 fn is_extensionless(path: Option<&str>) -> bool {
     let name = file_name(path);
     !name.is_empty() && extension(&name).is_none()
-}
-
-fn under_system(path: Option<&str>, system_dirs: &[PathBuf]) -> bool {
-    let Some(path) = path else {
-        return false;
-    };
-    let path = Path::new(path);
-    system_dirs.iter().any(|dir| path.starts_with(dir))
 }

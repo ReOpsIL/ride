@@ -152,24 +152,48 @@ fn std_vector_completes_from_libcxx_and_summaries_persist_on_disk() {
 
 #[test]
 fn sniff_extensionless_under_system_dirs_or_cpp_markers_is_cpp() {
-    let sys = PathBuf::from("/usr/include/c++/v1");
-    let vector = sys.join("vector");
     assert_eq!(
-        Lang::sniff(vector.to_str(), "// empty\n", std::slice::from_ref(&sys)),
+        Lang::sniff(Some("/usr/include/c++/v1/vector"), "// empty\n", true),
         Lang::Cpp
     );
     assert_eq!(
-        Lang::sniff(Some("/proj/samples/buffer"), "class vector {\n};\n", &[]),
+        Lang::sniff(Some("/proj/samples/buffer"), "class vector {\n};\n", false),
         Lang::Cpp
     );
     assert_eq!(
         Lang::sniff(
             Some("/proj/samples/buffer"),
             "template<class T>\nT id(T);\n",
-            &[]
+            false
         ),
         Lang::Cpp
     );
+}
+
+#[test]
+fn is_system_path_uses_probed_include_dirs() {
+    if !clang_on_path() {
+        eprintln!("skipping: clang is not on PATH");
+        return;
+    }
+    let dir = tempfile::tempdir().unwrap();
+    let engine = engine(&dir.path().join("index"));
+    if let Some(path) = system_header("c++", "vector") {
+        let is_system = engine.is_system_path(path.display().to_string());
+        assert!(is_system, "{path:?}");
+        assert_eq!(
+            Lang::sniff(path.to_str(), "// empty\n", is_system),
+            Lang::Cpp
+        );
+    }
+    if let Some(path) = system_header("c", "stdio.h") {
+        assert!(
+            engine.is_system_path(path.display().to_string()),
+            "{path:?}"
+        );
+    }
+    assert!(!engine.is_system_path("/tmp/samples/notes".into()));
+    assert!(!engine.is_system_path("/Users/me/proj/src/vector".into()));
 }
 
 #[test]
@@ -177,9 +201,9 @@ fn sniff_extensionless_plain_under_samples_is_not_cpp() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("samples");
     let notes = root.join("notes");
     let text = "hello world\nthis is not a header\n";
-    assert_ne!(Lang::sniff(notes.to_str(), text, &[]), Lang::Cpp);
+    assert_ne!(Lang::sniff(notes.to_str(), text, false), Lang::Cpp);
     assert_eq!(
-        Lang::sniff(notes.to_str(), text, &[]),
+        Lang::sniff(notes.to_str(), text, false),
         Lang::for_path(notes.to_str())
     );
     let dir = tempfile::tempdir().unwrap();
@@ -213,13 +237,21 @@ fn opening_libcxx_vector_is_cpp_with_class_outline() {
         .open_session("v".into(), Some(path.display().to_string()), text, None)
         .unwrap();
     assert_eq!(opened.lang, Lang::Cpp);
-    let class_src = "template<class T>\nclass vector {\npublic:\n  T x;\n};\n";
-    let class_path = dir.path().join("vector");
+    assert!(
+        engine.is_system_path(path.display().to_string()),
+        "{path:?}"
+    );
+    let Some(class_path) = system_header("c++", "__vector/vector.h") else {
+        eprintln!("skipping: libc++ __vector/vector.h is not available");
+        return;
+    };
+    let class_text =
+        ride_engine::scrub_macros(&fs::read_to_string(&class_path).unwrap()).into_owned();
     let classy = engine
         .open_session(
             "c".into(),
             Some(class_path.display().to_string()),
-            class_src.into(),
+            class_text,
             None,
         )
         .unwrap();

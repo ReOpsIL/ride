@@ -42,28 +42,11 @@ enum BufferLanguage {
         }
     }
 
-    static func sniff(url: URL?, text: String, systemDirs: [URL] = []) -> BufferLanguage {
-        if let url, isExtensionless(url), isCpp(url: url, text: text, systemDirs: systemDirs) {
+    static func sniff(url: URL?, text: String, isSystem: Bool) -> BufferLanguage {
+        if let url, isExtensionless(url), isSystem || isCppHeader(text) {
             return .cpp
         }
         return of(url)
-    }
-
-    static func isReadOnly(_ url: URL, systemDirs: [URL] = []) -> Bool {
-        isSystemInclude(url, systemDirs: systemDirs)
-    }
-
-    static func isSystemInclude(_ url: URL, systemDirs: [URL] = []) -> Bool {
-        let path = url.standardizedFileURL.path
-        if systemDirs.contains(where: { under(path, dir: $0) }) {
-            return true
-        }
-        return path.hasPrefix("/usr/include")
-            || path.hasPrefix("/usr/local/include")
-            || path.contains("/usr/include/")
-            || path.contains("/include/c++/")
-            || path.contains("/c++/v1/")
-            || path.hasSuffix("/c++/v1")
     }
 
     var hasCompletions: Bool {
@@ -115,10 +98,6 @@ enum BufferLanguage {
         url.pathExtension.isEmpty
     }
 
-    private static func isCpp(url: URL, text: String, systemDirs: [URL]) -> Bool {
-        isSystemInclude(url, systemDirs: systemDirs) || isCppHeader(text)
-    }
-
     private static func isCppHeader(_ text: String) -> Bool {
         var seen = 0
         for line in text.split(whereSeparator: \.isNewline) {
@@ -154,14 +133,5 @@ enum BufferLanguage {
         }
         let name = rest[rest.index(after: rest.startIndex)..<close]
         return !name.isEmpty && !name.contains(".")
-    }
-
-    private static func under(_ path: String, dir: URL) -> Bool {
-        let root = dir.standardizedFileURL.path
-        if path == root {
-            return true
-        }
-        let prefix = root.hasSuffix("/") ? root : root + "/"
-        return path.hasPrefix(prefix)
     }
 }

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::sync::Mutex;
 
@@ -37,6 +37,12 @@ impl SystemIncludes {
             cache.insert(key, dirs.clone());
         }
         dirs
+    }
+
+    pub fn contains(&self, path: &Path) -> bool {
+        ["c++", "c"]
+            .into_iter()
+            .any(|lang| self.dirs(lang, &[]).iter().any(|dir| path.starts_with(dir)))
     }
 
     fn cached(&self, key: &Key) -> Option<Ranked> {
@@ -140,5 +146,30 @@ mod tests {
     #[test]
     fn transcript_without_search_list_yields_nothing() {
         assert!(parse_search_list("clang: error: no such file\n").is_empty());
+    }
+
+    #[test]
+    fn contains_matches_cached_include_dirs_not_frameworks() {
+        let sys = SystemIncludes::default();
+        {
+            let mut cache = sys.cache.lock().unwrap();
+            cache.insert(
+                ("c++".into(), vec![]),
+                vec![
+                    (PathBuf::from("/opt/sysroot/include/c++/v1"), false),
+                    (PathBuf::from("/opt/sysroot/Frameworks"), true),
+                ],
+            );
+            cache.insert(
+                ("c".into(), vec![]),
+                vec![(PathBuf::from("/opt/sysroot/usr/include"), false)],
+            );
+        }
+        assert!(sys.contains(Path::new("/opt/sysroot/include/c++/v1/vector")));
+        assert!(sys.contains(Path::new("/opt/sysroot/usr/include/stdio.h")));
+        assert!(!sys.contains(Path::new(
+            "/opt/sysroot/Frameworks/Foo.framework/Headers/Foo.h"
+        )));
+        assert!(!sys.contains(Path::new("/Users/me/proj/src/vector")));
     }
 }
