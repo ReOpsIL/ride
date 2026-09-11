@@ -35,6 +35,7 @@ impl Detect for Make {
             targets,
             profiles: vec!["default".to_string()],
             manifest: manifest.display().to_string(),
+            notice: None,
         }))
     }
 }
