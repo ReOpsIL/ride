@@ -43,6 +43,10 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         hits.indices.contains(selected) ? hits[selected] : nil
     }
 
+    func hitNamed(_ name: String) -> CompletionHit? {
+        hits.first { $0.name == name }
+    }
+
     func show(hits: [CompletionHit], prefix: String, truncated: Bool, selectedName: String?, in view: RideTextView) {
         self.hits = hits
         self.prefix = prefix

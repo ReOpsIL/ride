@@ -52,14 +52,11 @@ extension AppState {
     }
 
     func showQuickDocumentation() {
-        guard let view = EditorPanes.shared.focusedView else {
-            return
-        }
-        let caret = view.selectedRange().location
-        guard let range = IdentifierRange.at(view.string as NSString, index: caret) else {
-            return
-        }
-        HoverController.shared.present(view: view, range: range)
+        DocController.showFocused()
+    }
+
+    func showExternalDocumentation() {
+        DocController.showExternalFocused()
     }
 
     func showSignatureHelp() {

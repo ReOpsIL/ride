@@ -140,6 +140,14 @@
 		A00000000000000000000114 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
 		A00000000000000000000115 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
 		A00000000000000000000117 /* HoverPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* HoverPanel.swift */; };
+		D19000000000000000000002 /* DocPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000001 /* DocPage.swift */; };
+		D19000000000000000000003 /* DocPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000001 /* DocPage.swift */; };
+		D19000000000000000000005 /* DocPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000004 /* DocPanel.swift */; };
+		D19000000000000000000007 /* DocWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000006 /* DocWebView.swift */; };
+		D19000000000000000000009 /* DocController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000008 /* DocController.swift */; };
+		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
+		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
+		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
 		F10000000000000000000002 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
 		F10000000000000000000003 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
 		F10000000000000000000005 /* EditorPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* EditorPanes.swift */; };
@@ -444,6 +452,13 @@
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		A00000000000000000000113 /* IdentifierRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierRange.swift; sourceTree = "<group>"; };
 		A00000000000000000000116 /* HoverPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverPanel.swift; sourceTree = "<group>"; };
+		D19000000000000000000001 /* DocPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPage.swift; sourceTree = "<group>"; };
+		D19000000000000000000004 /* DocPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPanel.swift; sourceTree = "<group>"; };
+		D19000000000000000000006 /* DocWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocWebView.swift; sourceTree = "<group>"; };
+		D19000000000000000000008 /* DocController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocController.swift; sourceTree = "<group>"; };
+		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
+		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
+		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
 		F10000000000000000000001 /* PaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayout.swift"; sourceTree = "<group>"; };
 		F10000000000000000000004 /* EditorPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPanes.swift"; sourceTree = "<group>"; };
 		F10000000000000000000006 /* EditorHostView+Jump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Jump.swift"; sourceTree = "<group>"; };
@@ -656,6 +671,7 @@
 				A00000000000000000000183 /* TreeModelTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
+				D1900000000000000000000C /* DocPageTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
@@ -773,6 +789,11 @@
 				A00000000000000000000111 /* Definitions.swift */,
 				A00000000000000000000113 /* IdentifierRange.swift */,
 				A00000000000000000000116 /* HoverPanel.swift */,
+				D19000000000000000000001 /* DocPage.swift */,
+				D19000000000000000000004 /* DocPanel.swift */,
+				D19000000000000000000006 /* DocWebView.swift */,
+				D19000000000000000000008 /* DocController.swift */,
+				D1900000000000000000000E /* EditorHostView+Docs.swift */,
 				F10000000000000000000001 /* PaneLayout.swift */,
 				F12000000000000000000001 /* SplitLayout.swift */,
 				F10000000000000000000004 /* EditorPanes.swift */,
@@ -930,6 +951,7 @@
 				A00000000000000000000903 /* DemoScene.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
+				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
 			);
 			path = Debug;
@@ -1195,6 +1217,8 @@
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
 				F12000000000000000000005 /* SplitLayoutTests.swift in Sources */,
+				D19000000000000000000003 /* DocPage.swift in Sources */,
+				D1900000000000000000000D /* DocPageTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -1251,6 +1275,7 @@
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
+				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
 				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,
 				E70000000000000000000002 /* RideTextView+Typing.swift in Sources */,
 				E60000000000000000000003 /* NavigationHistory.swift in Sources */,
@@ -1351,6 +1376,11 @@
 				A00000000000000000000112 /* Definitions.swift in Sources */,
 				A00000000000000000000114 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000117 /* HoverPanel.swift in Sources */,
+				D19000000000000000000002 /* DocPage.swift in Sources */,
+				D19000000000000000000005 /* DocPanel.swift in Sources */,
+				D19000000000000000000007 /* DocWebView.swift in Sources */,
+				D19000000000000000000009 /* DocController.swift in Sources */,
+				D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */,
 				F10000000000000000000002 /* PaneLayout.swift in Sources */,
 				F12000000000000000000002 /* SplitLayout.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,

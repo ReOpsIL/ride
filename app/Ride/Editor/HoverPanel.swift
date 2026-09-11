@@ -7,9 +7,12 @@ final class HoverPanel {
     private let signature = NSTextField(wrappingLabelWithString: "")
     private let doc = NSTextField(wrappingLabelWithString: "")
     private let origin = NSTextField(labelWithString: "")
+    var onClick: (() -> Void)?
 
     init() {
         panel = OverlayPanel.make(size: NSSize(width: 200, height: 40))
+        let click = NSClickGestureRecognizer(target: self, action: #selector(clicked))
+        card.addGestureRecognizer(click)
         signature.font = Tokens.nsMono(11)
         signature.maximumNumberOfLines = 6
         doc.font = Tokens.nsUI(11)
@@ -67,5 +70,9 @@ final class HoverPanel {
 
     func hide() {
         panel.orderOut(nil)
+    }
+
+    @objc private func clicked() {
+        onClick?()
     }
 }

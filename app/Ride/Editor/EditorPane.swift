@@ -7,6 +7,7 @@ final class EditorHostView: NSView {
     let textView: RideTextView
     var paneID = UUID()
     var onViewport: (() -> Void)?
+    var docsStorage: DocController?
     private var gutterWidth: NSLayoutConstraint!
 
     override init(frame frameRect: NSRect) {
@@ -119,6 +120,7 @@ struct EditorPane: NSViewRepresentable {
 
     static func dismantleNSView(_ host: EditorHostView, coordinator: Coordinator) {
         coordinator.document.capture(host.textView)
+        host.closeDocs()
         EditorPanes.shared.detach(host)
     }
 }

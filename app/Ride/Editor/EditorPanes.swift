@@ -21,6 +21,10 @@ final class EditorPanes {
         hosts[paneID]?.host
     }
 
+    func host(for view: RideTextView) -> EditorHostView? {
+        hosts.values.compactMap(\.host).first { $0.textView === view }
+    }
+
     func attach(_ host: EditorHostView, pane paneID: UUID) {
         hosts[paneID] = WeakHost(host: host)
         if focusedID == nil || hosts[focusedID ?? paneID]?.host == nil {

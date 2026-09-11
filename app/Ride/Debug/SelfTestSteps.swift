@@ -79,6 +79,12 @@ enum SelfTestSteps {
             workspaceSnapshotAfterOpen(state: state, e: e),
             outerSignatureAfterClose(e: e),
             splitHeaderSource(state: state, e: e),
+            quickDocOpen(state: state, e: e),
+            quickDoc(state: state, e: e),
+            docPin(e: e),
+            completionDocTrigger(e: e),
+            completionDoc(e: e),
+            docCleanup(),
         ]
     }
 

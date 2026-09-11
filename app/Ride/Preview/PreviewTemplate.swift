@@ -1,6 +1,13 @@
 import AppKit
 
 enum PreviewTemplate {
+    static func popup(_ theme: Theme) -> String {
+        page(theme).replacingOccurrences(
+            of: "main{max-width:72ch;margin:0 auto;padding:28px 32px 96px}",
+            with: "main{max-width:none;margin:0;padding:12px 14px 20px}h1{font-size:1.2em;margin-top:.2em}"
+        )
+    }
+
     static func page(_ theme: Theme) -> String {
         let c = theme.chrome
         let syntax: [(String, NSColor)] = [

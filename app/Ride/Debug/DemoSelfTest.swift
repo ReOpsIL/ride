@@ -34,17 +34,19 @@ final class DemoSelfTest {
             } else {
                 results.append("PASS \(step.name)")
             }
+            writeReport()
             next(state: state)
         }
     }
 
     private func finish() {
+        writeReport()
+        exit(results.contains(where: { $0.hasPrefix("FAIL") }) ? 1 : 0)
+    }
+
+    private func writeReport() {
         let text = results.joined(separator: "\n") + "\n"
         try? text.write(toFile: report, atomically: true, encoding: .utf8)
-        if results.contains(where: { $0.hasPrefix("FAIL") }) {
-            exit(1)
-        }
-        NSApp.terminate(nil)
     }
 }
 

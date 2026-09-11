@@ -37,8 +37,15 @@ struct CodeCommands: Commands {
                 .keyboardShortcut(.space, modifiers: .control)
             Button("Cheat Sheet") { EditorCommands.toggleCheatSheet() }
                 .keyboardShortcut(.space, modifiers: [.control, .shift])
-            Button("Quick Documentation") { state.showQuickDocumentation() }
+            Button("Quick Documentation") { DocController.showFocused() }
                 .keyboardShortcut("j", modifiers: .control)
+                .disabled(!menu.hasEditor)
+            Button("Quick Documentation") { DocController.showFocused() }
+                .keyboardShortcut(FunctionKeys.f1, modifiers: [])
+                .disabled(!menu.hasEditor)
+            Button("External Documentation") { DocController.showExternalFocused() }
+                .keyboardShortcut(FunctionKeys.f1, modifiers: .shift)
+                .disabled(!menu.hasEditor)
             Button("Signature Help") { state.showSignatureHelp() }
                 .keyboardShortcut(.space, modifiers: [.command, .shift])
         }

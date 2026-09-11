@@ -10,11 +10,25 @@ final class HoverController {
     private var lastFire = Date.distantPast
     private var word: NSRange?
     private var shown: NSRange?
+    private weak var view: RideTextView?
 
     private init() {
         lifecycle = CompletionLifecycle(panel: panel.panel) { [weak self] in
             self?.hide()
         }
+        panel.onClick = { [weak self] in
+            _ = self?.upgradeIfVisible()
+        }
+    }
+
+    func upgradeIfVisible() -> Bool {
+        guard panel.isVisible, let view, let shown else {
+            return false
+        }
+        let loc = shown.location
+        hide()
+        EditorPanes.shared.host(for: view)?.docs.show(utf16: loc, in: view)
+        return true
     }
 
     func mouseMoved(view: RideTextView, event: NSEvent) {
@@ -40,6 +54,7 @@ final class HoverController {
     func present(view: RideTextView, range: NSRange) {
         timer?.cancel()
         word = range
+        self.view = view
         lastFire = .distantPast
         fire(view: view, range: range)
     }
@@ -49,6 +64,7 @@ final class HoverController {
         timer = nil
         word = nil
         shown = nil
+        view = nil
         panel.hide()
     }
 
@@ -89,6 +105,7 @@ final class HoverController {
             var actual = NSRange()
             let anchor = view.firstRect(forCharacterRange: range, actualRange: &actual)
             self.shown = range
+            self.view = view
             self.panel.show(content, anchor: anchor, bounds: Self.bounds(for: view))
         }
     }

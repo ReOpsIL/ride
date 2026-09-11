@@ -37,6 +37,10 @@ extension RideTextView {
             SignatureHelpController.shared.hide()
             return
         }
+        if let docs = EditorPanes.shared.host(for: self)?.docs, docs.isVisible {
+            docs.hide()
+            return
+        }
         if CompletionSession.shared.endSnippet() {
             return
         }
@@ -45,6 +49,7 @@ extension RideTextView {
 
     override func keyDown(with event: NSEvent) {
         HoverController.shared.hide()
+        EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
         if event.keyCode == 49, event.modifierFlags.contains(.control) {
             if event.modifierFlags.contains(.shift) {
                 CheatSheetController.shared.toggle(view: self)
@@ -96,7 +101,7 @@ extension RideTextView {
     private func handleCompletionKey(_ event: NSEvent) -> Bool {
         let popup = CompletionSession.shared.popup
         if event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "i" {
-            popup.toggleWideDoc()
+            DocController.showCompletion(in: self)
             return true
         }
         switch event.keyCode {

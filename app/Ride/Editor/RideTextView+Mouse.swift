@@ -28,6 +28,7 @@ extension RideTextView {
 
     override func mouseDown(with event: NSEvent) {
         HoverController.shared.hide()
+        EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
         if event.modifierFlags.contains(.command), let go = hooks.goToDefinition {
             let point = convert(event.locationInWindow, from: nil)
             let index = characterIndexForInsertion(at: point)
