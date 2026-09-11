@@ -316,6 +316,12 @@
 		P20000000000000000000008 /* ManifestWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000007 /* ManifestWatch.swift */; };
 		P2000000000000000000000A /* TargetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000001 /* TargetRows.swift */; };
 		P2000000000000000000000B /* TargetRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000009 /* TargetRowsTests.swift */; };
+		Q10000000000000000000002 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
+		Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
+		Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000005 /* RunConfig+Engine.swift */; };
+		Q10000000000000000000008 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
+		Q10000000000000000000009 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
+		Q1000000000000000000000A /* RunConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000007 /* RunConfigTests.swift */; };
 		A00000000000000000000182 /* TreeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000180 /* TreeModel.swift */; };
 		A00000000000000000000184 /* TreeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000183 /* TreeModelTests.swift */; };
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
@@ -460,6 +466,10 @@
 		P20000000000000000000005 /* TargetsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsPanel.swift; sourceTree = "<group>"; };
 		P20000000000000000000007 /* ManifestWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestWatch.swift; sourceTree = "<group>"; };
 		P20000000000000000000009 /* TargetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetRowsTests.swift; sourceTree = "<group>"; };
+		Q10000000000000000000001 /* RunConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfig.swift; sourceTree = "<group>"; };
+		Q10000000000000000000003 /* RunConfig+Sanitizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Sanitizers.swift"; sourceTree = "<group>"; };
+		Q10000000000000000000005 /* RunConfig+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Engine.swift"; sourceTree = "<group>"; };
+		Q10000000000000000000007 /* RunConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
@@ -709,6 +719,7 @@
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
 				A00000000000000000000183 /* TreeModelTests.swift */,
 				P20000000000000000000009 /* TargetRowsTests.swift */,
+				Q10000000000000000000007 /* RunConfigTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
@@ -758,6 +769,7 @@
 				A00000000000000000000053 /* StatusBar */,
 				A00000000000000000000054 /* Workspace */,
 				P20000000000000000000010 /* Project */,
+				Q10000000000000000000010 /* Run */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
@@ -795,6 +807,16 @@
 				A00000000000000000000014 /* StatusBarView.swift */,
 			);
 			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		Q10000000000000000000010 /* Run */ = {
+			isa = PBXGroup;
+			children = (
+				Q10000000000000000000001 /* RunConfig.swift */,
+				Q10000000000000000000003 /* RunConfig+Sanitizers.swift */,
+				Q10000000000000000000005 /* RunConfig+Engine.swift */,
+			);
+			path = Run;
 			sourceTree = "<group>";
 		};
 		P20000000000000000000010 /* Project */ = {
@@ -1276,6 +1298,9 @@
 				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
 				P2000000000000000000000A /* TargetRows.swift in Sources */,
 				P2000000000000000000000B /* TargetRowsTests.swift in Sources */,
+				Q10000000000000000000008 /* RunConfig.swift in Sources */,
+				Q10000000000000000000009 /* RunConfig+Sanitizers.swift in Sources */,
+				Q1000000000000000000000A /* RunConfigTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1486,6 +1511,9 @@
 				P20000000000000000000002 /* TargetRows.swift in Sources */,
 				P20000000000000000000004 /* ProjectModelStore.swift in Sources */,
 				P20000000000000000000006 /* TargetsPanel.swift in Sources */,
+				Q10000000000000000000002 /* RunConfig.swift in Sources */,
+				Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */,
+				Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */,
 				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,

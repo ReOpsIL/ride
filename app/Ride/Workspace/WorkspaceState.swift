@@ -138,19 +138,25 @@ struct WorkspaceState: Codable, Equatable {
     var focusedPath: String?
     var layout: LayoutState
     var split: SplitState?
+    var runConfigs: [RunConfig]
+    var selectedTarget: String?
 
     init(
         version: Int = currentVersion,
         tabs: [TabState],
         focusedPath: String?,
         layout: LayoutState,
-        split: SplitState? = nil
+        split: SplitState? = nil,
+        runConfigs: [RunConfig] = [],
+        selectedTarget: String? = nil
     ) {
         self.version = version
         self.tabs = tabs
         self.focusedPath = focusedPath
         self.layout = layout
         self.split = split
+        self.runConfigs = runConfigs
+        self.selectedTarget = selectedTarget
     }
 
     init(from decoder: Decoder) throws {
@@ -160,6 +166,8 @@ struct WorkspaceState: Codable, Equatable {
         focusedPath = try c.decodeIfPresent(String.self, forKey: .focusedPath)
         layout = try c.decodeIfPresent(LayoutState.self, forKey: .layout) ?? .defaults
         split = try c.decodeIfPresent(SplitState.self, forKey: .split)
+        runConfigs = try c.decodeIfPresent([RunConfig].self, forKey: .runConfigs) ?? []
+        selectedTarget = try c.decodeIfPresent(String.self, forKey: .selectedTarget)
     }
 
     static func decode(_ data: Data) -> WorkspaceState? {
