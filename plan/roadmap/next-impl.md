@@ -318,15 +318,19 @@ A `BufferDocument` bound to two `EditorHostView`s does not sync (`EditorCoordina
 
 ### R12 Doc popup leaks, focus and content policy (1.1-9b) — Tier B
 
-`app/Ride/Editor/DocWebView.swift`: the `WKScriptMessageHandler` registration retains the view (cycle through the configuration); register a weak proxy object instead and assert in a RideTests-free way that `deinit` runs (a `weak` reference test in the app target's self-test step is acceptable). `RideTextView+Keys.swift` `cancelOperation` and `PeekController.present` use the lazy `docs` accessor to test visibility and so construct a panel and web view on every Escape; use the nil-checking storage. `AppState+Panes.swift` `paneFocused` hides the previous pane's doc and peek panels unless pinned. `DocWebView` loads with a base URL and a `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">` in `PreviewTemplate.popup`. Remove the dead `toggleWideDoc`/`wideDoc` code in `CompletionPopup.swift`. Make the `completion doc trigger` self-test step pass on a copy of `samples/rust-demo` (place the caret where a `Counter` hit exists, or open the completion on `Cou`); the scene must end with 0 FAIL and always write its report.
+`app/Ride/Editor/DocWebView.swift`: the `WKScriptMessageHandler` registration retains the view (cycle through the configuration); register a weak proxy object instead and assert in a RideTests-free way that `deinit` runs (a `weak` reference test in the app target's self-test step is acceptable). `RideTextView+Keys.swift` `cancelOperation` and `PeekController.present` use the lazy `docs` accessor to test visibility and so construct a panel and web view on every Escape; use the nil-checking storage. `AppState+Panes.swift` `paneFocused` hides the previous pane's doc and peek panels unless pinned. `DocWebView` loads with a base URL and a `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">` in `PreviewTemplate.popup`. Remove the dead `toggleWideDoc`/`wideDoc` code in `CompletionPopup.swift`. Make the `completion doc trigger` and `completion doc` self-test steps pass on a copy of `samples/rust-demo` (they fail today: `completion false hit nil`, `visible false`) (place the caret where a `Counter` hit exists, or open the completion on `Cou`); the scene must end with 0 FAIL and always write its report.
 
 ### R13 Demo fixture: a real trait and impl for `record` (1.1-10) — Tier A
 
-`samples/rust-demo/src/util.rs` gained a dangling `Recorder` trait so `record` has two hits. Make it real: `pub trait Recorder { fn record(&mut self, name: &str); }` with `impl Recorder for Counter` holding the body, no inherent `record`; `src/main.rs` line 5 becomes `use util::{Counter, Recorder};` so the line count and every self-test line number stay the same. Run the self-test scene on a copy and confirm the Quick Definition step still sees two segments.
+`samples/rust-demo/src/util.rs` gained a dangling `Recorder` trait so `record` has two hits. Make it real: `pub trait Recorder { fn record(&mut self, name: &str); }` with `impl Recorder for Counter` holding the body, no inherent `record`; `src/main.rs` line 5 becomes `use util::{Counter, Recorder};` so the line count and every self-test line number stay the same. The `quick definition` self-test step fails today (`visible false labels []`); make it pass on a copy of the crate and confirm two segments.
 
 ### R14 C++ self-test steps (1.1-8b) — Tier B
 
 `SelfTestSteps` is Rust-only, so the CI job cannot run `samples/cpp-demo`. Split it into `SelfTestSteps` (language-neutral: setup, indent, undo, duplicate, move line, go to line, back/forward, zoom, workspace) plus `SelfTestSteps+Rust.swift` and `SelfTestSteps+Cpp.swift`, chosen by the opened buffer's language. The C++ set on `samples/cpp-demo/src/shapes.cpp`: `//` comment toggle, matching brace, header/source switch to `include/shapes.hpp`, Complete Statement adding `;`, fold, Quick Definition on a method declared in the header. Add the second run to the `selftest` CI job on a fresh copy of `samples/cpp-demo`. Acceptance: both runs 0 FAIL.
+
+### R15 Window restoration must not decide whether Ride opens (self-test hang) — Tier B
+
+Ride opened no window at all on the maintainer's machine after the batch runs: macOS state restoration replayed a record left by a killed or `exit(1)`-terminated Ride, and SwiftUI restored "no windows". Launching with `-ApplePersistenceIgnoreState YES` opens normally; a clean quit repairs the record. Ride restores its own workspace (1.1-2), so macOS restoration is redundant: `WindowConfigurator` (RootView.swift) sets `window.isRestorable = false` on the main window, and every `NSPanel` (`OverlayPanel.make`, `DocPanel`, `PeekPanel`, `ShortcutsPanel`) sets `isRestorable = false`. `DemoSelfTest.finish` never calls `exit`; it writes the report, appends a final `EXIT 0` or `EXIT 1` line, and terminates normally. The CI job (1.1-8b) greps `^FAIL` and the `EXIT` line instead of the process status and passes `-ApplePersistenceIgnoreState YES` on every launch. Acceptance: the scene runs to completion twice in a row with a `kill -9` of an unrelated plain launch in between.
 
 ## 7. Batch log
 
@@ -337,6 +341,6 @@ A `BufferDocument` bound to two `EditorHostView`s does not sync (`EditorCoordina
 | strong model | 1.1-1a pane registry, `samples/rust-demo` fixture | commit on this branch; 141 RideTests, self-test 51/52 (R7 pre-existing) |
 | 3+4 | R1–R7, 1.1-4 d e h i, 1.1-6b, 1.1-8b, 1.1-3b | 14 commits, reviewed; R8–R10, R14 |
 | 5 | 1.1-1b, 1.1-9b, 1.1-10 | 3 commits, reviewed; R11–R13 |
-| 6 | R8–R14 | pending |
+| 6 | R8–R15 | pending |
 
 The runner lives at `scripts/run-cards.sh`: one card name per argument, one commit per card, logs under `target/executor-logs/`.
