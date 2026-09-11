@@ -34,4 +34,5 @@ pub struct ProjectModel {
     pub targets: Vec<Target>,
     pub profiles: Vec<String>,
     pub manifest: String,
+    pub notice: Option<String>,
 }

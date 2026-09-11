@@ -1,5 +1,7 @@
 mod cargo;
 mod cmake;
+mod cmake_api;
+mod cmake_targets;
 mod compile_db;
 mod make;
 mod model;
