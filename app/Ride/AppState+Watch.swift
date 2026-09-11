@@ -9,10 +9,11 @@ extension AppState {
             return
         }
         git.refresh(root: root)
-        if ManifestWatch.touchesManifest(paths, root: root) {
+        let change = ManifestWatch.change(paths, root: root)
+        if change.reloadProject {
             projectModel.reload()
         }
-        if CargoWatch.touchesManifest(paths, root: root) {
+        if change.reindexCargo {
             scheduleCargoReindex(root)
         }
     }

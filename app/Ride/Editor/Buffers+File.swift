@@ -64,6 +64,7 @@ extension AppState {
         expanded = []
         quickFiles = []
         git.clear()
+        projectModel.clear()
     }
 
     func saveAll() {

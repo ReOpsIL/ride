@@ -52,8 +52,6 @@
 		A00000000000000000000137 /* AppState+Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000136 /* AppState+Launch.swift */; };
 		A00000000000000000000139 /* CargoManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000138 /* CargoManifest.swift */; };
 		A0000000000000000000013A /* CargoManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000138 /* CargoManifest.swift */; };
-		A0000000000000000000013C /* CargoWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013B /* CargoWatch.swift */; };
-		A0000000000000000000013D /* CargoWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013B /* CargoWatch.swift */; };
 		A0000000000000000000013F /* GitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitStatus.swift */; };
 		A00000000000000000000140 /* GitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitStatus.swift */; };
 		A00000000000000000000142 /* GitStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000141 /* GitStatusService.swift */; };
@@ -63,7 +61,7 @@
 		A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000149 /* DiagnosticRangeTests.swift */; };
 		A00000000000000000000909 /* BufferLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000908 /* BufferLanguageTests.swift */; };
 		A0000000000000000000014C /* GitStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014B /* GitStatusTests.swift */; };
-		A0000000000000000000014E /* CargoWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014D /* CargoWatchTests.swift */; };
+		A0000000000000000000014E /* ManifestWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014D /* ManifestWatchTests.swift */; };
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
 		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
 		A000000000000000000000D0 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
@@ -314,6 +312,7 @@
 		P20000000000000000000004 /* ProjectModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000003 /* ProjectModelStore.swift */; };
 		P20000000000000000000006 /* TargetsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000005 /* TargetsPanel.swift */; };
 		P20000000000000000000008 /* ManifestWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000007 /* ManifestWatch.swift */; };
+		P2000000000000000000001A /* ManifestWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000007 /* ManifestWatch.swift */; };
 		P2000000000000000000000A /* TargetRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000001 /* TargetRows.swift */; };
 		P2000000000000000000000B /* TargetRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20000000000000000000009 /* TargetRowsTests.swift */; };
 		Q10000000000000000000002 /* RunConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000001 /* RunConfig.swift */; };
@@ -396,7 +395,6 @@
 		A00000000000000000000134 /* AppState+Check.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Check.swift"; sourceTree = "<group>"; };
 		A00000000000000000000136 /* AppState+Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Launch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000138 /* CargoManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CargoManifest.swift"; sourceTree = "<group>"; };
-		A0000000000000000000013B /* CargoWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CargoWatch.swift"; sourceTree = "<group>"; };
 		A0000000000000000000013E /* GitStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatus.swift"; sourceTree = "<group>"; };
 		A00000000000000000000141 /* GitStatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatusService.swift"; sourceTree = "<group>"; };
 		A00000000000000000000143 /* light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "light.json"; sourceTree = "<group>"; };
@@ -405,7 +403,7 @@
 		A00000000000000000000149 /* DiagnosticRangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRangeTests.swift"; sourceTree = "<group>"; };
 		A00000000000000000000908 /* BufferLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BufferLanguageTests.swift"; sourceTree = "<group>"; };
 		A0000000000000000000014B /* GitStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatusTests.swift"; sourceTree = "<group>"; };
-		A0000000000000000000014D /* CargoWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CargoWatchTests.swift"; sourceTree = "<group>"; };
+		A0000000000000000000014D /* ManifestWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ManifestWatchTests.swift"; sourceTree = "<group>"; };
 		A000000000000000000000C0 /* RideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A000000000000000000000C1 /* Utf16Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16Tests.swift; sourceTree = "<group>"; };
 		A000000000000000000000C2 /* QueryIdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryIdTests.swift; sourceTree = "<group>"; };
@@ -750,7 +748,7 @@
 				E50000000000000000000010 /* BracketPairingTests.swift */,
 				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
-				A0000000000000000000014D /* CargoWatchTests.swift */,
+				A0000000000000000000014D /* ManifestWatchTests.swift */,
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
@@ -897,7 +895,6 @@
 				B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */,
 				A00000000000000000000141 /* GitStatusService.swift */,
 				A0000000000000000000013E /* GitStatus.swift */,
-				A0000000000000000000013B /* CargoWatch.swift */,
 				A00000000000000000000138 /* CargoManifest.swift */,
 				F11000000000000000000001 /* WorkspaceState.swift */,
 				F11000000000000000000004 /* WorkspaceStateStore.swift */,
@@ -1347,13 +1344,13 @@
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
-				A0000000000000000000013D /* CargoWatch.swift in Sources */,
 				A00000000000000000000140 /* GitStatus.swift in Sources */,
 				A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */,
 				A00000000000000000000909 /* BufferLanguageTests.swift in Sources */,
 				A00000000000000000000911 /* RangeShiftTests.swift in Sources */,
 				A0000000000000000000014C /* GitStatusTests.swift in Sources */,
-				A0000000000000000000014E /* CargoWatchTests.swift in Sources */,
+				A0000000000000000000014E /* ManifestWatchTests.swift in Sources */,
+				P2000000000000000000001A /* ManifestWatch.swift in Sources */,
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
 				A00000000000000000000162 /* ProjectReplace.swift in Sources */,
 				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
@@ -1518,7 +1515,6 @@
 				A00000000000000000000135 /* AppState+Check.swift in Sources */,
 				A00000000000000000000137 /* AppState+Launch.swift in Sources */,
 				A00000000000000000000139 /* CargoManifest.swift in Sources */,
-				A0000000000000000000013C /* CargoWatch.swift in Sources */,
 				A0000000000000000000013F /* GitStatus.swift in Sources */,
 				A00000000000000000000142 /* GitStatusService.swift in Sources */,
 				A00000000000000000000146 /* AppState+Watch.swift in Sources */,

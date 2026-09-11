@@ -1,8 +1,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use serde::Deserialize;
-
+use crate::check::Entry;
 use crate::error::EngineError;
 use crate::ffi::{EngineConfig, Target, TargetKind};
 
@@ -13,14 +12,6 @@ const DB_NAMES: [&str; 2] = ["compile_commands.json", "build/compile_commands.js
 const UNREADABLE: &str = "compile_commands.json could not be parsed: no targets listed";
 
 pub struct CompileDb;
-
-#[derive(Deserialize)]
-struct Entry {
-    directory: String,
-    file: String,
-    command: Option<String>,
-    arguments: Option<Vec<String>>,
-}
 
 impl Detect for CompileDb {
     fn detect(root: &Path, _config: &EngineConfig) -> Result<Option<ProjectModel>, EngineError> {
@@ -61,21 +52,13 @@ fn targets(root: &Path, db: &Path, entries: &[Entry]) -> Vec<Target> {
         out.push(Target {
             name,
             kind: TargetKind::Custom,
-            build: argv(entry),
+            build: entry.argv().unwrap_or_default(),
             run: None,
             sources: vec![source.display().to_string()],
             working_dir: dir.display().to_string(),
         });
     }
     out
-}
-
-fn argv(entry: &Entry) -> Vec<String> {
-    match (&entry.arguments, &entry.command) {
-        (Some(args), _) => args.clone(),
-        (None, Some(command)) => shell_words::split(command).unwrap_or_default(),
-        (None, None) => Vec::new(),
-    }
 }
 
 fn absolute(base: &Path, path: &str) -> PathBuf {

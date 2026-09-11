@@ -12,10 +12,14 @@ final class ProjectModelStore: ObservableObject {
     var onChange: (() -> Void)?
     private var root: URL?
     private var loading = false
+    private var wanted: String?
 
     var groups: [TargetGroup] { TargetRows.grouped(rows) }
 
     func load(root: URL) {
+        if self.root != root {
+            clear()
+        }
         self.root = root
         fetch(root: root, reload: false)
     }
@@ -35,13 +39,20 @@ final class ProjectModelStore: ObservableObject {
         profile = ""
         notice = nil
         selected = nil
+        wanted = nil
         model = nil
         onChange?()
     }
 
     func select(_ row: TargetRow?) {
+        wanted = row?.name
         selected = row
         onChange?()
+    }
+
+    func restoreSelection(_ name: String?) {
+        wanted = name
+        applySelection()
     }
 
     private func fetch(root: URL, reload: Bool) {
@@ -75,9 +86,11 @@ final class ProjectModelStore: ObservableObject {
         if !profiles.contains(profile) {
             profile = profiles.first ?? ""
         }
-        if let current = selected, !rows.contains(current) {
-            selected = nil
-        }
+        applySelection()
+    }
+
+    private func applySelection() {
+        selected = wanted.flatMap { name in rows.first { $0.name == name } }
         onChange?()
     }
 

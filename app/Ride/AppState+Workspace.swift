@@ -106,6 +106,7 @@ extension AppState {
         }
         applyLayout(saved.layout)
         runConfigs = saved.runConfigs
+        projectModel.restoreSelection(saved.selectedTarget)
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored
         restoreSplit(saved, restored)

@@ -34,6 +34,25 @@ extension SelfTestSteps {
         })
     }
 
+    static func targetSelectionRestore(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "target selection restore", wait: 0.5, run: {
+            state.selectTarget(state.projectModel.rows.first { $0.kind == .bin })
+            guard let data = try? JSONEncoder().encode(state.captureWorkspace()),
+                  let loaded = WorkspaceState.decode(data)
+            else {
+                return
+            }
+            state.projectModel.select(nil)
+            state.restoreWorkspace(loaded)
+        }, check: {
+            let bin = state.projectModel.rows.first { $0.kind == .bin }
+            return e.expect(
+                bin != nil && state.projectModel.selected == bin && state.menu.selectedTarget == bin?.name,
+                "selected \(state.projectModel.selected?.id ?? "nil") menu \(state.menu.selectedTarget ?? "nil")"
+            )
+        })
+    }
+
     static func runOutputLinks(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "run output link", wait: 0.4, run: {
             state.runOutput.append("  --> src/main.rs:12:5")
