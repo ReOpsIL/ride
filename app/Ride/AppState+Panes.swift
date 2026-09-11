@@ -12,6 +12,7 @@ extension AppState {
 
     func paneFocused(_ paneID: UUID) {
         if paneLayout.focusedID != paneID {
+            EditorPanes.shared.host(paneLayout.focusedID)?.hideUnpinnedDocs()
             CompletionSession.shared.reset()
             paneLayout.focus(paneID)
             syncSplitFocus()

@@ -38,12 +38,12 @@ extension RideTextView {
             return
         }
         if let host = EditorPanes.shared.host(for: self) {
-            if host.peek.isVisible {
-                host.peek.hide()
+            if let peek = host.peekStorage, peek.isVisible {
+                peek.hide()
                 return
             }
-            if host.docs.isVisible {
-                host.docs.hide()
+            if let docs = host.docsStorage, docs.isVisible {
+                docs.hide()
                 return
             }
         }

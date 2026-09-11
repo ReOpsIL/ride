@@ -1,21 +1,26 @@
 import AppKit
 import WebKit
 
-final class DocWebView: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+final class DocWebView: NSObject, WKNavigationDelegate {
+    private static let baseURL = URL(string: "https://ride.invalid/")!
     let view: WKWebView
     var onLink: ((String) -> Void)?
+    private let proxy: DocScriptProxy
     private var themeName = ""
     private var lastHTML = ""
     private var ready = false
     private var pending: String?
 
     override init() {
+        let proxy = DocScriptProxy()
         let config = WKWebViewConfiguration()
+        let user = config.userContentController
+        user.add(proxy, name: "rideDoc")
+        user.addUserScript(WKUserScript(source: Self.pageScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        self.proxy = proxy
         view = WKWebView(frame: .zero, configuration: config)
         super.init()
-        let user = config.userContentController
-        user.add(self, name: "rideDoc")
-        user.addUserScript(WKUserScript(source: Self.clickScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        proxy.owner = self
         view.navigationDelegate = self
         view.setValue(false, forKey: "drawsBackground")
     }
@@ -31,7 +36,7 @@ final class DocWebView: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
             ready = false
             pending = html
             lastHTML = ""
-            view.loadHTMLString(PreviewTemplate.popup(theme), baseURL: nil)
+            view.loadHTMLString(PreviewTemplate.popup(theme), baseURL: Self.baseURL)
             return
         }
         push(html)
@@ -67,8 +72,8 @@ final class DocWebView: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         decisionHandler(.allow)
     }
 
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let href = message.body as? String, let target = DocLinkTarget.item(url: href) else {
+    fileprivate func receiveLink(_ href: String) {
+        guard let target = DocLinkTarget.item(url: href) else {
             return
         }
         onLink?(target)
@@ -84,7 +89,8 @@ final class DocWebView: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         view.evaluateJavaScript("setBody(\(json))")
     }
 
-    private static let clickScript = """
+    private static let pageScript = """
+    function setBody(h){var m=document.getElementById('main');if(m)m.innerHTML=h;}
     document.addEventListener('click', function(e) {
       var a = e.target.closest('a');
       if (!a) return;
@@ -96,4 +102,15 @@ final class DocWebView: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
       }
     }, true);
     """
+}
+
+private final class DocScriptProxy: NSObject, WKScriptMessageHandler {
+    weak var owner: DocWebView?
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let href = message.body as? String else {
+            return
+        }
+        owner?.receiveLink(href)
+    }
 }

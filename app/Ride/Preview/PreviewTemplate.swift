@@ -2,10 +2,14 @@ import AppKit
 
 enum PreviewTemplate {
     static func popup(_ theme: Theme) -> String {
-        page(theme).replacingOccurrences(
-            of: "main{max-width:72ch;margin:0 auto;padding:28px 32px 96px}",
-            with: "main{max-width:none;margin:0;padding:12px 14px 20px}h1{font-size:1.2em;margin-top:.2em}"
-        )
+        let csp =
+            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; img-src data:\">"
+        return page(theme)
+            .replacingOccurrences(
+                of: "main{max-width:72ch;margin:0 auto;padding:28px 32px 96px}",
+                with: "main{max-width:none;margin:0;padding:12px 14px 20px}h1{font-size:1.2em;margin-top:.2em}"
+            )
+            .replacingOccurrences(of: "<meta charset=\"utf-8\">", with: "<meta charset=\"utf-8\">" + csp)
     }
 
     static func page(_ theme: Theme) -> String {

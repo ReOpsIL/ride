@@ -71,7 +71,7 @@ final class DocController {
         }
         openedAt = IdentifierRange.at(view.string as NSString, index: view.selectedRange().location)
         if let path = hit.sourcePath, let byte = hit.byteStart, !Self.same(path, binding.document.fileURL?.path) {
-            fetch(path: path, byte: byte, view: view)
+            fetch(path: path, byte: byte, name: hit.name, view: view)
             return
         }
         let caret = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
@@ -156,10 +156,10 @@ final class DocController {
         }
     }
 
-    private func fetch(path: String, byte: UInt32, view: RideTextView) {
+    private func fetch(path: String, byte: UInt32, name: String, view: RideTextView) {
         generation += 1
         let expected = generation
-        SessionService.shared.quickDoc(path: path, byte: byte) { [weak self, weak view] doc in
+        SessionService.shared.quickDoc(path: path, byte: byte, name: name) { [weak self, weak view] doc in
             guard let self, let view, expected == self.generation, let doc else {
                 return
             }
@@ -171,7 +171,7 @@ final class DocController {
         self.view = view
         HoverController.shared.hide()
         CompletionSession.shared.hide()
-        EditorPanes.shared.host(for: view)?.peek.hide()
+        EditorPanes.shared.host(for: view)?.peekStorage?.hide()
         var actual = NSRange()
         let caret = view.selectedRange()
         let anchor = view.firstRect(forCharacterRange: NSRange(location: caret.location, length: 0), actualRange: &actual)

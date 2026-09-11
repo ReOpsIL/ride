@@ -7,7 +7,6 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     private var hits: [CompletionHit] = []
     private var prefix = ""
     private var selected = 0
-    private var wideDoc = false
     weak var textView: RideTextView?
 
     override init() {
@@ -53,7 +52,6 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         textView = view
         selected = CompletionNarrowing.selection(in: hits, previous: selectedName) { $0.name }
         layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
-        layout.wide = wideDoc
         layout.truncated = truncated
         layout.applyTheme()
         layout.configureScrolling(rows: hits.count)
@@ -66,16 +64,6 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
 
     func relocate(in view: RideTextView) {
-        panel.setFrame(frame(in: view), display: true)
-    }
-
-    func toggleWideDoc() {
-        wideDoc.toggle()
-        guard isVisible, let view = textView else {
-            return
-        }
-        layout.wide = wideDoc
-        layout.doc.fill(selectedHit)
         panel.setFrame(frame(in: view), display: true)
     }
 

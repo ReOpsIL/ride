@@ -114,7 +114,7 @@ final class PeekController {
         self.view = view
         HoverController.shared.hide()
         CompletionSession.shared.hide()
-        EditorPanes.shared.host(for: view)?.docs.hide()
+        EditorPanes.shared.host(for: view)?.docsStorage?.hide()
         var actual = NSRange()
         let caret = view.selectedRange()
         let anchor = view.firstRect(forCharacterRange: NSRange(location: caret.location, length: 0), actualRange: &actual)

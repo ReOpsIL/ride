@@ -15,6 +15,8 @@ final class DemoSelfTest {
 
     static func start(state: AppState, report: String) {
         shared.report = report
+        shared.results = []
+        shared.writeReport()
         shared.steps = SelfTestSteps.all(state: state)
         shared.next(state: state)
     }
@@ -47,8 +49,13 @@ final class DemoSelfTest {
     }
 
     private func writeReport() {
+        let url = URL(fileURLWithPath: report)
+        try? FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
         let text = results.joined(separator: "\n") + "\n"
-        try? text.write(toFile: report, atomically: true, encoding: .utf8)
+        try? text.write(to: url, atomically: true, encoding: .utf8)
     }
 }
 
