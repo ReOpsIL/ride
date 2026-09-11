@@ -153,6 +153,7 @@ extension AppState {
         }
         buffers = []
         paneLayout = PaneLayout()
+        splitLayout = SplitLayout()
         return true
     }
 

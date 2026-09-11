@@ -38,10 +38,16 @@ extension AppState {
         cursorColumn = 1
     }
 
-    func selectBuffer(_ id: UUID) {
+    func selectBuffer(_ id: UUID, in paneID: UUID? = nil) {
         CompletionSession.shared.reset()
         recordLocation()
-        paneLayout.select(id)
+        if let paneID {
+            paneLayout.focus(paneID)
+            paneLayout.open(id, in: paneID)
+        } else {
+            paneLayout.select(id)
+        }
+        syncSplitFocus()
         selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
         cursorColumn = 1

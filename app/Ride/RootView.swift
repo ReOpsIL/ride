@@ -129,35 +129,6 @@ struct DetailColumn: View {
     }
 
     private var editor: some View {
-        HStack(spacing: 0) {
-            ForEach(state.paneLayout.panes) { pane in
-                if pane.id != state.paneLayout.panes.first?.id {
-                    ts.ui.border.frame(width: Tokens.Size.hairline)
-                }
-                PaneColumn(pane: pane, focused: pane.id == state.paneLayout.focusedID)
-            }
-        }
-    }
-}
-
-struct PaneColumn: View {
-    let pane: Pane
-    let focused: Bool
-    @EnvironmentObject private var state: AppState
-
-    var body: some View {
-        VStack(spacing: 0) {
-            TabStrip(pane: pane)
-            if focused, state.showFind {
-                FindBar()
-            }
-            if let buffer = state.buffer(pane.activeID) {
-                EditorPane(document: buffer, state: state, paneID: pane.id)
-                    .id(buffer.id)
-            } else {
-                WelcomeView()
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        EditorSplit()
     }
 }

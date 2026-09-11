@@ -13,6 +13,7 @@ final class MenuModel: ObservableObject {
     @Published var showSidebar = true
     @Published var outlinePanel = true
     @Published var showProblems = false
+    @Published var hasSplit = false
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -26,6 +27,7 @@ final class MenuModel: ObservableObject {
         set(\.showSidebar, state.showSidebar)
         set(\.outlinePanel, state.prefs.outlinePanel)
         set(\.showProblems, state.showProblems)
+        set(\.hasSplit, state.splitLayout.isSplit)
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

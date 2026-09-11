@@ -3,6 +3,7 @@ import SwiftUI
 struct TabItem: View {
     @ObservedObject var buffer: BufferDocument
     let selected: Bool
+    let paneID: UUID
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
     @State private var hovering = false
@@ -42,12 +43,13 @@ struct TabItem: View {
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .onTapGesture {
-            state.selectBuffer(buffer.id)
+            state.selectBuffer(buffer.id, in: paneID)
         }
         .contextMenu {
             Button("Close") { state.closeBuffer(buffer.id) }
             Button("Close Others") { state.closeOthers(keeping: buffer.id) }
             Button("Close All") { state.closeAll() }
+            Button("Open in Split") { state.openInSplit(buffer.id) }
             if let url = buffer.fileURL {
                 Divider()
                 Button("Copy Path") { TreeActions.copyPath(url, root: nil) }

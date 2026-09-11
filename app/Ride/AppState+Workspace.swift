@@ -56,6 +56,7 @@ extension AppState {
         }
         buffers = []
         paneLayout = PaneLayout()
+        splitLayout = SplitLayout()
         cursorLine = 1
         cursorColumn = 1
         expanded = []
@@ -89,7 +90,7 @@ extension AppState {
             tabs: buffers.compactMap(tabState(of:)),
             focusedPath: activeBuffer?.fileURL?.standardizedFileURL.path,
             layout: currentLayout(),
-            split: nil
+            split: splitLayout.snapshot
         )
     }
 
@@ -104,6 +105,17 @@ extension AppState {
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored
         paneLayout.reset(tabs: restored.map(\.id), active: focusedID(saved.focusedPath, in: restored))
+        splitLayout = SplitLayout.restore(saved.split)
+        if splitLayout.isSplit {
+            let current = paneLayout.activeID
+            let right = paneLayout.split()
+            if let current {
+                paneLayout.open(current, in: right)
+            }
+            if let left = paneLayout.panes.first?.id {
+                paneLayout.focus(left)
+            }
+        }
         selectedURL = activeBuffer?.fileURL
         cursorLine = 1
         cursorColumn = 1

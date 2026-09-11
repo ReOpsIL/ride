@@ -103,8 +103,29 @@ struct PaneLayout: Equatable {
         focusedID = pane.id
     }
 
+    mutating func move(_ bufferID: UUID, to paneID: UUID) {
+        guard pane(paneID) != nil else {
+            return
+        }
+        for pane in panes where pane.id != paneID {
+            update(pane.id) { current in
+                current.tabs.removeAll { $0 == bufferID }
+                if current.activeID == bufferID {
+                    current.activeID = current.tabs.last
+                }
+            }
+        }
+        open(bufferID, in: paneID)
+        focusedID = paneID
+    }
+
     @discardableResult
     mutating func split() -> UUID {
+        if panes.count >= 2 {
+            let other = neighbour(of: focusedID) ?? panes[1]
+            focusedID = other.id
+            return other.id
+        }
         let pane = Pane()
         let index = panes.firstIndex { $0.id == focusedID } ?? panes.count - 1
         panes.insert(pane, at: index + 1)

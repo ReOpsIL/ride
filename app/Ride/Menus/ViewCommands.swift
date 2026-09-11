@@ -26,6 +26,14 @@ struct ViewCommands: Commands {
             Toggle("Soft Wrap", isOn: Binding(get: { menu.softWrap }, set: { _ in state.toggleSoftWrap() }))
             Toggle("Show Whitespace", isOn: Binding(get: { menu.visibleWhitespace }, set: { _ in state.toggleWhitespace() }))
             Toggle("Indent Guides", isOn: Binding(get: { menu.indentGuides }, set: { _ in state.toggleIndentGuides() }))
+            Divider()
+            Button("Open in Split") { state.openInSplit() }
+                .disabled(!menu.hasEditor)
+            Button("Toggle Split") { state.toggleSplit() }
+                .keyboardShortcut("\\", modifiers: .command)
+                .disabled(!menu.hasEditor)
+            Button("Close Split") { state.closeSplit() }
+                .disabled(!menu.hasSplit)
         }
     }
 }

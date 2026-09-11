@@ -81,6 +81,19 @@ final class PaneLayoutTests: XCTestCase {
         XCTAssertEqual(layout.activeID, a)
     }
 
+    func testMoveTakesTabToOtherPane() {
+        var layout = PaneLayout()
+        layout.activeID = a
+        let first = layout.focusedID
+        let second = layout.split()
+        layout.activeID = b
+        layout.move(b, to: first)
+        XCTAssertEqual(layout.focusedID, first)
+        XCTAssertEqual(layout.pane(first)?.tabs, [a, b])
+        XCTAssertEqual(layout.pane(second)?.tabs, [])
+        XCTAssertEqual(layout.activeID, b)
+    }
+
     func testResetReplacesEverything() {
         var layout = PaneLayout()
         layout.activeID = a

@@ -78,6 +78,7 @@ enum SelfTestSteps {
             workspaceRestore(state: state, e: e),
             workspaceSnapshotAfterOpen(state: state, e: e),
             outerSignatureAfterClose(e: e),
+            splitHeaderSource(state: state, e: e),
         ]
     }
 

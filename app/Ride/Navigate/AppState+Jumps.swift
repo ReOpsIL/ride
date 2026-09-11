@@ -44,6 +44,10 @@ extension AppState {
             return
         }
         recordLocation()
+        if splitLayout.isSplit, let other = paneLayout.neighbour(of: paneLayout.focusedID) {
+            paneLayout.focus(other.id)
+            syncSplitFocus()
+        }
         openFile(sibling)
     }
 

@@ -122,3 +122,57 @@ struct EditorPane: NSViewRepresentable {
         EditorPanes.shared.detach(host)
     }
 }
+
+struct EditorSplit: View {
+    @EnvironmentObject private var state: AppState
+
+    var body: some View {
+        let panes = state.paneLayout.panes
+        if panes.count >= 2 {
+            splitView(left: panes[0], right: panes[1])
+        } else if let pane = panes.first {
+            PaneColumn(pane: pane, focused: pane.id == state.paneLayout.focusedID)
+        }
+    }
+
+    private func splitView(left: Pane, right: Pane) -> some View {
+        GeometryReader { geo in
+            let total = geo.size.width
+            HSplitView {
+                PaneColumn(pane: left, focused: left.id == state.paneLayout.focusedID)
+                    .frame(minWidth: total * SplitLayout.minRatio)
+                    .reportSize(.width) { width in
+                        if total > 0 {
+                            state.setSplitRatio(width / total)
+                        }
+                    }
+                PaneColumn(pane: right, focused: right.id == state.paneLayout.focusedID)
+                    .frame(minWidth: total * SplitLayout.minRatio)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(SplitPositioner(position: state.splitLayout.ratio * total))
+        }
+    }
+}
+
+struct PaneColumn: View {
+    let pane: Pane
+    let focused: Bool
+    @EnvironmentObject private var state: AppState
+
+    var body: some View {
+        VStack(spacing: 0) {
+            TabStrip(pane: pane)
+            if focused, state.showFind {
+                FindBar()
+            }
+            if let buffer = state.buffer(pane.activeID) {
+                EditorPane(document: buffer, state: state, paneID: pane.id)
+                    .id(buffer.id)
+            } else {
+                WelcomeView()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}

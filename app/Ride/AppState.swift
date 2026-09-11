@@ -18,6 +18,9 @@ final class AppState: ObservableObject {
     @Published var paneLayout = PaneLayout() {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var splitLayout = SplitLayout() {
+        didSet { syncMenu(); scheduleWorkspaceSave() }
+    }
     @Published var cursorLine = 1
     @Published var cursorColumn = 1
     @Published var prefs = Preferences.defaults {

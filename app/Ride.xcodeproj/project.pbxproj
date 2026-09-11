@@ -146,6 +146,10 @@
 		F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* EditorHostView+Jump.swift */; };
 		F10000000000000000000009 /* AppState+Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* AppState+Panes.swift */; };
 		F1000000000000000000000B /* PaneLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PaneLayoutTests.swift */; };
+		F12000000000000000000002 /* SplitLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000001 /* SplitLayout.swift */; };
+		F12000000000000000000003 /* SplitLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000001 /* SplitLayout.swift */; };
+		F12000000000000000000005 /* SplitLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000004 /* SplitLayoutTests.swift */; };
+		F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000006 /* SelfTestSteps+Split.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
 		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
@@ -445,6 +449,9 @@
 		F10000000000000000000006 /* EditorHostView+Jump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Jump.swift"; sourceTree = "<group>"; };
 		F10000000000000000000008 /* AppState+Panes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Panes.swift"; sourceTree = "<group>"; };
 		F1000000000000000000000A /* PaneLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayoutTests.swift"; sourceTree = "<group>"; };
+		F12000000000000000000001 /* SplitLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitLayout.swift"; sourceTree = "<group>"; };
+		F12000000000000000000004 /* SplitLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitLayoutTests.swift"; sourceTree = "<group>"; };
+		F12000000000000000000006 /* SelfTestSteps+Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Split.swift"; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
 		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
@@ -648,6 +655,7 @@
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
 				A00000000000000000000183 /* TreeModelTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
+				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
 				B1000000000000000000000B /* LineIndexTests.swift */,
@@ -766,6 +774,7 @@
 				A00000000000000000000113 /* IdentifierRange.swift */,
 				A00000000000000000000116 /* HoverPanel.swift */,
 				F10000000000000000000001 /* PaneLayout.swift */,
+				F12000000000000000000001 /* SplitLayout.swift */,
 				F10000000000000000000004 /* EditorPanes.swift */,
 				F10000000000000000000006 /* EditorHostView+Jump.swift */,
 				A00000000000000000000118 /* HoverController.swift */,
@@ -920,6 +929,7 @@
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
+				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
 			);
 			path = Debug;
@@ -1183,6 +1193,8 @@
 				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
+				F12000000000000000000003 /* SplitLayout.swift in Sources */,
+				F12000000000000000000005 /* SplitLayoutTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -1238,6 +1250,7 @@
 				EA0000000000000000000006 /* ToolsInstallView.swift in Sources */,
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
+				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,
 				E70000000000000000000002 /* RideTextView+Typing.swift in Sources */,
 				E60000000000000000000003 /* NavigationHistory.swift in Sources */,
@@ -1339,6 +1352,7 @@
 				A00000000000000000000114 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000117 /* HoverPanel.swift in Sources */,
 				F10000000000000000000002 /* PaneLayout.swift in Sources */,
+				F12000000000000000000002 /* SplitLayout.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,
 				F10000000000000000000009 /* AppState+Panes.swift in Sources */,
