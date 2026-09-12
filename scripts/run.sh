@@ -17,6 +17,7 @@ xcodebuild \
   -configuration Debug \
   -derivedDataPath "$DERIVED" \
   -destination 'platform=macOS,arch=arm64' \
+  -skipPackagePluginValidation -skipMacroValidation \
   build
 
 APP="$DERIVED/Build/Products/Debug/Ride.app"
