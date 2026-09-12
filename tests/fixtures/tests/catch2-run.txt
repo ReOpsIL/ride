@@ -1,7 +1,0 @@
-Filters: ""
-Randomness seeded to: 1
-c2.cpp:3: passed: 2 + 2 == 4 for: 4 == 4
-c2.cpp:5: failed: 2 + 2 == 5 for: 4 == 5
-c2.cpp:7: passed: true for: true
-
-Failed 1 test case, failed 1 assertion.

@@ -1,0 +1,55 @@
+   Compiling twobin v0.1.0 (/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/twobin)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/twobin/target/debug/deps/twobin-84f8928289d0c295)
+
+running 1 test
+test shared_name ... FAILED
+
+failures:
+
+---- shared_name stdout ----
+
+thread 'shared_name' (12840992) panicked at src/lib.rs:7:5:
+assertion `left == right` failed: lib arithmetic drifted
+  left: 4
+ right: 5
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    shared_name
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+     Running tests/geo.rs (/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/twobin/target/debug/deps/geo-722e96184e6961de)
+
+running 1 test
+test shared_name ... FAILED
+
+failures:
+
+---- shared_name stdout ----
+
+thread 'shared_name' (12840994) panicked at tests/geo.rs:3:5:
+assertion `left == right` failed: integration arithmetic drifted
+  left: 4
+ right: 6
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    shared_name
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test geo`
+   Doc-tests twobin
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: 2 targets failed:
+    `--lib`
+    `--test geo`

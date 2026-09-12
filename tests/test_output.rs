@@ -70,6 +70,18 @@ fn cargo_output_carries_status_and_failure_text() {
 }
 
 #[test]
+fn cargo_output_keeps_one_block_per_binary() {
+    let events =
+        engine().parse_test_output(TestFramework::Cargo, fixture("cargo-run-two-binaries.txt"));
+    assert_eq!(events.len(), 2);
+    assert!(events.iter().all(|e| e.name == "shared_name"));
+    assert!(events[0].output.contains("lib arithmetic drifted"));
+    assert!(!events[0].output.contains("integration arithmetic drifted"));
+    assert!(events[1].output.contains("integration arithmetic drifted"));
+    assert!(!events[1].output.contains("lib arithmetic drifted"));
+}
+
+#[test]
 fn gtest_list_groups_cases_by_suite() {
     let cases = engine().list_tests(TestFramework::GoogleTest, fixture("gtest-list.txt"));
     assert_eq!(cases.len(), 3);
@@ -99,23 +111,37 @@ fn gtest_output_pairs_run_with_result() {
 }
 
 #[test]
-fn catch2_list_carries_tags_and_location() {
+fn catch2_list_carries_tags() {
     let cases = engine().list_tests(TestFramework::Catch2, fixture("catch2-list.txt"));
-    assert_eq!(cases.len(), 3);
+    assert_eq!(cases.len(), 5);
     assert_eq!(cases[1].name, "detects drift");
     assert_eq!(cases[1].suite.as_deref(), Some("[geo]"));
-    assert_eq!(cases[1].file.as_deref(), Some("c2.cpp"));
-    assert_eq!(cases[1].line, Some(5));
+    assert!(cases[1].file.is_none());
+    assert_eq!(cases[4].name, "skips slow path");
 }
 
 #[test]
-fn catch2_compact_output_reports_each_assertion() {
-    let events = engine().parse_test_output(TestFramework::Catch2, fixture("catch2-run.txt"));
-    assert_eq!(events.len(), 3);
+fn catch2_xml_reports_one_event_per_test_case() {
+    let events = engine().parse_test_output(TestFramework::Catch2, fixture("catch2-run.xml"));
+    assert_eq!(events.len(), 5);
+    assert_eq!(events[0].name, "adds points");
+    assert_eq!(events[0].suite.as_deref(), Some("[geo]"));
     assert_eq!(events[0].status, TestStatus::Passed);
-    assert_eq!(events[1].name, "c2.cpp:5");
+    assert!(events[0].output.is_empty());
+    assert_eq!(events[1].name, "detects drift");
     assert_eq!(events[1].status, TestStatus::Failed);
-    assert!(events[1].output.contains("4 == 5"));
+    assert_eq!(
+        events[1].output,
+        "sum: c2.cpp:6: REQUIRE(2 + 2 == 5)\nwith expansion: 4 == 5"
+    );
+    assert_eq!(
+        events[2].output,
+        "c2.cpp:9: REQUIRE(2 < 1)\nwith expansion: 2 < 1"
+    );
+    assert_eq!(events[3].status, TestStatus::Passed);
+    assert_eq!(events[4].name, "skips slow path");
+    assert_eq!(events[4].status, TestStatus::Ignored);
+    assert_eq!(events[4].output, "needs a fixture");
 }
 
 #[test]
@@ -187,7 +213,10 @@ fn binary_commands_extend_the_run_argv() {
         )
         .unwrap();
     assert_eq!(commands.list, ["/project/build/geo_tests", "--list-tests"]);
-    assert_eq!(commands.run, ["/project/build/geo_tests", "-r", "compact"]);
+    assert_eq!(
+        commands.run,
+        ["/project/build/geo_tests", "--reporter", "xml"]
+    );
 }
 
 #[test]

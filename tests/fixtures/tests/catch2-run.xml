@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catch2TestRun name="c2" rng-seed="1" xml-format-version="3" catch2-version="3.16.0">
+  <TestCase name="adds points" tags="[geo]" filename="c2.cpp" line="3">
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <TestCase name="detects drift" tags="[geo]" filename="c2.cpp" line="5">
+    <Section name="sum" filename="c2.cpp" line="6">
+      <Expression success="false" type="REQUIRE" filename="c2.cpp" line="6">
+        <Original>
+          2 + 2 == 5
+        </Original>
+        <Expanded>
+          4 == 5
+        </Expanded>
+      </Expression>
+      <OverallResults successes="0" failures="1" expectedFailures="0" skipped="false"/>
+    </Section>
+    <OverallResult success="false" skips="0"/>
+  </TestCase>
+  <TestCase name="compares sizes" tags="[geo]" filename="c2.cpp" line="9">
+    <Expression success="false" type="REQUIRE" filename="c2.cpp" line="9">
+      <Original>
+        2 &lt; 1
+      </Original>
+      <Expanded>
+        2 &lt; 1
+      </Expanded>
+    </Expression>
+    <OverallResult success="false" skips="0"/>
+  </TestCase>
+  <TestCase name="trims blanks" tags="[text]" filename="c2.cpp" line="11">
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <TestCase name="skips slow path" tags="[text]" filename="c2.cpp" line="13">
+    <Skip filename="c2.cpp" line="13">
+      needs a fixture
+    </Skip>
+    <OverallResult success="true" skips="1"/>
+  </TestCase>
+  <OverallResults successes="2" failures="2" expectedFailures="0" skips="1"/>
+  <OverallResultsCases successes="2" failures="2" expectedFailures="0" skips="1"/>
+</Catch2TestRun>
