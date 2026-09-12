@@ -1,0 +1,17 @@
+Test project /project/build
+    Start 1: geo.adds_points
+1/3 Test #1: geo.adds_points ..................   Passed    0.01 sec
+    Start 2: geo.detects_drift
+2/3 Test #2: geo.detects_drift ................***Failed    0.01 sec
+arithmetic drifted
+
+    Start 3: text.trims_blanks
+3/3 Test #3: text.trims_blanks ................   Passed    0.01 sec
+
+67% tests passed, 1 tests failed out of 3
+
+Total Test time (real) =   0.02 sec
+
+The following tests FAILED:
+	  2 - geo.detects_drift (Failed)
+Errors while running CTest

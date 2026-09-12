@@ -1,0 +1,11 @@
+All available test cases:
+  adds points
+      c2.cpp:3
+      [geo]
+  detects drift
+      c2.cpp:5
+      [geo]
+  trims blanks
+      c2.cpp:7
+      [text]
+3 test cases
