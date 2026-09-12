@@ -33,3 +33,4 @@
 - cheatsheet: no sheets for TOML (Cargo manifest keys) and CMake yet; `Lang::Toml` / `Lang::Cmake` answer with no sections
 - context: detection is syntactic; `expression` after `x.` does not know the type of `x`, so iterator and string sections rely on the typed prefix
 - context: C `switch` bodies and Rust `match` arm blocks classify by the generic brace rules; a `case` label context could offer `case`/`default` templates first
+- Test markers: `src/run/tests/markers_cpp.rs` has no comment tracking, so a `TEST(...)` inside `/* */` yields a gutter marker; add the block-comment scan from `markers.rs` and a `tests/test_markers.rs` case.
