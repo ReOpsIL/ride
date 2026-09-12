@@ -16,6 +16,7 @@ extension AppState {
         debug.onOutput = { [weak self] _, text in
             self?.appendDebugOutput(text)
         }
+        observeDebugPanel()
     }
 
     func startDebug() {
@@ -80,7 +81,8 @@ extension AppState {
             args: resolved.args,
             cwd: plan.cwd ?? nonEmpty(target.workingDir) ?? workspaceRoot?.path,
             env: plan.env,
-            stopOnEntry: false
+            stopOnEntry: false,
+            exceptionFilters: DebugFilters.shared.enabledIds
         )
     }
 

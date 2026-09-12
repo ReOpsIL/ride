@@ -32,6 +32,16 @@ struct DebugCommands: Commands {
             Button("Toggle Breakpoint") { state.toggleBreakpointAtCaret() }
                 .keyboardShortcut(FunctionKeys.f8, modifiers: .command)
                 .disabled(!menu.hasEditor)
+            Divider()
+            Toggle("Debug Panel", isOn: Binding(get: { menu.showDebugPanel }, set: { _ in state.toggleDebugPanel() }))
+                .keyboardShortcut("3", modifiers: .command)
+            Button("Evaluate Expression…") { state.showEvaluateSheet() }
+                .keyboardShortcut(FunctionKeys.f8, modifiers: .option)
+                .disabled(!menu.isDebugStopped)
+            Divider()
+            ForEach(menu.debugFilters) { filter in
+                Toggle(filter.label, isOn: Binding(get: { filter.enabled }, set: { _ in state.toggleExceptionFilter(id: filter.id) }))
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ pub struct DebugLaunch {
     pub cwd: Option<String>,
     pub env: HashMap<String, String>,
     pub stop_on_entry: bool,
+    pub exception_filters: Vec<String>,
 }
 
 impl DebugLaunch {
@@ -17,8 +18,16 @@ impl DebugLaunch {
             cwd: None,
             env: HashMap::new(),
             stop_on_entry: false,
+            exception_filters: Vec::new(),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct ExceptionFilter {
+    pub id: String,
+    pub label: String,
+    pub default_on: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]

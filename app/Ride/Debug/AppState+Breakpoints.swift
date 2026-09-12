@@ -45,6 +45,7 @@ extension AppState {
     }
 
     func debugChanged() {
+        debugPanelChanged()
         syncMenu()
         refreshBreakpointGutters()
         showStoppedLine()

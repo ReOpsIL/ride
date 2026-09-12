@@ -95,6 +95,10 @@ final class HoverController {
             return
         }
         lastFire = Date()
+        if let content = DebugHover.content(view: view, range: range) {
+            show(content, view: view, range: range)
+            return
+        }
         view.hooks.definitions?(range.location) { [weak self, weak view] resp in
             guard let self, let view, self.word == range else {
                 return
@@ -102,11 +106,15 @@ final class HoverController {
             guard let content = HoverText.content(resp) else {
                 return
             }
-            var actual = NSRange()
-            let anchor = view.firstRect(forCharacterRange: range, actualRange: &actual)
-            self.shown = range
-            self.view = view
-            self.panel.show(content, anchor: anchor, bounds: Self.bounds(for: view))
+            self.show(content, view: view, range: range)
         }
+    }
+
+    private func show(_ content: HoverContent, view: RideTextView, range: NSRange) {
+        var actual = NSRange()
+        let anchor = view.firstRect(forCharacterRange: range, actualRange: &actual)
+        shown = range
+        self.view = view
+        panel.show(content, anchor: anchor, bounds: Self.bounds(for: view))
     }
 }

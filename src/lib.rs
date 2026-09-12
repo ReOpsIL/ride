@@ -28,6 +28,7 @@ pub use check::{
     run_clang_check, sources_including,
 };
 pub use debug::adapter::{adapter_path, find_adapter};
+pub use debug::filters::{exception_filters, probe_exception_filters};
 pub use debug::registry::DebugRegistry;
 pub use debug::session::DebugSession;
 pub use debug::transport::Transport;

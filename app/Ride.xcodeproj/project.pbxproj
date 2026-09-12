@@ -418,6 +418,18 @@
 		F11000000000000000000007 /* AppState+Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000006 /* AppState+Workspace.swift */; };
 		F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000008 /* WorkspaceStateTests.swift */; };
 		F1100000000000000000000C /* WorkspaceStateStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1100000000000000000000B /* WorkspaceStateStoreTests.swift */; };
+		D50000000000000000000002 /* VariableTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000001 /* VariableTree.swift */; };
+		D50000000000000000000003 /* VariableTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000001 /* VariableTree.swift */; };
+		D50000000000000000000005 /* DebugPanelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000004 /* DebugPanelModel.swift */; };
+		D50000000000000000000007 /* DebugPanelModel+Load.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000006 /* DebugPanelModel+Load.swift */; };
+		D50000000000000000000009 /* DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000008 /* DebugPanel.swift */; };
+		D50000000000000000000011 /* DebugPanelLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000010 /* DebugPanelLists.swift */; };
+		D50000000000000000000013 /* DebugWatchesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000012 /* DebugWatchesList.swift */; };
+		D50000000000000000000015 /* DebugFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000014 /* DebugFilters.swift */; };
+		D50000000000000000000017 /* DebugHover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000016 /* DebugHover.swift */; };
+		D50000000000000000000019 /* AppState+DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000018 /* AppState+DebugPanel.swift */; };
+		D50000000000000000000021 /* SelfTestSteps+DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */; };
+		D50000000000000000000023 /* VariableTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000022 /* VariableTreeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -765,6 +777,17 @@
 		EA0000000000000000000001 /* ToolsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolsModel.swift"; sourceTree = "<group>"; };
 		EA0000000000000000000003 /* ToolInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolInstaller.swift"; sourceTree = "<group>"; };
 		EA0000000000000000000005 /* ToolsInstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolsInstallView.swift"; sourceTree = "<group>"; };
+		D50000000000000000000001 /* VariableTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTree.swift; sourceTree = "<group>"; };
+		D50000000000000000000004 /* DebugPanelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelModel.swift; sourceTree = "<group>"; };
+		D50000000000000000000006 /* DebugPanelModel+Load.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugPanelModel+Load.swift"; sourceTree = "<group>"; };
+		D50000000000000000000008 /* DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanel.swift; sourceTree = "<group>"; };
+		D50000000000000000000010 /* DebugPanelLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelLists.swift; sourceTree = "<group>"; };
+		D50000000000000000000012 /* DebugWatchesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugWatchesList.swift; sourceTree = "<group>"; };
+		D50000000000000000000014 /* DebugFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugFilters.swift; sourceTree = "<group>"; };
+		D50000000000000000000016 /* DebugHover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugHover.swift; sourceTree = "<group>"; };
+		D50000000000000000000018 /* AppState+DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+DebugPanel.swift"; sourceTree = "<group>"; };
+		D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugPanel.swift"; sourceTree = "<group>"; };
+		D50000000000000000000022 /* VariableTreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTreeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -844,6 +867,7 @@
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				D50000000000000000000022 /* VariableTreeTests.swift */,
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
@@ -1249,6 +1273,16 @@
 		A00000000000000000000905 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
+				D50000000000000000000001 /* VariableTree.swift */,
+				D50000000000000000000004 /* DebugPanelModel.swift */,
+				D50000000000000000000006 /* DebugPanelModel+Load.swift */,
+				D50000000000000000000008 /* DebugPanel.swift */,
+				D50000000000000000000010 /* DebugPanelLists.swift */,
+				D50000000000000000000012 /* DebugWatchesList.swift */,
+				D50000000000000000000014 /* DebugFilters.swift */,
+				D50000000000000000000016 /* DebugHover.swift */,
+				D50000000000000000000018 /* AppState+DebugPanel.swift */,
+				D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */,
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
@@ -1471,6 +1505,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D50000000000000000000003 /* VariableTree.swift in Sources */,
+				D50000000000000000000023 /* VariableTreeTests.swift in Sources */,
 				E10000000000000000000003 /* CompletionTrigger.swift in Sources */,
 				E10000000000000000000006 /* CompletionNarrowing.swift in Sources */,
 				E10000000000000000000009 /* SnippetParser.swift in Sources */,
@@ -1594,6 +1630,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D50000000000000000000002 /* VariableTree.swift in Sources */,
+				D50000000000000000000005 /* DebugPanelModel.swift in Sources */,
+				D50000000000000000000007 /* DebugPanelModel+Load.swift in Sources */,
+				D50000000000000000000009 /* DebugPanel.swift in Sources */,
+				D50000000000000000000011 /* DebugPanelLists.swift in Sources */,
+				D50000000000000000000013 /* DebugWatchesList.swift in Sources */,
+				D50000000000000000000015 /* DebugFilters.swift in Sources */,
+				D50000000000000000000017 /* DebugHover.swift in Sources */,
+				D50000000000000000000019 /* AppState+DebugPanel.swift in Sources */,
+				D50000000000000000000021 /* SelfTestSteps+DebugPanel.swift in Sources */,
 				E10000000000000000000102 /* CompletionSession+Snippet.swift in Sources */,
 				E10000000000000000000104 /* SessionService+Kinds.swift in Sources */,
 				E10000000000000000000002 /* CompletionTrigger.swift in Sources */,
