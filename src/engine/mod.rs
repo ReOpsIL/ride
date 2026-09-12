@@ -16,6 +16,7 @@ use crate::highlight::BufferSession;
 mod access;
 mod build_output;
 mod cheat;
+mod debug;
 mod definition;
 mod doc_block;
 mod doc_comment;
@@ -66,6 +67,8 @@ pub(crate) struct Inner {
     pub(crate) scopes: reach::ScopeCache,
     pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
     pub(crate) projects: HashMap<String, ProjectModel>,
+    pub(crate) debug_sessions: HashMap<u64, Arc<crate::debug::session::DebugSession>>,
+    pub(crate) next_debug_session_id: u64,
 }
 
 #[derive(uniffi::Object)]
@@ -98,6 +101,8 @@ impl Engine {
                 scopes: reach::ScopeCache::default(),
                 system_includes: Arc::default(),
                 projects: HashMap::new(),
+                debug_sessions: HashMap::new(),
+                next_debug_session_id: 1,
             }),
         }
     }

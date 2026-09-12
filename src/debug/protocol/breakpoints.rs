@@ -120,6 +120,33 @@ pub struct SetExceptionBreakpointsResponseBody {
     pub breakpoints: Vec<Breakpoint>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FunctionBreakpoint {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hit_condition: Option<String>,
+}
+
+impl FunctionBreakpoint {
+    pub fn name(name: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            condition: None,
+            hit_condition: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetFunctionBreakpointsArguments {
+    #[serde(default)]
+    pub breakpoints: Vec<FunctionBreakpoint>,
+}
+
 pub const FILTER_CPP_THROW: &str = "cpp_throw";
 pub const FILTER_CPP_CATCH: &str = "cpp_catch";
 pub const FILTER_RUST_PANIC: &str = "rust_panic";

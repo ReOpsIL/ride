@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io::{BufRead, BufReader};
 use std::process::ChildStdout;
 use std::sync::mpsc::Sender;
@@ -11,6 +11,7 @@ use crate::error::EngineError;
 #[derive(Default)]
 pub struct Inbox {
     pub responses: HashMap<i64, Value>,
+    pub timed_out: HashSet<i64>,
     pub failure: Option<String>,
 }
 
@@ -40,7 +41,9 @@ fn dispatch(message: Value, shared: &Shared, events: &Sender<Value>) -> Result<(
                 .and_then(Value::as_i64)
                 .unwrap_or(-1);
             let mut inbox = lock.lock().map_err(|_| ())?;
-            inbox.responses.insert(seq, message);
+            if !inbox.timed_out.remove(&seq) {
+                inbox.responses.insert(seq, message);
+            }
             signal.notify_all();
             Ok(())
         }

@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 use std::process::Command;
 
-use super::transport::Transport;
 use crate::error::EngineError;
 use crate::toolchain::find_tool;
 
@@ -15,10 +14,6 @@ pub fn adapter_path() -> Result<PathBuf, EngineError> {
     find_adapter().ok_or_else(|| EngineError::Tool {
         message: format!("{ADAPTER} not found: install Xcode or put {ADAPTER} on PATH"),
     })
-}
-
-pub fn spawn_adapter() -> Result<Transport, EngineError> {
-    Transport::spawn(&adapter_path()?, &[])
 }
 
 fn xcrun_path(name: &str) -> Option<PathBuf> {

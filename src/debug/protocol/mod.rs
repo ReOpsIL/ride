@@ -9,8 +9,9 @@ mod variables;
 
 pub use breakpoints::{
     Breakpoint, ExceptionFilterOptions, FILTER_CPP_CATCH, FILTER_CPP_THROW, FILTER_RUST_PANIC,
-    SetBreakpointsArguments, SetBreakpointsResponseBody, SetExceptionBreakpointsArguments,
-    SetExceptionBreakpointsResponseBody, Source, SourceBreakpoint,
+    FunctionBreakpoint, SetBreakpointsArguments, SetBreakpointsResponseBody,
+    SetExceptionBreakpointsArguments, SetExceptionBreakpointsResponseBody,
+    SetFunctionBreakpointsArguments, Source, SourceBreakpoint,
 };
 pub use control::{
     CONFIGURATION_DONE, CONTINUE, ConfigurationDoneArguments, ContinueArguments,
@@ -23,7 +24,9 @@ pub use events::{
 };
 pub use initialize::{Capabilities, ExceptionBreakpointFilter, InitializeArguments};
 pub use launch::{AttachArguments, DisconnectArguments, LaunchArguments};
-pub use message::{EVENT, ErrorBody, ErrorMessage, Event, REQUEST, RESPONSE, Request, Response};
+pub use message::{
+    EVENT, ErrorBody, ErrorMessage, Event, REQUEST, RESPONSE, Request, Response, failure_text,
+};
 pub use stack::{
     Scope, ScopesArguments, ScopesResponseBody, StackFrame, StackTraceArguments,
     StackTraceResponseBody, Thread, ThreadsResponseBody,
