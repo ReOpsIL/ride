@@ -132,3 +132,67 @@ fn recompile_command_comes_from_the_database() {
             .is_none()
     );
 }
+
+fn copy_tree(src: &Path, dst: &Path) {
+    fs::create_dir_all(dst).unwrap();
+    for entry in fs::read_dir(src).unwrap() {
+        let entry = entry.unwrap();
+        let to = dst.join(entry.file_name());
+        if entry.file_type().unwrap().is_dir() {
+            copy_tree(&entry.path(), &to);
+        } else {
+            fs::copy(entry.path(), &to).unwrap();
+        }
+    }
+}
+
+#[test]
+fn project_source_uses_the_database_flags() {
+    if which("clang++").is_none() {
+        eprintln!("skipping: clang++ not found");
+        return;
+    }
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("cpp-demo");
+    copy_tree(Path::new("samples/cpp-demo"), &root);
+    let source = root.join("src/main.cpp");
+    let out = dir.path().join("out");
+    let single = engine()
+        .single_file_command(source.display().to_string(), out.display().to_string())
+        .unwrap();
+    let include = root
+        .join("include")
+        .canonicalize()
+        .unwrap()
+        .display()
+        .to_string();
+    assert!(
+        single.compile.contains(&format!("-I{include}")),
+        "{:?}",
+        single.compile
+    );
+    assert!(
+        !single.compile.iter().any(|a| a == "-c"),
+        "{:?}",
+        single.compile
+    );
+    assert!(
+        !single.compile.iter().any(|a| a.ends_with("main.o")),
+        "{:?}",
+        single.compile
+    );
+    let output = Command::new(&single.compile[0])
+        .args(&single.compile[1..])
+        .output()
+        .unwrap();
+    assert!(!output.status.success(), "expected a link failure");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        !stderr.contains("file not found"),
+        "include stage failed: {stderr}"
+    );
+    assert!(
+        stderr.contains("Undefined symbols") || stderr.contains("undefined symbol"),
+        "{stderr}"
+    );
+}

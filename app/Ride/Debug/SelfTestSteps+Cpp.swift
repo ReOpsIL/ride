@@ -148,9 +148,11 @@ extension SelfTestSteps {
             state.runFile()
         }, check: {
             let text = state.runOutput.text
+            let lower = text.lowercased()
+            let linked = lower.contains("undefined symbol") || lower.contains("linker command failed")
             return e.expect(
-                state.runOutput.status != "exit 0" && text.lowercased().contains("error"),
-                "status \(state.runOutput.status ?? "nil") text \(text.suffix(240))"
+                state.runOutput.status != "exit 0" && linked && !lower.contains("file not found"),
+                "status \(state.runOutput.status ?? "nil") text \(text.suffix(400))"
             )
         })
     }
