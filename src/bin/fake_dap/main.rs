@@ -6,10 +6,12 @@ use std::io::{self, BufRead, BufReader, Write};
 use serde_json::Value;
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    announce_pid(&args);
     let stdin = io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     let mut out = io::stdout();
-    let mut state = script::State::default();
+    let mut state = script::State::from_args(&args);
     while let Ok(Some(message)) = read_frame(&mut reader) {
         let command = message
             .get("command")
@@ -30,6 +32,16 @@ fn main() {
             return;
         }
     }
+}
+
+fn announce_pid(args: &[String]) {
+    let Some(index) = args.iter().position(|arg| arg == script::PID_FILE) else {
+        return;
+    };
+    let Some(path) = args.get(index + 1) else {
+        return;
+    };
+    let _ = std::fs::write(path, std::process::id().to_string());
 }
 
 fn write_frame(out: &mut impl Write, message: &Value, extra_headers: bool) {

@@ -1,11 +1,12 @@
 use std::sync::Arc;
 
 use crate::debug::adapter::adapter_path;
+use crate::debug::registry::DebugRegistry;
 use crate::debug::session::DebugSession;
 use crate::error::EngineError;
 use crate::ffi::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugState, DebugThread, Scope, StackFrame, Variable,
+    DebugScope, DebugState, DebugThread, StackFrame, Variable,
 };
 
 use super::Engine;
@@ -19,20 +20,14 @@ impl Engine {
         listener: Arc<dyn DebugListener>,
     ) -> Result<u64, EngineError> {
         let adapter = adapter_path()?;
-        match DebugSession::start(&adapter, &[], launch, breakpoints, Arc::clone(&listener)) {
-            Ok(session) => self.write(|i| {
-                let id = i.next_debug_session_id;
-                i.next_debug_session_id += 1;
-                i.debug_sessions.insert(id, session);
-                id
-            }),
-            Err(err) => {
+        let registry = self.debug_registry()?;
+        registry
+            .start(&adapter, &[], launch, breakpoints, Arc::clone(&listener))
+            .inspect_err(|err| {
                 listener.on_event(DebugEvent::Failed {
                     message: err.to_string(),
                 });
-                Err(err)
-            }
-        }
+            })
     }
 
     pub fn debug_state(&self, session_id: u64) -> DebugState {
@@ -43,12 +38,7 @@ impl Engine {
     }
 
     pub fn debug_command(&self, session_id: u64, command: DebugCommand) -> Result<(), EngineError> {
-        let session = self.debug_session(session_id)?;
-        let outcome = session.command(command);
-        if matches!(command, DebugCommand::Disconnect) {
-            let _ = self.write(|i| i.debug_sessions.remove(&session_id));
-        }
-        outcome
+        self.debug_session(session_id)?.command(command)
     }
 
     pub fn debug_threads(&self, session_id: u64) -> Result<Vec<DebugThread>, EngineError> {
@@ -63,7 +53,11 @@ impl Engine {
         self.debug_session(session_id)?.stack(thread_id)
     }
 
-    pub fn debug_scopes(&self, session_id: u64, frame_id: i64) -> Result<Vec<Scope>, EngineError> {
+    pub fn debug_scopes(
+        &self,
+        session_id: u64,
+        frame_id: i64,
+    ) -> Result<Vec<DebugScope>, EngineError> {
         self.debug_session(session_id)?.scopes(frame_id)
     }
 
@@ -101,8 +95,13 @@ impl Engine {
 }
 
 impl Engine {
+    fn debug_registry(&self) -> Result<Arc<DebugRegistry>, EngineError> {
+        self.read(|i| Arc::clone(&i.debug_sessions))
+    }
+
     fn debug_session(&self, session_id: u64) -> Result<Arc<DebugSession>, EngineError> {
-        self.read(|i| i.debug_sessions.get(&session_id).cloned())?
+        self.debug_registry()?
+            .get(session_id)
             .ok_or(EngineError::SessionNotFound { session_id })
     }
 }

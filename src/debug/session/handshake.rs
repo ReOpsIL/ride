@@ -19,6 +19,7 @@ const SET_EXCEPTION_BREAKPOINTS: &str = "setExceptionBreakpoints";
 const SET_FUNCTION_BREAKPOINTS: &str = "setFunctionBreakpoints";
 const RUST_PANIC_FUNCTION: &str = "rust_panic";
 const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
+const SETTLE: Duration = Duration::from_millis(250);
 
 pub fn run(session: &DebugSession) -> Result<(), EngineError> {
     let capabilities = initialize(session)?;
@@ -33,11 +34,28 @@ pub fn run(session: &DebugSession) -> Result<(), EngineError> {
         arguments(CONFIGURATION_DONE, &ConfigurationDoneArguments {})?,
     )?;
     session.transport.await_response(launch_seq, LAUNCH)?;
-    if !session.finished() && !matches!(session.state(), DebugState::Stopped { .. }) {
+    settle(session);
+    if matches!(session.state(), DebugState::Launching) {
         session.set_state(DebugState::Running);
         session.emit(DebugEvent::Running);
     }
     Ok(())
+}
+
+fn settle(session: &DebugSession) {
+    let deadline = Instant::now() + SETTLE;
+    while Instant::now() < deadline {
+        match session.transport.poll_event(events::POLL) {
+            Ok(Some(event)) => {
+                events::handle(session, &event);
+                if !matches!(session.state(), DebugState::Launching) {
+                    return;
+                }
+            }
+            Ok(None) => {}
+            Err(_) => return,
+        }
+    }
 }
 
 fn initialize(session: &DebugSession) -> Result<Capabilities, EngineError> {

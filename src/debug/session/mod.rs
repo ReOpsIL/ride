@@ -6,14 +6,20 @@ mod wire;
 
 use std::collections::BTreeMap;
 use std::path::Path;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Weak};
 use std::thread;
 
 use crate::error::EngineError;
 use crate::ffi::{Breakpoint, DebugEvent, DebugLaunch, DebugListener, DebugState, DebugThread};
 
 use super::protocol::Capabilities;
+use super::registry::DebugRegistry;
 use super::transport::Transport;
+
+struct Registration {
+    registry: Weak<DebugRegistry>,
+    id: u64,
+}
 
 pub struct DebugSession {
     transport: Transport,
@@ -23,6 +29,7 @@ pub struct DebugSession {
     capabilities: Mutex<Capabilities>,
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
+    registration: Mutex<Option<Registration>>,
 }
 
 impl DebugSession {
@@ -42,6 +49,7 @@ impl DebugSession {
             capabilities: Mutex::new(Capabilities::default()),
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),
+            registration: Mutex::new(None),
         });
         session.emit(DebugEvent::Launching);
         let worker = Arc::clone(&session);
@@ -53,6 +61,27 @@ impl DebugSession {
             events::pump(&worker);
         });
         Ok(session)
+    }
+
+    pub fn attach(self: &Arc<Self>, registry: &Arc<DebugRegistry>, id: u64) {
+        if let Ok(mut slot) = self.registration.lock() {
+            *slot = Some(Registration {
+                registry: Arc::downgrade(registry),
+                id,
+            });
+        }
+        if self.finished() {
+            self.retire();
+        }
+    }
+
+    pub fn shutdown(&self) {
+        let ended = self.finished();
+        self.set_state(DebugState::Terminated);
+        self.transport.shutdown();
+        if !ended {
+            self.emit(DebugEvent::Terminated);
+        }
     }
 
     pub fn state(&self) -> DebugState {
@@ -78,9 +107,28 @@ impl DebugSession {
     }
 
     fn set_state(&self, state: DebugState) {
+        let ending = matches!(state, DebugState::Terminated | DebugState::Exited { .. });
         if let Ok(mut current) = self.state.lock() {
             *current = state;
         }
+        if ending {
+            self.retire();
+        }
+    }
+
+    fn retire(&self) {
+        let taken = self
+            .registration
+            .lock()
+            .ok()
+            .and_then(|mut slot| slot.take());
+        let Some(registration) = taken else {
+            return;
+        };
+        let Some(registry) = registration.registry.upgrade() else {
+            return;
+        };
+        registry.remove(registration.id);
     }
 
     fn emit(&self, event: DebugEvent) {

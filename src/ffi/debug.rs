@@ -58,7 +58,7 @@ pub struct StackFrame {
 }
 
 #[derive(Debug, Clone, PartialEq, uniffi::Record)]
-pub struct Scope {
+pub struct DebugScope {
     pub name: String,
     pub variables_reference: i64,
     pub expensive: bool,

@@ -2,11 +2,15 @@ use serde_json::{Value, json};
 
 use super::data::{capabilities, scopes, set_breakpoints, stack_trace, variables};
 
+pub const IGNORE_DISCONNECT: &str = "--ignore-disconnect";
+pub const PID_FILE: &str = "--pid-file";
+
 pub struct State {
     seq: i64,
     pub line: u32,
     pub path: String,
     launch_seq: Option<i64>,
+    ignore_disconnect: bool,
 }
 
 impl Default for State {
@@ -16,11 +20,19 @@ impl Default for State {
             line: 10,
             path: "src/main.rs".to_string(),
             launch_seq: None,
+            ignore_disconnect: false,
         }
     }
 }
 
 impl State {
+    pub fn from_args(args: &[String]) -> Self {
+        Self {
+            ignore_disconnect: args.iter().any(|arg| arg == IGNORE_DISCONNECT),
+            ..Self::default()
+        }
+    }
+
     fn next_seq(&mut self) -> i64 {
         let seq = self.seq;
         self.seq += 1;
@@ -60,6 +72,9 @@ pub fn reply(state: &mut State, command: &str, message: &Value) -> (Vec<Value>, 
         return (configuration_done(state, request_seq), false);
     }
     if command == "disconnect" {
+        if state.ignore_disconnect {
+            return (Vec::new(), false);
+        }
         let response = state.response(command, request_seq, true, Value::Null);
         let terminated = state.event("terminated", Value::Null);
         return (vec![response, terminated], true);
