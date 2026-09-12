@@ -12,7 +12,8 @@ final class ProcessRunner {
 
     func start(
         _ invocation: RunInvocation,
-        onLine: @escaping (String) -> Void,
+        runId: Int,
+        onLine: @escaping (Int, String) -> Void,
         onFinish: @escaping (RunFinish) -> Void
     ) {
         guard !isRunning, let tool = invocation.argv.first else {
@@ -39,15 +40,15 @@ final class ProcessRunner {
             guard !data.isEmpty else {
                 return
             }
-            self?.receive(data, onLine: onLine)
+            self?.receive(data, runId: runId, onLine: onLine)
         }
         task.terminationHandler = { [weak self] finished in
             pipe.fileHandleForReading.readabilityHandler = nil
             let tail = try? pipe.fileHandleForReading.readToEnd()
             if let tail, !tail.isEmpty {
-                self?.receive(tail, onLine: onLine)
+                self?.receive(tail, runId: runId, onLine: onLine)
             }
-            self?.finish(finished, onLine: onLine, onFinish: onFinish)
+            self?.finish(finished, runId: runId, onLine: onLine, onFinish: onFinish)
         }
         do {
             try task.run()
@@ -80,26 +81,31 @@ final class ProcessRunner {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
     }
 
-    private func receive(_ data: Data, onLine: @escaping (String) -> Void) {
+    private func receive(_ data: Data, runId: Int, onLine: @escaping (Int, String) -> Void) {
         let lines = queue.sync { splitter.take([UInt8](data)) }
         guard !lines.isEmpty else {
             return
         }
         DispatchQueue.main.async {
             for line in lines {
-                onLine(line)
+                onLine(runId, line)
             }
         }
     }
 
-    private func finish(_ task: Process, onLine: @escaping (String) -> Void, onFinish: @escaping (RunFinish) -> Void) {
+    private func finish(
+        _ task: Process,
+        runId: Int,
+        onLine: @escaping (Int, String) -> Void,
+        onFinish: @escaping (RunFinish) -> Void
+    ) {
         let tail = queue.sync { splitter.flush() }
         let status: RunFinish = task.terminationReason == .uncaughtSignal
             ? .signalled(task.terminationStatus)
             : .exited(task.terminationStatus)
         DispatchQueue.main.async { [weak self] in
             if let tail {
-                onLine(tail)
+                onLine(runId, tail)
             }
             self?.killWork?.cancel()
             self?.killWork = nil

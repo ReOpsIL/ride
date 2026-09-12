@@ -21,8 +21,8 @@ final class BuildSession {
         state.cancel()
     }
 
-    func line(_ line: String) -> String? {
-        guard state.isActive else {
+    func line(runId: Int, _ line: String) -> String? {
+        guard state.accepts(runId: runId) else {
             return line
         }
         guard kind == .cargo else {

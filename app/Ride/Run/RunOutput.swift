@@ -10,7 +10,7 @@ final class RunOutput: ObservableObject {
     @Published private(set) var command: String?
 
     var onChange: (() -> Void)?
-    var lineFilter: ((String) -> String?)?
+    var lineFilter: ((Int, String) -> String?)?
     var onFinish: ((Int, RunFinish) -> Void)?
     private let runner = ProcessRunner()
     private var last: RunInvocation?
@@ -51,8 +51,8 @@ final class RunOutput: ObservableObject {
         command = invocation.argv.joined(separator: " ")
         isRunning = true
         onChange?()
-        runner.start(invocation) { [weak self] line in
-            self?.append(line)
+        runner.start(invocation, runId: id) { [weak self] lineId, line in
+            self?.append(line, runId: lineId)
         } onFinish: { [weak self] finish in
             self?.finished(finish, id: id)
         }
@@ -91,11 +91,18 @@ final class RunOutput: ObservableObject {
     }
 
     func append(_ line: String) {
+        append(line, runId: runId)
+    }
+
+    func append(_ line: String, runId: Int) {
+        guard runId == self.runId else {
+            return
+        }
         guard let filter = lineFilter else {
             buffer.append(line)
             return
         }
-        if let shown = filter(line) {
+        if let shown = filter(runId, line) {
             buffer.append(shown)
         }
     }
@@ -107,6 +114,9 @@ final class RunOutput: ObservableObject {
     }
 
     private func finished(_ finish: RunFinish, id: Int) {
+        guard id == runId else {
+            return
+        }
         isRunning = false
         switch finish {
         case let .exited(code):
