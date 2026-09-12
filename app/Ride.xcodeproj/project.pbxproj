@@ -430,6 +430,10 @@
 		D50000000000000000000019 /* AppState+DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000018 /* AppState+DebugPanel.swift */; };
 		D50000000000000000000021 /* SelfTestSteps+DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */; };
 		D50000000000000000000023 /* VariableTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000022 /* VariableTreeTests.swift */; };
+		D50000000000000000000031 /* DebugLoadState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000030 /* DebugLoadState.swift */; };
+		D50000000000000000000032 /* DebugLoadState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000030 /* DebugLoadState.swift */; };
+		D50000000000000000000034 /* DebugEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000033 /* DebugEvaluate.swift */; };
+		D50000000000000000000036 /* DebugLoadStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000035 /* DebugLoadStateTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -788,6 +792,9 @@
 		D50000000000000000000018 /* AppState+DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+DebugPanel.swift"; sourceTree = "<group>"; };
 		D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugPanel.swift"; sourceTree = "<group>"; };
 		D50000000000000000000022 /* VariableTreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTreeTests.swift; sourceTree = "<group>"; };
+		D50000000000000000000030 /* DebugLoadState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLoadState.swift; sourceTree = "<group>"; };
+		D50000000000000000000033 /* DebugEvaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugEvaluate.swift; sourceTree = "<group>"; };
+		D50000000000000000000035 /* DebugLoadStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLoadStateTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -868,6 +875,7 @@
 			isa = PBXGroup;
 			children = (
 				D50000000000000000000022 /* VariableTreeTests.swift */,
+				D50000000000000000000035 /* DebugLoadStateTests.swift */,
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
@@ -1274,6 +1282,8 @@
 			isa = PBXGroup;
 			children = (
 				D50000000000000000000001 /* VariableTree.swift */,
+				D50000000000000000000030 /* DebugLoadState.swift */,
+				D50000000000000000000033 /* DebugEvaluate.swift */,
 				D50000000000000000000004 /* DebugPanelModel.swift */,
 				D50000000000000000000006 /* DebugPanelModel+Load.swift */,
 				D50000000000000000000008 /* DebugPanel.swift */,
@@ -1507,6 +1517,8 @@
 			files = (
 				D50000000000000000000003 /* VariableTree.swift in Sources */,
 				D50000000000000000000023 /* VariableTreeTests.swift in Sources */,
+				D50000000000000000000032 /* DebugLoadState.swift in Sources */,
+				D50000000000000000000036 /* DebugLoadStateTests.swift in Sources */,
 				E10000000000000000000003 /* CompletionTrigger.swift in Sources */,
 				E10000000000000000000006 /* CompletionNarrowing.swift in Sources */,
 				E10000000000000000000009 /* SnippetParser.swift in Sources */,
@@ -1631,6 +1643,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D50000000000000000000002 /* VariableTree.swift in Sources */,
+				D50000000000000000000031 /* DebugLoadState.swift in Sources */,
+				D50000000000000000000034 /* DebugEvaluate.swift in Sources */,
 				D50000000000000000000005 /* DebugPanelModel.swift in Sources */,
 				D50000000000000000000007 /* DebugPanelModel+Load.swift in Sources */,
 				D50000000000000000000009 /* DebugPanel.swift in Sources */,

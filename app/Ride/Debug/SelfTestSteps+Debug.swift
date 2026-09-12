@@ -56,7 +56,7 @@ extension SelfTestSteps {
 
     private static func liveDebug(state: AppState, e: SelfTestEditor) -> [SelfTestStep] {
         [
-            SelfTestStep(name: "debug", wait: 0.5, until: { state.debug.isStopped || !state.debug.isActive }, timeout: 240, run: {
+            SelfTestStep(name: "debug", wait: 0.5, until: { (state.debug.isStopped && state.debug.stoppedLine > 0) || !state.debug.isActive }, timeout: 240, run: {
                 state.startDebug()
             }, check: {
                 e.expect(
@@ -64,7 +64,7 @@ extension SelfTestSteps {
                     "line \(state.debug.stoppedLine) stopped \(state.debug.isStopped)"
                 )
             }),
-            SelfTestStep(name: "debug step over", wait: 0.5, until: { state.debug.isStopped && state.debug.stoppedLine != breakpointLine }, timeout: 60, run: {
+            SelfTestStep(name: "debug step over", wait: 0.5, until: { state.debug.isStopped && state.debug.stoppedLine > 0 && state.debug.stoppedLine != breakpointLine }, timeout: 60, run: {
                 state.debugCommand(.next)
             }, check: {
                 e.expect(

@@ -28,19 +28,24 @@ extension DebugController {
     }
 
     private func stopped(threadId: Int64, reason: String) {
-        let frame = topFrame(threadId: threadId)
-        publish(
-            state: .stopped(threadId: threadId, reason: reason),
-            path: frame?.path,
-            line: frame?.line ?? 0
-        )
+        publish(state: .stopped(threadId: threadId, reason: reason), path: nil, line: 0)
+        locateTopFrame(threadId: threadId)
     }
 
-    private func topFrame(threadId: Int64) -> StackFrame? {
+    private func locateTopFrame(threadId: Int64) {
         guard let engine = RideEngineClient.shared.engine, let id = sessionId else {
-            return nil
+            return
         }
-        let frames = (try? engine.debugStack(sessionId: id, threadId: threadId)) ?? []
-        return frames.first { $0.path != nil } ?? frames.first
+        let sequence = stopSequence
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            let frames = (try? engine.debugStack(sessionId: id, threadId: threadId)) ?? []
+            let frame = frames.first { $0.path != nil } ?? frames.first
+            DispatchQueue.main.async {
+                guard let self, self.stopSequence == sequence, self.isStopped else {
+                    return
+                }
+                self.locate(path: frame?.path, line: frame?.line ?? 0)
+            }
+        }
     }
 }
