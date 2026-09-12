@@ -111,19 +111,22 @@ fn gtest_output_pairs_run_with_result() {
 }
 
 #[test]
-fn catch2_list_carries_tags() {
-    let cases = engine().list_tests(TestFramework::Catch2, fixture("catch2-list.txt"));
-    assert_eq!(cases.len(), 5);
+fn catch2_list_carries_tags_and_locations() {
+    let cases = engine().list_tests(TestFramework::Catch2, fixture("catch2-list.xml"));
+    assert_eq!(cases.len(), 6);
     assert_eq!(cases[1].name, "detects drift");
     assert_eq!(cases[1].suite.as_deref(), Some("[geo]"));
-    assert!(cases[1].file.is_none());
+    assert_eq!(cases[1].file.as_deref(), Some("c2.cpp"));
+    assert_eq!(cases[1].line, Some(5));
     assert_eq!(cases[4].name, "skips slow path");
+    assert_eq!(cases[5].name, "counts twice");
+    assert_eq!(cases[5].line, Some(15));
 }
 
 #[test]
 fn catch2_xml_reports_one_event_per_test_case() {
     let events = engine().parse_test_output(TestFramework::Catch2, fixture("catch2-run.xml"));
-    assert_eq!(events.len(), 5);
+    assert_eq!(events.len(), 6);
     assert_eq!(events[0].name, "adds points");
     assert_eq!(events[0].suite.as_deref(), Some("[geo]"));
     assert_eq!(events[0].status, TestStatus::Passed);
@@ -142,6 +145,35 @@ fn catch2_xml_reports_one_event_per_test_case() {
     assert_eq!(events[4].name, "skips slow path");
     assert_eq!(events[4].status, TestStatus::Ignored);
     assert_eq!(events[4].output, "needs a fixture");
+}
+
+#[test]
+fn catch2_lists_every_failed_check_of_one_case() {
+    let events = engine().parse_test_output(TestFramework::Catch2, fixture("catch2-run.xml"));
+    let failed = named(&events, "counts twice");
+    assert_eq!(failed.status, TestStatus::Failed);
+    assert_eq!(
+        failed.output,
+        "c2.cpp:16: CHECK(1 == 2)\nwith expansion: 1 == 2\nc2.cpp:17: CHECK(3 == 4)\nwith expansion: 3 == 4"
+    );
+}
+
+#[test]
+fn catch2_durations_come_from_the_run() {
+    let events = engine().parse_test_output(TestFramework::Catch2, fixture("catch2-run.xml"));
+    assert!(events.iter().all(|e| e.duration_ms.is_some()));
+    assert_eq!(events[0].duration_ms, Some(0));
+}
+
+#[test]
+fn catch2_truncated_output_keeps_earlier_events() {
+    let text = fixture("catch2-run.xml");
+    let cut = text.find("compares sizes").unwrap();
+    let events = engine().parse_test_output(TestFramework::Catch2, text[..cut].to_string());
+    assert_eq!(events.len(), 2);
+    assert_eq!(events[0].name, "adds points");
+    assert_eq!(events[1].name, "detects drift");
+    assert_eq!(events[1].status, TestStatus::Failed);
 }
 
 #[test]
@@ -212,10 +244,24 @@ fn binary_commands_extend_the_run_argv() {
             TestFramework::Catch2,
         )
         .unwrap();
-    assert_eq!(commands.list, ["/project/build/geo_tests", "--list-tests"]);
+    assert_eq!(
+        commands.list,
+        [
+            "/project/build/geo_tests",
+            "--reporter",
+            "xml",
+            "--list-tests"
+        ]
+    );
     assert_eq!(
         commands.run,
-        ["/project/build/geo_tests", "--reporter", "xml"]
+        [
+            "/project/build/geo_tests",
+            "--reporter",
+            "xml",
+            "--durations",
+            "yes"
+        ]
     );
 }
 

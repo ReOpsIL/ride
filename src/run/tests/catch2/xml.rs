@@ -4,7 +4,7 @@ use quick_xml::events::{BytesStart, Event};
 use crate::ffi::{TestEvent, TestStatus};
 use crate::run::tests::event;
 
-use super::tag::{attr, entity, location, status};
+use super::tag::{attr, duration_ms, entity, location, status};
 
 #[derive(Clone, Copy)]
 enum Field {
@@ -67,6 +67,7 @@ impl Run {
             && let Some(current) = self.current.as_mut()
         {
             current.status = status(tag);
+            current.duration_ms = duration_ms(tag);
         }
     }
 

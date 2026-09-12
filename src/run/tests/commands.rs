@@ -8,7 +8,11 @@ pub fn test_commands(
     match framework {
         TestFramework::Cargo => Ok(cargo(target)),
         TestFramework::GoogleTest => binary(target, &["--gtest_list_tests"], &["--gtest_color=no"]),
-        TestFramework::Catch2 => binary(target, &["--list-tests"], &["--reporter", "xml"]),
+        TestFramework::Catch2 => binary(
+            target,
+            &["--reporter", "xml", "--list-tests"],
+            &["--reporter", "xml", "--durations", "yes"],
+        ),
         TestFramework::CTest => Ok(ctest()),
     }
 }
