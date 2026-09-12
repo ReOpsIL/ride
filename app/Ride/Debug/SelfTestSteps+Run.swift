@@ -46,6 +46,25 @@ extension SelfTestSteps {
         })
     }
 
+    static func buildStopAndRerun(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "build stop and rerun", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
+            state.runAction(.build)
+            scratch.staleRunId = state.runOutput.runId
+            DemoLaunch.after(0.1) { state.runAction(.build) }
+        }, check: {
+            state.runOutput.append(staleLine, runId: scratch.staleRunId)
+            return e.expect(
+                state.runOutput.status == "exit 0"
+                    && !state.runOutput.text.contains(staleLine)
+                    && CheckService.shared.buildDiagnostics.isEmpty,
+                "status \(state.runOutput.status ?? "nil") built \(CheckService.shared.buildDiagnostics.count) "
+                    + "text \(state.runOutput.text.suffix(200))"
+            )
+        })
+    }
+
+    static let staleLine = "ride-stale-build-line"
+
     static let buildErrorLine = 13
     static let buildErrorSuffix = " let _ride_bad: u32 = \"x\";"
 

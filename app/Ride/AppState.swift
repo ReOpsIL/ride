@@ -125,7 +125,7 @@ final class AppState: ObservableObject {
         runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
-        runOutput.lineFilter = { BuildSession.shared.line($0) }
+        runOutput.lineFilter = { BuildSession.shared.line(runId: $0, $1) }
         runOutput.onFinish = { [weak self] runId, finish in
             self?.runFinished(runId, finish)
         }

@@ -50,6 +50,9 @@ extension AppState {
     }
 
     private func confirmStopAndRerun() -> Bool {
+        guard !DemoLaunch.isDemo else {
+            return true
+        }
         let alert = NSAlert()
         alert.messageText = "Stop and rerun?"
         alert.informativeText = "A process is already running."
