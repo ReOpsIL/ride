@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Catch2TestRun name="c2" rng-seed="1" xml-format-version="3" catch2-version="3.16.0">
   <TestCase name="adds points" tags="[geo]" filename="c2.cpp" line="3">
-    <OverallResult success="true" skips="0"/>
+    <OverallResult success="true" skips="0" durationInSeconds="2.2e-05"/>
   </TestCase>
   <TestCase name="detects drift" tags="[geo]" filename="c2.cpp" line="5">
     <Section name="sum" filename="c2.cpp" line="6">
@@ -13,9 +13,9 @@
           4 == 5
         </Expanded>
       </Expression>
-      <OverallResults successes="0" failures="1" expectedFailures="0" skipped="false"/>
+      <OverallResults successes="0" failures="1" expectedFailures="0" skipped="false" durationInSeconds="6.4e-05"/>
     </Section>
-    <OverallResult success="false" skips="0"/>
+    <OverallResult success="false" skips="0" durationInSeconds="0.000109"/>
   </TestCase>
   <TestCase name="compares sizes" tags="[geo]" filename="c2.cpp" line="9">
     <Expression success="false" type="REQUIRE" filename="c2.cpp" line="9">
@@ -26,17 +26,36 @@
         2 &lt; 1
       </Expanded>
     </Expression>
-    <OverallResult success="false" skips="0"/>
+    <OverallResult success="false" skips="0" durationInSeconds="4.6e-05"/>
   </TestCase>
   <TestCase name="trims blanks" tags="[text]" filename="c2.cpp" line="11">
-    <OverallResult success="true" skips="0"/>
+    <OverallResult success="true" skips="0" durationInSeconds="9e-06"/>
   </TestCase>
   <TestCase name="skips slow path" tags="[text]" filename="c2.cpp" line="13">
     <Skip filename="c2.cpp" line="13">
       needs a fixture
     </Skip>
-    <OverallResult success="true" skips="1"/>
+    <OverallResult success="true" skips="1" durationInSeconds="3.1e-05"/>
   </TestCase>
-  <OverallResults successes="2" failures="2" expectedFailures="0" skips="1"/>
-  <OverallResultsCases successes="2" failures="2" expectedFailures="0" skips="1"/>
+  <TestCase name="counts twice" tags="[text]" filename="c2.cpp" line="15">
+    <Expression success="false" type="CHECK" filename="c2.cpp" line="16">
+      <Original>
+        1 == 2
+      </Original>
+      <Expanded>
+        1 == 2
+      </Expanded>
+    </Expression>
+    <Expression success="false" type="CHECK" filename="c2.cpp" line="17">
+      <Original>
+        3 == 4
+      </Original>
+      <Expanded>
+        3 == 4
+      </Expanded>
+    </Expression>
+    <OverallResult success="false" skips="0" durationInSeconds="5.8e-05"/>
+  </TestCase>
+  <OverallResults successes="2" failures="4" expectedFailures="0" skips="1"/>
+  <OverallResultsCases successes="2" failures="3" expectedFailures="0" skips="1"/>
 </Catch2TestRun>

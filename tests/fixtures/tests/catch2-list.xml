@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MatchingTests>
+  <TestCase>
+    <Name>adds points</Name>
+    <ClassName/>
+    <Tags>[geo]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>3</Line>
+    </SourceInfo>
+  </TestCase>
+  <TestCase>
+    <Name>detects drift</Name>
+    <ClassName/>
+    <Tags>[geo]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>5</Line>
+    </SourceInfo>
+  </TestCase>
+  <TestCase>
+    <Name>compares sizes</Name>
+    <ClassName/>
+    <Tags>[geo]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>9</Line>
+    </SourceInfo>
+  </TestCase>
+  <TestCase>
+    <Name>trims blanks</Name>
+    <ClassName/>
+    <Tags>[text]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>11</Line>
+    </SourceInfo>
+  </TestCase>
+  <TestCase>
+    <Name>skips slow path</Name>
+    <ClassName/>
+    <Tags>[text]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>13</Line>
+    </SourceInfo>
+  </TestCase>
+  <TestCase>
+    <Name>counts twice</Name>
+    <ClassName/>
+    <Tags>[text]</Tags>
+    <SourceInfo>
+      <File>c2.cpp</File>
+      <Line>15</Line>
+    </SourceInfo>
+  </TestCase>
+</MatchingTests>

@@ -31,6 +31,14 @@ pub fn status(tag: &BytesStart) -> TestStatus {
     }
 }
 
+pub fn duration_ms(tag: &BytesStart) -> Option<u64> {
+    let seconds: f64 = attr(tag, "durationInSeconds")?.parse().ok()?;
+    if !seconds.is_finite() || seconds < 0.0 {
+        return None;
+    }
+    Some((seconds * 1000.0).round() as u64)
+}
+
 pub fn attr(tag: &BytesStart, name: &str) -> Option<String> {
     tag.attributes()
         .flatten()
