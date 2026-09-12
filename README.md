@@ -22,7 +22,7 @@ Hover an identifier for its signature and first doc paragraph; F12 jumps to the 
 
 ![Hover card over HashMap showing the struct signature and documentation](docs/images/ride-hover.png)
 
-`cargo check` runs on save (or ⌘B), and `clang -fsyntax-only` does the same for C and C++ files with flags from `compile_commands.json`. Diagnostics land in the Problems panel and as underlines in the editor.
+`cargo check` runs on save (or ⌥⌘B), and `clang -fsyntax-only` does the same for C and C++ files with flags from `compile_commands.json`. Diagnostics land in the Problems panel and as underlines in the editor.
 
 ![Problems panel listing a cargo check error with the offending line underlined](docs/images/ride-problems.png)
 
@@ -33,6 +33,14 @@ C++ files get the same treatment: highlighting, outline, member and `::` complet
 Makefiles have an outline of targets and variables, highlighting of automatic variables and functions, and completion for GNU make directives, functions and builtin variables.
 
 ![A Makefile with variables, pattern rules and recipes highlighted and its targets in the outline](docs/images/ride-makefile.png)
+
+## Build, run, test and debug
+
+The project model reads `cargo metadata`, the CMake File API, a Makefile or a bare `compile_commands.json` and lists the targets in the sidebar. ⌘B builds the selected target, ⌘R runs it, ⇧⌘R runs its tests and ⌃⌘R debugs it; run configurations (arguments, environment, working directory, `RUST_BACKTRACE`, sanitizers) are saved with the workspace. Build errors from Cargo and clang land in the Problems panel, run output goes to a panel with clickable `path:line:col` links, a ▶ in the gutter runs a single test, and the Tests panel groups results per suite with output per test and Rerun Failed. A terminal panel on SwiftTerm opens with ⌥F12.
+
+![Debugging the rust-demo crate: stopped on a breakpoint, frames on the left, the locals tree expanding a HashMap and a String, a watch, the Tests panel with one passed test and the run output](docs/images/ride-debug.png)
+
+The debugger drives `lldb-dap` from Xcode. Click a line number to set a breakpoint, right-click it for a condition or hit count; C++ exception and Rust panic breakpoints are in the Debug menu. F7, F8 and ⇧F8 step, ⌘F2 stops. The Debug panel (⌘3) shows threads and frames, a lazily expanded locals tree with the toolchain's Rust formatters and lldb's libc++ ones, watches re-evaluated on every stop, and Evaluate Expression (⌥F8); hovering an identifier while stopped shows its value. Debugging needs macOS developer mode (`sudo DevToolsSecurity -enable`, once).
 
 ## Navigation and search
 
@@ -66,9 +74,10 @@ cargo test                       # engine tests
 cargo clippy --all-targets -- -D warnings
 ./scripts/build-engine.sh        # xcframework + Swift bindings + ride-engine CLI
 ./scripts/run.sh [folder]        # build Ride.app and open a folder
+xcodebuild -downloadComponent MetalToolchain   # once per machine, for SwiftTerm's shaders
 ```
 
-Two sample projects exercise the C and C++ support end to end (member completion through headers, go to definition into `include/`, `compile_commands.json`-driven diagnostics, clang-format): `./scripts/run.sh samples/c-demo` or `samples/cpp-demo`, each with a README checklist.
+Two sample projects exercise the C and C++ support end to end (member completion through headers, go to definition into `include/`, `compile_commands.json`-driven diagnostics, clang-format): `./scripts/run.sh samples/c-demo` or `samples/cpp-demo`, each with a README checklist. `samples/rust-demo` is the crate the `--demo selftest` scene drives (run it on a copy, the scene saves its edits).
 
 The one-shot indexer writes to `~/Library/Application Support/Ride/index/`:
 
