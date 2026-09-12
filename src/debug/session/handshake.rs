@@ -15,6 +15,7 @@ use crate::debug::protocol::{
     FunctionBreakpoint, INITIALIZED, InitializeArguments, LaunchArguments,
     SetExceptionBreakpointsArguments, SetFunctionBreakpointsArguments,
 };
+use crate::debug::render;
 
 const INITIALIZE: &str = "initialize";
 const LAUNCH: &str = "launch";
@@ -77,7 +78,7 @@ fn launch_arguments(session: &DebugSession) -> LaunchArguments {
             .map(|(name, value)| (name.clone(), value.clone()))
             .collect::<BTreeMap<String, String>>(),
         stop_on_entry: Some(launch.stop_on_entry),
-        init_commands: Vec::new(),
+        init_commands: render::toolchain_init_commands(is_rust_target(session)),
     }
 }
 

@@ -8,8 +8,12 @@ pub fn reply(state: &mut State, command: &str, message: &Value) -> Reply {
     let arguments = message.get("arguments").cloned().unwrap_or(Value::Null);
     if command == "launch" {
         state.launch_seq = Some(request_seq);
+        let commands = state.event(
+            "output",
+            json!({ "category": "console", "output": format!("initCommands: {}\n", init_commands(&arguments)) }),
+        );
         return Reply {
-            now: vec![state.event("initialized", Value::Null)],
+            now: vec![commands, state.event("initialized", Value::Null)],
             ..Reply::default()
         };
     }
@@ -118,16 +122,24 @@ fn stop_body(reason: &str, hit: Vec<i64>) -> Value {
     })
 }
 
+fn init_commands(arguments: &Value) -> String {
+    strings(arguments, "initCommands").join(" | ")
+}
+
 fn filter_names(arguments: &Value) -> String {
+    strings(arguments, "filters").join(",")
+}
+
+fn strings(arguments: &Value, key: &str) -> Vec<String> {
     arguments
-        .get("filters")
+        .get(key)
         .and_then(Value::as_array)
         .map(|entries| {
             entries
                 .iter()
                 .filter_map(Value::as_str)
-                .collect::<Vec<&str>>()
-                .join(",")
+                .map(str::to_string)
+                .collect::<Vec<String>>()
         })
         .unwrap_or_default()
 }
