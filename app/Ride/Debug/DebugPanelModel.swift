@@ -13,6 +13,7 @@ struct WatchRow: Identifiable, Equatable {
 
 final class DebugPanelModel: ObservableObject {
     static let shared = DebugPanelModel()
+    static let queue = DispatchQueue(label: "ride.debug.load", qos: .utility, attributes: .concurrent)
 
     @Published var visible = false
     @Published var showEvaluate = false
@@ -25,6 +26,8 @@ final class DebugPanelModel: ObservableObject {
 
     var onFrame: ((String, UInt32) -> Void)?
     var onWatchesChanged: (() -> Void)?
+    private var loads = DebugLoadState()
+    private var seenSequence = 0
 
     var expressions: [String] {
         watches.map(\.expression)
@@ -32,6 +35,22 @@ final class DebugPanelModel: ObservableObject {
 
     var isStopped: Bool {
         DebugController.shared.isStopped
+    }
+
+    var stopGeneration: Int {
+        loads.generation
+    }
+
+    func beginLoad(_ key: String) -> Int? {
+        loads.begin(key)
+    }
+
+    func finishLoad(_ key: String, generation: Int) -> Bool {
+        loads.finish(key, generation: generation)
+    }
+
+    func isCurrent(_ generation: Int) -> Bool {
+        loads.isCurrent(generation)
     }
 
     func restore(watches list: [String]) {
@@ -54,16 +73,19 @@ final class DebugPanelModel: ObservableObject {
         onWatchesChanged?()
     }
 
-    func setWatch(id: String, value: String, typeName: String?, failed: Bool) {
-        guard let index = watches.firstIndex(where: { $0.id == id }) else {
-            return
+    func apply(watches rows: [WatchRow]) {
+        watches = watches.map { row in
+            rows.first { $0.id == row.id } ?? row
         }
-        watches[index].value = value
-        watches[index].typeName = typeName
-        watches[index].failed = failed
     }
 
     func sessionChanged() {
+        let sequence = DebugController.shared.stopSequence
+        guard sequence != seenSequence else {
+            return
+        }
+        seenSequence = sequence
+        loads.invalidate()
         guard DebugController.shared.isStopped else {
             frames = []
             selectedFrame = nil
@@ -76,7 +98,6 @@ final class DebugPanelModel: ObservableObject {
             return
         }
         reloadThreads()
-        refreshWatches()
     }
 
     func selectThread(_ id: Int64) {
@@ -88,6 +109,7 @@ final class DebugPanelModel: ObservableObject {
         selectedFrame = id
         tree.clear()
         loadScopes(frame: id)
+        refreshWatches()
         guard jump, let frame = frames.first(where: { $0.id == id }), let path = frame.path else {
             return
         }

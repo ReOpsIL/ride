@@ -12,6 +12,7 @@ final class DebugController: ObservableObject {
     var onOutput: ((String, String) -> Void)?
     var onStop: ((String?, UInt32) -> Void)?
     var sessionId: UInt64?
+    private(set) var stopSequence = 0
     private var forwarder: DebugForwarder?
 
     var isActive: Bool {
@@ -105,7 +106,12 @@ final class DebugController: ObservableObject {
     }
 
     func publish(state next: DebugState, path: String?, line: UInt32) {
+        stopSequence += 1
         state = next
+        locate(path: path, line: line)
+    }
+
+    func locate(path: String?, line: UInt32) {
         stoppedPath = path
         stoppedLine = line
         onStop?(path, line)

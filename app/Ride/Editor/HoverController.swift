@@ -95,8 +95,13 @@ final class HoverController {
             return
         }
         lastFire = Date()
-        if let content = DebugHover.content(view: view, range: range) {
-            show(content, view: view, range: range)
+        let started = DebugHover.request(view: view, range: range) { [weak self, weak view] content in
+            guard let self, let view, self.word == range, let content else {
+                return
+            }
+            self.show(content, view: view, range: range)
+        }
+        if started {
             return
         }
         view.hooks.definitions?(range.location) { [weak self, weak view] resp in

@@ -110,7 +110,13 @@ struct DebugEvaluateSheet: View {
         guard !trimmed.isEmpty else {
             return
         }
-        let row = model.evaluate(trimmed, context: .repl)
-        result = row.typeName.map { "\(row.value)  ·  \($0)" } ?? row.value
+        result = "evaluating…"
+        model.evaluate(trimmed, context: .repl) { row in
+            guard let row else {
+                result = "not stopped"
+                return
+            }
+            result = row.typeName.map { "\(row.value)  ·  \($0)" } ?? row.value
+        }
     }
 }
