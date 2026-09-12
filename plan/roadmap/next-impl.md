@@ -59,8 +59,10 @@ cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo test
 bash scripts/build-engine.sh                      # only when src/ffi or src/engine changed
+xcodebuild -downloadComponent MetalToolchain   # once per machine, needed by SwiftTerm's shaders
 xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
   -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
+  -skipPackagePluginValidation -skipMacroValidation \
   CODE_SIGNING_ALLOWED=NO build test
 ```
 
@@ -439,7 +441,7 @@ Add SwiftTerm as a Swift package (pin the latest 1.x); `app/Ride/Terminal/Termin
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
 | 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b merged, reviewed: R20; Q5b and S1 running |
-| 10 | T1 merged, reviewed: R21 (Catch2 rework); S1 and Q5b finishing after the disk outage; then R20, R21, T2 |
+| 10 | T1 merged, reviewed: R21 (Catch2 rework); S1 merged (SwiftTerm needs the Metal toolchain and the plugin-validation skip flags, now in the gate and CI); Q5b finishing; R21 running; then R20, T2 |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.

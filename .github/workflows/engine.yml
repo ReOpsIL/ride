@@ -45,10 +45,13 @@ jobs:
           targets: aarch64-apple-darwin, x86_64-apple-darwin
       - name: build-engine
         run: bash scripts/build-engine.sh
+      - name: metal-toolchain
+        run: xcodebuild -downloadComponent MetalToolchain
       - name: xcodebuild
         run: |
           xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
             -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
+            -skipPackagePluginValidation -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO build test
 
   selftest:
@@ -61,10 +64,13 @@ jobs:
           components: rustfmt
       - name: build-engine
         run: bash scripts/build-engine.sh
+      - name: metal-toolchain
+        run: xcodebuild -downloadComponent MetalToolchain
       - name: xcodebuild
         run: |
           xcodebuild -project app/Ride.xcodeproj -scheme Ride -configuration Debug \
             -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
+            -skipPackagePluginValidation -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO build
       - name: selftest
         timeout-minutes: 20
