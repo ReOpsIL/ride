@@ -1,5 +1,6 @@
 mod events;
 mod handshake;
+mod lifecycle;
 mod progress;
 mod registration;
 mod requests;
@@ -107,35 +108,6 @@ impl DebugSession {
             .unwrap_or_default()
     }
 
-    pub(super) fn transition(&self, state: DebugState) -> bool {
-        let ending = matches!(state, DebugState::Terminated | DebugState::Exited { .. });
-        let entered =
-            self.replace_state(|current| !matches!(current, DebugState::Terminated), state);
-        if entered && ending {
-            self.retire();
-        }
-        entered
-    }
-
-    pub(super) fn begin_running(&self) -> bool {
-        self.replace_state(
-            |current| matches!(current, DebugState::Launching),
-            DebugState::Running,
-        )
-    }
-
-    fn replace_state(&self, allowed: impl Fn(&DebugState) -> bool, state: DebugState) -> bool {
-        let mut current = self
-            .state
-            .lock()
-            .unwrap_or_else(|poisoned| poisoned.into_inner());
-        if !allowed(&current) {
-            return false;
-        }
-        *current = state;
-        true
-    }
-
     pub(super) fn mark_processed(&self, stamp: u64) {
         self.progress.mark(stamp);
     }
@@ -144,48 +116,14 @@ impl DebugSession {
         self.progress.wait(mark, DRAIN_TIMEOUT)
     }
 
-    fn retire(&self) {
-        self.registration.retire();
-    }
-
-    fn emit(&self, event: DebugEvent) {
+    pub(super) fn emit(&self, event: DebugEvent) {
         self.listener.on_event(event);
     }
 
-    fn emit_failure(&self, message: &str) {
+    pub(super) fn emit_failure(&self, message: &str) {
         self.emit(DebugEvent::Failed {
             message: message.to_string(),
         });
         self.emit(DebugEvent::Terminated);
-    }
-
-    pub(super) fn fail(&self, message: &str) {
-        if self.transition(DebugState::Terminated) {
-            self.emit_failure(message);
-        }
-    }
-
-    pub(super) fn abandon_launch(&self, message: &str) {
-        let entered = self.replace_state(
-            |current| matches!(current, DebugState::Launching),
-            DebugState::Terminated,
-        );
-        if !entered {
-            return;
-        }
-        self.transport.shutdown();
-        self.retire();
-        self.emit_failure(message);
-    }
-
-    fn finished(&self) -> bool {
-        matches!(self.state(), DebugState::Terminated)
-    }
-
-    fn ended(&self) -> bool {
-        matches!(
-            self.state(),
-            DebugState::Terminated | DebugState::Exited { .. }
-        )
     }
 }

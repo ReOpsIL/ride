@@ -424,6 +424,42 @@ fn an_adapter_that_dies_during_the_handshake_fails_once() {
 }
 
 #[test]
+fn an_adapter_that_dies_before_the_launch_response_fails_once() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &["--die-after-done".to_string()],
+            DebugLaunch::program("/usr/bin/true"),
+            None,
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener.clone(),
+        )
+        .expect("start the dying session");
+    listener.wait("a failure", |event| {
+        matches!(event, DebugEvent::Failed { .. })
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    sleep(Duration::from_millis(300));
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Failed { .. })),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Terminated)),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert!(!listener.saw(|event| matches!(event, DebugEvent::Running)));
+}
+
+#[test]
 fn a_stalled_event_pump_fails_the_launch_and_leaves_the_registry() {
     let registry = Arc::new(DebugRegistry::default());
     let recorder = Arc::new(Recorder::default());
