@@ -14,6 +14,8 @@ pub enum EngineError {
     Panic { message: String },
     #[error("tool: {message}")]
     Tool { message: String },
+    #[error("debug: {message}")]
+    Debug { message: String },
 }
 
 impl EngineError {
@@ -21,6 +23,12 @@ impl EngineError {
         Self::Io {
             path: path.as_ref().display().to_string(),
             message: err.to_string(),
+        }
+    }
+
+    pub fn debug(message: impl std::fmt::Display) -> Self {
+        Self::Debug {
+            message: message.to_string(),
         }
     }
 
