@@ -8,9 +8,9 @@ use serde_json::{Value, json};
 
 use ride_engine::debug::protocol::{
     AttachArguments, BreakpointBody, Capabilities, ConfigurationDoneArguments, ContinueArguments,
-    ContinueResponseBody, ContinuedBody, DisconnectArguments, EvaluateArguments, EvaluateContext,
-    EvaluateResponseBody, Event, ExitedBody, InitializeArguments, LaunchArguments, OutputBody,
-    PauseArguments, Request, Response, ScopesArguments, ScopesResponseBody,
+    ContinueResponseBody, ContinuedBody, DisconnectArguments, ErrorMessage, EvaluateArguments,
+    EvaluateContext, EvaluateResponseBody, Event, ExitedBody, InitializeArguments, LaunchArguments,
+    OutputBody, PauseArguments, Request, Response, ScopesArguments, ScopesResponseBody,
     SetBreakpointsArguments, SetBreakpointsResponseBody, SetExceptionBreakpointsArguments,
     SetExceptionBreakpointsResponseBody, Source, SourceBreakpoint, StackTraceArguments,
     StackTraceResponseBody, StepArguments, SteppingGranularity, StoppedBody, TerminatedBody,
@@ -373,4 +373,41 @@ fn unknown_fields_are_tolerated() {
         serde_json::to_value(&built).unwrap(),
         json!({"seq": 9, "type": "request", "command": "threads"})
     );
+}
+
+#[test]
+fn error_message_variables_are_interpolated() {
+    let raw = json!({
+        "id": 3002,
+        "format": "breakpoint {number} at {path} could not be set",
+        "variables": {"number": "1", "path": "src/main.rs"},
+        "showUser": true
+    });
+    let parsed: ErrorMessage = round_trip(&raw);
+    assert_eq!(
+        parsed.variables.as_ref().unwrap().get("path").unwrap(),
+        "src/main.rs"
+    );
+    assert_eq!(
+        parsed.text(),
+        "breakpoint 1 at src/main.rs could not be set"
+    );
+
+    let message: Response = serde_json::from_value(json!({
+        "seq": 7,
+        "type": "response",
+        "request_seq": 6,
+        "success": false,
+        "command": "setBreakpoints",
+        "message": "failed",
+        "body": {"error": raw}
+    }))
+    .unwrap();
+    assert_eq!(
+        message.failure().unwrap(),
+        "breakpoint 1 at src/main.rs could not be set"
+    );
+
+    let plain: ErrorMessage = round_trip(&json!({"id": 1, "format": "plain {name}"}));
+    assert_eq!(plain.text(), "plain {name}");
 }

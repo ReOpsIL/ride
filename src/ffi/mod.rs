@@ -1,6 +1,7 @@
 mod cheat;
 mod check;
 mod config;
+mod debug;
 mod docs;
 mod edit;
 mod editing;
@@ -18,6 +19,10 @@ mod workspace;
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
+pub use debug::{
+    Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
+    DebugState, DebugThread, Scope, StackFrame, Variable,
+};
 pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange};

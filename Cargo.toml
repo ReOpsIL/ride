@@ -13,7 +13,7 @@ path = "src/bin/ride_engine/main.rs"
 
 [[bin]]
 name = "fake-dap"
-path = "src/bin/fake_dap.rs"
+path = "src/bin/fake_dap/main.rs"
 
 [[bin]]
 name = "uniffi-bindgen"

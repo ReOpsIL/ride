@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicI64, Ordering};
-use std::sync::mpsc::{Receiver, TryIter, channel};
+use std::sync::mpsc::{Receiver, RecvTimeoutError, channel};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -21,7 +21,7 @@ pub struct Transport {
     stdin: Mutex<ChildStdin>,
     seq: AtomicI64,
     shared: Shared,
-    events: Receiver<Value>,
+    events: Mutex<Receiver<Value>>,
     timeout: Duration,
 }
 
@@ -51,7 +51,7 @@ impl Transport {
             stdin: Mutex::new(stdin),
             seq: AtomicI64::new(1),
             shared,
-            events,
+            events: Mutex::new(events),
             timeout: DEFAULT_TIMEOUT,
         })
     }
@@ -62,23 +62,40 @@ impl Transport {
     }
 
     pub fn request(&self, command: &str, arguments: Value) -> Result<Value, EngineError> {
+        let seq = self.send_request(command, arguments)?;
+        self.await_response(seq, command)
+    }
+
+    pub fn send_request(&self, command: &str, arguments: Value) -> Result<i64, EngineError> {
         let seq = self.seq.fetch_add(1, Ordering::SeqCst);
         let mut message = json!({ "seq": seq, "type": "request", "command": command });
         if !arguments.is_null() {
             message["arguments"] = arguments;
         }
-        self.send(&message)?;
-        self.await_response(seq, command)
+        self.send(&message)
+            .map_err(|err| EngineError::debug(format!("{command}: {err}")))?;
+        Ok(seq)
     }
 
-    pub fn events(&self) -> TryIter<'_, Value> {
-        self.events.try_iter()
-    }
-
-    pub fn next_event(&self, timeout: Duration) -> Result<Value, EngineError> {
+    pub fn try_event(&self) -> Option<Value> {
         self.events
-            .recv_timeout(timeout)
-            .map_err(|err| EngineError::debug(format!("event: {err}")))
+            .lock()
+            .ok()
+            .and_then(|events| events.try_recv().ok())
+    }
+
+    pub fn poll_event(&self, timeout: Duration) -> Result<Option<Value>, EngineError> {
+        let events = self
+            .events
+            .lock()
+            .map_err(|_| EngineError::debug("transport poisoned"))?;
+        match events.recv_timeout(timeout) {
+            Ok(event) => Ok(Some(event)),
+            Err(RecvTimeoutError::Timeout) => Ok(None),
+            Err(RecvTimeoutError::Disconnected) => {
+                Err(EngineError::debug("adapter closed the connection"))
+            }
+        }
     }
 
     fn send(&self, message: &Value) -> Result<(), EngineError> {
@@ -96,7 +113,7 @@ impl Transport {
             .map_err(|err| EngineError::debug(format!("write: {err}")))
     }
 
-    fn await_response(&self, seq: i64, command: &str) -> Result<Value, EngineError> {
+    pub fn await_response(&self, seq: i64, command: &str) -> Result<Value, EngineError> {
         let (lock, signal) = &*self.shared;
         let deadline = Instant::now() + self.timeout;
         let mut inbox = lock
@@ -111,6 +128,7 @@ impl Transport {
             }
             let left = deadline.saturating_duration_since(Instant::now());
             if left.is_zero() {
+                inbox.timed_out.insert(seq);
                 return Err(EngineError::debug(format!("{command}: timed out")));
             }
             inbox = signal
@@ -134,10 +152,14 @@ fn body_of(message: Value, command: &str) -> Result<Value, EngineError> {
         .and_then(Value::as_bool)
         .unwrap_or(false);
     if !ok {
-        let reason = message
-            .get("message")
-            .and_then(Value::as_str)
-            .unwrap_or("request failed");
+        let reason = crate::debug::protocol::failure_text(&message)
+            .or_else(|| {
+                message
+                    .get("message")
+                    .and_then(Value::as_str)
+                    .map(str::to_string)
+            })
+            .unwrap_or_else(|| "request failed".to_string());
         return Err(EngineError::debug(format!("{command}: {reason}")));
     }
     Ok(message.get("body").cloned().unwrap_or(Value::Null))

@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -62,7 +64,7 @@ impl Response {
             .body_as::<ErrorBody>()
             .ok()
             .and_then(|body| body.error)
-            .map(|error| error.format);
+            .map(|error| error.text());
         Some(
             detail
                 .or_else(|| self.message.clone())
@@ -104,7 +106,27 @@ pub struct ErrorMessage {
     pub id: i64,
     pub format: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub variables: Option<BTreeMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub show_user: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub send_telemetry: Option<bool>,
+}
+
+impl ErrorMessage {
+    pub fn text(&self) -> String {
+        let Some(variables) = &self.variables else {
+            return self.format.clone();
+        };
+        variables
+            .iter()
+            .fold(self.format.clone(), |text, (name, value)| {
+                text.replace(&format!("{{{name}}}"), value)
+            })
+    }
+}
+
+pub fn failure_text(message: &Value) -> Option<String> {
+    let response: Response = serde_json::from_value(message.clone()).ok()?;
+    response.failure()
 }

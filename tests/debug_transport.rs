@@ -18,11 +18,12 @@ fn initialize_round_trips_and_emits_an_event() {
         .expect("initialize response");
     assert_eq!(body["supportsConfigurationDoneRequest"], json!(true));
     let event = transport
-        .next_event(Duration::from_secs(5))
+        .poll_event(Duration::from_secs(5))
+        .expect("event channel")
         .expect("output event");
     assert_eq!(event["event"], json!("output"));
     assert_eq!(event["body"]["category"], json!("console"));
-    assert!(transport.events().next().is_none());
+    assert!(transport.try_event().is_none());
 }
 
 #[test]
@@ -36,7 +37,8 @@ fn responses_correlate_across_several_requests() {
         .expect("initialize response");
     assert_eq!(body["supportsConfigurationDoneRequest"], json!(true));
     let first = transport
-        .next_event(Duration::from_secs(5))
+        .poll_event(Duration::from_secs(5))
+        .expect("event channel")
         .expect("output event");
     assert_eq!(first["event"], json!("output"));
 }
