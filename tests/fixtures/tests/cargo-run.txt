@@ -1,0 +1,26 @@
+   Compiling ride-demo v0.1.0 (/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/demo)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running unittests src/main.rs (target/debug/deps/ride_demo-30492b83244d607b)
+
+running 3 tests
+test util::runner_fixture_tests::skipped_for_now ... ignored
+test util::runner_fixture_tests::adds_two_numbers ... ok
+test util::runner_fixture_tests::compares_wrong_sum ... FAILED
+
+failures:
+
+---- util::runner_fixture_tests::compares_wrong_sum stdout ----
+
+thread 'util::runner_fixture_tests::compares_wrong_sum' (12429390) panicked at src/util.rs:40:9:
+assertion `left == right` failed: arithmetic drifted
+  left: 4
+ right: 5
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    util::runner_fixture_tests::compares_wrong_sum
+
+test result: FAILED. 1 passed; 1 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin ride-demo`

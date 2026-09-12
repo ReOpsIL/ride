@@ -1,0 +1,6 @@
+Running main() from gtest_main.cc
+GeoSuite.
+  AddsPoints
+  DetectsDrift
+TextSuite.
+  TrimsBlanks

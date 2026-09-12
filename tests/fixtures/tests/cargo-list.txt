@@ -1,0 +1,7 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/main.rs (target/debug/deps/ride_demo-30492b83244d607b)
+util::runner_fixture_tests::adds_two_numbers: test
+util::runner_fixture_tests::compares_wrong_sum: test
+util::runner_fixture_tests::skipped_for_now: test
+
+3 tests, 0 benchmarks

@@ -11,6 +11,7 @@ mod query;
 mod run;
 mod session;
 mod symbol;
+mod tests;
 mod tools;
 mod workspace;
 
@@ -32,5 +33,6 @@ pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
 pub use symbol::{DefinitionExcerpt, DefinitionResponse, SymbolAt};
+pub use tests::{TestCase, TestCommands, TestEvent, TestFramework, TestStatus};
 pub use tools::ToolInfo;
 pub use workspace::WorkspaceInfo;

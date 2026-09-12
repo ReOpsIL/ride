@@ -46,6 +46,7 @@ mod snippets;
 mod struct_literal;
 mod symbols;
 mod system_paths;
+mod test_runner;
 mod tools;
 mod watch;
 
