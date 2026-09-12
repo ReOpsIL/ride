@@ -78,6 +78,7 @@ fn scripted_with(
         Path::new(FAKE_ADAPTER),
         arguments,
         launch,
+        None,
         breakpoints,
         listener.clone(),
     )
@@ -114,6 +115,7 @@ fn the_launch_sends_only_the_advertised_enabled_filters() {
         Path::new(FAKE_ADAPTER),
         &[],
         launch,
+        None,
         vec![Breakpoint::at("src/main.rs", 10)],
         listener.clone(),
     )
@@ -220,6 +222,7 @@ fn a_disconnected_session_leaves_the_registry() {
             Path::new(FAKE_ADAPTER),
             &[],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             vec![Breakpoint::at("src/main.rs", 10)],
             listener.clone(),
         )
@@ -244,6 +247,7 @@ fn a_failed_handshake_leaves_the_registry() {
             Path::new("/usr/bin/true"),
             &[],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             Vec::new(),
             listener.clone(),
         )
@@ -266,6 +270,7 @@ fn a_disconnect_terminates_once_and_leaves_the_registry_once() {
             Path::new(FAKE_ADAPTER),
             &[],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             vec![Breakpoint::at("src/main.rs", 10)],
             listener.clone(),
         )
@@ -303,6 +308,7 @@ fn an_exit_leaves_the_registry_and_terminates_once() {
             Path::new(FAKE_ADAPTER),
             &["--exit-on-continue".to_string()],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             vec![Breakpoint::at("src/main.rs", 10)],
             listener.clone(),
         )
@@ -355,6 +361,7 @@ fn a_disconnect_during_the_handshake_terminates_once() {
         Path::new("/bin/cat"),
         &[],
         DebugLaunch::program("/usr/bin/true"),
+        None,
         Vec::new(),
         listener.clone(),
     )
@@ -389,6 +396,7 @@ fn an_adapter_that_dies_during_the_handshake_fails_once() {
             Path::new(FAKE_ADAPTER),
             &["--die-on-done".to_string()],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             vec![Breakpoint::at("src/main.rs", 10)],
             listener.clone(),
         )
@@ -428,6 +436,7 @@ fn a_stalled_event_pump_fails_the_launch_and_leaves_the_registry() {
             Path::new(FAKE_ADAPTER),
             &[],
             DebugLaunch::program("/usr/bin/true"),
+            None,
             vec![Breakpoint::at("src/main.rs", 10)],
             listener,
         )
@@ -583,6 +592,7 @@ fn a_handshake_against_a_silent_adapter_fails() {
         Path::new("/usr/bin/true"),
         &[],
         DebugLaunch::program("/usr/bin/true"),
+        None,
         Vec::new(),
         listener.clone(),
     )
@@ -639,8 +649,15 @@ fn the_live_adapter_stops_in_the_rust_demo() {
     launch.cwd = Some(root.to_string_lossy().to_string());
     let listener = Arc::new(Recorder::default());
     let breakpoint = Breakpoint::at(&source.to_string_lossy(), 10);
-    let session = DebugSession::start(&adapter, &[], launch, vec![breakpoint], listener.clone())
-        .expect("start the live session");
+    let session = DebugSession::start(
+        &adapter,
+        &[],
+        launch,
+        None,
+        vec![breakpoint],
+        listener.clone(),
+    )
+    .expect("start the live session");
 
     listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
     let threads = session.threads().expect("threads");

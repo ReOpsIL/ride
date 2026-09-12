@@ -7,6 +7,7 @@ use std::time::{Duration, Instant};
 
 use ride_engine::{
     Breakpoint, DebugCommand, DebugEvent, DebugLaunch, DebugListener, DebugSession, find_adapter,
+    rustc_sysroot,
 };
 
 #[derive(Default)]
@@ -91,8 +92,15 @@ fn the_live_session_summarises_rust_values() {
     let listener = Arc::new(Recorder::default());
     let source = root.join("src/main.rs");
     let breakpoint = Breakpoint::at(&source.to_string_lossy(), 4);
-    let session = DebugSession::start(&adapter, &[], launch, vec![breakpoint], listener.clone())
-        .expect("start the live session");
+    let session = DebugSession::start(
+        &adapter,
+        &[],
+        launch,
+        rustc_sysroot().ok().flatten(),
+        vec![breakpoint],
+        listener.clone(),
+    )
+    .expect("start the live session");
     listener.wait("the breakpoint stop", |event| {
         matches!(event, DebugEvent::Stopped { .. })
     });

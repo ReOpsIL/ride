@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 const LOOKUP_SCRIPT: &str = "lib/rustlib/etc/lldb_lookup.py";
 const LOOKUP_COMMANDS: &str = "lib/rustlib/etc/lldb_commands";
@@ -20,12 +20,4 @@ pub fn init_commands(sysroot: Option<&Path>, rust_target: bool) -> Vec<String> {
         commands.push(format!("command source -s 0 \"{}\"", sourced.display()));
     }
     commands
-}
-
-pub fn toolchain_init_commands(rust_target: bool) -> Vec<String> {
-    if !rust_target {
-        return Vec::new();
-    }
-    let sysroot: Option<PathBuf> = crate::discover::rustc_sysroot().ok().flatten();
-    init_commands(sysroot.as_deref(), rust_target)
 }

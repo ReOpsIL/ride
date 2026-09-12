@@ -15,7 +15,7 @@ mod tools;
 
 pub use home::cargo_home;
 pub use metadata::workspace_info;
-pub use sysroot::{rustc_sysroot, sysroot_path};
+pub use sysroot::{rust_src_available, rustc_sysroot, sysroot_path};
 pub use system_includes::{SystemIncludes, probe_args};
 pub use tools::tool_status;
 

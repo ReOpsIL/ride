@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 
 use tantivy::{Index, IndexReader};
@@ -68,6 +68,7 @@ pub(crate) struct Inner {
     pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
     pub(crate) projects: HashMap<String, ProjectModel>,
     pub(crate) debug_sessions: Arc<crate::debug::registry::DebugRegistry>,
+    pub(crate) sysroot: Option<PathBuf>,
 }
 
 #[derive(uniffi::Object)]
@@ -77,11 +78,8 @@ pub struct Engine {
 
 impl Engine {
     fn new(config: EngineConfig) -> Self {
-        let rust_src = crate::discover::sysroot_path(&config)
-            .ok()
-            .flatten()
-            .map(|s| s.join("lib/rustlib/src/rust/library/std").is_dir())
-            .unwrap_or(false);
+        let sysroot = crate::discover::sysroot_path(&config).ok().flatten();
+        let rust_src = crate::discover::rust_src_available(sysroot.as_deref());
         let header_store = Path::new(&config.index_dir).join("headers");
         Self {
             inner: RwLock::new(Inner {
@@ -101,6 +99,7 @@ impl Engine {
                 system_includes: Arc::default(),
                 projects: HashMap::new(),
                 debug_sessions: Arc::default(),
+                sysroot,
             }),
         }
     }
