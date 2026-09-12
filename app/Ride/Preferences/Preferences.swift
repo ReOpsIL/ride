@@ -21,6 +21,7 @@ struct Preferences: Codable, Equatable {
     var runOutputHeight: Double
     var terminalHeight: Double
     var testsHeight: Double
+    var debugHeight: Double
     var previewWidth: Double
 
     static let defaults = Preferences(
@@ -41,6 +42,7 @@ struct Preferences: Codable, Equatable {
         runOutputHeight: 200,
         terminalHeight: 220,
         testsHeight: 200,
+        debugHeight: 320,
         previewWidth: 460,
         cheatSheet: true,
         softWrap: true,
@@ -65,6 +67,7 @@ struct Preferences: Codable, Equatable {
         runOutputHeight: Double = 200,
         terminalHeight: Double = 220,
         testsHeight: Double = 200,
+        debugHeight: Double = 320,
         previewWidth: Double = 460,
         cheatSheet: Bool = true,
         softWrap: Bool = true,
@@ -87,6 +90,7 @@ struct Preferences: Codable, Equatable {
         self.runOutputHeight = runOutputHeight
         self.terminalHeight = terminalHeight
         self.testsHeight = testsHeight
+        self.debugHeight = debugHeight
         self.previewWidth = previewWidth
         self.cheatSheet = cheatSheet
         self.softWrap = softWrap
@@ -116,6 +120,7 @@ struct Preferences: Codable, Equatable {
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
         testsHeight = try c.decodeIfPresent(Double.self, forKey: .testsHeight) ?? d.testsHeight
+        debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
     }
 
@@ -129,6 +134,7 @@ struct Preferences: Codable, Equatable {
         next.runOutputHeight = min(480, max(80, runOutputHeight))
         next.terminalHeight = min(480, max(80, terminalHeight))
         next.testsHeight = min(480, max(80, testsHeight))
+        next.debugHeight = min(600, max(320, debugHeight))
         next.previewWidth = min(900, max(260, previewWidth))
         if next.theme != "light" {
             next.theme = "dark"

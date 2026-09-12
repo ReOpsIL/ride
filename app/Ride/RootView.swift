@@ -101,7 +101,9 @@ struct DetailColumn: View {
                 }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)
-                        .frame(minHeight: 80, idealHeight: 240, maxHeight: 480)
+                        .frame(minHeight: 320, idealHeight: state.prefs.debugHeight, maxHeight: 600)
+                        .background(SplitPositioner(position: state.prefs.debugHeight, fromEnd: true))
+                        .reportSize(.height) { debugHeight.wrappedValue = $0 }
                 }
                 if state.showRunOutput {
                     RunOutputPanel(output: state.runOutput)
@@ -165,6 +167,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.terminalHeight },
             set: { value in state.saveLayout { $0.terminalHeight = value } }
+        )
+    }
+
+    private var debugHeight: Binding<Double> {
+        Binding(
+            get: { state.prefs.debugHeight },
+            set: { value in state.saveLayout { $0.debugHeight = value } }
         )
     }
 

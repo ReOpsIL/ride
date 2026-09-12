@@ -197,6 +197,9 @@
 		D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000003 /* SelfTestSteps+Cpp.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
+		F1A000000000000000000002 /* PeekSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A000000000000000000001 /* PeekSegments.swift */; };
+		F1A000000000000000000003 /* PeekSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A000000000000000000001 /* PeekSegments.swift */; };
+		F1A000000000000000000005 /* PeekSegmentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A000000000000000000004 /* PeekSegmentsTests.swift */; };
 		F10000000000000000000002 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
 		F10000000000000000000003 /* PaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PaneLayout.swift */; };
 		F10000000000000000000005 /* EditorPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* EditorPanes.swift */; };
@@ -670,6 +673,8 @@
 		D19200000000000000000003 /* SelfTestSteps+Cpp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Cpp.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
+		F1A000000000000000000001 /* PeekSegments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekSegments.swift; sourceTree = "<group>"; };
+		F1A000000000000000000004 /* PeekSegmentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekSegmentsTests.swift; sourceTree = "<group>"; };
 		F10000000000000000000001 /* PaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayout.swift"; sourceTree = "<group>"; };
 		F10000000000000000000004 /* EditorPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPanes.swift"; sourceTree = "<group>"; };
 		F10000000000000000000006 /* EditorHostView+Jump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Jump.swift"; sourceTree = "<group>"; };
@@ -905,6 +910,7 @@
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
 				F11000000000000000000008 /* WorkspaceStateTests.swift */,
+				F1A000000000000000000004 /* PeekSegmentsTests.swift */,
 				F1100000000000000000000B /* WorkspaceStateStoreTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
@@ -1132,6 +1138,7 @@
 				D19000000000000000000006 /* DocWebView.swift */,
 				D19000000000000000000008 /* DocController.swift */,
 				D19100000000000000000001 /* PeekPanel.swift */,
+				F1A000000000000000000001 /* PeekSegments.swift */,
 				D19100000000000000000003 /* PeekController.swift */,
 				D1900000000000000000000E /* EditorHostView+Docs.swift */,
 				F10000000000000000000001 /* PaneLayout.swift */,
@@ -1627,6 +1634,8 @@
 				D400000000000000000000EB /* SplitState.swift in Sources */,
 				D400000000000000000000FB /* BreakpointsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
+				F1A000000000000000000003 /* PeekSegments.swift in Sources */,
+				F1A000000000000000000005 /* PeekSegmentsTests.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
 				F12000000000000000000005 /* SplitLayoutTests.swift in Sources */,
@@ -1817,6 +1826,7 @@
 				D19100000000000000000004 /* PeekController.swift in Sources */,
 				D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */,
 				F10000000000000000000002 /* PaneLayout.swift in Sources */,
+				F1A000000000000000000002 /* PeekSegments.swift in Sources */,
 				F12000000000000000000002 /* SplitLayout.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,

@@ -18,8 +18,9 @@ struct TargetsPanel: View {
         VStack(alignment: .leading, spacing: 0) {
             ts.ui.border.frame(height: Tokens.Size.hairline)
             PanelHeader(icon: "square.stack.3d.up", title: "Targets", badges: badges) {
-                profilePicker
+                EmptyView()
             }
+            optionsRow
             if let notice = store.notice {
                 Text(notice)
                     .font(Tokens.ui(11))
@@ -41,10 +42,25 @@ struct TargetsPanel: View {
     }
 
     private var badges: [PanelBadge] {
-        guard !store.kindLabel.isEmpty else {
+        guard !store.rows.isEmpty else {
             return []
         }
-        return [PanelBadge(id: "kind", text: store.kindLabel, tint: nil)]
+        return [PanelBadge(id: "count", text: "\(store.rows.count)", tint: nil)]
+    }
+
+    @ViewBuilder private var optionsRow: some View {
+        if !store.kindLabel.isEmpty || store.profiles.count > 1 {
+            HStack(spacing: Tokens.Space.s) {
+                Text(store.kindLabel)
+                    .font(Tokens.ui(10, weight: .semibold))
+                    .foregroundStyle(ts.ui.textTertiary)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+                profilePicker
+            }
+            .padding(.horizontal, Tokens.Space.m)
+            .padding(.vertical, Tokens.Space.xs)
+        }
     }
 
     @ViewBuilder private var profilePicker: some View {

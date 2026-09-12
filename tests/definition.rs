@@ -183,3 +183,44 @@ fn catalog_hit_name_byte_is_identifier() {
             .is_empty()
     );
 }
+
+fn demo_engine() -> (tempfile::TempDir, Arc<Engine>, PathBuf) {
+    let dir = tempfile::tempdir().unwrap();
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/rust-demo");
+    write_index(&root, dir.path(), &config(dir.path())).unwrap();
+    let engine = engine_start(config(dir.path()));
+    engine.open_workspace(root.display().to_string()).unwrap();
+    (dir, engine, root)
+}
+
+#[test]
+fn workspace_counter_outranks_catalog_names() {
+    let (_dir, engine, root) = demo_engine();
+    let main = root.join("src/main.rs");
+    let src = std::fs::read_to_string(&main).unwrap();
+    let open = engine
+        .open_session(
+            "demo".into(),
+            Some(main.display().to_string()),
+            src.clone(),
+            None,
+        )
+        .unwrap();
+    let at = src.find("Counter::new()").unwrap() as u32 + 1;
+    let resp = engine.find_definitions(open.session_id, at);
+    let hit = resp.hits.first().expect("hit");
+    assert_eq!(hit.name, "Counter");
+    assert!(
+        hit.source_path.as_deref().unwrap().ends_with("src/util.rs"),
+        "{:?}",
+        resp.hits
+            .iter()
+            .map(|h| (h.path.clone(), h.source_path.clone()))
+            .collect::<Vec<_>>()
+    );
+    assert!(hit.path.ends_with("util::Counter"), "{}", hit.path);
+    let excerpts = engine.quick_definition(open.session_id, at);
+    let first = excerpts.first().expect("excerpt");
+    assert!(first.path.ends_with("src/util.rs"), "{}", first.path);
+    assert!(first.text.contains("pub struct Counter"), "{}", first.text);
+}

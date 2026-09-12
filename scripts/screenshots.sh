@@ -68,6 +68,24 @@ SCENES=(
   "debug rust-demo"
 )
 
+if (($# > 0)); then
+  WANTED=()
+  for want in "$@"; do
+    found=""
+    for entry in "${SCENES[@]}"; do
+      if [[ "${entry%% *}" == "$want" ]]; then
+        WANTED+=("$entry")
+        found="yes"
+      fi
+    done
+    if [[ -z "$found" ]]; then
+      echo "unknown scene $want" >&2
+      exit 1
+    fi
+  done
+  SCENES=("${WANTED[@]}")
+fi
+
 await() {
   local scene="$1" ready="$2" pid="$3"
   local waited=0
