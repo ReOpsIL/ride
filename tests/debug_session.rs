@@ -6,8 +6,10 @@ use std::time::{Duration, Instant};
 
 use ride_engine::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugSession, DebugState, find_adapter,
+    DebugRegistry, DebugSession, DebugState, find_adapter,
 };
+
+const FAKE_ADAPTER: &str = env!("CARGO_BIN_EXE_fake-dap");
 
 #[derive(Default)]
 struct Recorder {
@@ -58,17 +60,151 @@ fn stopped(event: &DebugEvent, expected: &str) -> bool {
 }
 
 fn scripted(breakpoints: Vec<Breakpoint>) -> (Arc<DebugSession>, Arc<Recorder>) {
+    scripted_with(&[], breakpoints)
+}
+
+fn scripted_with(
+    arguments: &[String],
+    breakpoints: Vec<Breakpoint>,
+) -> (Arc<DebugSession>, Arc<Recorder>) {
     let listener = Arc::new(Recorder::default());
     let launch = DebugLaunch::program("/usr/bin/true");
     let session = DebugSession::start(
-        Path::new(env!("CARGO_BIN_EXE_fake-dap")),
-        &[],
+        Path::new(FAKE_ADAPTER),
+        arguments,
         launch,
         breakpoints,
         listener.clone(),
     )
     .expect("start the scripted session");
     (session, listener)
+}
+
+fn alive(pid: u32) -> bool {
+    Command::new("/bin/kill")
+        .arg("-0")
+        .arg(pid.to_string())
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false)
+}
+
+fn adapter_pid(pid_file: &Path) -> u32 {
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while Instant::now() < deadline {
+        if let Ok(text) = std::fs::read_to_string(pid_file)
+            && let Ok(pid) = text.trim().parse::<u32>()
+        {
+            return pid;
+        }
+        sleep(Duration::from_millis(20));
+    }
+    panic!("the fake adapter never wrote its pid");
+}
+
+fn until(what: &str, ready: impl Fn() -> bool) {
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while Instant::now() < deadline {
+        if ready() {
+            return;
+        }
+        sleep(Duration::from_millis(20));
+    }
+    panic!("timed out waiting for {what}");
+}
+
+#[test]
+fn a_stop_on_entry_launch_never_reports_running() {
+    let (session, listener) = scripted(vec![Breakpoint::at("src/main.rs", 10)]);
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    let events = listener.events();
+    let stop = events
+        .iter()
+        .position(|event| matches!(event, DebugEvent::Stopped { .. }))
+        .expect("a stopped event");
+    assert!(matches!(events[0], DebugEvent::Launching), "{events:?}");
+    assert!(
+        !events[..stop]
+            .iter()
+            .any(|event| matches!(event, DebugEvent::Running)),
+        "{events:?}"
+    );
+    let _ = session.command(DebugCommand::Disconnect);
+}
+
+#[test]
+fn a_disconnect_kills_an_adapter_that_never_answers() {
+    let pid_file = std::env::temp_dir().join("ride-fake-dap-disconnect.pid");
+    let _ = std::fs::remove_file(&pid_file);
+    let arguments = vec![
+        "--ignore-disconnect".to_string(),
+        "--pid-file".to_string(),
+        pid_file.to_string_lossy().to_string(),
+    ];
+    let (session, listener) = scripted_with(&arguments, vec![Breakpoint::at("src/main.rs", 10)]);
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    let pid = adapter_pid(&pid_file);
+    assert!(alive(pid));
+
+    let started = Instant::now();
+    session
+        .command(DebugCommand::Disconnect)
+        .expect("disconnect");
+    assert!(
+        started.elapsed() < Duration::from_secs(10),
+        "the disconnect blocked"
+    );
+    assert_eq!(session.state(), DebugState::Terminated);
+    assert!(listener.saw(|event| matches!(event, DebugEvent::Terminated)));
+    assert!(!alive(pid), "the adapter {pid} outlived the disconnect");
+    assert!(session.threads().is_err());
+    let _ = std::fs::remove_file(&pid_file);
+}
+
+#[test]
+fn a_disconnected_session_leaves_the_registry() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &[],
+            DebugLaunch::program("/usr/bin/true"),
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener.clone(),
+        )
+        .expect("start the registered session");
+    let session = registry.get(id).expect("the registered session");
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    session
+        .command(DebugCommand::Disconnect)
+        .expect("disconnect");
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    assert!(registry.reserve() > id, "the registry reused an id");
+}
+
+#[test]
+fn a_failed_handshake_leaves_the_registry() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new("/usr/bin/true"),
+            &[],
+            DebugLaunch::program("/usr/bin/true"),
+            Vec::new(),
+            listener.clone(),
+        )
+        .expect("spawn the silent adapter");
+    listener.wait("a failure", |event| {
+        matches!(event, DebugEvent::Failed { .. })
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    assert!(registry.reserve() > id, "the registry reused an id");
 }
 
 #[test]

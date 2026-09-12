@@ -17,7 +17,7 @@ use frame::{Inbox, Shared, pump};
 pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(15);
 
 pub struct Transport {
-    child: Child,
+    child: Mutex<Child>,
     stdin: Mutex<ChildStdin>,
     seq: AtomicI64,
     shared: Shared,
@@ -47,7 +47,7 @@ impl Transport {
         let reader = Arc::clone(&shared);
         thread::spawn(move || pump(stdout, reader, sender));
         Ok(Self {
-            child,
+            child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             seq: AtomicI64::new(1),
             shared,
@@ -62,8 +62,25 @@ impl Transport {
     }
 
     pub fn request(&self, command: &str, arguments: Value) -> Result<Value, EngineError> {
+        self.request_within(command, arguments, self.timeout)
+    }
+
+    pub fn request_within(
+        &self,
+        command: &str,
+        arguments: Value,
+        timeout: Duration,
+    ) -> Result<Value, EngineError> {
         let seq = self.send_request(command, arguments)?;
-        self.await_response(seq, command)
+        self.await_within(seq, command, timeout)
+    }
+
+    pub fn shutdown(&self) {
+        let Ok(mut child) = self.child.lock() else {
+            return;
+        };
+        let _ = child.kill();
+        let _ = child.wait();
     }
 
     pub fn send_request(&self, command: &str, arguments: Value) -> Result<i64, EngineError> {
@@ -114,8 +131,17 @@ impl Transport {
     }
 
     pub fn await_response(&self, seq: i64, command: &str) -> Result<Value, EngineError> {
+        self.await_within(seq, command, self.timeout)
+    }
+
+    pub fn await_within(
+        &self,
+        seq: i64,
+        command: &str,
+        timeout: Duration,
+    ) -> Result<Value, EngineError> {
         let (lock, signal) = &*self.shared;
-        let deadline = Instant::now() + self.timeout;
+        let deadline = Instant::now() + timeout;
         let mut inbox = lock
             .lock()
             .map_err(|_| EngineError::debug("transport poisoned"))?;
@@ -141,8 +167,7 @@ impl Transport {
 
 impl Drop for Transport {
     fn drop(&mut self) {
-        let _ = self.child.kill();
-        let _ = self.child.wait();
+        self.shutdown();
     }
 }
 

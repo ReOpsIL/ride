@@ -3,7 +3,7 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 
 use crate::error::EngineError;
-use crate::ffi::{DebugEvaluateContext, DebugThread, Scope, StackFrame, Variable};
+use crate::ffi::{DebugEvaluateContext, DebugScope, DebugThread, StackFrame, Variable};
 
 use crate::debug::protocol::{self, EvaluateContext};
 
@@ -34,8 +34,8 @@ pub fn frame(source: protocol::StackFrame) -> StackFrame {
     }
 }
 
-pub fn scope(source: protocol::Scope) -> Scope {
-    Scope {
+pub fn scope(source: protocol::Scope) -> DebugScope {
+    DebugScope {
         name: source.name,
         variables_reference: source.variables_reference,
         expensive: source.expensive.unwrap_or(false),

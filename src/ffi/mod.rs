@@ -21,7 +21,7 @@ pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
 pub use config::EngineConfig;
 pub use debug::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugState, DebugThread, Scope, StackFrame, Variable,
+    DebugScope, DebugState, DebugThread, StackFrame, Variable,
 };
 pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};

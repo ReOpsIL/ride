@@ -1,7 +1,11 @@
+use std::time::Duration;
+
 use serde_json::Value;
 
 use crate::error::EngineError;
-use crate::ffi::{DebugCommand, DebugEvaluateContext, DebugThread, Scope, StackFrame, Variable};
+use crate::ffi::{
+    DebugCommand, DebugEvaluateContext, DebugScope, DebugThread, StackFrame, Variable,
+};
 
 use super::DebugSession;
 use super::wire::{arguments, body, context, evaluated, frame, scope, thread, variable};
@@ -19,6 +23,7 @@ const VARIABLES: &str = "variables";
 const EVALUATE: &str = "evaluate";
 const DISCONNECT: &str = "disconnect";
 const STACK_LEVELS: u32 = 64;
+const DISCONNECT_TIMEOUT: Duration = Duration::from_secs(3);
 
 impl DebugSession {
     pub fn threads(&self) -> Result<Vec<DebugThread>, EngineError> {
@@ -40,7 +45,7 @@ impl DebugSession {
         Ok(listed.stack_frames.into_iter().map(frame).collect())
     }
 
-    pub fn scopes(&self, frame_id: i64) -> Result<Vec<Scope>, EngineError> {
+    pub fn scopes(&self, frame_id: i64) -> Result<Vec<DebugScope>, EngineError> {
         let request = ScopesArguments { frame_id };
         let response = self
             .transport
@@ -128,7 +133,13 @@ impl DebugSession {
             terminate_debuggee: Some(true),
             suspend_debuggee: None,
         };
-        self.send(DISCONNECT, arguments(DISCONNECT, &request)?)
+        let _ = self.transport.request_within(
+            DISCONNECT,
+            arguments(DISCONNECT, &request)?,
+            DISCONNECT_TIMEOUT,
+        );
+        self.shutdown();
+        Ok(())
     }
 
     fn send(&self, command: &str, request: Value) -> Result<(), EngineError> {
