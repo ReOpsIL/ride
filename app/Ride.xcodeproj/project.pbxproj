@@ -8,6 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		T20000000000000000000002 /* TestTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000001 /* TestTree.swift */; };
+		D4000000000000000000001A /* DebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000001F /* DebugController.swift */; };
+		D4000000000000000000002A /* DebugController+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000002F /* DebugController+Events.swift */; };
+		D4000000000000000000003A /* DebugChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000003F /* DebugChain.swift */; };
+		D4000000000000000000004A /* DebugProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000004F /* DebugProgram.swift */; };
+		D4000000000000000000005A /* AppState+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000005F /* AppState+Debug.swift */; };
+		D4000000000000000000006A /* AppState+Breakpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000006F /* AppState+Breakpoints.swift */; };
+		D4000000000000000000007A /* BreakpointEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000007F /* BreakpointEditor.swift */; };
+		D4000000000000000000008A /* DeveloperMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000008F /* DeveloperMode.swift */; };
+		D4000000000000000000009A /* SelfTestSteps+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000009F /* SelfTestSteps+Debug.swift */; };
+		D400000000000000000000AA /* GutterGlyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000AF /* GutterGlyphs.swift */; };
+		D400000000000000000000BA /* HighlightApply+Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000BF /* HighlightApply+Line.swift */; };
+		D400000000000000000000CA /* DebugCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000CF /* DebugCommands.swift */; };
+		D400000000000000000000DA /* Breakpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000DF /* Breakpoints.swift */; };
+		D400000000000000000000EA /* SplitState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000EF /* SplitState.swift */; };
+		D400000000000000000000DB /* Breakpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000DF /* Breakpoints.swift */; };
+		D400000000000000000000EB /* SplitState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000EF /* SplitState.swift */; };
+		D400000000000000000000FB /* BreakpointsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000FF /* BreakpointsTests.swift */; };
 		T20000000000000000000004 /* TestRunStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000003 /* TestRunStore.swift */; };
 		T20000000000000000000006 /* TestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000005 /* TestSession.swift */; };
 		T20000000000000000000008 /* TestMarkers.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000007 /* TestMarkers.swift */; };
@@ -405,6 +422,21 @@
 
 /* Begin PBXFileReference section */
 		T20000000000000000000001 /* TestTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestTree.swift"; sourceTree = "<group>"; };
+		D4000000000000000000001F /* DebugController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugController.swift"; sourceTree = "<group>"; };
+		D4000000000000000000002F /* DebugController+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugController+Events.swift"; sourceTree = "<group>"; };
+		D4000000000000000000003F /* DebugChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugChain.swift"; sourceTree = "<group>"; };
+		D4000000000000000000004F /* DebugProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugProgram.swift"; sourceTree = "<group>"; };
+		D4000000000000000000005F /* AppState+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Debug.swift"; sourceTree = "<group>"; };
+		D4000000000000000000006F /* AppState+Breakpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Breakpoints.swift"; sourceTree = "<group>"; };
+		D4000000000000000000007F /* BreakpointEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BreakpointEditor.swift"; sourceTree = "<group>"; };
+		D4000000000000000000008F /* DeveloperMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeveloperMode.swift"; sourceTree = "<group>"; };
+		D4000000000000000000009F /* SelfTestSteps+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Debug.swift"; sourceTree = "<group>"; };
+		D400000000000000000000AF /* GutterGlyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GutterGlyphs.swift"; sourceTree = "<group>"; };
+		D400000000000000000000BF /* HighlightApply+Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HighlightApply+Line.swift"; sourceTree = "<group>"; };
+		D400000000000000000000CF /* DebugCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugCommands.swift"; sourceTree = "<group>"; };
+		D400000000000000000000DF /* Breakpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Breakpoints.swift"; sourceTree = "<group>"; };
+		D400000000000000000000EF /* SplitState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitState.swift"; sourceTree = "<group>"; };
+		D400000000000000000000FF /* BreakpointsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BreakpointsTests.swift"; sourceTree = "<group>"; };
 		T20000000000000000000003 /* TestRunStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestRunStore.swift"; sourceTree = "<group>"; };
 		T20000000000000000000005 /* TestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestSession.swift"; sourceTree = "<group>"; };
 		T20000000000000000000007 /* TestMarkers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestMarkers.swift"; sourceTree = "<group>"; };
@@ -860,6 +892,7 @@
 				RB0000000000000000000005 /* SingleFileRunTests.swift */,
 				S20000000000000000000013 /* TerminalTabsTests.swift */,
 				T20000000000000000000090 /* TestTreeTests.swift */,
+				D400000000000000000000FF /* BreakpointsTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -1034,6 +1067,7 @@
 				A00000000000000000000019 /* TreeActions.swift */,
 				A00000000000000000000180 /* TreeModel.swift */,
 				P20000000000000000000007 /* ManifestWatch.swift */,
+				D400000000000000000000EF /* SplitState.swift */,
 			);
 			path = Workspace;
 			sourceTree = "<group>";
@@ -1068,6 +1102,8 @@
 				A0000000000000000000011A /* HoverText.swift */,
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
 				A0000000000000000000011E /* FunctionKeys.swift */,
+				D400000000000000000000AF /* GutterGlyphs.swift */,
+				D400000000000000000000BF /* HighlightApply+Line.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000090A /* BufferLanguage.swift */,
@@ -1223,6 +1259,16 @@
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				D2500000000000000000000A /* SelfTestSteps+Tests.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
+				D4000000000000000000001F /* DebugController.swift */,
+				D4000000000000000000002F /* DebugController+Events.swift */,
+				D4000000000000000000003F /* DebugChain.swift */,
+				D4000000000000000000004F /* DebugProgram.swift */,
+				D4000000000000000000005F /* AppState+Debug.swift */,
+				D4000000000000000000006F /* AppState+Breakpoints.swift */,
+				D4000000000000000000007F /* BreakpointEditor.swift */,
+				D4000000000000000000008F /* DeveloperMode.swift */,
+				D4000000000000000000009F /* SelfTestSteps+Debug.swift */,
+				D400000000000000000000DF /* Breakpoints.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -1299,6 +1345,7 @@
 				E60000000000000000000014 /* ViewCommands.swift */,
 				E60000000000000000000016 /* NavigateCommands.swift */,
 				E60000000000000000000018 /* CodeCommands.swift */,
+				D400000000000000000000CF /* DebugCommands.swift */,
 			);
 			path = Menus;
 			sourceTree = "<group>";
@@ -1516,6 +1563,9 @@
 				S20000000000000000000014 /* TerminalTabsTests.swift in Sources */,
 				T20000000000000000000091 /* TestTreeTests.swift in Sources */,
 				T20000000000000000000092 /* TestTree.swift in Sources */,
+				D400000000000000000000DB /* Breakpoints.swift in Sources */,
+				D400000000000000000000EB /* SplitState.swift in Sources */,
+				D400000000000000000000FB /* BreakpointsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1704,6 +1754,20 @@
 				S10000000000000000000024 /* UpdateController+Sparkle.swift in Sources */,
 				S20000000000000000000002 /* TerminalTabs.swift in Sources */,
 				T20000000000000000000002 /* TestTree.swift in Sources */,
+				D4000000000000000000001A /* DebugController.swift in Sources */,
+				D4000000000000000000002A /* DebugController+Events.swift in Sources */,
+				D4000000000000000000003A /* DebugChain.swift in Sources */,
+				D4000000000000000000004A /* DebugProgram.swift in Sources */,
+				D4000000000000000000005A /* AppState+Debug.swift in Sources */,
+				D4000000000000000000006A /* AppState+Breakpoints.swift in Sources */,
+				D4000000000000000000007A /* BreakpointEditor.swift in Sources */,
+				D4000000000000000000008A /* DeveloperMode.swift in Sources */,
+				D4000000000000000000009A /* SelfTestSteps+Debug.swift in Sources */,
+				D400000000000000000000AA /* GutterGlyphs.swift in Sources */,
+				D400000000000000000000BA /* HighlightApply+Line.swift in Sources */,
+				D400000000000000000000CA /* DebugCommands.swift in Sources */,
+				D400000000000000000000DA /* Breakpoints.swift in Sources */,
+				D400000000000000000000EA /* SplitState.swift in Sources */,
 				T20000000000000000000004 /* TestRunStore.swift in Sources */,
 				T20000000000000000000006 /* TestSession.swift in Sources */,
 				T20000000000000000000008 /* TestMarkers.swift in Sources */,

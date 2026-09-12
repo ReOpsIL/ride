@@ -12,6 +12,9 @@ extension SessionService {
         }
         Underlines.apply(document: document, view: view, parseErrors: update.errors)
         TestMarkers.refresh(document: document, view: view)
+        if let gutter = (view.enclosingScrollView?.superview as? EditorHostView)?.gutter {
+            BreakpointMarkers.refresh(view: view, gutter: gutter)
+        }
     }
 
     private func mergeHighlights(document: BufferDocument, update: SessionUpdate) {

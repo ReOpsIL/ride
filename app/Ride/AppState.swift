@@ -129,6 +129,7 @@ final class AppState: ObservableObject {
         runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
+        observeDebug()
         runOutput.lineFilter = { runId, line in
             RunLineFilter.shown(runId: runId, line: line)
         }

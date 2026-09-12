@@ -44,6 +44,7 @@ struct RideApp: App {
             NavigateCommands(state: state, menu: menu)
             CodeCommands(state: state, menu: menu)
             RunCommands(state: state, menu: menu)
+            DebugCommands(state: state, menu: menu)
         }
         Settings {
             PreferencesView()
