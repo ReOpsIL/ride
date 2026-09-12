@@ -7,6 +7,9 @@ extension SelfTestSteps {
 
     private static func panelToggle(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "debug panel toggle", wait: 0.4, run: {
+            if state.debugPanel.visible {
+                state.toggleDebugPanel()
+            }
             state.toggleDebugPanel()
         }, check: {
             e.expect(state.debugPanel.visible, "panel hidden")

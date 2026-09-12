@@ -23,12 +23,26 @@ pub fn group(breakpoints: Vec<Breakpoint>) -> BTreeMap<String, Vec<Breakpoint>> 
     grouped
 }
 
+pub fn canonical(path: &str) -> String {
+    std::fs::canonicalize(path)
+        .map(|resolved| resolved.to_string_lossy().to_string())
+        .unwrap_or_else(|_| path.to_string())
+}
+
 fn source_of(path: &str) -> Source {
-    let name = Path::new(path)
+    let resolved = canonical(path);
+    let name = Path::new(&resolved)
         .file_name()
         .map(|name| name.to_string_lossy().to_string())
-        .unwrap_or_else(|| path.to_string());
-    Source::file(path, &name)
+        .unwrap_or_else(|| resolved.clone());
+    Source::file(&resolved, &name)
+}
+
+fn stored_key(store: &BTreeMap<String, Vec<Breakpoint>>, reported: &str) -> Option<String> {
+    if store.contains_key(reported) {
+        return Some(reported.to_string());
+    }
+    store.keys().find(|key| canonical(key) == reported).cloned()
 }
 
 fn wanted(breakpoint: &Breakpoint) -> SourceBreakpoint {
@@ -101,12 +115,13 @@ impl DebugSession {
             return;
         };
         let updated = self.breakpoints.lock().ok().and_then(|mut store| {
-            let entries = store.get_mut(&path)?;
+            let key = stored_key(&store, &path)?;
+            let entries = store.get_mut(&key)?;
             let entry = entries.iter_mut().find(|entry| entry.line == line)?;
             entry.verified = reported.verified;
-            Some(entries.clone())
+            Some((key, entries.clone()))
         });
-        if let Some(breakpoints) = updated {
+        if let Some((path, breakpoints)) = updated {
             self.emit(DebugEvent::Breakpoints { path, breakpoints });
         }
     }
