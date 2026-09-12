@@ -2,6 +2,8 @@ use std::path::Path;
 
 use crate::error::EngineError;
 use crate::ffi::{RecompileCommand, SingleRun};
+use crate::highlight::Lang;
+use crate::run::db_flags;
 use crate::toolchain::find_tool;
 
 enum Kind {
@@ -25,6 +27,14 @@ impl Kind {
             Self::C => "clang",
             Self::Cpp => "clang++",
             Self::Rust => "rustc",
+        }
+    }
+
+    fn lang(&self) -> Option<Lang> {
+        match self {
+            Self::C => Some(Lang::C),
+            Self::Cpp => Some(Lang::Cpp),
+            Self::Rust => None,
         }
     }
 
@@ -54,6 +64,9 @@ pub fn single_file_command(path: &Path, out_dir: &Path) -> Result<SingleRun, Eng
     let output = out_dir.join(name);
     let mut compile = vec![tool.display().to_string()];
     compile.extend(kind.flags().iter().map(|f| (*f).to_string()));
+    if let Some(lang) = kind.lang() {
+        compile.extend(db_flags::flags(path, lang));
+    }
     compile.push(path.display().to_string());
     compile.push("-o".to_string());
     compile.push(output.display().to_string());

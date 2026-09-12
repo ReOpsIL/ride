@@ -1,3 +1,4 @@
+mod db_flags;
 mod single;
 pub mod tests;
 
