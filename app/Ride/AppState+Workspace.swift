@@ -100,7 +100,8 @@ extension AppState {
             split: capturedSplit(),
             runConfigs: runConfigs,
             selectedTarget: projectModel.selected?.name,
-            breakpoints: DebugController.shared.breakpoints
+            breakpoints: DebugController.shared.breakpoints,
+            watches: DebugPanelModel.shared.expressions
         )
     }
 
@@ -114,6 +115,7 @@ extension AppState {
         applyLayout(saved.layout)
         runConfigs = saved.runConfigs
         DebugController.shared.breakpoints = saved.breakpoints
+        DebugPanelModel.shared.restore(watches: saved.watches)
         projectModel.restoreSelection(saved.selectedTarget)
         let restored = saved.tabs.compactMap(buffer(from:))
         buffers = restored

@@ -28,6 +28,8 @@ final class MenuModel: ObservableObject {
     @Published var isDebugging = false
     @Published var isDebugStopped = false
     @Published var isDebugRunning = false
+    @Published var showDebugPanel = false
+    @Published var debugFilters: [DebugFilterToggle] = []
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -56,6 +58,8 @@ final class MenuModel: ObservableObject {
         set(\.isDebugging, state.debug.isActive)
         set(\.isDebugStopped, state.debug.isStopped)
         set(\.isDebugRunning, state.debug.isRunning)
+        set(\.showDebugPanel, state.debugPanel.visible)
+        set(\.debugFilters, DebugFilters.shared.toggles)
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

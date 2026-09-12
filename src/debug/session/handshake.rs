@@ -7,6 +7,7 @@ use crate::ffi::{DebugEvent, DebugState};
 
 use super::wire::{arguments, body};
 use super::{DebugSession, events};
+use crate::debug::filters;
 use crate::debug::protocol::{
     CONFIGURATION_DONE, Capabilities, ConfigurationDoneArguments, FILTER_RUST_PANIC,
     FunctionBreakpoint, INITIALIZED, InitializeArguments, LaunchArguments,
@@ -105,8 +106,11 @@ fn exception_breakpoints(
     capabilities: &Capabilities,
 ) -> Result<(), EngineError> {
     let rust = is_rust_target(session);
-    let mut filters = Vec::new();
-    if rust && capabilities.has_filter(FILTER_RUST_PANIC) {
+    let mut filters = filters::enabled(&session.launch.exception_filters, capabilities);
+    if rust
+        && capabilities.has_filter(FILTER_RUST_PANIC)
+        && !filters.iter().any(|id| id == FILTER_RUST_PANIC)
+    {
         filters.push(FILTER_RUST_PANIC.to_string());
     }
     let request = SetExceptionBreakpointsArguments {

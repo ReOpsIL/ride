@@ -68,6 +68,7 @@ extension RootView {
 struct DetailColumn: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
+    @ObservedObject private var debugPanel = DebugPanelModel.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -97,6 +98,10 @@ struct DetailColumn: View {
                         .frame(minHeight: 80, idealHeight: state.prefs.testsHeight, maxHeight: 480)
                         .background(SplitPositioner(position: state.prefs.testsHeight, fromEnd: true))
                         .reportSize(.height) { testsHeight.wrappedValue = $0 }
+                }
+                if debugPanel.visible {
+                    DebugPanel(model: debugPanel)
+                        .frame(minHeight: 80, idealHeight: 240, maxHeight: 480)
                 }
                 if state.showRunOutput {
                     RunOutputPanel(output: state.runOutput)

@@ -6,7 +6,8 @@ use std::time::{Duration, Instant};
 
 use ride_engine::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugRegistry, DebugSession, DebugState, find_adapter,
+    DebugRegistry, DebugSession, DebugState, ExceptionFilter, find_adapter,
+    probe_exception_filters,
 };
 
 const FAKE_ADAPTER: &str = env!("CARGO_BIN_EXE_fake-dap");
@@ -78,6 +79,51 @@ fn scripted_with(
     )
     .expect("start the scripted session");
     (session, listener)
+}
+
+#[test]
+fn the_adapter_advertises_its_exception_filters() {
+    let filters = probe_exception_filters(Path::new(FAKE_ADAPTER)).expect("probe the filters");
+    assert_eq!(
+        filters,
+        vec![
+            ExceptionFilter {
+                id: "cpp_throw".to_string(),
+                label: "C++ Throw".to_string(),
+                default_on: true,
+            },
+            ExceptionFilter {
+                id: "cpp_catch".to_string(),
+                label: "C++ Catch".to_string(),
+                default_on: false,
+            },
+        ]
+    );
+}
+
+#[test]
+fn the_launch_sends_only_the_advertised_enabled_filters() {
+    let listener = Arc::new(Recorder::default());
+    let mut launch = DebugLaunch::program("/usr/bin/true");
+    launch.exception_filters = vec!["cpp_catch".to_string(), "swift_throw".to_string()];
+    let session = DebugSession::start(
+        Path::new(FAKE_ADAPTER),
+        &[],
+        launch,
+        vec![Breakpoint::at("src/main.rs", 10)],
+        listener.clone(),
+    )
+    .expect("start the scripted session");
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    assert!(
+        listener
+            .output()
+            .iter()
+            .any(|line| line == "console: filters: cpp_catch\n"),
+        "{:?}",
+        listener.output()
+    );
+    let _ = session.command(DebugCommand::Disconnect);
 }
 
 fn alive(pid: u32) -> bool {

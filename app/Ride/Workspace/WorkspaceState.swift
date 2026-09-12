@@ -130,6 +130,7 @@ struct WorkspaceState: Codable, Equatable {
     var runConfigs: [RunConfig]
     var selectedTarget: String?
     var breakpoints: Breakpoints
+    var watches: [String]
 
     init(
         version: Int = currentVersion,
@@ -139,7 +140,8 @@ struct WorkspaceState: Codable, Equatable {
         split: SplitState? = nil,
         runConfigs: [RunConfig] = [],
         selectedTarget: String? = nil,
-        breakpoints: Breakpoints = Breakpoints()
+        breakpoints: Breakpoints = Breakpoints(),
+        watches: [String] = []
     ) {
         self.version = version
         self.tabs = tabs
@@ -149,6 +151,7 @@ struct WorkspaceState: Codable, Equatable {
         self.runConfigs = runConfigs
         self.selectedTarget = selectedTarget
         self.breakpoints = breakpoints
+        self.watches = watches
     }
 
     init(from decoder: Decoder) throws {
@@ -161,6 +164,7 @@ struct WorkspaceState: Codable, Equatable {
         runConfigs = try c.decodeIfPresent([RunConfig].self, forKey: .runConfigs) ?? []
         selectedTarget = try c.decodeIfPresent(String.self, forKey: .selectedTarget)
         breakpoints = try c.decodeIfPresent(Breakpoints.self, forKey: .breakpoints) ?? Breakpoints()
+        watches = try c.decodeIfPresent([String].self, forKey: .watches) ?? []
     }
 
     static func decode(_ data: Data) -> WorkspaceState? {

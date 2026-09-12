@@ -7,6 +7,7 @@ extension SelfTestSteps {
         var steps = [breakpointToggle(state: state, e: e), breakpointPersists(state: state, e: e)]
         steps += DeveloperMode.isEnabled ? liveDebug(state: state, e: e) : [debugSkipped()]
         steps.append(breakpointClear(state: state, e: e))
+        steps += debugPanelSteps(state: state, e: e)
         return steps
     }
 

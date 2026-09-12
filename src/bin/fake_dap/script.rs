@@ -81,7 +81,7 @@ pub fn reply(state: &mut State, command: &str, message: &Value) -> (Vec<Value>, 
     }
     let (ok, body) = outcome(state, command, &arguments);
     let mut messages = vec![state.response(command, request_seq, ok, body)];
-    messages.extend(follow_up(state, command));
+    messages.extend(follow_up(state, command, &arguments));
     (messages, false)
 }
 
@@ -108,8 +108,12 @@ fn outcome(state: &mut State, command: &str, arguments: &Value) -> (bool, Value)
     }
 }
 
-fn follow_up(state: &mut State, command: &str) -> Vec<Value> {
+fn follow_up(state: &mut State, command: &str, arguments: &Value) -> Vec<Value> {
     match command {
+        "setExceptionBreakpoints" => vec![state.event(
+            "output",
+            json!({ "category": "console", "output": format!("filters: {}\n", filter_names(arguments)) }),
+        )],
         "initialize" => vec![state.event(
             "output",
             json!({ "category": "console", "output": "fake adapter ready\n" }),
@@ -140,4 +144,18 @@ fn stop_body(reason: &str, hit: Vec<i64>) -> Value {
         "allThreadsStopped": true,
         "hitBreakpointIds": hit,
     })
+}
+
+fn filter_names(arguments: &Value) -> String {
+    arguments
+        .get("filters")
+        .and_then(Value::as_array)
+        .map(|entries| {
+            entries
+                .iter()
+                .filter_map(Value::as_str)
+                .collect::<Vec<&str>>()
+                .join(",")
+        })
+        .unwrap_or_default()
 }

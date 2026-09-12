@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use crate::debug::adapter::adapter_path;
+use crate::debug::filters::exception_filters;
 use crate::debug::registry::DebugRegistry;
 use crate::debug::session::DebugSession;
 use crate::error::EngineError;
 use crate::ffi::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugScope, DebugState, DebugThread, StackFrame, Variable,
+    DebugScope, DebugState, DebugThread, ExceptionFilter, StackFrame, Variable,
 };
 
 use super::Engine;
@@ -28,6 +29,10 @@ impl Engine {
                     message: err.to_string(),
                 });
             })
+    }
+
+    pub fn debug_exception_filters(&self) -> Vec<ExceptionFilter> {
+        exception_filters()
     }
 
     pub fn debug_state(&self, session_id: u64) -> DebugState {
