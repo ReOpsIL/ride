@@ -10,6 +10,7 @@
 | Must-have editor functionality (Edit / View / Navigate / Code menus), first priority | `plan/roadmap/must_have.md` |
 | Next features and releases 1.1 / 1.2 / 1.3 / 2.0 (trimmed to daily native-app work after the RustRover and CLion pass) | `plan/roadmap/next.md` |
 | Implementation plan for a delegated model: executor contract, tiers, task cards for 1.1 and 1.2 | `plan/roadmap/next-impl.md` |
+| Feature inventory for running and debugging C, C++, Rust and assembly, with verification status | `docs/product/feature-inventory.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
