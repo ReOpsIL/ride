@@ -353,6 +353,10 @@ Three defects on commit f7b3484. (1) `ProcessRunner.receive` decodes each pipe c
 
 `BuildSession.finish()` runs on every run finish regardless of which run produced it and of how it ended: Stop (⌘.) during a build publishes the partial diagnostic set, and "Stop and rerun" lets the old process's finish land on the new session. Fix: `RunOutput` hands each run a monotonically increasing run id and passes it with the exit status to `onFinish`; `BuildSession.begin` records the id it belongs to; `finish` ignores any other id and any `.signalled`/stopped status (it leaves the previous diagnostics untouched); `stopRun` cancels the session explicitly. RideTests on the pure part (extract `BuildSessionState.swift`: begin/finish/cancel with ids and statuses). Self-test step: start a Build, stop it within 200 ms, assert no build diagnostics were published and the panel status says stopped.
 
+### R21 Catch2 through the XML reporter, verified against a real binary (T1) — Tier A
+
+`src/run/tests/catch2.rs` was written without a Catch2 binary: the compact reporter never prints passes without `-s`, and the parsed vocabulary (`passed:`/`for:`) does not match Catch2's real output. Replace it: `test_commands` for Catch2 runs the binary with `--reporter xml` (list stays `--list-tests`), and the parser reads the XML (`<TestCase name=… filename=… line=…>`, `<OverallResult success=…>`, `<Expression success=… filename=… line=…>` with `<Original>`/`<Expanded>`, `<Section>`), producing one event per test case with the failed expressions in `output`; use a small hand-rolled tag scanner or add `quick-xml` (pinned) to `Cargo.toml`. Verify against a real build: download the Catch2 v3 amalgamated `catch_amalgamated.hpp`/`.cpp` from the GitHub release into a temp dir, compile a ten-line program with one passing and one failing test, capture `--list-tests` and `--reporter xml` output into `tests/fixtures/tests/catch2-list.txt` and `catch2-run.xml`, and say in the hand-back which Catch2 version produced them. Also in `src/run/tests/cargo.rs`, key stdout blocks by (binary, name) using the `Running <path>` lines so two binaries sharing a test name keep their own output; add a fixture case.
+
 ## 9. Release 1.2 cards — project model (2026-09-11)
 
 The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the app only renders. Everything lives under `src/project/` (new module, listed in `src/lib.rs`), exposed through one `Engine::project_model(root: String) -> Result<ProjectModel, EngineError>` and re-read on `Engine::reload_project(root)`.
@@ -435,7 +439,7 @@ Add SwiftTerm as a Swift package (pin the latest 1.x); `app/Ride/Terminal/Termin
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
 | 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b merged, reviewed: R20; Q5b and S1 running |
-| 10 | T1, S1 in parallel; then T2 | next |
+| 10 | T1 merged, reviewed: R21 (Catch2 rework); S1 and Q5b finishing after the disk outage; then R20, R21, T2 |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.
