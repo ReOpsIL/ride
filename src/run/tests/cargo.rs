@@ -40,13 +40,20 @@ pub fn parse(text: &str) -> Vec<TestEvent> {
         let Some((name, status)) = result(line) else {
             continue;
         };
-        let mut e = event(suite_of(name), name, status, None);
+        let mut e = event(suite_of(name), leaf_of(name), status, None);
         if let Some(output) = outputs.remove(&(binary.clone(), name.to_string())) {
             e.output = output;
         }
         events.push(e);
     }
     events
+}
+
+fn leaf_of(name: &str) -> &str {
+    match name.rsplit_once("::") {
+        Some((_, leaf)) => leaf,
+        None => name,
+    }
 }
 
 fn binary_line(line: &str) -> Option<&str> {

@@ -9,13 +9,15 @@ final class TestRunStore: ObservableObject {
     @Published private(set) var running = false
     @Published private(set) var status: String?
     @Published private(set) var command: String?
+    private(set) var framework: TestMarkerFramework?
 
-    func begin(command: String?) {
+    func begin(command: String?, framework: TestMarkerFramework) {
         tree.clear()
         selected = nil
         status = nil
         running = true
         self.command = command
+        self.framework = framework
     }
 
     func apply(_ events: [TestEvent]) {
@@ -39,6 +41,7 @@ final class TestRunStore: ObservableObject {
         selected = nil
         status = nil
         command = nil
+        framework = nil
     }
 
     static func row(_ event: TestEvent) -> TestRow {

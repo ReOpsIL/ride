@@ -9,8 +9,9 @@ extension SelfTestSteps {
         }, check: {
             let tree = TestRunStore.shared.tree
             return e.expect(
-                state.showTests && tree.passed == 1 && tree.failed == 0 && tree.rows.first?.name == "util::counts_one",
-                "passed \(tree.passed) failed \(tree.failed) rows \(tree.rows.map(\.name)) status \(state.runOutput.status ?? "nil")"
+                state.showTests && tree.passed == 1 && tree.failed == 0
+                    && tree.rows.first?.name == "counts_one" && tree.rows.first?.suite == "util",
+                "passed \(tree.passed) failed \(tree.failed) rows \(tree.rows.map(\.id)) status \(state.runOutput.status ?? "nil")"
             )
         })
     }

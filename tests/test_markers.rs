@@ -77,3 +77,19 @@ fn cpp_macros_carry_their_framework() {
         Some("TEST_CASE(\"areas add up\", \"[geo]\") {")
     );
 }
+
+#[test]
+fn rust_block_comments_hide_tests() {
+    let text = "/*\n#[test]\nfn commented() {\n}\n*/\n#[test]\nfn real() {\n}\n";
+    let found = markers("/p/src/util.rs", text);
+    assert_eq!(found.len(), 1);
+    assert_eq!(found[0].name, "util::real");
+}
+
+#[test]
+fn rust_inline_block_comment_hides_a_test() {
+    let text = "/* #[test] fn hidden() {} */\n#[test]\nfn real() {\n}\n";
+    let found = markers("/p/src/util.rs", text);
+    let names: Vec<&str> = found.iter().map(|m| m.name.as_str()).collect();
+    assert_eq!(names, ["util::real"]);
+}

@@ -42,6 +42,7 @@ struct RustScan {
     mods: Vec<(String, usize)>,
     depth: usize,
     pending: bool,
+    in_block: bool,
 }
 
 fn rust(text: &str, module_path: &str) -> Vec<TestMarker> {
@@ -49,16 +50,50 @@ fn rust(text: &str, module_path: &str) -> Vec<TestMarker> {
         mods: Vec::new(),
         depth: 0,
         pending: false,
+        in_block: false,
     };
     let mut out = Vec::new();
     let mut offset = 0usize;
     for line in text.split_inclusive('\n') {
-        if let Some(marker) = rust_line(line.trim(), offset, module_path, &mut scan) {
+        let code = outside_block_comment(line, &mut scan.in_block);
+        if let Some(marker) = rust_line(code.trim(), offset, module_path, &mut scan) {
             out.push(marker);
         }
         offset += line.len();
     }
     out
+}
+
+fn outside_block_comment(line: &str, in_block: &mut bool) -> String {
+    let mut out = String::new();
+    let mut rest = line;
+    loop {
+        if *in_block {
+            let Some(at) = rest.find("*/") else {
+                return out;
+            };
+            rest = &rest[at + 2..];
+            *in_block = false;
+            continue;
+        }
+        let open = rest.find("/*");
+        let eol = rest.find("//");
+        match (open, eol) {
+            (Some(open), Some(eol)) if eol < open => {
+                out.push_str(rest);
+                return out;
+            }
+            (Some(open), _) => {
+                out.push_str(&rest[..open]);
+                rest = &rest[open + 2..];
+                *in_block = true;
+            }
+            (None, _) => {
+                out.push_str(rest);
+                return out;
+            }
+        }
+    }
 }
 
 fn rust_line(
