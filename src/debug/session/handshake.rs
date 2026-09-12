@@ -47,6 +47,7 @@ fn decide(session: &DebugSession, launch_seq: i64) {
         return;
     }
     if !session.drained(session.transport.events_received()) {
+        session.abandon_launch("launch: the adapter stopped delivering events");
         return;
     }
     if session.begin_running() {

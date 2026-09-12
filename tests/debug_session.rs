@@ -330,6 +330,127 @@ fn an_exit_leaves_the_registry_and_terminates_once() {
     session.shutdown();
 }
 
+struct Stalling {
+    inner: Arc<Recorder>,
+    stall: Duration,
+}
+
+impl DebugListener for Stalling {
+    fn on_event(&self, event: DebugEvent) {
+        self.inner.on_event(event);
+    }
+
+    fn on_output(&self, category: String, text: String) {
+        if text.contains("filters:") {
+            sleep(self.stall);
+        }
+        self.inner.on_output(category, text);
+    }
+}
+
+#[test]
+fn a_disconnect_during_the_handshake_terminates_once() {
+    let listener = Arc::new(Recorder::default());
+    let session = DebugSession::start(
+        Path::new("/bin/cat"),
+        &[],
+        DebugLaunch::program("/usr/bin/true"),
+        Vec::new(),
+        listener.clone(),
+    )
+    .expect("spawn the stalling adapter");
+    sleep(Duration::from_millis(200));
+    session.shutdown();
+    listener.wait("termination", |event| {
+        matches!(event, DebugEvent::Terminated)
+    });
+    sleep(Duration::from_millis(500));
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Terminated)),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Failed { .. })),
+        0,
+        "{:?}",
+        listener.events()
+    );
+    assert_eq!(session.state(), DebugState::Terminated);
+}
+
+#[test]
+fn an_adapter_that_dies_during_the_handshake_fails_once() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &["--die-on-done".to_string()],
+            DebugLaunch::program("/usr/bin/true"),
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener.clone(),
+        )
+        .expect("start the dying session");
+    listener.wait("a failure", |event| {
+        matches!(event, DebugEvent::Failed { .. })
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    sleep(Duration::from_millis(300));
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Failed { .. })),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Terminated)),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert!(!listener.saw(|event| matches!(event, DebugEvent::Running)));
+}
+
+#[test]
+fn a_stalled_event_pump_fails_the_launch_and_leaves_the_registry() {
+    let registry = Arc::new(DebugRegistry::default());
+    let recorder = Arc::new(Recorder::default());
+    let listener = Arc::new(Stalling {
+        inner: recorder.clone(),
+        stall: Duration::from_secs(9),
+    });
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &[],
+            DebugLaunch::program("/usr/bin/true"),
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener,
+        )
+        .expect("start the stalled session");
+    recorder.wait("a failure", |event| {
+        matches!(event, DebugEvent::Failed { .. })
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    assert_eq!(
+        recorder.count(|event| matches!(event, DebugEvent::Failed { .. })),
+        1,
+        "{:?}",
+        recorder.events()
+    );
+    assert!(
+        !recorder.saw(|event| matches!(event, DebugEvent::Running)),
+        "{:?}",
+        recorder.events()
+    );
+}
+
 #[test]
 fn a_late_stop_orders_running_before_it() {
     let arguments = vec!["--delay-stop".to_string(), "400".to_string()];
