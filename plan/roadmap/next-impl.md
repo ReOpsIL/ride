@@ -50,6 +50,7 @@ Read this section before every card. It is the whole difference between a mergea
 - The engine is a Rust crate exposed to Swift through UniFFI. Any new engine call is: a method on `Engine` in `src/engine/`, a record in `src/ffi/`, then `scripts/build-engine.sh` to regenerate `app/generated/` and the xcframework. Swift code cannot see an engine change until that script has run.
 - A full reindex of the live index takes ~50 s; tests use a temp index dir (`tests/samples.rs::engine()`), never the live one.
 - Tree-sitter grammars and versions are pinned in `Cargo.toml` (`tree-sitter = "=0.27.0"`); do not bump them inside a feature card.
+- An executor worktree builds its own `target/` (several GB with the release engine build and Xcode derived data). After the card's commit, run `rm -rf target` in the worktree; the strong model removes merged worktrees with `git worktree remove --force`. On 2026-09-12 thirteen live worktrees filled the disk and stopped every tool.
 
 ### 1.3 Gates (all must pass before a card is "done")
 
