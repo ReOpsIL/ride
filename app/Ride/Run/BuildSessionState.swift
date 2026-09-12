@@ -1,5 +1,11 @@
 import Foundation
 
+enum BuildLine: Equatable {
+    case accept
+    case drop
+    case passThrough
+}
+
 enum BuildFinish: Equatable {
     case ignore
     case discard
@@ -23,6 +29,13 @@ struct BuildSessionState: Equatable {
 
     func accepts(runId: Int) -> Bool {
         self.runId == runId
+    }
+
+    func line(runId: Int) -> BuildLine {
+        guard self.runId == runId else {
+            return isActive ? .drop : .passThrough
+        }
+        return .accept
     }
 
     mutating func finish(runId: Int, status: RunFinish) -> BuildFinish {

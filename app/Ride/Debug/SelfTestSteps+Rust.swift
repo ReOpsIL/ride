@@ -18,6 +18,7 @@ extension SelfTestSteps {
             buildTarget(state: state, e: e),
             runTarget(state: state, e: e),
             runTests(state: state, e: e),
+            testStopAndRerun(state: state, e: e, scratch: scratch),
             gutterRunMarkers(state: state, e: e),
             buildDiagnostic(state: state, e: e, scratch: scratch),
             buildDiagnosticCleared(state: state, e: e, scratch: scratch),

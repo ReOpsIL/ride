@@ -63,3 +63,12 @@ extension AppState {
         return alert.runModal() == .alertFirstButtonReturn
     }
 }
+
+enum RunLineFilter {
+    static func shown(runId: Int, line: String) -> String? {
+        guard let passed = TestSession.shared.line(runId: runId, line) else {
+            return nil
+        }
+        return BuildSession.shared.line(runId: runId, passed)
+    }
+}
