@@ -340,6 +340,8 @@
 		Q60000000000000000000002 /* BuildParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q60000000000000000000001 /* BuildParse.swift */; };
 		Q60000000000000000000003 /* BuildParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q60000000000000000000001 /* BuildParse.swift */; };
 		Q60000000000000000000005 /* BuildSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q60000000000000000000004 /* BuildSession.swift */; };
+		Q70000000000000000000004 /* AppState+RunFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q70000000000000000000003 /* AppState+RunFile.swift */; };
+		Q70000000000000000000002 /* SingleFileRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q70000000000000000000001 /* SingleFileRun.swift */; };
 		Q60000000000000000000007 /* BuildParseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q60000000000000000000006 /* BuildParseTests.swift */; };
 		Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000003 /* RunConfig+Sanitizers.swift */; };
 		Q10000000000000000000006 /* RunConfig+Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q10000000000000000000005 /* RunConfig+Engine.swift */; };
@@ -518,6 +520,8 @@
 		Q4000000000000000000000C /* RunOutputBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunOutputBufferTests.swift; sourceTree = "<group>"; };
 		Q60000000000000000000001 /* BuildParse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildParse.swift; sourceTree = "<group>"; };
 		Q60000000000000000000004 /* BuildSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildSession.swift; sourceTree = "<group>"; };
+		Q70000000000000000000003 /* AppState+RunFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+RunFile.swift"; sourceTree = "<group>"; };
+		Q70000000000000000000001 /* SingleFileRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleFileRun.swift; sourceTree = "<group>"; };
 		Q60000000000000000000006 /* BuildParseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildParseTests.swift; sourceTree = "<group>"; };
 		Q10000000000000000000003 /* RunConfig+Sanitizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Sanitizers.swift"; sourceTree = "<group>"; };
 		Q10000000000000000000005 /* RunConfig+Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RunConfig+Engine.swift"; sourceTree = "<group>"; };
@@ -895,6 +899,8 @@
 				Q40000000000000000000007 /* RunOutputAppend.swift */,
 				Q60000000000000000000001 /* BuildParse.swift */,
 				Q60000000000000000000004 /* BuildSession.swift */,
+				Q70000000000000000000003 /* AppState+RunFile.swift */,
+				Q70000000000000000000001 /* SingleFileRun.swift */,
 				Q30000000000000000000001 /* RunPlan.swift */,
 				Q30000000000000000000005 /* RunPlan+Engine.swift */,
 				Q30000000000000000000007 /* AppState+Run.swift */,
@@ -1636,6 +1642,8 @@
 				Q40000000000000000000008 /* RunOutputAppend.swift in Sources */,
 				Q60000000000000000000002 /* BuildParse.swift in Sources */,
 				Q60000000000000000000005 /* BuildSession.swift in Sources */,
+				Q70000000000000000000004 /* AppState+RunFile.swift in Sources */,
+				Q70000000000000000000002 /* SingleFileRun.swift in Sources */,
 				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,

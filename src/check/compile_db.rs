@@ -123,12 +123,12 @@ fn best_entry(db: &Path, file: &Path, lang: Lang) -> Option<CompileCommand> {
     })
 }
 
-pub fn raw_argv(file: &Path) -> Option<Vec<String>> {
+pub fn raw_command(file: &Path) -> Option<CompileCommand> {
     let file = file.canonicalize().ok()?;
-    databases(&file).find_map(|(_, db)| exact_argv(&db, &file))
+    databases(&file).find_map(|(_, db)| exact_command(&db, &file))
 }
 
-fn exact_argv(db: &Path, file: &Path) -> Option<Vec<String>> {
+fn exact_command(db: &Path, file: &Path) -> Option<CompileCommand> {
     let text = std::fs::read_to_string(db).ok()?;
     let entries: Vec<Entry> = serde_json::from_str(&text).ok()?;
     let base = db.parent().unwrap_or(Path::new("."));
@@ -136,11 +136,13 @@ fn exact_argv(db: &Path, file: &Path) -> Option<Vec<String>> {
         let dir = base.join(&entry.directory);
         let dir = dir.canonicalize().unwrap_or(dir);
         let src = dir.join(&entry.file);
-        if src.canonicalize().ok().as_deref() == Some(file) {
-            entry.argv()
-        } else {
-            None
+        if src.canonicalize().ok().as_deref() != Some(file) {
+            return None;
         }
+        Some(CompileCommand {
+            directory: dir,
+            args: entry.argv()?,
+        })
     })
 }
 

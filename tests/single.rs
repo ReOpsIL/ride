@@ -118,13 +118,14 @@ fn recompile_command_comes_from_the_database() {
         root.display()
     );
     fs::write(root.join("compile_commands.json"), db).unwrap();
-    let argv = engine()
+    let command = engine()
         .recompile_command(root.join("src/a.c").display().to_string())
         .unwrap();
     assert_eq!(
-        argv,
+        command.argv,
         vec!["cc", "-I", "include", "-c", "src/a.c", "-o", "a.o"]
     );
+    assert_eq!(command.directory, root.display().to_string());
     assert!(
         engine()
             .recompile_command(root.join("src/missing.c").display().to_string())

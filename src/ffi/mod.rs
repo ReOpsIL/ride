@@ -27,7 +27,7 @@ pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,
     QueryMode,
 };
-pub use run::SingleRun;
+pub use run::{RecompileCommand, SingleRun};
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };

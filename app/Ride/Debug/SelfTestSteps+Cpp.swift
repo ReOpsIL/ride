@@ -35,6 +35,8 @@ extension SelfTestSteps {
             workspaceRestore(state: state, e: e, file: file),
             workspaceSnapshotAfterOpen(state: state, e: e),
             headerSourceSwitch(state: state, e: e),
+            runFileError(state: state, e: e),
+            recompileFile(state: state, e: e),
         ]
     }
 
@@ -134,6 +136,35 @@ extension SelfTestSteps {
             return e.expect(
                 peek?.isVisible == true && text.contains("Circle::area") && labels.count >= 2,
                 "visible \(peek?.isVisible ?? false) labels \(labels) text \(text.prefix(160))"
+            )
+        })
+    }
+
+    private static func runFileError(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "run file error", wait: 0.8, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 120, run: {
+            if let url = state.workspaceRoot?.appendingPathComponent("src/main.cpp") {
+                state.openFile(url)
+            }
+            state.runFile()
+        }, check: {
+            let text = state.runOutput.text
+            return e.expect(
+                state.runOutput.status != "exit 0" && text.lowercased().contains("error"),
+                "status \(state.runOutput.status ?? "nil") text \(text.suffix(240))"
+            )
+        })
+    }
+
+    private static func recompileFile(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "recompile file", wait: 0.8, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 120, run: {
+            if let url = state.workspaceRoot?.appendingPathComponent("src/shapes.cpp") {
+                state.openFile(url)
+            }
+            state.recompileFile()
+        }, check: {
+            e.expect(
+                state.runOutput.status == "exit 0",
+                "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(240))"
             )
         })
     }

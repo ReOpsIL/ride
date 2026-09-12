@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::error::EngineError;
-use crate::ffi::SingleRun;
+use crate::ffi::{RecompileCommand, SingleRun};
 use crate::toolchain::find_tool;
 
 enum Kind {
@@ -64,6 +64,10 @@ pub fn single_file_command(path: &Path, out_dir: &Path) -> Result<SingleRun, Eng
     })
 }
 
-pub fn recompile_command(path: &Path) -> Option<Vec<String>> {
-    crate::check::raw_argv(path)
+pub fn recompile_command(path: &Path) -> Option<RecompileCommand> {
+    let command = crate::check::raw_command(path)?;
+    Some(RecompileCommand {
+        argv: command.args,
+        directory: command.directory.display().to_string(),
+    })
 }

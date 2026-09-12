@@ -2,7 +2,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
 use crate::error::EngineError;
-use crate::ffi::SingleRun;
+use crate::ffi::{RecompileCommand, SingleRun};
 
 use super::Engine;
 
@@ -21,7 +21,7 @@ impl Engine {
         }
     }
 
-    pub fn recompile_command(&self, path: String) -> Option<Vec<String>> {
+    pub fn recompile_command(&self, path: String) -> Option<RecompileCommand> {
         catch_unwind(AssertUnwindSafe(|| {
             crate::run::recompile_command(Path::new(&path))
         }))
