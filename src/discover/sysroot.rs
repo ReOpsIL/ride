@@ -13,6 +13,10 @@ pub fn sysroot_path(config: &EngineConfig) -> Result<Option<PathBuf>, EngineErro
         let p = PathBuf::from(path);
         return Ok(if p.is_dir() { Some(p) } else { None });
     }
+    rustc_sysroot()
+}
+
+pub fn rustc_sysroot() -> Result<Option<PathBuf>, EngineError> {
     let output = crate::toolchain::tool("rustc")
         .args(["--print", "sysroot"])
         .output()

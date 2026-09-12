@@ -34,7 +34,7 @@ pub use debug::session::DebugSession;
 pub use debug::transport::Transport;
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,
-    sysroot_path, system_includes, tool_status, workspace_info,
+    rustc_sysroot, sysroot_path, system_includes, tool_status, workspace_info,
 };
 pub use engine::{Engine, engine_start};
 pub use error::EngineError;
