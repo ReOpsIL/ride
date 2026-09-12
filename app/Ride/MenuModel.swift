@@ -21,6 +21,8 @@ final class MenuModel: ObservableObject {
     @Published var canBuild = false
     @Published var canRunTarget = false
     @Published var canRunTests = false
+    @Published var canRunFile = false
+    @Published var canRecompileFile = false
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -42,6 +44,8 @@ final class MenuModel: ObservableObject {
         set(\.canBuild, state.canRun(.build))
         set(\.canRunTarget, state.canRun(.run))
         set(\.canRunTests, state.canRun(.test))
+        set(\.canRunFile, state.canRunFile)
+        set(\.canRecompileFile, state.canRecompileFile)
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

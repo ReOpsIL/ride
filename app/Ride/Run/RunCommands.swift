@@ -16,6 +16,13 @@ struct RunCommands: Commands {
                 .keyboardShortcut("r", modifiers: [.command, .shift])
                 .disabled(!menu.canRunTests)
             Divider()
+            Button("Run File") { state.runFile() }
+                .keyboardShortcut("r", modifiers: [.control, .shift])
+                .disabled(!menu.canRunFile)
+            Button("Recompile File") { state.recompileFile() }
+                .keyboardShortcut(FunctionKeys.f9, modifiers: [.command, .shift])
+                .disabled(!menu.canRecompileFile)
+            Divider()
             Button("Stop") { state.stopRun() }
                 .keyboardShortcut(".", modifiers: .command)
                 .disabled(!menu.isRunning)
