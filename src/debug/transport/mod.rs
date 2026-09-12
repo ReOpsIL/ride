@@ -1,4 +1,5 @@
 mod frame;
+mod trace;
 
 use std::io::Write;
 use std::path::Path;
@@ -131,6 +132,7 @@ impl Transport {
     fn send(&self, message: &Value) -> Result<(), EngineError> {
         let body = serde_json::to_vec(message)
             .map_err(|err| EngineError::debug(format!("encode: {err}")))?;
+        trace::record("->", message);
         let mut stdin = self
             .stdin
             .lock()

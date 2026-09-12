@@ -726,3 +726,29 @@ fn the_live_adapter_stops_in_the_rust_demo() {
         matches!(event, DebugEvent::Terminated)
     });
 }
+
+fn symlinked_source() -> (PathBuf, PathBuf) {
+    let root = std::env::temp_dir().join("ride-fake-dap-canonical");
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(root.join("real")).expect("the fixture directory");
+    std::fs::write(root.join("real/main.rs"), b"fn main() {}\n").expect("the fixture source");
+    std::os::unix::fs::symlink(root.join("real"), root.join("link")).expect("the fixture symlink");
+    let canonical = std::fs::canonicalize(root.join("real/main.rs")).expect("the canonical source");
+    (root.join("link/main.rs"), canonical)
+}
+
+#[test]
+fn a_symlinked_breakpoint_path_reaches_the_adapter_canonicalised() {
+    let (linked, canonical) = symlinked_source();
+    let linked = linked.to_string_lossy().to_string();
+    let (session, listener) = scripted(vec![Breakpoint::at(&linked, 10)]);
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    let threads = session.threads().expect("threads");
+    let stack = session.stack(threads[0].id).expect("stackTrace");
+    assert_eq!(
+        stack[0].path.as_deref(),
+        Some(canonical.to_string_lossy().as_ref())
+    );
+    assert_eq!(session.breakpoints(&linked).len(), 1);
+    let _ = session.command(DebugCommand::Disconnect);
+}

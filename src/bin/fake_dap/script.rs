@@ -108,22 +108,28 @@ fn configuration_done(state: &mut State, request_seq: i64) -> Reply {
             stop: true,
         };
     }
-    if let Some(seq) = state.launch_seq.take() {
-        now.push(state.response("launch", seq, true, Value::Null));
-    }
-    let stopped = state.event("stopped", stop_body("breakpoint", vec![1]));
     if state.delay.is_zero() {
-        now.push(stopped);
+        now.push(state.event("stopped", stop_body("breakpoint", vec![1])));
+        now.extend(launch_response(state));
         return Reply {
             now,
             ..Reply::default()
         };
     }
+    now.extend(launch_response(state));
     Reply {
         now,
-        later: vec![stopped],
+        later: vec![state.event("stopped", stop_body("breakpoint", vec![1]))],
         stop: false,
     }
+}
+
+fn launch_response(state: &mut State) -> Vec<Value> {
+    state
+        .launch_seq
+        .take()
+        .map(|seq| vec![state.response("launch", seq, true, Value::Null)])
+        .unwrap_or_default()
 }
 
 fn stop_body(reason: &str, hit: Vec<i64>) -> Value {

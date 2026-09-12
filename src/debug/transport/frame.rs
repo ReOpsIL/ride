@@ -24,6 +24,7 @@ pub fn pump(stdout: ChildStdout, shared: Shared, events: Events, received: Arc<A
     loop {
         match read_frame(&mut reader) {
             Ok(Some(message)) => {
+                super::trace::record("<-", &message);
                 if dispatch(message, &shared, &events, &received).is_err() {
                     return;
                 }
