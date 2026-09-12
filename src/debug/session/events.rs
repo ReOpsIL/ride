@@ -111,6 +111,9 @@ fn breakpoint(session: &DebugSession, event: &Event) {
 }
 
 fn terminate(session: &DebugSession) {
+    if session.abandon_launch("the adapter ended before the launch completed") {
+        return;
+    }
     if session.transition(DebugState::Terminated) {
         session.emit(DebugEvent::Terminated);
     }

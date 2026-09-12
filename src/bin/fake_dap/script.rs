@@ -101,6 +101,13 @@ fn configuration_done(state: &mut State, request_seq: i64) -> Reply {
         };
     }
     let mut now = vec![state.response("configurationDone", request_seq, true, Value::Null)];
+    if state.die_after_done {
+        return Reply {
+            now,
+            later: Vec::new(),
+            stop: true,
+        };
+    }
     if let Some(seq) = state.launch_seq.take() {
         now.push(state.response("launch", seq, true, Value::Null));
     }
