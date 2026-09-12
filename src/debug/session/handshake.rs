@@ -1,9 +1,11 @@
 use std::collections::BTreeMap;
 use std::path::Path;
+use std::sync::Arc;
+use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::error::EngineError;
-use crate::ffi::{DebugEvent, DebugState};
+use crate::ffi::DebugEvent;
 
 use super::wire::{arguments, body};
 use super::{DebugSession, events};
@@ -20,9 +22,8 @@ const SET_EXCEPTION_BREAKPOINTS: &str = "setExceptionBreakpoints";
 const SET_FUNCTION_BREAKPOINTS: &str = "setFunctionBreakpoints";
 const RUST_PANIC_FUNCTION: &str = "rust_panic";
 const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
-const SETTLE: Duration = Duration::from_millis(250);
 
-pub fn run(session: &DebugSession) -> Result<(), EngineError> {
+pub fn run(session: &Arc<DebugSession>) -> Result<(), EngineError> {
     let capabilities = initialize(session)?;
     let launch_seq = session
         .transport
@@ -34,28 +35,21 @@ pub fn run(session: &DebugSession) -> Result<(), EngineError> {
         CONFIGURATION_DONE,
         arguments(CONFIGURATION_DONE, &ConfigurationDoneArguments {})?,
     )?;
-    session.transport.await_response(launch_seq, LAUNCH)?;
-    settle(session);
-    if matches!(session.state(), DebugState::Launching) {
-        session.set_state(DebugState::Running);
-        session.emit(DebugEvent::Running);
-    }
+    let launched = Arc::clone(session);
+    thread::spawn(move || decide(&launched, launch_seq));
     Ok(())
 }
 
-fn settle(session: &DebugSession) {
-    let deadline = Instant::now() + SETTLE;
-    while Instant::now() < deadline {
-        match session.transport.poll_event(events::POLL) {
-            Ok(Some(event)) => {
-                events::handle(session, &event);
-                if !matches!(session.state(), DebugState::Launching) {
-                    return;
-                }
-            }
-            Ok(None) => {}
-            Err(_) => return,
-        }
+fn decide(session: &DebugSession, launch_seq: i64) {
+    if let Err(err) = session.transport.await_response(launch_seq, LAUNCH) {
+        session.fail(&err.to_string());
+        return;
+    }
+    if !session.drained(session.transport.events_received()) {
+        return;
+    }
+    if session.begin_running() {
+        session.emit(DebugEvent::Running);
     }
 }
 
@@ -90,13 +84,15 @@ fn launch_arguments(session: &DebugSession) -> LaunchArguments {
 fn await_initialized(session: &DebugSession) -> Result<(), EngineError> {
     let deadline = Instant::now() + HANDSHAKE_TIMEOUT;
     while Instant::now() < deadline {
-        let Some(event) = session.transport.poll_event(events::POLL)? else {
+        let Some((stamp, event)) = session.transport.poll_received(events::POLL)? else {
             continue;
         };
         if event.get("event").and_then(|name| name.as_str()) == Some(INITIALIZED) {
+            session.mark_processed(stamp);
             return Ok(());
         }
         events::handle(session, &event);
+        session.mark_processed(stamp);
     }
     Err(EngineError::debug("initialized event: timed out"))
 }

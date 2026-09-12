@@ -14,9 +14,10 @@ pub const POLL: Duration = Duration::from_millis(100);
 
 pub fn pump(session: &DebugSession) {
     loop {
-        match session.transport.poll_event(POLL) {
-            Ok(Some(event)) => {
+        match session.transport.poll_received(POLL) {
+            Ok(Some((stamp, event))) => {
                 handle(session, &event);
+                session.mark_processed(stamp);
                 if session.finished() {
                     return;
                 }
@@ -52,10 +53,12 @@ fn stopped(session: &DebugSession, event: &Event) {
     };
     let thread_id = stop.thread_id.unwrap_or(0);
     let reason = stop.reason.unwrap_or_else(|| "stopped".to_string());
-    session.set_state(DebugState::Stopped {
+    if !session.transition(DebugState::Stopped {
         thread_id,
         reason: reason.clone(),
-    });
+    }) {
+        return;
+    }
     session.refresh_threads();
     session.emit(DebugEvent::Stopped {
         thread_id,
@@ -69,7 +72,9 @@ fn continued(session: &DebugSession, event: &Event) {
     let Ok(resumed) = event.body_as::<ContinuedBody>() else {
         return;
     };
-    session.set_state(DebugState::Running);
+    if !session.transition(DebugState::Running) {
+        return;
+    }
     session.emit(DebugEvent::Continued {
         thread_id: resumed.thread_id,
     });
@@ -88,9 +93,11 @@ fn exited(session: &DebugSession, event: &Event) {
     let Ok(exit) = event.body_as::<ExitedBody>() else {
         return;
     };
-    session.set_state(DebugState::Exited {
+    if !session.transition(DebugState::Exited {
         code: exit.exit_code,
-    });
+    }) {
+        return;
+    }
     session.emit(DebugEvent::Exited {
         code: exit.exit_code,
     });
@@ -104,9 +111,7 @@ fn breakpoint(session: &DebugSession, event: &Event) {
 }
 
 fn terminate(session: &DebugSession) {
-    if session.finished() {
-        return;
+    if session.transition(DebugState::Terminated) {
+        session.emit(DebugEvent::Terminated);
     }
-    session.set_state(DebugState::Terminated);
-    session.emit(DebugEvent::Terminated);
 }

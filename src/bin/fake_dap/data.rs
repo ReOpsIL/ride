@@ -1,6 +1,6 @@
 use serde_json::{Value, json};
 
-use super::script::State;
+use super::state::State;
 
 pub fn capabilities() -> Value {
     json!({

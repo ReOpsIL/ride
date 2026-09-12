@@ -3,7 +3,7 @@ mod frame;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Child, ChildStdin, Command, Stdio};
-use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
 use std::sync::mpsc::{Receiver, RecvTimeoutError, channel};
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
@@ -21,7 +21,8 @@ pub struct Transport {
     stdin: Mutex<ChildStdin>,
     seq: AtomicI64,
     shared: Shared,
-    events: Mutex<Receiver<Value>>,
+    events: Mutex<Receiver<(u64, Value)>>,
+    received: Arc<AtomicU64>,
     timeout: Duration,
 }
 
@@ -45,13 +46,16 @@ impl Transport {
         let shared: Shared = Arc::new((Mutex::new(Inbox::default()), Condvar::new()));
         let (sender, events) = channel();
         let reader = Arc::clone(&shared);
-        thread::spawn(move || pump(stdout, reader, sender));
+        let received = Arc::new(AtomicU64::new(0));
+        let counter = Arc::clone(&received);
+        thread::spawn(move || pump(stdout, reader, sender, counter));
         Ok(Self {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             seq: AtomicI64::new(1),
             shared,
             events: Mutex::new(events),
+            received,
             timeout: DEFAULT_TIMEOUT,
         })
     }
@@ -99,15 +103,24 @@ impl Transport {
             .lock()
             .ok()
             .and_then(|events| events.try_recv().ok())
+            .map(|(_, event)| event)
+    }
+
+    pub fn events_received(&self) -> u64 {
+        self.received.load(Ordering::SeqCst)
     }
 
     pub fn poll_event(&self, timeout: Duration) -> Result<Option<Value>, EngineError> {
+        Ok(self.poll_received(timeout)?.map(|(_, event)| event))
+    }
+
+    pub fn poll_received(&self, timeout: Duration) -> Result<Option<(u64, Value)>, EngineError> {
         let events = self
             .events
             .lock()
             .map_err(|_| EngineError::debug("transport poisoned"))?;
         match events.recv_timeout(timeout) {
-            Ok(event) => Ok(Some(event)),
+            Ok(stamped) => Ok(Some(stamped)),
             Err(RecvTimeoutError::Timeout) => Ok(None),
             Err(RecvTimeoutError::Disconnected) => {
                 Err(EngineError::debug("adapter closed the connection"))

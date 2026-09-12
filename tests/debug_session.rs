@@ -44,6 +44,10 @@ impl Recorder {
         self.events().iter().any(matches)
     }
 
+    fn count(&self, matches: impl Fn(&&DebugEvent) -> bool) -> usize {
+        self.events().iter().filter(matches).count()
+    }
+
     fn wait(&self, what: &str, matches: impl Fn(&DebugEvent) -> bool) -> DebugEvent {
         let deadline = Instant::now() + Duration::from_secs(20);
         while Instant::now() < deadline {
@@ -251,6 +255,112 @@ fn a_failed_handshake_leaves_the_registry() {
         registry.get(id).is_none()
     });
     assert!(registry.reserve() > id, "the registry reused an id");
+}
+
+#[test]
+fn a_disconnect_terminates_once_and_leaves_the_registry_once() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &[],
+            DebugLaunch::program("/usr/bin/true"),
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener.clone(),
+        )
+        .expect("start the registered session");
+    let session = registry.get(id).expect("the registered session");
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    session
+        .command(DebugCommand::Disconnect)
+        .expect("disconnect");
+    listener.wait("termination", |event| {
+        matches!(event, DebugEvent::Terminated)
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    sleep(Duration::from_millis(300));
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Terminated)),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert!(
+        registry.remove(id).is_none(),
+        "the session was removed from the registry twice"
+    );
+}
+
+#[test]
+fn an_exit_leaves_the_registry_and_terminates_once() {
+    let registry = Arc::new(DebugRegistry::default());
+    let listener = Arc::new(Recorder::default());
+    let id = registry
+        .start(
+            Path::new(FAKE_ADAPTER),
+            &["--exit-on-continue".to_string()],
+            DebugLaunch::program("/usr/bin/true"),
+            vec![Breakpoint::at("src/main.rs", 10)],
+            listener.clone(),
+        )
+        .expect("start the registered session");
+    let session = registry.get(id).expect("the registered session");
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    session.command(DebugCommand::Continue).expect("continue");
+    listener.wait("the exit", |event| {
+        matches!(event, DebugEvent::Exited { code: 0 })
+    });
+    until("the session to leave the registry", || {
+        registry.get(id).is_none()
+    });
+    listener.wait("termination", |event| {
+        matches!(event, DebugEvent::Terminated)
+    });
+    sleep(Duration::from_millis(300));
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Terminated)),
+        1,
+        "{:?}",
+        listener.events()
+    );
+    assert!(registry.remove(id).is_none());
+    session.shutdown();
+}
+
+#[test]
+fn a_late_stop_orders_running_before_it() {
+    let arguments = vec!["--delay-stop".to_string(), "400".to_string()];
+    let (session, listener) = scripted_with(&arguments, vec![Breakpoint::at("src/main.rs", 10)]);
+    listener.wait("the late breakpoint stop", |event| {
+        stopped(event, "breakpoint")
+    });
+    let events = listener.events();
+    let stop = events
+        .iter()
+        .position(|event| matches!(event, DebugEvent::Stopped { .. }))
+        .expect("a stopped event");
+    assert!(
+        !events[stop..]
+            .iter()
+            .any(|event| matches!(event, DebugEvent::Running)),
+        "{events:?}"
+    );
+    assert_eq!(
+        listener.count(|event| matches!(event, DebugEvent::Running)),
+        1,
+        "{events:?}"
+    );
+    assert_eq!(
+        session.state(),
+        DebugState::Stopped {
+            thread_id: 1,
+            reason: "breakpoint".to_string()
+        }
+    );
+    let _ = session.command(DebugCommand::Disconnect);
 }
 
 #[test]
