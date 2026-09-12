@@ -12,6 +12,13 @@ final class GutterView: NSView {
             }
         }
     }
+    var breakpointLines: [Int: Bool] = [:] {
+        didSet {
+            if breakpointLines != oldValue {
+                needsDisplay = true
+            }
+        }
+    }
     private var viewport: NSTextViewportLayoutController?
     static let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
     static let currentFont = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
@@ -62,7 +69,13 @@ final class GutterView: NSView {
 
     override func mouseDown(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
-        guard point.x < Self.markerColumn + Self.glyphColumn, let line = line(at: point), let textView else {
+        guard let line = line(at: point), let textView else {
+            return
+        }
+        guard point.x < Self.markerColumn + Self.glyphColumn else {
+            if let path = path(of: textView) {
+                state(of: textView)?.toggleBreakpoint(path: path, line: UInt32(line))
+            }
             return
         }
         if point.x < Self.markerColumn {
@@ -78,11 +91,29 @@ final class GutterView: NSView {
         FoldController.shared.toggle(line: line)
     }
 
+    override func rightMouseDown(with event: NSEvent) {
+        let point = convert(event.locationInWindow, from: nil)
+        guard point.x >= Self.markerColumn + Self.glyphColumn, let line = line(at: point), let textView,
+              let path = path(of: textView)
+        else {
+            return
+        }
+        state(of: textView)?.editBreakpoint(path: path, line: UInt32(line))
+    }
+
     private func runMarker(_ line: Int, in textView: RideTextView) {
-        guard let marker = runMarkers[line], let state = textView.hooks.binding?()?.state else {
+        guard let marker = runMarkers[line], let state = state(of: textView) else {
             return
         }
         state.runTestMarker(marker)
+    }
+
+    private func state(of textView: RideTextView) -> AppState? {
+        textView.hooks.binding?()?.state
+    }
+
+    private func path(of textView: RideTextView) -> String? {
+        textView.hooks.binding?()?.document.fileURL?.standardizedFileURL.path
     }
 
     private func line(at point: NSPoint) -> Int? {
@@ -127,11 +158,16 @@ final class GutterView: NSView {
     }
 
     private func drawLine(_ lineNo: Int, at dest: NSRect, attrs: [NSAttributedString.Key: Any], theme: Theme) {
+        var attributes = attrs
+        if let verified = breakpointLines[lineNo] {
+            drawBreakpoint(verified: verified, at: dest, color: theme.chrome.error)
+            attributes[.foregroundColor] = theme.editor.background
+        }
         let label = "\(lineNo)" as NSString
-        let size = label.size(withAttributes: attrs)
+        let size = label.size(withAttributes: attributes)
         label.draw(
             at: CGPoint(x: bounds.width - size.width - Self.trailing, y: dest.midY - size.height / 2),
-            withAttributes: attrs
+            withAttributes: attributes
         )
         if let textView, textView.folds.isFoldStart(line: lineNo) {
             let collapsed = textView.folds.startsFold(at: lineRange(lineNo, in: textView))
@@ -154,35 +190,5 @@ final class GutterView: NSView {
         let start = starts[line - 1]
         let end = line < starts.count ? starts[line] : (view.string as NSString).length
         return NSRange(location: start, length: max(0, end - start))
-    }
-
-    private func drawRunMarker(at dest: NSRect, color: NSColor) {
-        let cx = Self.markerColumn / 2
-        let cy = dest.midY
-        let path = NSBezierPath()
-        path.move(to: CGPoint(x: cx - 3, y: cy - 4))
-        path.line(to: CGPoint(x: cx + 4, y: cy))
-        path.line(to: CGPoint(x: cx - 3, y: cy + 4))
-        path.close()
-        color.setFill()
-        path.fill()
-    }
-
-    private func drawChevron(collapsed: Bool, at dest: NSRect, color: NSColor) {
-        let cx = Self.markerColumn + Self.glyphColumn / 2
-        let cy = dest.midY
-        let path = NSBezierPath()
-        if collapsed {
-            path.move(to: CGPoint(x: cx - 2, y: cy - 3.5))
-            path.line(to: CGPoint(x: cx + 3, y: cy))
-            path.line(to: CGPoint(x: cx - 2, y: cy + 3.5))
-        } else {
-            path.move(to: CGPoint(x: cx - 3.5, y: cy - 2))
-            path.line(to: CGPoint(x: cx + 3.5, y: cy - 2))
-            path.line(to: CGPoint(x: cx, y: cy + 3))
-        }
-        path.close()
-        color.setFill()
-        path.fill()
     }
 }

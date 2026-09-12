@@ -23,6 +23,7 @@ extension AppState {
     }
 
     func stopRun() {
+        DebugChain.shared.cancel()
         BuildSession.shared.cancel()
         TestSession.shared.cancel()
         SingleFileChain.shared.cancel()
@@ -33,6 +34,7 @@ extension AppState {
         BuildSession.shared.finish(runId: runId, status: finish)
         TestSession.shared.finish(runId: runId, status: finish)
         continueSingleFile(runId, finish)
+        continueDebug(runId, finish)
     }
 
     func stopRunOnWorkspaceChange() {

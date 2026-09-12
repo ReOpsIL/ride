@@ -22,7 +22,7 @@ extension SelfTestSteps {
             gutterRunMarkers(state: state, e: e),
             buildDiagnostic(state: state, e: e, scratch: scratch),
             buildDiagnosticCleared(state: state, e: e, scratch: scratch),
-        ]
+        ] + debugSteps(state: state, e: e)
     }
 
     private static func rustEdit(e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {

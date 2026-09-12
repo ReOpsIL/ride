@@ -119,47 +119,6 @@ struct LayoutState: Codable, Equatable {
     }
 }
 
-struct SplitState: Codable, Equatable {
-    var panes: [[String]]
-    var focused: Int
-    var ratio: Double
-
-    init(panes: [[String]] = [], focused: Int = 0, ratio: Double) {
-        self.panes = panes
-        self.focused = focused
-        self.ratio = ratio
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        panes = try c.decodeIfPresent([[String]].self, forKey: .panes) ?? []
-        focused = try c.decodeIfPresent(Int.self, forKey: .focused) ?? 0
-        ratio = try c.decodeIfPresent(Double.self, forKey: .ratio) ?? 0.5
-    }
-
-    static func from(ratio: Double, panes: [Pane], focused: UUID, pathOf: (UUID) -> String?) -> SplitState {
-        SplitState(
-            panes: panes.map { pane in pane.tabs.compactMap(pathOf) },
-            focused: panes.firstIndex { $0.id == focused } ?? 0,
-            ratio: ratio
-        )
-    }
-
-    func tabs(ids: [String: UUID], leftover: [UUID]) -> [[UUID]] {
-        var seen = Set<String>()
-        var tabs = panes.map { pane in
-            pane.filter { seen.insert($0).inserted }.compactMap { ids[$0] }
-        }
-        if tabs.count < 2 {
-            tabs += Array(repeating: [], count: 2 - tabs.count)
-        }
-        tabs = Array(tabs.prefix(2))
-        let placed = Set(tabs.flatMap { $0 })
-        tabs[0].append(contentsOf: leftover.filter { !placed.contains($0) })
-        return tabs
-    }
-}
-
 struct WorkspaceState: Codable, Equatable {
     static let currentVersion = 1
 
@@ -170,6 +129,7 @@ struct WorkspaceState: Codable, Equatable {
     var split: SplitState?
     var runConfigs: [RunConfig]
     var selectedTarget: String?
+    var breakpoints: Breakpoints
 
     init(
         version: Int = currentVersion,
@@ -178,7 +138,8 @@ struct WorkspaceState: Codable, Equatable {
         layout: LayoutState,
         split: SplitState? = nil,
         runConfigs: [RunConfig] = [],
-        selectedTarget: String? = nil
+        selectedTarget: String? = nil,
+        breakpoints: Breakpoints = Breakpoints()
     ) {
         self.version = version
         self.tabs = tabs
@@ -187,6 +148,7 @@ struct WorkspaceState: Codable, Equatable {
         self.split = split
         self.runConfigs = runConfigs
         self.selectedTarget = selectedTarget
+        self.breakpoints = breakpoints
     }
 
     init(from decoder: Decoder) throws {
@@ -198,6 +160,7 @@ struct WorkspaceState: Codable, Equatable {
         split = try c.decodeIfPresent(SplitState.self, forKey: .split)
         runConfigs = try c.decodeIfPresent([RunConfig].self, forKey: .runConfigs) ?? []
         selectedTarget = try c.decodeIfPresent(String.self, forKey: .selectedTarget)
+        breakpoints = try c.decodeIfPresent(Breakpoints.self, forKey: .breakpoints) ?? Breakpoints()
     }
 
     static func decode(_ data: Data) -> WorkspaceState? {

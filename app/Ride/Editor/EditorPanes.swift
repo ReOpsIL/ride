@@ -17,6 +17,10 @@ final class EditorPanes {
         focused?.textView
     }
 
+    var all: [EditorHostView] {
+        hosts.values.compactMap(\.host)
+    }
+
     func host(_ paneID: UUID) -> EditorHostView? {
         hosts[paneID]?.host
     }

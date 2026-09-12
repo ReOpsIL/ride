@@ -24,6 +24,10 @@ final class MenuModel: ObservableObject {
     @Published var canRunTests = false
     @Published var canRunFile = false
     @Published var canRecompileFile = false
+    @Published var canDebug = false
+    @Published var isDebugging = false
+    @Published var isDebugStopped = false
+    @Published var isDebugRunning = false
 
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
@@ -48,6 +52,10 @@ final class MenuModel: ObservableObject {
         set(\.canRunTests, state.canRun(.test))
         set(\.canRunFile, state.canRunFile)
         set(\.canRecompileFile, state.canRecompileFile)
+        set(\.canDebug, state.canDebug)
+        set(\.isDebugging, state.debug.isActive)
+        set(\.isDebugStopped, state.debug.isStopped)
+        set(\.isDebugRunning, state.debug.isRunning)
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {
