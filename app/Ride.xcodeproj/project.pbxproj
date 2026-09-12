@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		T20000000000000000000002 /* TestTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000001 /* TestTree.swift */; };
+		T20000000000000000000004 /* TestRunStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000003 /* TestRunStore.swift */; };
+		T20000000000000000000006 /* TestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000005 /* TestSession.swift */; };
+		T20000000000000000000008 /* TestMarkers.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000007 /* TestMarkers.swift */; };
+		T2000000000000000000000A /* TestsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000009 /* TestsPanel.swift */; };
+		T2000000000000000000000C /* TestTreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = T2000000000000000000000B /* TestTreeList.swift */; };
+		T2000000000000000000000E /* AppState+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T2000000000000000000000D /* AppState+Tests.swift */; };
+		T20000000000000000000091 /* TestTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000090 /* TestTreeTests.swift */; };
+		T20000000000000000000092 /* TestTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000001 /* TestTree.swift */; };
 		S10000000000000000000002 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
 		S20000000000000000000002 /* TerminalTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000001 /* TerminalTabs.swift */; };
 		S20000000000000000000004 /* TerminalShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000003 /* TerminalShell.swift */; };
@@ -394,6 +403,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		T20000000000000000000001 /* TestTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestTree.swift"; sourceTree = "<group>"; };
+		T20000000000000000000003 /* TestRunStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestRunStore.swift"; sourceTree = "<group>"; };
+		T20000000000000000000005 /* TestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestSession.swift"; sourceTree = "<group>"; };
+		T20000000000000000000007 /* TestMarkers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestMarkers.swift"; sourceTree = "<group>"; };
+		T20000000000000000000009 /* TestsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestsPanel.swift"; sourceTree = "<group>"; };
+		T2000000000000000000000B /* TestTreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestTreeList.swift"; sourceTree = "<group>"; };
+		T2000000000000000000000D /* AppState+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Tests.swift"; sourceTree = "<group>"; };
+		T20000000000000000000090 /* TestTreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestTreeTests.swift"; sourceTree = "<group>"; };
 		B0901DA538FDB916C2AF040F /* AppState+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Layout.swift"; sourceTree = "<group>"; };
 		B00E834049D45F687C4E4144 /* FindCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FindCount.swift"; sourceTree = "<group>"; };
 		B0E018E55E618A879AC6440A /* IndexStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexStatusView.swift"; sourceTree = "<group>"; };
@@ -840,6 +857,7 @@
 				RA0000000000000000000007 /* BuildSessionStateTests.swift */,
 				RB0000000000000000000005 /* SingleFileRunTests.swift */,
 				S20000000000000000000013 /* TerminalTabsTests.swift */,
+				T20000000000000000000090 /* TestTreeTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -882,6 +900,7 @@
 				P20000000000000000000010 /* Project */,
 				Q10000000000000000000010 /* Run */,
 				S20000000000000000000020 /* Terminal */,
+				T20000000000000000000100 /* Tests */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
@@ -919,6 +938,20 @@
 				A00000000000000000000014 /* StatusBarView.swift */,
 			);
 			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		T20000000000000000000100 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				T20000000000000000000001 /* TestTree.swift */,
+				T20000000000000000000003 /* TestRunStore.swift */,
+				T20000000000000000000005 /* TestSession.swift */,
+				T20000000000000000000007 /* TestMarkers.swift */,
+				T20000000000000000000009 /* TestsPanel.swift */,
+				T2000000000000000000000B /* TestTreeList.swift */,
+				T2000000000000000000000D /* AppState+Tests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		S20000000000000000000020 /* Terminal */ = {
@@ -1478,6 +1511,8 @@
 				RB0000000000000000000006 /* SingleFileRunTests.swift in Sources */,
 				S20000000000000000000015 /* TerminalTabs.swift in Sources */,
 				S20000000000000000000014 /* TerminalTabsTests.swift in Sources */,
+				T20000000000000000000091 /* TestTreeTests.swift in Sources */,
+				T20000000000000000000092 /* TestTree.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1664,6 +1699,13 @@
 				S10000000000000000000002 /* UpdateController.swift in Sources */,
 				S10000000000000000000024 /* UpdateController+Sparkle.swift in Sources */,
 				S20000000000000000000002 /* TerminalTabs.swift in Sources */,
+				T20000000000000000000002 /* TestTree.swift in Sources */,
+				T20000000000000000000004 /* TestRunStore.swift in Sources */,
+				T20000000000000000000006 /* TestSession.swift in Sources */,
+				T20000000000000000000008 /* TestMarkers.swift in Sources */,
+				T2000000000000000000000A /* TestsPanel.swift in Sources */,
+				T2000000000000000000000C /* TestTreeList.swift in Sources */,
+				T2000000000000000000000E /* AppState+Tests.swift in Sources */,
 				S20000000000000000000004 /* TerminalShell.swift in Sources */,
 				S20000000000000000000006 /* TerminalColors.swift in Sources */,
 				S20000000000000000000008 /* TerminalSession.swift in Sources */,

@@ -43,8 +43,14 @@ extension AppState {
         SingleFileChain.shared.cancel()
         guard building else {
             BuildSession.shared.cancel()
+            if action == .test {
+                beginTestRun(runId: runId, argv: argv)
+            } else {
+                TestSession.shared.cancel()
+            }
             return
         }
+        TestSession.shared.cancel()
         BuildSession.shared.begin(
             runId: runId,
             kind: kind,

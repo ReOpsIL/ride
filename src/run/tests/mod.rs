@@ -3,10 +3,13 @@ mod catch2;
 mod commands;
 mod ctest;
 mod gtest;
+mod markers;
+mod markers_cpp;
 
 use crate::ffi::{TestCase, TestEvent, TestFramework};
 
 pub use commands::test_commands;
+pub use markers::{markers, rust_module_path};
 
 pub fn list_tests(framework: TestFramework, text: &str) -> Vec<TestCase> {
     match framework {

@@ -15,6 +15,7 @@ final class MenuModel: ObservableObject {
     @Published var showProblems = false
     @Published var showRunOutput = false
     @Published var showTerminal = false
+    @Published var showTests = false
     @Published var isRunning = false
     @Published var hasSplit = false
     @Published var selectedTarget: String?
@@ -38,6 +39,7 @@ final class MenuModel: ObservableObject {
         set(\.showProblems, state.showProblems)
         set(\.showRunOutput, state.showRunOutput)
         set(\.showTerminal, state.showTerminal)
+        set(\.showTests, state.showTests)
         set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)

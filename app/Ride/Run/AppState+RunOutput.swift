@@ -24,12 +24,14 @@ extension AppState {
 
     func stopRun() {
         BuildSession.shared.cancel()
+        TestSession.shared.cancel()
         SingleFileChain.shared.cancel()
         runOutput.stop()
     }
 
     func runFinished(_ runId: Int, _ finish: RunFinish) {
         BuildSession.shared.finish(runId: runId, status: finish)
+        TestSession.shared.finish(runId: runId, status: finish)
         continueSingleFile(runId, finish)
     }
 

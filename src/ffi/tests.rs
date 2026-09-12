@@ -36,3 +36,10 @@ pub struct TestCommands {
     pub list: Vec<String>,
     pub run: Vec<String>,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct TestMarker {
+    pub name: String,
+    pub byte_start: u32,
+    pub framework: Option<TestFramework>,
+}
