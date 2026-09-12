@@ -100,6 +100,8 @@ extension SelfTestSteps {
             runOutputLinks(state: state, e: e),
             runBigOutput(state: state, e: e),
             runOutputClose(state: state, e: e),
+            terminalOpen(state: state, e: e),
+            terminalClose(state: state, e: e),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
             workspaceOpenSecond(state: state, e: e, file: file),
             workspaceRestore(state: state, e: e, file: file),
@@ -127,6 +129,31 @@ extension SelfTestSteps {
             return e.expect(
                 bins.count == 1 && state.menu.selectedTarget == bins.first?.name,
                 "targets \(state.projectModel.rows.map(\.id)) selected \(state.menu.selectedTarget ?? "nil")"
+            )
+        })
+    }
+
+    private static func terminalOpen(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "terminal open", wait: 0.5, run: { state.openTerminal(directory: state.workspaceRoot) }, check: {
+            e.expect(
+                state.showTerminal && state.menu.showTerminal && state.terminals.tabs.count == 1,
+                "tabs \(state.terminals.tabs.count) shown \(state.showTerminal)"
+            )
+        })
+    }
+
+    private static func terminalClose(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "terminal close", wait: 0.5, run: {
+            guard let id = state.terminals.tabs.selected else {
+                return
+            }
+            state.terminals.close(id)
+            state.showTerminal = false
+            e.focus()
+        }, check: {
+            e.expect(
+                state.terminals.tabs.isEmpty && !state.showTerminal,
+                "tabs \(state.terminals.tabs.count) shown \(state.showTerminal)"
             )
         })
     }

@@ -8,6 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		S10000000000000000000002 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
+		S20000000000000000000002 /* TerminalTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000001 /* TerminalTabs.swift */; };
+		S20000000000000000000004 /* TerminalShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000003 /* TerminalShell.swift */; };
+		S20000000000000000000006 /* TerminalColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000005 /* TerminalColors.swift */; };
+		S20000000000000000000008 /* TerminalSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000007 /* TerminalSession.swift */; };
+		S2000000000000000000000A /* TerminalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000009 /* TerminalStore.swift */; };
+		S2000000000000000000000C /* TerminalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = S2000000000000000000000B /* TerminalTab.swift */; };
+		S2000000000000000000000E /* TerminalTabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = S2000000000000000000000D /* TerminalTabStrip.swift */; };
+		S20000000000000000000010 /* TerminalPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S2000000000000000000000F /* TerminalPanel.swift */; };
+		S20000000000000000000012 /* AppState+Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000011 /* AppState+Terminal.swift */; };
+		S20000000000000000000014 /* TerminalTabsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000013 /* TerminalTabsTests.swift */; };
+		S20000000000000000000015 /* TerminalTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20000000000000000000001 /* TerminalTabs.swift */; };
+		S20000000000000000000032 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = S20000000000000000000031 /* SwiftTerm */; };
 		S10000000000000000000010 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = S10000000000000000000012 /* Sparkle */; };
 		S10000000000000000000020 /* Sparkle in Embed Frameworks */ = {isa = PBXBuildFile; productRef = S10000000000000000000012 /* Sparkle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		S10000000000000000000022 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = S10000000000000000000001 /* UpdateController.swift */; };
@@ -427,6 +439,16 @@
 		A00000000000000000000011 /* RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideApp.swift; sourceTree = "<group>"; };
 		S10000000000000000000001 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		S10000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		S20000000000000000000001 /* TerminalTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTabs.swift; sourceTree = "<group>"; };
+		S20000000000000000000003 /* TerminalShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalShell.swift; sourceTree = "<group>"; };
+		S20000000000000000000005 /* TerminalColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalColors.swift; sourceTree = "<group>"; };
+		S20000000000000000000007 /* TerminalSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalSession.swift; sourceTree = "<group>"; };
+		S20000000000000000000009 /* TerminalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalStore.swift; sourceTree = "<group>"; };
+		S2000000000000000000000B /* TerminalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTab.swift; sourceTree = "<group>"; };
+		S2000000000000000000000D /* TerminalTabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTabStrip.swift; sourceTree = "<group>"; };
+		S2000000000000000000000F /* TerminalPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalPanel.swift; sourceTree = "<group>"; };
+		S20000000000000000000011 /* AppState+Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Terminal.swift"; sourceTree = "<group>"; };
+		S20000000000000000000013 /* TerminalTabsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTabsTests.swift; sourceTree = "<group>"; };
 		S10000000000000000000023 /* UpdateController+Sparkle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateController+Sparkle.swift"; sourceTree = "<group>"; };
 		S10000000000000000000025 /* UpdateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateControllerTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000012 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -690,6 +712,7 @@
 			files = (
 				A00000000000000000000081 /* RideEngine.xcframework in Frameworks */,
 				S10000000000000000000010 /* Sparkle in Frameworks */,
+				S20000000000000000000032 /* SwiftTerm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,6 +819,7 @@
 				Q4000000000000000000000A /* LineSplitterTests.swift */,
 				Q4000000000000000000000C /* RunOutputBufferTests.swift */,
 				Q60000000000000000000006 /* BuildParseTests.swift */,
+				S20000000000000000000013 /* TerminalTabsTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -837,6 +861,7 @@
 				A00000000000000000000054 /* Workspace */,
 				P20000000000000000000010 /* Project */,
 				Q10000000000000000000010 /* Run */,
+				S20000000000000000000020 /* Terminal */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
@@ -874,6 +899,22 @@
 				A00000000000000000000014 /* StatusBarView.swift */,
 			);
 			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		S20000000000000000000020 /* Terminal */ = {
+			isa = PBXGroup;
+			children = (
+				S20000000000000000000001 /* TerminalTabs.swift */,
+				S20000000000000000000003 /* TerminalShell.swift */,
+				S20000000000000000000005 /* TerminalColors.swift */,
+				S20000000000000000000007 /* TerminalSession.swift */,
+				S20000000000000000000009 /* TerminalStore.swift */,
+				S2000000000000000000000B /* TerminalTab.swift */,
+				S2000000000000000000000D /* TerminalTabStrip.swift */,
+				S2000000000000000000000F /* TerminalPanel.swift */,
+				S20000000000000000000011 /* AppState+Terminal.swift */,
+			);
+			path = Terminal;
 			sourceTree = "<group>";
 		};
 		Q10000000000000000000010 /* Run */ = {
@@ -1250,6 +1291,7 @@
 			name = Ride;
 			packageProductDependencies = (
 				S10000000000000000000012 /* Sparkle */,
+				S20000000000000000000031 /* SwiftTerm */,
 			);
 			productName = Ride;
 			productReference = A00000000000000000000010 /* Ride.app */;
@@ -1284,6 +1326,7 @@
 			mainGroup = A00000000000000000000050;
 			packageReferences = (
 				S10000000000000000000011 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				S20000000000000000000030 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
 			);
 			productRefGroup = A00000000000000000000052 /* Products */;
 			projectDirPath = "";
@@ -1402,6 +1445,8 @@
 				Q40000000000000000000011 /* RunOutputBufferTests.swift in Sources */,
 				Q60000000000000000000003 /* BuildParse.swift in Sources */,
 				Q60000000000000000000007 /* BuildParseTests.swift in Sources */,
+				S20000000000000000000015 /* TerminalTabs.swift in Sources */,
+				S20000000000000000000014 /* TerminalTabsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
@@ -1587,6 +1632,15 @@
 				A00000000000000000000021 /* RideApp.swift in Sources */,
 				S10000000000000000000002 /* UpdateController.swift in Sources */,
 				S10000000000000000000024 /* UpdateController+Sparkle.swift in Sources */,
+				S20000000000000000000002 /* TerminalTabs.swift in Sources */,
+				S20000000000000000000004 /* TerminalShell.swift in Sources */,
+				S20000000000000000000006 /* TerminalColors.swift in Sources */,
+				S20000000000000000000008 /* TerminalSession.swift in Sources */,
+				S2000000000000000000000A /* TerminalStore.swift in Sources */,
+				S2000000000000000000000C /* TerminalTab.swift in Sources */,
+				S2000000000000000000000E /* TerminalTabStrip.swift in Sources */,
+				S20000000000000000000010 /* TerminalPanel.swift in Sources */,
+				S20000000000000000000012 /* AppState+Terminal.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
 				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
@@ -1947,6 +2001,14 @@
 				minimumVersion = 2.9.6;
 			};
 		};
+		S20000000000000000000030 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.20.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1954,6 +2016,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = S10000000000000000000011 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		S20000000000000000000031 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = S20000000000000000000030 /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

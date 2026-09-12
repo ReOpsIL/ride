@@ -19,6 +19,7 @@ struct Preferences: Codable, Equatable {
     var outlineWidth: Double
     var problemsHeight: Double
     var runOutputHeight: Double
+    var terminalHeight: Double
     var previewWidth: Double
 
     static let defaults = Preferences(
@@ -37,6 +38,7 @@ struct Preferences: Codable, Equatable {
         outlineWidth: 220,
         problemsHeight: 180,
         runOutputHeight: 200,
+        terminalHeight: 220,
         previewWidth: 460,
         cheatSheet: true,
         softWrap: true,
@@ -59,6 +61,7 @@ struct Preferences: Codable, Equatable {
         outlineWidth: Double = 220,
         problemsHeight: Double = 180,
         runOutputHeight: Double = 200,
+        terminalHeight: Double = 220,
         previewWidth: Double = 460,
         cheatSheet: Bool = true,
         softWrap: Bool = true,
@@ -79,6 +82,7 @@ struct Preferences: Codable, Equatable {
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
         self.runOutputHeight = runOutputHeight
+        self.terminalHeight = terminalHeight
         self.previewWidth = previewWidth
         self.cheatSheet = cheatSheet
         self.softWrap = softWrap
@@ -106,6 +110,7 @@ struct Preferences: Codable, Equatable {
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
+        terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
     }
 
@@ -117,6 +122,7 @@ struct Preferences: Codable, Equatable {
         next.outlineWidth = min(420, max(160, outlineWidth))
         next.problemsHeight = min(480, max(80, problemsHeight))
         next.runOutputHeight = min(480, max(80, runOutputHeight))
+        next.terminalHeight = min(480, max(80, terminalHeight))
         next.previewWidth = min(900, max(260, previewWidth))
         if next.theme != "light" {
             next.theme = "dark"
