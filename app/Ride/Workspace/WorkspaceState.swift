@@ -41,6 +41,7 @@ struct LayoutState: Codable, Equatable {
     var runOutputHeight: Double
     var terminalHeight: Double
     var testsHeight: Double
+    var debugHeight: Double
     var previewWidth: Double
     var showSidebar: Bool
     var showProblems: Bool
@@ -57,6 +58,7 @@ struct LayoutState: Codable, Equatable {
         runOutputHeight: 200,
         terminalHeight: 220,
         testsHeight: 200,
+        debugHeight: 320,
         previewWidth: 460,
         showSidebar: true,
         showProblems: false,
@@ -74,6 +76,7 @@ struct LayoutState: Codable, Equatable {
         runOutputHeight: Double,
         terminalHeight: Double = 220,
         testsHeight: Double = 200,
+        debugHeight: Double = 320,
         previewWidth: Double,
         showSidebar: Bool,
         showProblems: Bool,
@@ -89,6 +92,7 @@ struct LayoutState: Codable, Equatable {
         self.runOutputHeight = runOutputHeight
         self.terminalHeight = terminalHeight
         self.testsHeight = testsHeight
+        self.debugHeight = debugHeight
         self.previewWidth = previewWidth
         self.showSidebar = showSidebar
         self.showProblems = showProblems
@@ -108,6 +112,7 @@ struct LayoutState: Codable, Equatable {
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
         testsHeight = try c.decodeIfPresent(Double.self, forKey: .testsHeight) ?? d.testsHeight
+        debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
         showSidebar = try c.decodeIfPresent(Bool.self, forKey: .showSidebar) ?? d.showSidebar
         showProblems = try c.decodeIfPresent(Bool.self, forKey: .showProblems) ?? d.showProblems

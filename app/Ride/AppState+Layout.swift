@@ -26,6 +26,7 @@ extension AppState {
             runOutputHeight: prefs.runOutputHeight,
             terminalHeight: prefs.terminalHeight,
             testsHeight: prefs.testsHeight,
+            debugHeight: prefs.debugHeight,
             previewWidth: prefs.previewWidth,
             showSidebar: showSidebar,
             showProblems: showProblems,
@@ -46,6 +47,7 @@ extension AppState {
         prefs.runOutputHeight = layout.runOutputHeight
         prefs.terminalHeight = layout.terminalHeight
         prefs.testsHeight = layout.testsHeight
+        prefs.debugHeight = layout.debugHeight
         prefs.previewWidth = layout.previewWidth
         prefs.outlinePanel = layout.outlinePanel
         prefs = prefs.clamped

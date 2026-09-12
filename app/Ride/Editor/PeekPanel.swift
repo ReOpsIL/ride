@@ -8,6 +8,7 @@ final class PeekPanel {
     private var lastSize = DocPanel.defaultSize
     private(set) var excerpts: [DefinitionExcerpt] = []
     private(set) var index = 0
+    private var expanded = false
     var onPin: (() -> Void)?
     var onOpen: (() -> Void)?
 
@@ -60,6 +61,7 @@ final class PeekPanel {
     func show(excerpts: [DefinitionExcerpt], anchor: NSRect, bounds: NSRect) {
         self.excerpts = excerpts
         index = 0
+        expanded = false
         render()
         if panel.isVisible {
             lastSize = panel.frame.size
@@ -88,7 +90,10 @@ final class PeekPanel {
             return
         }
         chrome.origin.stringValue = DocPage.origin(path: excerpt.path, line: excerpt.line)
-        chrome.setSegments(excerpts.map(\.label), selected: index)
+        chrome.setSegments(
+            PeekSegments.labels(excerpts.map(\.label), expanded: expanded),
+            selected: PeekSegments.selection(excerpts.map(\.label), expanded: expanded, index: index)
+        )
         text.string = excerpt.text
         text.applyTheme(ThemeStore.shared.theme)
         let end = UInt32(excerpt.text.utf8.count)
@@ -115,6 +120,11 @@ final class PeekPanel {
 
     @objc private func segmentChanged() {
         let next = chrome.segments.selectedSegment
+        if PeekSegments.isMore(excerpts.map(\.label), expanded: expanded, index: next) {
+            expanded = true
+            render()
+            return
+        }
         guard excerpts.indices.contains(next), next != index else {
             return
         }

@@ -24,7 +24,7 @@ extension DemoScene {
         case "debug":
             editor(state, line: debugLine)
             DemoLaunch.after(1.6) { startDebug(state) }
-            ready(when: { state.debug.isStopped && state.debugPanel.tree.rows.contains { $0.depth > 0 } }, timeout: 180)
+            ready(when: { state.debugPanel.tree.rows.contains { $0.depth > 1 } }, timeout: 180)
         default:
             return false
         }
@@ -62,10 +62,43 @@ extension DemoScene {
             DemoLaunch.after(1.0) { expandLocals(state, attempt: attempt + 1) }
             return
         }
-        state.debugPanel.visible = true
+        stage(state)
+        selectTopFrame(state)
         state.debugPanel.addWatch("counter")
         for row in state.debugPanel.tree.rows where row.depth == 0 && !row.expanded {
             state.debugPanel.toggle(row)
         }
+        DemoLaunch.after(1.0) { expandCounter(state) }
+    }
+
+    private static func stage(_ state: AppState) {
+        state.debugPanel.visible = true
+        state.showRunOutput = false
+        state.saveLayout { $0.debugHeight = max(320, $0.debugHeight) }
+    }
+
+    private static func selectTopFrame(_ state: AppState) {
+        guard let frame = state.debugPanel.frames.first,
+              state.debugPanel.selectedFrame != frame.id else {
+            return
+        }
+        state.debugPanel.selectFrame(frame.id, jump: false)
+    }
+
+    private static func expandCounter(_ state: AppState, attempt: Int = 0) {
+        guard attempt < 60 else {
+            return
+        }
+        stage(state)
+        let local = state.debugPanel.tree.rows.first { $0.depth == 1 && $0.node.name == "counter" }
+        guard let local, local.node.isExpandable else {
+            DemoLaunch.after(1.0) { expandCounter(state, attempt: attempt + 1) }
+            return
+        }
+        guard !local.expanded else {
+            return
+        }
+        state.debugPanel.toggle(local)
+        DemoLaunch.after(1.0) { expandCounter(state, attempt: attempt + 1) }
     }
 }

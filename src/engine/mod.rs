@@ -17,6 +17,7 @@ mod access;
 mod build_output;
 mod cheat;
 mod debug;
+mod def_rank;
 mod definition;
 mod doc_block;
 mod doc_comment;

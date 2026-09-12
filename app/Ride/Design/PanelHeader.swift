@@ -21,9 +21,13 @@ struct PanelHeader<Actions: View>: View {
             Text(title)
                 .font(Tokens.ui(11, weight: .semibold))
                 .foregroundStyle(ts.ui.textPrimary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .layoutPriority(1)
             ForEach(badges) { badge in
                 Text(badge.text)
                     .font(Tokens.ui(10, weight: .semibold))
+                    .lineLimit(1)
                     .foregroundStyle(badge.tint ?? ts.ui.textSecondary)
                     .padding(.horizontal, Tokens.Space.s)
                     .padding(.vertical, 1)

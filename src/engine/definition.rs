@@ -9,6 +9,7 @@ use crate::highlight::{Lang, source_highlights};
 
 use super::Engine;
 use super::doc_block;
+use super::symbols;
 
 const MAX_LINES: usize = 60;
 
@@ -33,6 +34,7 @@ struct Loaded {
 
 fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Vec<DefinitionExcerpt> {
     let ctx = session(engine, session_id);
+    let ranking = symbols::context(engine, session_id);
     let hits = engine.find_definitions(session_id, cursor_byte).hits;
     let mut seen = HashSet::new();
     let mut out = Vec::new();
@@ -42,12 +44,13 @@ fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Vec<DefinitionEx
         if !seen.insert(key) {
             continue;
         }
+        let tier = ranking.tier(hit.source_path.as_deref(), &hit.crate_name);
         if let Some(excerpt) = excerpt(&hit, &loaded) {
-            out.push(excerpt);
+            out.push((tier, excerpt));
         }
     }
-    out.sort_by_key(|e| rank(&e.label));
-    out
+    out.sort_by_key(|(tier, e)| (*tier, rank(&e.label)));
+    out.into_iter().map(|(_, e)| e).collect()
 }
 
 fn session(engine: &Engine, session_id: u64) -> Option<Ctx> {

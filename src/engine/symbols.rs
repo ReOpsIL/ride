@@ -1,12 +1,14 @@
+use std::collections::HashSet;
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::ffi::{CompletionHit, DefinitionResponse, ItemKind, OutlineItem, SymbolAt};
-use crate::highlight::include_on_line;
+use crate::highlight::{BufferSession, include_on_line};
 use crate::query::{IndexSrc, exact_search};
 
+use super::def_rank::RankContext;
 use super::reach::Reach;
-use super::{Engine, header_hits};
+use super::{Engine, Inner, def_rank, header_hits};
 
 const LOCAL_SCORE: f32 = 2000.0;
 
@@ -45,14 +47,18 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
             i.config.index_dir.clone(),
             i.index.clone(),
             i.reader.clone(),
+            base_context(i, session),
         ))
     });
-    let Ok(Some((symbol, mut hits, catalog, reach, index_dir, index, reader))) = snap else {
+    let Ok(Some((symbol, mut hits, catalog, reach, index_dir, index, reader, mut ctx))) = snap
+    else {
         return DefinitionResponse::empty();
     };
     if !catalog {
         hits.extend(header_hits::definitions(reach.headers(), &symbol.name));
+        ctx.headers = reach.headers().iter().map(|h| h.path.clone()).collect();
         reach.remember(engine);
+        rank(&mut hits, &ctx);
         return DefinitionResponse {
             symbol: Some(symbol),
             hits,
@@ -68,10 +74,42 @@ fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> Definition
         symbol.qualifier.as_deref(),
         20,
     ));
+    rank(&mut hits, &ctx);
     DefinitionResponse {
         symbol: Some(symbol),
         hits,
     }
+}
+
+pub(crate) fn base_context(inner: &Inner, session: &BufferSession) -> RankContext {
+    let mut crates = def_rank::imported_crates(session.replica());
+    if let Some(workspace) = inner.workspace.as_ref() {
+        crates.extend(workspace.members.iter().cloned());
+    }
+    RankContext {
+        session_path: session.path().map(Path::to_path_buf),
+        workspace_root: inner
+            .workspace
+            .as_ref()
+            .map(|w| PathBuf::from(w.root.clone())),
+        headers: HashSet::new(),
+        crates,
+    }
+}
+
+pub(crate) fn context(engine: &Engine, session_id: u64) -> RankContext {
+    engine
+        .read(|i| {
+            let session = i.sessions.get(&session_id)?;
+            Some(base_context(i, session))
+        })
+        .ok()
+        .flatten()
+        .unwrap_or_default()
+}
+
+fn rank(hits: &mut [CompletionHit], ctx: &RankContext) {
+    hits.sort_by_key(|h| ctx.tier(h.source_path.as_deref(), &h.crate_name));
 }
 
 fn include_definition(
