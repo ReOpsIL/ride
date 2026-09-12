@@ -2,73 +2,83 @@ import AppKit
 
 enum DemoScene {
     static func run(_ name: String, state: AppState) {
+        prepare(state)
+        let handled = base(name, state: state)
+            || popups(name, state: state)
+            || docs(name, state: state)
+            || running(name, state: state)
+            || languages(name, state: state)
+        if !handled {
+            DemoLaunch.ready()
+        }
+    }
+
+    private static func prepare(_ state: AppState) {
         state.prefs.autoSave = false
         state.persistLayout = false
-        if let theme = DemoLaunch.theme {
-            state.prefs.theme = theme
-            state.applyTheme()
+        DemoLaunch.activate()
+        guard let theme = DemoLaunch.theme else {
+            return
         }
+        state.prefs.theme = theme
+        state.applyTheme()
+    }
+
+    private static func base(_ name: String, state: AppState) -> Bool {
         switch name {
         case "empty":
-            break
+            DemoLaunch.ready()
         case "editor":
             editor(state)
+            ready(after: 1.2)
         case "file":
             editor(state, file: DemoLaunch.file ?? "src/main.rs", line: 1)
             if DemoLaunch.scroll {
                 DemoLaunch.after(1.5) { autoScroll(step: 0) }
             }
-        case "completion":
-            editor(state)
-            DemoLaunch.after(1.0) { completion(state) }
-        case "cheatsheet":
-            editor(state)
-            DemoLaunch.after(1.0) { cheatSheet(state) }
-        case "unformatted":
-            editor(state)
-            DemoLaunch.after(1.5) {
-                guard let view = EditorPanes.shared.focusedView else {
-                    return
-                }
-                let anchor = (view.string as NSString).range(of: "counter.record(\"ride\");")
-                view.replaceText(in: anchor, with: "counter.record(   \"ride\"  );")
-            }
-        case "tools":
-            editor(state)
-            DemoLaunch.after(1.0) { state.showToolsSheet = true }
+            ready(after: 1.2)
         case "selftest":
             editor(state, file: DemoLaunch.file ?? defaultEditorFile(state))
-            DemoLaunch.after(1.5) { DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt") }
-        case "hover":
+            DemoLaunch.after(1.5) {
+                DemoSelfTest.start(state: state, report: DemoLaunch.report ?? "/tmp/ride-selftest.txt")
+            }
+        case "outline":
+            state.prefs.outlinePanel = true
             editor(state)
-            DemoLaunch.after(1.0) { hover() }
-        case "quickopen":
+            ready(after: 1.2)
+        case "light":
+            state.prefs.theme = "light"
+            state.applyTheme()
             editor(state)
-            DemoLaunch.after(0.8) { quickOpen(state) }
-        case "symbols":
-            editor(state)
-            DemoLaunch.after(0.8) { symbols(state) }
-        case "find":
-            editor(state)
-            DemoLaunch.after(0.8) { find(state) }
-        case "problems":
-            editor(state, file: "src/util.rs", line: 2)
-            DemoLaunch.after(0.8) { problems(state) }
+            ready(after: 1.2)
         case "preview":
             editor(state, file: "README.md", line: 1)
             DemoLaunch.after(0.8) {
                 state.showPreview = true
                 state.refreshPreview()
             }
-        case "outline":
-            state.prefs.outlinePanel = true
-            editor(state)
-        case "light":
-            state.prefs.theme = "light"
-            state.applyTheme()
-            editor(state)
+            ready(after: 2.0)
         default:
-            break
+            return false
+        }
+        return true
+    }
+
+    static func ready(after seconds: Double) {
+        DemoLaunch.after(seconds) { DemoLaunch.ready() }
+    }
+
+    static func ready(when condition: @escaping () -> Bool, timeout: Double = 300) {
+        poll(condition, deadline: Date().addingTimeInterval(timeout))
+    }
+
+    private static func poll(_ condition: @escaping () -> Bool, deadline: Date) {
+        DemoLaunch.after(0.5) {
+            guard !condition(), Date() < deadline else {
+                DemoLaunch.ready()
+                return
+            }
+            poll(condition, deadline: deadline)
         }
     }
 
@@ -88,7 +98,7 @@ enum DemoScene {
         return candidates.first { FileManager.default.fileExists(atPath: root.appendingPathComponent($0).path) } ?? "src/main.rs"
     }
 
-    private static func editor(_ state: AppState, file: String = "src/main.rs", line: Int = 9) {
+    static func editor(_ state: AppState, file: String = "src/main.rs", line: Int = 9) {
         guard let root = state.workspaceRoot else {
             return
         }
@@ -98,71 +108,15 @@ enum DemoScene {
         }
     }
 
-    private static func completion(_ state: AppState) {
-        guard let view = EditorPanes.shared.focusedView else {
-            return
+    static func open(_ state: AppState, file: String) -> URL? {
+        guard let root = state.workspaceRoot else {
+            return nil
         }
-        let ns = view.string as NSString
-        let anchor = ns.range(of: "counter.record(\"ride\");")
-        guard anchor.location != NSNotFound else {
-            return
+        let url = root.appendingPathComponent(file)
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            return nil
         }
-        let end = NSMaxRange(anchor)
-        EditorPanes.shared.focused?.select(NSRange(location: end, length: 0))
-        view.insertText("\n    let m: HashM", replacementRange: NSRange(location: end, length: 0))
-        DemoLaunch.after(0.1) {
-            CompletionSession.shared.trigger(view: view)
-        }
-    }
-
-    private static func cheatSheet(_ state: AppState) {
-        guard let view = EditorPanes.shared.focusedView else {
-            return
-        }
-        let ns = view.string as NSString
-        let anchor = ns.range(of: "counter.record(\"ride\");")
-        guard anchor.location != NSNotFound else {
-            return
-        }
-        let end = NSMaxRange(anchor)
-        EditorPanes.shared.focused?.select(NSRange(location: end, length: 0))
-        view.insertText("\n    ma", replacementRange: NSRange(location: end, length: 0))
-        DispatchQueue.main.async {
-            CompletionSession.shared.trigger(view: view)
-        }
-    }
-
-    private static func hover() {
-        guard let view = EditorPanes.shared.focusedView else {
-            return
-        }
-        let range = (view.string as NSString).range(of: "HashMap")
-        guard range.location != NSNotFound else {
-            return
-        }
-        HoverController.shared.present(view: view, range: range)
-    }
-
-    private static func quickOpen(_ state: AppState) {
-        state.toggleQuickOpen()
-        state.quickQuery = "ma"
-        state.refreshQuickOpen()
-    }
-
-    private static func symbols(_ state: AppState) {
-        state.toggleSymbolPicker()
-        state.symbolPicker.query = "Has"
-        state.symbolPicker.refresh()
-    }
-
-    private static func find(_ state: AppState) {
-        state.toggleProjectFind()
-        state.projectFind.query = "counter"
-        state.projectFind.run(root: state.workspaceRoot, showHidden: state.prefs.showHidden)
-    }
-
-    private static func problems(_ state: AppState) {
-        state.showProblems = true
-        state.runCheck()
+        state.openFile(url)
+        return url
     }
 }
