@@ -98,6 +98,7 @@ Screenshots come from the demo scenes: `Ride.app --args --open <folder> --demo <
 - `plan/roadmap/improve-extend.md` — current roadmap
 - `plan/roadmap/cheatsheet.md` — cheat sheet design
 - `plan/roadmap/must_have.md` — must-have editor commands (first priority)
-- `plan/roadmap/next.md` — next features and releases
+- `plan/roadmap/next.md` — next features and releases (1.1 and 1.2, done)
+- `plan/roadmap/next-1.3.md` — coding, completion, running and debugging after 1.2
 - `todo/` — open follow-ups per module
 - `AGENTS.md` — engineering rules for this repo
