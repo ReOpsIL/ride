@@ -86,6 +86,12 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.problemsHeight, fromEnd: true))
                         .reportSize(.height) { problemsHeight.wrappedValue = $0 }
                 }
+                if state.showTerminal {
+                    TerminalPanel(store: state.terminals)
+                        .frame(minHeight: 80, idealHeight: state.prefs.terminalHeight, maxHeight: 480)
+                        .background(SplitPositioner(position: state.prefs.terminalHeight, fromEnd: true))
+                        .reportSize(.height) { terminalHeight.wrappedValue = $0 }
+                }
                 if state.showRunOutput {
                     RunOutputPanel(output: state.runOutput)
                         .frame(minHeight: 80, idealHeight: state.prefs.runOutputHeight, maxHeight: 480)
@@ -134,6 +140,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.problemsHeight },
             set: { value in state.saveLayout { $0.problemsHeight = value } }
+        )
+    }
+
+    private var terminalHeight: Binding<Double> {
+        Binding(
+            get: { state.prefs.terminalHeight },
+            set: { value in state.saveLayout { $0.terminalHeight = value } }
         )
     }
 

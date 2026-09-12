@@ -46,6 +46,9 @@ final class AppState: ObservableObject {
     @Published var showRunOutput = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var showTerminal = false {
+        didSet { syncMenu(); scheduleWorkspaceSave() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -78,6 +81,7 @@ final class AppState: ObservableObject {
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
     let runOutput = RunOutput()
+    let terminals = TerminalStore()
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?

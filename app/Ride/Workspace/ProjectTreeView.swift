@@ -141,7 +141,7 @@ struct TreeRow: View {
         Button("Copy Path") { TreeActions.copyPath(node.url, root: nil) }
         Button("Copy Relative Path") { TreeActions.copyPath(node.url, root: state.workspaceRoot) }
         Button("Reveal in Finder") { TreeActions.reveal(node.url) }
-        Button("Open in Terminal") { TreeActions.openInTerminal(node.url, isDirectory: node.isDirectory) }
+        Button("Open in Terminal") { state.openTerminal(directory: dir) }
     }
 }
 

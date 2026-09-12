@@ -107,10 +107,4 @@ enum TreeActions {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
     }
-
-    static func openInTerminal(_ url: URL, isDirectory: Bool) {
-        let dir = WorkspaceFS.parentDir(for: url, isDirectory: isDirectory)
-        let terminal = URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app")
-        NSWorkspace.shared.open([dir], withApplicationAt: terminal, configuration: NSWorkspace.OpenConfiguration())
-    }
 }

@@ -3,12 +3,14 @@ import AppKit
 extension AppState {
     func watchWorkspaceQuit() {
         stopRunOnWorkspaceChange()
+        stopTerminalsOnWorkspaceChange()
         NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
             self?.runOutput.stop()
+            self?.terminals.closeAll()
             self?.flushWorkspace()
         }
     }
@@ -50,6 +52,7 @@ extension AppState {
 
     func open(_ url: URL) {
         runOutput.stop()
+        terminals.closeAll()
         flushWorkspace()
         restoringWorkspace = true
         workspaceRoot = url.standardizedFileURL

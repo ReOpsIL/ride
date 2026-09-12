@@ -39,10 +39,12 @@ struct LayoutState: Codable, Equatable {
     var outlineWidth: Double
     var problemsHeight: Double
     var runOutputHeight: Double
+    var terminalHeight: Double
     var previewWidth: Double
     var showSidebar: Bool
     var showProblems: Bool
     var showRunOutput: Bool
+    var showTerminal: Bool
     var showPreview: Bool
     var outlinePanel: Bool
 
@@ -51,10 +53,12 @@ struct LayoutState: Codable, Equatable {
         outlineWidth: 220,
         problemsHeight: 180,
         runOutputHeight: 200,
+        terminalHeight: 220,
         previewWidth: 460,
         showSidebar: true,
         showProblems: false,
         showRunOutput: false,
+        showTerminal: false,
         showPreview: false,
         outlinePanel: true
     )
@@ -64,10 +68,12 @@ struct LayoutState: Codable, Equatable {
         outlineWidth: Double,
         problemsHeight: Double,
         runOutputHeight: Double,
+        terminalHeight: Double = 220,
         previewWidth: Double,
         showSidebar: Bool,
         showProblems: Bool,
         showRunOutput: Bool,
+        showTerminal: Bool = false,
         showPreview: Bool,
         outlinePanel: Bool
     ) {
@@ -75,10 +81,12 @@ struct LayoutState: Codable, Equatable {
         self.outlineWidth = outlineWidth
         self.problemsHeight = problemsHeight
         self.runOutputHeight = runOutputHeight
+        self.terminalHeight = terminalHeight
         self.previewWidth = previewWidth
         self.showSidebar = showSidebar
         self.showProblems = showProblems
         self.showRunOutput = showRunOutput
+        self.showTerminal = showTerminal
         self.showPreview = showPreview
         self.outlinePanel = outlinePanel
     }
@@ -90,10 +98,12 @@ struct LayoutState: Codable, Equatable {
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
+        terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
         showSidebar = try c.decodeIfPresent(Bool.self, forKey: .showSidebar) ?? d.showSidebar
         showProblems = try c.decodeIfPresent(Bool.self, forKey: .showProblems) ?? d.showProblems
         showRunOutput = try c.decodeIfPresent(Bool.self, forKey: .showRunOutput) ?? d.showRunOutput
+        showTerminal = try c.decodeIfPresent(Bool.self, forKey: .showTerminal) ?? d.showTerminal
         showPreview = try c.decodeIfPresent(Bool.self, forKey: .showPreview) ?? d.showPreview
         outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
     }

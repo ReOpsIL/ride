@@ -24,10 +24,12 @@ extension AppState {
             outlineWidth: prefs.outlineWidth,
             problemsHeight: prefs.problemsHeight,
             runOutputHeight: prefs.runOutputHeight,
+            terminalHeight: prefs.terminalHeight,
             previewWidth: prefs.previewWidth,
             showSidebar: showSidebar,
             showProblems: showProblems,
             showRunOutput: showRunOutput,
+            showTerminal: showTerminal,
             showPreview: showPreview,
             outlinePanel: prefs.outlinePanel
         )
@@ -40,12 +42,14 @@ extension AppState {
         prefs.outlineWidth = layout.outlineWidth
         prefs.problemsHeight = layout.problemsHeight
         prefs.runOutputHeight = layout.runOutputHeight
+        prefs.terminalHeight = layout.terminalHeight
         prefs.previewWidth = layout.previewWidth
         prefs.outlinePanel = layout.outlinePanel
         prefs = prefs.clamped
         showSidebar = layout.showSidebar
         showProblems = layout.showProblems
         showRunOutput = layout.showRunOutput
+        showTerminal = layout.showTerminal
         showPreview = layout.showPreview
         persistLayout = persist
         syncMenu()
