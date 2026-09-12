@@ -37,11 +37,19 @@ extension AppState {
         let kind = projectModel.runKind
         let building = action == .build
         let argv = building && kind == .cargo ? BuildParse.cargoArgv(plan.argv) : plan.argv
-        BuildSession.shared.cancel()
-        let started = runInOutput(RunInvocation(argv: argv, workingDir: plan.cwd, env: plan.env))
-        if started, building {
-            BuildSession.shared.begin(kind: kind, baseDir: plan.cwd ?? workspaceRoot?.path ?? "")
+        guard let runId = runInOutput(RunInvocation(argv: argv, workingDir: plan.cwd, env: plan.env)) else {
+            return
         }
+        SingleFileChain.shared.cancel()
+        guard building else {
+            BuildSession.shared.cancel()
+            return
+        }
+        BuildSession.shared.begin(
+            runId: runId,
+            kind: kind,
+            baseDir: plan.cwd ?? workspaceRoot?.path ?? ""
+        )
     }
 
     func editRunConfig() {

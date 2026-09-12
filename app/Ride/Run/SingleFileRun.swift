@@ -21,21 +21,24 @@ final class SingleFileChain {
     static let shared = SingleFileChain()
 
     private var next: RunInvocation?
+    private var state = RunChainState()
 
-    func expect(_ invocation: RunInvocation?) {
+    func expect(_ invocation: RunInvocation?, after runId: Int) {
         next = invocation
+        state.expect(runId: runId)
     }
 
     func cancel() {
         next = nil
+        state.cancel()
     }
 
-    func take(_ finish: RunFinish) -> RunInvocation? {
+    func take(runId: Int, status: RunFinish) -> RunInvocation? {
         let pending = next
-        next = nil
-        guard case .exited(0) = finish else {
+        guard state.take(runId: runId, status: status) else {
             return nil
         }
+        next = nil
         return pending
     }
 }

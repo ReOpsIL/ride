@@ -9,7 +9,7 @@ extension AppState {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.runOutput.stop()
+            self?.stopRun()
             self?.terminals.closeAll()
             self?.flushWorkspace()
         }
@@ -51,7 +51,7 @@ extension AppState {
     }
 
     func open(_ url: URL) {
-        runOutput.stop()
+        stopRun()
         terminals.closeAll()
         flushWorkspace()
         restoringWorkspace = true

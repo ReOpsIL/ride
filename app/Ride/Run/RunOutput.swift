@@ -11,11 +11,14 @@ final class RunOutput: ObservableObject {
 
     var onChange: (() -> Void)?
     var lineFilter: ((String) -> String?)?
-    var onFinish: ((RunFinish) -> Void)?
+    var onFinish: ((Int, RunFinish) -> Void)?
     private let runner = ProcessRunner()
     private var last: RunInvocation?
-    private var queued: RunInvocation?
+    private var queued: (id: Int, invocation: RunInvocation)?
     private var workspaceSink: AnyCancellable?
+    private var nextId = 0
+    private var stopping = false
+    private(set) var runId = 0
 
     var lines: [String] {
         buffer.lines
@@ -29,10 +32,19 @@ final class RunOutput: ObservableObject {
         last != nil
     }
 
-    func start(_ invocation: RunInvocation) {
+    @discardableResult
+    func start(_ invocation: RunInvocation) -> Int? {
         guard !isRunning else {
-            return
+            return nil
         }
+        nextId += 1
+        return launch(invocation, id: nextId)
+    }
+
+    @discardableResult
+    private func launch(_ invocation: RunInvocation, id: Int) -> Int? {
+        runId = id
+        stopping = false
         last = invocation
         buffer.clear()
         status = nil
@@ -42,8 +54,9 @@ final class RunOutput: ObservableObject {
         runner.start(invocation) { [weak self] line in
             self?.append(line)
         } onFinish: { [weak self] finish in
-            self?.finished(finish)
+            self?.finished(finish, id: id)
         }
+        return id
     }
 
     func rerun() {
@@ -53,17 +66,22 @@ final class RunOutput: ObservableObject {
         start(last)
     }
 
-    func stopAndStart(_ invocation: RunInvocation) {
+    @discardableResult
+    func stopAndStart(_ invocation: RunInvocation) -> Int? {
         guard isRunning else {
-            start(invocation)
-            return
+            return start(invocation)
         }
-        queued = invocation
+        nextId += 1
+        let id = nextId
+        queued = (id, invocation)
+        stopping = true
         runner.stop()
+        return id
     }
 
     func stop() {
         queued = nil
+        stopping = true
         runner.stop()
     }
 
@@ -88,22 +106,23 @@ final class RunOutput: ObservableObject {
         }
     }
 
-    private func finished(_ finish: RunFinish) {
+    private func finished(_ finish: RunFinish, id: Int) {
         isRunning = false
         switch finish {
         case let .exited(code):
             status = code == 0 ? "exit 0" : "exit \(code)"
         case let .signalled(code):
-            status = "signal \(code)"
+            status = stopping ? "stopped" : "signal \(code)"
         case let .failed(message):
             status = message
             append(message)
         }
-        onFinish?(finish)
+        stopping = false
+        onFinish?(id, finish)
         onChange?()
         if let next = queued {
             queued = nil
-            start(next)
+            launch(next.invocation, id: next.id)
         }
     }
 }

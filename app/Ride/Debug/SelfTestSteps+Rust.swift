@@ -13,6 +13,7 @@ extension SelfTestSteps {
     private static func rustRun(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {
         [
             projectTargets(state: state, e: e),
+            buildStopped(state: state, e: e),
             buildTarget(state: state, e: e),
             runTarget(state: state, e: e),
             buildDiagnostic(state: state, e: e, scratch: scratch),
