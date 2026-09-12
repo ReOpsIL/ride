@@ -21,6 +21,17 @@ enum DemoLaunch {
         value(after: "--report")
     }
 
+    static var readyFile: String? {
+        value(after: "--ready-file")
+    }
+
+    static var quitAfter: Double? {
+        guard let raw = value(after: "--quit-after") else {
+            return nil
+        }
+        return Double(raw)
+    }
+
     static var scroll: Bool {
         CommandLine.arguments.contains("--scroll")
     }
@@ -40,14 +51,58 @@ enum DemoLaunch {
         if let size = frame {
             after(0.3) { resize(to: size) }
         }
+        armQuitGuard()
         guard let scene else {
             return
         }
         after(1.0) { DemoScene.run(scene, state: state) }
     }
 
+    static func ready() {
+        after(0.6) {
+            writeReadyFile()
+            armQuit()
+        }
+    }
+
+    static func activate() {
+        guard readyFile != nil else {
+            return
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.windows.first { $0.isVisible && !($0 is NSPanel) }?.makeKeyAndOrderFront(nil)
+    }
+
     static func after(_ seconds: Double, _ work: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
+    }
+
+    private static let guardSeconds = 600.0
+
+    private static func armQuitGuard() {
+        guard quitAfter != nil else {
+            return
+        }
+        after(guardSeconds) { NSApp.terminate(nil) }
+    }
+
+    private static func armQuit() {
+        guard let seconds = quitAfter else {
+            return
+        }
+        after(seconds) { NSApp.terminate(nil) }
+    }
+
+    private static func writeReadyFile() {
+        guard let path = readyFile else {
+            return
+        }
+        let url = URL(fileURLWithPath: path)
+        try? FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try? "ready\n".write(to: url, atomically: true, encoding: .utf8)
     }
 
     private static func resize(to size: NSSize) {

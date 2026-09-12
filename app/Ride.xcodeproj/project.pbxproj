@@ -85,6 +85,10 @@
 		A00000000000000000000130 /* ProblemsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012F /* ProblemsPanel.swift */; };
 		A00000000000000000000902 /* DemoLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000901 /* DemoLaunch.swift */; };
 		A00000000000000000000904 /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000903 /* DemoScene.swift */; };
+		F20000000000000000000002 /* DemoScene+Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DemoScene+Popups.swift */; };
+		F20000000000000000000004 /* DemoScene+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* DemoScene+Docs.swift */; };
+		F20000000000000000000006 /* DemoScene+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* DemoScene+Run.swift */; };
+		F20000000000000000000008 /* DemoScene+Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007 /* DemoScene+Lang.swift */; };
 		A00000000000000000000133 /* CheckStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000132 /* CheckStatusView.swift */; };
 		A00000000000000000000135 /* AppState+Check.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000134 /* AppState+Check.swift */; };
 		A00000000000000000000137 /* AppState+Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000136 /* AppState+Launch.swift */; };
@@ -492,6 +496,10 @@
 		A0000000000000000000012F /* ProblemsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProblemsPanel.swift"; sourceTree = "<group>"; };
 		A00000000000000000000901 /* DemoLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoLaunch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000903 /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene.swift"; sourceTree = "<group>"; };
+		F20000000000000000000001 /* DemoScene+Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Popups.swift"; sourceTree = "<group>"; };
+		F20000000000000000000003 /* DemoScene+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Docs.swift"; sourceTree = "<group>"; };
+		F20000000000000000000005 /* DemoScene+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Run.swift"; sourceTree = "<group>"; };
+		F20000000000000000000007 /* DemoScene+Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Lang.swift"; sourceTree = "<group>"; };
 		A00000000000000000000132 /* CheckStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckStatusView.swift"; sourceTree = "<group>"; };
 		A00000000000000000000134 /* AppState+Check.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Check.swift"; sourceTree = "<group>"; };
 		A00000000000000000000136 /* AppState+Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Launch.swift"; sourceTree = "<group>"; };
@@ -1295,6 +1303,10 @@
 				D50000000000000000000020 /* SelfTestSteps+DebugPanel.swift */,
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
+				F20000000000000000000001 /* DemoScene+Popups.swift */,
+				F20000000000000000000003 /* DemoScene+Docs.swift */,
+				F20000000000000000000005 /* DemoScene+Run.swift */,
+				F20000000000000000000007 /* DemoScene+Lang.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
@@ -1764,6 +1776,10 @@
 				0BA4D18F0FC9183F1366905D /* SizeReporter.swift in Sources */,
 				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
+				F20000000000000000000002 /* DemoScene+Popups.swift in Sources */,
+				F20000000000000000000004 /* DemoScene+Docs.swift in Sources */,
+				F20000000000000000000006 /* DemoScene+Run.swift in Sources */,
+				F20000000000000000000008 /* DemoScene+Lang.swift in Sources */,
 				A00000000000000000000127 /* CheckService.swift in Sources */,
 				H16000000000000000000011 /* CheckConvert.swift in Sources */,
 				A00000000000000000000129 /* DiagnosticRange.swift in Sources */,
