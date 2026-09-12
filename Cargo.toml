@@ -12,6 +12,10 @@ name = "ride-engine"
 path = "src/bin/ride_engine/main.rs"
 
 [[bin]]
+name = "fake-dap"
+path = "src/bin/fake_dap.rs"
+
+[[bin]]
 name = "uniffi-bindgen"
 path = "src/bin/uniffi_bindgen.rs"
 required-features = ["bindgen"]

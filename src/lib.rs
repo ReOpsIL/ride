@@ -2,6 +2,7 @@ uniffi::setup_scaffolding!();
 
 mod cheatsheet;
 mod check;
+mod debug;
 mod discover;
 mod engine;
 mod error;
@@ -26,6 +27,8 @@ pub use check::{
     include_dirs, merge_indexed, parse_clang, parse_lines, run_check, run_check_c_project,
     run_clang_check, sources_including,
 };
+pub use debug::adapter::{ADAPTER, adapter_path, find_adapter, spawn_adapter};
+pub use debug::transport::{DEFAULT_TIMEOUT, Transport};
 pub use discover::{
     CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,
     sysroot_path, system_includes, tool_status, workspace_info,
