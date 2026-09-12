@@ -14,6 +14,7 @@ extension SelfTestSteps {
         [
             projectTargets(state: state, e: e),
             buildStopped(state: state, e: e),
+            buildStopAndRerun(state: state, e: e, scratch: scratch),
             buildTarget(state: state, e: e),
             runTarget(state: state, e: e),
             runTests(state: state, e: e),
