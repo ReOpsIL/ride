@@ -2,17 +2,15 @@ import AppKit
 
 extension AppState {
     @discardableResult
-    func runInOutput(_ invocation: RunInvocation) -> Bool {
+    func runInOutput(_ invocation: RunInvocation) -> Int? {
         showRunOutput = true
         guard runOutput.isRunning else {
-            runOutput.start(invocation)
-            return true
+            return runOutput.start(invocation)
         }
         guard confirmStopAndRerun() else {
-            return false
+            return nil
         }
-        runOutput.stopAndStart(invocation)
-        return true
+        return runOutput.stopAndStart(invocation)
     }
 
     func rerunOutput() {
@@ -25,7 +23,14 @@ extension AppState {
     }
 
     func stopRun() {
+        BuildSession.shared.cancel()
+        SingleFileChain.shared.cancel()
         runOutput.stop()
+    }
+
+    func runFinished(_ runId: Int, _ finish: RunFinish) {
+        BuildSession.shared.finish(runId: runId, status: finish)
+        continueSingleFile(runId, finish)
     }
 
     func stopRunOnWorkspaceChange() {

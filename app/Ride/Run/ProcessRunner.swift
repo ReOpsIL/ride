@@ -12,12 +12,6 @@ struct RunInvocation: Equatable {
     }
 }
 
-enum RunFinish: Equatable {
-    case exited(Int32)
-    case signalled(Int32)
-    case failed(String)
-}
-
 final class ProcessRunner {
     private var process: Process?
     private var killWork: DispatchWorkItem?
@@ -34,11 +28,11 @@ final class ProcessRunner {
         onFinish: @escaping (RunFinish) -> Void
     ) {
         guard !isRunning, let tool = invocation.argv.first else {
-            onFinish(.failed("no command"))
+            report(.failed("no command"), onFinish: onFinish)
             return
         }
         guard let executable = ProcessLookup.url(for: tool, workingDir: invocation.workingDir) else {
-            onFinish(.failed("command not found: \(tool)"))
+            report(.failed("command not found: \(tool)"), onFinish: onFinish)
             return
         }
         let task = Process()
@@ -72,7 +66,13 @@ final class ProcessRunner {
             process = task
         } catch {
             process = nil
-            onFinish(.failed(error.localizedDescription))
+            report(.failed(error.localizedDescription), onFinish: onFinish)
+        }
+    }
+
+    private func report(_ finish: RunFinish, onFinish: @escaping (RunFinish) -> Void) {
+        DispatchQueue.main.async {
+            onFinish(finish)
         }
     }
 

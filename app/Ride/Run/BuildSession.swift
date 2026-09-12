@@ -7,22 +7,22 @@ final class BuildSession {
     private var baseDir = ""
     private var cargo: [Diagnostic] = []
     private var text = ""
-    private var active = false
+    private var state = BuildSessionState()
 
-    func begin(kind: RunProjectKind, baseDir: String) {
+    func begin(runId: Int, kind: RunProjectKind, baseDir: String) {
         self.kind = kind
         self.baseDir = baseDir
         cargo = []
         text = ""
-        active = true
+        state.begin(runId: runId)
     }
 
     func cancel() {
-        active = false
+        state.cancel()
     }
 
     func line(_ line: String) -> String? {
-        guard active else {
+        guard state.isActive else {
             return line
         }
         guard kind == .cargo else {
@@ -36,11 +36,10 @@ final class BuildSession {
         return BuildParse.rendered(line)
     }
 
-    func finish() {
-        guard active else {
+    func finish(runId: Int, status: RunFinish) {
+        guard state.finish(runId: runId, status: status) == .publish else {
             return
         }
-        active = false
         CheckService.shared.replaceBuild(diagnostics())
     }
 

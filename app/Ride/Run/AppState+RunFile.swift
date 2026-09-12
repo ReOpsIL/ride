@@ -46,20 +46,18 @@ extension AppState {
         )
     }
 
-    func continueSingleFile(_ finish: RunFinish) {
-        guard let next = SingleFileChain.shared.take(finish) else {
+    func continueSingleFile(_ runId: Int, _ finish: RunFinish) {
+        guard let next = SingleFileChain.shared.take(runId: runId, status: finish) else {
             return
         }
         runInOutput(next)
     }
 
     private func startSingleFile(_ invocation: RunInvocation, baseDir: String, then next: RunInvocation?) {
-        BuildSession.shared.cancel()
-        SingleFileChain.shared.cancel()
-        guard runInOutput(invocation) else {
+        guard let runId = runInOutput(invocation) else {
             return
         }
-        BuildSession.shared.begin(kind: .none, baseDir: baseDir)
-        SingleFileChain.shared.expect(next)
+        BuildSession.shared.begin(runId: runId, kind: .none, baseDir: baseDir)
+        SingleFileChain.shared.expect(next, after: runId)
     }
 }

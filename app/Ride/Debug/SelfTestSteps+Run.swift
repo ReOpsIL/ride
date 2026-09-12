@@ -34,6 +34,18 @@ extension SelfTestSteps {
         })
     }
 
+    static func buildStopped(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "build stopped", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 180, run: {
+            state.runAction(.build)
+            DemoLaunch.after(0.2) { state.stopRun() }
+        }, check: {
+            e.expect(
+                state.runOutput.status == "stopped" && CheckService.shared.buildDiagnostics.isEmpty,
+                "status \(state.runOutput.status ?? "nil") built \(CheckService.shared.buildDiagnostics.count)"
+            )
+        })
+    }
+
     static let buildErrorLine = 13
     static let buildErrorSuffix = " let _ride_bad: u32 = \"x\";"
 
