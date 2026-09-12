@@ -1,0 +1,14 @@
+{
+  "body": {
+    "error": {
+      "format": "mach-o-core does not support resuming processes",
+      "id": 3,
+      "showUser": true
+    }
+  },
+  "command": "continue",
+  "request_seq": 16,
+  "seq": 0,
+  "success": false,
+  "type": "response"
+}

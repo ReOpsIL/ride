@@ -1,0 +1,29 @@
+{
+  "body": {
+    "variables": [
+      {
+        "declarationLocationReference": 8,
+        "evaluateName": "counter",
+        "memoryReference": "0x16D992948",
+        "name": "counter",
+        "type": "ride_demo::util::Counter",
+        "value": "ride_demo::util::Counter @ 0x16d992948",
+        "variablesReference": 4
+      },
+      {
+        "declarationLocationReference": 10,
+        "evaluateName": "totals",
+        "memoryReference": "0x16D9929A0",
+        "name": "totals",
+        "type": "std::collections::hash::map::HashMap<&str, unsigned int, std::hash::random::RandomState, alloc::alloc::Global>",
+        "value": "std::collections::hash::map::HashMap<&str, unsigned int, std::hash::random::RandomState, alloc::alloc::Global> @ 0x16d9929a0",
+        "variablesReference": 5
+      }
+    ]
+  },
+  "command": "variables",
+  "request_seq": 9,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

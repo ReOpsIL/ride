@@ -1,0 +1,19 @@
+{
+  "body": {
+    "variables": [
+      {
+        "evaluateName": "counter.counts",
+        "memoryReference": "0x16D992948",
+        "name": "counts",
+        "type": "std::collections::hash::map::HashMap<alloc::string::String, unsigned int, std::hash::random::RandomState, alloc::alloc::Global>",
+        "value": "std::collections::hash::map::HashMap<alloc::string::String, unsigned int, std::hash::random::RandomState, alloc::alloc::Global> @ 0x16d992948",
+        "variablesReference": 9
+      }
+    ]
+  },
+  "command": "variables",
+  "request_seq": 12,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

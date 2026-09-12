@@ -1,0 +1,14 @@
+{
+  "body": {
+    "error": {
+      "format": "'/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/target/debug/no-such-binary' does not exist",
+      "id": 3,
+      "showUser": true
+    }
+  },
+  "command": "launch",
+  "request_seq": 2,
+  "seq": 0,
+  "success": false,
+  "type": "response"
+}

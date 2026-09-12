@@ -1,0 +1,13 @@
+{
+  "body": {
+    "memoryReference": "0x16D992948",
+    "result": "ride_demo::util::Counter @ 0x16d992948",
+    "type": "ride_demo::util::Counter",
+    "variablesReference": 10
+  },
+  "command": "evaluate",
+  "request_seq": 13,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

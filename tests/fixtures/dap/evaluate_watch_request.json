@@ -1,0 +1,10 @@
+{
+  "arguments": {
+    "context": "watch",
+    "expression": "counter",
+    "frameId": 524290
+  },
+  "command": "evaluate",
+  "seq": 13,
+  "type": "request"
+}

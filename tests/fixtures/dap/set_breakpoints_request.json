@@ -1,0 +1,26 @@
+{
+  "arguments": {
+    "breakpoints": [
+      {
+        "line": 10
+      },
+      {
+        "condition": "counter.count > 0",
+        "hitCondition": "2",
+        "line": 12
+      }
+    ],
+    "lines": [
+      10,
+      12
+    ],
+    "source": {
+      "name": "main.rs",
+      "path": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/src/main.rs"
+    },
+    "sourceModified": false
+  },
+  "command": "setBreakpoints",
+  "seq": 3,
+  "type": "request"
+}

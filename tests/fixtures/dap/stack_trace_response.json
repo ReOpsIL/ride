@@ -1,0 +1,232 @@
+{
+  "body": {
+    "stackFrames": [
+      {
+        "column": 9,
+        "id": 524288,
+        "instructionPointerReference": "0x10246DF10",
+        "line": 1910,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "core::ptr::write::h2b224fe44339f231",
+        "source": {
+          "name": "mod.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mod.rs"
+        }
+      },
+      {
+        "column": 18,
+        "id": 524289,
+        "instructionPointerReference": "0x10246DF10",
+        "line": 1418,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "core::ptr::mut_ptr::_$LT$impl$u20$$BP$mut$u20$T$GT$::write::h91a1f544681c06cf",
+        "source": {
+          "name": "mut_ptr.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mut_ptr.rs"
+        }
+      },
+      {
+        "column": 42,
+        "id": 524290,
+        "instructionPointerReference": "0x10246DF10",
+        "line": 20,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "ride_demo::main::h03f113d7557ca578",
+        "source": {
+          "name": "main.rs",
+          "path": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/src/main.rs"
+        }
+      },
+      {
+        "column": 5,
+        "id": 524291,
+        "instructionPointerReference": "0x10246FE34",
+        "line": 250,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "core::ops::function::FnOnce::call_once::h7edd1727989a3367",
+        "source": {
+          "name": "function.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ops/function.rs"
+        }
+      },
+      {
+        "column": 18,
+        "id": 524292,
+        "instructionPointerReference": "0x10247045C",
+        "line": 166,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::sys::backtrace::__rust_begin_short_backtrace::h44fd3f183b41eff7",
+        "source": {
+          "name": "backtrace.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs"
+        }
+      },
+      {
+        "column": 18,
+        "id": 524293,
+        "instructionPointerReference": "0x10246E134",
+        "line": 206,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::rt::lang_start::_$u7b$$u7b$closure$u7d$$u7d$::h51496a3d1d945fe9",
+        "source": {
+          "name": "rt.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/rt.rs"
+        }
+      },
+      {
+        "column": 21,
+        "id": 524294,
+        "instructionPointerReference": "0x10247BBA0",
+        "line": 287,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "core::ops::function::impls::_$LT$impl$u20$core..ops..function..FnOnce$LT$A$GT$$u20$for$u20$$RF$F$GT$::call_once::hfd11daa18fec4b01 [opt]",
+        "source": {
+          "name": "function.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/core/src/ops/function.rs"
+        }
+      },
+      {
+        "column": 40,
+        "id": 524295,
+        "instructionPointerReference": "0x10247BB98",
+        "line": 581,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panicking::catch_unwind::do_call::h8ddd2d07bceb025a [opt]",
+        "source": {
+          "name": "panicking.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panicking.rs"
+        }
+      },
+      {
+        "column": 19,
+        "id": 524296,
+        "instructionPointerReference": "0x10247BB94",
+        "line": 544,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panicking::catch_unwind::h41b41e3ab11529dd [opt]",
+        "source": {
+          "name": "panicking.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panicking.rs"
+        }
+      },
+      {
+        "column": 14,
+        "id": 524297,
+        "instructionPointerReference": "0x10247BB94",
+        "line": 359,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panic::catch_unwind::hb972c8fff1d8f02c [opt]",
+        "source": {
+          "name": "panic.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panic.rs"
+        }
+      },
+      {
+        "column": 24,
+        "id": 524298,
+        "instructionPointerReference": "0x10247BB94",
+        "line": 175,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::rt::lang_start_internal::_$u7b$$u7b$closure$u7d$$u7d$::h19bce2c73e86e331 [opt]",
+        "source": {
+          "name": "rt.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/rt.rs"
+        }
+      },
+      {
+        "column": 40,
+        "id": 524299,
+        "instructionPointerReference": "0x10247B80C",
+        "line": 581,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panicking::catch_unwind::do_call::h1282c9d47af4ada9 [opt]",
+        "source": {
+          "name": "panicking.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panicking.rs"
+        }
+      },
+      {
+        "column": 19,
+        "id": 524300,
+        "instructionPointerReference": "0x10247B80C",
+        "line": 544,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panicking::catch_unwind::h0705b8eeb870cf80 [opt]",
+        "source": {
+          "name": "panicking.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panicking.rs"
+        }
+      },
+      {
+        "column": 14,
+        "id": 524301,
+        "instructionPointerReference": "0x10247B80C",
+        "line": 359,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::panic::catch_unwind::hd7ba7e25e37404b8 [opt]",
+        "source": {
+          "name": "panic.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/panic.rs"
+        }
+      },
+      {
+        "column": 5,
+        "id": 524302,
+        "instructionPointerReference": "0x10247B80C",
+        "line": 171,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::rt::lang_start_internal::hdd036a54cd97d929 [opt]",
+        "source": {
+          "name": "rt.rs",
+          "path": "/rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/std/src/rt.rs"
+        }
+      },
+      {
+        "column": 5,
+        "id": 524303,
+        "instructionPointerReference": "0x10246E10C",
+        "line": 205,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "std::rt::lang_start::hf815c51222e18fba",
+        "source": {
+          "name": "rt.rs",
+          "path": "/Users/dovcaspi/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/rt.rs"
+        }
+      },
+      {
+        "column": 1,
+        "id": 524304,
+        "instructionPointerReference": "0x10246DFC0",
+        "line": 10,
+        "moduleId": "CB871023-F5C2-3D37-BE48-F04C7AE1788B",
+        "name": "main",
+        "source": {
+          "name": "main",
+          "path": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/target/debug/ride-demo`main",
+          "presentationHint": "deemphasize",
+          "sourceReference": 1
+        }
+      },
+      {
+        "column": 1,
+        "id": 524305,
+        "instructionPointerReference": "0x1811D5D54",
+        "line": 1797,
+        "moduleId": "0975AFBA-C46B-364C-BD84-A75DAA9E455A",
+        "name": "start",
+        "source": {
+          "name": "start",
+          "path": "/usr/lib/dyld`start",
+          "presentationHint": "deemphasize",
+          "sourceReference": 2
+        }
+      }
+    ],
+    "totalFrames": 18
+  },
+  "command": "stackTrace",
+  "request_seq": 7,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

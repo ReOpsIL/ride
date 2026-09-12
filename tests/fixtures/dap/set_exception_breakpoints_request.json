@@ -1,0 +1,12 @@
+{
+  "arguments": {
+    "filters": [
+      "cpp_throw",
+      "cpp_catch",
+      "rust_panic"
+    ]
+  },
+  "command": "setExceptionBreakpoints",
+  "seq": 4,
+  "type": "request"
+}

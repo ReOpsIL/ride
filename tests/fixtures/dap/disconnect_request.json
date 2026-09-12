@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "terminateDebuggee": true
+  },
+  "command": "disconnect",
+  "seq": 21,
+  "type": "request"
+}

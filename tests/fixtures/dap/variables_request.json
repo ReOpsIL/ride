@@ -1,0 +1,10 @@
+{
+  "arguments": {
+    "count": 0,
+    "start": 0,
+    "variablesReference": 1
+  },
+  "command": "variables",
+  "seq": 9,
+  "type": "request"
+}
