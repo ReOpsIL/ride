@@ -72,6 +72,25 @@ final class BuildSessionStateTests: XCTestCase {
         XCTAssertFalse(state.accepts(runId: 8))
     }
 
+    func testStaleLineIsDroppedWhileASessionIsActive() {
+        var state = BuildSessionState()
+        state.begin(runId: 1)
+        state.begin(runId: 2)
+        XCTAssertEqual(state.line(runId: 1), .drop)
+        XCTAssertEqual(state.line(runId: 2), .accept)
+    }
+
+    func testLineWithoutAnActiveSessionPassesThrough() {
+        var state = BuildSessionState()
+        XCTAssertEqual(state.line(runId: 1), .passThrough)
+        state.begin(runId: 1)
+        XCTAssertEqual(state.finish(runId: 1, status: .exited(0)), .publish)
+        XCTAssertEqual(state.line(runId: 1), .passThrough)
+        state.begin(runId: 2)
+        state.cancel()
+        XCTAssertEqual(state.line(runId: 2), .passThrough)
+    }
+
     func testDeclinedStartLeavesPendingChain() {
         var chain = RunChainState()
         chain.expect(runId: 1)

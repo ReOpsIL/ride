@@ -12,34 +12,6 @@ extension SelfTestSteps {
         })
     }
 
-    static func runTests(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "run tests", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
-            state.runAction(.test)
-        }, check: {
-            let tree = TestRunStore.shared.tree
-            return e.expect(
-                state.showTests && tree.passed == 1 && tree.failed == 0 && tree.rows.first?.name == "util::counts_one",
-                "passed \(tree.passed) failed \(tree.failed) rows \(tree.rows.map(\.name)) status \(state.runOutput.status ?? "nil")"
-            )
-        })
-    }
-
-    static func gutterRunMarkers(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "gutter run markers", wait: 0.5, run: {
-            guard let view = e.view, let document = state.activeBuffer else {
-                return
-            }
-            TestMarkers.refresh(document: document, view: view)
-        }, check: {
-            let gutter = (e.view?.enclosingScrollView?.superview as? EditorHostView)?.gutter
-            let markers = gutter?.runMarkers ?? [:]
-            return e.expect(
-                markers.count == 1 && markers[8]?.name == "main" && markers[8]?.framework == nil,
-                "markers \(markers.map { "\($0.key):\($0.value.name)" })"
-            )
-        })
-    }
-
     static func buildTarget(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "build target", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 180, run: {
             state.runAction(.build)
@@ -78,15 +50,17 @@ extension SelfTestSteps {
         SelfTestStep(name: "build stop and rerun", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
             state.runAction(.build)
             scratch.staleRunId = state.runOutput.runId
-            DemoLaunch.after(0.1) { state.runAction(.build) }
-        }, check: {
+            state.runAction(.build)
             state.runOutput.append(staleLine, runId: scratch.staleRunId)
-            return e.expect(
+            scratch.staleShown = state.runOutput.text.contains(staleLine)
+        }, check: {
+            e.expect(
                 state.runOutput.status == "exit 0"
+                    && !scratch.staleShown
                     && !state.runOutput.text.contains(staleLine)
                     && CheckService.shared.buildDiagnostics.isEmpty,
-                "status \(state.runOutput.status ?? "nil") built \(CheckService.shared.buildDiagnostics.count) "
-                    + "text \(state.runOutput.text.suffix(200))"
+                "status \(state.runOutput.status ?? "nil") stale shown \(scratch.staleShown) "
+                    + "built \(CheckService.shared.buildDiagnostics.count) text \(state.runOutput.text.suffix(200))"
             )
         })
     }

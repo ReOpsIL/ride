@@ -19,10 +19,19 @@ final class TestSession {
         state.cancel()
     }
 
-    func line(_ line: String) {
-        guard state.isActive else {
-            return
+    func line(runId: Int, _ line: String) -> String? {
+        switch state.line(runId: runId) {
+        case .drop:
+            return nil
+        case .passThrough:
+            return line
+        case .accept:
+            accept(line)
+            return line
         }
+    }
+
+    private func accept(_ line: String) {
         text += line + "\n"
         guard text.utf8.count < Self.liveLimit else {
             return

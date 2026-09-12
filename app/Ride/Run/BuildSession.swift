@@ -22,9 +22,17 @@ final class BuildSession {
     }
 
     func line(runId: Int, _ line: String) -> String? {
-        guard state.accepts(runId: runId) else {
+        switch state.line(runId: runId) {
+        case .drop:
+            return nil
+        case .passThrough:
             return line
+        case .accept:
+            return accepted(line)
         }
+    }
+
+    private func accepted(_ line: String) -> String? {
         guard kind == .cargo else {
             text += line + "\n"
             return line
