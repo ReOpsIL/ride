@@ -363,6 +363,10 @@ Three defects on commit f7b3484. (1) `ProcessRunner.receive` decodes each pipe c
 
 (1) `app/Ride/Run/SingleFileRun.swift` is FFI-free but not in the RideTests Sources phase and has no tests: register it and add `SingleFileRunTests` (supported extensions, output name is `single/<sha256>`, the chain releases only on exit 0 and clears on stop or on a different run id). (2) `single_file_command` builds a bare compiler line, so Run File on a project source that includes project headers fails at the include stage; when `compile_db::lookup` finds an entry for the file, reuse its `-I`, `-D`, `-std` and `-isystem` flags (only those, dropping `-c`, `-o` and the input), with a `tests/single.rs` case on a temp copy of `samples/cpp-demo` where Run File on `src/main.cpp` then fails at link (the acceptance the card originally described) and the self-test step asserts the linker error text.
 
+### R23 Build output lines gated by run id (R20) — Tier A, after R22
+
+`BuildSession.line` checks only `isActive`, so during a stop-and-rerun the dying process's trailing stdout (delivered until SIGKILL, up to 3 s) is accumulated into the new session. `ProcessRunner` and `RunOutput.append` carry the run id with every line; `BuildSession.line(runId:_:)` ignores lines whose id is not the session's; `RunOutput.finished` asserts the id it receives is the current run. `BuildSessionStateTests` gains a case where a line with the old id arrives after `begin` for the new id and is dropped; the self-test gains a stop-and-rerun step (start a build, immediately start another, wait, assert exactly one build's diagnostics and status).
+
 ## 9. Release 1.2 cards — project model (2026-09-11)
 
 The 1.2-1 sketch in section 3 becomes five cards. The engine owns detection; the app only renders. Everything lives under `src/project/` (new module, listed in `src/lib.rs`), exposed through one `Engine::project_model(root: String) -> Result<ProjectModel, EngineError>` and re-read on `Engine::reload_project(root)`.
@@ -445,7 +449,7 @@ Add SwiftTerm as a Swift package (pin the latest 1.x); `app/Ride/Terminal/Termin
 | 6 | R8–R15 | 8 commits, reviewed; R16 |
 | 7 | R17, R16, P1 | 3 commits, reviewed and merge-ready; gates green (183 app tests), self-test 65/65 Rust and 30/30 C++ without the persistence flag; the shared `name_start_byte` helper was deduplicated by the strong model |
 | 9 | Q1, Q4, Q5 in parallel; then Q2; then R18 and Q3; then Q4b, Q5b | Q1–Q5 engine/model halves, Q2, Q3, R18, R19 merged and reviewed (244 app tests, self-test 72/72); Q4b merged, reviewed: R20; Q5b and S1 running |
-| 10 | T1 merged, reviewed: R21 (Catch2 rework); S1 merged (SwiftTerm needs the Metal toolchain and the plugin-validation skip flags, now in the gate and CI); Q5b merged, reviewed: R22; gates green on 75bda62 (257 app tests, self-tests 77/77 and 32/32); R20 and R21 running; then R22, T2 |
+| 10 | T1 merged, reviewed: R21 (Catch2 rework); S1 merged (SwiftTerm needs the Metal toolchain and the plugin-validation skip flags, now in the gate and CI); Q5b merged, reviewed: R22; gates green on 75bda62 (257 app tests, self-tests 77/77 and 32/32); R20 merged, reviewed: R23; R21 merged; R22 and T2 running; then R23 |
 | 8 | P2–P4 in parallel, then P5 | P2–P4 merged and reviewed (gates green, 183 app tests, self-test 65/65); the strong model fixed the cmake-missing detection order. P5 in progress. Grok's balance ran out, so from here the executor is a Claude Opus subagent per card in its own git worktree (tests in per-card files such as `tests/project_cargo.rs` to avoid merge conflicts), merged into `grok/next-impl` by the strong model after review |
 
 The Grok runner lives at `scripts/run-cards.sh` (unused since batch 7): one card name per argument, one commit per card, logs under `target/executor-logs/`.
