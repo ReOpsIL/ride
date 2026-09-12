@@ -649,7 +649,12 @@ fn developer_mode() -> bool {
 
 fn demo_binary() -> Option<PathBuf> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/rust-demo");
-    let target = std::env::temp_dir().join("ride-debug-session-demo");
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    std::hash::Hash::hash(&root, &mut hasher);
+    let target = std::env::temp_dir().join(format!(
+        "ride-debug-session-demo-{:x}",
+        std::hash::Hasher::finish(&hasher)
+    ));
     let built = Command::new("cargo")
         .arg("build")
         .arg("--manifest-path")
