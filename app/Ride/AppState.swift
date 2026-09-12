@@ -49,6 +49,9 @@ final class AppState: ObservableObject {
     @Published var showTerminal = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var showTests = false {
+        didSet { syncMenu(); scheduleWorkspaceSave() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -81,6 +84,7 @@ final class AppState: ObservableObject {
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
     let runOutput = RunOutput()
+    let testRun = TestRunStore.shared
     let terminals = TerminalStore()
     var pendingJump: UInt32?
     var applyThenSave = false
@@ -125,7 +129,10 @@ final class AppState: ObservableObject {
         runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
-        runOutput.lineFilter = { BuildSession.shared.line($0) }
+        runOutput.lineFilter = { line in
+            TestSession.shared.line(line)
+            return BuildSession.shared.line(line)
+        }
         runOutput.onFinish = { [weak self] runId, finish in
             self?.runFinished(runId, finish)
         }

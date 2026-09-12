@@ -27,3 +27,10 @@ impl Counter {
         self.counts.get(name).copied().unwrap_or(0)
     }
 }
+
+#[test]
+fn counts_one() {
+    let mut counter = Counter::new();
+    counter.record("ride");
+    assert_eq!(counter.count("ride"), 1);
+}

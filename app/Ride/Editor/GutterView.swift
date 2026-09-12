@@ -5,17 +5,25 @@ final class GutterView: NSView {
     var diagnosticLines: [Int: DiagnosticLevel] = [:] {
         didSet { needsDisplay = true }
     }
+    var runMarkers: [Int: TestMarkerRow] = [:] {
+        didSet {
+            if runMarkers != oldValue {
+                needsDisplay = true
+            }
+        }
+    }
     private var viewport: NSTextViewportLayoutController?
     static let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
     static let currentFont = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
     static let glyphColumn: CGFloat = 14
+    static let markerColumn: CGFloat = 13
     static let trailing: CGFloat = 8
 
     override var isFlipped: Bool { true }
 
     static func width(digits: Int) -> CGFloat {
         let digit = ("0" as NSString).size(withAttributes: [.font: font]).width
-        return glyphColumn + digit * CGFloat(max(digits, 3)) + trailing + 4
+        return markerColumn + glyphColumn + digit * CGFloat(max(digits, 3)) + trailing + 4
     }
 
     func attach(textView: RideTextView) {
@@ -54,7 +62,11 @@ final class GutterView: NSView {
 
     override func mouseDown(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
-        guard point.x < Self.glyphColumn, let line = line(at: point), let textView else {
+        guard point.x < Self.markerColumn + Self.glyphColumn, let line = line(at: point), let textView else {
+            return
+        }
+        if point.x < Self.markerColumn {
+            runMarker(line, in: textView)
             return
         }
         if textView.folds.startsDirty {
@@ -64,6 +76,13 @@ final class GutterView: NSView {
             return
         }
         FoldController.shared.toggle(line: line)
+    }
+
+    private func runMarker(_ line: Int, in textView: RideTextView) {
+        guard let marker = runMarkers[line], let state = textView.hooks.binding?()?.state else {
+            return
+        }
+        state.runTestMarker(marker)
     }
 
     private func line(at point: NSPoint) -> Int? {
@@ -120,7 +139,10 @@ final class GutterView: NSView {
         } else if let level = diagnosticLines[lineNo] {
             let color = level == .error ? theme.chrome.error : theme.chrome.warning
             color.setFill()
-            NSBezierPath(ovalIn: NSRect(x: 5, y: dest.midY - 3, width: 6, height: 6)).fill()
+            NSBezierPath(ovalIn: NSRect(x: Self.markerColumn + 5, y: dest.midY - 3, width: 6, height: 6)).fill()
+        }
+        if runMarkers[lineNo] != nil {
+            drawRunMarker(at: dest, color: theme.chrome.accent)
         }
     }
 
@@ -134,8 +156,20 @@ final class GutterView: NSView {
         return NSRange(location: start, length: max(0, end - start))
     }
 
+    private func drawRunMarker(at dest: NSRect, color: NSColor) {
+        let cx = Self.markerColumn / 2
+        let cy = dest.midY
+        let path = NSBezierPath()
+        path.move(to: CGPoint(x: cx - 3, y: cy - 4))
+        path.line(to: CGPoint(x: cx + 4, y: cy))
+        path.line(to: CGPoint(x: cx - 3, y: cy + 4))
+        path.close()
+        color.setFill()
+        path.fill()
+    }
+
     private func drawChevron(collapsed: Bool, at dest: NSRect, color: NSColor) {
-        let cx = Self.glyphColumn / 2
+        let cx = Self.markerColumn + Self.glyphColumn / 2
         let cy = dest.midY
         let path = NSBezierPath()
         if collapsed {

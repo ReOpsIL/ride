@@ -11,6 +11,7 @@ extension SessionService {
             document.outline = outline.map(Self.row)
         }
         Underlines.apply(document: document, view: view, parseErrors: update.errors)
+        TestMarkers.refresh(document: document, view: view)
     }
 
     private func mergeHighlights(document: BufferDocument, update: SessionUpdate) {

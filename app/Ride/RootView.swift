@@ -92,6 +92,12 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.terminalHeight, fromEnd: true))
                         .reportSize(.height) { terminalHeight.wrappedValue = $0 }
                 }
+                if state.showTests {
+                    TestsPanel(store: state.testRun)
+                        .frame(minHeight: 80, idealHeight: state.prefs.testsHeight, maxHeight: 480)
+                        .background(SplitPositioner(position: state.prefs.testsHeight, fromEnd: true))
+                        .reportSize(.height) { testsHeight.wrappedValue = $0 }
+                }
                 if state.showRunOutput {
                     RunOutputPanel(output: state.runOutput)
                         .frame(minHeight: 80, idealHeight: state.prefs.runOutputHeight, maxHeight: 480)
@@ -140,6 +146,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.problemsHeight },
             set: { value in state.saveLayout { $0.problemsHeight = value } }
+        )
+    }
+
+    private var testsHeight: Binding<Double> {
+        Binding(
+            get: { state.prefs.testsHeight },
+            set: { value in state.saveLayout { $0.testsHeight = value } }
         )
     }
 
