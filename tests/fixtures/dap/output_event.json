@@ -1,0 +1,9 @@
+{
+  "body": {
+    "category": "console",
+    "output": "warning: failed to set breakpoint site at 0x10246dc64 for breakpoint 1.1: error: mach-o-core does not support enabling breakpoints\n"
+  },
+  "event": "output",
+  "seq": 0,
+  "type": "event"
+}

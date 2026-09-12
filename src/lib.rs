@@ -2,7 +2,7 @@ uniffi::setup_scaffolding!();
 
 mod cheatsheet;
 mod check;
-mod debug;
+pub mod debug;
 mod discover;
 mod engine;
 mod error;

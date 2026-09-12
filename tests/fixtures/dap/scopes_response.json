@@ -1,0 +1,31 @@
+{
+  "body": {
+    "scopes": [
+      {
+        "expensive": false,
+        "name": "Locals",
+        "namedVariables": 2,
+        "presentationHint": "locals",
+        "variablesReference": 1
+      },
+      {
+        "expensive": false,
+        "name": "Globals",
+        "namedVariables": 0,
+        "variablesReference": 2
+      },
+      {
+        "expensive": false,
+        "name": "Registers",
+        "namedVariables": 3,
+        "presentationHint": "registers",
+        "variablesReference": 3
+      }
+    ]
+  },
+  "command": "scopes",
+  "request_seq": 8,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

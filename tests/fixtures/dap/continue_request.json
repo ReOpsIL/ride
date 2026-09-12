@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "threadId": 0
+  },
+  "command": "continue",
+  "seq": 16,
+  "type": "request"
+}

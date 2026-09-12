@@ -1,0 +1,19 @@
+{
+  "body": {
+    "breakpoints": [
+      {
+        "id": 3,
+        "verified": true
+      },
+      {
+        "id": 4,
+        "verified": true
+      }
+    ]
+  },
+  "command": "setExceptionBreakpoints",
+  "request_seq": 4,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

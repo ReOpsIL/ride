@@ -1,0 +1,10 @@
+{
+  "arguments": {
+    "context": "repl",
+    "expression": "p 2*3",
+    "frameId": 524290
+  },
+  "command": "evaluate",
+  "seq": 15,
+  "type": "request"
+}

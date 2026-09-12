@@ -1,0 +1,15 @@
+{
+  "body": {
+    "threads": [
+      {
+        "id": 0,
+        "name": "Thread 1"
+      }
+    ]
+  },
+  "command": "threads",
+  "request_seq": 6,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

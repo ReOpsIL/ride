@@ -1,0 +1,13 @@
+{
+  "body": {
+    "allThreadsStopped": true,
+    "description": "ESR_EC_DABORT_EL0 (fault address: 0x0)",
+    "preserveFocusHint": false,
+    "reason": "exception",
+    "threadCausedFocus": true,
+    "threadId": 0
+  },
+  "event": "stopped",
+  "seq": 0,
+  "type": "event"
+}

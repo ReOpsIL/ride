@@ -1,0 +1,33 @@
+{
+  "body": {
+    "breakpoints": [
+      {
+        "column": 13,
+        "id": 1,
+        "instructionReference": "0x10246DC64",
+        "line": 10,
+        "source": {
+          "name": "main.rs",
+          "path": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/src/main.rs"
+        },
+        "verified": false
+      },
+      {
+        "column": 34,
+        "id": 2,
+        "instructionReference": "0x10246DCB4",
+        "line": 12,
+        "source": {
+          "name": "main.rs",
+          "path": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/src/main.rs"
+        },
+        "verified": false
+      }
+    ]
+  },
+  "command": "setBreakpoints",
+  "request_seq": 3,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

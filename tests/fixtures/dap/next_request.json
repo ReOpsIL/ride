@@ -1,0 +1,9 @@
+{
+  "arguments": {
+    "granularity": "statement",
+    "threadId": 0
+  },
+  "command": "next",
+  "seq": 17,
+  "type": "request"
+}

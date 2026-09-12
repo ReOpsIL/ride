@@ -1,0 +1,11 @@
+{
+  "body": {
+    "result": "(int) 6\n",
+    "variablesReference": 0
+  },
+  "command": "evaluate",
+  "request_seq": 15,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

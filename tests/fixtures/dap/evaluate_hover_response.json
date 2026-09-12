@@ -1,0 +1,13 @@
+{
+  "body": {
+    "memoryReference": "0x16D9929A0",
+    "result": "std::collections::hash::map::HashMap<&str, unsigned int, std::hash::random::RandomState, alloc::alloc::Global> @ 0x16d9929a0",
+    "type": "std::collections::hash::map::HashMap<&str, unsigned int, std::hash::random::RandomState, alloc::alloc::Global>",
+    "variablesReference": 11
+  },
+  "command": "evaluate",
+  "request_seq": 14,
+  "seq": 0,
+  "success": true,
+  "type": "response"
+}

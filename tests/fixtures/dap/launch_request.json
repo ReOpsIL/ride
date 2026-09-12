@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "args": [
+      "--demo"
+    ],
+    "cwd": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo",
+    "env": {
+      "RIDE_DEMO": "1"
+    },
+    "initCommands": [
+      "settings set symbols.enable-external-lookup false"
+    ],
+    "program": "/private/tmp/claude-503/-Users-dovcaspi-develop-ride/855fc12d-4b96-4d61-b0ca-ecd3d046b13e/scratchpad/dap/rust-demo/target/debug/no-such-binary",
+    "stopOnEntry": true
+  },
+  "command": "launch",
+  "seq": 2,
+  "type": "request"
+}

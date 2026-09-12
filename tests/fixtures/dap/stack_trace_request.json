@@ -1,0 +1,10 @@
+{
+  "arguments": {
+    "levels": 20,
+    "startFrame": 0,
+    "threadId": 0
+  },
+  "command": "stackTrace",
+  "seq": 7,
+  "type": "request"
+}

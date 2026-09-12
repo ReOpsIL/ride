@@ -1,0 +1,18 @@
+{
+  "arguments": {
+    "adapterID": "lldb-dap",
+    "clientID": "ride",
+    "clientName": "Ride",
+    "columnsStartAt1": true,
+    "linesStartAt1": true,
+    "locale": "en-US",
+    "pathFormat": "path",
+    "supportsProgressReporting": false,
+    "supportsRunInTerminalRequest": false,
+    "supportsVariablePaging": true,
+    "supportsVariableType": true
+  },
+  "command": "initialize",
+  "seq": 1,
+  "type": "request"
+}
