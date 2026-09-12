@@ -1,5 +1,6 @@
 mod events;
 mod handshake;
+mod progress;
 mod requests;
 mod store;
 mod wire;
@@ -8,6 +9,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 use std::sync::{Arc, Mutex, Weak};
 use std::thread;
+use std::time::Duration;
 
 use crate::error::EngineError;
 use crate::ffi::{Breakpoint, DebugEvent, DebugLaunch, DebugListener, DebugState, DebugThread};
@@ -15,6 +17,9 @@ use crate::ffi::{Breakpoint, DebugEvent, DebugLaunch, DebugListener, DebugState,
 use super::protocol::Capabilities;
 use super::registry::DebugRegistry;
 use super::transport::Transport;
+use progress::Progress;
+
+const DRAIN_TIMEOUT: Duration = Duration::from_secs(5);
 
 struct Registration {
     registry: Weak<DebugRegistry>,
@@ -30,6 +35,7 @@ pub struct DebugSession {
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
     registration: Mutex<Option<Registration>>,
+    progress: Progress,
 }
 
 impl DebugSession {
@@ -50,6 +56,7 @@ impl DebugSession {
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),
             registration: Mutex::new(None),
+            progress: Progress::default(),
         });
         session.emit(DebugEvent::Launching);
         let worker = Arc::clone(&session);
@@ -70,16 +77,15 @@ impl DebugSession {
                 id,
             });
         }
-        if self.finished() {
+        if self.ended() {
             self.retire();
         }
     }
 
     pub fn shutdown(&self) {
-        let ended = self.finished();
-        self.set_state(DebugState::Terminated);
+        let entered = self.transition(DebugState::Terminated);
         self.transport.shutdown();
-        if !ended {
+        if entered {
             self.emit(DebugEvent::Terminated);
         }
     }
@@ -106,14 +112,41 @@ impl DebugSession {
             .unwrap_or_default()
     }
 
-    fn set_state(&self, state: DebugState) {
+    pub(super) fn transition(&self, state: DebugState) -> bool {
         let ending = matches!(state, DebugState::Terminated | DebugState::Exited { .. });
-        if let Ok(mut current) = self.state.lock() {
-            *current = state;
-        }
-        if ending {
+        let entered =
+            self.replace_state(|current| !matches!(current, DebugState::Terminated), state);
+        if entered && ending {
             self.retire();
         }
+        entered
+    }
+
+    pub(super) fn begin_running(&self) -> bool {
+        self.replace_state(
+            |current| matches!(current, DebugState::Launching),
+            DebugState::Running,
+        )
+    }
+
+    fn replace_state(&self, allowed: impl Fn(&DebugState) -> bool, state: DebugState) -> bool {
+        let mut current = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if !allowed(&current) {
+            return false;
+        }
+        *current = state;
+        true
+    }
+
+    pub(super) fn mark_processed(&self, stamp: u64) {
+        self.progress.mark(stamp);
+    }
+
+    pub(super) fn drained(&self, mark: u64) -> bool {
+        self.progress.wait(mark, DRAIN_TIMEOUT)
     }
 
     fn retire(&self) {
@@ -135,15 +168,23 @@ impl DebugSession {
         self.listener.on_event(event);
     }
 
-    fn fail(&self, message: &str) {
+    pub(super) fn fail(&self, message: &str) {
         self.emit(DebugEvent::Failed {
             message: message.to_string(),
         });
-        self.set_state(DebugState::Terminated);
-        self.emit(DebugEvent::Terminated);
+        if self.transition(DebugState::Terminated) {
+            self.emit(DebugEvent::Terminated);
+        }
     }
 
     fn finished(&self) -> bool {
         matches!(self.state(), DebugState::Terminated)
+    }
+
+    fn ended(&self) -> bool {
+        matches!(
+            self.state(),
+            DebugState::Terminated | DebugState::Exited { .. }
+        )
     }
 }

@@ -1,17 +1,22 @@
 mod data;
 mod script;
+mod state;
 
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, BufRead, BufReader, Stdout, Write};
+use std::sync::{Arc, Mutex};
+use std::thread;
 
 use serde_json::Value;
+
+type Out = Arc<Mutex<Stdout>>;
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     announce_pid(&args);
     let stdin = io::stdin();
     let mut reader = BufReader::new(stdin.lock());
-    let mut out = io::stdout();
-    let mut state = script::State::from_args(&args);
+    let out: Out = Arc::new(Mutex::new(io::stdout()));
+    let mut state = state::State::from_args(&args);
     while let Ok(Some(message)) = read_frame(&mut reader) {
         let command = message
             .get("command")
@@ -19,23 +24,42 @@ fn main() {
             .unwrap_or("")
             .to_string();
         if command == "truncate" {
-            let _ = out.write_all(b"Content-Length: 4096\r\n\r\n{\"type\":\"resp");
-            let _ = out.flush();
-            return;
+            return truncate(&out);
         }
-        let (messages, stop) = script::reply(&mut state, &command, &message);
-        for message in messages {
-            let response = message.get("type").and_then(Value::as_str) == Some("response");
-            write_frame(&mut out, &message, response);
+        let reply = script::reply(&mut state, &command, &message);
+        write_all(&out, reply.now);
+        if !reply.later.is_empty() {
+            let delayed = Arc::clone(&out);
+            let delay = state.delay;
+            let later = reply.later;
+            thread::spawn(move || {
+                thread::sleep(delay);
+                write_all(&delayed, later);
+            });
         }
-        if stop {
+        if reply.stop {
             return;
         }
     }
 }
 
+fn truncate(out: &Out) {
+    let Ok(mut handle) = out.lock() else {
+        return;
+    };
+    let _ = handle.write_all(b"Content-Length: 4096\r\n\r\n{\"type\":\"resp");
+    let _ = handle.flush();
+}
+
+fn write_all(out: &Out, messages: Vec<Value>) {
+    for message in messages {
+        let response = message.get("type").and_then(Value::as_str) == Some("response");
+        write_frame(out, &message, response);
+    }
+}
+
 fn announce_pid(args: &[String]) {
-    let Some(index) = args.iter().position(|arg| arg == script::PID_FILE) else {
+    let Some(index) = args.iter().position(|arg| arg == state::PID_FILE) else {
         return;
     };
     let Some(path) = args.get(index + 1) else {
@@ -44,7 +68,7 @@ fn announce_pid(args: &[String]) {
     let _ = std::fs::write(path, std::process::id().to_string());
 }
 
-fn write_frame(out: &mut impl Write, message: &Value, extra_headers: bool) {
+fn write_frame(out: &Out, message: &Value, extra_headers: bool) {
     let Ok(body) = serde_json::to_vec(message) else {
         return;
     };
@@ -56,9 +80,12 @@ fn write_frame(out: &mut impl Write, message: &Value, extra_headers: bool) {
     } else {
         format!("content-length: {}\n\n", body.len())
     };
-    let _ = out.write_all(header.as_bytes());
-    let _ = out.write_all(&body);
-    let _ = out.flush();
+    let Ok(mut handle) = out.lock() else {
+        return;
+    };
+    let _ = handle.write_all(header.as_bytes());
+    let _ = handle.write_all(&body);
+    let _ = handle.flush();
 }
 
 fn read_frame<R: BufRead>(reader: &mut R) -> io::Result<Option<Value>> {

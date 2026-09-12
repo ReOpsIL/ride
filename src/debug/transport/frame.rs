@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::io::{BufRead, BufReader};
 use std::process::ChildStdout;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::mpsc::Sender;
 use std::sync::{Arc, Condvar, Mutex};
 
@@ -16,13 +17,14 @@ pub struct Inbox {
 }
 
 pub type Shared = Arc<(Mutex<Inbox>, Condvar)>;
+pub type Events = Sender<(u64, Value)>;
 
-pub fn pump(stdout: ChildStdout, shared: Shared, events: Sender<Value>) {
+pub fn pump(stdout: ChildStdout, shared: Shared, events: Events, received: Arc<AtomicU64>) {
     let mut reader = BufReader::new(stdout);
     loop {
         match read_frame(&mut reader) {
             Ok(Some(message)) => {
-                if dispatch(message, &shared, &events).is_err() {
+                if dispatch(message, &shared, &events, &received).is_err() {
                     return;
                 }
             }
@@ -32,7 +34,12 @@ pub fn pump(stdout: ChildStdout, shared: Shared, events: Sender<Value>) {
     }
 }
 
-fn dispatch(message: Value, shared: &Shared, events: &Sender<Value>) -> Result<(), ()> {
+fn dispatch(
+    message: Value,
+    shared: &Shared,
+    events: &Events,
+    received: &Arc<AtomicU64>,
+) -> Result<(), ()> {
     let (lock, signal) = &**shared;
     match message.get("type").and_then(Value::as_str).unwrap_or("") {
         "response" => {
@@ -47,7 +54,10 @@ fn dispatch(message: Value, shared: &Shared, events: &Sender<Value>) -> Result<(
             signal.notify_all();
             Ok(())
         }
-        "event" => events.send(message).map_err(|_| ()),
+        "event" => {
+            let stamp = received.fetch_add(1, Ordering::SeqCst) + 1;
+            events.send((stamp, message)).map_err(|_| ())
+        }
         _ => Ok(()),
     }
 }
