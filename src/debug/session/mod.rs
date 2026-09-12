@@ -168,13 +168,30 @@ impl DebugSession {
         self.listener.on_event(event);
     }
 
-    pub(super) fn fail(&self, message: &str) {
+    fn emit_failure(&self, message: &str) {
         self.emit(DebugEvent::Failed {
             message: message.to_string(),
         });
+        self.emit(DebugEvent::Terminated);
+    }
+
+    pub(super) fn fail(&self, message: &str) {
         if self.transition(DebugState::Terminated) {
-            self.emit(DebugEvent::Terminated);
+            self.emit_failure(message);
         }
+    }
+
+    pub(super) fn abandon_launch(&self, message: &str) {
+        let entered = self.replace_state(
+            |current| matches!(current, DebugState::Launching),
+            DebugState::Terminated,
+        );
+        if !entered {
+            return;
+        }
+        self.transport.shutdown();
+        self.retire();
+        self.emit_failure(message);
     }
 
     fn finished(&self) -> bool {

@@ -6,6 +6,7 @@ pub const IGNORE_DISCONNECT: &str = "--ignore-disconnect";
 pub const PID_FILE: &str = "--pid-file";
 pub const DELAY_STOP: &str = "--delay-stop";
 pub const EXIT_ON_CONTINUE: &str = "--exit-on-continue";
+pub const DIE_ON_DONE: &str = "--die-on-done";
 
 #[derive(Default)]
 pub struct Reply {
@@ -22,6 +23,7 @@ pub struct State {
     pub launch_seq: Option<i64>,
     pub ignore_disconnect: bool,
     pub exit_on_continue: bool,
+    pub die_on_done: bool,
 }
 
 impl Default for State {
@@ -34,6 +36,7 @@ impl Default for State {
             launch_seq: None,
             ignore_disconnect: false,
             exit_on_continue: false,
+            die_on_done: false,
         }
     }
 }
@@ -43,6 +46,7 @@ impl State {
         Self {
             ignore_disconnect: args.iter().any(|arg| arg == IGNORE_DISCONNECT),
             exit_on_continue: args.iter().any(|arg| arg == EXIT_ON_CONTINUE),
+            die_on_done: args.iter().any(|arg| arg == DIE_ON_DONE),
             delay: Duration::from_millis(millis(args, DELAY_STOP)),
             ..Self::default()
         }
