@@ -79,7 +79,7 @@ fn launch_arguments(session: &DebugSession) -> LaunchArguments {
             .map(|(name, value)| (name.clone(), value.clone()))
             .collect::<BTreeMap<String, String>>(),
         stop_on_entry: Some(launch.stop_on_entry),
-        init_commands: render::toolchain_init_commands(is_rust_target(session)),
+        init_commands: render::init_commands(session.sysroot.as_deref(), is_rust_target(session)),
     }
 }
 
@@ -135,11 +135,24 @@ fn exception_breakpoints(
 fn is_rust_target(session: &DebugSession) -> bool {
     let launch = &session.launch;
     if let Some(cwd) = &launch.cwd
-        && Path::new(cwd).join("Cargo.toml").is_file()
+        && has_manifest(Path::new(cwd))
     {
         return true;
     }
     Path::new(&launch.program)
         .ancestors()
-        .any(|parent| parent.file_name().is_some_and(|name| name == "target"))
+        .any(is_cargo_target_dir)
+}
+
+fn has_manifest(directory: &Path) -> bool {
+    directory
+        .ancestors()
+        .any(|parent| parent.join("Cargo.toml").is_file())
+}
+
+fn is_cargo_target_dir(directory: &Path) -> bool {
+    directory.file_name().is_some_and(|name| name == "target")
+        && directory
+            .parent()
+            .is_some_and(|parent| parent.join("Cargo.toml").is_file())
 }

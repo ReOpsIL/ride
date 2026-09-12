@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
@@ -20,11 +20,13 @@ impl DebugRegistry {
         adapter: &Path,
         arguments: &[String],
         launch: DebugLaunch,
+        sysroot: Option<PathBuf>,
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
     ) -> Result<u64, EngineError> {
         let id = self.reserve();
-        let session = DebugSession::start(adapter, arguments, launch, breakpoints, listener)?;
+        let session =
+            DebugSession::start(adapter, arguments, launch, sysroot, breakpoints, listener)?;
         self.insert(id, Arc::clone(&session));
         session.attach(self, id);
         Ok(id)

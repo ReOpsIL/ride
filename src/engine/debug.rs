@@ -22,8 +22,16 @@ impl Engine {
     ) -> Result<u64, EngineError> {
         let adapter = adapter_path()?;
         let registry = self.debug_registry()?;
+        let sysroot = self.read(|i| i.sysroot.clone())?;
         registry
-            .start(&adapter, &[], launch, breakpoints, Arc::clone(&listener))
+            .start(
+                &adapter,
+                &[],
+                launch,
+                sysroot,
+                breakpoints,
+                Arc::clone(&listener),
+            )
             .inspect_err(|err| {
                 listener.on_event(DebugEvent::Failed {
                     message: err.to_string(),

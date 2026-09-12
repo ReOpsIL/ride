@@ -1,11 +1,14 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-use ride_engine::debug::render::{init_commands, toolchain_init_commands};
-use ride_engine::{Breakpoint, DebugCommand, DebugEvent, DebugLaunch, DebugListener, DebugSession};
+use ride_engine::debug::render::init_commands;
+use ride_engine::{
+    Breakpoint, DebugCommand, DebugEvent, DebugLaunch, DebugListener, DebugSession, EngineConfig,
+    sysroot_path,
+};
 
 const FAKE_ADAPTER: &str = env!("CARGO_BIN_EXE_fake-dap");
 const LOOKUP: &str = "lib/rustlib/etc/lldb_lookup.py";
@@ -94,7 +97,6 @@ fn the_lldb_commands_file_is_sourced_when_present() {
 fn a_non_rust_target_gets_no_init_commands() {
     let root = sysroot_with(&[LOOKUP, COMMANDS]);
     assert!(init_commands(Some(root.path()), false).is_empty());
-    assert!(toolchain_init_commands(false).is_empty());
 }
 
 #[test]
@@ -104,14 +106,25 @@ fn a_sysroot_without_the_scripts_gets_no_init_commands() {
     assert!(init_commands(None, true).is_empty());
 }
 
-fn launched(cwd: Option<&Path>) -> Arc<Recorder> {
+fn configured(sysroot: &Path) -> Option<PathBuf> {
+    let config = EngineConfig {
+        index_dir: String::new(),
+        cargo_home: None,
+        sysroot: Some(sysroot.to_string_lossy().to_string()),
+        offline_metadata: true,
+    };
+    sysroot_path(&config).expect("the configured sysroot")
+}
+
+fn launched(program: &str, cwd: Option<&Path>, sysroot: Option<PathBuf>) -> Arc<Recorder> {
     let listener = Arc::new(Recorder::default());
-    let mut launch = DebugLaunch::program("/usr/bin/true");
+    let mut launch = DebugLaunch::program(program);
     launch.cwd = cwd.map(|path| path.to_string_lossy().to_string());
     let session = DebugSession::start(
         Path::new(FAKE_ADAPTER),
         &[],
         launch,
+        sysroot,
         vec![Breakpoint::at("src/main.rs", 10)],
         listener.clone(),
     )
@@ -124,21 +137,54 @@ fn launched(cwd: Option<&Path>) -> Arc<Recorder> {
 }
 
 #[test]
-fn the_launch_request_carries_the_rust_init_commands() {
+fn the_launch_request_carries_the_configured_sysroot() {
     let root = tempfile::tempdir().expect("a temp crate");
     fs::write(root.path().join("Cargo.toml"), b"[package]\n").expect("the manifest");
-    let listener = launched(Some(root.path()));
-    let expected = toolchain_init_commands(true).join(" | ");
-    let line = listener.line("initCommands:");
-    assert_eq!(line, format!("initCommands: {expected}"));
+    let sysroot = sysroot_with(&[LOOKUP, COMMANDS]);
+    let listener = launched(
+        "/usr/bin/true",
+        Some(root.path()),
+        configured(sysroot.path()),
+    );
+    let expected = init_commands(Some(sysroot.path()), true).join(" | ");
+    assert_eq!(
+        listener.line("initCommands:"),
+        format!("initCommands: {expected}")
+    );
+    assert!(expected.contains("lldb_lookup.py"), "{expected}");
+}
+
+#[test]
+fn a_crate_below_the_working_directory_root_is_a_rust_target() {
+    let root = tempfile::tempdir().expect("a temp crate");
+    fs::write(root.path().join("Cargo.toml"), b"[package]\n").expect("the manifest");
+    let nested = root.path().join("src/inner");
+    fs::create_dir_all(&nested).expect("the nested directory");
+    let sysroot = sysroot_with(&[LOOKUP]);
+    let listener = launched("/usr/bin/true", Some(&nested), configured(sysroot.path()));
     assert!(
-        expected.is_empty() || line.contains("lldb_lookup.py"),
-        "{line}"
+        listener.line("initCommands:").contains("lldb_lookup.py"),
+        "the manifest above the working directory makes it a rust target"
     );
 }
 
 #[test]
+fn a_target_directory_without_a_manifest_is_not_a_rust_target() {
+    let root = tempfile::tempdir().expect("a temp project");
+    let binary = root.path().join("target/debug/demo");
+    fs::create_dir_all(binary.parent().expect("a parent")).expect("the build directory");
+    let sysroot = sysroot_with(&[LOOKUP, COMMANDS]);
+    let listener = launched(
+        &binary.to_string_lossy(),
+        Some(root.path()),
+        configured(sysroot.path()),
+    );
+    assert_eq!(listener.line("initCommands:"), "initCommands:");
+}
+
+#[test]
 fn the_launch_request_of_a_non_rust_target_carries_none() {
-    let listener = launched(None);
+    let sysroot = sysroot_with(&[LOOKUP, COMMANDS]);
+    let listener = launched("/usr/bin/true", None, configured(sysroot.path()));
     assert_eq!(listener.line("initCommands:"), "initCommands:");
 }

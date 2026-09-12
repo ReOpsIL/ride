@@ -1,13 +1,14 @@
 mod events;
 mod handshake;
 mod progress;
+mod registration;
 mod requests;
 mod store;
 mod wire;
 
 use std::collections::BTreeMap;
-use std::path::Path;
-use std::sync::{Arc, Mutex, Weak};
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
@@ -18,23 +19,20 @@ use super::protocol::Capabilities;
 use super::registry::DebugRegistry;
 use super::transport::Transport;
 use progress::Progress;
+use registration::Registration;
 
 const DRAIN_TIMEOUT: Duration = Duration::from_secs(5);
-
-struct Registration {
-    registry: Weak<DebugRegistry>,
-    id: u64,
-}
 
 pub struct DebugSession {
     transport: Transport,
     listener: Arc<dyn DebugListener>,
     launch: DebugLaunch,
+    sysroot: Option<PathBuf>,
     state: Mutex<DebugState>,
     capabilities: Mutex<Capabilities>,
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
-    registration: Mutex<Option<Registration>>,
+    registration: Registration,
     progress: Progress,
 }
 
@@ -43,6 +41,7 @@ impl DebugSession {
         adapter: &Path,
         arguments: &[String],
         launch: DebugLaunch,
+        sysroot: Option<PathBuf>,
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
     ) -> Result<Arc<Self>, EngineError> {
@@ -51,11 +50,12 @@ impl DebugSession {
             transport,
             listener,
             launch,
+            sysroot,
             state: Mutex::new(DebugState::Launching),
             capabilities: Mutex::new(Capabilities::default()),
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),
-            registration: Mutex::new(None),
+            registration: Registration::default(),
             progress: Progress::default(),
         });
         session.emit(DebugEvent::Launching);
@@ -71,12 +71,7 @@ impl DebugSession {
     }
 
     pub fn attach(self: &Arc<Self>, registry: &Arc<DebugRegistry>, id: u64) {
-        if let Ok(mut slot) = self.registration.lock() {
-            *slot = Some(Registration {
-                registry: Arc::downgrade(registry),
-                id,
-            });
-        }
+        self.registration.set(registry, id);
         if self.ended() {
             self.retire();
         }
@@ -150,18 +145,7 @@ impl DebugSession {
     }
 
     fn retire(&self) {
-        let taken = self
-            .registration
-            .lock()
-            .ok()
-            .and_then(|mut slot| slot.take());
-        let Some(registration) = taken else {
-            return;
-        };
-        let Some(registry) = registration.registry.upgrade() else {
-            return;
-        };
-        registry.remove(registration.id);
+        self.registration.retire();
     }
 
     fn emit(&self, event: DebugEvent) {
