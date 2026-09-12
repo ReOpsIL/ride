@@ -59,8 +59,8 @@ struct TestTree: Equatable {
         count(.running)
     }
 
-    var failedNames: [String] {
-        rows.filter { $0.outcome == .failed }.map(\.name)
+    func failedNames(framework: TestMarkerFramework) -> [String] {
+        rows.filter { $0.outcome == .failed }.map { TestNameQualifier.qualified($0, framework: framework) }
     }
 
     mutating func clear() {
@@ -103,6 +103,29 @@ struct TestTree: Equatable {
 
     private func count(_ outcome: TestOutcome) -> Int {
         rows.filter { $0.outcome == outcome }.count
+    }
+}
+
+enum TestNameQualifier {
+    static func qualified(_ row: TestRow, framework: TestMarkerFramework) -> String {
+        guard let separator = separator(framework), !row.suite.isEmpty else {
+            return row.name
+        }
+        guard !row.name.hasPrefix(row.suite + separator) else {
+            return row.name
+        }
+        return row.suite + separator + row.name
+    }
+
+    private static func separator(_ framework: TestMarkerFramework) -> String? {
+        switch framework {
+        case .cargo:
+            return "::"
+        case .googleTest:
+            return "."
+        case .catch2, .ctest:
+            return nil
+        }
     }
 }
 

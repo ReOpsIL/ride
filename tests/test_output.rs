@@ -58,12 +58,13 @@ fn cargo_list_yields_names_and_modules() {
 fn cargo_output_carries_status_and_failure_text() {
     let events = engine().parse_test_output(TestFramework::Cargo, fixture("cargo-run.txt"));
     assert_eq!(events.len(), 3);
-    let passed = named(&events, "util::runner_fixture_tests::adds_two_numbers");
+    let passed = named(&events, "adds_two_numbers");
     assert_eq!(passed.status, TestStatus::Passed);
+    assert_eq!(passed.suite.as_deref(), Some("util::runner_fixture_tests"));
     assert!(passed.output.is_empty());
-    let ignored = named(&events, "util::runner_fixture_tests::skipped_for_now");
+    let ignored = named(&events, "skipped_for_now");
     assert_eq!(ignored.status, TestStatus::Ignored);
-    let failed = named(&events, "util::runner_fixture_tests::compares_wrong_sum");
+    let failed = named(&events, "compares_wrong_sum");
     assert_eq!(failed.status, TestStatus::Failed);
     assert!(failed.output.contains("arithmetic drifted"));
     assert!(failed.output.contains("src/util.rs:40"));

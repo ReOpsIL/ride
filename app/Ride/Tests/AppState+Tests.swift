@@ -5,8 +5,8 @@ extension AppState {
         showTests.toggle()
     }
 
-    func beginTestRun(runId: Int, argv: [String]) {
-        guard let framework = TestSession.framework(for: projectModel.runKind) else {
+    func beginTestRun(runId: Int, argv: [String], framework: TestMarkerFramework? = nil) {
+        guard let framework = framework ?? TestSession.framework(for: projectModel.runKind) else {
             TestSession.shared.cancel()
             return
         }
@@ -27,16 +27,22 @@ extension AppState {
     }
 
     func rerunFailedTests() {
-        let names = TestRunStore.shared.tree.failedNames
-        guard let framework = markerFramework() else {
+        guard let framework = rerunFramework() else {
             showNotice("No test framework for this project")
             return
         }
-        runTests(names: names, framework: framework)
+        runTests(names: TestRunStore.shared.tree.failedNames(framework: framework), framework: framework)
     }
 
     var canRerunFailedTests: Bool {
-        !TestRunStore.shared.tree.failedNames.isEmpty && markerFramework() != nil
+        guard let framework = rerunFramework() else {
+            return false
+        }
+        return !TestRunStore.shared.tree.failedNames(framework: framework).isEmpty
+    }
+
+    private func rerunFramework() -> TestMarkerFramework? {
+        TestRunStore.shared.framework ?? markerFramework()
     }
 
     private func runTests(names: [String], framework: TestMarkerFramework) {
@@ -53,7 +59,7 @@ extension AppState {
         }
         BuildSession.shared.cancel()
         SingleFileChain.shared.cancel()
-        beginTestRun(runId: runId, argv: argv)
+        beginTestRun(runId: runId, argv: argv, framework: framework)
     }
 
     private func markerFramework() -> TestMarkerFramework? {

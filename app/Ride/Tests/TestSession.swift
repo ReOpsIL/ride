@@ -8,11 +8,11 @@ final class TestSession {
     private var framework = TestFramework.cargo
     private var text = ""
 
-    func begin(runId: Int, framework: TestFramework, command: String?) {
-        self.framework = framework
+    func begin(runId: Int, framework: TestMarkerFramework, command: String?) {
+        self.framework = Self.engineFramework(framework)
         text = ""
         state.begin(runId: runId)
-        TestRunStore.shared.begin(command: command)
+        TestRunStore.shared.begin(command: command, framework: framework)
     }
 
     func cancel() {
@@ -48,14 +48,27 @@ final class TestSession {
         TestRunStore.shared.finish(label(outcome, status: status))
     }
 
-    static func framework(for kind: RunProjectKind) -> TestFramework? {
+    static func framework(for kind: RunProjectKind) -> TestMarkerFramework? {
         switch kind {
         case .cargo:
             return .cargo
         case .cmake:
-            return .cTest
+            return .ctest
         case .make, .compileDb, .none:
             return nil
+        }
+    }
+
+    static func engineFramework(_ framework: TestMarkerFramework) -> TestFramework {
+        switch framework {
+        case .cargo:
+            return .cargo
+        case .googleTest:
+            return .googleTest
+        case .catch2:
+            return .catch2
+        case .ctest:
+            return .cTest
         }
     }
 
