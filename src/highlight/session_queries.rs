@@ -42,6 +42,10 @@ impl BufferSession {
         self.syntax.symbol_at(&self.replica, byte)
     }
 
+    pub fn local_occurrences(&self, byte: u32) -> Vec<ByteRange> {
+        self.syntax.local_occurrences(&self.replica, byte)
+    }
+
     pub fn enclosing_ranges(&self, range: ByteRange) -> Vec<ByteRange> {
         self.syntax.enclosing_ranges(&self.replica, range)
     }

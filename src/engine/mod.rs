@@ -40,6 +40,7 @@ mod project;
 mod query;
 mod reach;
 mod refs;
+mod rename;
 mod run;
 mod rust_members;
 mod sessions;
