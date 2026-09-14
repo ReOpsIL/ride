@@ -5,6 +5,10 @@ pub enum GenKind {
     Setters,
     EqualityOps,
     StreamInsert,
+    ImplBlock,
+    DefaultImpl,
+    DisplayImpl,
+    New,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
