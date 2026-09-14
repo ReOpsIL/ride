@@ -87,6 +87,9 @@ extension SelfTestSteps {
             }
             scratch.original = util.text
             util.text = "let _stale = 0;\n" + util.text
+            if let id = reviewId(state, suffix: "util.rs") {
+                state.renamePreview.selection.setReview(id, true)
+            }
             scratch.applied = true
             RenameController.shared.applyWorkspace()
             return noticeFired(state)
