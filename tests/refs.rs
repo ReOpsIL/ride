@@ -112,11 +112,13 @@ fn cpp_extractor_yields_call_for_header_method() {
         "describe"
     );
 
-    assert!(
-        records
-            .iter()
-            .any(|r| r.kind == RefKind::Include && r.name == "shapes.hpp"),
-        "include of shapes.hpp should yield an Include record"
+    let include = records
+        .iter()
+        .find(|r| r.kind == RefKind::Include && r.name == "shapes.hpp")
+        .expect("include of shapes.hpp should yield an Include record");
+    assert_eq!(
+        &text[include.byte_start as usize..include.byte_end as usize],
+        "shapes.hpp"
     );
 }
 

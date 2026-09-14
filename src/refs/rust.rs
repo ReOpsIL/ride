@@ -1,11 +1,11 @@
 use tree_sitter::{Language, Node, Parser, Tree};
 
-use crate::ffi::{ItemKind, OutlineItem};
+use crate::ffi::OutlineItem;
 use crate::highlight::Lang;
 use crate::highlight::rust_outline;
 use crate::highlight::symbol::node_text;
 
-use super::record::{RefExtractor, RefKind, RefRecord};
+use super::record::{RefExtractor, RefKind, RefRecord, enclosing};
 
 pub struct RustExtractor;
 
@@ -132,13 +132,4 @@ fn record(node: Node<'_>, kind: RefKind, text: &str, outline: &[OutlineItem]) ->
         enclosing_item,
         enclosing_kind,
     }
-}
-
-fn enclosing(outline: &[OutlineItem], byte: u32) -> (String, ItemKind) {
-    outline
-        .iter()
-        .filter(|o| o.start_byte <= byte && byte < o.end_byte)
-        .min_by_key(|o| o.end_byte - o.start_byte)
-        .map(|o| (o.name.clone(), o.kind))
-        .unwrap_or_else(|| (String::new(), ItemKind::Mod))
 }

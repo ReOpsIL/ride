@@ -1,4 +1,4 @@
-use crate::ffi::ItemKind;
+use crate::ffi::{ItemKind, OutlineItem};
 use crate::highlight::Lang;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -65,4 +65,13 @@ pub fn extractor_for(lang: Lang) -> Box<dyn RefExtractor> {
         Lang::C | Lang::Cpp => Box::new(super::c::CExtractor),
         _ => Box::new(StubExtractor),
     }
+}
+
+pub(super) fn enclosing(outline: &[OutlineItem], byte: u32) -> (String, ItemKind) {
+    outline
+        .iter()
+        .filter(|o| o.start_byte <= byte && byte < o.end_byte)
+        .min_by_key(|o| o.end_byte - o.start_byte)
+        .map(|o| (o.name.clone(), o.kind))
+        .unwrap_or_else(|| (String::new(), ItemKind::Mod))
 }

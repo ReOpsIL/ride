@@ -1,9 +1,9 @@
 use tree_sitter::{Node, Parser};
 
-use crate::ffi::{ItemKind, OutlineItem};
+use crate::ffi::OutlineItem;
 use crate::highlight::Lang;
 
-use super::record::{RefExtractor, RefKind, RefRecord};
+use super::record::{RefExtractor, RefKind, RefRecord, enclosing};
 
 pub struct CExtractor;
 
@@ -115,12 +115,14 @@ fn emit_include(node: Node<'_>, ctx: &mut Ctx<'_>) {
         .trim_start_matches('<')
         .trim_end_matches('>')
         .to_string();
+    let offset = raw.find(&name).unwrap_or(0);
+    let start = path.start_byte() + offset;
     record(
         ctx,
-        name,
+        name.clone(),
         RefKind::Include,
-        path.start_byte() as u32,
-        path.end_byte() as u32,
+        start as u32,
+        (start + name.len()) as u32,
     );
 }
 
@@ -150,22 +152,6 @@ fn record(ctx: &mut Ctx<'_>, name: String, kind: RefKind, start: u32, end: u32) 
         enclosing_item,
         enclosing_kind,
     });
-}
-
-fn enclosing(outline: &[OutlineItem], byte: u32) -> (String, ItemKind) {
-    let mut best: Option<&OutlineItem> = None;
-    for item in outline {
-        if byte < item.start_byte || byte >= item.end_byte {
-            continue;
-        }
-        if best.is_none_or(|b| item.start_byte > b.start_byte) {
-            best = Some(item);
-        }
-    }
-    match best {
-        Some(item) => (item.name.clone(), item.kind),
-        None => (String::new(), ItemKind::Mod),
-    }
 }
 
 fn line_at(text: &str, byte: usize) -> u32 {
