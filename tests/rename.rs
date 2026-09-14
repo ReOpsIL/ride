@@ -102,24 +102,24 @@ fn rename_plan_lists_unresolved_matches_for_review() {
     let mut covered: Vec<&str> = plan
         .files
         .iter()
+        .chain(plan.review.iter())
         .map(|f| f.path.as_str())
-        .chain(
-            plan.skipped
-                .iter()
-                .map(|s| s.rsplit_once(':').map(|(p, _)| p).unwrap_or(s)),
-        )
         .collect();
     covered.sort_unstable();
     covered.dedup();
     assert!(covered.contains(&"src/main.rs"), "{covered:?}");
     assert!(covered.contains(&"src/util.rs"), "{covered:?}");
     assert!(
-        plan.files.is_empty() && !plan.skipped.is_empty(),
-        "an unresolved workspace symbol must not auto-edit: files={:?} skipped={:?}",
+        plan.files.is_empty() && !plan.review.is_empty(),
+        "an unresolved workspace symbol must not auto-edit: files={:?} review={:?}",
         plan.files,
-        plan.skipped
+        plan.review
     );
-    for file in &plan.files {
+    let review_paths: Vec<&str> = plan.review.iter().map(|f| f.path.as_str()).collect();
+    assert!(review_paths.contains(&"src/main.rs"), "{review_paths:?}");
+    assert!(review_paths.contains(&"src/util.rs"), "{review_paths:?}");
+    for file in &plan.review {
+        assert!(!file.edits.is_empty());
         assert!(file.edits.iter().all(|e| e.text == "log"));
     }
 }

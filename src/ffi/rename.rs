@@ -11,7 +11,7 @@ pub struct RenamePlan {
     pub name: String,
     pub new_name: String,
     pub files: Vec<RenameFile>,
-    pub skipped: Vec<String>,
+    pub review: Vec<RenameFile>,
 }
 
 impl RenamePlan {
@@ -20,7 +20,7 @@ impl RenamePlan {
             name: String::new(),
             new_name: String::new(),
             files: Vec::new(),
-            skipped: Vec::new(),
+            review: Vec::new(),
         }
     }
 }

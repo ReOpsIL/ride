@@ -8,10 +8,10 @@ struct RenamePreviewFile: Equatable {
 struct RenameReviewRow: Equatable {
     let id: Int
     let path: String
-    let line: Int
+    let count: Int
 
     var label: String {
-        line > 0 ? "\(path):\(line)" : path
+        path
     }
 }
 
@@ -46,12 +46,22 @@ struct RenameSelection: Equatable {
         files.filter { includedFiles.contains($0.path) }.map(\.path)
     }
 
+    var chosenReviewIds: [Int] {
+        review.filter { includedReview.contains($0.id) }.map(\.id)
+    }
+
+    var chosenTargetCount: Int {
+        chosenFilePaths.count + chosenReviewIds.count
+    }
+
     var chosenEditCount: Int {
-        files.filter { includedFiles.contains($0.path) }.reduce(0) { $0 + $1.count }
+        let fileEdits = files.filter { includedFiles.contains($0.path) }.reduce(0) { $0 + $1.count }
+        let reviewEdits = review.filter { includedReview.contains($0.id) }.reduce(0) { $0 + $1.count }
+        return fileEdits + reviewEdits
     }
 
     var canApply: Bool {
-        !chosenFilePaths.isEmpty
+        !chosenFilePaths.isEmpty || !chosenReviewIds.isEmpty
     }
 
     var allFilesSelected: Bool {
@@ -94,14 +104,9 @@ struct RenameSelection: Equatable {
         includedReview = on ? Set(review.map(\.id)) : []
     }
 
-    static func reviewRows(from skipped: [String]) -> [RenameReviewRow] {
-        skipped.enumerated().map { index, entry in
-            guard let colon = entry.lastIndex(of: ":"),
-                  let line = Int(entry[entry.index(after: colon)...])
-            else {
-                return RenameReviewRow(id: index, path: entry, line: 0)
-            }
-            return RenameReviewRow(id: index, path: String(entry[..<colon]), line: line)
+    static func reviewRows(from review: [RenamePreviewFile]) -> [RenameReviewRow] {
+        review.enumerated().map { index, file in
+            RenameReviewRow(id: index, path: file.path, count: file.count)
         }
     }
 }

@@ -43,7 +43,13 @@ final class RenameController {
         guard let state, let plan = state.renamePlan else {
             return
         }
-        RenameApply.applyWorkspace(state: state, plan: plan, chosen: Set(state.renamePreview.selection.chosenFilePaths))
+        let selection = state.renamePreview.selection
+        RenameApply.applyWorkspace(
+            state: state,
+            plan: plan,
+            chosenFiles: Set(selection.chosenFilePaths),
+            chosenReview: Set(selection.chosenReviewIds)
+        )
         state.showRenamePreview = false
         state.renamePlan = nil
     }
@@ -89,12 +95,13 @@ final class RenameController {
     }
 
     private func load(_ plan: RenamePlan, present: Bool) -> Bool {
-        guard let state, !(plan.files.isEmpty && plan.skipped.isEmpty) else {
+        guard let state, !(plan.files.isEmpty && plan.review.isEmpty) else {
             return false
         }
         state.renamePlan = plan
         let files = plan.files.map { RenamePreviewFile(path: $0.path, count: $0.edits.count) }
-        let review = RenameSelection.reviewRows(from: plan.skipped)
+        let reviewFiles = plan.review.map { RenamePreviewFile(path: $0.path, count: $0.edits.count) }
+        let review = RenameSelection.reviewRows(from: reviewFiles)
         state.renamePreview.load(name: plan.name, newName: plan.newName, files: files, review: review)
         if present {
             state.showRenamePreview = true
