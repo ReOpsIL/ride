@@ -50,5 +50,5 @@ pub use index::{
     live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,
 };
 pub use markdown::render as render_markdown;
-pub use refs::{RefKind, RefRecord};
+pub use refs::{RefExtractor, RefKind, RefRecord, extractor_for};
 pub use toolchain::tool_path;
