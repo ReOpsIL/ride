@@ -37,7 +37,7 @@ extension SelfTestSteps {
             headerSourceSwitch(state: state, e: e),
             runFileError(state: state, e: e),
             recompileFile(state: state, e: e),
-        ]
+        ] + liveSteps(state: state, e: e)
     }
 
     private static func commentLine(e: SelfTestEditor) -> SelfTestStep {

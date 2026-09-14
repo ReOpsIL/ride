@@ -52,6 +52,7 @@ struct ToolsSettings: View {
         Form {
             Section("cargo check") {
                 Toggle("Check on save", isOn: bind.bool(\.checkOnSave))
+                Toggle("Use Clippy for live diagnostics", isOn: bind.bool(\.useClippy))
             }
             Section("rustfmt") {
                 Toggle("Format on save", isOn: bind.bool(\.formatOnSave))
