@@ -80,14 +80,32 @@ enum RenameApply {
             return persist(state, buffer) ? .applied(changes.count) : .failed
         }
         if let buffer {
-            buffer.text = EditResult.applying(changes, to: text)
-            guard persist(state, buffer) else {
-                return .failed
-            }
-            resync(buffer)
-            return .applied(changes.count)
+            return applyBackground(state, buffer, EditResult.applying(changes, to: text), count: changes.count)
         }
         return writeDisk(url, EditResult.applying(changes, to: text), count: changes.count)
+    }
+
+    private static func applyBackground(
+        _ state: AppState,
+        _ buffer: BufferDocument,
+        _ text: String,
+        count: Int
+    ) -> Outcome {
+        var ok = true
+        BufferTextUndo.apply(text, to: buffer, undo: EditorPanes.shared.focusedView?.undoManager) { [weak state] doc in
+            guard let state else {
+                return
+            }
+            if persist(state, doc) {
+                resync(doc)
+                if let view = state.editorView(for: doc), view.string != doc.text {
+                    doc.bind(view)
+                }
+            } else {
+                ok = false
+            }
+        }
+        return ok ? .applied(count) : .failed
     }
 
     private static func validate(text: String, name: String, edits: [TextEdit]) -> [TextChange]? {
@@ -149,5 +167,12 @@ enum RenameApply {
             parts.append("Failed \(failed.joined(separator: ", "))")
         }
         return parts.isEmpty ? nil : parts.joined(separator: ". ")
+    }
+}
+
+extension BufferDocument: TextUndoTarget {
+    var undoText: String {
+        get { text }
+        set { text = newValue }
     }
 }
