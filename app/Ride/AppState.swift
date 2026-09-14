@@ -52,6 +52,9 @@ final class AppState: ObservableObject {
     @Published var showTests = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var showUsages = false {
+        didSet { syncMenu() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -86,6 +89,7 @@ final class AppState: ObservableObject {
     let runOutput = RunOutput()
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()
+    let usages = UsagesModel.shared
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?

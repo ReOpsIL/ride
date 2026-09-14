@@ -100,6 +100,10 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.testsHeight, fromEnd: true))
                         .reportSize(.height) { testsHeight.wrappedValue = $0 }
                 }
+                if state.showUsages {
+                    UsagesPanel(model: state.usages)
+                        .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)
+                }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)
                         .frame(minHeight: 320, idealHeight: state.prefs.debugHeight, maxHeight: 600)

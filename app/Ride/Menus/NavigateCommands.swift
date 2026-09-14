@@ -31,6 +31,9 @@ struct NavigateCommands: Commands {
                 .keyboardShortcut(FunctionKeys.f12, modifiers: [])
             Button("Switch Header / Source") { state.switchHeaderSource() }
                 .keyboardShortcut(FunctionKeys.f10, modifiers: [])
+            Button("Find Usages") { state.findUsages() }
+                .keyboardShortcut(FunctionKeys.f7, modifiers: .option)
+                .disabled(!menu.hasEditor)
             Divider()
             Button("Next Problem") { state.nextProblem(1) }
                 .keyboardShortcut(FunctionKeys.f2, modifiers: [])

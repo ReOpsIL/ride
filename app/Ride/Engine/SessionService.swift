@@ -142,6 +142,9 @@ final class SessionService {
                 }
                 self.paint(opened?.update, document: document, view: view, text: view.string)
                 FoldController.shared.restore(document: document, view: view)
+                if let id = opened?.sessionId {
+                    UsageIndexer.index(sessionId: id)
+                }
             }
         }
     }
