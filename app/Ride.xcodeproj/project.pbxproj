@@ -208,6 +208,16 @@
 		F10000000000000000000009 /* AppState+Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* AppState+Panes.swift */; };
 		F1000000000000000000000B /* PaneLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PaneLayoutTests.swift */; };
 		F12000000000000000000002 /* SplitLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000001 /* SplitLayout.swift */; };
+		F1E000000000000000000002 /* RenameSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000001 /* RenameSelection.swift */; };
+		F1E000000000000000000003 /* RenameSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000001 /* RenameSelection.swift */; };
+		F1E000000000000000000005 /* RenameSelectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000004 /* RenameSelectionTests.swift */; };
+		F1E000000000000000000007 /* RenamePreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000006 /* RenamePreviewModel.swift */; };
+		F1E000000000000000000009 /* RenameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000008 /* RenameController.swift */; };
+		F1E00000000000000000000B /* AppState+Rename.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000A /* AppState+Rename.swift */; };
+		F1E00000000000000000000D /* RenameApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000C /* RenameApply.swift */; };
+		F1E00000000000000000000F /* RenameInlineBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000E /* RenameInlineBox.swift */; };
+		F1E000000000000000000011 /* RenamePreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000010 /* RenamePreviewSheet.swift */; };
+		F1E000000000000000000013 /* SelfTestSteps+Rename.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000012 /* SelfTestSteps+Rename.swift */; };
 		F12000000000000000000003 /* SplitLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000001 /* SplitLayout.swift */; };
 		F12000000000000000000005 /* SplitLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000004 /* SplitLayoutTests.swift */; };
 		F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12000000000000000000006 /* SelfTestSteps+Split.swift */; };
@@ -692,6 +702,15 @@
 		F10000000000000000000008 /* AppState+Panes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Panes.swift"; sourceTree = "<group>"; };
 		F1000000000000000000000A /* PaneLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaneLayoutTests.swift"; sourceTree = "<group>"; };
 		F12000000000000000000001 /* SplitLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitLayout.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000001 /* RenameSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameSelection.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000004 /* RenameSelectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameSelectionTests.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000006 /* RenamePreviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenamePreviewModel.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000008 /* RenameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameController.swift"; sourceTree = "<group>"; };
+		F1E00000000000000000000A /* AppState+Rename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Rename.swift"; sourceTree = "<group>"; };
+		F1E00000000000000000000C /* RenameApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameApply.swift"; sourceTree = "<group>"; };
+		F1E00000000000000000000E /* RenameInlineBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameInlineBox.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000010 /* RenamePreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenamePreviewSheet.swift"; sourceTree = "<group>"; };
+		F1E000000000000000000012 /* SelfTestSteps+Rename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rename.swift"; sourceTree = "<group>"; };
 		F12000000000000000000004 /* SplitLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplitLayoutTests.swift"; sourceTree = "<group>"; };
 		F12000000000000000000006 /* SelfTestSteps+Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Split.swift"; sourceTree = "<group>"; };
 		F13000000000000000000001 /* UsageRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageRows.swift; sourceTree = "<group>"; };
@@ -934,6 +953,7 @@
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
 				A00000000000000000000163 /* ProjectReplaceTests.swift */,
+				F1E000000000000000000004 /* RenameSelectionTests.swift */,
 				A00000000000000000000183 /* TreeModelTests.swift */,
 				P20000000000000000000009 /* TargetRowsTests.swift */,
 				Q10000000000000000000007 /* RunConfigTests.swift */,
@@ -1002,6 +1022,7 @@
 				S20000000000000000000020 /* Terminal */,
 				T20000000000000000000100 /* Tests */,
 				F13000000000000000000100 /* Usages */,
+				F1E0000000000000000000A0 /* Rename */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
@@ -1039,6 +1060,20 @@
 				A00000000000000000000014 /* StatusBarView.swift */,
 			);
 			path = StatusBar;
+			sourceTree = "<group>";
+		};
+		F1E0000000000000000000A0 /* Rename */ = {
+			isa = PBXGroup;
+			children = (
+				F1E000000000000000000001 /* RenameSelection.swift */,
+				F1E000000000000000000006 /* RenamePreviewModel.swift */,
+				F1E000000000000000000008 /* RenameController.swift */,
+				F1E00000000000000000000A /* AppState+Rename.swift */,
+				F1E00000000000000000000C /* RenameApply.swift */,
+				F1E00000000000000000000E /* RenameInlineBox.swift */,
+				F1E000000000000000000010 /* RenamePreviewSheet.swift */,
+			);
+			path = Rename;
 			sourceTree = "<group>";
 		};
 		F13000000000000000000100 /* Usages */ = {
@@ -1352,6 +1387,7 @@
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
+				F1E000000000000000000012 /* SelfTestSteps+Rename.swift */,
 				Q2000000000000000000000D /* SelfTestSteps+Run.swift */,
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				D2500000000000000000000A /* SelfTestSteps+Tests.swift */,
@@ -1634,6 +1670,8 @@
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
 				A00000000000000000000162 /* ProjectReplace.swift in Sources */,
 				A00000000000000000000164 /* ProjectReplaceTests.swift in Sources */,
+				F1E000000000000000000003 /* RenameSelection.swift in Sources */,
+				F1E000000000000000000005 /* RenameSelectionTests.swift in Sources */,
 				A00000000000000000000182 /* TreeModel.swift in Sources */,
 				A00000000000000000000184 /* TreeModelTests.swift in Sources */,
 				P2000000000000000000000A /* TargetRows.swift in Sources */,
@@ -1848,6 +1886,14 @@
 				A0000000000000000000010A /* ProjectFindModel.swift in Sources */,
 				A0000000000000000000010C /* ProjectFindView.swift in Sources */,
 				A00000000000000000000161 /* ProjectReplace.swift in Sources */,
+				F1E000000000000000000002 /* RenameSelection.swift in Sources */,
+				F1E000000000000000000007 /* RenamePreviewModel.swift in Sources */,
+				F1E000000000000000000009 /* RenameController.swift in Sources */,
+				F1E00000000000000000000B /* AppState+Rename.swift in Sources */,
+				F1E00000000000000000000D /* RenameApply.swift in Sources */,
+				F1E00000000000000000000F /* RenameInlineBox.swift in Sources */,
+				F1E000000000000000000011 /* RenamePreviewSheet.swift in Sources */,
+				F1E000000000000000000013 /* SelfTestSteps+Rename.swift in Sources */,
 				A00000000000000000000166 /* ProjectReplacePreview.swift in Sources */,
 				A00000000000000000000168 /* ProjectReplaceApply.swift in Sources */,
 				A0000000000000000000010E /* EditorHooks.swift in Sources */,
