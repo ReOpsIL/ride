@@ -41,7 +41,7 @@ extension SelfTestSteps {
             generateConstructor(e: e),
             generateGetters(e: e),
             generateCleanup(e: e, scratch: scratch),
-        ] + liveSteps(state: state, e: e)
+        ] + liveSteps(state: state, e: e) + cppExtract(state: state, e: e, scratch: scratch)
     }
 
     private static func commentLine(e: SelfTestEditor) -> SelfTestStep {

@@ -40,6 +40,7 @@ mod postfix;
 mod project;
 mod query;
 mod reach;
+mod refactor;
 mod refs;
 mod rename;
 mod run;

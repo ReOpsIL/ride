@@ -10,6 +10,7 @@ mod index;
 mod kind;
 mod project;
 mod query;
+mod refactor;
 mod refs;
 mod rename;
 mod run;
@@ -37,6 +38,7 @@ pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,
     QueryMode,
 };
+pub use refactor::ExtractPlan;
 pub use refs::{UsageHit, UsagesResponse};
 pub use rename::{RenameFile, RenamePlan};
 pub use run::{RecompileCommand, SingleRun};

@@ -16,6 +16,7 @@ mod markdown;
 mod params;
 pub mod project;
 mod query;
+mod refactor;
 mod refs;
 mod run;
 mod score;

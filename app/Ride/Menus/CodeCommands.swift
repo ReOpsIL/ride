@@ -24,6 +24,9 @@ struct CodeCommands: Commands {
             Button("Generate…") { EditorCommands.generate() }
                 .keyboardShortcut("g", modifiers: [.control, .command])
                 .disabled(!menu.canGenerate)
+            Button("Extract Variable") { EditorCommands.extractVariable() }
+                .keyboardShortcut("v", modifiers: [.command, .option])
+                .disabled(!menu.canRefactor)
             Divider()
             Button("Surround With…") { EditorCommands.surroundWith() }
                 .keyboardShortcut("t", modifiers: [.command, .option])

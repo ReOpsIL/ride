@@ -1,4 +1,5 @@
 use crate::ffi::{BracketPair, ByteRange, FoldRange, SymbolAt, TextEdit};
+use crate::refactor::ExtractSpans;
 
 use super::call_site::CallSite;
 use super::context::Context;
@@ -44,6 +45,10 @@ impl BufferSession {
 
     pub fn local_occurrences(&self, byte: u32) -> Vec<ByteRange> {
         self.syntax.local_occurrences(&self.replica, byte)
+    }
+
+    pub fn extract_spans(&self, range: ByteRange) -> Option<ExtractSpans> {
+        self.syntax.extract_spans(&self.replica, range)
     }
 
     pub fn enclosing_ranges(&self, range: ByteRange) -> Vec<ByteRange> {
