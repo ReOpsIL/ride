@@ -23,7 +23,8 @@ pub struct GenType {
 
 impl GenType {
     pub fn from_scope(name: &str, types: &TypeTable) -> Self {
-        let fields = TypeTable::resolve(&[types], name)
+        let fields = types
+            .own_members(name)
             .into_iter()
             .filter(|m| m.item.kind == ItemKind::Field)
             .map(Field::from)
@@ -37,18 +38,28 @@ impl GenType {
 
 impl From<Member> for Field {
     fn from(member: Member) -> Self {
-        let type_name = member.type_name.clone().unwrap_or_else(|| {
-            if member.detail.is_empty() {
-                "auto".to_string()
-            } else {
-                member.detail.clone()
-            }
-        });
+        let type_name = field_type(&member);
         Field {
             name: member.item.name,
             type_name,
         }
     }
+}
+
+fn field_type(member: &Member) -> String {
+    let detail = member.detail.trim().trim_end_matches(';').trim_end();
+    if !detail.is_empty() {
+        let stripped = detail
+            .strip_suffix(member.item.name.as_str())
+            .map(str::trim_end)
+            .filter(|ty| !ty.is_empty())
+            .unwrap_or(detail);
+        return stripped.to_string();
+    }
+    member
+        .type_name
+        .clone()
+        .unwrap_or_else(|| "auto".to_string())
 }
 
 pub fn enclosing_type(outline: &[OutlineItem], cursor: u32) -> Option<&OutlineItem> {
@@ -182,5 +193,32 @@ mod tests {
         let src = "class Point {\npublic:\n    int x;\n};\n";
         let text = cpp::getters(&gen_type("Point", src));
         assert!(text.contains("int get_x() const { return x; }"), "{text}");
+    }
+
+    const DERIVED: &str =
+        "class Base {\n    std::string tag_;\n};\nclass Derived : public Base {\n    int n_;\n};\n";
+
+    #[test]
+    fn own_fields_exclude_base() {
+        let t = gen_type("Derived", DERIVED);
+        let names: Vec<&str> = t.fields.iter().map(|f| f.name.as_str()).collect();
+        assert_eq!(names, vec!["n_"]);
+    }
+
+    #[test]
+    fn constructor_omits_base_fields() {
+        let text = cpp::constructor(&gen_type("Derived", DERIVED));
+        assert!(text.contains("Derived(int n) : n_(n) {}"), "{text}");
+        assert!(!text.contains("tag_"), "{text}");
+    }
+
+    #[test]
+    fn getter_keeps_namespace_qualifier() {
+        let src = "class Person {\n    std::string name_;\n};\n";
+        let text = cpp::getters(&gen_type("Person", src));
+        assert!(
+            text.contains("std::string name() const { return name_; }"),
+            "{text}"
+        );
     }
 }

@@ -185,7 +185,7 @@ extension SelfTestSteps {
                 return
             }
             scratch.saved = view.string
-            let addition = "\n\nstruct GenBox {\n    int gx_;\n    int gy_;\n};\n"
+            let addition = "\n\nstruct GenBase {\n    int tag_;\n};\nstruct GenBox : GenBase {\n    std::string gname_;\n    int gy_;\n};\n"
             let end = (view.string as NSString).length
             view.setSelectedRange(NSRange(location: end, length: 0))
             view.insertText(addition, replacementRange: NSRange(location: end, length: 0))
@@ -196,17 +196,28 @@ extension SelfTestSteps {
     private static func generateConstructor(e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "generate constructor", wait: 1.0, run: {
             e.activate()
-            e.place(on: "int gx_;")
+            e.place(on: "int gy_;")
             EditorCommands.applyGenerator(.constructor)
-        }, check: { e.expect(e.text.contains("GenBox(int gx, int gy)"), "text \(e.text.suffix(200))") })
+        }, check: {
+            e.expect(
+                e.text.contains("GenBox(std::string gname, int gy) : gname_(gname), gy_(gy) {}")
+                    && !e.text.contains("tag_("),
+                "text \(e.text.suffix(260))"
+            )
+        })
     }
 
     private static func generateGetters(e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "generate getters", wait: 0.8, run: {
             e.activate()
-            e.place(on: "int gx_;")
+            e.place(on: "int gy_;")
             EditorCommands.applyGenerator(.getters)
-        }, check: { e.expect(e.text.contains("int gx() const { return gx_; }"), "text \(e.text.suffix(260))") })
+        }, check: {
+            e.expect(
+                e.text.contains("std::string gname() const { return gname_; }"),
+                "text \(e.text.suffix(260))"
+            )
+        })
     }
 
     private static func generateCleanup(e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
