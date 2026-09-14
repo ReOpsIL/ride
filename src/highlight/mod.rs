@@ -27,6 +27,7 @@ mod markdown;
 mod members;
 mod paint;
 mod ranges;
+mod rename_local;
 mod rust_import;
 mod rust_locals;
 pub(crate) mod rust_outline;

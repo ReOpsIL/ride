@@ -10,6 +10,7 @@ mod kind;
 mod project;
 mod query;
 mod refs;
+mod rename;
 mod run;
 mod session;
 mod symbol;
@@ -35,6 +36,7 @@ pub use query::{
     QueryMode,
 };
 pub use refs::{UsageHit, UsagesResponse};
+pub use rename::{RenameFile, RenamePlan};
 pub use run::{RecompileCommand, SingleRun};
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,

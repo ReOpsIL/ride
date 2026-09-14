@@ -157,6 +157,13 @@ impl Syntax for TreeSyntax {
         )
     }
 
+    fn local_occurrences(&self, text: &str, byte: u32) -> Vec<ByteRange> {
+        self.tree
+            .as_ref()
+            .map(|tree| super::rename_local::occurrences(tree, text, byte, &self.grammar))
+            .unwrap_or_default()
+    }
+
     fn enclosing_ranges(&self, text: &str, range: ByteRange) -> Vec<ByteRange> {
         let Some(tree) = self.tree.as_ref() else {
             return Vec::new();
