@@ -2,7 +2,9 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Instant;
 
-use ride_engine::{Engine, EngineConfig, ItemKind, RefKind, RefRecord, engine_start};
+use ride_engine::{
+    Engine, EngineConfig, ItemKind, Lang, RefKind, RefRecord, engine_start, extractor_for,
+};
 
 fn config(dir: &Path) -> EngineConfig {
     EngineConfig {
@@ -89,4 +91,31 @@ fn find_usages_groups_and_replaces() {
         .unwrap();
     let again = engine.find_usages(open.session_id, at);
     assert_eq!(again.hits.len(), 2, "replace duplicated: {:?}", again.hits);
+}
+
+#[test]
+fn cpp_extractor_yields_call_for_header_method() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/cpp-demo");
+    let main = root.join("src/main.cpp");
+    let text = std::fs::read_to_string(&main).unwrap();
+
+    let records = extractor_for(Lang::Cpp).extract(Lang::Cpp, &text);
+
+    let describe = records
+        .iter()
+        .find(|r| r.kind == RefKind::Call && r.name == "describe")
+        .expect("call to Shape::describe should yield a Call record");
+    assert_eq!(describe.enclosing_item, "main");
+    assert_eq!(describe.enclosing_kind, ItemKind::Fn);
+    assert_eq!(
+        &text[describe.byte_start as usize..describe.byte_end as usize],
+        "describe"
+    );
+
+    assert!(
+        records
+            .iter()
+            .any(|r| r.kind == RefKind::Include && r.name == "shapes.hpp"),
+        "include of shapes.hpp should yield an Include record"
+    );
 }

@@ -1,3 +1,4 @@
+mod c;
 mod index;
 mod query;
 mod record;
