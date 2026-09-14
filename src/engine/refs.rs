@@ -3,9 +3,7 @@ use std::path::{Path, PathBuf};
 
 use crate::error::EngineError;
 use crate::ffi::UsagesResponse;
-use crate::refs::{
-    DefContext, RefExtractor, RefIndex, RefRecord, build_response, extractor_for, ref_index_dir,
-};
+use crate::refs::{DefContext, RefIndex, RefRecord, build_response, extractor_for, ref_index_dir};
 
 use super::Engine;
 
