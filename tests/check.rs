@@ -1,9 +1,12 @@
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use ride_engine::{
-    DiagnosticLevel, Formatter, Lang, format_document, format_range, format_source, parse_lines,
-    run_check,
+    DiagnosticLevel, Formatter, Lang, check_c_live, format_document, format_range, format_source,
+    parse_lines, run_check, tool_path,
 };
+
+static ENV_LOCK: Mutex<()> = Mutex::new(());
 
 fn fixtures() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
@@ -31,9 +34,43 @@ fn parses_primary_spans_only() {
 }
 
 #[test]
+fn live_c_check_maps_stdin_error_to_the_real_path_without_touching_disk() {
+    if !tool_path("clang").is_file() {
+        eprintln!("skipping: clang not available");
+        return;
+    }
+    let _guard = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+    let file = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/cpp-demo/src/shapes.cpp");
+    let disk = std::fs::read_to_string(&file).unwrap();
+    let injected = disk.replace(
+        "return PI * radius_ * radius_;",
+        "return ride_live_undeclared;",
+    );
+    assert_ne!(injected, disk, "the injection point moved");
+
+    let result = check_c_live(&file, &injected).unwrap();
+    assert!(!result.success, "{}", result.stderr_tail);
+    let err = result
+        .diagnostics
+        .iter()
+        .find(|d| d.level == DiagnosticLevel::Error)
+        .unwrap_or_else(|| panic!("no error diagnostic: {:?}", result.diagnostics));
+    assert_eq!(err.line, 23, "{err:?}");
+    assert!(
+        err.message.contains("ride_live_undeclared"),
+        "{}",
+        err.message
+    );
+    assert_eq!(err.path, file.display().to_string(), "{err:?}");
+    assert!(!err.path.contains("<stdin>"), "{}", err.path);
+
+    assert_eq!(std::fs::read_to_string(&file).unwrap(), disk);
+}
+
+#[test]
 fn cargo_check_on_fixture_crate() {
     let target = tempfile::tempdir().unwrap();
-    let result = run_check(&fixtures().join("sample_crate"), Some(target.path())).unwrap();
+    let result = run_check(&fixtures().join("sample_crate"), Some(target.path()), false).unwrap();
     assert!(result.success, "{}", result.stderr_tail);
     assert!(
         result
@@ -52,6 +89,7 @@ fn rustfmt_formats_and_reports_errors() {
 
 #[test]
 fn tools_resolve_without_path() {
+    let _guard = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
     let saved = std::env::var_os("PATH");
     unsafe { std::env::set_var("PATH", "/nonexistent") };
     let cargo = ride_engine::tool_path("cargo");

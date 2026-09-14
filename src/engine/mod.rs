@@ -26,6 +26,7 @@ mod docs;
 mod doxygen;
 mod editing;
 mod edits;
+mod generate;
 mod header_hits;
 mod header_store;
 pub(crate) mod headers;
@@ -39,6 +40,9 @@ mod postfix;
 mod project;
 mod query;
 mod reach;
+mod refactor;
+mod refs;
+mod rename;
 mod run;
 mod rust_members;
 mod sessions;
@@ -70,6 +74,8 @@ pub(crate) struct Inner {
     pub(crate) projects: HashMap<String, ProjectModel>,
     pub(crate) debug_sessions: Arc<crate::debug::registry::DebugRegistry>,
     pub(crate) sysroot: Option<PathBuf>,
+    pub(crate) refs: Option<std::sync::Arc<crate::refs::RefIndex>>,
+    pub(crate) refs_root: Option<PathBuf>,
 }
 
 #[derive(uniffi::Object)]
@@ -101,6 +107,8 @@ impl Engine {
                 projects: HashMap::new(),
                 debug_sessions: Arc::default(),
                 sysroot,
+                refs: None,
+                refs_root: None,
             }),
         }
     }

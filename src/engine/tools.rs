@@ -2,7 +2,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
 use crate::check::{
-    Formatter, format_clang, format_document, format_range, format_source, run_check,
+    Formatter, check_c_live, format_clang, format_document, format_range, format_source, run_check,
     run_check_c_project, run_clang_check, selection_span, sources_including,
 };
 use crate::error::EngineError;
@@ -13,9 +13,14 @@ use super::Engine;
 
 #[uniffi::export]
 impl Engine {
-    pub fn run_check(&self, project_root: String) -> Result<CheckResult, EngineError> {
+    #[uniffi::method(default(clippy = false))]
+    pub fn run_check(
+        &self,
+        project_root: String,
+        clippy: bool,
+    ) -> Result<CheckResult, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| {
-            run_check(Path::new(&project_root), None)
+            run_check(Path::new(&project_root), None, clippy)
         })) {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
@@ -24,6 +29,13 @@ impl Engine {
 
     pub fn run_check_c(&self, path: String) -> Result<CheckResult, EngineError> {
         match catch_unwind(AssertUnwindSafe(|| run_clang_check(Path::new(&path)))) {
+            Ok(r) => r,
+            Err(p) => Err(EngineError::from_panic(p)),
+        }
+    }
+
+    pub fn check_c_live(&self, path: String, text: String) -> Result<CheckResult, EngineError> {
+        match catch_unwind(AssertUnwindSafe(|| check_c_live(Path::new(&path), &text))) {
             Ok(r) => r,
             Err(p) => Err(EngineError::from_panic(p)),
         }

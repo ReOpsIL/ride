@@ -13,6 +13,7 @@ struct Preferences: Codable, Equatable {
     var visibleWhitespace: Bool
     var showHidden: Bool
     var checkOnSave: Bool
+    var useClippy: Bool
     var formatOnSave: Bool
     var indentGuides: Bool
     var sidebarWidth: Double
@@ -34,6 +35,7 @@ struct Preferences: Codable, Equatable {
         visibleWhitespace: false,
         showHidden: false,
         checkOnSave: true,
+        useClippy: false,
         formatOnSave: false,
         indentGuides: true,
         sidebarWidth: 230,
@@ -59,6 +61,7 @@ struct Preferences: Codable, Equatable {
         visibleWhitespace: Bool,
         showHidden: Bool,
         checkOnSave: Bool = true,
+        useClippy: Bool = false,
         formatOnSave: Bool = false,
         indentGuides: Bool = true,
         sidebarWidth: Double = 230,
@@ -82,6 +85,7 @@ struct Preferences: Codable, Equatable {
         self.visibleWhitespace = visibleWhitespace
         self.showHidden = showHidden
         self.checkOnSave = checkOnSave
+        self.useClippy = useClippy
         self.formatOnSave = formatOnSave
         self.indentGuides = indentGuides
         self.sidebarWidth = sidebarWidth
@@ -112,6 +116,7 @@ struct Preferences: Codable, Equatable {
         visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
         showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
         checkOnSave = try c.decodeIfPresent(Bool.self, forKey: .checkOnSave) ?? d.checkOnSave
+        useClippy = try c.decodeIfPresent(Bool.self, forKey: .useClippy) ?? d.useClippy
         formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
         indentGuides = try c.decodeIfPresent(Bool.self, forKey: .indentGuides) ?? d.indentGuides
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth

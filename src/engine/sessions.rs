@@ -22,10 +22,13 @@ impl Engine {
                 .is_some_and(|p| self.is_system_path(p.to_string()));
             let lang = Lang::sniff(path.as_deref(), &text, is_system);
             let (mut session, update) = BufferSession::open_lang(lang, text, visible)?;
-            if let Some(path) = path.as_deref().map(Path::new)
-                && lang.clang_name().is_some()
-            {
-                session.locate(path, crate::check::include_dirs(path));
+            if let Some(path) = path.as_deref().map(Path::new) {
+                let dirs = if lang.clang_name().is_some() {
+                    crate::check::include_dirs(path)
+                } else {
+                    Vec::new()
+                };
+                session.locate(path, dirs);
             }
             self.write(|i| {
                 let session_id = i.next_session_id;

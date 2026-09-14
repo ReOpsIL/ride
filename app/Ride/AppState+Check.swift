@@ -17,6 +17,9 @@ extension AppState {
     }
 
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
+        if let id = buffer.sessionId {
+            UsageIndexer.index(sessionId: id)
+        }
         if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer) {
             formatActive(thenSave: true)
         }
@@ -29,6 +32,7 @@ extension AppState {
             } else {
                 CheckService.shared.schedule(file: url)
             }
+            runClangTidyOnSave(buffer)
         } else if let root = workspaceRoot {
             CheckService.shared.schedule(root: root)
         }
@@ -88,7 +92,7 @@ extension AppState {
         openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
-    private func refreshDiagnosticUnderlines() {
+    func refreshDiagnosticUnderlines() {
         if let view = EditorPanes.shared.focusedView, let buffer = activeBuffer {
             Underlines.apply(document: buffer, view: view, parseErrors: nil)
         }

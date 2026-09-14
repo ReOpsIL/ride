@@ -8,6 +8,7 @@ mod engine;
 mod error;
 mod extract;
 mod ffi;
+mod generate;
 mod highlight;
 pub mod includes;
 mod index;
@@ -15,6 +16,8 @@ mod markdown;
 mod params;
 pub mod project;
 mod query;
+mod refactor;
+mod refs;
 mod run;
 mod score;
 mod skip;
@@ -23,9 +26,9 @@ mod toolchain;
 
 pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{
-    Formatter, format_clang, format_document, format_make, format_range, format_source,
-    include_dirs, merge_indexed, parse_clang, parse_lines, run_check, run_check_c_project,
-    run_clang_check, sources_including,
+    Formatter, check_c_live, format_clang, format_document, format_make, format_range,
+    format_source, include_dirs, merge_indexed, parse_clang, parse_lines, run_check,
+    run_check_c_project, run_clang_check, sources_including,
 };
 pub use debug::adapter::{adapter_path, find_adapter};
 pub use debug::filters::{exception_filters, probe_exception_filters};
@@ -49,4 +52,5 @@ pub use index::{
     live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,
 };
 pub use markdown::render as render_markdown;
+pub use refs::{RefExtractor, RefKind, RefRecord, extractor_for};
 pub use toolchain::tool_path;

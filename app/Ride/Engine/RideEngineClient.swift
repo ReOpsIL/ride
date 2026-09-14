@@ -35,13 +35,16 @@ final class RideEngineClient: ObservableObject {
         apply(engine.status())
     }
 
-    func openWorkspace(_ url: URL) {
+    func openWorkspace(_ url: URL, then completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self, let engine = self.engine else {
                 return
             }
             _ = try? engine.openWorkspace(path: url.path)
             IndexerProcess.run(project: url, indexDir: self.indexDir)
+            if let completion {
+                DispatchQueue.main.async(execute: completion)
+            }
         }
     }
 

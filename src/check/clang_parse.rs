@@ -5,6 +5,8 @@ use crate::ffi::{Diagnostic, DiagnosticLevel};
 
 use super::offsets::LineOffsets;
 
+const STDIN: &str = "<stdin>";
+
 const LEVELS: &[(&str, DiagnosticLevel)] = &[
     (": fatal error: ", DiagnosticLevel::Error),
     (": error: ", DiagnosticLevel::Error),
@@ -20,12 +22,38 @@ struct Location {
 }
 
 pub fn parse_clang(text: &str, base: &Path) -> Vec<Diagnostic> {
+    collect(text, base, LineOffsets::default(), |d| d)
+}
+
+pub fn parse_clang_live(text: &str, base: &Path, file: &Path, buffer: &str) -> Vec<Diagnostic> {
     let mut offsets = LineOffsets::default();
+    offsets.seed(&base.join(STDIN), buffer);
+    collect(text, base, offsets, |mut d| {
+        remap(&mut d, file);
+        d
+    })
+}
+
+fn collect(
+    text: &str,
+    base: &Path,
+    mut offsets: LineOffsets,
+    map: impl Fn(Diagnostic) -> Diagnostic,
+) -> Vec<Diagnostic> {
     let mut seen = HashSet::new();
     text.lines()
         .filter_map(|line| parse_line(line, base, &mut offsets))
+        .map(map)
         .filter(|d| seen.insert((d.path.clone(), d.byte_start, d.message.clone())))
         .collect()
+}
+
+fn remap(d: &mut Diagnostic, file: &Path) {
+    let is_stdin =
+        d.path.is_empty() || Path::new(&d.path).file_name().and_then(|s| s.to_str()) == Some(STDIN);
+    if is_stdin {
+        d.path = file.display().to_string();
+    }
 }
 
 fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diagnostic> {

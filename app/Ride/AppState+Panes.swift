@@ -10,6 +10,13 @@ extension AppState {
         buffers.first { $0.id == id }
     }
 
+    func editorView(for buffer: BufferDocument) -> RideTextView? {
+        guard let pane = paneLayout.panes.first(where: { $0.activeID == buffer.id }) else {
+            return nil
+        }
+        return EditorPanes.shared.host(pane.id)?.textView
+    }
+
     func paneFocused(_ paneID: UUID) {
         if paneLayout.focusedID != paneID {
             EditorPanes.shared.host(paneLayout.focusedID)?.hideUnpinnedDocs()

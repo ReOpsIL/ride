@@ -32,7 +32,7 @@ extension AppState {
         }
     }
 
-    private func liveText(_ file: URL) -> String? {
+    func liveText(_ file: URL) -> String? {
         if let buffer = buffers.first(where: { $0.fileURL == file }) {
             if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
                 buffer.capture(view)
@@ -42,7 +42,7 @@ extension AppState {
         return ProjectFind.readText(file)
     }
 
-    private func saveEdits(_ edits: [FileEdit]) -> (written: [URL], failed: [URL]) {
+    func saveEdits(_ edits: [FileEdit]) -> (written: [URL], failed: [URL]) {
         var written: [URL] = []
         var failed: [URL] = []
         for edit in edits {

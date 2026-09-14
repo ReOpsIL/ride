@@ -108,6 +108,48 @@ final class DiagnosticStoreTests: XCTestCase {
         )
     }
 
+    func testLiveOwnerPrefersLiveOverSaveClangPerPath() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/a.c", 1, "save-a")])
+        store.replace(from: "/b.c", with: [item("/b.c", 1, "save-b")])
+        store.replaceLive(path: "/a.c", with: [item("/a.c", 2, "live-a")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["live-a", "save-b"])
+        XCTAssertEqual(store.snapshot.first { $0.message == "live-a" }?.origin, .live)
+        XCTAssertEqual(Set(store.clangPaths), ["/a.c", "/b.c"])
+    }
+
+    func testSaveCargoAfterLiveCargoWins() {
+        var store = DiagnosticStore()
+        store.replaceLiveCargo([])
+        store.replaceCargo([item("/r.rs", 3, "save-err")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["save-err"])
+        XCTAssertEqual(store.snapshot.first?.origin, .check)
+    }
+
+    func testLiveCargoAfterSaveCargoWins() {
+        var store = DiagnosticStore()
+        store.replaceCargo([item("/r.rs", 1, "save-r")])
+        store.replaceLiveCargo([item("/r.rs", 2, "live-r")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["live-r"])
+        XCTAssertEqual(store.snapshot.first?.origin, .live)
+    }
+
+    func testEmptyLiveFallsBackToSave() {
+        var store = DiagnosticStore()
+        store.replace(from: "/a.c", with: [item("/a.c", 1, "save-a")])
+        store.replaceLive(path: "/a.c", with: [item("/a.c", 2, "live-a")])
+        store.replaceLive(path: "/a.c", with: [])
+        XCTAssertEqual(store.snapshot.map(\.message), ["save-a"])
+    }
+
+    func testRemovePathDropsLiveClang() {
+        var store = DiagnosticStore()
+        store.replaceLive(path: "/a.c", with: [item("/a.c", 1, "live-a")])
+        XCTAssertEqual(store.clangPaths, ["/a.c"])
+        XCTAssertTrue(store.remove(path: "/a.c"))
+        XCTAssertTrue(store.snapshot.isEmpty)
+    }
+
     private func item(
         _ path: String,
         _ byte: UInt32,

@@ -112,18 +112,21 @@ struct ProblemRow: View {
                 .foregroundStyle(ts.ui.textTertiary)
                 .lineLimit(1)
             if diag.origin == .build {
-                Text("build")
-                    .font(Tokens.mono(10))
-                    .foregroundStyle(ts.ui.textTertiary)
-                    .padding(.horizontal, Tokens.Space.xs)
-                    .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
+                tag("build", tint: ts.ui.textTertiary)
+            }
+            if diag.origin == .live {
+                tag("live", tint: ts.ui.accent)
             }
             if let code = diag.code {
-                Text(code)
-                    .font(Tokens.mono(10))
-                    .foregroundStyle(ts.ui.textTertiary)
-                    .padding(.horizontal, Tokens.Space.xs)
-                    .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
+                if let link = DiagnosticDocLink.url(for: code) {
+                    Button(action: { NSWorkspace.shared.open(link) }) {
+                        tag(code, tint: ts.ui.accent)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Open documentation for \(code)")
+                } else {
+                    tag(code, tint: ts.ui.textTertiary)
+                }
             }
             Spacer(minLength: 0)
         }
@@ -134,5 +137,13 @@ struct ProblemRow: View {
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .onTapGesture(perform: action)
+    }
+
+    private func tag(_ text: String, tint: Color) -> some View {
+        Text(text)
+            .font(Tokens.mono(10))
+            .foregroundStyle(tint)
+            .padding(.horizontal, Tokens.Space.xs)
+            .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
     }
 }

@@ -52,6 +52,9 @@ final class AppState: ObservableObject {
     @Published var showTests = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
+    @Published var showUsages = false {
+        didSet { syncMenu() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -63,6 +66,9 @@ final class AppState: ObservableObject {
     @Published var noticeAction: (title: String, run: () -> Void)?
     @Published var showToolsSheet = false
     @Published var showRunConfigSheet = false
+    @Published var showRenamePreview = false
+    let renamePreview = RenamePreviewModel()
+    var renamePlan: RenamePlan?
     @Published var runConfigs: [RunConfig] = [] {
         didSet { scheduleWorkspaceSave() }
     }
@@ -86,6 +92,7 @@ final class AppState: ObservableObject {
     let runOutput = RunOutput()
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()
+    let usages = UsagesModel.shared
     var pendingJump: UInt32?
     var applyThenSave = false
     var cargoWork: DispatchWorkItem?
@@ -138,6 +145,9 @@ final class AppState: ObservableObject {
         }
         CheckService.shared.onFinished = { [weak self] diagnostics in
             self?.checkFinished(diagnostics)
+        }
+        CheckService.shared.onLiveFinished = { [weak self] _ in
+            self?.refreshDiagnosticUnderlines()
         }
         _ = RideEngineClient.shared
         EditorPanes.shared.onFocus = { [weak self] pane in

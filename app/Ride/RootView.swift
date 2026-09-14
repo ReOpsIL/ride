@@ -28,6 +28,14 @@ struct RootView: View {
         .sheet(isPresented: $state.showRunConfigSheet) {
             RunConfigSheet().environmentObject(state)
         }
+        .sheet(isPresented: $state.showRenamePreview) {
+            RenamePreviewSheet(
+                model: state.renamePreview,
+                root: state.workspaceRoot,
+                onApply: { RenameController.shared.applyWorkspace() },
+                onCancel: { state.showRenamePreview = false }
+            )
+        }
         .preferredColorScheme(state.isLightTheme ? .light : .dark)
         .onAppear {
             NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)
@@ -99,6 +107,10 @@ struct DetailColumn: View {
                         .frame(minHeight: 80, idealHeight: state.prefs.testsHeight, maxHeight: 480)
                         .background(SplitPositioner(position: state.prefs.testsHeight, fromEnd: true))
                         .reportSize(.height) { testsHeight.wrappedValue = $0 }
+                }
+                if state.showUsages {
+                    UsagesPanel(model: state.usages)
+                        .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)
                 }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)

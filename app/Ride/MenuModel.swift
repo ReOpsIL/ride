@@ -5,6 +5,8 @@ final class MenuModel: ObservableObject {
     @Published var previewAvailable = false
     @Published var hasEditor = false
     @Published var hasWorkspace = false
+    @Published var canGenerate = false
+    @Published var canRefactor = false
     @Published var canGoBack = false
     @Published var canGoForward = false
     @Published var softWrap = true
@@ -16,6 +18,7 @@ final class MenuModel: ObservableObject {
     @Published var showRunOutput = false
     @Published var showTerminal = false
     @Published var showTests = false
+    @Published var showUsages = false
     @Published var isRunning = false
     @Published var hasSplit = false
     @Published var selectedTarget: String?
@@ -35,6 +38,8 @@ final class MenuModel: ObservableObject {
         set(\.previewAvailable, state.previewAvailable)
         set(\.hasEditor, state.activeBuffer != nil)
         set(\.hasWorkspace, state.workspaceRoot != nil)
+        set(\.canGenerate, generatable(state.activeBuffer?.language))
+        set(\.canRefactor, generatable(state.activeBuffer?.language))
         set(\.canGoBack, state.history.canGoBack)
         set(\.canGoForward, state.history.canGoForward)
         set(\.softWrap, state.prefs.softWrap)
@@ -46,6 +51,7 @@ final class MenuModel: ObservableObject {
         set(\.showRunOutput, state.showRunOutput)
         set(\.showTerminal, state.showTerminal)
         set(\.showTests, state.showTests)
+        set(\.showUsages, state.showUsages)
         set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)
@@ -60,6 +66,15 @@ final class MenuModel: ObservableObject {
         set(\.isDebugRunning, state.debug.isRunning)
         set(\.showDebugPanel, state.debugPanel.visible)
         set(\.debugFilters, DebugFilters.shared.toggles)
+    }
+
+    private func generatable(_ language: BufferLanguage?) -> Bool {
+        switch language {
+        case .c, .cpp, .rust:
+            return true
+        default:
+            return false
+        }
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {

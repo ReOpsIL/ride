@@ -1,9 +1,11 @@
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 use crate::highlight::Lang;
+use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 
-use super::clang_parse::parse_clang;
+use super::clang_parse::{parse_clang, parse_clang_live};
 use super::compile_db;
 use super::output::stderr_tail;
 
@@ -17,6 +19,29 @@ const DIAG_FLAGS: &[&str] = &[
 pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
     let text = std::fs::read_to_string(file).map_err(|e| EngineError::io(file, e))?;
     let lang = Lang::for_buffer(file.to_str(), &text);
+    let (mut cmd, cwd) = build_command(file, lang)?;
+    cmd.arg(file);
+    let (success, stderr) = run(&mut cmd, &cwd)?;
+    Ok(CheckResult {
+        success,
+        diagnostics: parse_clang(&stderr, &cwd),
+        stderr_tail: stderr_tail(&stderr),
+    })
+}
+
+pub fn check_c_live(file: &Path, text: &str) -> Result<CheckResult, EngineError> {
+    let lang = Lang::for_buffer(file.to_str(), text);
+    let (mut cmd, cwd) = build_command(file, lang)?;
+    cmd.arg("-");
+    let (success, stderr) = run_stdin(&mut cmd, &cwd, text)?;
+    Ok(CheckResult {
+        success,
+        diagnostics: parse_clang_live(&stderr, &cwd, file, text),
+        stderr_tail: stderr_tail(&stderr),
+    })
+}
+
+fn build_command(file: &Path, lang: Lang) -> Result<(Command, PathBuf), EngineError> {
     let Some(lang_name) = lang.clang_name() else {
         return Err(EngineError::Tool {
             message: format!("clang: not a C or C++ file: {}", file.display()),
@@ -34,19 +59,47 @@ pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
             file.parent().map(Path::to_path_buf).unwrap_or_default()
         }
     };
-    cmd.args(DIAG_FLAGS).arg(file);
+    cmd.args(DIAG_FLAGS);
+    Ok((cmd, cwd))
+}
+
+fn run(cmd: &mut Command, cwd: &Path) -> Result<(bool, String), EngineError> {
     if cwd.is_dir() {
-        cmd.current_dir(&cwd);
+        cmd.current_dir(cwd);
     }
     let output = cmd.output().map_err(|e| EngineError::Tool {
         message: format!("clang: {e}"),
     })?;
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    Ok(CheckResult {
-        success: output.status.success(),
-        diagnostics: parse_clang(&stderr, &cwd),
-        stderr_tail: stderr_tail(&stderr),
-    })
+    Ok((
+        output.status.success(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    ))
+}
+
+fn run_stdin(cmd: &mut Command, cwd: &Path, text: &str) -> Result<(bool, String), EngineError> {
+    if cwd.is_dir() {
+        cmd.current_dir(cwd);
+    }
+    cmd.stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped());
+    let mut child = cmd.spawn().map_err(|e| EngineError::Tool {
+        message: format!("clang: {e}"),
+    })?;
+    if let Some(mut stdin) = child.stdin.take() {
+        stdin
+            .write_all(text.as_bytes())
+            .map_err(|e| EngineError::Tool {
+                message: format!("clang: {e}"),
+            })?;
+    }
+    let output = child.wait_with_output().map_err(|e| EngineError::Tool {
+        message: format!("clang: {e}"),
+    })?;
+    Ok((
+        output.status.success(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    ))
 }
 
 fn default_args(lang: Lang, file: &Path) -> Vec<String> {

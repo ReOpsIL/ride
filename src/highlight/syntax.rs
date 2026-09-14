@@ -6,6 +6,8 @@ use crate::ffi::{
     SymbolAt, TextEdit,
 };
 
+use crate::refactor::ExtractSpans;
+
 use super::context::Context;
 use super::includes::IncludeRef;
 use super::members::Access;
@@ -35,6 +37,9 @@ pub trait Syntax: Send + Sync {
     fn errors(&self) -> Vec<ParseErrorSpan>;
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;
+    fn local_occurrences(&self, _text: &str, _byte: u32) -> Vec<ByteRange> {
+        Vec::new()
+    }
     fn includes(&self, _text: &str) -> Vec<IncludeRef> {
         Vec::new()
     }
@@ -62,6 +67,10 @@ pub trait Syntax: Send + Sync {
     fn bracket_pair(&self, _text: &str, _byte: usize) -> Option<BracketPair> {
         None
     }
+    fn extract_spans(&self, _text: &str, _range: ByteRange) -> Option<ExtractSpans> {
+        None
+    }
+
     fn statement_range(&self, _text: &str, _byte: u32) -> Option<ByteRange> {
         None
     }

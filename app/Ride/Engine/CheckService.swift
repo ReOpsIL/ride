@@ -12,9 +12,11 @@ final class CheckService: ObservableObject {
     @Published var progress = ""
     @Published private(set) var version: UInt64 = 0
     var onFinished: (([Diagnostic]) -> Void)?
-    private let queue = DispatchQueue(label: "dev.ride.check")
-    private var store = DiagnosticStore()
-    private var generations: [String: UInt64] = [:]
+    var onLiveFinished: (([Diagnostic]) -> Void)?
+    let queue = DispatchQueue(label: "dev.ride.check")
+    var store = DiagnosticStore()
+    var generations: [String: UInt64] = [:]
+    var liveTimers: [String: DispatchWorkItem] = [:]
     private var pending: DispatchWorkItem?
 
     var snapshot: [StoredDiagnostic] { store.snapshot }
@@ -83,6 +85,9 @@ final class CheckService: ObservableObject {
     func dropClang(paths: [String]) {
         var any = false
         for path in paths {
+            liveTimers[path]?.cancel()
+            liveTimers.removeValue(forKey: path)
+            _ = bump(Self.livePrefix + path)
             any = store.remove(path: path) || any
         }
         if any {
@@ -97,7 +102,7 @@ final class CheckService: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
 
-    private func bump(_ source: String) -> UInt64 {
+    func bump(_ source: String) -> UInt64 {
         let gen = (generations[source] ?? 0) + 1
         generations[source] = gen
         return gen
@@ -175,7 +180,7 @@ final class CheckService: ObservableObject {
         onFinished?(diagnostics)
     }
 
-    private func publish() {
+    func publish() {
         version += 1
         diagnostics = store.snapshot.map(CheckConvert.ffi)
     }

@@ -11,3 +11,4 @@ xcuserdata
 /samples/*/build/*
 !/samples/*/build/compile_commands.json
 /samples/*/target/
+.claude/
