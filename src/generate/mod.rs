@@ -1,7 +1,8 @@
 mod cpp;
+mod rust;
 
 use crate::ffi::{GenKind, GenOption, ItemKind, OutlineItem};
-use crate::highlight::{Member, TypeTable};
+use crate::highlight::{Lang, Member, TypeTable};
 
 const CPP_KINDS: [GenKind; 5] = [
     GenKind::Constructor,
@@ -70,17 +71,20 @@ pub fn enclosing_type(outline: &[OutlineItem], cursor: u32) -> Option<&OutlineIt
         .min_by_key(|i| i.end_byte - i.start_byte)
 }
 
-pub fn options(t: &GenType) -> Vec<GenOption> {
+pub fn options(t: &GenType, lang: Lang, buffer: &str) -> Vec<GenOption> {
     if t.fields.is_empty() {
         return Vec::new();
     }
-    CPP_KINDS
-        .iter()
-        .map(|&kind| GenOption {
-            kind,
-            title: title(kind),
-        })
-        .collect()
+    match lang {
+        Lang::Rust => rust::options(t, buffer),
+        _ => CPP_KINDS
+            .iter()
+            .map(|&kind| GenOption {
+                kind,
+                title: title(kind),
+            })
+            .collect(),
+    }
 }
 
 pub fn apply(t: &GenType, kind: GenKind) -> String {
@@ -90,18 +94,23 @@ pub fn apply(t: &GenType, kind: GenKind) -> String {
         GenKind::Setters => cpp::setters(t),
         GenKind::EqualityOps => cpp::equality(t),
         GenKind::StreamInsert => cpp::stream_insert(t),
+        GenKind::ImplBlock | GenKind::DefaultImpl | GenKind::DisplayImpl | GenKind::New => {
+            rust::apply(t, kind)
+        }
     }
 }
 
 fn title(kind: GenKind) -> String {
     match kind {
-        GenKind::Constructor => "Constructor",
-        GenKind::Getters => "Getters",
-        GenKind::Setters => "Setters",
-        GenKind::EqualityOps => "Equality operators",
-        GenKind::StreamInsert => "Stream operator",
+        GenKind::Constructor => "Constructor".to_string(),
+        GenKind::Getters => "Getters".to_string(),
+        GenKind::Setters => "Setters".to_string(),
+        GenKind::EqualityOps => "Equality operators".to_string(),
+        GenKind::StreamInsert => "Stream operator".to_string(),
+        GenKind::ImplBlock | GenKind::DefaultImpl | GenKind::DisplayImpl | GenKind::New => {
+            rust::title(kind)
+        }
     }
-    .to_string()
 }
 
 #[cfg(test)]
@@ -184,8 +193,15 @@ mod tests {
 
     #[test]
     fn options_present_with_fields_absent_without() {
-        assert_eq!(options(&gen_type("Rect", RECT)).len(), 5);
-        assert!(options(&gen_type("Empty", "class Empty {};\n")).is_empty());
+        assert_eq!(options(&gen_type("Rect", RECT), Lang::Cpp, RECT).len(), 5);
+        assert!(
+            options(
+                &gen_type("Empty", "class Empty {};\n"),
+                Lang::Cpp,
+                "class Empty {};\n"
+            )
+            .is_empty()
+        );
     }
 
     #[test]
