@@ -17,6 +17,9 @@ extension AppState {
     }
 
     func didSave(_ buffer: BufferDocument, allowFormat: Bool = true) {
+        if let id = buffer.sessionId {
+            UsageIndexer.index(sessionId: id)
+        }
         if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer) {
             formatActive(thenSave: true)
         }

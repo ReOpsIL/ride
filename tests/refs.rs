@@ -94,6 +94,28 @@ fn find_usages_groups_and_replaces() {
 }
 
 #[test]
+fn note_saved_indexes_rust_buffer() {
+    let (_dir, engine, root) = demo_engine();
+    let main = root.join("src/main.rs");
+    let text = std::fs::read_to_string(&main).unwrap();
+    let open = engine
+        .open_session(
+            "demo".into(),
+            Some(main.display().to_string()),
+            text.clone(),
+            None,
+        )
+        .unwrap();
+
+    engine.note_saved(open.session_id).unwrap();
+
+    let at = text.find("record(").unwrap() as u32 + 1;
+    let resp = engine.find_usages(open.session_id, at);
+    assert_eq!(resp.name, "record");
+    assert_eq!(resp.hits.len(), 2, "{:?}", resp.hits);
+}
+
+#[test]
 fn cpp_extractor_yields_call_for_header_method() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/cpp-demo");
     let main = root.join("src/main.cpp");
