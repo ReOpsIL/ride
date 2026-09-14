@@ -64,15 +64,11 @@ fn plan(engine: &Engine, session_id: u64, cursor_byte: u32, new_name: &str) -> R
 }
 
 pub fn plan_from_usages(resp: UsagesResponse, new_name: &str) -> RenamePlan {
-    let UsagesResponse {
-        name,
-        has_definition,
-        hits,
-    } = resp;
+    let UsagesResponse { name, hits, .. } = resp;
     let mut files: Vec<RenameFile> = Vec::new();
     let mut skipped: Vec<String> = Vec::new();
     for hit in hits {
-        if has_definition && !hit.in_definition_scope {
+        if !hit.in_definition_scope {
             skipped.push(format!("{}:{}", hit.path, hit.line));
             continue;
         }

@@ -86,7 +86,7 @@ fn rename_local_refuses_non_local() {
 }
 
 #[test]
-fn rename_plan_covers_both_workspace_files() {
+fn rename_plan_lists_unresolved_matches_for_review() {
     let (_dir, engine, root) = demo_engine();
     let (main_id, main_text) = open(&engine, &root.join("src/main.rs"));
     let (util_id, _) = open(&engine, &root.join("src/util.rs"));
@@ -99,9 +99,26 @@ fn rename_plan_covers_both_workspace_files() {
 
     assert_eq!(plan.name, "record");
     assert_eq!(plan.new_name, "log");
-    let paths: Vec<&str> = plan.files.iter().map(|f| f.path.as_str()).collect();
-    assert!(paths.contains(&"src/main.rs"), "{paths:?}");
-    assert!(paths.contains(&"src/util.rs"), "{paths:?}");
+    let mut covered: Vec<&str> = plan
+        .files
+        .iter()
+        .map(|f| f.path.as_str())
+        .chain(
+            plan.skipped
+                .iter()
+                .map(|s| s.rsplit_once(':').map(|(p, _)| p).unwrap_or(s)),
+        )
+        .collect();
+    covered.sort_unstable();
+    covered.dedup();
+    assert!(covered.contains(&"src/main.rs"), "{covered:?}");
+    assert!(covered.contains(&"src/util.rs"), "{covered:?}");
+    assert!(
+        plan.files.is_empty() && !plan.skipped.is_empty(),
+        "an unresolved workspace symbol must not auto-edit: files={:?} skipped={:?}",
+        plan.files,
+        plan.skipped
+    );
     for file in &plan.files {
         assert!(file.edits.iter().all(|e| e.text == "log"));
     }
