@@ -37,10 +37,10 @@ impl Engine {
 impl Engine {
     pub fn refs_update(&self, path: String, records: Vec<RefRecord>) -> Result<(), EngineError> {
         self.ensure_refs()?;
-        self.write(|i| match i.refs.as_ref() {
-            Some(refs) => refs.update_file(&path, &records),
-            None => Ok(()),
-        })?
+        let Some(refs) = self.read(|i| i.refs.clone())? else {
+            return Ok(());
+        };
+        refs.update_file(&path, &records)
     }
 
     fn ensure_refs(&self) -> Result<(), EngineError> {
@@ -53,7 +53,7 @@ impl Engine {
             }
             let dir = ref_index_dir(Path::new(&i.config.index_dir), &root);
             let index = RefIndex::open(&dir)?;
-            i.refs = Some(index);
+            i.refs = Some(std::sync::Arc::new(index));
             i.refs_root = Some(root);
             Ok(())
         })?
@@ -80,14 +80,11 @@ fn usages(engine: &Engine, session_id: u64, cursor_byte: u32) -> UsagesResponse 
     if engine.ensure_refs().is_err() {
         return UsagesResponse::empty();
     }
-    let rows = engine
-        .read(|i| match i.refs.as_ref() {
-            Some(refs) => refs.usages(&name).ok(),
-            None => Some(Vec::new()),
-        })
-        .ok()
-        .flatten()
-        .unwrap_or_default();
+    let refs = engine.read(|i| i.refs.clone()).ok().flatten();
+    let rows = match refs {
+        Some(refs) => refs.usages(&name).unwrap_or_default(),
+        None => Vec::new(),
+    };
     let root = engine
         .read(|i| i.workspace.as_ref().map(|w| PathBuf::from(&w.root)))
         .ok()

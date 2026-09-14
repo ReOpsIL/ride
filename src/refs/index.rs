@@ -40,6 +40,7 @@ pub struct UsageRow {
 pub struct RefIndex {
     index: Index,
     fields: RefFields,
+    writes: std::sync::Mutex<()>,
 }
 
 fn build_schema() -> (Schema, RefFields) {
@@ -59,8 +60,9 @@ fn build_schema() -> (Schema, RefFields) {
 
 pub fn ref_index_dir(index_dir: &Path, root: &Path) -> PathBuf {
     let support = index_dir.parent().unwrap_or(index_dir);
+    let canonical = fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
     let mut hasher = Sha256::new();
-    hasher.update(root.to_string_lossy().as_bytes());
+    hasher.update(canonical.to_string_lossy().as_bytes());
     let digest = hasher.finalize().iter().fold(String::new(), |mut out, b| {
         use std::fmt::Write;
         let _ = write!(out, "{b:02x}");
@@ -77,10 +79,17 @@ impl RefIndex {
             Ok(index) => index,
             Err(_) => Index::create_in_dir(dir, schema).map_err(tv)?,
         };
-        Ok(Self { index, fields })
+        Ok(Self {
+            index,
+            fields,
+            writes: std::sync::Mutex::new(()),
+        })
     }
 
     pub fn update_file(&self, path: &str, records: &[RefRecord]) -> Result<(), EngineError> {
+        let _guard = self.writes.lock().map_err(|_| EngineError::Index {
+            message: "refs write lock poisoned".into(),
+        })?;
         let mut writer: IndexWriter = self
             .index
             .writer_with_num_threads(1, WRITER_MEMORY)
@@ -149,5 +158,27 @@ impl RefIndex {
 fn tv(err: tantivy::TantivyError) -> EngineError {
     EngineError::Index {
         message: err.to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ref_index_dir;
+    use std::path::Path;
+
+    #[test]
+    fn a_symlinked_root_hashes_to_the_canonical_dir() {
+        let tmp = std::env::temp_dir().join("ride-refs-canon");
+        let real = tmp.join("real");
+        let link = tmp.join("link");
+        std::fs::create_dir_all(&real).unwrap();
+        let _ = std::fs::remove_file(&link);
+        std::os::unix::fs::symlink(&real, &link).unwrap();
+        let index_dir = tmp.join("support").join("index");
+        let a = ref_index_dir(&index_dir, &real);
+        let b = ref_index_dir(&index_dir, &link);
+        assert_eq!(a, b);
+        let c = ref_index_dir(&index_dir, Path::new(&format!("{}/", real.display())));
+        assert_eq!(a, c);
     }
 }
