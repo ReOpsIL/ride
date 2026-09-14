@@ -32,6 +32,7 @@ extension AppState {
             } else {
                 CheckService.shared.schedule(file: url)
             }
+            runClangTidyOnSave(buffer)
         } else if let root = workspaceRoot {
             CheckService.shared.schedule(root: root)
         }

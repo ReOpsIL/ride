@@ -8,6 +8,7 @@ enum ProblemLevel: Equatable, Hashable {
 enum DiagnosticOrigin: Equatable, Hashable {
     case check
     case build
+    case live
 }
 
 struct StoredDiagnostic: Equatable, Hashable {
@@ -27,6 +28,9 @@ struct DiagnosticStore {
     private var cargo: [StoredDiagnostic] = []
     private var build: [StoredDiagnostic] = []
     private var owner: [String: String] = [:]
+    private var liveClang: [String: [StoredDiagnostic]] = [:]
+    private var liveCargo: [StoredDiagnostic] = []
+    private var liveCargoRan = false
 
     mutating func insert(_ item: StoredDiagnostic) {
         clang[item.path, default: []].append(item)
@@ -62,7 +66,28 @@ struct DiagnosticStore {
     @discardableResult
     mutating func remove(path: String) -> Bool {
         owner.removeValue(forKey: path)
-        return clang.removeValue(forKey: path) != nil
+        let hadLive = liveClang.removeValue(forKey: path) != nil
+        return (clang.removeValue(forKey: path) != nil) || hadLive
+    }
+
+    mutating func replaceLive(path: String, with items: [StoredDiagnostic]) {
+        let mine = items.filter { $0.path == path }.map(Self.asLive)
+        if mine.isEmpty {
+            liveClang.removeValue(forKey: path)
+        } else {
+            liveClang[path] = mine
+        }
+    }
+
+    mutating func replaceLiveCargo(_ items: [StoredDiagnostic]) {
+        liveCargo = items.map(Self.asLive)
+        liveCargoRan = true
+    }
+
+    private static func asLive(_ item: StoredDiagnostic) -> StoredDiagnostic {
+        var next = item
+        next.origin = .live
+        return next
     }
 
     mutating func replaceCargo(_ items: [StoredDiagnostic]) {
@@ -84,13 +109,17 @@ struct DiagnosticStore {
     }
 
     var snapshot: [StoredDiagnostic] {
-        (clang.values.flatMap { $0 } + cargo + build).sorted {
+        let liveKeys = Set(liveClang.keys)
+        let liveItems = liveClang.values.flatMap { $0 } + liveCargo
+        let saveClang = clang.filter { !liveKeys.contains($0.key) }.values.flatMap { $0 }
+        let saveCargo = liveCargoRan ? [] : cargo
+        return (liveItems + saveClang + saveCargo + build).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)
         }
     }
 
     var clangPaths: [String] {
-        Array(clang.keys)
+        Array(Set(clang.keys).union(liveClang.keys))
     }
 
     var buildDiagnostics: [StoredDiagnostic] {

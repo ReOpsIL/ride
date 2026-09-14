@@ -438,6 +438,16 @@
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
 		A00000000000000000000187 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
 		A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000188 /* DiagnosticStoreTests.swift */; };
+		FEE0000000000000000000B1 /* AppState+LiveCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A1 /* AppState+LiveCheck.swift */; };
+		FEE0000000000000000000B2 /* CheckService+Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A2 /* CheckService+Live.swift */; };
+		FEE0000000000000000000B3 /* ClangTidyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A3 /* ClangTidyService.swift */; };
+		FEE0000000000000000000B4 /* SelfTestSteps+Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */; };
+		FEE0000000000000000000B5 /* DiagnosticDocLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A5 /* DiagnosticDocLink.swift */; };
+		FEE0000000000000000000C5 /* DiagnosticDocLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A5 /* DiagnosticDocLink.swift */; };
+		FEE0000000000000000000B6 /* ClangTidyParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A6 /* ClangTidyParse.swift */; };
+		FEE0000000000000000000C6 /* ClangTidyParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A6 /* ClangTidyParse.swift */; };
+		FEE0000000000000000000C7 /* DiagnosticDocLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A7 /* DiagnosticDocLinkTests.swift */; };
+		FEE0000000000000000000C8 /* ClangTidyParseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE0000000000000000000A8 /* ClangTidyParseTests.swift */; };
 		F11000000000000000000002 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
 		F11000000000000000000003 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000001 /* WorkspaceState.swift */; };
 		F11000000000000000000005 /* WorkspaceStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11000000000000000000004 /* WorkspaceStateStore.swift */; };
@@ -671,6 +681,14 @@
 		A00000000000000000000183 /* TreeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeModelTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
+		FEE0000000000000000000A1 /* AppState+LiveCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+LiveCheck.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A2 /* CheckService+Live.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckService+Live.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A3 /* ClangTidyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClangTidyService.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Live.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A5 /* DiagnosticDocLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticDocLink.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A6 /* ClangTidyParse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClangTidyParse.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A7 /* DiagnosticDocLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticDocLinkTests.swift"; sourceTree = "<group>"; };
+		FEE0000000000000000000A8 /* ClangTidyParseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClangTidyParseTests.swift"; sourceTree = "<group>"; };
 		F11000000000000000000001 /* WorkspaceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceState.swift; sourceTree = "<group>"; };
 		F11000000000000000000004 /* WorkspaceStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateStore.swift; sourceTree = "<group>"; };
 		F11000000000000000000006 /* AppState+Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Workspace.swift"; sourceTree = "<group>"; };
@@ -946,6 +964,8 @@
 				A0000000000000000000014B /* GitStatusTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
+				FEE0000000000000000000A7 /* DiagnosticDocLinkTests.swift */,
+				FEE0000000000000000000A8 /* ClangTidyParseTests.swift */,
 				F11000000000000000000008 /* WorkspaceStateTests.swift */,
 				F1A000000000000000000004 /* PeekSegmentsTests.swift */,
 				F1100000000000000000000B /* WorkspaceStateStoreTests.swift */,
@@ -1007,6 +1027,7 @@
 				A00000000000000000000145 /* AppState+Watch.swift */,
 				A00000000000000000000136 /* AppState+Launch.swift */,
 				A00000000000000000000134 /* AppState+Check.swift */,
+				FEE0000000000000000000A1 /* AppState+LiveCheck.swift */,
 				A00000000000000000000011 /* RideApp.swift */,
 				S10000000000000000000001 /* UpdateController.swift */,
 				S10000000000000000000023 /* UpdateController+Sparkle.swift */,
@@ -1296,6 +1317,7 @@
 				E1000000000000000000001C /* SessionService+Query.swift */,
 				A0000000000000000000012D /* SessionService+Paint.swift */,
 				A00000000000000000000126 /* CheckService.swift */,
+				FEE0000000000000000000A2 /* CheckService+Live.swift */,
 				H16000000000000000000010 /* CheckConvert.swift */,
 				A00000000000000000000084 /* RideEngineClient.swift */,
 				A00000000000000000000086 /* IndexerProcess.swift */,
@@ -1358,6 +1380,9 @@
 			children = (
 				A0000000000000000000012F /* ProblemsPanel.swift */,
 				A00000000000000000000185 /* DiagnosticStore.swift */,
+				FEE0000000000000000000A5 /* DiagnosticDocLink.swift */,
+				FEE0000000000000000000A6 /* ClangTidyParse.swift */,
+				FEE0000000000000000000A3 /* ClangTidyService.swift */,
 			);
 			path = Problems;
 			sourceTree = "<group>";
@@ -1386,6 +1411,7 @@
 				E80000000000000000000003 /* SelfTestSteps.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
+				FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
 				F1E000000000000000000012 /* SelfTestSteps+Rename.swift */,
 				Q2000000000000000000000D /* SelfTestSteps+Run.swift */,
@@ -1653,6 +1679,10 @@
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
 				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
+				FEE0000000000000000000C5 /* DiagnosticDocLink.swift in Sources */,
+				FEE0000000000000000000C6 /* ClangTidyParse.swift in Sources */,
+				FEE0000000000000000000C7 /* DiagnosticDocLinkTests.swift in Sources */,
+				FEE0000000000000000000C8 /* ClangTidyParseTests.swift in Sources */,
 				F11000000000000000000003 /* WorkspaceState.swift in Sources */,
 				F1100000000000000000000A /* WorkspaceStateStore.swift in Sources */,
 				F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */,
@@ -1871,6 +1901,12 @@
 				A0000000000000000000012E /* SessionService+Paint.swift in Sources */,
 				A00000000000000000000130 /* ProblemsPanel.swift in Sources */,
 				A00000000000000000000186 /* DiagnosticStore.swift in Sources */,
+				FEE0000000000000000000B1 /* AppState+LiveCheck.swift in Sources */,
+				FEE0000000000000000000B2 /* CheckService+Live.swift in Sources */,
+				FEE0000000000000000000B3 /* ClangTidyService.swift in Sources */,
+				FEE0000000000000000000B4 /* SelfTestSteps+Live.swift in Sources */,
+				FEE0000000000000000000B5 /* DiagnosticDocLink.swift in Sources */,
+				FEE0000000000000000000B6 /* ClangTidyParse.swift in Sources */,
 				A00000000000000000000133 /* CheckStatusView.swift in Sources */,
 				A00000000000000000000135 /* AppState+Check.swift in Sources */,
 				A00000000000000000000137 /* AppState+Launch.swift in Sources */,

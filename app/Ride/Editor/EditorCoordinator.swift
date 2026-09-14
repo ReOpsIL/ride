@@ -52,6 +52,7 @@ extension EditorPane {
             BracketHighlight.update(document: document, view: view)
             state.previewTextChanged(document, text: view.string)
             state.scheduleAutoSave()
+            state.scheduleLiveCheck(document, view: view)
         }
 
         private func assist(_ view: RideTextView, pending: PendingEdit) {
