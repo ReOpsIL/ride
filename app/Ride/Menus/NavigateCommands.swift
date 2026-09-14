@@ -34,6 +34,9 @@ struct NavigateCommands: Commands {
             Button("Find Usages") { state.findUsages() }
                 .keyboardShortcut(FunctionKeys.f7, modifiers: .option)
                 .disabled(!menu.hasEditor)
+            Button("Rename…") { state.beginRename() }
+                .keyboardShortcut(FunctionKeys.f6, modifiers: .shift)
+                .disabled(!menu.hasEditor)
             Divider()
             Button("Next Problem") { state.nextProblem(1) }
                 .keyboardShortcut(FunctionKeys.f2, modifiers: [])

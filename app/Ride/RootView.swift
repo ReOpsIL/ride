@@ -28,6 +28,14 @@ struct RootView: View {
         .sheet(isPresented: $state.showRunConfigSheet) {
             RunConfigSheet().environmentObject(state)
         }
+        .sheet(isPresented: $state.showRenamePreview) {
+            RenamePreviewSheet(
+                model: state.renamePreview,
+                root: state.workspaceRoot,
+                onApply: { RenameController.shared.applyWorkspace() },
+                onCancel: { state.showRenamePreview = false }
+            )
+        }
         .preferredColorScheme(state.isLightTheme ? .light : .dark)
         .onAppear {
             NSApp.appearance = NSAppearance(named: state.isLightTheme ? .aqua : .darkAqua)

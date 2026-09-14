@@ -66,6 +66,9 @@ final class AppState: ObservableObject {
     @Published var noticeAction: (title: String, run: () -> Void)?
     @Published var showToolsSheet = false
     @Published var showRunConfigSheet = false
+    @Published var showRenamePreview = false
+    let renamePreview = RenamePreviewModel()
+    var renamePlan: RenamePlan?
     @Published var runConfigs: [RunConfig] = [] {
         didSet { scheduleWorkspaceSave() }
     }

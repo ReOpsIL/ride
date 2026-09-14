@@ -8,6 +8,7 @@ extension SelfTestSteps {
             + rustSelect(e: e)
             + rustTools(state: state, e: e, file: file)
             + rustClose(state: state, e: e, file: file)
+            + renameSteps(state: state, e: e)
     }
 
     private static func findUsages(state: AppState, e: SelfTestEditor) -> SelfTestStep {
