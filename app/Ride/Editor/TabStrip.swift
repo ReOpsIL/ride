@@ -8,18 +8,19 @@ struct TabStrip: View {
     @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 0) {
-                ForEach(pane.tabs.compactMap(state.buffer)) { buffer in
-                    TabItem(buffer: buffer, selected: buffer.id == pane.activeID, paneID: pane.id)
-                        .onDrag { TabPasteboard.provider(buffer.id) }
+        ZStack(alignment: .leading) {
+            ts.ui.bgRaised
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    ForEach(pane.tabs.compactMap(state.buffer)) { buffer in
+                        TabItem(buffer: buffer, selected: buffer.id == pane.activeID, paneID: pane.id)
+                            .onDrag { TabPasteboard.provider(buffer.id) }
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         }
         .frame(height: Tokens.Size.tab)
         .frame(maxWidth: .infinity)
-        .background(ts.ui.bgRaised)
         .overlay(alignment: .trailing) {
             LinearGradient(colors: [ts.ui.bgRaised.opacity(0), ts.ui.bgRaised], startPoint: .leading, endPoint: .trailing)
                 .frame(width: 20)

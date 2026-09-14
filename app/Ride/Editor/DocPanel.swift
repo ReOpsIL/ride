@@ -20,7 +20,7 @@ final class DocPanel {
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = !DemoLaunch.isDemo
         panel.becomesKeyOnlyIfNeeded = true
-        panel.level = .popUpMenu
+        panel.level = DemoLaunch.isDemo ? .normal : .popUpMenu
         panel.hasShadow = true
         panel.isOpaque = false
         panel.backgroundColor = .clear

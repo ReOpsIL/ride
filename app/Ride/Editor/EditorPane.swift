@@ -165,7 +165,6 @@ struct PaneColumn: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TabStrip(pane: pane)
             if focused, state.showFind {
                 FindBar()
             }

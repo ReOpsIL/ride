@@ -72,6 +72,7 @@ struct DetailColumn: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            PaneTabStrips()
             if let notice = state.notice {
                 NoticeBar(text: notice, actionTitle: state.noticeAction?.title, action: state.noticeAction?.run) {
                     state.notice = nil
