@@ -39,6 +39,7 @@ mod postfix;
 mod project;
 mod query;
 mod reach;
+mod refs;
 mod run;
 mod rust_members;
 mod sessions;
@@ -70,6 +71,8 @@ pub(crate) struct Inner {
     pub(crate) projects: HashMap<String, ProjectModel>,
     pub(crate) debug_sessions: Arc<crate::debug::registry::DebugRegistry>,
     pub(crate) sysroot: Option<PathBuf>,
+    pub(crate) refs: Option<crate::refs::RefIndex>,
+    pub(crate) refs_root: Option<PathBuf>,
 }
 
 #[derive(uniffi::Object)]
@@ -101,6 +104,8 @@ impl Engine {
                 projects: HashMap::new(),
                 debug_sessions: Arc::default(),
                 sysroot,
+                refs: None,
+                refs_root: None,
             }),
         }
     }
