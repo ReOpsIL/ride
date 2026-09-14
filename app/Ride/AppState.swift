@@ -146,6 +146,9 @@ final class AppState: ObservableObject {
         CheckService.shared.onFinished = { [weak self] diagnostics in
             self?.checkFinished(diagnostics)
         }
+        CheckService.shared.onLiveFinished = { [weak self] _ in
+            self?.refreshDiagnosticUnderlines()
+        }
         _ = RideEngineClient.shared
         EditorPanes.shared.onFocus = { [weak self] pane in
             self?.paneFocused(pane)

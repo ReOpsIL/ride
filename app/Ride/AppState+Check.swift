@@ -92,7 +92,7 @@ extension AppState {
         openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
-    private func refreshDiagnosticUnderlines() {
+    func refreshDiagnosticUnderlines() {
         if let view = EditorPanes.shared.focusedView, let buffer = activeBuffer {
             Underlines.apply(document: buffer, view: view, parseErrors: nil)
         }

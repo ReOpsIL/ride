@@ -12,6 +12,7 @@ final class CheckService: ObservableObject {
     @Published var progress = ""
     @Published private(set) var version: UInt64 = 0
     var onFinished: (([Diagnostic]) -> Void)?
+    var onLiveFinished: (([Diagnostic]) -> Void)?
     let queue = DispatchQueue(label: "dev.ride.check")
     var store = DiagnosticStore()
     var generations: [String: UInt64] = [:]
@@ -84,6 +85,9 @@ final class CheckService: ObservableObject {
     func dropClang(paths: [String]) {
         var any = false
         for path in paths {
+            liveTimers[path]?.cancel()
+            liveTimers.removeValue(forKey: path)
+            _ = bump(Self.livePrefix + path)
             any = store.remove(path: path) || any
         }
         if any {
