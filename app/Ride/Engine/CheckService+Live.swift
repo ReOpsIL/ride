@@ -24,7 +24,12 @@ extension CheckService {
         store.replaceLive(path: path, with: items)
         hasRun = true
         publish()
-        onFinished?(diagnostics)
+        onLiveFinished?(diagnostics)
+    }
+
+    func setLive(path: String, diagnostics items: [StoredDiagnostic], generation gen: UInt64) {
+        guard generations[Self.livePrefix + path] == gen else { return }
+        setLive(path: path, diagnostics: items)
     }
 
     private func runLive(path: String, text: String) {
@@ -62,6 +67,6 @@ extension CheckService {
         store.replaceLiveCargo(check.diagnostics.compactMap(CheckConvert.stored))
         hasRun = true
         publish()
-        onFinished?(diagnostics)
+        onLiveFinished?(diagnostics)
     }
 }

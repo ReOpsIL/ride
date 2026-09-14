@@ -118,7 +118,15 @@ final class DiagnosticStoreTests: XCTestCase {
         XCTAssertEqual(Set(store.clangPaths), ["/a.c", "/b.c"])
     }
 
-    func testLiveCargoSuppressesSaveCargoWholesale() {
+    func testSaveCargoAfterLiveCargoWins() {
+        var store = DiagnosticStore()
+        store.replaceLiveCargo([])
+        store.replaceCargo([item("/r.rs", 3, "save-err")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["save-err"])
+        XCTAssertEqual(store.snapshot.first?.origin, .check)
+    }
+
+    func testLiveCargoAfterSaveCargoWins() {
         var store = DiagnosticStore()
         store.replaceCargo([item("/r.rs", 1, "save-r")])
         store.replaceLiveCargo([item("/r.rs", 2, "live-r")])

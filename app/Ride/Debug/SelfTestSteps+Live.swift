@@ -14,6 +14,9 @@ extension SelfTestSteps {
             liveDiagnosticPrep(state: state, e: e, scratch: scratch),
             liveDiagnosticAppears(state: state, e: e, scratch: scratch),
             liveDiagnosticClears(state: state, e: e, scratch: scratch),
+            livePanelSeam(state: state, e: e),
+            liveDropCancels(state: state, e: e),
+            liveStaleGuarded(state: state, e: e),
         ]
     }
 
@@ -23,6 +26,58 @@ extension SelfTestSteps {
 
     private static func hasLive(_ state: AppState, marker: String) -> Bool {
         CheckService.shared.snapshot.contains { $0.origin == .live && $0.message.contains(marker) }
+    }
+
+    private static func errItem(_ path: String, _ marker: String) -> StoredDiagnostic {
+        StoredDiagnostic(
+            path: path, byteStart: 1, byteEnd: 2, line: 1, column: 1,
+            level: .error, message: marker, code: nil
+        )
+    }
+
+    private static func livePanelSeam(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "live diagnostic keeps panel", wait: 0.3, run: {
+            guard let path = shapesURL(state)?.path else { return }
+            state.showProblems = false
+            let gen = CheckService.shared.bump(CheckService.livePrefix + path)
+            CheckService.shared.setLive(path: path, diagnostics: [errItem(path, "ride_seam_live")], generation: gen)
+        }, check: {
+            guard let path = shapesURL(state)?.path else { return "no shapes path" }
+            let liveOpened = state.showProblems
+            state.showProblems = false
+            state.checkFinished([CheckConvert.ffi(errItem(path, "ride_seam_save"))])
+            let saveOpened = state.showProblems
+            state.showProblems = false
+            CheckService.shared.dropClang(path: path)
+            return e.expect(!liveOpened && saveOpened, "liveOpened \(liveOpened) saveOpened \(saveOpened)")
+        })
+    }
+
+    private static func liveDropCancels(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "live drop cancels", wait: 0.3, run: {
+            guard let path = shapesURL(state)?.path else { return }
+            let armed = CheckService.shared.bump(CheckService.livePrefix + path)
+            CheckService.shared.dropClang(path: path)
+            CheckService.shared.setLive(path: path, diagnostics: [errItem(path, "ride_drop_live")], generation: armed)
+        }, check: {
+            e.expect(!hasLive(state, marker: "ride_drop_live"), "dropped path resurrected")
+        })
+    }
+
+    private static func liveStaleGuarded(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "live stale guarded", wait: 0.3, run: {
+            guard let path = shapesURL(state)?.path else { return }
+            let stale = CheckService.shared.bump(CheckService.livePrefix + path)
+            let fresh = CheckService.shared.bump(CheckService.livePrefix + path)
+            CheckService.shared.setLive(path: path, diagnostics: [errItem(path, "ride_stale_live")], generation: stale)
+            CheckService.shared.setLive(path: path, diagnostics: [errItem(path, "ride_fresh_live")], generation: fresh)
+        }, check: {
+            guard let path = shapesURL(state)?.path else { return "no shapes path" }
+            let staleDropped = !hasLive(state, marker: "ride_stale_live")
+            let freshApplied = hasLive(state, marker: "ride_fresh_live")
+            CheckService.shared.dropClang(path: path)
+            return e.expect(staleDropped && freshApplied, "staleDropped \(staleDropped) freshApplied \(freshApplied)")
+        })
     }
 
     private static func liveDiagnosticPrep(state: AppState, e: SelfTestEditor, scratch: LiveScratch) -> SelfTestStep {

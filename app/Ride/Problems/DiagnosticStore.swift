@@ -29,8 +29,6 @@ struct DiagnosticStore {
     private var build: [StoredDiagnostic] = []
     private var owner: [String: String] = [:]
     private var liveClang: [String: [StoredDiagnostic]] = [:]
-    private var liveCargo: [StoredDiagnostic] = []
-    private var liveCargoRan = false
 
     mutating func insert(_ item: StoredDiagnostic) {
         clang[item.path, default: []].append(item)
@@ -80,8 +78,7 @@ struct DiagnosticStore {
     }
 
     mutating func replaceLiveCargo(_ items: [StoredDiagnostic]) {
-        liveCargo = items.map(Self.asLive)
-        liveCargoRan = true
+        cargo = items.map(Self.asLive)
     }
 
     private static func asLive(_ item: StoredDiagnostic) -> StoredDiagnostic {
@@ -110,10 +107,9 @@ struct DiagnosticStore {
 
     var snapshot: [StoredDiagnostic] {
         let liveKeys = Set(liveClang.keys)
-        let liveItems = liveClang.values.flatMap { $0 } + liveCargo
+        let liveItems = liveClang.values.flatMap { $0 }
         let saveClang = clang.filter { !liveKeys.contains($0.key) }.values.flatMap { $0 }
-        let saveCargo = liveCargoRan ? [] : cargo
-        return (liveItems + saveClang + saveCargo + build).sorted {
+        return (liveItems + saveClang + cargo + build).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)
         }
     }
