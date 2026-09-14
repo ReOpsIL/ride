@@ -65,25 +65,65 @@ extension SelfTestSteps {
     }
 
     private static func renameSkipsEditedBuffer(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "rename skips edited buffer", wait: 0.6, run: {
+        let scratch = RenameSkipScratch()
+        return SelfTestStep(name: "rename skips edited buffer", wait: 0.4, until: {
+            if scratch.applied {
+                return noticeFired(state)
+            }
+            guard let util = openBuffer(state, name: "util.rs") else {
+                openWorkspaceFile(state, "src/util.rs")
+                return false
+            }
+            guard activateMain(state) else {
+                return false
+            }
             e.focus()
             e.place(on: "record")
             RenameController.shared.prepare(state: state)
             RenameController.shared.buildPreview("changed")
-            guard let util = openBuffer(state, name: "util.rs") else {
-                return
+            guard renameHasBothFiles(state) else {
+                state.indexOpenBuffers()
+                return false
             }
+            scratch.original = util.text
             util.text = "let _stale = 0;\n" + util.text
+            scratch.applied = true
             RenameController.shared.applyWorkspace()
-        }, check: {
-            let text = openBuffer(state, name: "util.rs")?.text ?? ""
-            return e.expect(
-                text.contains("fn record")
+            return noticeFired(state)
+        }, timeout: 30, run: {}, check: {
+            let util = openBuffer(state, name: "util.rs")
+            let text = util?.text ?? ""
+            let failure = e.expect(
+                scratch.applied
+                    && text.contains("fn record")
                     && !text.contains("changed")
-                    && (state.notice?.contains("changed since indexing") ?? false),
-                "notice \(state.notice ?? "nil")"
+                    && noticeFired(state),
+                "applied \(scratch.applied) notice \(state.notice ?? "nil")"
             )
+            if let util, !scratch.original.isEmpty {
+                util.text = scratch.original
+            }
+            return failure
         })
+    }
+
+    private static func noticeFired(_ state: AppState) -> Bool {
+        state.notice?.contains("changed since indexing") ?? false
+    }
+
+    private static func openWorkspaceFile(_ state: AppState, _ relative: String) {
+        guard let root = state.workspaceRoot else {
+            return
+        }
+        state.openFile(root.appendingPathComponent(relative))
+    }
+
+    private static func activateMain(_ state: AppState) -> Bool {
+        if state.activeBuffer?.fileURL?.lastPathComponent == "main.rs" {
+            return true
+        }
+        openWorkspaceFile(state, "src/main.rs")
+        return false
     }
 
     private static func renameReviewApply(state: AppState, e: SelfTestEditor) -> SelfTestStep {
@@ -122,4 +162,9 @@ extension SelfTestSteps {
         let paths = renamePaths(state)
         return paths.contains { $0.hasSuffix("main.rs") } && paths.contains { $0.hasSuffix("util.rs") }
     }
+}
+
+final class RenameSkipScratch {
+    var applied = false
+    var original = ""
 }
