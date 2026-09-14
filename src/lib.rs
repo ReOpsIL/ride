@@ -15,6 +15,7 @@ mod markdown;
 mod params;
 pub mod project;
 mod query;
+mod refs;
 mod run;
 mod score;
 mod skip;
@@ -49,4 +50,5 @@ pub use index::{
     live_index_dir, parent_path_of, read_manifest, rebuild_index, write_index,
 };
 pub use markdown::render as render_markdown;
+pub use refs::{RefKind, RefRecord};
 pub use toolchain::tool_path;

@@ -9,6 +9,7 @@ mod index;
 mod kind;
 mod project;
 mod query;
+mod refs;
 mod run;
 mod session;
 mod symbol;
@@ -33,6 +34,7 @@ pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,
     QueryMode,
 };
+pub use refs::{UsageHit, UsagesResponse};
 pub use run::{RecompileCommand, SingleRun};
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
