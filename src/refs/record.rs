@@ -61,6 +61,7 @@ impl RefExtractor for StubExtractor {
 
 pub fn extractor_for(lang: Lang) -> Box<dyn RefExtractor> {
     match lang {
+        Lang::Rust => Box::new(super::rust::RustExtractor),
         Lang::C | Lang::Cpp => Box::new(super::c::CExtractor),
         _ => Box::new(StubExtractor),
     }

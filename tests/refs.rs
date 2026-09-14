@@ -119,3 +119,46 @@ fn cpp_extractor_yields_call_for_header_method() {
         "include of shapes.hpp should yield an Include record"
     );
 }
+
+fn sample(rel: &str) -> String {
+    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("samples/rust-demo")
+        .join(rel);
+    std::fs::read_to_string(path).unwrap()
+}
+
+#[test]
+fn rust_extractor_calls_record_twice() {
+    let text = sample("src/main.rs");
+    let records = extractor_for(Lang::Rust).extract(Lang::Rust, &text);
+
+    let calls: Vec<&RefRecord> = records
+        .iter()
+        .filter(|r| r.name == "record" && r.kind == RefKind::Call)
+        .collect();
+    assert_eq!(calls.len(), 2, "{calls:?}");
+
+    let r1 = text.find("record(").unwrap();
+    let r2 = text[r1 + 1..].find("record(").unwrap() + r1 + 1;
+    let mut lines: Vec<u32> = calls.iter().map(|c| c.line).collect();
+    lines.sort_unstable();
+    assert_eq!(lines, vec![line_of(&text, r1), line_of(&text, r2)]);
+
+    for c in &calls {
+        assert_eq!(c.enclosing_item, "main");
+        assert_eq!(c.enclosing_kind, ItemKind::Fn);
+    }
+}
+
+#[test]
+fn rust_extractor_yields_type_mentions() {
+    let text = sample("src/util.rs");
+    let records = extractor_for(Lang::Rust).extract(Lang::Rust, &text);
+
+    let types: Vec<&RefRecord> = records
+        .iter()
+        .filter(|r| r.name == "Counter" && r.kind == RefKind::TypeMention)
+        .collect();
+    assert!(types.len() >= 2, "{records:?}");
+    assert!(types.iter().all(|t| t.kind == RefKind::TypeMention));
+}

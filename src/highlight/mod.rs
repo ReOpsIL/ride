@@ -29,7 +29,7 @@ mod paint;
 mod ranges;
 mod rust_import;
 mod rust_locals;
-mod rust_outline;
+pub(crate) mod rust_outline;
 mod rust_postfix;
 mod rust_receiver;
 mod rust_type_names;
