@@ -122,3 +122,21 @@ Executor contract is `plan/roadmap/next-impl.md` sections 0–1 (repository rule
 ### 1.3-1d Find Usages panel, indexing hook and code vision — Tier B, after 1.3-1b/c
 
 Indexing hook first (the engine has `find_usages` and `note_saved` but nothing calls the latter, so the index is empty): call `note_saved(session)` off the main thread whenever a buffer is opened and whenever it is saved (through the existing `SessionService`/`didSave` path), and index every already-open buffer once when a workspace finishes opening. Then the panel: `app/Ride/Usages/UsagesPanel.swift` (a bottom-panel tab or a side panel listing `UsageHit`s grouped by file with the enclosing item, click to open at the byte, "other matches" section collapsed), `⌥F7` in the Navigate menu through `MenuModel`, and a dimmed "N usages" code-vision line above each outline item drawn as an editor overlay (a pure `UsageVision.swift` in RideTests maps outline items plus counts to line positions). The query runs off the main thread with the stop-generation pattern from the debug panel. Self-test step on `samples/rust-demo`: ⌥F7 on `record` lists two usages. Out of scope: rename (1.3-2), hierarchy (1.3-8).
+
+### 1.3-1e Code-vision "N usages" line — Tier B, deferred
+
+1.3-1d shipped the pure `UsageVision` model (outline items + counts → line labels) but did not render the dimmed "N usages" line above each item, because it needs `RideTextView` line-fragment work. Render it: an editor overlay (a top inset or a line-fragment padding above each outline item's first line) drawing a dimmed, clickable "N usages" label from `UsageVision`; the count comes from a background `find_usages`-style aggregate keyed by item, refreshed on save; clicking opens the Find Usages panel filtered to that item. Not on the rename path, so it can wait until after 1.3-2. Acceptance: a self-test asserts the vision model yields the right line/label for `record`; a manual check by the reviewer for the drawn overlay.
+
+## Implementation cards — 1.3-2 Rename
+
+### 1.3-2a Rename engine — Tier B, after 1.3-1
+
+**Goal.** `Engine::rename_local(session_id, cursor_byte, new_name) -> Vec<TextEdit>` renaming every in-scope occurrence of a local/parameter through the existing scope analysis, and `Engine::rename_plan(session_id, cursor_byte, new_name) -> RenamePlan { files: [RenameFile { path, edits: [TextEdit] }], skipped: [String] }` for a workspace symbol built from the reference index: only occurrences whose `in_definition_scope` is true are edited; other same-name matches go to `skipped` (shown, not applied). A `.h`/`.cpp` pair is one plan (both files' hits). Refuse (empty result) when the caret is not on a renameable identifier or the new name is not a valid identifier for the language.
+
+**Read first.** `src/highlight/{scope,rust_locals,c_locals}.rs` (scope/occurrence analysis), `src/engine/refs.rs` (find_usages), `src/refs/`, `src/engine/edits.rs` and the `TextEdit` FFI record, `src/ffi/`.
+
+**Steps.** `src/engine/rename.rs` with the two methods and a pure `plan_from_usages` helper; `RenamePlan`/`RenameFile` records in `src/ffi/rename.rs`; `bash scripts/build-engine.sh`. Tests in `tests/rename.rs`: renaming the `counter` local in `samples/rust-demo` main yields edits at every occurrence and none outside the fn; a workspace rename of `record` produces a plan covering `src/main.rs` and `src/util.rs`; an invalid new name yields an empty result. Out of scope: the app UI (1.3-2b).
+
+### 1.3-2b Rename UI — Tier B, after 1.3-2a
+
+**Goal.** ⇧F6: an inline rename box over the identifier for a local (apply `rename_local` as one undo group on commit, Esc cancels); for a workspace symbol, a preview sheet listing the `RenamePlan` files with their edits and a "skipped" section, each file tickable, Apply writing through open `Buffers` or to disk then triggering the watcher. `.h`/`.cpp` pairs shown together. Menu item through `MenuModel`; check ⇧F6 against existing bindings. Self-test on `samples/rust-demo`: rename the `counter` local to `tally`, assert the occurrences changed and nothing outside `main`; a workspace rename preview of `record` lists two files. Out of scope: rename of a field/method across the catalog (heuristic-limited; refuse rather than guess).
