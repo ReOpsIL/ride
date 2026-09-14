@@ -10,6 +10,7 @@ extension SelfTestSteps {
             + rustClose(state: state, e: e, file: file)
             + rustGenerate(e: e, scratch: scratch)
             + renameSteps(state: state, e: e)
+            + rustExtract(e: e, scratch: scratch)
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {

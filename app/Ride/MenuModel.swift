@@ -6,6 +6,7 @@ final class MenuModel: ObservableObject {
     @Published var hasEditor = false
     @Published var hasWorkspace = false
     @Published var canGenerate = false
+    @Published var canRefactor = false
     @Published var canGoBack = false
     @Published var canGoForward = false
     @Published var softWrap = true
@@ -38,6 +39,7 @@ final class MenuModel: ObservableObject {
         set(\.hasEditor, state.activeBuffer != nil)
         set(\.hasWorkspace, state.workspaceRoot != nil)
         set(\.canGenerate, generatable(state.activeBuffer?.language))
+        set(\.canRefactor, generatable(state.activeBuffer?.language))
         set(\.canGoBack, state.history.canGoBack)
         set(\.canGoForward, state.history.canGoForward)
         set(\.softWrap, state.prefs.softWrap)

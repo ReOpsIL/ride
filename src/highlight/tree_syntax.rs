@@ -8,6 +8,8 @@ use crate::ffi::{
     TextEdit,
 };
 
+use crate::refactor::ExtractSpans;
+
 use super::context::Context;
 use super::grammar::Grammar;
 use super::includes::IncludeRef;
@@ -179,6 +181,11 @@ impl Syntax for TreeSyntax {
     fn bracket_pair(&self, text: &str, byte: usize) -> Option<BracketPair> {
         let tree = self.tree.as_ref()?;
         editing::bracket_pair(tree.root_node(), text, byte, &self.grammar.editing)
+    }
+
+    fn extract_spans(&self, text: &str, range: ByteRange) -> Option<ExtractSpans> {
+        let tree = self.tree.as_ref()?;
+        crate::refactor::spans(tree.root_node(), text, range)
     }
 
     fn statement_range(&self, _text: &str, byte: u32) -> Option<ByteRange> {
