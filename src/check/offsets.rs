@@ -12,6 +12,11 @@ pub struct LineOffsets {
 }
 
 impl LineOffsets {
+    pub fn seed(&mut self, path: &Path, text: &str) {
+        self.files
+            .insert(path.to_path_buf(), lines_of(text.as_bytes()));
+    }
+
     pub fn byte_at(&mut self, path: &Path, line: u32, column: u32) -> u32 {
         let lines = self
             .files
@@ -27,7 +32,10 @@ impl LineOffsets {
 }
 
 fn read_lines(path: &Path) -> FileLines {
-    let bytes = std::fs::read(path).unwrap_or_default();
+    lines_of(&std::fs::read(path).unwrap_or_default())
+}
+
+fn lines_of(bytes: &[u8]) -> FileLines {
     let starts = std::iter::once(0)
         .chain(
             bytes
