@@ -26,6 +26,7 @@ mod docs;
 mod doxygen;
 mod editing;
 mod edits;
+mod generate;
 mod header_hits;
 mod header_store;
 pub(crate) mod headers;

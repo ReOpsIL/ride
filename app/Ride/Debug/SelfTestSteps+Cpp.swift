@@ -37,6 +37,10 @@ extension SelfTestSteps {
             headerSourceSwitch(state: state, e: e),
             runFileError(state: state, e: e),
             recompileFile(state: state, e: e),
+            generatePrep(state: state, e: e, scratch: scratch),
+            generateConstructor(e: e),
+            generateGetters(e: e),
+            generateCleanup(e: e, scratch: scratch),
         ] + liveSteps(state: state, e: e)
     }
 
@@ -169,6 +173,53 @@ extension SelfTestSteps {
                 "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(240))"
             )
         })
+    }
+
+    private static func generatePrep(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "generate prep", wait: 1.5, run: {
+            if let url = state.workspaceRoot?.appendingPathComponent("src/shapes.cpp") {
+                state.openFile(url)
+            }
+            e.activate()
+            guard let view = e.view, let binding = view.hooks.binding?() else {
+                return
+            }
+            scratch.saved = view.string
+            let addition = "\n\nstruct GenBox {\n    int gx_;\n    int gy_;\n};\n"
+            let end = (view.string as NSString).length
+            view.setSelectedRange(NSRange(location: end, length: 0))
+            view.insertText(addition, replacementRange: NSRange(location: end, length: 0))
+            SessionService.shared.resync(document: binding.document, view: view)
+        }, check: { e.expect(e.text.contains("struct GenBox"), "no GenBox") })
+    }
+
+    private static func generateConstructor(e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "generate constructor", wait: 1.0, run: {
+            e.activate()
+            e.place(on: "int gx_;")
+            EditorCommands.applyGenerator(.constructor)
+        }, check: { e.expect(e.text.contains("GenBox(int gx, int gy)"), "text \(e.text.suffix(200))") })
+    }
+
+    private static func generateGetters(e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "generate getters", wait: 0.8, run: {
+            e.activate()
+            e.place(on: "int gx_;")
+            EditorCommands.applyGenerator(.getters)
+        }, check: { e.expect(e.text.contains("int gx() const { return gx_; }"), "text \(e.text.suffix(260))") })
+    }
+
+    private static func generateCleanup(e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "generate cleanup", run: {
+            guard let view = e.view else {
+                return
+            }
+            let full = NSRange(location: 0, length: (view.string as NSString).length)
+            view.insertText(scratch.saved, replacementRange: full)
+            if let binding = view.hooks.binding?() {
+                SessionService.shared.resync(document: binding.document, view: view)
+            }
+        }, check: { e.expect(!e.text.contains("GenBox"), "leftover") })
     }
 
     private static func headerSourceSwitch(state: AppState, e: SelfTestEditor) -> SelfTestStep {

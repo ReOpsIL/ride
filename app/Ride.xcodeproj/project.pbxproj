@@ -348,6 +348,7 @@
 		E6000000000000000000001D /* EditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001C /* EditorCommands.swift */; };
 		E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001E /* EditorCommands+Selection.swift */; };
 		E60000000000000000000021 /* SurroundWith.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000020 /* SurroundWith.swift */; };
+		E6000000000000000000003D /* GenerateMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000003C /* GenerateMenu.swift */; };
 		E60000000000000000000023 /* FoldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000022 /* FoldController.swift */; };
 		E60000000000000000000025 /* FoldLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000024 /* FoldLayout.swift */; };
 		E60000000000000000000027 /* FoldSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000026 /* FoldSet.swift */; };
@@ -831,6 +832,7 @@
 		E6000000000000000000001C /* EditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands.swift"; sourceTree = "<group>"; };
 		E6000000000000000000001E /* EditorCommands+Selection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands+Selection.swift"; sourceTree = "<group>"; };
 		E60000000000000000000020 /* SurroundWith.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurroundWith.swift"; sourceTree = "<group>"; };
+		E6000000000000000000003C /* GenerateMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenerateMenu.swift"; sourceTree = "<group>"; };
 		E60000000000000000000022 /* FoldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldController.swift"; sourceTree = "<group>"; };
 		E60000000000000000000024 /* FoldLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldLayout.swift"; sourceTree = "<group>"; };
 		E60000000000000000000026 /* FoldSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldSet.swift"; sourceTree = "<group>"; };
@@ -1469,6 +1471,7 @@
 				E6000000000000000000001C /* EditorCommands.swift */,
 				E6000000000000000000001E /* EditorCommands+Selection.swift */,
 				E60000000000000000000020 /* SurroundWith.swift */,
+				E6000000000000000000003C /* GenerateMenu.swift */,
 				E60000000000000000000022 /* FoldController.swift */,
 				E60000000000000000000024 /* FoldLayout.swift */,
 				E60000000000000000000026 /* FoldSet.swift */,
@@ -1837,6 +1840,7 @@
 				E6000000000000000000001D /* EditorCommands.swift in Sources */,
 				E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */,
 				E60000000000000000000021 /* SurroundWith.swift in Sources */,
+				E6000000000000000000003D /* GenerateMenu.swift in Sources */,
 				E60000000000000000000023 /* FoldController.swift in Sources */,
 				E60000000000000000000025 /* FoldLayout.swift in Sources */,
 				E60000000000000000000027 /* FoldSet.swift in Sources */,
