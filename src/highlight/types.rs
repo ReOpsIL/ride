@@ -87,6 +87,29 @@ impl TypeTable {
         type_lookup::scoped(tables, segments)
     }
 
+    pub fn own_members(&self, name: &str) -> Vec<Member> {
+        let Some(items) = self.members_of(name) else {
+            return Vec::new();
+        };
+        items
+            .iter()
+            .map(|item| {
+                let type_name = self.member_type(name, &item.name).cloned();
+                let detail = self
+                    .member_detail(name, &item.name)
+                    .cloned()
+                    .or_else(|| type_name.clone())
+                    .unwrap_or_default();
+                Member {
+                    item: item.clone(),
+                    origin: self.origin.clone(),
+                    type_name,
+                    detail,
+                }
+            })
+            .collect()
+    }
+
     pub fn follow(tables: &[&TypeTable], chain: &Chain) -> Option<String> {
         type_lookup::follow(tables, chain)
     }
