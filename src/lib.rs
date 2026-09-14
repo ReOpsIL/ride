@@ -8,6 +8,7 @@ mod engine;
 mod error;
 mod extract;
 mod ffi;
+mod generate;
 mod highlight;
 pub mod includes;
 mod index;

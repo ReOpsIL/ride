@@ -173,6 +173,7 @@ final class SelfTestScratch {
     var buildLine = ""
     var staleRunId = 0
     var staleShown = false
+    var saved = ""
 }
 
 struct SelfTestOpened {

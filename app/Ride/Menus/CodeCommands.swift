@@ -21,6 +21,9 @@ struct CodeCommands: Commands {
                 .keyboardShortcut("l", modifiers: [.command, .option])
             Button("Complete Statement") { EditorCommands.completeStatement() }
                 .keyboardShortcut(.return, modifiers: [.command, .shift])
+            Button("Generate…") { EditorCommands.generate() }
+                .keyboardShortcut("g", modifiers: [.control, .command])
+                .disabled(!menu.canGenerate)
             Divider()
             Button("Surround With…") { EditorCommands.surroundWith() }
                 .keyboardShortcut("t", modifiers: [.command, .option])

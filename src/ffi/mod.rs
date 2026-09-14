@@ -5,6 +5,7 @@ mod debug;
 mod docs;
 mod edit;
 mod editing;
+mod generate;
 mod index;
 mod kind;
 mod project;
@@ -28,6 +29,7 @@ pub use debug::{
 pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange};
+pub use generate::{GenKind, GenOption};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use kind::{CaptureKind, ItemKind};
 pub use project::{ProjectKind, ProjectModel, Target, TargetKind};

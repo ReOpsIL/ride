@@ -5,6 +5,7 @@ final class MenuModel: ObservableObject {
     @Published var previewAvailable = false
     @Published var hasEditor = false
     @Published var hasWorkspace = false
+    @Published var canGenerate = false
     @Published var canGoBack = false
     @Published var canGoForward = false
     @Published var softWrap = true
@@ -36,6 +37,7 @@ final class MenuModel: ObservableObject {
         set(\.previewAvailable, state.previewAvailable)
         set(\.hasEditor, state.activeBuffer != nil)
         set(\.hasWorkspace, state.workspaceRoot != nil)
+        set(\.canGenerate, generatable(state.activeBuffer?.language))
         set(\.canGoBack, state.history.canGoBack)
         set(\.canGoForward, state.history.canGoForward)
         set(\.softWrap, state.prefs.softWrap)
@@ -62,6 +64,15 @@ final class MenuModel: ObservableObject {
         set(\.isDebugRunning, state.debug.isRunning)
         set(\.showDebugPanel, state.debugPanel.visible)
         set(\.debugFilters, DebugFilters.shared.toggles)
+    }
+
+    private func generatable(_ language: BufferLanguage?) -> Bool {
+        switch language {
+        case .c, .cpp, .rust:
+            return true
+        default:
+            return false
+        }
     }
 
     private func set<T: Equatable>(_ path: ReferenceWritableKeyPath<MenuModel, T>, _ value: T) {
