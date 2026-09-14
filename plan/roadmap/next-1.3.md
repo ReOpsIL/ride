@@ -78,3 +78,47 @@ Exit: a C++ session on `samples/cpp-demo` stops in a method, shows `std::vector`
 - **Heuristic typing over a type checker**: three-hop expression typing, template arguments only for the standard containers, and "unknown" shown honestly. rust-analyzer and clangd stay out.
 - **DAP only**: every debugger feature is a `lldb-dap` request; no direct `liblldb` binding, no GDB.
 - **Not planned**: coverage and profiler UIs, Valgrind, remote debugging, kernel or embedded targets, macro expansion views, any model in the keystroke path.
+
+## Foundations that already exist (checked 2026-09-14)
+
+The Tier-C items extend subsystems that are already in the tree, which lowers their risk and moves more work into executor-friendly A/B cards:
+
+- **Catalog index** (`src/index/`): a Tantivy index of crate items under `~/Library/Application Support/Ride/index/`, rebuilt by the out-of-process `ride-engine index` batch (the ~50 s reindex). Schema at `schema.rs` (`SCHEMA_VERSION` 12), incremental crate delta at `incremental.rs`. The **reference index (1.3-1) is a new, separate, per-workspace index built in-process on save** — it reuses the Tantivy plumbing and the tree-sitter walk (`src/extract/walk.rs` `extract_tree`/`walk_list`, `emit.rs`), not the catalog schema or the batch indexer.
+- **TypeTable** (`src/highlight/{types,rust_types,c_types,type_lookup,c_member_types}.rs`): resolves receivers for member completion today. 1.3-7 and 1.4-1/2 **extend** it (locals/params colouring, expression typing, template args), not build it.
+- **Check infra** (`src/check/{clang,clang_project,run,parse,offsets,message,output}.rs`): 1.3-3 live diagnostics is a debounce plus temp-target-dir wrapper over this; the build-diagnostics owner model from 1.2 (`DiagnosticStore` build owner) is reused.
+
+Net: only the reference-index core (1.3-1a), the resolver extension (1.3-7) and Extract Function / Change Signature (1.3-6) are truly architectural. Everything else is Tier A/B.
+
+## Implementation cards — 1.3-1 Reference index and Find Usages
+
+Executor contract is `plan/roadmap/next-impl.md` sections 0–1 (repository rules, project facts, gates, hand-back format). Grok is out of balance, so executors are Claude Opus subagents per card in a git worktree; reviews are Sonnet subagents; the strong model keeps the Tier-C design.
+
+### 1.3-1a References index core — Tier C
+
+**Goal.** A new per-workspace Tantivy index of *references* (name occurrences with their kind and enclosing item), built in-process, updated incrementally when a buffer is saved, queried by byte offset.
+
+**Read first.** `src/index/{schema,incremental,writer,folder,tokenizers,fingerprint,hash}.rs`, `src/index/mod.rs`, `src/engine/mod.rs` (how `Engine` holds the catalog index and sessions), `src/ffi/{query,session}.rs`, `src/highlight/session.rs` (the per-buffer session and its tree).
+
+**Design (fixed).**
+- New module `src/refs/` (index only; extractors are 1.3-1b/c). `RefKind { Call, TypeMention, FieldAccess, UsePath, Include, Ident }`, `RefRecord { name, kind, path (workspace-relative file), line, byte_start, byte_end, enclosing_item, enclosing_kind }`.
+- `RefIndex`: a Tantivy index under `<support dir>/refs/<sha256 of workspace root>/`, its own small schema (name STRING+fast for exact term lookup, kind, path, line, byte offsets stored, enclosing item stored, a `name_exact` term). One `RefIndex` per workspace root, held on `Engine` behind the existing lock.
+- Writer is in-process and incremental: `update_file(path, records)` deletes every document whose `path` equals this file with a `Term` delete, then adds the new records, and commits with a short-lived `IndexWriter` (reuse the `writer.rs` memory-budget pattern). No batch process, no generations.
+- Extraction is injected: `RefIndex::update_file` takes `Vec<RefRecord>` produced by a `RefExtractor` trait (`fn extract(lang, text) -> Vec<RefRecord>`); 1.3-1a ships a stub extractor that returns `[]`, so the pipeline is testable before the real extractors land.
+- Query: `Engine::find_usages(session_id, cursor_byte) -> UsagesResponse` — resolve the identifier under the caret (reuse `find_definitions`' symbol resolution for the name and whether a reachable definition of that name exists), term-query the ref index for that `name_exact`, return `UsageHit { path, line, byte_start, byte_end, enclosing_item, enclosing_kind, in_definition_scope: bool }` grouped by file, with hits whose enclosing scope can reach the definition marked `in_definition_scope` (ranked first) and the rest as "other matches". FFI records in `src/ffi/refs.rs`.
+- `Engine` gains `note_saved(session_id)` (or reuses an existing save hook) that re-extracts and calls `update_file`.
+
+**Steps.** Create `src/refs/{mod,index,record,query}.rs` and `src/ffi/refs.rs`; wire `mod refs;` in `lib.rs` and the FFI re-exports; add `find_usages` and the save hook on `Engine`; `bash scripts/build-engine.sh` to regenerate bindings.
+
+**Acceptance.** `tests/refs.rs`: with a hand-built `Vec<RefRecord>` for `samples/rust-demo` (two calls to `record`, one to `count`), `update_file` then `find_usages` at the caret on `record` returns both call sites grouped under `src/main.rs`, and a second `update_file` for the same file replaces rather than duplicates. Latency: updating one file under 50 ms in the test. Out of scope: the real extractors (1.3-1b/c), the app UI (1.3-1d), code vision.
+
+### 1.3-1b Rust reference extractor — Tier A, after 1.3-1a
+
+`src/refs/rust.rs`: a tree-sitter walk of a Rust buffer producing `RefRecord`s — `call_expression` and `method_call` names (Call), type identifiers in type positions (TypeMention), `field_expression` field names (FieldAccess), `use` path segments (UsePath), every other identifier (Ident) — each tagged with its enclosing item name and kind from the outline. Reuse the query/walk patterns in `src/extract/` and `src/highlight/`. Tests in `tests/refs.rs` on `samples/rust-demo`: `record` yields two Call records at the right lines with enclosing item `main`; `Counter` yields TypeMention records. Wire it as the `RefExtractor` for `Lang::Rust`.
+
+### 1.3-1c C and C++ reference extractor — Tier A, after 1.3-1a
+
+`src/refs/c.rs`: the same for C and C++ (call expressions, type identifiers, field accesses through `.`/`->`, `#include` targets). Tests on `samples/cpp-demo`: a call to a method declared in `include/shapes.hpp` yields a Call record. Wire it for `Lang::C`/`Lang::Cpp`.
+
+### 1.3-1d Find Usages panel and code vision — Tier B, after 1.3-1a
+
+App: `app/Ride/Usages/UsagesPanel.swift` (a bottom-panel tab or a side panel listing `UsageHit`s grouped by file with the enclosing item, click to open at the byte, "other matches" section collapsed), `⌥F7` in the Navigate menu through `MenuModel`, and a dimmed "N usages" code-vision line above each outline item drawn as an editor overlay (a pure `UsageVision.swift` in RideTests maps outline items plus counts to line positions). The query runs off the main thread with the stop-generation pattern from the debug panel. Self-test step on `samples/rust-demo`: ⌥F7 on `record` lists two usages. Out of scope: rename (1.3-2), hierarchy (1.3-8).
