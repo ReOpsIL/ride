@@ -258,3 +258,23 @@ Engine + app. Select an expression in a Rust or C/C++ buffer and press ⌥⌘V: 
 **Self-test**: add a step to `SelfTestSteps+Rust.swift` (append at the END of the array, after `renameSteps` and the generate steps — a new step must not perturb the index-dependent rename steps, see 1.3-2e) that selects a known expression in `main.rs`, calls `EditorCommands.extractVariable()` directly (never a menu), asserts a `let value = …;` line appeared and the original site now reads `value`, then restores the buffer. Mirror it in `SelfTestSteps+Cpp.swift` with `auto`.
 
 **Gates**: `scripts/build-engine.sh`, `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`, the xcodebuild `build test` gate, then the Rust self-test on a fresh copy of `samples/rust-demo` (no `--file`) run **twice** and the C++ self-test on a fresh copy of `samples/cpp-demo` (`--file src/shapes.cpp`) — every run `EXIT 0` with zero `^FAIL`. Rules: no comments, files ~200 LOC, no unwrap/expect/force-unwrap outside tests, new pure files registered in the right pbxproj Sources phases.
+
+## Landed in 1.3 (log, newest last)
+
+Every card below is merged with `--no-ff` into `grok/next-impl` and pushed; `main` is untouched until the release is complete. Gates for each were re-run independently after the executor handed back, not taken on trust.
+
+| Card | What landed | Merge |
+|---|---|---|
+| 1.3-1a–d | Reference index (per-workspace Tantivy, built in-process on save) and Find Usages | — |
+| 1.3-2a–c | Rename: buffer-local inline box, workspace preview sheet, safe apply that validates live text and skips mismatches | — |
+| 1.3-3a | Live check engine: `check_c_live` pipes the buffer to clang stdin, never touching disk; `run_check` gained `clippy` | `fe3d25b` |
+| 1.3-3b | Live diagnostics UI: 800 ms debounce, a distinct live owner on `DiagnosticStore`, lint-code doc links, clang-tidy on save | `88bd9a0` |
+| 1.3-3c | Live diagnostics fixes: cargo last-writer-wins, close cancels the live timer, shared per-path generation, no forced Problems panel | `61d3968` |
+| 1.3-4a | Generate framework (⌃⌘G) and the C++ field generators: constructor, getters, setters, equality, stream insertion | `a15fd7d` |
+| 1.3-4d | Generate compile-correctness: own fields only (`TypeTable::own_members`, no base walk) and namespace-qualified types | `205d0b9` |
+| 1.3-4b | Rust field generators: `impl` block, `new`, `Default`, `Display`, omitting any that already exist | `73d2143` |
+| 1.3-2e | De-raced `renameSkipsEditedBuffer` (polls reference-index readiness) and background-tab rename undo | `6359fb3` |
+
+**Still open in 1.3:** 1.3-4c (base-class and trait-item generators, blocked on 1.3-7), 1.3-2d (self-test reference-index isolation), 1.3-6a Extract Variable (in flight) and the rest of the refactor menu, 1.3-5 intention actions, 1.3-7 the resolver extension (Tier C, strong model), 1.3-8 call and type hierarchy.
+
+**Two traps worth remembering.** (1) A new self-test step placed before `renameSteps` shifts the async reference-index build and breaks the index-dependent rename steps — append new Rust steps at the end. (2) An executor's reported PASS counts can be wrong or environment-lucky: re-run the gates yourself, and when a run disagrees, A/B the two binaries interleaved before calling it flaky.
