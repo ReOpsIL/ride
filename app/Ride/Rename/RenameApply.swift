@@ -1,6 +1,13 @@
 import AppKit
 
 enum RenameApply {
+    private enum Outcome {
+        case applied(Int)
+        case changed
+        case failed
+        case noop
+    }
+
     static func applyLocal(_ edits: [TextEdit], to view: RideTextView) {
         guard !edits.isEmpty else {
             return
@@ -13,51 +20,133 @@ enum RenameApply {
         EditorCommand.apply(result, to: view)
     }
 
-    static func applyWorkspace(state: AppState, plan: RenamePlan, chosen: Set<String>) {
-        let edits = plan.files
-            .filter { chosen.contains($0.path) }
-            .compactMap { fileEdit(state: state, file: $0) }
-        let saved = state.saveEdits(edits)
-        if !saved.written.isEmpty {
-            state.filesChanged(saved.written.map(\.path))
+    static func applyWorkspace(state: AppState, plan: RenamePlan, chosenFiles: Set<String>, chosenReview: Set<Int>) {
+        var applied = 0
+        var files = 0
+        var written: [String] = []
+        var changed: [String] = []
+        var failed: [String] = []
+        for (path, edits) in gather(plan: plan, chosenFiles: chosenFiles, chosenReview: chosenReview) {
+            let url = state.resolveRenameURL(path)
+            switch applyFile(state: state, url: url, name: plan.name, edits: edits) {
+            case let .applied(count):
+                applied += count
+                files += 1
+                written.append(url.path)
+            case .changed:
+                changed.append(url.lastPathComponent)
+            case .failed:
+                failed.append(url.lastPathComponent)
+            case .noop:
+                break
+            }
         }
-        if let text = summary(plan: plan, saved: saved) {
+        if !written.isEmpty {
+            state.filesChanged(written)
+        }
+        if let text = summary(applied: applied, files: files, changed: changed, failed: failed) {
             state.notice = text
         }
     }
 
-    private static func fileEdit(state: AppState, file: RenameFile) -> FileEdit? {
-        let url = state.resolveRenameURL(file.path)
-        guard let text = state.liveText(url) else {
-            return nil
+    private static func gather(plan: RenamePlan, chosenFiles: Set<String>, chosenReview: Set<Int>) -> [(String, [TextEdit])] {
+        var map: [String: [TextEdit]] = [:]
+        for file in plan.files where chosenFiles.contains(file.path) {
+            map[file.path, default: []].append(contentsOf: file.edits)
         }
-        let map = Utf16Map(text)
-        let mutable = NSMutableString(string: text)
-        for edit in file.edits.sorted(by: { $0.startByte > $1.startByte }) {
-            let range = map.nsRange(startByte: edit.startByte, endByte: edit.endByte)
-            guard NSMaxRange(range) <= mutable.length else {
-                return nil
-            }
-            mutable.replaceCharacters(in: range, with: edit.text)
+        for (index, file) in plan.review.enumerated() where chosenReview.contains(index) {
+            map[file.path, default: []].append(contentsOf: file.edits)
         }
-        let next = mutable as String
-        guard next != text else {
-            return nil
-        }
-        return FileEdit(file: url, text: next)
+        return map
+            .map { ($0.key, $0.value.sorted { $0.startByte < $1.startByte }) }
+            .sorted { $0.0 < $1.0 }
     }
 
-    private static func summary(plan: RenamePlan, saved: (written: [URL], failed: [URL])) -> String? {
-        var parts: [String] = []
-        let writtenPaths = saved.written.map(\.path)
-        let edits = plan.files
-            .filter { file in writtenPaths.contains(where: { $0.hasSuffix(file.path) }) }
-            .reduce(0) { $0 + $1.edits.count }
-        if !saved.written.isEmpty {
-            parts.append("Renamed \(Plural.count(edits, "occurrence")) in \(Plural.count(saved.written.count, "file"))")
+    private static func applyFile(state: AppState, url: URL, name: String, edits: [TextEdit]) -> Outcome {
+        let buffer = state.buffers.first { $0.fileURL == url }
+        let view = buffer.flatMap { state.editorView(for: $0) }
+        guard let text = view?.string ?? buffer?.text ?? state.liveText(url) else {
+            return .failed
         }
-        if !saved.failed.isEmpty {
-            parts.append("Failed \(saved.failed.map(\.lastPathComponent).joined(separator: ", "))")
+        guard let changes = validate(text: text, name: name, edits: edits) else {
+            return .changed
+        }
+        guard !changes.isEmpty else {
+            return .noop
+        }
+        if let view, let buffer {
+            let result = EditResult.mapping(view.selectedRange(), through: changes)
+            EditorCommand.apply(result, to: view)
+            return persist(state, buffer) ? .applied(changes.count) : .failed
+        }
+        if let buffer {
+            buffer.text = EditResult.applying(changes, to: text)
+            guard persist(state, buffer) else {
+                return .failed
+            }
+            resync(buffer)
+            return .applied(changes.count)
+        }
+        return writeDisk(url, EditResult.applying(changes, to: text), count: changes.count)
+    }
+
+    private static func validate(text: String, name: String, edits: [TextEdit]) -> [TextChange]? {
+        let map = Utf16Map(text)
+        let ns = text as NSString
+        var changes: [TextChange] = []
+        for edit in edits {
+            let range = map.nsRange(startByte: edit.startByte, endByte: edit.endByte)
+            guard NSMaxRange(range) <= ns.length, ns.substring(with: range) == name else {
+                return nil
+            }
+            changes.append(TextChange(range: range, text: edit.text))
+        }
+        return changes.sorted { $0.range.location < $1.range.location }
+    }
+
+    private static func persist(_ state: AppState, _ buffer: BufferDocument) -> Bool {
+        guard !buffer.isReadOnly else {
+            return false
+        }
+        do {
+            try buffer.save(from: nil)
+        } catch {
+            return false
+        }
+        state.didSave(buffer, allowFormat: false)
+        return true
+    }
+
+    private static func resync(_ buffer: BufferDocument) {
+        guard let id = buffer.sessionId else {
+            return
+        }
+        let text = buffer.text
+        DispatchQueue.global(qos: .userInitiated).async {
+            _ = try? RideEngineClient.shared.engine?.setText(sessionId: id, text: text, visible: nil)
+        }
+    }
+
+    private static func writeDisk(_ url: URL, _ text: String, count: Int) -> Outcome {
+        do {
+            try text.write(to: url, atomically: true, encoding: .utf8)
+        } catch {
+            return .failed
+        }
+        RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
+        return .applied(count)
+    }
+
+    private static func summary(applied: Int, files: Int, changed: [String], failed: [String]) -> String? {
+        var parts: [String] = []
+        if files > 0 {
+            parts.append("Renamed \(Plural.count(applied, "occurrence")) in \(Plural.count(files, "file"))")
+        }
+        if !changed.isEmpty {
+            parts.append("\(Plural.count(changed.count, "file")) skipped — changed since indexing")
+        }
+        if !failed.isEmpty {
+            parts.append("Failed \(failed.joined(separator: ", "))")
         }
         return parts.isEmpty ? nil : parts.joined(separator: ". ")
     }

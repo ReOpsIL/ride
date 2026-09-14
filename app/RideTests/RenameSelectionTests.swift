@@ -9,7 +9,10 @@ final class RenameSelectionTests: XCTestCase {
                 RenamePreviewFile(path: "src/main.rs", count: 2),
                 RenamePreviewFile(path: "src/util.rs", count: 1),
             ],
-            review: RenameSelection.reviewRows(from: ["src/other.rs:12", "src/other.rs:20"])
+            review: RenameSelection.reviewRows(from: [
+                RenamePreviewFile(path: "src/other.rs", count: 3),
+                RenamePreviewFile(path: "src/extra.rs", count: 1),
+            ])
         )
     }
 
@@ -20,6 +23,7 @@ final class RenameSelectionTests: XCTestCase {
         XCTAssertTrue(s.includedReview.isEmpty)
         XCTAssertFalse(s.allReviewSelected)
         XCTAssertEqual(s.chosenEditCount, 3)
+        XCTAssertEqual(s.chosenTargetCount, 2)
         XCTAssertTrue(s.canApply)
         XCTAssertFalse(s.showBanner)
     }
@@ -32,35 +36,54 @@ final class RenameSelectionTests: XCTestCase {
         XCTAssertFalse(s.allFilesSelected)
     }
 
+    func testTickReviewAddsEditsAndTargets() {
+        var s = selection()
+        s.setReview(0, true)
+        XCTAssertEqual(s.chosenReviewIds, [0])
+        XCTAssertEqual(s.chosenEditCount, 6)
+        XCTAssertEqual(s.chosenTargetCount, 3)
+        XCTAssertFalse(s.allReviewSelected)
+    }
+
     func testSelectAllReviewToggles() {
         var s = selection()
         XCTAssertEqual(s.review.count, 2)
         s.selectAllReview(true)
         XCTAssertTrue(s.allReviewSelected)
         XCTAssertTrue(s.isReview(0))
+        XCTAssertEqual(s.chosenReviewIds, [0, 1])
         s.selectAllReview(false)
         XCTAssertFalse(s.allReviewSelected)
+        XCTAssertTrue(s.chosenReviewIds.isEmpty)
     }
 
-    func testReviewRowsParseTrailingLine() {
-        let rows = RenameSelection.reviewRows(from: ["a/b.cpp:7", "noline"])
+    func testReviewRowsCarryPathAndCount() {
+        let rows = RenameSelection.reviewRows(from: [
+            RenamePreviewFile(path: "a/b.cpp", count: 7),
+            RenamePreviewFile(path: "c/d.rs", count: 1),
+        ])
+        XCTAssertEqual(rows[0].id, 0)
         XCTAssertEqual(rows[0].path, "a/b.cpp")
-        XCTAssertEqual(rows[0].line, 7)
-        XCTAssertEqual(rows[0].label, "a/b.cpp:7")
-        XCTAssertEqual(rows[1].path, "noline")
-        XCTAssertEqual(rows[1].line, 0)
-        XCTAssertEqual(rows[1].label, "noline")
+        XCTAssertEqual(rows[0].count, 7)
+        XCTAssertEqual(rows[0].label, "a/b.cpp")
+        XCTAssertEqual(rows[1].id, 1)
+        XCTAssertEqual(rows[1].path, "c/d.rs")
+        XCTAssertEqual(rows[1].count, 1)
     }
 
-    func testEmptyFilesShowsBannerAndBlocksApply() {
-        let s = RenameSelection(
+    func testEmptyFilesShowsBannerAndReviewTickEnablesApply() {
+        var s = RenameSelection(
             name: "record",
             newName: "logged",
             files: [],
-            review: RenameSelection.reviewRows(from: ["src/main.rs:3"])
+            review: RenameSelection.reviewRows(from: [RenamePreviewFile(path: "src/main.rs", count: 2)])
         )
         XCTAssertTrue(s.filesEmpty)
         XCTAssertTrue(s.showBanner)
         XCTAssertFalse(s.canApply)
+        s.setReview(0, true)
+        XCTAssertTrue(s.showBanner)
+        XCTAssertTrue(s.canApply)
+        XCTAssertEqual(s.chosenEditCount, 2)
     }
 }

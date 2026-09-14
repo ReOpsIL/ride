@@ -37,7 +37,7 @@ struct RenamePreviewSheet: View {
 
     private var summary: String {
         let count = model.selection.chosenEditCount
-        let files = model.selection.chosenFilePaths.count
+        let files = model.selection.chosenTargetCount
         return "\(Plural.count(count, "occurrence")) in \(Plural.count(files, "file"))"
     }
 
@@ -112,11 +112,17 @@ struct RenamePreviewSheet: View {
 
     private func reviewRow(_ row: RenameReviewRow) -> some View {
         Toggle(isOn: reviewBinding(row.id)) {
-            Text(row.label)
-                .font(Tokens.mono(12))
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .foregroundStyle(ts.ui.textSecondary)
+            HStack {
+                Text(row.label)
+                    .font(Tokens.mono(12))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .foregroundStyle(ts.ui.textSecondary)
+                Spacer(minLength: Tokens.Space.m)
+                Text("\(row.count)")
+                    .font(Tokens.ui(11))
+                    .foregroundStyle(ts.ui.textTertiary)
+            }
         }
         .toggleStyle(.checkbox)
     }

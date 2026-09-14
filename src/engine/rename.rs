@@ -66,31 +66,37 @@ fn plan(engine: &Engine, session_id: u64, cursor_byte: u32, new_name: &str) -> R
 pub fn plan_from_usages(resp: UsagesResponse, new_name: &str) -> RenamePlan {
     let UsagesResponse { name, hits, .. } = resp;
     let mut files: Vec<RenameFile> = Vec::new();
-    let mut skipped: Vec<String> = Vec::new();
+    let mut review: Vec<RenameFile> = Vec::new();
     for hit in hits {
-        if !hit.in_definition_scope {
-            skipped.push(format!("{}:{}", hit.path, hit.line));
-            continue;
-        }
         let edit = text_edit(hit.byte_start, hit.byte_end, new_name);
-        match files.iter_mut().find(|f| f.path == hit.path) {
+        let bucket = if hit.in_definition_scope {
+            &mut files
+        } else {
+            &mut review
+        };
+        match bucket.iter_mut().find(|f| f.path == hit.path) {
             Some(file) => file.edits.push(edit),
-            None => files.push(RenameFile {
+            None => bucket.push(RenameFile {
                 path: hit.path,
                 edits: vec![edit],
             }),
         }
     }
-    for file in &mut files {
-        file.edits.sort_by_key(|e| e.start_byte);
-    }
-    files.sort_by(|a, b| a.path.cmp(&b.path));
+    sort_files(&mut files);
+    sort_files(&mut review);
     RenamePlan {
         name,
         new_name: new_name.to_string(),
         files,
-        skipped,
+        review,
     }
+}
+
+fn sort_files(files: &mut [RenameFile]) {
+    for file in files.iter_mut() {
+        file.edits.sort_by_key(|e| e.start_byte);
+    }
+    files.sort_by(|a, b| a.path.cmp(&b.path));
 }
 
 fn session_lang(engine: &Engine, session_id: u64) -> Option<Lang> {
