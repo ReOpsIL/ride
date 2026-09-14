@@ -24,9 +24,9 @@ mod toolchain;
 
 pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{
-    Formatter, format_clang, format_document, format_make, format_range, format_source,
-    include_dirs, merge_indexed, parse_clang, parse_lines, run_check, run_check_c_project,
-    run_clang_check, sources_including,
+    Formatter, check_c_live, format_clang, format_document, format_make, format_range,
+    format_source, include_dirs, merge_indexed, parse_clang, parse_lines, run_check,
+    run_check_c_project, run_clang_check, sources_including,
 };
 pub use debug::adapter::{adapter_path, find_adapter};
 pub use debug::filters::{exception_filters, probe_exception_filters};

@@ -14,7 +14,7 @@ mod output;
 mod parse;
 mod run;
 
-pub use clang::run_clang_check;
+pub use clang::{check_c_live, run_clang_check};
 pub use clang_parse::parse_clang;
 pub use clang_project::{merge_indexed, run_check_c_project};
 pub use compile_db::{Entry, lookup, raw_command};
