@@ -282,3 +282,35 @@ Every card below is merged with `--no-ff` into `grok/next-impl` and pushed; `mai
 **Traps worth remembering.** (1) A new self-test step placed before `renameSteps` shifts the async reference-index build and breaks the index-dependent rename steps — append new Rust steps at the end. (2) An executor's reported PASS counts can be wrong or environment-lucky: re-run the gates yourself, and when a run disagrees, A/B the two binaries interleaved before calling it flaky. (3) `renameSkipsEditedBuffer` broke twice for two different reasons, so treat it as the canary: a rename plan splits into an auto-applied `files` list and a `review` list that only applies when ticked, while `renameHasBothFiles` counts the file in *either*; a step can therefore report "ready" and then apply nothing. Any test that expects a rename to actually touch a file must tick its review row (`reviewId` + `selection.setReview(id, true)`) rather than assume it landed in `files`. The two symptoms are distinguishable: "notice nil" alone means the index was not ready, "applied true notice nil" means the apply ran but was a no-op.
 
 **Refactorings refuse rather than guess.** Extract Variable matches the selection against exactly one tree-sitter node, so `a + b` inside `a + b * c` is declined — precedence makes that `a + (b * c)`, and there is no such node. Supporting sub-expression selections needs a deliberate binary-chain re-association rule; it is a design decision, not something a card should guess at.
+
+## Implementation cards — engine fixes
+
+### E1 Cross-crate glob re-exports are never resolved — Tier B
+
+**Symptom.** Completion stops dead at a facade crate's re-export boundary. Typing `use pnet::packet::` returns zero hits, while `use pnet_packet::ethernet::` returns `Ethernet`, `EtherType`, `EtherTypes` correctly. Verified 2026-09-15 against the live index with `ride-engine complete`. This is not pnet-specific: it breaks every crate that re-exports a sibling crate, which is a very common facade pattern (`pnet`, and many others).
+
+**Cause.** `pnet/src/lib.rs` has `pub mod packet { pub use pnet_packet::*; }`. The `mod packet` item is indexed, so `pnet::packet` completes, but nothing beneath it is. Two independent defects:
+1. `src/index/writer.rs` `build()` absorbs items into `External` only for `Scope::Sysroot` crates, so when `pnet` is extracted the table holds just std/core/alloc and `pnet_packet` is unknown.
+2. `src/extract/reexport.rs` `glob()` never takes `external` at all — it searches only the current crate's `items` and the in-progress `extra`. Named re-exports do fall back to `external.get()` (`reexport.rs:56`), globs do not. So fixing (1) alone changes nothing.
+
+There is also an ordering problem: `collect_crates` sorts by scope then name, so `pnet` is always extracted before `pnet_packet`. A single forward pass can never resolve it.
+
+**Do NOT fix by absorbing every crate.** `External::absorb` clones each item; the index holds about 1.6 million documents, so absorbing all 841 crates would put multiple GB in memory. The fix must be targeted.
+
+**Design — a deferred second phase, bounded to the crates that actually need it.**
+- Phase 1, one pass over the crates in the existing order. Extract as today. Inspect the crate's `reexports` for **cross-crate** targets, meaning a `Glob { module }` (or `Named { target }`) whose first path segment is not this crate's own name. If there are none, resolve and write exactly as today. If there are, do NOT write: push `(crate, items, reexports, aliases)` onto a `deferred` list and add each target root to a `needed: HashSet<String>`.
+- Phase 2, after the loop. Re-extract only those crates whose name is in `needed` (a handful in practice) and `external.absorb` them. Then for each deferred crate re-run `reexport::apply` against the now-populated `external` and write its documents. Phase 2 must not recurse; a facade whose target is itself a facade resolves one level, which is enough for the known cases.
+- `glob()` gains an `external: &External` parameter and matches against it as well as `items`/`extra`.
+- **Mirror the whole subtree, not one level.** `glob()` today keeps only items at exactly `module.len() + 1` segments (`reexport.rs:142,151`). For `pub use pnet_packet::*;` that yields only `pnet::packet::ethernet` (the module) and completion at `pnet::packet::ethernet::` would still find nothing. Because re-exporting a module genuinely makes every path under it valid, mirror every external item whose path starts with `<target>::` and re-root it under the re-exporting module path. This is correct Rust path semantics, not a heuristic.
+- `External` needs a prefix lookup for this (it is a `HashMap<String, ItemDoc>` keyed by full path); add a method returning the items under a given path prefix.
+- **Cap the mirroring.** If a single glob would mirror more than 20,000 items, skip it, append a warning through the existing `append_warning` path, and carry on. This stops a pathological facade from doubling the index.
+
+**Acceptance.**
+- A new fixture pair under `tests/fixtures/` (two crates, one containing `pub mod re { pub use <other>::*; }`) asserts that items from the target crate appear under BOTH their own path and the mirrored path, at more than one level of depth.
+- An assertion that a glob target crate extracted *after* its facade still resolves, proving the ordering fix.
+- Existing `tests/index.rs` and `tests/goldens.rs` stay green; note in the hand-back how much the index grew for the fixture.
+- Report the index document count before and after a full rebuild on this machine if you run one (it was 1,590,319 docs / 731 MB at schema v10; the code is at v12 so a rebuild happens anyway).
+
+**Out of scope.** Proc-macro generated items (for example pnet's `#[packet]` producing `EthernetPacket`) remain invisible; the extractor is tree-sitter based and never sees them. Do not attempt macro expansion. The incremental path (`src/index/incremental.rs`) is limited to workspace-scoped crates, so facades do not flow through it; leave it unchanged but say in the hand-back whether a deferred crate could reach it.
+
+**Gates.** `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test` (all 47 binaries green), and `scripts/build-engine.sh`. App gates are not needed unless you change `src/ffi`. Keep files under ~200 LOC, no comments, no unwrap/expect outside tests.
