@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use crate::ffi::ItemKind;
 
 use super::external::External;
-use super::glob;
+use super::glob::{self, OversizedGlob};
 use super::item::{ItemDoc, Scope, Visibility, join_path};
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,7 @@ pub enum ReexportKind {
 #[derive(Default)]
 pub struct Applied {
     pub items: Vec<ItemDoc>,
-    pub oversized_globs: Vec<String>,
+    pub oversized_globs: Vec<OversizedGlob>,
 }
 
 pub fn apply(
@@ -35,7 +35,7 @@ pub fn apply(
     aliases: &[(String, String)],
 ) -> Applied {
     let mut extra: Vec<ItemDoc> = Vec::new();
-    let mut oversized: Vec<String> = Vec::new();
+    let mut oversized: Vec<OversizedGlob> = Vec::new();
     let mut pending: Vec<&Reexport> = reexports.iter().collect();
     for _ in 0..3 {
         let before = pending.len();

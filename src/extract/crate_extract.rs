@@ -4,6 +4,7 @@ use crate::ffi::ItemKind;
 
 use super::cargo_toml::Package;
 use super::external::External;
+use super::glob::OversizedGlob;
 use super::item::{CrateContext, ItemDoc, ItemParts, Scope, Visibility};
 use super::reach::{self, Assoc};
 use super::reexport::{self, Reexport, ReexportKind, dealias};
@@ -19,7 +20,7 @@ pub struct CrateExtract {
 
 pub struct CrateItems {
     pub items: Vec<ItemDoc>,
-    pub oversized_globs: Vec<String>,
+    pub oversized_globs: Vec<OversizedGlob>,
 }
 
 impl CrateExtract {

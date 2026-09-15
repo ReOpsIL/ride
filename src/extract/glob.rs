@@ -7,7 +7,12 @@ pub const GLOB_LIMIT: usize = 20_000;
 #[derive(Default)]
 pub struct Globbed {
     pub items: Vec<ItemDoc>,
-    pub oversized: Option<String>,
+    pub oversized: Option<OversizedGlob>,
+}
+
+pub struct OversizedGlob {
+    pub target: String,
+    pub module: String,
 }
 
 pub fn expand(
@@ -20,7 +25,7 @@ pub fn expand(
 ) -> Globbed {
     let local = local_children(items, extra, re, module);
     let target = dealias(module, aliases);
-    if same_crate(root_of(&target), host_crate(items)) {
+    if !exported(re) || same_crate(root_of(&target), host_crate(items)) {
         return Globbed {
             items: local,
             oversized: None,
@@ -41,7 +46,10 @@ pub fn expand(
         }
         None => Globbed {
             items: Vec::new(),
-            oversized: Some(target),
+            oversized: Some(OversizedGlob {
+                target,
+                module: re.module_path.join("::"),
+            }),
         },
     }
 }

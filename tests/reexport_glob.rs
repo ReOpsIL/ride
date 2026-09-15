@@ -84,3 +84,59 @@ fn glob_resolves_whichever_crate_is_extracted_first() {
         "zfacade sorts after leaf and still resolves"
     );
 }
+
+#[test]
+fn unreachable_glob_site_mirrors_nothing() {
+    let dir = indexed();
+    let index_dir = dir.path().join("index");
+    assert_eq!(
+        count_path(&index_dir, "facade::hidden::net::Packet"),
+        0,
+        "a glob inside a private module is never publicly reachable"
+    );
+    assert_eq!(
+        count_path(&index_dir, "facade::hidden::net::proto::Kind"),
+        0
+    );
+    assert_eq!(count_path(&index_dir, "facade::hidden::LeafRoot"), 0);
+    assert_eq!(
+        count_path(&index_dir, "facade::packet::net::proto::Kind"),
+        1,
+        "a reachable glob in the same crate still mirrors"
+    );
+}
+
+fn status_lines(index_dir: &Path) -> Vec<serde_json::Value> {
+    let text = std::fs::read_to_string(index_dir.join("status.jsonl")).unwrap();
+    text.lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| serde_json::from_str(l).unwrap())
+        .collect()
+}
+
+#[test]
+fn the_deferred_phase_reports_progress() {
+    let dir = indexed();
+    let index_dir = dir.path().join("index");
+    let lines = status_lines(&index_dir);
+    assert!(
+        lines
+            .iter()
+            .any(|l| l["message"].as_str() == Some("resolving cross-crate re-exports")),
+        "phase two appends its own status lines"
+    );
+    for line in &lines {
+        let done = line["crates_done"].as_u64().unwrap();
+        let total = line["crates_total"].as_u64().unwrap();
+        assert!(
+            done <= total,
+            "crates_done {done} exceeds crates_total {total}"
+        );
+        if done < total {
+            assert_ne!(line["state"].as_str(), Some("ready"));
+        }
+    }
+    let last = lines.last().unwrap();
+    assert_eq!(last["state"].as_str(), Some("ready"));
+    assert_eq!(last["crates_done"], last["crates_total"]);
+}
