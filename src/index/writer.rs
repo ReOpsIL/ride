@@ -1,24 +1,18 @@
 use std::fs;
 use std::path::Path;
 
-use tantivy::{Index, IndexWriter};
-
 use crate::discover::discover;
 use crate::error::EngineError;
-use crate::extract::{External, Scope};
 use crate::ffi::{EngineConfig, IndexState, IndexStatus};
 
-use super::crates::{collect_crates, extract_items};
-use super::doc::{keep_item, to_document};
+use super::build::build;
+use super::crates::collect_crates;
 use super::fingerprint::{HashedCrate, fingerprint, hash_crates};
 use super::gc::clean_stagings;
 use super::incremental::{self, key_of};
-use super::promote::{promote, tv};
-use super::schema::{SCHEMA_VERSION, build_fields};
+use super::promote::promote;
+use super::schema::SCHEMA_VERSION;
 use super::status::{Manifest, append_status, read_manifest};
-use super::warnings::{append_warning, reset_warnings};
-
-const WRITER_MEMORY: usize = 32 * 1024 * 1024;
 
 pub fn write_index(
     project: &Path,
@@ -101,51 +95,7 @@ fn write(
             status,
         );
     }
-    build(index_dir, hashed, status)
-}
-
-fn build(
-    index_dir: &Path,
-    hashed: &[HashedCrate],
-    status: &mut IndexStatus,
-) -> Result<u32, EngineError> {
-    reset_warnings(index_dir)?;
-    let staging = staging_dir(index_dir);
-    if staging.exists() {
-        fs::remove_dir_all(&staging).map_err(|e| EngineError::io(&staging, e))?;
-    }
-    fs::create_dir_all(&staging).map_err(|e| EngineError::io(&staging, e))?;
-    let fields = build_fields();
-    let index = Index::create_in_dir(&staging, fields.schema.clone()).map_err(tv)?;
-    super::tokenizers::register(&index).map_err(tv)?;
-    let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(tv)?;
-    let mut docs = 0u32;
-    let mut external = External::default();
-    for h in hashed {
-        match extract_items(&h.crate_, &external) {
-            Ok(items) => {
-                if h.crate_.scope == Scope::Sysroot {
-                    external.absorb(&items);
-                }
-                for item in items.iter().filter(|i| keep_item(i)) {
-                    writer
-                        .add_document(to_document(&fields, item, &h.hash))
-                        .map_err(tv)?;
-                    docs += 1;
-                }
-            }
-            Err(e) => {
-                append_warning(index_dir, &h.crate_.name, &e)?;
-                status.warnings += 1;
-            }
-        }
-        status.crates_done += 1;
-        status.docs = docs;
-        append_status(index_dir, status)?;
-    }
-    writer.commit().map_err(tv)?;
-    writer.wait_merging_threads().map_err(tv)?;
-    Ok(docs)
+    build(index_dir, &staging_dir(index_dir), hashed, status)
 }
 
 fn finish(
