@@ -3,3 +3,7 @@ pub mod packet {
 }
 
 pub struct FacadeRoot;
+
+mod hidden {
+    pub use leaf::*;
+}

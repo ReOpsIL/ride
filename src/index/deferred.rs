@@ -39,18 +39,20 @@ impl Deferred {
         self.entries.is_empty()
     }
 
-    pub fn absorb_targets(&self, hashed: &[HashedCrate], external: &mut External) {
-        for h in hashed
+    pub fn targets<'a>(&self, hashed: &'a [HashedCrate]) -> Vec<&'a HashedCrate> {
+        hashed
             .iter()
             .filter(|h| self.needed.contains(&normalized(&h.crate_.name)))
-        {
-            if let Ok(items) = extract_items(&h.crate_, external) {
-                external.absorb(&items);
-            }
-        }
+            .collect()
     }
 
     pub fn into_entries(self) -> Vec<DeferredCrate> {
         self.entries
+    }
+}
+
+pub fn absorb_target(hashed: &HashedCrate, external: &mut External) {
+    if let Ok(items) = extract_items(&hashed.crate_, external) {
+        external.absorb(&items);
     }
 }

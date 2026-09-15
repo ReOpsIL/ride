@@ -8,7 +8,7 @@ use crate::extract::{External, Scope};
 use crate::ffi::IndexStatus;
 
 use super::crates::extract_parts;
-use super::deferred::Deferred;
+use super::deferred::{Deferred, absorb_target};
 use super::doc::{keep_item, to_document};
 use super::fingerprint::HashedCrate;
 use super::promote::tv;
@@ -29,6 +29,8 @@ struct CrateWrite<'a> {
 }
 
 const WRITER_MEMORY: usize = 32 * 1024 * 1024;
+const RESOLVING: &str = "resolving cross-crate re-exports";
+const COMMITTING: &str = "committing index";
 
 pub fn build(
     index_dir: &Path,
@@ -51,6 +53,8 @@ pub fn build(
         index_dir,
     };
     let docs = run(&mut sink, hashed, status)?;
+    status.message = Some(COMMITTING.into());
+    append_status(index_dir, status)?;
     writer.commit().map_err(tv)?;
     writer.wait_merging_threads().map_err(tv)?;
     Ok(docs)
@@ -65,6 +69,7 @@ fn run(
     let mut external = External::default();
     let mut deferred = Deferred::default();
     for h in hashed {
+        let mut held = false;
         match extract_parts(&h.crate_) {
             Ok(parts) => {
                 let roots = deferred.unresolved_roots(&parts, &external);
@@ -83,6 +88,7 @@ fn run(
                     )?;
                 } else {
                     deferred.push(h, parts, roots);
+                    held = true;
                 }
             }
             Err(e) => {
@@ -90,11 +96,13 @@ fn run(
                 status.warnings += 1;
             }
         }
-        status.crates_done += 1;
+        if !held {
+            status.crates_done += 1;
+        }
         status.docs = docs;
         append_status(sink.index_dir, status)?;
     }
-    docs += flush_deferred(sink, hashed, deferred, &mut external, status)?;
+    flush_deferred(sink, hashed, deferred, &mut external, status, &mut docs)?;
     status.docs = docs;
     append_status(sink.index_dir, status)?;
     Ok(docs)
@@ -106,15 +114,23 @@ fn flush_deferred(
     deferred: Deferred,
     external: &mut External,
     status: &mut IndexStatus,
-) -> Result<u32, EngineError> {
+    docs: &mut u32,
+) -> Result<(), EngineError> {
     if deferred.is_empty() {
-        return Ok(0);
+        return Ok(());
     }
-    deferred.absorb_targets(hashed, external);
-    let mut docs = 0u32;
+    status.message = Some(RESOLVING.into());
+    let targets = deferred.targets(hashed);
+    status.crates_total += targets.len() as u32;
+    append_status(sink.index_dir, status)?;
+    for target in targets {
+        absorb_target(target, external);
+        status.crates_done += 1;
+        append_status(sink.index_dir, status)?;
+    }
     for entry in deferred.into_entries() {
         let items = entry.parts.finish(external);
-        docs += sink.write(
+        *docs += sink.write(
             CrateWrite {
                 items: &items,
                 hash: &entry.hash,
@@ -122,8 +138,11 @@ fn flush_deferred(
             },
             status,
         )?;
+        status.crates_done += 1;
+        status.docs = *docs;
+        append_status(sink.index_dir, status)?;
     }
-    Ok(docs)
+    Ok(())
 }
 
 impl Sink<'_> {
@@ -132,8 +151,11 @@ impl Sink<'_> {
         write: CrateWrite<'_>,
         status: &mut IndexStatus,
     ) -> Result<u32, EngineError> {
-        for target in &write.items.oversized_globs {
-            let message = format!("glob re-export of {target} exceeds the mirror limit");
+        for glob in &write.items.oversized_globs {
+            let message = format!(
+                "glob re-export of {} in {} exceeds the mirror limit",
+                glob.target, glob.module
+            );
             append_warning(self.index_dir, write.crate_name, &message)?;
             status.warnings += 1;
         }
