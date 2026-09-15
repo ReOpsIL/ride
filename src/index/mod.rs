@@ -1,4 +1,6 @@
+mod build;
 mod crates;
+mod deferred;
 mod doc;
 mod fingerprint;
 mod folder;

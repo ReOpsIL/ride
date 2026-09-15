@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use crate::ffi::ItemKind;
 
 use super::external::External;
+use super::glob;
 use super::item::{ItemDoc, Scope, Visibility, join_path};
 
 #[derive(Debug, Clone)]
@@ -21,13 +22,20 @@ pub enum ReexportKind {
     Glob { module: Vec<String> },
 }
 
+#[derive(Default)]
+pub struct Applied {
+    pub items: Vec<ItemDoc>,
+    pub oversized_globs: Vec<String>,
+}
+
 pub fn apply(
     items: &[ItemDoc],
     reexports: &[Reexport],
     external: &External,
     aliases: &[(String, String)],
-) -> Vec<ItemDoc> {
+) -> Applied {
     let mut extra: Vec<ItemDoc> = Vec::new();
+    let mut oversized: Vec<String> = Vec::new();
     let mut pending: Vec<&Reexport> = reexports.iter().collect();
     for _ in 0..3 {
         let before = pending.len();
@@ -35,8 +43,11 @@ pub fn apply(
         for re in pending.drain(..) {
             match &re.kind {
                 ReexportKind::Glob { module } => {
-                    let found = glob(items, &extra, re, module);
-                    extra.extend(found);
+                    let found = glob::expand(items, &extra, external, aliases, re, module);
+                    extra.extend(found.items);
+                    if let Some(target) = found.oversized {
+                        oversized.push(target);
+                    }
                 }
                 ReexportKind::Named { target, alias } => {
                     match find_target(items, &extra, &re.module_path, target) {
@@ -59,7 +70,10 @@ pub fn apply(
             });
         }
     }
-    extra
+    Applied {
+        items: extra,
+        oversized_globs: oversized,
+    }
 }
 
 fn remap(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDoc {
@@ -77,7 +91,7 @@ fn remap(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDo
     doc
 }
 
-fn dealias(target: &[String], aliases: &[(String, String)]) -> String {
+pub(super) fn dealias(target: &[String], aliases: &[(String, String)]) -> String {
     let mut parts = target.to_vec();
     if let Some(first) = parts.first_mut()
         && let Some((_, real)) = aliases.iter().find(|(alias, _)| alias == first)
@@ -115,7 +129,7 @@ fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
     }
 }
 
-fn exported(re: &Reexport) -> bool {
+pub(super) fn exported(re: &Reexport) -> bool {
     re.reach && re.vis == Visibility::Pub
 }
 
@@ -135,29 +149,6 @@ fn find_target<'a>(
         .iter()
         .find(matches)
         .or_else(|| extra.iter().find(matches))
-}
-
-fn glob(items: &[ItemDoc], extra: &[ItemDoc], re: &Reexport, module: &[String]) -> Vec<ItemDoc> {
-    let prefix = module.join("::");
-    let depth = module.len() + 1;
-    items
-        .iter()
-        .chain(extra.iter())
-        .filter(|i| {
-            if i.visibility != Visibility::Pub {
-                return false;
-            }
-            let parts: Vec<&str> = i.path.split("::").collect();
-            parts.len() == depth && i.path.starts_with(&format!("{prefix}::"))
-        })
-        .map(|src| {
-            let mut doc = src.clone();
-            doc.path = join_path(&re.module_path, &src.name);
-            doc.visibility = re.vis;
-            doc.reachable = exported(re);
-            doc
-        })
-        .collect()
 }
 
 fn guess_kind(name: &str) -> ItemKind {
