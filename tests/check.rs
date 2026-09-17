@@ -70,7 +70,8 @@ fn live_c_check_maps_stdin_error_to_the_real_path_without_touching_disk() {
 #[test]
 fn cargo_check_on_fixture_crate() {
     let target = tempfile::tempdir().unwrap();
-    let result = run_check(&fixtures().join("sample_crate"), Some(target.path()), false).unwrap();
+    let crate_dir = fixtures().join("sample_crate");
+    let result = run_check(&crate_dir, &crate_dir, Some(target.path()), false).unwrap();
     assert!(result.success, "{}", result.stderr_tail);
     assert!(
         result

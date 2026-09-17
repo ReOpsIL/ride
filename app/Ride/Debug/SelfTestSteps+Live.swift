@@ -87,7 +87,7 @@ extension SelfTestSteps {
             }
             scratch.wasAutoSave = state.prefs.autoSave
             state.updatePrefs { $0.autoSave = false }
-            state.autoSaveWork?.cancel()
+            state.buffers.forEach { $0.autoSaveWork?.cancel() }
             scratch.disk = shapesURL(state).flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? ""
             e.focus()
         }, check: {

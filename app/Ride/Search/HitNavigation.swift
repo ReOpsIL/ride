@@ -10,7 +10,10 @@ enum HitNavigation {
         }
         let url = URL(fileURLWithPath: path).standardizedFileURL
         let inside = WorkspaceFS.contains(root: state.workspaceRoot, file: url)
-        state.pendingJump = hit.byteStart
-        state.openFile(url, readOnly: !inside)
+        if let byte = hit.byteStart {
+            state.openFile(url, at: .byte(byte), readOnly: !inside)
+        } else {
+            state.openFile(url, readOnly: !inside)
+        }
     }
 }

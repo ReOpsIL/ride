@@ -2,13 +2,14 @@ use tree_sitter::Tree;
 
 use super::Context;
 use crate::highlight::site::word_start;
+use crate::text::line_start;
 
 const ASSIGN: &[&str] = &["::=", ":=", "?=", "+=", "!=", "="];
 
 pub fn make(_: Option<&Tree>, text: &str, at: usize) -> Context {
     let start = word_start(text, at, &['-']);
     let head = &text[..start];
-    let line_start = head.rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let line_start = line_start(head, head.len());
     let line = &head[line_start..];
     if unclosed_call(line) {
         return Context::Function;

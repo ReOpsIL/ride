@@ -23,6 +23,13 @@ final class BufferDocument: ObservableObject, Identifiable {
     var caretByte: UInt32 = 0
     var scrollLine: UInt32 = 1
     var foldStarts: [UInt32] = []
+    var diskText: String
+    var pendingText: PendingText?
+    var pendingJump: PendingJump?
+    var sessionGeneration = 0
+    var sessionOpening = false
+    var autoSaveWork: DispatchWorkItem?
+    let undoManager = UndoManager()
 
     var hasCompletions: Bool {
         language.hasCompletions
@@ -41,6 +48,7 @@ final class BufferDocument: ObservableObject, Identifiable {
         untitledIndex = nil
         let loaded = Self.load(url.standardizedFileURL)
         text = loaded?.text ?? ""
+        diskText = text
         usesCRLF = loaded?.crlf ?? false
     }
 
@@ -58,6 +66,7 @@ final class BufferDocument: ObservableObject, Identifiable {
             return false
         }
         text = loaded.text
+        diskText = text
         usesCRLF = loaded.crlf
         isDirty = false
         return true
@@ -67,7 +76,7 @@ final class BufferDocument: ObservableObject, Identifiable {
         guard let fileURL, let loaded = Self.load(fileURL) else {
             return false
         }
-        return loaded.text != text
+        return loaded.text != diskText
     }
 
     var lineEnding: String {
@@ -78,6 +87,7 @@ final class BufferDocument: ObservableObject, Identifiable {
         fileURL = nil
         untitledIndex = index
         text = ""
+        diskText = ""
     }
 
     var displayName: String {
@@ -97,7 +107,6 @@ final class BufferDocument: ObservableObject, Identifiable {
         textView.selectionStack = []
         textView.string = text
         textView.lines.invalidate()
-        isDirty = false
         updateLabel(textView)
         textView.isEditable = !isReadOnly
         caretByte = caret
@@ -140,6 +149,7 @@ final class BufferDocument: ObservableObject, Identifiable {
         }
         let output = usesCRLF ? text.replacingOccurrences(of: "\n", with: "\r\n") : text
         try output.write(to: fileURL, atomically: true, encoding: .utf8)
+        diskText = text
         changedOnDisk = false
         isDirty = false
         RideEngineClient.shared.engine?.workspaceFileChanged(path: fileURL.path)

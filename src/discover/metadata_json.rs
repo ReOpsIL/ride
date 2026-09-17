@@ -8,6 +8,7 @@ use crate::error::EngineError;
 pub struct Metadata {
     pub packages: Vec<MetaPackage>,
     pub workspace_members: Vec<String>,
+    pub workspace_root: String,
     pub resolve: Option<Resolve>,
 }
 

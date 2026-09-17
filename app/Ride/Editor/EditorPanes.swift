@@ -5,12 +5,10 @@ final class EditorPanes {
     var onFocus: ((UUID) -> Void)?
     private var hosts: [UUID: WeakHost] = [:]
     private var focusedID: UUID?
+    private var claimedID: UUID?
 
     var focused: EditorHostView? {
-        if let focusedID, let host = hosts[focusedID]?.host {
-            return host
-        }
-        return hosts.values.compactMap(\.host).first
+        focusedID.flatMap { hosts[$0]?.host }
     }
 
     var focusedView: RideTextView? {
@@ -26,25 +24,44 @@ final class EditorPanes {
     }
 
     func host(for view: RideTextView) -> EditorHostView? {
-        hosts.values.compactMap(\.host).first { $0.textView === view }
+        all.first { $0.textView === view }
+    }
+
+    func host(bound document: BufferDocument) -> EditorHostView? {
+        all.first { $0.document === document }
     }
 
     func attach(_ host: EditorHostView, pane paneID: UUID) {
         hosts[paneID] = WeakHost(host: host)
-        if focusedID == nil || hosts[focusedID ?? paneID]?.host == nil {
+        if focused == nil {
             focusedID = paneID
+        }
+        if claimedID == paneID {
+            claimedID = nil
+            DispatchQueue.main.async {
+                host.window?.makeFirstResponder(host.textView)
+            }
         }
     }
 
     func detach(_ host: EditorHostView) {
-        let paneID = host.paneID
-        guard hosts[paneID]?.host === host else {
+        guard hosts[host.paneID]?.host === host else {
             return
         }
-        hosts[paneID] = nil
-        if focusedID == paneID {
-            focusedID = hosts.keys.first
+        hosts[host.paneID] = nil
+    }
+
+    func adopt(pane paneID: UUID) {
+        if hosts[paneID]?.host != nil {
+            focusedID = paneID
         }
+        if claimedID != paneID {
+            claimedID = nil
+        }
+    }
+
+    func claim(pane paneID: UUID) {
+        claimedID = paneID
     }
 
     func focus(pane paneID: UUID) {

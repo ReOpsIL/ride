@@ -14,14 +14,13 @@ final class ToolsModel: ObservableObject {
     @Published var rows: [ToolRow] = []
     @Published var installing = false
     @Published var log = ""
-    @Published var checked = false
 
     var missing: [ToolRow] {
         rows.filter(\.missing)
     }
 
-    var installable: [ToolRow] {
-        missing.filter { $0.info.install != nil }
+    var selectedInstallable: [ToolRow] {
+        rows.filter { $0.missing && $0.selected && $0.info.install != nil }
     }
 
     func refresh(done: (() -> Void)? = nil) {
@@ -38,15 +37,13 @@ final class ToolsModel: ObservableObject {
                 self.rows = tools.map { info in
                     ToolRow(info: info, selected: previous[info.name]?.selected ?? (info.install != nil), result: previous[info.name]?.result)
                 }
-                self.checked = true
                 done?()
             }
         }
     }
 
     func installSelected() {
-        let commands = rows.filter { $0.missing && $0.selected && $0.info.install != nil }
-            .map { ($0.id, $0.info.install ?? "") }
+        let commands = selectedInstallable.map { ($0.id, $0.info.install ?? "") }
         guard !commands.isEmpty, !installing else {
             return
         }

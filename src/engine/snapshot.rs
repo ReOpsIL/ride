@@ -11,9 +11,9 @@ use crate::highlight::{
 };
 use crate::query::IndexSrc;
 
-use super::Engine;
 use super::headers::Header;
 use super::reach::Reach;
+use super::{Engine, Inner};
 
 pub struct Catalog {
     pub index_dir: String,
@@ -62,64 +62,69 @@ impl Snapshot {
 }
 
 pub fn take(engine: &Engine, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
-    engine
+    let latest = engine
         .write(|i| {
             let prev = i.latest_query_id.get(&q.session_id).copied().unwrap_or(0);
             if prev > q.query_id {
-                return None;
+                return false;
             }
             i.latest_query_id.insert(q.session_id, q.query_id);
-            let session = i.sessions.get(&q.session_id);
-            let lang = session.map(|s| s.lang()).unwrap_or(Lang::Rust);
-            let site = session.map(|s| s.site_at(q.cursor_byte));
-            let wants_local = matches!(
-                site.as_ref().map(|s| &s.site),
-                Some(Site::Identifier(_) | Site::MemberAccess | Site::StructLiteral(_))
-            );
-            let local = session
-                .filter(|_| wants_local)
-                .zip(site.as_ref())
-                .map(|(s, at)| {
-                    s.local_hits(&LocalQuery {
-                        prefix: &at.prefix,
-                        limit,
-                        at: at.replace_start as u32,
-                    })
-                });
-            let literal = session
-                .zip(site.as_ref())
-                .filter(|(_, at)| matches!(at.site, Site::StructLiteral(_)))
-                .map(|(s, at)| {
-                    literal_state(s.replica(), at.replace_start, q.cursor_byte as usize)
-                });
-            let postfix_receiver = session
-                .zip(site.as_ref())
-                .filter(|(s, at)| s.lang() == Lang::Rust && matches!(at.site, Site::MemberAccess))
-                .and_then(|(s, at)| s.postfix_receiver(at.replace_start));
-            let receiver_text = postfix_receiver
-                .zip(session)
-                .map(|((a, b), s)| s.replica()[a..b].to_string());
-            Some(Snapshot {
-                lang,
-                site,
-                local,
-                literal,
-                postfix_receiver,
-                receiver_text,
-                reach: session.map(|s| Reach::take(i, q.session_id, s)),
-                imports: session.map(|s| s.imports()).unwrap_or_default(),
-                system_includes: i.system_includes.clone(),
-                catalog: Catalog {
-                    index_dir: i.config.index_dir.clone(),
-                    index: i.index.clone(),
-                    reader: i.reader.clone(),
-                    overlay: i.overlay.clone(),
-                },
-                workspace: i.workspace.clone(),
-            })
+            true
         })
-        .ok()
-        .flatten()
+        .unwrap_or(false);
+    if !latest {
+        return None;
+    }
+    engine.read(|i| build(i, q, limit)).ok().flatten()
+}
+
+fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
+    let session = i.sessions.get(&q.session_id);
+    let lang = session.map(|s| s.lang()).unwrap_or(Lang::Rust);
+    let site = session.map(|s| s.site_at(q.cursor_byte));
+    let wants_local = matches!(
+        site.as_ref().map(|s| &s.site),
+        Some(Site::Identifier(_) | Site::MemberAccess | Site::StructLiteral(_))
+    );
+    let local = session
+        .filter(|_| wants_local)
+        .zip(site.as_ref())
+        .map(|(s, at)| {
+            s.local_hits(&LocalQuery {
+                prefix: &at.prefix,
+                limit,
+                at: at.replace_start as u32,
+            })
+        });
+    let literal = session
+        .zip(site.as_ref())
+        .filter(|(_, at)| matches!(at.site, Site::StructLiteral(_)))
+        .map(|(s, at)| literal_state(s.replica(), at.replace_start, q.cursor_byte as usize));
+    let postfix_receiver = session
+        .zip(site.as_ref())
+        .filter(|(s, at)| s.lang() == Lang::Rust && matches!(at.site, Site::MemberAccess))
+        .and_then(|(s, at)| s.postfix_receiver(at.replace_start));
+    let receiver_text = postfix_receiver
+        .zip(session)
+        .map(|((a, b), s)| s.replica()[a..b].to_string());
+    Some(Snapshot {
+        lang,
+        site,
+        local,
+        literal,
+        postfix_receiver,
+        receiver_text,
+        reach: session.map(|s| Reach::take(i, q.session_id, s)),
+        imports: session.map(|s| s.imports()).unwrap_or_default(),
+        system_includes: i.system_includes.clone(),
+        catalog: Catalog {
+            index_dir: i.config.index_dir.clone(),
+            index: i.index.clone(),
+            reader: i.reader.clone(),
+            overlay: i.overlay.clone(),
+        },
+        workspace: i.workspace.clone(),
+    })
 }
 
 pub fn is_latest(engine: &Engine, session_id: u64, query_id: u64) -> bool {

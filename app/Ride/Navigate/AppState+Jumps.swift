@@ -65,12 +65,8 @@ extension AppState {
         PeekController.showFocused()
     }
 
-    func showExternalDocumentation() {
-        DocController.showExternalFocused()
-    }
-
     func showSignatureHelp() {
-        guard let view = EditorPanes.shared.focusedView, let buffer = activeBuffer else {
+        guard let (view, buffer) = focusedEditor else {
             return
         }
         SignatureHelpController.shared.show(document: buffer, view: view)

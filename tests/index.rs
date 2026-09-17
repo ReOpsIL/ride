@@ -359,3 +359,23 @@ fn enum_variants_are_indexed() {
     assert_eq!(stored(&index, some, "signature"), "Some(T)");
     assert_eq!(fast_u64(&index, "option::some", REACHABLE), 1);
 }
+
+#[test]
+fn manifest_edit_reindexes_the_workspace_crate() {
+    let dir = tempfile::tempdir().unwrap();
+    let project = dir.path().join("proj");
+    copy_dir(&fixtures().join("sample_crate"), &project);
+    let index_dir = dir.path().join("index");
+    write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    let manifest = project.join("Cargo.toml");
+    let text = std::fs::read_to_string(&manifest)
+        .unwrap()
+        .replace("edition = \"2021\"", "edition = \"2024\"");
+    std::thread::sleep(std::time::Duration::from_millis(20));
+    std::fs::write(&manifest, text).unwrap();
+    let second = write_index(&project, &index_dir, &config(&index_dir)).unwrap();
+    assert_eq!(second.state, IndexState::Ready);
+    assert_eq!(second.crates_total, 1);
+    assert_eq!(second.crates_done, 1);
+    assert_eq!(read_manifest(&index_dir).unwrap().generation, 2);
+}

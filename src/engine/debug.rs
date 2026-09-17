@@ -7,7 +7,7 @@ use crate::debug::session::DebugSession;
 use crate::error::EngineError;
 use crate::ffi::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugScope, DebugState, DebugThread, ExceptionFilter, StackFrame, Variable,
+    DebugScope, DebugThread, ExceptionFilter, StackFrame, Variable,
 };
 
 use super::Engine;
@@ -41,13 +41,6 @@ impl Engine {
 
     pub fn debug_exception_filters(&self) -> Vec<ExceptionFilter> {
         exception_filters()
-    }
-
-    pub fn debug_state(&self, session_id: u64) -> DebugState {
-        match self.debug_session(session_id) {
-            Ok(session) => session.state(),
-            Err(_) => DebugState::Idle,
-        }
     }
 
     pub fn debug_command(&self, session_id: u64, command: DebugCommand) -> Result<(), EngineError> {

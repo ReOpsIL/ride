@@ -19,3 +19,12 @@
 - Replace in Project with a preview sheet
 - Project tree: ⌫ deletes and ↩ renames the selected node; Recent Locations picker
 - Line endings: a preference to convert CRLF to LF on save (today the original ending is preserved)
+
+# Audit follow-ups (2026-09-17, bound-host review)
+
+- Breakpoints are stored as absolute line numbers (`Breakpoints.swift`) and never shifted by edits; `EditorCoordinator.textDidChange` shifts folds and underlines but not breakpoints, so inserting lines above a breakpoint moves it onto a different statement. Shift them through the same edit, then re-sync to the debugger.
+- Format, Reload and Replace in Project replace the whole text through `EditorHostView.replaceText`, which clears the document's undo stack instead of registering an undoable step. Route whole-text replacement through `replaceText(in:with:)` so ⌘Z restores the pre-format text.
+- `document.highlights` keeps engine byte offsets and is never shifted after an edit (`SessionService+Paint.swift`), so `HighlightApply.restyle` on re-attach paints stale ranges until the next engine paint. Shift spans with the edit or drop them on edit.
+- UsageVision ("N usages" editor overlay) has a pure model and tests but no view (see `plan/roadmap/next-1.3.md`).
+- Files over 200 lines to split: `SelfTestSteps+Cpp.swift`, `SelfTestSteps+Rust.swift`, `RideTextView.swift` (apply* helpers), `AppState.swift` (overlay flags), `PeekPanel.swift` (`PeekChrome`), `RootView.swift` (`DetailColumn`), `Buffers+File.swift` (new/open/close workspace).
+- 17 copies of the `guard let engine = RideEngineClient.shared.engine` + background queue + main hop prologue; add `RideEngineClient.withEngine(_:then:)`.

@@ -34,10 +34,12 @@ final class WorkspaceStateStore {
         work = nil
     }
 
-    func scheduleSave(_ state: WorkspaceState, root: URL) {
+    func scheduleSave(root: URL, _ capture: @escaping () -> WorkspaceState?) {
         cancelPending()
         let item = DispatchWorkItem { [weak self] in
-            self?.save(state, root: root)
+            if let state = capture() {
+                self?.save(state, root: root)
+            }
         }
         work = item
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: item)

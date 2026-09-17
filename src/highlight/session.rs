@@ -6,7 +6,7 @@ use crate::ffi::{ByteRange, InputEditFfi, OutlineItem, SessionUpdate};
 
 use super::edit::{apply_replica, to_ts_edit};
 use super::paint::{HUGE, clip_changed, expand, paint_range};
-use super::ranges::{subtract, union_into};
+use super::ranges::{shift, subtract, union_into};
 use super::scope::{ScopeCache, SourceScope};
 use super::syntax::{Lang, Syntax};
 
@@ -107,7 +107,13 @@ impl BufferSession {
         let changed = self.syntax.edit(&to_ts_edit(&edit), &self.replica)?;
         self.generation += 1;
         self.edits += 1;
-        self.already_covered = subtract(&self.already_covered, &changed);
+        let covered = shift(
+            &self.already_covered,
+            edit.start_byte,
+            edit.old_end_byte,
+            edit.new_end_byte,
+        );
+        self.already_covered = subtract(&covered, &changed);
         let to_style = clip_changed(&changed, visible, self.replica.len());
         union_into(&mut self.already_covered, &to_style);
         let highlights = self.syntax.highlights(&self.replica, &to_style);

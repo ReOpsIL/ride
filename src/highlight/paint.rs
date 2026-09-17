@@ -20,9 +20,10 @@ pub fn paint_range(len: usize, visible: Option<ByteRange>) -> Vec<ByteRange> {
 }
 
 pub fn expand(visible: ByteRange, len: usize) -> ByteRange {
+    let end_byte = visible.end_byte.saturating_add(MARGIN).min(len as u32);
     ByteRange {
-        start_byte: visible.start_byte.saturating_sub(MARGIN),
-        end_byte: visible.end_byte.saturating_add(MARGIN).min(len as u32),
+        start_byte: visible.start_byte.saturating_sub(MARGIN).min(end_byte),
+        end_byte,
     }
 }
 

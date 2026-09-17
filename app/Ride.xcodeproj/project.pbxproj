@@ -66,7 +66,6 @@
 		B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */; };
 		B04310B616ED144666AD4307 /* Contrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E24DEA7816D2F286932927 /* Contrast.swift */; };
 		B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05134279C118A62C90B7732 /* ContrastTests.swift */; };
-		B05E4AA889D03EFBB3220063 /* Contrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E24DEA7816D2F286932927 /* Contrast.swift */; };
 		B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09832F616F69FF9D72097BD /* ThemeStore.swift */; };
 		B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */; };
 		B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */; };
@@ -142,6 +141,10 @@
 		A0000000000000000000090F /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
 		A00000000000000000000911 /* RangeShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000910 /* RangeShiftTests.swift */; };
 		A0000000000000000000002C /* EditorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* EditorPane.swift */; };
+		BF0000000000000000000011 /* EditorHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000010 /* EditorHostView.swift */; };
+		BF0000000000000000000017 /* Confirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000016 /* Confirm.swift */; };
+		BF0000000000000000000015 /* Buffers+SavePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000014 /* Buffers+SavePanel.swift */; };
+		BF0000000000000000000013 /* PendingDelivery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000012 /* PendingDelivery.swift */; };
 		A0000000000000000000002D /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001D /* GutterView.swift */; };
 		A0000000000000000000002E /* TabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001E /* TabStrip.swift */; };
 		A0000000000000000000002F /* Buffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001F /* Buffers.swift */; };
@@ -590,6 +593,10 @@
 		A0000000000000000000090D /* RangeShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShift.swift; sourceTree = "<group>"; };
 		A00000000000000000000910 /* RangeShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShiftTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
+		BF0000000000000000000010 /* EditorHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHostView.swift; sourceTree = "<group>"; };
+		BF0000000000000000000016 /* Confirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Confirm.swift"; sourceTree = "<group>"; };
+		BF0000000000000000000014 /* Buffers+SavePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Buffers+SavePanel.swift"; sourceTree = "<group>"; };
+		BF0000000000000000000012 /* PendingDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PendingDelivery.swift"; sourceTree = "<group>"; };
 		A0000000000000000000001D /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
 		A0000000000000000000001E /* TabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabStrip.swift; sourceTree = "<group>"; };
 		A0000000000000000000001F /* Buffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffers.swift; sourceTree = "<group>"; };
@@ -941,6 +948,7 @@
 				B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */,
 				B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */,
 				B06689A7D426576E81967851 /* DesignTokens.swift */,
+				BF0000000000000000000016 /* Confirm.swift */,
 				03A3BCCA538C5EDD3C311746 /* DividerGrip.swift */,
 				DEEC1CCDEE78C4705C5071E7 /* SplitGrip.swift */,
 				7926B4F6B67B19ADA6D1247B /* SplitPositioner.swift */,
@@ -1260,6 +1268,9 @@
 				R11000000000000000000010 /* BufferLanguage+Engine.swift */,
 				A0000000000000000000090D /* RangeShift.swift */,
 				A0000000000000000000001C /* EditorPane.swift */,
+				BF0000000000000000000014 /* Buffers+SavePanel.swift */,
+				BF0000000000000000000012 /* PendingDelivery.swift */,
+				BF0000000000000000000010 /* EditorHostView.swift */,
 				A0000000000000000000001D /* GutterView.swift */,
 				A0000000000000000000001E /* TabStrip.swift */,
 				A0000000000000000000001F /* Buffers.swift */,
@@ -1899,7 +1910,6 @@
 				B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */,
 				B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */,
 				B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */,
-				B05E4AA889D03EFBB3220063 /* Contrast.swift in Sources */,
 				B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */,
 				B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */,
 				B074ADC7994685735E0B9C30 /* ChromePalette.swift in Sources */,
@@ -2077,6 +2087,10 @@
 				R11000000000000000000011 /* BufferLanguage+Engine.swift in Sources */,
 				A0000000000000000000090E /* RangeShift.swift in Sources */,
 				A0000000000000000000002C /* EditorPane.swift in Sources */,
+				BF0000000000000000000011 /* EditorHostView.swift in Sources */,
+				BF0000000000000000000017 /* Confirm.swift in Sources */,
+				BF0000000000000000000015 /* Buffers+SavePanel.swift in Sources */,
+				BF0000000000000000000013 /* PendingDelivery.swift in Sources */,
 				A0000000000000000000002D /* GutterView.swift in Sources */,
 				A0000000000000000000002E /* TabStrip.swift in Sources */,
 				A0000000000000000000002F /* Buffers.swift in Sources */,

@@ -17,13 +17,15 @@ enum TreeActions {
         return name.isEmpty ? nil : name
     }
 
-    static func newFile(in directory: URL) {
+    static func newFile(in directory: URL) -> URL? {
         guard let name = prompt(title: "New File", defaultName: "untitled.rs") else {
-            return
+            return nil
         }
         let url = directory.appendingPathComponent(name)
-        FileManager.default.createFile(atPath: url.path, contents: Data())
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
+        if !FileManager.default.fileExists(atPath: url.path) {
+            FileManager.default.createFile(atPath: url.path, contents: Data())
+        }
+        return url
     }
 
     static func newFolder(in directory: URL) {
@@ -72,13 +74,7 @@ enum TreeActions {
     }
 
     private static func confirmTrash(_ url: URL) -> Bool {
-        let alert = NSAlert()
-        alert.messageText = "Delete \(url.lastPathComponent)?"
-        alert.informativeText = "The item will be moved to the Trash."
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "Delete")
-        alert.addButton(withTitle: "Cancel")
-        return alert.runModal() == .alertFirstButtonReturn
+        Confirm.ask("Delete \(url.lastPathComponent)?", message: "The item will be moved to the Trash.", ok: "Delete")
     }
 
     static func reveal(_ url: URL) {

@@ -3,6 +3,7 @@ use std::path::Path;
 use super::markers_cpp::cpp;
 use crate::ffi::{TestFramework, TestMarker};
 use crate::highlight::Lang;
+use crate::text::is_word;
 
 pub fn markers(lang: Lang, text: &str, module_path: &str) -> Vec<TestMarker> {
     match lang {
@@ -16,24 +17,25 @@ pub fn rust_module_path(path: Option<&Path>) -> String {
     let Some(path) = path else {
         return String::new();
     };
-    let mut parts: Vec<String> = Vec::new();
-    let mut in_crate = false;
-    for component in path.components() {
-        let Some(name) = component.as_os_str().to_str() else {
-            continue;
-        };
-        if !in_crate {
-            in_crate = name == "src";
-            continue;
-        }
-        parts.push(name.to_string());
-    }
-    let last = parts.pop().unwrap_or_default();
-    let Some(stem) = last.strip_suffix(".rs") else {
+    let names: Vec<&str> = path
+        .components()
+        .filter_map(|c| c.as_os_str().to_str())
+        .collect();
+    let Some(src) = names.iter().rposition(|n| *n == "src") else {
         return String::new();
     };
+    let mut parts = names[src + 1..].to_vec();
+    let Some(stem) = parts.pop().and_then(|last| last.strip_suffix(".rs")) else {
+        return String::new();
+    };
+    if parts.first() == Some(&"bin") {
+        if parts.len() == 1 {
+            return String::new();
+        }
+        parts.drain(..2);
+    }
     if !matches!(stem, "main" | "lib" | "mod") {
-        parts.push(stem.to_string());
+        parts.push(stem);
     }
     parts.join("::")
 }
@@ -144,14 +146,14 @@ fn qualified(name: &str, module_path: &str, mods: &[(String, usize)]) -> String 
 
 fn fn_name(trimmed: &str) -> Option<&str> {
     let rest = keyword(trimmed, "fn")?;
-    let end = rest.find(|c: char| !c.is_alphanumeric() && c != '_')?;
+    let end = rest.find(|c: char| !is_word(c))?;
     let name = rest.get(..end)?;
     if name.is_empty() { None } else { Some(name) }
 }
 
 fn mod_name(trimmed: &str) -> Option<&str> {
     let rest = keyword(trimmed, "mod")?;
-    let end = rest.find(|c: char| !c.is_alphanumeric() && c != '_')?;
+    let end = rest.find(|c: char| !is_word(c))?;
     let name = rest.get(..end)?;
     if rest.get(end..)?.trim_start().starts_with('{') {
         Some(name)

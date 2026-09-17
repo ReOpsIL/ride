@@ -43,6 +43,7 @@ final class LineOpsTests: XCTestCase {
     func testDeleteLinesKeepsTheColumn() {
         XCTAssertEqual(deleteLines("a\nb|x\nc"), "a\nc|")
         XCTAssertEqual(deleteLines("a\nb|"), "a|")
+        XCTAssertEqual(deleteLines("a\nb|\n"), "a\n|")
         XCTAssertEqual(deleteLines("ab|"), "|")
         XCTAssertEqual(deleteLines("[a\nb]\nc"), "|c")
     }
@@ -52,6 +53,8 @@ final class LineOpsTests: XCTestCase {
         XCTAssertEqual(joinLines("a|\n\nb"), "a|\nb")
         XCTAssertEqual(joinLines("a\nb|"), "a\nb|")
         XCTAssertEqual(joinLines("[a\n  b\n  c]"), "[a b c]")
+        XCTAssertEqual(joinLines("[a\n  \nb]"), "[a b]")
+        XCTAssertEqual(joinLines("[fn a() {\n    \n    x\n}]"), "[fn a() { x }]")
     }
 
     func testMoveLinesUpAndDown() {

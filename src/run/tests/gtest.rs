@@ -83,6 +83,7 @@ fn outcome(line: &str, running: &mut Option<(String, Vec<&str>)>) -> Option<Test
         return None;
     };
     let (full, duration_ms) = split_duration(rest.trim());
+    let full = full.split_once(", where ").map_or(full, |(name, _)| name);
     let (name, output) = running.take()?;
     if name != full {
         *running = Some((name, output));

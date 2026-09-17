@@ -1,4 +1,3 @@
-use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
 use crate::error::EngineError;
@@ -9,17 +8,11 @@ use super::Engine;
 #[uniffi::export]
 impl Engine {
     pub fn project_model(&self, root: String) -> Result<ProjectModel, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| load(self, &root, false))) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| load(self, &root, false))
     }
 
     pub fn reload_project(&self, root: String) -> Result<ProjectModel, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| load(self, &root, true))) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| load(self, &root, true))
     }
 }
 

@@ -8,7 +8,6 @@ final class UsagesModel: ObservableObject {
     @Published private(set) var other: [UsageFileGroup] = []
     @Published private(set) var running = false
     @Published private(set) var finished = false
-    @Published private(set) var hasDefinition = false
 
     private var generation = 0
     private static let queue = DispatchQueue(label: "ride.usages.query", qos: .userInitiated)
@@ -24,7 +23,6 @@ final class UsagesModel: ObservableObject {
         other = []
         running = false
         finished = false
-        hasDefinition = false
     }
 
     func query(sessionId: UInt64, byte: UInt32) {
@@ -47,7 +45,6 @@ final class UsagesModel: ObservableObject {
                     return
                 }
                 self.name = response.name
-                self.hasDefinition = response.hasDefinition
                 self.primary = split.primary
                 self.other = split.other
                 self.running = false

@@ -1,83 +1,11 @@
 import AppKit
 import SwiftUI
 
-final class EditorHostView: NSView {
-    let gutter = GutterView()
-    let scroll = NSScrollView()
-    let textView: RideTextView
-    var paneID = UUID()
-    var onViewport: (() -> Void)?
-    var docsStorage: DocController?
-    var peekStorage: PeekController?
-    private var gutterWidth: NSLayoutConstraint!
-
-    override init(frame frameRect: NSRect) {
-        textView = RideTextView.makeTK2()
-        super.init(frame: frameRect)
-        scroll.hasVerticalScroller = true
-        scroll.hasHorizontalScroller = false
-        scroll.autohidesScrollers = true
-        scroll.borderType = .noBorder
-        scroll.drawsBackground = true
-        scroll.backgroundColor = ThemeStore.shared.editor.background
-        scroll.documentView = textView
-        scroll.contentView.postsBoundsChangedNotifications = true
-        gutter.translatesAutoresizingMaskIntoConstraints = false
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(gutter)
-        addSubview(scroll)
-        gutterWidth = gutter.widthAnchor.constraint(equalToConstant: GutterView.width(digits: 3))
-        NSLayoutConstraint.activate([
-            gutter.leadingAnchor.constraint(equalTo: leadingAnchor),
-            gutter.topAnchor.constraint(equalTo: topAnchor),
-            gutter.bottomAnchor.constraint(equalTo: bottomAnchor),
-            gutterWidth,
-            scroll.leadingAnchor.constraint(equalTo: gutter.trailingAnchor),
-            scroll.topAnchor.constraint(equalTo: topAnchor),
-            scroll.bottomAnchor.constraint(equalTo: bottomAnchor),
-            scroll.trailingAnchor.constraint(equalTo: trailingAnchor),
-        ])
-        gutter.attach(textView: textView)
-        onViewport = nil
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(viewportMoved),
-            name: NSView.boundsDidChangeNotification,
-            object: scroll.contentView
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(syncGutter),
-            name: NSText.didChangeNotification,
-            object: textView
-        )
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:)")
-    }
-
-    func applyTheme(_ theme: Theme) {
-        scroll.backgroundColor = theme.editor.background
-        gutter.needsDisplay = true
-    }
-
-    @objc func syncGutter() {
-        let lines = max(1, textView.lineIndex().lineCount)
-        gutterWidth.constant = GutterView.width(digits: String(lines).count)
-        gutter.needsDisplay = true
-    }
-
-    @objc func viewportMoved() {
-        gutter.needsDisplay = true
-        onViewport?()
-    }
-}
-
 struct EditorPane: NSViewRepresentable {
     @ObservedObject var document: BufferDocument
     @ObservedObject var state: AppState
     let paneID: UUID
+    let focused: Bool
 
     func makeCoordinator() -> Coordinator {
         Coordinator(document: document, state: state)
@@ -90,7 +18,7 @@ struct EditorPane: NSViewRepresentable {
         host.textView.delegate = context.coordinator
         context.coordinator.textView = host.textView
         context.coordinator.host = host
-        document.bind(host.textView)
+        host.bind(document)
         host.textView.applyPrefs(state.prefs)
         context.coordinator.boundID = document.id
         host.onViewport = { [weak coordinator = context.coordinator] in
@@ -98,6 +26,9 @@ struct EditorPane: NSViewRepresentable {
         }
         SessionService.shared.attach(document: document, view: host.textView)
         EditorPanes.shared.attach(host, pane: paneID)
+        if focused {
+            EditorPanes.shared.adopt(pane: paneID)
+        }
         context.coordinator.installHooks(host.textView)
         host.syncGutter()
         return host
@@ -106,9 +37,12 @@ struct EditorPane: NSViewRepresentable {
     func updateNSView(_ host: EditorHostView, context: Context) {
         context.coordinator.state = state
         host.textView.applyPrefs(state.prefs)
+        if focused {
+            EditorPanes.shared.adopt(pane: paneID)
+        }
         if context.coordinator.boundID != document.id {
-            context.coordinator.document.capture(host.textView)
-            document.bind(host.textView)
+            host.capture()
+            host.bind(document)
             context.coordinator.document = document
             context.coordinator.boundID = document.id
             context.coordinator.publishCursor(host.textView)
@@ -116,12 +50,13 @@ struct EditorPane: NSViewRepresentable {
             SessionService.shared.attach(document: document, view: host.textView)
             EditorPanes.shared.attach(host, pane: paneID)
         }
-        context.coordinator.flush(host)
+        state.flushPending(host)
     }
 
     static func dismantleNSView(_ host: EditorHostView, coordinator: Coordinator) {
-        coordinator.document.capture(host.textView)
+        host.capture()
         host.closeDocs()
+        host.textView.hooks = EditorHooks()
         EditorPanes.shared.detach(host)
     }
 }
@@ -169,7 +104,7 @@ struct PaneColumn: View {
                 FindBar()
             }
             if let buffer = state.buffer(pane.activeID) {
-                EditorPane(document: buffer, state: state, paneID: pane.id)
+                EditorPane(document: buffer, state: state, paneID: pane.id, focused: focused)
                     .id(buffer.id)
             } else {
                 WelcomeView()

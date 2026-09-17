@@ -1,7 +1,7 @@
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
 use crate::highlight::Lang;
-use std::io::Write;
+use crate::process::run_piped;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
@@ -80,22 +80,8 @@ fn run_stdin(cmd: &mut Command, cwd: &Path, text: &str) -> Result<(bool, String)
     if cwd.is_dir() {
         cmd.current_dir(cwd);
     }
-    cmd.stdin(Stdio::piped())
-        .stdout(Stdio::null())
-        .stderr(Stdio::piped());
-    let mut child = cmd.spawn().map_err(|e| EngineError::Tool {
-        message: format!("clang: {e}"),
-    })?;
-    if let Some(mut stdin) = child.stdin.take() {
-        stdin
-            .write_all(text.as_bytes())
-            .map_err(|e| EngineError::Tool {
-                message: format!("clang: {e}"),
-            })?;
-    }
-    let output = child.wait_with_output().map_err(|e| EngineError::Tool {
-        message: format!("clang: {e}"),
-    })?;
+    cmd.stdout(Stdio::null()).stderr(Stdio::piped());
+    let output = run_piped(cmd, "clang", text)?;
     Ok((
         output.status.success(),
         String::from_utf8_lossy(&output.stderr).into_owned(),

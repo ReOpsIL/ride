@@ -25,7 +25,7 @@ extension AppState {
         if EditorPanes.shared.focused?.peek.openIfVisible() == true {
             return
         }
-        guard let view = EditorPanes.shared.focusedView, let document = activeBuffer else {
+        guard let (view, document) = focusedEditor else {
             return
         }
         goToDefinition(document: document, view: view, utf16: view.selectedRange().location)

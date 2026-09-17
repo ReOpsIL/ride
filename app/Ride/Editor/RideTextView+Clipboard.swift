@@ -6,7 +6,7 @@ extension RideTextView {
             super.copy(sender)
             return
         }
-        let line = (string as NSString).lineRange(for: selectedRange())
+        let line = lineNSRange()
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString((string as NSString).substring(with: line), forType: .string)
@@ -18,7 +18,7 @@ extension RideTextView {
             return
         }
         copy(sender)
-        let line = (string as NSString).lineRange(for: selectedRange())
+        let line = lineNSRange()
         replaceText(in: line, with: "")
         setSelectedRange(NSRange(location: min(line.location, (string as NSString).length), length: 0))
     }

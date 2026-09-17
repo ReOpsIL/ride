@@ -89,25 +89,36 @@ fn summary(line: &str) -> bool {
 }
 
 fn start(line: &str) -> Option<&str> {
-    let rest = line.strip_prefix("    Start ")?;
-    let (_, name) = rest.split_once(": ")?;
-    Some(name.trim())
+    let rest = line.trim_start().strip_prefix("Start")?.trim_start();
+    let (number, name) = rest.split_once(':')?;
+    is_number(number).then(|| name.trim())
 }
 
 fn outcome(line: &str) -> Option<TestEvent> {
-    let rest = line.split_once(" Test #")?.1.split_once(": ")?.1;
+    let (counter, rest) = line.trim_start().split_once("Test")?;
+    let (done, total) = counter.trim().split_once('/')?;
+    if !is_number(done) || !is_number(total) {
+        return None;
+    }
+    let rest = rest.trim_start().strip_prefix('#')?;
+    let (number, rest) = rest.split_once(':')?;
+    if !is_number(number) {
+        return None;
+    }
     let (name, tail) = rest.split_once(" ..")?;
     let status = if tail.contains("Passed") {
         TestStatus::Passed
-    } else if tail.contains("Failed") || tail.contains("Timeout") {
-        TestStatus::Failed
     } else if tail.contains("Skipped") || tail.contains("Not Run") {
         TestStatus::Ignored
     } else {
-        return None;
+        TestStatus::Failed
     };
     let name = name.trim();
     Some(event(suite_of(name), name, status, duration_ms(tail)))
+}
+
+fn is_number(s: &str) -> bool {
+    !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit())
 }
 
 fn duration_ms(tail: &str) -> Option<u64> {

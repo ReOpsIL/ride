@@ -1,6 +1,6 @@
 use tree_sitter::Node;
 
-use crate::text::{cap, collapse_ws};
+use crate::text::{cap, collapse_ws, line_start};
 
 const SIGNATURE_MAX: usize = 160;
 const DOC_MAX: usize = 400;
@@ -83,9 +83,7 @@ fn adjacent(comment: Node<'_>, next: Node<'_>, text: &str) -> bool {
     let Some(gap) = text.get(comment.end_byte()..next.start_byte()) else {
         return false;
     };
-    let line_start = text[..comment.start_byte()]
-        .rfind('\n')
-        .map_or(0, |i| i + 1);
+    let line_start = line_start(text, comment.start_byte());
     gap.chars().all(char::is_whitespace)
         && gap.matches('\n').count() <= 1
         && text[line_start..comment.start_byte()]

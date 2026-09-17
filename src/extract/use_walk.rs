@@ -94,6 +94,9 @@ fn collect_clause(
         _ => {
             let mut parts = prefix.to_vec();
             parts.extend(path_parts(node, source));
+            if parts.last().is_some_and(|p| p == "self") {
+                parts.pop();
+            }
             if let Some(alias) = parts.last().cloned() {
                 push_named(out, ctx, parts, alias);
             }

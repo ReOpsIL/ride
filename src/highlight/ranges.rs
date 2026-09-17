@@ -43,6 +43,29 @@ pub fn subtract(covered: &[ByteRange], holes: &[ByteRange]) -> Vec<ByteRange> {
     out
 }
 
+pub fn shift(spans: &[ByteRange], start: u32, old_end: u32, new_end: u32) -> Vec<ByteRange> {
+    let mut out = Vec::new();
+    for span in spans {
+        if span.end_byte <= start {
+            out.push(*span);
+            continue;
+        }
+        if span.start_byte < start {
+            out.push(ByteRange {
+                start_byte: span.start_byte,
+                end_byte: start,
+            });
+        }
+        if span.end_byte > old_end {
+            out.push(ByteRange {
+                start_byte: new_end + span.start_byte.max(old_end) - old_end,
+                end_byte: new_end + span.end_byte - old_end,
+            });
+        }
+    }
+    out
+}
+
 pub fn union_into(base: &mut Vec<ByteRange>, extra: &[ByteRange]) {
     base.extend_from_slice(extra);
     base.sort_by_key(|r| r.start_byte);

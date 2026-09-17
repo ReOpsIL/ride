@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct WorkspaceInfo {
     pub root: String,
+    pub workspace_root: String,
     pub package_name: Option<String>,
     pub is_cargo: bool,
     pub members: Vec<String>,

@@ -63,7 +63,7 @@ enum RenameApply {
     }
 
     private static func applyFile(state: AppState, url: URL, name: String, edits: [TextEdit]) -> Outcome {
-        let buffer = state.buffers.first { $0.fileURL == url }
+        let buffer = state.buffer(for: url)
         let view = buffer.flatMap { state.editorView(for: $0) }
         guard let text = view?.string ?? buffer?.text ?? state.liveText(url) else {
             return .failed
@@ -92,14 +92,14 @@ enum RenameApply {
         count: Int
     ) -> Outcome {
         var ok = true
-        BufferTextUndo.apply(text, to: buffer, undo: EditorPanes.shared.focusedView?.undoManager) { [weak state] doc in
+        BufferTextUndo.apply(text, to: buffer, undo: buffer.undoManager) { [weak state] doc in
             guard let state else {
                 return
             }
             if persist(state, doc) {
                 resync(doc)
-                if let view = state.editorView(for: doc), view.string != doc.text {
-                    doc.bind(view)
+                if let host = EditorPanes.shared.host(bound: doc), host.textView.string != doc.text {
+                    host.bind(doc)
                 }
             } else {
                 ok = false

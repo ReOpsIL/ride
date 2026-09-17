@@ -7,8 +7,6 @@ use serde_json::Value;
 use crate::error::EngineError;
 
 pub const REQUEST: &str = "request";
-pub const RESPONSE: &str = "response";
-pub const EVENT: &str = "event";
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

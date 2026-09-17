@@ -132,7 +132,11 @@ struct TreeRow: View {
     @ViewBuilder
     private func menu(for node: FileNode) -> some View {
         let dir = WorkspaceFS.parentDir(for: node.url, isDirectory: node.isDirectory)
-        Button("New File") { TreeActions.newFile(in: dir) }
+        Button("New File") {
+            if let url = TreeActions.newFile(in: dir) {
+                state.fileCreated(url)
+            }
+        }
         Button("New Folder") { TreeActions.newFolder(in: dir) }
         Button("Rename") { TreeActions.run(.rename, url: node.url) }
         Button("Duplicate") { TreeActions.duplicate(node.url) }

@@ -8,6 +8,7 @@ use super::parse::parse_lines;
 
 pub fn run_check(
     root: &Path,
+    workspace_root: &Path,
     target_dir: Option<&Path>,
     clippy: bool,
 ) -> Result<CheckResult, EngineError> {
@@ -25,7 +26,7 @@ pub fn run_check(
     let stderr = String::from_utf8_lossy(&output.stderr);
     Ok(CheckResult {
         success: output.status.success(),
-        diagnostics: parse_lines(root, &stdout),
+        diagnostics: parse_lines(workspace_root, &stdout),
         stderr_tail: stderr_tail(&stderr),
     })
 }

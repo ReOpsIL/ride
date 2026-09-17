@@ -2,7 +2,7 @@ import AppKit
 
 extension AppState {
     func newFile() {
-        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: isDirectory($0)) } ?? workspaceRoot
+        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: WorkspaceFS.isDirectory($0)) } ?? workspaceRoot
         let panel = NSSavePanel()
         panel.canCreateDirectories = true
         panel.directoryURL = directory
@@ -15,23 +15,22 @@ extension AppState {
         if !FileManager.default.fileExists(atPath: url.path) {
             FileManager.default.createFile(atPath: url.path, contents: Data())
         }
+        fileCreated(url)
+    }
+
+    func fileCreated(_ url: URL) {
         RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
         reloadTree()
         openFile(url)
     }
 
     func newFolder() {
-        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: isDirectory($0)) } ?? workspaceRoot
+        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: WorkspaceFS.isDirectory($0)) } ?? workspaceRoot
         guard let directory else {
             return
         }
         TreeActions.newFolder(in: directory)
         reloadTree()
-    }
-
-    private func isDirectory(_ url: URL) -> Bool {
-        var isDir: ObjCBool = false
-        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
     }
 
     func openAnything() {
@@ -43,7 +42,7 @@ extension AppState {
         guard panel.runModal() == .OK, let url = panel.url else {
             return
         }
-        if isDirectory(url) {
+        if WorkspaceFS.isDirectory(url) {
             open(url)
             return
         }
@@ -69,9 +68,7 @@ extension AppState {
 
     func saveAll() {
         for buffer in buffers where buffer.isDirty && buffer.fileURL != nil && !buffer.isReadOnly {
-            if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
-                buffer.capture(view)
-            }
+            EditorPanes.shared.host(bound: buffer)?.capture()
             try? buffer.save(from: nil)
             didSave(buffer, allowFormat: false)
         }
@@ -79,29 +76,10 @@ extension AppState {
     }
 
     func saveAs() {
-        guard let buffer = activeBuffer else {
+        guard let buffer = activeBuffer, let url = chooseSaveURL(for: buffer) else {
             return
         }
-        let panel = NSSavePanel()
-        panel.canCreateDirectories = true
-        panel.directoryURL = buffer.fileURL?.deletingLastPathComponent() ?? workspaceRoot
-        panel.nameFieldStringValue = buffer.fileURL?.lastPathComponent ?? buffer.displayName + "." + buffer.language.fileExtension
-        let picker = SaveLanguagePicker(panel: panel, initial: buffer.language)
-        let response = withExtendedLifetime(picker) { panel.runModal() }
-        guard response == .OK, let url = panel.url else {
-            return
-        }
-        let previous = buffer.language
-        buffer.fileURL = url.standardizedFileURL
-        buffer.detectedLanguage = nil
-        buffer.isReadOnly = false
-        if let view = EditorPanes.shared.focusedView {
-            buffer.capture(view)
-            if buffer.language != previous {
-                SessionService.shared.close(buffer)
-                SessionService.shared.attach(document: buffer, view: view)
-            }
-        }
+        rebind(buffer, to: url)
         try? buffer.save(from: nil)
         selectedURL = buffer.fileURL
         objectWillChange.send()
@@ -112,15 +90,8 @@ extension AppState {
         guard let buffer = activeBuffer, buffer.fileURL != nil else {
             return
         }
-        if buffer.isDirty {
-            let alert = NSAlert()
-            alert.messageText = "Revert \(buffer.displayName) to the saved version?"
-            alert.informativeText = "Your unsaved changes will be lost."
-            alert.addButton(withTitle: "Revert")
-            alert.addButton(withTitle: "Cancel")
-            guard alert.runModal() == .alertFirstButtonReturn else {
-                return
-            }
+        if buffer.isDirty, !Confirm.ask("Revert \(buffer.displayName) to the saved version?", message: "Your unsaved changes will be lost.", ok: "Revert") {
+            return
         }
         reloadFromDisk(buffer)
     }
@@ -130,11 +101,8 @@ extension AppState {
             return
         }
         buffer.changedOnDisk = false
-        if buffer.id == activeID {
-            applyText = buffer.text
-            applyThenSave = false
-            objectWillChange.send()
-        }
+        refreshView(of: buffer)
+        objectWillChange.send()
     }
 
     @discardableResult

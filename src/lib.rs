@@ -14,6 +14,7 @@ pub mod includes;
 mod index;
 mod markdown;
 mod params;
+mod process;
 pub mod project;
 mod query;
 mod refactor;

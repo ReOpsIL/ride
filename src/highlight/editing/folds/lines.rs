@@ -3,19 +3,7 @@ use std::cmp::Reverse;
 use tree_sitter::Node;
 
 use crate::ffi::FoldRange;
-
-pub fn line_start(text: &str, byte: usize) -> usize {
-    let byte = byte.min(text.len());
-    text[..byte].rfind('\n').map(|i| i + 1).unwrap_or(0)
-}
-
-pub fn line_end(text: &str, byte: usize) -> usize {
-    let byte = byte.min(text.len());
-    text[byte..]
-        .find('\n')
-        .map(|i| byte + i)
-        .unwrap_or(text.len())
-}
+use crate::text::{line_end, line_start};
 
 pub fn after_line(text: &str, byte: usize) -> usize {
     (line_end(text, byte) + 1).min(text.len())
@@ -24,7 +12,11 @@ pub fn after_line(text: &str, byte: usize) -> usize {
 pub fn last_content(text: &str, start: usize, end: usize) -> usize {
     let end = end.min(text.len()).max(start);
     let trimmed = text[start..end].trim_end();
-    start + trimmed.len().saturating_sub(1)
+    start + last_char_start(trimmed)
+}
+
+fn last_char_start(text: &str) -> usize {
+    text.char_indices().next_back().map_or(0, |(i, _)| i)
 }
 
 pub fn span(node: Node<'_>) -> (usize, usize) {
@@ -83,7 +75,7 @@ pub fn runs(out: &mut Vec<FoldRange>, text: &str, spans: &[(usize, usize)], kind
     let mut run: Vec<(usize, usize)> = Vec::new();
     for &(start, end) in spans {
         let continues = run.last().is_some_and(|&(_, prev)| {
-            line_start(text, start) == after_line(text, prev.saturating_sub(1))
+            line_start(text, start) == after_line(text, last_char_start(&text[..prev]))
         });
         if !continues {
             flush(out, text, &run, kind);

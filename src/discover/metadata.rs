@@ -22,6 +22,7 @@ pub fn workspace_info(root: &Path, config: &EngineConfig) -> Result<WorkspaceInf
     if !manifest.is_file() {
         return Ok(WorkspaceInfo {
             root: root.display().to_string(),
+            workspace_root: root.display().to_string(),
             package_name: None,
             is_cargo: false,
             members: Vec::new(),
@@ -32,6 +33,7 @@ pub fn workspace_info(root: &Path, config: &EngineConfig) -> Result<WorkspaceInf
     let (meta, _) = cargo_metadata(&manifest, config.offline_metadata, true)?;
     Ok(WorkspaceInfo {
         root: root.display().to_string(),
+        workspace_root: meta.workspace_root.clone(),
         package_name: meta
             .packages
             .iter()

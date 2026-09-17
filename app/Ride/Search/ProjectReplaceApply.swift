@@ -33,10 +33,8 @@ extension AppState {
     }
 
     func liveText(_ file: URL) -> String? {
-        if let buffer = buffers.first(where: { $0.fileURL == file }) {
-            if buffer.id == activeID, let view = EditorPanes.shared.focusedView {
-                buffer.capture(view)
-            }
+        if let buffer = buffer(for: file) {
+            EditorPanes.shared.host(bound: buffer)?.capture()
             return buffer.text
         }
         return ProjectFind.readText(file)
@@ -76,10 +74,7 @@ extension AppState {
             buffer.isDirty = dirty
             return false
         }
-        if buffer.id == activeID {
-            applyText = text
-            applyThenSave = false
-        }
+        refreshView(of: buffer)
         didSave(buffer, allowFormat: false)
         return true
     }

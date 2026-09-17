@@ -28,7 +28,6 @@ enum Tokens {
         static let panelHeader: CGFloat = 28
         static let iconS: CGFloat = 11
         static let iconM: CGFloat = 13
-        static let iconL: CGFloat = 16
         static let pickerRow: CGFloat = 26
         static let completionRow: CGFloat = 24
         static let badge: CGFloat = 16

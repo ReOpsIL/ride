@@ -29,7 +29,9 @@ struct SidebarView: View {
             Spacer(minLength: 0)
             if let root = state.workspaceRoot {
                 IconButton(symbol: "doc.badge.plus", help: "New File") {
-                    TreeActions.newFile(in: root)
+                    if let url = TreeActions.newFile(in: root) {
+                        state.fileCreated(url)
+                    }
                 }
                 IconButton(symbol: "arrow.down.right.and.arrow.up.left", help: "Collapse All") {
                     state.expanded = []

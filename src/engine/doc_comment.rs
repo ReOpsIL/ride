@@ -1,3 +1,4 @@
+use crate::text::line_start;
 use tree_sitter::Node;
 
 pub fn rust(node: Node<'_>, source: &str) -> String {
@@ -146,7 +147,7 @@ fn adjacent(comment: Node<'_>, next: Node<'_>, text: &str) -> bool {
     let Some(prefix) = text.get(..start) else {
         return false;
     };
-    let line_start = prefix.rfind('\n').map_or(0, |i| i + 1);
+    let line_start = line_start(prefix, prefix.len());
     let Some(indent) = text.get(line_start..start) else {
         return false;
     };

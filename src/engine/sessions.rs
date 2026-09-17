@@ -1,4 +1,3 @@
-use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
 use crate::error::EngineError;
@@ -16,7 +15,7 @@ impl Engine {
         text: String,
         visible: Option<ByteRange>,
     ) -> Result<SessionOpen, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
+        self.guard(|| {
             let is_system = path
                 .as_deref()
                 .is_some_and(|p| self.is_system_path(p.to_string()));
@@ -40,10 +39,7 @@ impl Engine {
                     update,
                 }
             })
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        })
     }
 
     pub fn apply_edit(
@@ -53,7 +49,7 @@ impl Engine {
         inserted_text: String,
         visible: Option<ByteRange>,
     ) -> Result<SessionUpdate, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
+        self.guard(|| {
             self.write(|i| {
                 let session = i
                     .sessions
@@ -61,10 +57,7 @@ impl Engine {
                     .ok_or(EngineError::SessionNotFound { session_id })?;
                 session.apply_edit(edit, &inserted_text, visible)
             })?
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        })
     }
 
     pub fn set_visible_range(
@@ -72,7 +65,7 @@ impl Engine {
         session_id: u64,
         visible: ByteRange,
     ) -> Result<SessionUpdate, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
+        self.guard(|| {
             self.write(|i| {
                 let session = i
                     .sessions
@@ -80,10 +73,7 @@ impl Engine {
                     .ok_or(EngineError::SessionNotFound { session_id })?;
                 session.set_visible(visible)
             })?
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        })
     }
 
     pub fn set_text(
@@ -92,7 +82,7 @@ impl Engine {
         text: String,
         visible: Option<ByteRange>,
     ) -> Result<SessionUpdate, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
+        self.guard(|| {
             self.write(|i| {
                 let session = i
                     .sessions
@@ -100,10 +90,7 @@ impl Engine {
                     .ok_or(EngineError::SessionNotFound { session_id })?;
                 session.set_text(text, visible)
             })?
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        })
     }
 
     pub fn close_session(&self, session_id: u64) {

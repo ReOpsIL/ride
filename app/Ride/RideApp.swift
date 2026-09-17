@@ -14,6 +14,7 @@ struct RideApp: App {
         NSWindow.allowsAutomaticWindowTabbing = false
         let state = AppState()
         self.state = state
+        RideAppDelegate.state = state
         self.updater = UpdateController()
         _menu = ObservedObject(wrappedValue: state.menu)
     }
@@ -54,6 +55,12 @@ struct RideApp: App {
 }
 
 final class RideAppDelegate: NSObject, NSApplicationDelegate {
+    static weak var state: AppState?
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        Self.state?.closeAll() == false ? .terminateCancel : .terminateNow
+    }
+
     func application(_ app: NSApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
         false
     }

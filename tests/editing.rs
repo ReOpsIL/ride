@@ -702,3 +702,13 @@ fn complete_statement_engine_none_without_session() {
     let edit = engine.complete_statement(open.session_id, at).unwrap();
     assert_eq!(mark(src, &edit), "fn main() {\n    let x = 1;|\n}\n");
 }
+
+#[test]
+fn folds_end_on_a_line_whose_last_char_is_multibyte() {
+    let got = folds(Lang::Markdown, "# Title\n\nline one\nline two\ncafé");
+    assert_fold(&got, "section", "\n\nline one\nline two\ncafé");
+    let got = folds(Lang::Rust, "/// one\n/// two\n/// café\nfn f() {}\n");
+    assert_fold(&got, "comment", "\n/// two\n/// café\n");
+    let got = folds(Lang::Rust, "fn f() {\n    a();\n    b();\n    é\n}\n");
+    assert_fold(&got, "fn", "\n    a();\n    b();\n    é\n");
+}

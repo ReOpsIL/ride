@@ -1,10 +1,9 @@
-use tree_sitter::Tree;
+use tree_sitter::{Node, Tree};
+
+use crate::text::is_word;
 
 use super::Position;
-
-pub fn is_word(c: char) -> bool {
-    c.is_alphanumeric() || c == '_'
-}
+use super::comment_scan::in_open_comment;
 
 pub fn word_start(text: &str, at: usize, extra: &[char]) -> usize {
     let head = &text[..at];
@@ -16,35 +15,20 @@ pub fn head_before(text: &str, start: usize) -> &str {
     text[..start].trim_end_matches([' ', '\t'])
 }
 
-pub fn inside(tree: Option<&Tree>, at: usize, kinds: &[&str]) -> bool {
-    let Some(tree) = tree else {
-        return false;
-    };
-    let probe = at.saturating_sub(1);
-    let Some(mut node) = tree.root_node().descendant_for_byte_range(probe, probe) else {
-        return false;
-    };
-    for _ in 0..4 {
-        if kinds.contains(&node.kind()) {
-            return true;
+pub fn vetoed(tree: Option<&Tree>, text: &str, probe: usize, start: usize, kinds: &[&str]) -> bool {
+    let probe = probe.saturating_sub(1);
+    match tree.and_then(|t| t.root_node().descendant_for_byte_range(probe, probe)) {
+        Some(leaf) => {
+            ancestors(leaf).any(|n| kinds.contains(&n.kind()))
+                || (ancestors(leaf).any(|n| n.is_error() || n.is_missing())
+                    && in_open_comment(text, start))
         }
-        match node.parent() {
-            Some(p) => node = p,
-            None => return false,
-        }
+        None => in_open_comment(text, start),
     }
-    false
 }
 
-pub fn in_open_comment(text: &str, at: usize) -> bool {
-    let head = &text[..at];
-    let block_open = head.rfind("/*");
-    let block_close = head.rfind("*/");
-    if block_open.is_some_and(|o| block_close.is_none_or(|c| c < o)) {
-        return true;
-    }
-    let line_start = head.rfind('\n').map(|i| i + 1).unwrap_or(0);
-    head[line_start..].contains("//")
+fn ancestors(leaf: Node<'_>) -> impl Iterator<Item = Node<'_>> {
+    std::iter::successors(Some(leaf), |n| n.parent()).take(4)
 }
 
 pub fn path_segments(head: &str) -> (Vec<String>, usize) {

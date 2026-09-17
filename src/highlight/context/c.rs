@@ -3,6 +3,7 @@ use tree_sitter::{Node, Tree};
 use super::scan::{brace_depth, statement_or_expression};
 use super::{Context, ancestors, node_at};
 use crate::highlight::site::{c_type_position, word_start};
+use crate::text::line_start;
 
 pub fn c(tree: Option<&Tree>, text: &str, at: usize) -> Context {
     let start = word_start(text, at, &[]);
@@ -29,7 +30,7 @@ fn typed(ctx: Context, text: &str, start: usize) -> Context {
 
 fn on_directive_line(text: &str, start: usize) -> bool {
     let head = &text[..start];
-    let line_start = head.rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let line_start = line_start(head, head.len());
     head[line_start..].trim_start().starts_with('#')
 }
 

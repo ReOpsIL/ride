@@ -2,9 +2,7 @@ use tree_sitter::{Node, Tree};
 
 use crate::highlight::rust_type_names::enclosing_impl;
 
-use super::common::{
-    PositionWords, head_before, in_open_comment, inside, path_segments, position, word_start,
-};
+use super::common::{PositionWords, head_before, path_segments, position, vetoed, word_start};
 use super::{Position, Site, SiteAt, use_path};
 
 const NO_COMPLETION: &[&str] = &[
@@ -38,7 +36,7 @@ pub fn rust(tree: Option<&Tree>, text: &str, at: usize) -> SiteAt {
     let start = word_start(text, at, &[]);
     let prefix = text[start..at].to_string();
     let probe = if prefix.is_empty() { at } else { start + 1 };
-    if inside(tree, probe, NO_COMPLETION) || in_open_comment(text, start) {
+    if vetoed(tree, text, probe, start, NO_COMPLETION) {
         return SiteAt::none(at);
     }
     let head = head_before(text, start);

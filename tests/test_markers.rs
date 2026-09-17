@@ -93,3 +93,24 @@ fn rust_inline_block_comment_hides_a_test() {
     let names: Vec<&str> = found.iter().map(|m| m.name.as_str()).collect();
     assert_eq!(names, ["util::real"]);
 }
+
+#[test]
+fn rust_module_path_starts_at_the_crate_src_dir() {
+    let text = "#[test]\nfn adds() {\n}\n";
+    assert_eq!(
+        markers("/repo/src/ride/src/util.rs", text)[0].name,
+        "util::adds"
+    );
+    assert_eq!(markers("/p/src/net/src.rs", text)[0].name, "net::src::adds");
+}
+
+#[test]
+fn rust_bin_targets_are_crate_roots() {
+    let text = "#[test]\nfn adds() {\n}\n";
+    assert_eq!(markers("/p/src/bin/tool.rs", text)[0].name, "adds");
+    assert_eq!(markers("/p/src/bin/tool/main.rs", text)[0].name, "adds");
+    assert_eq!(
+        markers("/p/src/bin/tool/util.rs", text)[0].name,
+        "util::adds"
+    );
+}

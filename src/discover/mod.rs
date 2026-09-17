@@ -61,6 +61,7 @@ pub fn discover(config: &EngineConfig, project: Option<&Path>) -> Result<Discove
         (
             WorkspaceInfo {
                 root: String::new(),
+                workspace_root: String::new(),
                 package_name: None,
                 is_cargo: false,
                 members: Vec::new(),

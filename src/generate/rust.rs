@@ -1,5 +1,6 @@
 use super::{Field, GenType};
 use crate::ffi::{GenKind, GenOption};
+use crate::text::is_word;
 
 const RUST_KINDS: [GenKind; 4] = [
     GenKind::New,
@@ -138,7 +139,7 @@ fn inherent_impl_has_new(buffer: &str, name: &str) -> bool {
         let Some(rest) = rest.strip_prefix(name) else {
             continue;
         };
-        if rest.starts_with(|c: char| c.is_alphanumeric() || c == '_') {
+        if rest.starts_with(is_word) {
             continue;
         }
         let Some(open) = rest.find('{') else {
@@ -160,7 +161,7 @@ fn find_struct(buffer: &str, name: &str) -> Option<usize> {
     let needle = format!("struct {name}");
     let idx = buffer.find(&needle)?;
     let after = &buffer[idx + needle.len()..];
-    if after.starts_with(|c: char| c.is_alphanumeric() || c == '_') {
+    if after.starts_with(is_word) {
         return None;
     }
     Some(idx)

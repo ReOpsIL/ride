@@ -34,3 +34,10 @@
 - context: detection is syntactic; `expression` after `x.` does not know the type of `x`, so iterator and string sections rely on the typed prefix
 - context: C `switch` bodies and Rust `match` arm blocks classify by the generic brace rules; a `case` label context could offer `case`/`default` templates first
 - Test markers: `src/run/tests/markers_cpp.rs` has no comment tracking, so a `TEST(...)` inside `/* */` yields a gutter marker; add the block-comment scan from `markers.rs` and a `tests/test_markers.rs` case.
+
+# Audit follow-ups (2026-09-17)
+
+- Incremental reindex (`src/index/incremental.rs`) re-extracts changed crates with `External::default()`, so cross-crate glob re-exports mirrored by the full build vanish until a forced rebuild. Absorb the cross-crate roots for changed crates via `Deferred::targets`, or return `None` from `delta` so the full build runs.
+- Rename (`src/engine/rename.rs`) buckets hits by `in_definition_scope`, which is per file, while `refs/rust.rs` records every identifier; a local `let record = 1;` in the definition file is renamed together with `fn record`. Filter the auto bucket by `RefKind` compatible with the definition's `ItemKind` (`RefKind::from_label` is unused today) and stamp `RenameFile` with the indexed file hash.
+- Duplicated shapes to fold: outline item builder across `c_outline`/`c_types`/`c_scopes`/`cmake_outline`/`make_outline`/`rust_types`; C declarator walkers; C doc-comment extraction (`c_docs.rs` vs `engine/doc_comment.rs`, adjacency rules already drift); relative→absolute path helper (4 copies); diagnostic dedup key (3 copies); compile_commands entry load; default completion limit (`if limit == 0 { 20 }`, 7 copies); DAP framing shared with `fake_dap`.
+- `index/status.rs` `status.jsonl` is append-only and re-read every 250 ms by the watcher; `refs/index.rs` has no schema version; `debug/transport/frame.rs` allocates `Content-Length` bytes uncapped.

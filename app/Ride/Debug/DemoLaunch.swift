@@ -21,6 +21,10 @@ enum DemoLaunch {
         value(after: "--report")
     }
 
+    static var only: Set<String>? {
+        value(after: "--only").map { Set($0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }) }
+    }
+
     static var readyFile: String? {
         value(after: "--ready-file")
     }

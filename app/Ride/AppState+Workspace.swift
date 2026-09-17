@@ -27,7 +27,9 @@ extension AppState {
         guard !restoringWorkspace, canPersistWorkspace, let root = workspaceRoot else {
             return
         }
-        workspaceStore.scheduleSave(captureWorkspace(), root: root)
+        workspaceStore.scheduleSave(root: root) { [weak self] in
+            self?.captureWorkspace()
+        }
     }
 
     func flushWorkspace() {
@@ -51,18 +53,15 @@ extension AppState {
     }
 
     func open(_ url: URL) {
+        flushWorkspace()
+        guard closeAll() else {
+            return
+        }
         stopRun()
         terminals.closeAll()
-        flushWorkspace()
         restoringWorkspace = true
         workspaceRoot = url.standardizedFileURL
         selectedURL = nil
-        for buffer in buffers {
-            SessionService.shared.close(buffer)
-        }
-        buffers = []
-        paneLayout = PaneLayout()
-        splitLayout = SplitLayout()
         cursorLine = 1
         cursorColumn = 1
         expanded = []
@@ -92,8 +91,8 @@ extension AppState {
     }
 
     func captureWorkspace() -> WorkspaceState {
-        if !restoringWorkspace, let view = EditorPanes.shared.focusedView, let buffer = activeBuffer, buffer.id == activeID {
-            buffer.capture(view)
+        if !restoringWorkspace {
+            EditorPanes.shared.all.forEach { $0.capture() }
         }
         return WorkspaceState(
             tabs: buffers.compactMap(tabState(of:)),
@@ -172,8 +171,7 @@ extension AppState {
 
     private func buffer(from tab: TabState) -> BufferDocument? {
         let url = URL(fileURLWithPath: tab.path).standardizedFileURL
-        var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), !isDir.boolValue else {
+        guard WorkspaceFS.isFile(url) else {
             return nil
         }
         let buffer = BufferDocument(url: url)

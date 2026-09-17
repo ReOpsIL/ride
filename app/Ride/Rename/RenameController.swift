@@ -58,8 +58,7 @@ final class RenameController {
     func prepare(state: AppState) -> Bool {
         self.state = state
         context = nil
-        guard let view = EditorPanes.shared.focusedView,
-              let document = state.activeBuffer,
+        guard let (view, document) = state.focusedEditor,
               let id = document.sessionId,
               !document.isReadOnly
         else {
