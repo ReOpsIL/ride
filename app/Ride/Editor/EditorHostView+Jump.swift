@@ -6,12 +6,14 @@ extension EditorHostView {
         select(NSRange(location: ns.location, length: 0))
     }
 
-    func select(_ range: NSRange) {
+    func select(_ range: NSRange, focus: Bool = true) {
         let length = textView.textStorage?.length ?? 0
         let loc = min(max(range.location, 0), length)
         let len = min(max(range.length, 0), length - loc)
         let clamped = NSRange(location: loc, length: len)
-        textView.window?.makeFirstResponder(textView)
+        if focus {
+            textView.window?.makeFirstResponder(textView)
+        }
         textView.setSelectedRange(clamped)
         if loc == 0 {
             scroll.contentView.scroll(to: .zero)
@@ -23,13 +25,14 @@ extension EditorHostView {
         syncGutter()
     }
 
-    func jump(toLine line: Int) {
+    func jump(toLine line: Int, focus: Bool = true) {
         let starts = textView.lineIndex().starts
         let loc = starts[min(max(line, 1), starts.count) - 1]
-        select(NSRange(location: loc, length: 0))
+        select(NSRange(location: loc, length: 0), focus: focus)
     }
 
     func replaceText(_ text: String) {
+        textView.undoManager?.removeAllActions()
         textView.string = text
         textView.lines.invalidate()
         syncGutter()

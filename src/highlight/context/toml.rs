@@ -2,6 +2,7 @@ use tree_sitter::{Node, Tree};
 
 use super::{Context, ancestors, node_at};
 use crate::highlight::site::word_start;
+use crate::text::line_start;
 
 pub fn toml(tree: Option<&Tree>, text: &str, at: usize) -> Context {
     let start = word_start(text, at, &['-']);
@@ -31,6 +32,6 @@ fn fallback(line: &str) -> Context {
 
 fn line_head(text: &str, at: usize) -> &str {
     let head = &text[..at];
-    let line_start = head.rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let line_start = line_start(head, head.len());
     head[line_start..].trim_start()
 }

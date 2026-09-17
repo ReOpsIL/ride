@@ -23,3 +23,20 @@ pub fn cap(mut s: String, max_chars: usize) -> String {
     }
     s
 }
+
+pub fn is_word(c: char) -> bool {
+    c.is_alphanumeric() || c == '_'
+}
+
+pub fn line_start(text: &str, byte: usize) -> usize {
+    let byte = byte.min(text.len());
+    text[..byte].rfind('\n').map(|i| i + 1).unwrap_or(0)
+}
+
+pub fn line_end(text: &str, byte: usize) -> usize {
+    let byte = byte.min(text.len());
+    text[byte..]
+        .find('\n')
+        .map(|i| byte + i)
+        .unwrap_or(text.len())
+}

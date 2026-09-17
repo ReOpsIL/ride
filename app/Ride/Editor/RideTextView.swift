@@ -184,7 +184,7 @@ final class RideTextView: NSTextView {
         BracketHighlight.restore(self)
     }
 
-    private func lineNSRange() -> NSRange {
+    func lineNSRange() -> NSRange {
         let ns = string as NSString
         let loc = min(selectedRange().location, ns.length)
         var start = 0

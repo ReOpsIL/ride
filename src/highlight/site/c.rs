@@ -1,9 +1,8 @@
 use tree_sitter::Tree;
 
-use super::common::{
-    PositionWords, head_before, in_open_comment, inside, is_word, path_segments, position,
-    word_start,
-};
+use crate::text::{is_word, line_start};
+
+use super::common::{PositionWords, head_before, path_segments, position, vetoed, word_start};
 use super::{Position, Site, SiteAt};
 
 const NO_COMPLETION: &[&str] = &[
@@ -73,7 +72,7 @@ fn classify(tree: Option<&Tree>, text: &str, at: usize, cpp: bool) -> SiteAt {
     let start = word_start(text, at, &[]);
     let prefix = text[start..at].to_string();
     let probe = if prefix.is_empty() { at } else { start + 1 };
-    if inside(tree, probe, NO_COMPLETION) || in_open_comment(text, start) {
+    if vetoed(tree, text, probe, start, NO_COMPLETION) {
         return SiteAt::none(at);
     }
     let head = head_before(text, start);
@@ -88,8 +87,7 @@ fn classify(tree: Option<&Tree>, text: &str, at: usize, cpp: bool) -> SiteAt {
 }
 
 fn directive(text: &str, at: usize) -> Option<SiteAt> {
-    let line_start = text[..at].rfind('\n').map(|i| i + 1).unwrap_or(0);
-    let line = text[line_start..at].trim_start();
+    let line = text[line_start(text, at)..at].trim_start();
     let rest = line.strip_prefix('#')?;
     let rest = rest.trim_start();
     let word_start = at - rest.len();

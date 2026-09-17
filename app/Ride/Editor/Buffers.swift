@@ -2,8 +2,7 @@ import AppKit
 
 extension AppState {
     func openFile(_ url: URL, readOnly: Bool = false) {
-        var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), !isDir.boolValue else {
+        guard WorkspaceFS.isFile(url) else {
             return
         }
         let standard = url.standardizedFileURL
@@ -13,9 +12,10 @@ extension AppState {
         if activeBuffer?.fileURL != standard {
             recordLocation()
         }
-        if let existing = buffers.first(where: { $0.fileURL == standard }) {
+        if let existing = buffer(for: standard) {
             existing.isReadOnly = existing.isReadOnly || readOnly || BufferLanguage.isReadOnly(standard)
-            activeID = existing.id
+            paneLayout.select(existing.id)
+            syncSplitFocus()
             refreshPreview()
             return
         }
@@ -26,6 +26,11 @@ extension AppState {
         cursorLine = 1
         cursorColumn = 1
         refreshPreview()
+    }
+
+    func buffer(for url: URL) -> BufferDocument? {
+        let standard = url.standardizedFileURL
+        return buffers.first { $0.fileURL == standard }
     }
 
     func newUntitled() {
@@ -69,56 +74,58 @@ extension AppState {
     }
 
     func saveActive() {
-        guard let buffer = activeBuffer, confirmOverwrite(buffer) else {
+        if let buffer = activeBuffer {
+            save(buffer)
+        }
+    }
+
+    func save(_ buffer: BufferDocument) {
+        guard confirmOverwrite(buffer) else {
             return
         }
         if buffer.isReadOnly || buffer.fileURL == nil {
-            let panel = NSSavePanel()
-            panel.canCreateDirectories = true
-            panel.nameFieldStringValue = buffer.displayName + "." + buffer.language.fileExtension
-            let picker = SaveLanguagePicker(panel: panel, initial: buffer.language)
-            let response = withExtendedLifetime(picker) { panel.runModal() }
-            guard response == .OK, let url = panel.url else {
+            guard let url = chooseSaveURL(for: buffer) else {
                 return
             }
-            let previous = buffer.language
-            buffer.fileURL = url
-            buffer.detectedLanguage = nil
-            buffer.isReadOnly = false
-            if buffer.language != previous, let view = EditorPanes.shared.focusedView {
-                SessionService.shared.close(buffer)
-                SessionService.shared.attach(document: buffer, view: view)
-            }
+            rebind(buffer, to: url)
+        } else {
+            EditorPanes.shared.host(bound: buffer)?.capture()
         }
         try? buffer.save(from: nil)
         objectWillChange.send()
         didSave(buffer)
     }
 
-    func scheduleAutoSave() {
-        autoSaveWork?.cancel()
+    func scheduleAutoSave(_ buffer: BufferDocument) {
+        buffer.autoSaveWork?.cancel()
         guard prefs.autoSave else {
             objectWillChange.send()
             return
         }
-        let work = DispatchWorkItem { [weak self] in
-            self?.autoSaveActive()
+        let work = DispatchWorkItem { [weak self, weak buffer] in
+            if let buffer {
+                self?.autoSave(buffer)
+            }
         }
-        autoSaveWork = work
+        buffer.autoSaveWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: work)
         objectWillChange.send()
     }
 
-    func autoSaveActive() {
-        guard let buffer = activeBuffer, buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly, !buffer.changedOnDisk else {
+    func autoSave(_ buffer: BufferDocument) {
+        guard buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly, !buffer.changedOnDisk else {
             return
         }
+        EditorPanes.shared.host(bound: buffer)?.capture()
         try? buffer.save(from: nil)
         objectWillChange.send()
         didSave(buffer)
     }
 
     func confirmClose(_ buffer: BufferDocument) -> Bool {
+        guard !DemoLaunch.isDemo else {
+            return true
+        }
         let alert = NSAlert()
         alert.messageText = "Save changes to \(buffer.displayName)?"
         alert.addButton(withTitle: "Save")
@@ -126,7 +133,7 @@ extension AppState {
         alert.addButton(withTitle: "Cancel")
         switch alert.runModal() {
         case .alertFirstButtonReturn:
-            saveActive()
+            save(buffer)
             return buffer.fileURL != nil && !buffer.isDirty
         case .alertSecondButtonReturn:
             return true

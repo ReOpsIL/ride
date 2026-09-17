@@ -147,6 +147,4 @@ pub struct SetFunctionBreakpointsArguments {
     pub breakpoints: Vec<FunctionBreakpoint>,
 }
 
-pub const FILTER_CPP_THROW: &str = "cpp_throw";
-pub const FILTER_CPP_CATCH: &str = "cpp_catch";
 pub const FILTER_RUST_PANIC: &str = "rust_panic";

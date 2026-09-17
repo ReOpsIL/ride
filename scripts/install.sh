@@ -24,23 +24,34 @@ if ! rustup component list --installed 2>/dev/null | grep -q '^rust-src'; then
   say "Adding rust-src so std, core and alloc are indexed"
   rustup component add rust-src
 fi
-rustup target add aarch64-apple-darwin >/dev/null
+say "Checking the Metal toolchain (SwiftTerm compiles shaders)"
+xcodebuild -downloadComponent MetalToolchain >/dev/null 2>&1 || true
 
 say "Building the engine and Swift bindings"
 "$ROOT/scripts/build-engine.sh"
 
+BUILT="$DERIVED/Build/Products/Release/$APP_NAME"
+rm -rf "$BUILT"
+
 say "Building $APP_NAME (Release)"
+LOG="$DERIVED/install-build.log"
+mkdir -p "$DERIVED"
+set +e
 xcodebuild \
   -project "$ROOT/app/Ride.xcodeproj" \
   -scheme Ride \
   -configuration Release \
   -derivedDataPath "$DERIVED" \
-  -destination 'platform=macOS,arch=arm64' \
+  -destination "platform=macOS,arch=$(uname -m)" \
+  -skipPackagePluginValidation -skipMacroValidation \
   CODE_SIGN_IDENTITY="${RIDE_SIGN_IDENTITY:--}" \
   CODE_SIGNING_REQUIRED=NO \
-  build | grep -E 'error:|\*\* BUILD' || true
+  build >"$LOG" 2>&1
+STATUS=$?
+set -e
+grep -E 'error:|\*\* BUILD' "$LOG" | tail -20 || true
+[[ $STATUS -eq 0 ]] || fail "xcodebuild failed (full log: $LOG)"
 
-BUILT="$DERIVED/Build/Products/Release/$APP_NAME"
 [[ -d "$BUILT" ]] || fail "build did not produce $BUILT"
 codesign --force --deep --sign "${RIDE_SIGN_IDENTITY:--}" "$BUILT"
 

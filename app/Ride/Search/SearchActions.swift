@@ -81,7 +81,7 @@ extension AppState {
     }
 
     func replaceOne() {
-        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
+        guard !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
             return
         }
         var range = findRange
@@ -98,14 +98,14 @@ extension AppState {
         let text2 = FindMatcher.expression(findQuery, options: findOptions)?
             .stringByReplacingMatches(in: matched, range: NSRange(location: 0, length: (matched as NSString).length), withTemplate: replacement) ?? replaceQuery
         EditorCommand.apply(EditResult(changes: [TextChange(range: range, text: text2)], selection: NSRange(location: range.location, length: (text2 as NSString).length)), to: view)
-        buffer.capture(view)
+        EditorPanes.shared.host(for: view)?.capture()
         findOrigin = range.location + (text2 as NSString).length
         findRange = NSRange(location: range.location, length: (text2 as NSString).length)
         find(backwards: false)
     }
 
     func replaceAll() {
-        guard let buffer = activeBuffer, !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
+        guard !findQuery.isEmpty, let view = EditorPanes.shared.focusedView else {
             return
         }
         let text = view.string
@@ -120,7 +120,7 @@ extension AppState {
             return TextChange(range: range, text: replaced)
         }
         EditorCommand.apply(EditResult(changes: changes, selection: view.selectedRange()), to: view)
-        buffer.capture(view)
+        EditorPanes.shared.host(for: view)?.capture()
         findRange = nil
     }
 

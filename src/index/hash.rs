@@ -37,7 +37,7 @@ fn collect(root: &Path, dir: &Path, out: &mut Vec<(String, u64, u128)>) {
             collect(root, &path, out);
             continue;
         }
-        if path.extension().and_then(|e| e.to_str()) != Some("rs") {
+        if !hashed_file(&name, &path) {
             continue;
         }
         let rel = path
@@ -49,6 +49,10 @@ fn collect(root: &Path, dir: &Path, out: &mut Vec<(String, u64, u128)>) {
         let len = meta.as_ref().map(|m| m.len()).unwrap_or(0);
         out.push((rel, len, mtime_nanos(meta.as_ref())));
     }
+}
+
+fn hashed_file(name: &str, path: &Path) -> bool {
+    name == "Cargo.toml" || path.extension().and_then(|e| e.to_str()) == Some("rs")
 }
 
 pub fn crate_key(path: &Path) -> PathBuf {

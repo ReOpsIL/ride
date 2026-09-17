@@ -8,7 +8,6 @@ pub const CONTINUED: &str = "continued";
 pub const EXITED: &str = "exited";
 pub const TERMINATED: &str = "terminated";
 pub const OUTPUT: &str = "output";
-pub const THREAD: &str = "thread";
 pub const BREAKPOINT: &str = "breakpoint";
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

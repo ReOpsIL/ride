@@ -1,4 +1,5 @@
 use super::Context;
+use crate::text::is_word;
 
 const CONTROL: &[&str] = &["if", "while", "for", "switch", "catch"];
 
@@ -39,7 +40,7 @@ fn after_control_paren(head: &str) -> bool {
         return false;
     };
     let before = head[..open].trim_end();
-    let word_start = before.trim_end_matches(|c: char| c.is_alphanumeric() || c == '_');
+    let word_start = before.trim_end_matches(is_word);
     CONTROL.contains(&&before[word_start.len()..])
 }
 

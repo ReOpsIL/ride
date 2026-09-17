@@ -13,12 +13,7 @@ impl Engine {
         path: String,
         out_dir: String,
     ) -> Result<SingleRun, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
-            crate::run::single_file_command(Path::new(&path), Path::new(&out_dir))
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| crate::run::single_file_command(Path::new(&path), Path::new(&out_dir)))
     }
 
     pub fn recompile_command(&self, path: String) -> Option<RecompileCommand> {

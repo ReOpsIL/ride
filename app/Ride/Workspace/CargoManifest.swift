@@ -1,19 +1,11 @@
 import Foundation
 
-func cargoPackageName(_ root: URL) -> String? {
-    cargoField("name", root: root)
-}
-
 func cargoEdition(_ root: URL) -> String? {
-    cargoField("edition", root: root)
-}
-
-private func cargoField(_ key: String, root: URL) -> String? {
     let url = root.appendingPathComponent("Cargo.toml")
     guard let text = try? String(contentsOf: url, encoding: .utf8) else {
         return nil
     }
-    return CargoManifest.field(key, in: text)
+    return CargoManifest.field("edition", in: text)
 }
 
 enum CargoManifest {

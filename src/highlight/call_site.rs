@@ -1,3 +1,5 @@
+use crate::text::is_word;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CallSite {
     pub name: String,
@@ -17,12 +19,12 @@ pub fn find(text: &str, at: usize) -> Option<CallSite> {
         .nth(WINDOW)
         .map(|(i, _)| i)
         .unwrap_or(0);
-    let start = text[..start].rfind('\n').map(|i| i + 1).unwrap_or(start);
+    let start = text[..start].rfind('\n').map_or(start, |i| i + 1);
     let (open, commas) = enclosing_paren(&text[start..at])?;
     let open = start + open;
     let head = text[..open].trim_end();
     let name_start = head
-        .trim_end_matches(|c: char| c.is_alphanumeric() || c == '_' || c == '!')
+        .trim_end_matches(|c: char| is_word(c) || c == '!')
         .len();
     let name = head[name_start..].trim_end_matches('!').to_string();
     if name.is_empty() || NOT_CALLS.contains(&name.as_str()) {
@@ -48,7 +50,7 @@ pub fn find(text: &str, at: usize) -> Option<CallSite> {
 }
 
 fn last_word(s: &str) -> Option<String> {
-    let trimmed = s.trim_end_matches(|c: char| c.is_alphanumeric() || c == '_');
+    let trimmed = s.trim_end_matches(is_word);
     let word = &s[trimmed.len()..];
     (!word.is_empty()).then(|| word.to_string())
 }

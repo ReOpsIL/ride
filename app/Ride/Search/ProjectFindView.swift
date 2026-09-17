@@ -146,7 +146,6 @@ struct ProjectFindOverlay: View {
 
     private func open(_ match: ProjectFindMatch) {
         state.showProjectFind = false
-        state.pendingJump = match.byte
-        state.openFile(match.file)
+        state.openFile(match.file, at: .byte(match.byte))
     }
 }

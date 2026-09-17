@@ -1,5 +1,5 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::check::{parse_clang, parse_message_line};
 use crate::ffi::Diagnostic;
@@ -9,7 +9,7 @@ use super::Engine;
 #[uniffi::export]
 impl Engine {
     pub fn parse_cargo_line(&self, line: String) -> Vec<Diagnostic> {
-        let root = self.build_root();
+        let root = self.cargo_root(None);
         catch_unwind(AssertUnwindSafe(|| parse_message_line(&root, &line))).unwrap_or_default()
     }
 
@@ -20,10 +20,24 @@ impl Engine {
 }
 
 impl Engine {
-    fn build_root(&self) -> PathBuf {
-        self.read(|i| i.workspace.as_ref().map(|w| PathBuf::from(&w.root)))
+    pub(crate) fn cargo_root(&self, project: Option<&Path>) -> PathBuf {
+        let workspace = self
+            .read(|i| {
+                i.workspace
+                    .as_ref()
+                    .map(|w| (PathBuf::from(&w.root), PathBuf::from(&w.workspace_root)))
+            })
             .ok()
-            .flatten()
-            .unwrap_or_default()
+            .flatten();
+        match (workspace, project) {
+            (Some((_, workspace_root)), None) => workspace_root,
+            (Some((root, workspace_root)), Some(project))
+                if project.starts_with(&root) || project.starts_with(&workspace_root) =>
+            {
+                workspace_root
+            }
+            (_, Some(project)) => project.to_path_buf(),
+            (None, None) => PathBuf::new(),
+        }
     }
 }

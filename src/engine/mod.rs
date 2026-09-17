@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, PoisonError, RwLock};
 
 use tantivy::{Index, IndexReader};
 
@@ -114,26 +114,29 @@ impl Engine {
     }
 
     pub(crate) fn write<T>(&self, f: impl FnOnce(&mut Inner) -> T) -> Result<T, EngineError> {
-        self.inner
-            .write()
-            .map(|mut g| f(&mut g))
-            .map_err(|_| EngineError::Panic {
-                message: "lock poisoned".into(),
-            })
+        let mut inner = self.inner.write().unwrap_or_else(PoisonError::into_inner);
+        Ok(f(&mut inner))
     }
 
     pub(crate) fn read<T>(&self, f: impl FnOnce(&Inner) -> T) -> Result<T, EngineError> {
-        self.inner
-            .read()
-            .map(|g| f(&g))
-            .map_err(|_| EngineError::Panic {
-                message: "lock poisoned".into(),
-            })
+        let inner = self.inner.read().unwrap_or_else(PoisonError::into_inner);
+        Ok(f(&inner))
+    }
+
+    pub(crate) fn guard<T>(
+        &self,
+        f: impl FnOnce() -> Result<T, EngineError>,
+    ) -> Result<T, EngineError> {
+        match catch_unwind(AssertUnwindSafe(f)) {
+            Ok(result) => result,
+            Err(payload) => Err(EngineError::from_panic(payload)),
+        }
     }
 }
 
 #[uniffi::export]
 pub fn engine_start(config: EngineConfig) -> Arc<Engine> {
+    crate::process::ignore_sigpipe();
     let engine = Arc::new(Engine::new(config));
     engine.poll_index();
     watch::spawn(Arc::downgrade(&engine));
@@ -143,7 +146,7 @@ pub fn engine_start(config: EngineConfig) -> Arc<Engine> {
 #[uniffi::export]
 impl Engine {
     pub fn open_workspace(&self, path: String) -> Result<WorkspaceInfo, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
+        self.guard(|| {
             let config = self.read(|i| i.config.clone())?;
             let info = workspace_info(Path::new(&path), &config)?;
             self.write(|i| {
@@ -151,10 +154,7 @@ impl Engine {
                 i.workspace = Some(info.clone());
             })?;
             Ok(info)
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        })
     }
 
     pub fn close_workspace(&self) {

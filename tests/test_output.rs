@@ -286,3 +286,55 @@ fn ctest_commands_are_fixed_and_missing_binaries_error() {
             .is_err()
     );
 }
+
+#[test]
+fn ctest_output_with_twelve_tests_and_crashes() {
+    let events = engine().parse_test_output(TestFramework::CTest, fixture("ctest-run-twelve.txt"));
+    assert_eq!(
+        events
+            .iter()
+            .filter(|e| e.status == TestStatus::Started)
+            .count(),
+        12
+    );
+    assert_eq!(
+        events
+            .iter()
+            .filter(|e| e.status != TestStatus::Started)
+            .count(),
+        12
+    );
+    let segfault = named(&events, "geo.segfaults");
+    assert_eq!(segfault.status, TestStatus::Failed);
+    assert_eq!(segfault.duration_ms, Some(20));
+    let aborted = named(&events, "geo.aborts");
+    assert_eq!(aborted.status, TestStatus::Failed);
+    assert_eq!(aborted.output, "assertion failed: count > 0");
+    assert_eq!(named(&events, "geo.hangs").status, TestStatus::Failed);
+    assert_eq!(named(&events, "text.skipped").status, TestStatus::Ignored);
+    assert_eq!(
+        named(&events, "text.counts_chars").status,
+        TestStatus::Passed
+    );
+    assert_eq!(
+        named(&events, "text.counts_chars").suite.as_deref(),
+        Some("text")
+    );
+    assert_eq!(
+        named(&events, "geo.detects_drift").output,
+        "arithmetic drifted"
+    );
+}
+
+#[test]
+fn gtest_parameterised_failures_pair_with_their_run() {
+    let events =
+        engine().parse_test_output(TestFramework::GoogleTest, fixture("gtest-run-param.txt"));
+    let failed = named(&events, "Scales/1");
+    assert_eq!(failed.status, TestStatus::Failed);
+    assert_eq!(failed.suite.as_deref(), Some("Small/GeoParam"));
+    assert_eq!(failed.duration_ms, Some(1));
+    assert!(failed.output.contains("Which is: 9"));
+    assert_eq!(named(&events, "Scales/0").status, TestStatus::Passed);
+    assert_eq!(named(&events, "TrimsBlanks").status, TestStatus::Passed);
+}

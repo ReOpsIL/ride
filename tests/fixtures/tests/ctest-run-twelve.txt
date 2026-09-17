@@ -1,0 +1,40 @@
+Test project /project/build
+      Start  1: geo.adds_points
+ 1/12 Test  #1: geo.adds_points ..................   Passed    0.01 sec
+      Start  2: geo.detects_drift
+ 2/12 Test  #2: geo.detects_drift ................***Failed    0.01 sec
+arithmetic drifted
+
+      Start  3: geo.segfaults
+ 3/12 Test  #3: geo.segfaults ....................***Exception: SegFault  0.02 sec
+      Start  4: geo.aborts
+ 4/12 Test  #4: geo.aborts .......................Subprocess aborted***Exception:   0.01 sec
+assertion failed: count > 0
+
+      Start  5: geo.scales
+ 5/12 Test  #5: geo.scales .......................   Passed    0.01 sec
+      Start  6: geo.rotates
+ 6/12 Test  #6: geo.rotates ......................   Passed    0.01 sec
+      Start  7: geo.hangs
+ 7/12 Test  #7: geo.hangs ........................***Timeout   1.50 sec
+      Start  8: text.skipped
+ 8/12 Test  #8: text.skipped .....................***Skipped   0.00 sec
+      Start  9: text.trims_blanks
+ 9/12 Test  #9: text.trims_blanks ................   Passed    0.01 sec
+      Start 10: text.joins_words
+10/12 Test #10: text.joins_words .................   Passed    0.01 sec
+      Start 11: text.splits_lines
+11/12 Test #11: text.splits_lines ................   Passed    0.01 sec
+      Start 12: text.counts_chars
+12/12 Test #12: text.counts_chars ................   Passed    0.01 sec
+
+58% tests passed, 5 tests failed out of 12
+
+Total Test time (real) =   1.60 sec
+
+The following tests FAILED:
+	  2 - geo.detects_drift (Failed)
+	  3 - geo.segfaults (SEGFAULT)
+	  4 - geo.aborts (Subprocess aborted)
+	  7 - geo.hangs (Timeout)
+Errors while running CTest

@@ -19,33 +19,21 @@ impl Engine {
         project_root: String,
         clippy: bool,
     ) -> Result<CheckResult, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
-            run_check(Path::new(&project_root), None, clippy)
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        let project = Path::new(&project_root);
+        let workspace_root = self.cargo_root(Some(project));
+        self.guard(|| run_check(project, &workspace_root, None, clippy))
     }
 
     pub fn run_check_c(&self, path: String) -> Result<CheckResult, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| run_clang_check(Path::new(&path)))) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| run_clang_check(Path::new(&path)))
     }
 
     pub fn check_c_live(&self, path: String, text: String) -> Result<CheckResult, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| check_c_live(Path::new(&path), &text))) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| check_c_live(Path::new(&path), &text))
     }
 
     pub fn run_check_c_project(&self, root: String) -> Result<CheckResult, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| run_check_c_project(Path::new(&root)))) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| run_check_c_project(Path::new(&root)))
     }
 
     pub fn sources_including(&self, header: String) -> Vec<String> {
@@ -62,10 +50,6 @@ impl Engine {
         crate::discover::tool_status()
     }
 
-    pub fn has_tool(&self, name: String) -> bool {
-        crate::toolchain::tool_path(&name).is_file()
-    }
-
     pub fn render_markdown(&self, text: String) -> String {
         catch_unwind(AssertUnwindSafe(|| crate::markdown::render(&text))).unwrap_or_default()
     }
@@ -77,17 +61,12 @@ impl Engine {
         start_byte: Option<u32>,
         end_byte: Option<u32>,
     ) -> Result<String, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
-            match selection_span(start_byte, end_byte) {
-                Some((start, end)) => {
-                    format_range(Lang::Rust, &text, None, edition.as_deref(), start, end)
-                }
-                None => format_source(&text, edition.as_deref()),
+        self.guard(|| match selection_span(start_byte, end_byte) {
+            Some((start, end)) => {
+                format_range(Lang::Rust, &text, None, edition.as_deref(), start, end)
             }
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+            None => format_source(&text, edition.as_deref()),
+        })
     }
 
     pub fn format_buffer(
@@ -97,12 +76,7 @@ impl Engine {
         edition: Option<String>,
     ) -> Result<String, EngineError> {
         let lang = Lang::for_buffer(path.as_deref(), &text);
-        match catch_unwind(AssertUnwindSafe(|| {
-            format_document(lang, &text, path.as_deref(), edition.as_deref())
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| format_document(lang, &text, path.as_deref(), edition.as_deref()))
     }
 
     pub fn formatter_name(&self, path: Option<String>, text: String) -> String {
@@ -119,16 +93,11 @@ impl Engine {
         start_byte: Option<u32>,
         end_byte: Option<u32>,
     ) -> Result<String, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
-            match selection_span(start_byte, end_byte) {
-                Some((start, end)) => {
-                    format_range(Lang::C, &text, assume_filename.as_deref(), None, start, end)
-                }
-                None => format_clang(&text, assume_filename.as_deref()),
+        self.guard(|| match selection_span(start_byte, end_byte) {
+            Some((start, end)) => {
+                format_range(Lang::C, &text, assume_filename.as_deref(), None, start, end)
             }
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+            None => format_clang(&text, assume_filename.as_deref()),
+        })
     }
 }

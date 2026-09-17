@@ -33,7 +33,7 @@ struct ToolsInstallView: View {
                     .keyboardShortcut(.cancelAction)
                 Button(model.installing ? "Installing…" : "Install Selected") { model.installSelected() }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(model.installing || !model.rows.contains { $0.missing && $0.selected && $0.info.install != nil })
+                    .disabled(model.installing || model.selectedInstallable.isEmpty)
             }
         }
         .padding(Tokens.Space.xxl)

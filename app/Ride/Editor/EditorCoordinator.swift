@@ -13,6 +13,10 @@ extension EditorPane {
             self.state = state
         }
 
+        func undoManager(for view: NSTextView) -> UndoManager? {
+            document.undoManager
+        }
+
         func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
             if document.isReadOnly {
                 return false
@@ -31,7 +35,7 @@ extension EditorPane {
             }
             document.text = view.string
             document.isDirty = true
-            state.noteEdit(view)
+            state.noteEdit(view, in: document.id)
             host?.syncGutter()
             publishCursor(view)
             let pending = document.pending
@@ -51,7 +55,7 @@ extension EditorPane {
             }
             BracketHighlight.update(document: document, view: view)
             state.previewTextChanged(document, text: view.string)
-            state.scheduleAutoSave()
+            state.scheduleAutoSave(document)
             state.scheduleLiveCheck(document, view: view)
         }
 
@@ -89,11 +93,13 @@ extension EditorPane {
             let line = index.line(at: loc)
             let column = index.column(at: loc)
             document.caretByte = UInt32(Utf16.utf8Offset(in: ride.string, utf16: loc))
-            if state.cursorLine != line {
-                state.cursorLine = line
-            }
-            if state.cursorColumn != column {
-                state.cursorColumn = column
+            if document.id == state.activeID {
+                if state.cursorLine != line {
+                    state.cursorLine = line
+                }
+                if state.cursorColumn != column {
+                    state.cursorColumn = column
+                }
             }
             state.scheduleWorkspaceSave()
         }

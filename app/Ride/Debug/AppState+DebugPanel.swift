@@ -47,12 +47,6 @@ extension AppState {
         guard FileManager.default.fileExists(atPath: url.path) else {
             return
         }
-        openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
-        DispatchQueue.main.async {
-            EditorPanes.shared.focused?.jump(toLine: Int(line))
-            if let view = EditorPanes.shared.focusedView {
-                HighlightApply.markLine(view, line: Int(line))
-            }
-        }
+        openFile(url, at: .line(Int(line), mark: true), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 }

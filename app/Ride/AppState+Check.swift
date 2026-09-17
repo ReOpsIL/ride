@@ -20,8 +20,8 @@ extension AppState {
         if let id = buffer.sessionId {
             UsageIndexer.index(sessionId: id)
         }
-        if allowFormat, prefs.formatOnSave, buffer.id == activeID, formatsOnSave(buffer) {
-            formatActive(thenSave: true)
+        if allowFormat, prefs.formatOnSave, formatsOnSave(buffer) {
+            formatNow(buffer, thenSave: true, startByte: nil, endByte: nil)
         }
         guard prefs.checkOnSave else {
             return
@@ -88,35 +88,40 @@ extension AppState {
 
     private func jumpToDiagnostic(path: String, byteStart: UInt32) {
         let url = URL(fileURLWithPath: path).standardizedFileURL
-        pendingJump = byteStart
-        openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
+        openFile(url, at: .byte(byteStart), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
     func refreshDiagnosticUnderlines() {
-        if let view = EditorPanes.shared.focusedView, let buffer = activeBuffer {
-            Underlines.apply(document: buffer, view: view, parseErrors: nil)
+        for host in EditorPanes.shared.all {
+            if let document = host.document {
+                Underlines.apply(document: document, view: host.textView, parseErrors: nil)
+            }
         }
     }
 
     func formatActive(thenSave: Bool = false) {
-        formatNow(thenSave: thenSave, startByte: nil, endByte: nil)
+        guard let buffer = activeBuffer else {
+            return
+        }
+        formatNow(buffer, thenSave: thenSave, startByte: nil, endByte: nil)
     }
 
     func formatSelection() {
-        let text = EditorPanes.shared.focusedView?.string ?? activeBuffer?.text ?? ""
-        let sel = EditorPanes.shared.focusedView?.selectedRange() ?? NSRange(location: 0, length: 0)
-        let start = UInt32(Utf16.utf8Offset(in: text, utf16: sel.location))
-        let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(sel)))
-        formatNow(thenSave: false, startByte: start, endByte: end)
-    }
-
-    private func formatNow(thenSave: Bool, startByte: UInt32?, endByte: UInt32?) {
-        guard let buffer = activeBuffer, !buffer.isReadOnly, let engine = RideEngineClient.shared.engine else {
+        guard let buffer = activeBuffer, let host = EditorPanes.shared.host(bound: buffer) else {
             return
         }
-        if let view = EditorPanes.shared.focusedView {
-            buffer.text = view.string
+        let text = host.textView.string
+        let sel = host.textView.selectedRange()
+        let start = UInt32(Utf16.utf8Offset(in: text, utf16: sel.location))
+        let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(sel)))
+        formatNow(buffer, thenSave: false, startByte: start, endByte: end)
+    }
+
+    private func formatNow(_ buffer: BufferDocument, thenSave: Bool, startByte: UInt32?, endByte: UInt32?) {
+        guard !buffer.isReadOnly, let engine = RideEngineClient.shared.engine else {
+            return
         }
+        EditorPanes.shared.host(bound: buffer)?.capture()
         let text = buffer.text
         let edition = workspaceRoot.flatMap(cargoEdition)
         let path = buffer.fileURL?.path ?? "untitled.\(buffer.language.fileExtension)"
@@ -173,7 +178,7 @@ extension AppState {
     }
 
     private func formatFinished(_ result: Result<String, Error>, bufferID: UUID, thenSave: Bool) {
-        guard activeID == bufferID, let buffer = activeBuffer else {
+        guard let buffer = buffer(bufferID) else {
             return
         }
         switch result {
@@ -183,9 +188,7 @@ extension AppState {
                 showNotice("\(buffer.displayName) is already formatted", seconds: 2)
                 return
             }
-            applyText = formatted
-            applyThenSave = thenSave
-            objectWillChange.send()
+            deliver(formatted, to: buffer, disk: thenSave ? .save : .dirty)
         case .failure(let error):
             if case let EngineError.Tool(message) = error {
                 formatError = message.split(separator: "\n").first.map(String.init) ?? "format failed"

@@ -6,6 +6,7 @@ use super::rust_type_names::type_name;
 use super::symbol::node_text;
 use super::types::TypeTable;
 use super::walk::each_node;
+use crate::text::is_word;
 
 pub fn build(tree: &Tree, text: &str) -> TypeTable {
     let mut table = TypeTable::default();
@@ -93,7 +94,7 @@ fn type_name_of(detail: &str) -> Option<String> {
             rest = rest.strip_prefix(prefix).unwrap_or(rest).trim_start();
         }
         if rest.starts_with('\'') {
-            rest = rest.trim_start_matches(|c: char| c == '\'' || c.is_alphanumeric() || c == '_');
+            rest = rest.trim_start_matches(|c: char| c == '\'' || is_word(c));
             rest = rest.trim_start();
         }
         if rest == before {
@@ -101,7 +102,7 @@ fn type_name_of(detail: &str) -> Option<String> {
         }
     }
     let end = rest
-        .find(|c: char| !(c.is_alphanumeric() || c == '_' || c == ':'))
+        .find(|c: char| !(is_word(c) || c == ':'))
         .unwrap_or(rest.len());
     let path = &rest[..end];
     let name = path.rsplit("::").next().unwrap_or(path);

@@ -35,7 +35,9 @@ final class SessionService {
             return
         }
         if document.sessionId == nil {
-            open(document: document, view: view)
+            if !document.sessionOpening {
+                open(document: document, view: view)
+            }
         } else {
             HighlightApply.restyle(
                 spans: document.highlights,
@@ -49,6 +51,8 @@ final class SessionService {
     }
 
     func close(_ document: BufferDocument) {
+        document.sessionGeneration += 1
+        document.sessionOpening = false
         guard let id = document.sessionId else {
             return
         }
@@ -109,7 +113,9 @@ final class SessionService {
             return
         }
         guard let id = document.sessionId else {
-            open(document: document, view: view)
+            if !document.sessionOpening {
+                open(document: document, view: view)
+            }
             return
         }
         let text = view.string
@@ -127,6 +133,8 @@ final class SessionService {
         let vis = visible(view: view, text: text)
         let bufferId = document.id.uuidString
         let path = document.fileURL?.path
+        let generation = document.sessionGeneration
+        document.sessionOpening = true
         DispatchQueue.global(qos: .userInitiated).async {
             let opened = try? RideEngineClient.shared.engine?.openSession(
                 bufferId: bufferId,
@@ -135,17 +143,35 @@ final class SessionService {
                 visible: vis
             )
             DispatchQueue.main.async {
-                document.sessionId = opened?.sessionId
-                if let lang = opened?.lang {
-                    document.detectedLanguage = BufferLanguage(lang)
-                    document.updateLabel(view)
-                }
-                self.paint(opened?.update, document: document, view: view, text: view.string)
-                FoldController.shared.restore(document: document, view: view)
-                if let id = opened?.sessionId {
-                    UsageIndexer.index(sessionId: id)
-                }
+                self.opened(opened, document: document, generation: generation, sent: text)
             }
+        }
+    }
+
+    private func opened(_ opened: SessionOpen?, document: BufferDocument, generation: Int, sent: String) {
+        guard document.sessionGeneration == generation else {
+            if let id = opened?.sessionId {
+                RideEngineClient.shared.engine?.closeSession(sessionId: id)
+            }
+            return
+        }
+        document.sessionOpening = false
+        document.sessionId = opened?.sessionId
+        guard let view = EditorPanes.shared.host(bound: document)?.textView else {
+            return
+        }
+        if let lang = opened?.lang {
+            document.detectedLanguage = BufferLanguage(lang)
+            document.updateLabel(view)
+        }
+        if view.string != sent {
+            resync(document: document, view: view)
+            return
+        }
+        paint(opened?.update, document: document, view: view, text: view.string)
+        FoldController.shared.restore(document: document, view: view)
+        if let id = opened?.sessionId {
+            UsageIndexer.index(sessionId: id)
         }
     }
 

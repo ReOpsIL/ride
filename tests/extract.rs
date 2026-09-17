@@ -517,3 +517,12 @@ fn variants_inherit_reachability_of_a_reexported_enum() {
     assert!(item(&items, "c::E").reachable);
     assert!(item(&items, "E::A").reachable);
 }
+
+#[test]
+fn use_list_self_reexports_the_module_not_an_item_named_self() {
+    let src = "mod inner {\n    pub mod a {\n        pub struct S;\n    }\n}\npub use inner::a::{self, S};\n";
+    let items = extract_source(src, &sample_ctx(), &["std".into()]).unwrap();
+    let found = paths(&items);
+    assert!(!found.iter().any(|p| p.ends_with("::self")), "{found:?}");
+    assert!(found.contains(&"std::S"), "{found:?}");
+}

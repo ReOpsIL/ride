@@ -1,4 +1,4 @@
-use super::common::is_word;
+use crate::text::is_word;
 
 #[derive(Debug, PartialEq, Eq)]
 enum Tok<'a> {

@@ -1,3 +1,5 @@
+use crate::text::is_word;
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct LiteralState {
     pub written: Vec<String>,
@@ -52,7 +54,7 @@ fn written_names(body: &str) -> Vec<String> {
 
 fn push_name(names: &mut Vec<String>, part: &str) {
     let name = part.trim().split(':').next().unwrap_or("").trim();
-    if !name.is_empty() && name.chars().all(|c| c.is_alphanumeric() || c == '_') {
+    if !name.is_empty() && name.chars().all(is_word) {
         names.push(name.to_string());
     }
 }

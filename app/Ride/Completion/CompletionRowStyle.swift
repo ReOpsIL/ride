@@ -4,33 +4,6 @@ enum CompletionRowStyle {
     static var theme: Theme { HighlightApply.theme }
     static let sysroot: Set<String> = ["core", "alloc", "std", "proc_macro", "test"]
 
-    static func glyph(_ kind: ItemKind) -> String {
-        switch kind {
-        case .keyword: return "k"
-        case .local: return "l"
-        case .crate: return "cr"
-        case .mod: return "mod"
-        case .`struct`: return "S"
-        case .`enum`: return "E"
-        case .union: return "U"
-        case .trait: return "T"
-        case .fn: return "fn"
-        case .method: return "m"
-        case .macro: return "!"
-        case .const: return "c"
-        case .type: return "ty"
-        case .`static`: return "st"
-        case .heading: return "#"
-        case .`class`: return "cls"
-        case .namespace: return "ns"
-        case .field: return "fld"
-        case .table: return "tbl"
-        case .target: return "tgt"
-        case .variant: return "V"
-        case .header: return "h"
-        }
-    }
-
     static func color(_ kind: ItemKind) -> NSColor {
         switch kind {
         case .keyword: return theme.keyword

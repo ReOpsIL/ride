@@ -86,7 +86,11 @@ extension SelfTestSteps {
                 return false
             }
             scratch.original = util.text
-            util.text = "let _stale = 0;\n" + util.text
+            if let view = state.editorView(for: util) {
+                view.insertText("let _stale = 0;\n", replacementRange: NSRange(location: 0, length: 0))
+            } else {
+                util.text = "let _stale = 0;\n" + util.text
+            }
             if let id = reviewId(state, suffix: "util.rs") {
                 state.renamePreview.selection.setReview(id, true)
             }
@@ -105,6 +109,7 @@ extension SelfTestSteps {
             )
             if let util, !scratch.original.isEmpty {
                 util.text = scratch.original
+                state.refreshView(of: util)
             }
             return failure
         })

@@ -35,13 +35,14 @@ pub fn merge_indexed(jobs: impl IntoIterator<Item = (usize, CheckResult)>) -> Ch
 
 fn gather(files: Vec<PathBuf>) -> Result<CheckResult, EngineError> {
     let (rx, threads) = start_pool(files);
-    let mut merged = Merge::default();
+    let mut checks = Vec::new();
     let mut first_err = None;
     for (index, item) in rx {
         match item {
-            Ok(check) => merged.push(index, check),
-            Err(e) if first_err.is_none() => first_err = Some(e),
-            Err(_) => {}
+            Ok(check) => checks.push((index, check)),
+            Err(e) => {
+                first_err.get_or_insert(e);
+            }
         }
     }
     for handle in threads {
@@ -49,7 +50,7 @@ fn gather(files: Vec<PathBuf>) -> Result<CheckResult, EngineError> {
     }
     match first_err {
         Some(e) => Err(e),
-        None => Ok(merged.finish()),
+        None => Ok(merge_indexed(checks)),
     }
 }
 

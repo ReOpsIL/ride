@@ -4,6 +4,7 @@ use crate::ffi::{RenameFile, RenamePlan, TextEdit, UsagesResponse};
 use crate::highlight::Lang;
 
 use super::Engine;
+use crate::text::is_word;
 
 #[uniffi::export]
 impl Engine {
@@ -123,7 +124,7 @@ fn valid_identifier(lang: Lang, name: &str) -> bool {
     if !(first.is_alphabetic() || first == '_') {
         return false;
     }
-    if !chars.all(|c| c.is_alphanumeric() || c == '_') {
+    if !chars.all(is_word) {
         return false;
     }
     !lang.keywords().contains(&name)

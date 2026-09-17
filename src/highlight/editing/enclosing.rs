@@ -3,6 +3,7 @@ use tree_sitter::Node;
 use crate::ffi::ByteRange;
 
 use super::EditingKinds;
+use crate::text::is_word;
 
 const MARKDOWN: &[&str] = &["paragraph", "list_item", "section", "document"];
 
@@ -136,7 +137,6 @@ fn trimmed(text: &str, start: usize, end: usize) -> Span {
 }
 
 fn word_at(text: &str, at: usize) -> Option<Span> {
-    let is_word = |c: char| c.is_alphanumeric() || c == '_';
     let start = text[..at].trim_end_matches(is_word).len();
     let end = at + (text[at..].len() - text[at..].trim_start_matches(is_word).len());
     (start < end).then_some((start, end))

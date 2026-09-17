@@ -12,11 +12,11 @@ extension AppState {
             colors: TerminalColors.from(ThemeStore.shared.theme)
         )
         NSApp.appearance = NSAppearance(named: isLightTheme ? .aqua : .darkAqua)
-        if let view = EditorPanes.shared.focusedView {
-            view.applyTheme(ThemeStore.shared.theme)
-            EditorPanes.shared.focused?.applyTheme(ThemeStore.shared.theme)
-            if let buffer = activeBuffer {
-                SessionService.shared.resync(document: buffer, view: view)
+        for host in EditorPanes.shared.all {
+            host.textView.applyTheme(ThemeStore.shared.theme)
+            host.applyTheme(ThemeStore.shared.theme)
+            if let document = host.document {
+                SessionService.shared.resync(document: document, view: host.textView)
             }
         }
     }

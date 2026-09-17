@@ -1,0 +1,27 @@
+Running main() from gtest_main.cc
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from Small/GeoParam
+[ RUN      ] Small/GeoParam.Scales/0
+[       OK ] Small/GeoParam.Scales/0 (0 ms)
+[ RUN      ] Small/GeoParam.Scales/1
+gt.cpp:12: Failure
+Expected equality of these values:
+  scale(3)
+    Which is: 9
+  6
+[  FAILED  ] Small/GeoParam.Scales/1, where GetParam() = 3 (1 ms)
+[----------] 2 tests from Small/GeoParam (1 ms total)
+
+[----------] 1 test from TextSuite
+[ RUN      ] TextSuite.TrimsBlanks
+[       OK ] TextSuite.TrimsBlanks (0 ms)
+[----------] 1 test from TextSuite (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] Small/GeoParam.Scales/1, where GetParam() = 3
+
+ 1 FAILED TEST

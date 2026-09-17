@@ -19,7 +19,9 @@ final class DemoSelfTest {
         shared.report = report
         shared.results = []
         shared.writeReport()
-        shared.steps = SelfTestSteps.all(state: state)
+        shared.steps = DemoLaunch.only.map { only in
+            SelfTestSteps.all(state: state).filter { $0.name == "setup" || only.contains($0.name) }
+        } ?? SelfTestSteps.all(state: state)
         shared.next(state: state)
     }
 
@@ -168,6 +170,7 @@ struct SelfTestEditor {
 }
 
 final class SelfTestScratch {
+    var zoomBefore = 0
     var body = ""
     var next = ""
     var buildLine = ""

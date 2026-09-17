@@ -1,8 +1,10 @@
 use tree_sitter::Tree;
 
 use crate::ffi::{CompletionContext, CompletionSiteKind};
+use crate::text::line_start;
 
 mod c;
+mod comment_scan;
 mod common;
 mod plain;
 mod rust;
@@ -57,11 +59,7 @@ impl SiteAt {
     }
 
     pub fn new(site: Site, prefix: String, replace_start: usize, text: &str, at: usize) -> Self {
-        let line_start = text[..replace_start]
-            .rfind('\n')
-            .map(|i| i + 1)
-            .unwrap_or(0);
-        let line = &text[line_start..replace_start];
+        let line = &text[line_start(text, replace_start)..replace_start];
         let indent_len = line.len() - line.trim_start_matches([' ', '\t']).len();
         Self {
             site,

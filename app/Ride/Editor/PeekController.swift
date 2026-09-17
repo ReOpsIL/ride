@@ -105,8 +105,7 @@ final class PeekController {
         }
         let url = URL(fileURLWithPath: excerpt.path)
         let inside = WorkspaceFS.contains(root: state.workspaceRoot, file: url)
-        state.pendingJump = excerpt.byteStart
-        state.openFile(url, readOnly: !inside)
+        state.openFile(url, at: .byte(excerpt.byteStart), readOnly: !inside)
         return true
     }
 

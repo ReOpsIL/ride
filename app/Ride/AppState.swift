@@ -34,7 +34,6 @@ final class AppState: ObservableObject {
     @Published var findQuery = ""
     @Published var replaceQuery = ""
     @Published var findRange: NSRange?
-    @Published var applyText: String?
     @Published var showSymbolInFile = false
     @Published var symbolQuery = ""
     @Published var symbolSelection: UInt32?
@@ -81,7 +80,6 @@ final class AppState: ObservableObject {
     @Published var findOptions = FindOptions.defaults
     @Published var showReplaceField = false
     var recentFiles: [URL] = []
-    var zoomBefore = 0
     let history = NavigationHistory()
     let symbolPicker = SymbolPickerModel()
     let projectFind = ProjectFindModel()
@@ -93,8 +91,6 @@ final class AppState: ObservableObject {
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()
     let usages = UsagesModel.shared
-    var pendingJump: UInt32?
-    var applyThenSave = false
     var cargoWork: DispatchWorkItem?
     var gitSink: AnyCancellable?
     var layoutSaveWork: DispatchWorkItem?
@@ -105,7 +101,6 @@ final class AppState: ObservableObject {
     let recents = RecentProjects()
     let watcher = FileWatcher()
     var untitledSeq = 0
-    var autoSaveWork: DispatchWorkItem?
     var quickFiles: [URL] = []
     var findOrigin = 0
     var queryCounter: UInt64 = 0
@@ -169,13 +164,6 @@ final class AppState: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             self?.checkTools()
         }
-    }
-
-    var windowTitle: String {
-        guard let root = workspaceRoot else {
-            return "Ride"
-        }
-        return cargoPackageName(root) ?? root.lastPathComponent
     }
 
     var relativePath: String {

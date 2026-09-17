@@ -340,3 +340,70 @@ fn engine_picks_language_from_path() {
         ride_engine::ItemKind::Fn
     );
 }
+
+#[test]
+fn huge_edit_shifts_covered_tail_with_the_text() {
+    let text = huge_source();
+    let vis = ByteRange {
+        start_byte: 0,
+        end_byte: 80,
+    };
+    let (mut session, _) = BufferSession::open(text.clone(), Some(vis)).unwrap();
+    let end = text.len() as u32;
+    session
+        .set_visible(ByteRange {
+            start_byte: end - 40,
+            end_byte: end,
+        })
+        .unwrap();
+    let at = text.find("aaa").unwrap();
+    let inserted = "y".repeat(1000);
+    session
+        .apply_edit(insert_at(&text, at, &inserted), &inserted, Some(vis))
+        .unwrap();
+    let end = end + 1000;
+    let upd = session
+        .set_visible(ByteRange {
+            start_byte: end - 40,
+            end_byte: end,
+        })
+        .unwrap();
+    assert!(upd.changed.is_empty(), "{:?}", upd.changed);
+    let covered_start = end - 40 - 2048;
+    let upd = session
+        .set_visible(ByteRange {
+            start_byte: covered_start - 100,
+            end_byte: covered_start - 50,
+        })
+        .unwrap();
+    assert_eq!(
+        upd.changed.last().map(|r| r.end_byte),
+        Some(covered_start),
+        "{:?}",
+        upd.changed
+    );
+}
+
+#[test]
+fn huge_visible_range_past_the_end_is_clamped() {
+    let text = huge_source();
+    let vis = ByteRange {
+        start_byte: 0,
+        end_byte: 80,
+    };
+    let (mut session, _) = BufferSession::open(text.clone(), Some(vis)).unwrap();
+    let len = text.len() as u32;
+    let upd = session
+        .set_visible(ByteRange {
+            start_byte: len + 5000,
+            end_byte: len + 6000,
+        })
+        .unwrap();
+    assert!(
+        upd.changed
+            .iter()
+            .all(|r| r.start_byte <= r.end_byte && r.end_byte <= len),
+        "{:?}",
+        upd.changed
+    );
+}

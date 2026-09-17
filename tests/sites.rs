@@ -165,3 +165,22 @@ fn rust_imports_list_leaf_names_and_aliases() {
     let (session, _) = BufferSession::open_lang(Lang::Rust, src.to_string(), None).unwrap();
     assert_eq!(session.imports(), vec!["HashMap", "Serialize", "Tree"]);
 }
+
+#[test]
+fn comment_markers_inside_strings_do_not_veto() {
+    assert_eq!(
+        rust("fn f() { let u = \"http://x\"; foo.|").site,
+        Site::MemberAccess
+    );
+    assert_eq!(
+        rust("fn f() { let u = \"/* x\"; foo.|").site,
+        Site::MemberAccess
+    );
+    assert_eq!(
+        site(Lang::C, "int f() { const char *u = \"http://x\"; p->|").site,
+        Site::MemberAccess
+    );
+    assert_eq!(rust("fn f() { let u = \"x\"; // foo.|").site, Site::None);
+    assert_eq!(rust("fn f() { /* \"x\" foo.|").site, Site::None);
+    assert_eq!(rust("fn f() { let c = '\"'; // foo.|").site, Site::None);
+}

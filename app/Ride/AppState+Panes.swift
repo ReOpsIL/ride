@@ -11,10 +11,14 @@ extension AppState {
     }
 
     func editorView(for buffer: BufferDocument) -> RideTextView? {
-        guard let pane = paneLayout.panes.first(where: { $0.activeID == buffer.id }) else {
+        EditorPanes.shared.host(bound: buffer)?.textView
+    }
+
+    var focusedEditor: (view: RideTextView, document: BufferDocument)? {
+        guard let host = EditorPanes.shared.focused, let document = host.document else {
             return nil
         }
-        return EditorPanes.shared.host(pane.id)?.textView
+        return (host.textView, document)
     }
 
     func paneFocused(_ paneID: UUID) {
@@ -112,12 +116,13 @@ extension AppState {
     }
 
     func makeFocusedEditorFirstResponder() {
-        if let view = EditorPanes.shared.host(paneLayout.focusedID)?.textView {
+        let paneID = paneLayout.focusedID
+        if let view = EditorPanes.shared.host(paneID)?.textView {
             if view.window?.firstResponder !== view {
                 view.window?.makeFirstResponder(view)
             }
             return
         }
-        EditorPanes.shared.focusedView?.window?.makeFirstResponder(nil)
+        EditorPanes.shared.claim(pane: paneID)
     }
 }

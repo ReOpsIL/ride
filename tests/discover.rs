@@ -59,6 +59,26 @@ fn plain_folder_is_not_cargo() {
     let info = workspace_info(dir.path(), &config()).unwrap();
     assert!(!info.is_cargo);
     assert!(info.package_name.is_none());
+    assert_eq!(info.workspace_root, info.root);
+}
+
+#[test]
+fn member_crate_carries_the_workspace_root() {
+    let workspace = fixtures().join("workspace_members");
+    let info = workspace_info(&workspace.join("app"), &config()).unwrap();
+    assert!(info.is_cargo);
+    assert_eq!(info.package_name.as_deref(), Some("member_app"));
+    assert_eq!(
+        canonical(&info.workspace_root),
+        canonical(&workspace.display().to_string())
+    );
+    assert_ne!(canonical(&info.root), canonical(&info.workspace_root));
+    let single = workspace_info(&fixtures().join("workspace"), &config()).unwrap();
+    assert_eq!(canonical(&single.workspace_root), canonical(&single.root));
+}
+
+fn canonical(path: &str) -> PathBuf {
+    std::fs::canonicalize(path).unwrap()
 }
 
 #[test]

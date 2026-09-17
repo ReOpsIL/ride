@@ -10,16 +10,6 @@ extension RunProjectKind {
         case .none: self = .none
         }
     }
-
-    var engineKind: ProjectKind {
-        switch self {
-        case .cargo: .cargo
-        case .cmake: .cMake
-        case .make: .make
-        case .compileDb: .compileDb
-        case .none: .none
-        }
-    }
 }
 
 extension RunConfig {

@@ -26,6 +26,16 @@ enum WorkspaceFS {
             }
     }
 
+    static func isDirectory(_ url: URL) -> Bool {
+        var isDir: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
+    }
+
+    static func isFile(_ url: URL) -> Bool {
+        var isDir: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && !isDir.boolValue
+    }
+
     static func parentDir(for url: URL, isDirectory: Bool) -> URL {
         isDirectory ? url : url.deletingLastPathComponent()
     }

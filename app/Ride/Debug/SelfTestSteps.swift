@@ -97,9 +97,9 @@ enum SelfTestSteps {
         SelfTestStep(name: "forward", run: { state.goForward() }, check: { e.expect(e.caretLine == file.goToLine, "caret \(e.caretLine)") })
     }
 
-    static func zoomIn(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "zoom", run: { let before = state.prefs.fontSize; state.zoom(1); state.zoomBefore = before }, check: {
-            e.expect(state.prefs.fontSize == state.zoomBefore + 1, "font \(state.prefs.fontSize)")
+    static func zoomIn(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "zoom", run: { let before = state.prefs.fontSize; state.zoom(1); scratch.zoomBefore = before }, check: {
+            e.expect(state.prefs.fontSize == scratch.zoomBefore + 1, "font \(state.prefs.fontSize)")
         })
     }
 
@@ -109,19 +109,52 @@ enum SelfTestSteps {
         })
     }
 
-    static func workspaceOpenSecond(state: AppState, e: SelfTestEditor, file: SelfTestOpened) -> SelfTestStep {
-        SelfTestStep(name: "workspace second file", wait: 0.6, run: {
-            guard let second = siblingFile(state: state) else {
-                return
-            }
-            state.openFile(second)
-            if let current = state.workspaceRoot?.appendingPathComponent(file.filePath) {
-                state.openFile(current)
-            }
-        }, check: {
-            let names = state.buffers.compactMap { $0.fileURL?.lastPathComponent }
-            return e.expect(names.count >= 2 && names.contains(file.fileName), "tabs \(names)")
-        })
+    static func workspaceOpenSecond(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
+        [
+            SelfTestStep(name: "open second file", wait: 0.6, run: {
+                scratch.saved = e.text
+                guard let second = siblingFile(state: state) else {
+                    return
+                }
+                state.openFile(second)
+                _ = state.captureWorkspace()
+            }, check: {
+                let second = state.activeBuffer?.fileURL
+                let disk = second.flatMap { BufferDocument.load($0)?.text } ?? ""
+                return e.expect(
+                    second?.lastPathComponent != file.fileName && !disk.isEmpty && e.text == disk,
+                    "active \(second?.lastPathComponent ?? "nil") view \(e.text.prefix(60))"
+                )
+            }),
+            SelfTestStep(name: "reopen first file", wait: 0.6, run: {
+                if let current = state.workspaceRoot?.appendingPathComponent(file.filePath) {
+                    state.openFile(current)
+                }
+            }, check: {
+                let names = state.buffers.compactMap { $0.fileURL?.lastPathComponent }
+                return e.expect(
+                    names.count >= 2 && state.activeBuffer?.fileURL?.lastPathComponent == file.fileName && e.text == scratch.saved,
+                    "tabs \(names) active \(state.activeBuffer?.displayName ?? "nil") view \(e.text.prefix(60))"
+                )
+            }),
+            SelfTestStep(name: "dirty survives tab switch", wait: 0.6, run: {
+                let end = (e.text as NSString).length
+                e.view?.insertText("\n", replacementRange: NSRange(location: end, length: 0))
+                if let second = siblingFile(state: state) {
+                    state.openFile(second)
+                }
+                if let current = state.workspaceRoot?.appendingPathComponent(file.filePath) {
+                    state.openFile(current)
+                }
+            }, check: {
+                let dirty = state.activeBuffer?.isDirty == true
+                let undone: Bool = {
+                    e.view?.undoManager?.undo()
+                    return e.text == scratch.saved
+                }()
+                return e.expect(dirty && undone, "dirty \(dirty) text \(e.text.suffix(20))")
+            }),
+        ]
     }
 
     static func workspaceRestore(state: AppState, e: SelfTestEditor, file: SelfTestOpened) -> SelfTestStep {
@@ -150,7 +183,7 @@ enum SelfTestSteps {
             let filled = state.captureWorkspace()
             let empty = WorkspaceState(tabs: [], focusedPath: nil, layout: filled.layout, split: filled.split)
             state.workspaceStore.save(filled, root: root)
-            state.workspaceStore.scheduleSave(empty, root: root)
+            state.workspaceStore.scheduleSave(root: root) { empty }
             state.restoreWorkspace(filled)
         }, check: {
             guard let root = state.workspaceRoot else {
@@ -172,11 +205,7 @@ enum SelfTestSteps {
                 return nil
             }
             let url = dir.appendingPathComponent(name)
-            var isDir: ObjCBool = false
-            guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), !isDir.boolValue else {
-                return nil
-            }
-            return url
+            return WorkspaceFS.isFile(url) ? url : nil
         }.first
     }
 }

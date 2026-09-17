@@ -13,9 +13,9 @@ final class WorkspaceStateStoreTests: XCTestCase {
         )
         let empty = WorkspaceState(tabs: [], focusedPath: nil, layout: .defaults)
         store.save(filled, root: root)
-        store.scheduleSave(empty, root: root)
+        store.scheduleSave(root: root) { empty }
         store.cancelPending()
-        store.scheduleSave(filled, root: root)
+        store.scheduleSave(root: root) { filled }
         let exp = expectation(description: "debounce")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { exp.fulfill() }
         wait(for: [exp], timeout: 1)

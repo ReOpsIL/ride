@@ -60,7 +60,8 @@ enum LineOps {
         let source = text as NSString
         var span = LineSpan.lineRange(source, selection)
         let column = selection.location - span.location
-        if span.upperBound == source.length, span.location > 0 {
+        let terminated = span.length > 0 && source.character(at: span.upperBound - 1) == 10
+        if span.upperBound == source.length, span.location > 0, !terminated {
             span = NSRange(location: span.location - 1, length: span.length + 1)
         }
         let change = TextChange(delete: span)
@@ -79,12 +80,29 @@ enum LineOps {
         guard lines.count > 1 else {
             return .keep(selection)
         }
-        let changes = zip(lines, lines.dropFirst()).map { seam(source, upper: $0, lower: $1) }
+        let changes = seams(source, lines: lines)
         let mapped = EditResult.mapping(selection, through: changes)
         guard selection.length == 0, let first = changes.first else {
             return mapped
         }
         return EditResult(changes: changes, selection: NSRange(location: first.range.location, length: 0))
+    }
+
+    private static func seams(_ text: NSString, lines: [NSRange]) -> [TextChange] {
+        var changes: [TextChange] = []
+        var groupStart = lines[0].location
+        for (upper, lower) in zip(lines, lines.dropFirst()) {
+            let next = seam(text, upper: upper, lower: lower)
+            guard let last = changes.last, next.range.location <= last.range.upperBound else {
+                groupStart = upper.location
+                changes.append(next)
+                continue
+            }
+            let range = NSRange(location: last.range.location, length: next.range.upperBound - last.range.location)
+            let joinsContent = range.location > groupStart && next.range.upperBound < lower.upperBound
+            changes[changes.count - 1] = TextChange(range: range, text: joinsContent ? " " : "")
+        }
+        return changes
     }
 
     private static func seam(_ text: NSString, upper: NSRange, lower: NSRange) -> TextChange {

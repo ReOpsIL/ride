@@ -1,3 +1,4 @@
+use crate::text::{line_end, line_start};
 use serde::{Deserialize, Serialize};
 use tree_sitter::{Node, Tree};
 
@@ -26,8 +27,8 @@ pub fn c_includes(tree: &Tree, text: &str) -> Vec<IncludeRef> {
 
 pub fn include_on_line(text: &str, at: usize) -> Option<(IncludeRef, usize, usize)> {
     let at = at.min(text.len());
-    let start = text[..at].rfind('\n').map(|i| i + 1).unwrap_or(0);
-    let end = text[at..].find('\n').map(|i| at + i).unwrap_or(text.len());
+    let start = line_start(text, at);
+    let end = line_end(text, at);
     let line = &text[start..end];
     let rest = line.trim_start().strip_prefix('#')?.trim_start();
     let rest = ["include_next", "include", "import"]

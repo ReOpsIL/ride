@@ -29,9 +29,9 @@ extension SelfTestSteps {
             goToLine(state: state, e: e, file: file),
             back(state: state, e: e, file: file),
             forward(state: state, e: e, file: file),
-            zoomIn(state: state, e: e),
+            zoomIn(state: state, e: e, scratch: scratch),
             zoomReset(state: state, e: e),
-            workspaceOpenSecond(state: state, e: e, file: file),
+        ] + workspaceOpenSecond(state: state, e: e, file: file, scratch: scratch) + [
             workspaceRestore(state: state, e: e, file: file),
             workspaceSnapshotAfterOpen(state: state, e: e),
             headerSourceSwitch(state: state, e: e),

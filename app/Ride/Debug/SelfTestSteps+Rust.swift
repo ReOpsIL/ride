@@ -7,7 +7,7 @@ extension SelfTestSteps {
             + rustEdit(e: e, file: file, scratch: scratch)
             + rustSelect(e: e)
             + rustTools(state: state, e: e, file: file)
-            + rustClose(state: state, e: e, file: file)
+            + rustClose(state: state, e: e, file: file, scratch: scratch)
             + rustGenerate(e: e, scratch: scratch)
             + renameSteps(state: state, e: e)
             + rustExtract(e: e, scratch: scratch)
@@ -150,9 +150,9 @@ extension SelfTestSteps {
         ]
     }
 
-    private static func rustClose(state: AppState, e: SelfTestEditor, file: SelfTestOpened) -> [SelfTestStep] {
+    private static func rustClose(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
         [
-            zoomIn(state: state, e: e),
+            zoomIn(state: state, e: e, scratch: scratch),
             zoomReset(state: state, e: e),
             SelfTestStep(name: "recent files", run: {}, check: { e.expect(state.recentFiles.first?.lastPathComponent == "main.rs", "recent \(state.recentFiles)") }),
             SelfTestStep(name: "tree keys", run: {}, check: {
@@ -169,7 +169,7 @@ extension SelfTestSteps {
             terminalOpen(state: state, e: e),
             terminalClose(state: state, e: e),
             SelfTestStep(name: "save all", run: { state.saveAll() }, check: { e.expect(state.activeBuffer?.isDirty == false, "still dirty") }),
-            workspaceOpenSecond(state: state, e: e, file: file),
+        ] + workspaceOpenSecond(state: state, e: e, file: file, scratch: scratch) + [
             workspaceRestore(state: state, e: e, file: file),
             targetSelectionRestore(state: state, e: e),
             workspaceSnapshotAfterOpen(state: state, e: e),

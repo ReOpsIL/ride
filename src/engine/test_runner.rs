@@ -41,11 +41,6 @@ impl Engine {
         target: Target,
         framework: TestFramework,
     ) -> Result<TestCommands, EngineError> {
-        match catch_unwind(AssertUnwindSafe(|| {
-            tests::test_commands(&target, framework)
-        })) {
-            Ok(r) => r,
-            Err(p) => Err(EngineError::from_panic(p)),
-        }
+        self.guard(|| tests::test_commands(&target, framework))
     }
 }

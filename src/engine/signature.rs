@@ -73,7 +73,8 @@ fn help(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<SignatureH
 
 fn declaration_head(text: &str, start: usize) -> String {
     let rest = &text[start.min(text.len())..];
-    let end = rest.find(['{', ';']).unwrap_or_else(|| rest.len().min(200));
+    let limit = rest.char_indices().nth(200).map_or(rest.len(), |(i, _)| i);
+    let end = rest.find(['{', ';']).unwrap_or(limit);
     rest[..end].split_whitespace().collect::<Vec<_>>().join(" ")
 }
 

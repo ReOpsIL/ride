@@ -2,6 +2,7 @@ use tree_sitter::Node;
 
 use super::complete_kind::{bare_expr, header_end, header_without_body, missing_semi};
 use crate::ffi::TextEdit;
+use crate::text::{line_end, line_start};
 
 pub fn edit(root: Node<'_>, text: &str, byte: u32) -> TextEdit {
     let at = (byte as usize).min(root.end_byte());
@@ -25,8 +26,8 @@ pub fn edit(root: Node<'_>, text: &str, byte: u32) -> TextEdit {
 
 pub fn new_line(text: &str, byte: u32) -> TextEdit {
     let at = (byte as usize).min(text.len());
-    let start = text[..at].rfind('\n').map_or(0, |i| i + 1);
-    let end = text[at..].find('\n').map_or(text.len(), |i| at + i);
+    let start = line_start(text, at);
+    let end = line_end(text, at);
     let indent = leading(&text[start..end]);
     let inserted = format!("\n{indent}");
     let pos = end as u32;
@@ -69,7 +70,7 @@ fn insert(at: u32, text: &str, caret: u32) -> TextEdit {
 
 fn line_indent(text: &str, byte: u32) -> String {
     let at = (byte as usize).min(text.len());
-    let start = text[..at].rfind('\n').map_or(0, |i| i + 1);
+    let start = line_start(text, at);
     leading(&text[start..])
 }
 

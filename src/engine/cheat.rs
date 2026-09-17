@@ -6,6 +6,7 @@ use crate::highlight::{Context, Site, SiteAt};
 
 use super::Engine;
 use super::snippets::render;
+use crate::text::is_word;
 
 #[uniffi::export]
 impl Engine {
@@ -92,10 +93,6 @@ fn without_receiver(line: &str) -> &str {
     after
         .strip_prefix("->")
         .or_else(|| after.strip_prefix('.'))
-        .filter(|tail| {
-            tail.chars()
-                .next()
-                .is_some_and(|c| c.is_alphanumeric() || c == '_')
-        })
+        .filter(|tail| tail.chars().next().is_some_and(is_word))
         .unwrap_or(line)
 }

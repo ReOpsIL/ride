@@ -130,3 +130,21 @@ fn byte_of(path: &Path, line: u32, column: u32) -> u32 {
         .sum();
     start + column - 1
 }
+
+#[test]
+fn member_crate_diagnostics_resolve_against_the_workspace_root() {
+    let engine = engine();
+    let member =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/workspace_members/app");
+    let info = engine.open_workspace(member.display().to_string()).unwrap();
+    let diags = engine.parse_cargo_line(fixture("cargo-error.json"));
+    assert_eq!(diags.len(), 1);
+    assert_eq!(
+        diags[0].path,
+        Path::new(&info.workspace_root)
+            .join("src/main.rs")
+            .display()
+            .to_string()
+    );
+    assert!(!diags[0].path.starts_with(&member.display().to_string()));
+}

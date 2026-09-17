@@ -1,15 +1,15 @@
 import AppKit
 
 extension AppState {
-    var caretBreakpointLine: UInt32? {
-        guard let view = EditorPanes.shared.focusedView else {
+    var caretBreakpoint: (path: String, line: UInt32)? {
+        guard let (view, document) = focusedEditor, let path = document.fileURL?.standardizedFileURL.path else {
             return nil
         }
-        return UInt32(view.lineIndex().line(at: view.selectedRange().location))
+        return (path, UInt32(view.lineIndex().line(at: view.selectedRange().location)))
     }
 
     func toggleBreakpointAtCaret() {
-        guard let path = breakpointPath(), let line = caretBreakpointLine else {
+        guard let (path, line) = caretBreakpoint else {
             return
         }
         toggleBreakpoint(path: path, line: line)
@@ -67,19 +67,9 @@ extension AppState {
             HighlightApply.clearMarkedLine()
             return
         }
-        openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
-        let line = Int(debug.stoppedLine)
-        DispatchQueue.main.async {
-            EditorPanes.shared.focused?.jump(toLine: line)
-            if let view = EditorPanes.shared.focusedView {
-                HighlightApply.markLine(view, line: line)
-            }
-        }
+        openFile(url, at: .line(Int(debug.stoppedLine), mark: true), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
-    private func breakpointPath() -> String? {
-        activeBuffer?.fileURL?.standardizedFileURL.path
-    }
 }
 
 enum BreakpointMarkers {

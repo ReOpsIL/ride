@@ -9,9 +9,11 @@ use crate::skip::under_root;
 
 mod attrs;
 mod cargo_toml;
+mod crate_extract;
 mod docs;
 mod emit;
 mod external;
+mod glob;
 mod impls;
 mod item;
 mod mod_walk;
@@ -26,10 +28,12 @@ mod variants;
 mod vis;
 mod walk;
 
-pub use cargo_toml::{Package, parse_toml, read_package, workspace_members};
+pub use cargo_toml::{parse_toml, read_package, workspace_members};
+pub use crate_extract::{CrateExtract, CrateItems, normalized, plain as plain_extract};
 pub use external::External;
-pub use item::{CrateContext, ItemDoc, ItemParts, Scope, Visibility};
+pub use item::{CrateContext, ItemDoc, Scope, Visibility};
 
+use crate_extract::crate_item;
 use walk::PendingMod;
 
 #[derive(Debug, Error)]
@@ -71,12 +75,13 @@ pub fn extract_source(
     let file = Path::new("<mem>");
     let extracted = walk::extract_tree(tree.root_node(), source, file, module_path, true, ctx);
     let mut items = extracted.items;
-    items.extend(reexport::apply(
+    let applied = reexport::apply(
         &items,
         &extracted.reexports,
         &External::default(),
         &extracted.crate_aliases,
-    ));
+    );
+    items.extend(applied.items);
     reach::resolve(&mut items, &extracted.assoc, ctx.scope);
     Ok(items)
 }
@@ -91,6 +96,16 @@ pub fn extract_crate_with_version(
     version: Option<&str>,
     external: &External,
 ) -> Result<Vec<ItemDoc>, ExtractError> {
+    Ok(extract_crate_parts(crate_root, scope, version)?
+        .finish(external)
+        .items)
+}
+
+pub fn extract_crate_parts(
+    crate_root: &Path,
+    scope: Scope,
+    version: Option<&str>,
+) -> Result<CrateExtract, ExtractError> {
     let pkg = read_package(crate_root)?;
     let ctx = CrateContext {
         crate_name: pkg.name.clone(),
@@ -169,27 +184,12 @@ pub fn extract_crate_with_version(
             );
         }
     }
-    items.extend(reexport::apply(&items, &reexports, external, &aliases));
-    reach::resolve(&mut items, &assoc, scope);
-    Ok(items)
-}
-
-fn crate_item(pkg: &Package, crate_root: &Path, ctx: &CrateContext) -> ItemDoc {
-    ItemDoc::from_ctx(
-        ctx,
-        ItemParts {
-            kind: ItemKind::Crate,
-            path: pkg.name.clone(),
-            name: pkg.name.clone(),
-            vis: Visibility::Pub,
-            source_path: crate_root.join("Cargo.toml"),
-            byte_range: (0, 0),
-            name_start_byte: 0,
-            signature: String::new(),
-            doc: pkg.description.clone().unwrap_or_default(),
-            chunk: String::new(),
-            reachable: true,
-            deprecated: false,
-        },
-    )
+    Ok(CrateExtract {
+        name: ctx.crate_name,
+        scope,
+        items,
+        reexports,
+        aliases,
+        assoc,
+    })
 }

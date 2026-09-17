@@ -47,22 +47,11 @@ extension AppState {
         guard FileManager.default.fileExists(atPath: url.path) else {
             return
         }
-        openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
-        DispatchQueue.main.async {
-            EditorPanes.shared.focused?.jump(toLine: link.line)
-        }
+        openFile(url, at: .line(link.line, mark: false), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
     private func confirmStopAndRerun() -> Bool {
-        guard !DemoLaunch.isDemo else {
-            return true
-        }
-        let alert = NSAlert()
-        alert.messageText = "Stop and rerun?"
-        alert.informativeText = "A process is already running."
-        alert.addButton(withTitle: "Stop and Rerun")
-        alert.addButton(withTitle: "Cancel")
-        return alert.runModal() == .alertFirstButtonReturn
+        Confirm.ask("Stop and rerun?", message: "A process is already running.", ok: "Stop and Rerun")
     }
 }
 

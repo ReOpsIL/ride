@@ -2,10 +2,10 @@ import AppKit
 
 extension AppState {
     var currentLocation: NavLocation? {
-        guard let id = activeID, let view = EditorPanes.shared.focusedView else {
+        guard let (view, document) = focusedEditor else {
             return nil
         }
-        return NavLocation(bufferID: id, utf16: view.selectedRange().location)
+        return NavLocation(bufferID: document.id, utf16: view.selectedRange().location)
     }
 
     private var lineOf: (Int) -> Int {
@@ -20,10 +20,7 @@ extension AppState {
         syncMenu()
     }
 
-    func noteEdit(_ view: RideTextView) {
-        guard let id = activeID else {
-            return
-        }
+    func noteEdit(_ view: RideTextView, in id: UUID) {
         history.noteEdit(NavLocation(bufferID: id, utf16: view.selectedRange().location))
     }
 
@@ -50,7 +47,7 @@ extension AppState {
     }
 
     private func show(_ target: NavLocation) {
-        guard buffers.contains(where: { $0.id == target.bufferID }) else {
+        guard let buffer = buffer(target.bufferID) else {
             history.forget(bufferID: target.bufferID)
             syncMenu()
             return
@@ -58,13 +55,14 @@ extension AppState {
         if activeID != target.bufferID {
             switchBuffer(target.bufferID)
         }
-        EditorPanes.shared.focused?.select(NSRange(location: target.utf16, length: 0))
+        jump(to: .utf16(target.utf16), in: buffer)
         syncMenu()
     }
 
     private func switchBuffer(_ id: UUID) {
         CompletionSession.shared.reset()
-        activeID = id
+        paneLayout.select(id)
+        syncSplitFocus()
         selectedURL = activeBuffer?.fileURL
         refreshPreview()
     }
@@ -86,8 +84,9 @@ extension AppState {
         let starts = view.lineIndex().starts
         let start = starts[min(max(line, 1), starts.count) - 1]
         let column = (parts.count > 1 ? parts[1] : nil) ?? 1
-        let lineEnd = (view.string as NSString).lineRange(for: NSRange(location: start, length: 0))
-        let location = min(start + max(column - 1, 0), NSMaxRange(lineEnd))
+        var contentsEnd = start
+        (view.string as NSString).getLineStart(nil, end: nil, contentsEnd: &contentsEnd, for: NSRange(location: start, length: 0))
+        let location = min(start + max(column - 1, 0), contentsEnd)
         EditorPanes.shared.focused?.select(NSRange(location: location, length: 0))
         view.window?.makeFirstResponder(view)
     }

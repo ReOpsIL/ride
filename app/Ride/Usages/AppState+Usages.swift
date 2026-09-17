@@ -2,10 +2,7 @@ import AppKit
 
 extension AppState {
     func findUsages() {
-        guard let view = EditorPanes.shared.focusedView,
-              let document = activeBuffer,
-              let id = document.sessionId
-        else {
+        guard let (view, document) = focusedEditor, let id = document.sessionId else {
             return
         }
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
@@ -19,8 +16,7 @@ extension AppState {
 
     func openUsage(path: String, byte: UInt32) {
         let url = usageURL(path)
-        pendingJump = byte
-        openFile(url, readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
+        openFile(url, at: .byte(byte), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 
     func indexOpenBuffers() {

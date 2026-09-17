@@ -3,6 +3,7 @@ use crate::ffi::OutlineItem;
 use crate::highlight::BufferSession;
 
 use super::fmt_run::run;
+use crate::text::line_start;
 
 pub fn format_source(text: &str, edition: Option<&str>) -> Result<String, EngineError> {
     let edition = edition.unwrap_or("2024");
@@ -65,7 +66,7 @@ fn strip_added_newline(formatted: String, snippet_had_newline: bool) -> String {
 }
 
 fn leading_indent(text: &str, start: usize) -> &str {
-    let line_start = text[..start].rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let line_start = line_start(text, start);
     let prefix = &text[line_start..start];
     if prefix.bytes().all(|b| b == b' ' || b == b'\t') {
         prefix
