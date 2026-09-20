@@ -31,6 +31,14 @@ extension EditorHostView {
         select(NSRange(location: loc, length: 0), focus: focus)
     }
 
+    func jump(toLine line: Int, column: Int, focus: Bool = true) {
+        let starts = textView.lineIndex().starts
+        let index = min(max(line, 1), starts.count) - 1
+        let end = index + 1 < starts.count ? starts[index + 1] : (textView.string as NSString).length
+        let location = min(starts[index] + max(column, 1) - 1, end)
+        select(NSRange(location: location, length: 0), focus: focus)
+    }
+
     func replaceText(_ text: String) {
         if let edit = TextDiff.minimalEdit(from: textView.string, to: text) {
             textView.applyChanges([TextChange(range: edit.range, text: edit.text)])

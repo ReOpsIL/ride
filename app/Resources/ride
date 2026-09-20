@@ -1,0 +1,84 @@
+#!/bin/sh
+set -e
+
+is_number() {
+    case "$1" in
+    '' | *[!0-9]*) return 1 ;;
+    *) return 0 ;;
+    esac
+}
+
+encode() {
+    printf '%s' "$1" | od -An -v -tx1 | tr ' ' '\n' | while read -r byte; do
+        if [ -z "$byte" ]; then
+            continue
+        fi
+        case "$byte" in
+        2d | 2e | 2f | 5f | 7e | 3[0-9] | 4[1-9a-f] | 5[0-9a] | 6[1-9a-f] | 7[0-9a])
+            printf '%b' "\\x$byte"
+            ;;
+        *)
+            printf '%%%s' "$byte"
+            ;;
+        esac
+    done
+}
+
+absolute() {
+    if [ -d "$1" ]; then
+        (cd "$1" && pwd)
+        return
+    fi
+    parent=$(dirname "$1")
+    if [ -d "$parent" ]; then
+        parent=$(cd "$parent" && pwd)
+        if [ "$parent" = "/" ]; then
+            parent=""
+        fi
+        printf '%s/%s\n' "$parent" "$(basename "$1")"
+        return
+    fi
+    case "$1" in
+    /*) printf '%s\n' "$1" ;;
+    *) printf '%s/%s\n' "$PWD" "$1" ;;
+    esac
+}
+
+print_url=0
+if [ "$1" = "--print-url" ]; then
+    print_url=1
+    shift
+fi
+
+target=${1:-.}
+line=""
+column=""
+
+suffix=${target##*:}
+if [ "$suffix" != "$target" ] && is_number "$suffix"; then
+    head=${target%:*}
+    second=${head##*:}
+    if [ "$second" != "$head" ] && is_number "$second"; then
+        column=$suffix
+        line=$second
+        target=${head%:*}
+    else
+        line=$suffix
+        target=$head
+    fi
+fi
+
+target=${target:-.}
+url="ride://open?path=$(encode "$(absolute "$target")")"
+if [ -n "$line" ]; then
+    url="$url&line=$line"
+fi
+if [ -n "$column" ]; then
+    url="$url&column=$column"
+fi
+
+if [ "$print_url" = 1 ]; then
+    printf '%s\n' "$url"
+else
+    open -a Ride "$url"
+fi

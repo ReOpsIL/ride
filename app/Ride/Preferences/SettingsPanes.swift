@@ -64,6 +64,9 @@ struct ToolsSettings: View {
                 Toggle("Format on save", isOn: bind.bool(\.formatOnSave))
                 Toggle("Check for missing tools at launch", isOn: bind.bool(\.askMissingTools))
             }
+            Section("Command line") {
+                RideCommandRow()
+            }
         }
         .formStyle(.grouped)
     }

@@ -15,6 +15,7 @@ enum PendingJump {
     case byte(UInt32)
     case utf16(Int)
     case line(Int, mark: Bool)
+    case position(line: Int, column: Int)
 }
 
 extension AppState {
@@ -91,6 +92,8 @@ extension AppState {
             if mark {
                 HighlightApply.markLine(host.textView, line: line)
             }
+        case .position(let line, let column):
+            host.jump(toLine: line, column: column)
         }
     }
 }

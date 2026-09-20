@@ -17,6 +17,7 @@ extension SelfTestSteps {
             + [callHierarchy(state: state, e: e)]
             + [codeVision(state: state, e: e)]
             + safeDeleteSteps(state: state, e: e, scratch: scratch)
+            + openURLSteps(state: state, e: e)
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {
