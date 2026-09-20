@@ -46,3 +46,7 @@
 
 - refactor: Introduce Constant anchors at the item node, so a `const` lands between a doc comment or attribute and its item; anchor above the contiguous run of `line_comment`/`attribute_item` siblings that precede the item.
 - menus: Inline Variable is ⌃⌥N because ⌥⌘N is New Buffer; decide whether New Buffer moves so the JetBrains chord can be used.
+
+# Tests (added 2026-09-20, P-8a review)
+
+- Three copies of the fixture `engine()`/`config()` helper (`tests/completion_sites.rs`, `tests/goldens.rs`, `tests/latency.rs`); share one through a `#[path]` module as `goldens.rs` does for `io`.
