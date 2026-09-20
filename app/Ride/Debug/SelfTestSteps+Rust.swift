@@ -116,7 +116,7 @@ extension SelfTestSteps {
             duplicateLine(e: e, file: file, scratch: scratch),
             deleteLine(e: e, file: file, scratch: scratch),
             SelfTestStep(name: "join lines", run: { e.caret(line: 9); EditorCommands.joinLines() }, check: { e.expect(e.line(9).contains("new(); counter.record"), "line 9: \(e.line(9))") }),
-            SelfTestStep(name: "undo join", run: { e.view?.undoManager?.undo() }, check: { e.expect(e.line(10).contains("ride") && !e.line(9).contains("record"), "line 9: \(e.line(9))") }),
+            SelfTestStep(name: "undo join", run: { e.undo() }, check: { e.expect(e.line(10).contains("ride") && !e.line(9).contains("record"), "line 9: \(e.line(9))") }),
             moveLineDown(e: e, file: file, scratch: scratch),
             moveLineUp(e: e, file: file, scratch: scratch),
             SelfTestStep(name: "new line after", run: { e.caret(line: 10, column: 3); EditorCommands.newLine(before: false) }, check: { e.expect(e.line(11) == "    " && e.caretLine == 11, "line 11: '\(e.line(11))' caret \(e.caretLine)") }),
@@ -124,7 +124,7 @@ extension SelfTestSteps {
             SelfTestStep(name: "toggle case", run: { EditorCommands.deleteLines(); e.caret(line: 10, column: 7); EditorCommands.toggleCase() }, check: { e.expect(e.line(10).contains("COUNTER.record"), "line 10: \(e.line(10))") }),
             SelfTestStep(name: "toggle case back", run: { EditorCommands.toggleCase() }, check: { e.expect(e.line(10).contains("counter.record"), "line 10: \(e.line(10))") }),
             SelfTestStep(name: "sort lines", run: { e.selectLines(10, 12); EditorCommands.sortLines() }, check: { e.expect(e.line(10).contains("engine"), "line 10: \(e.line(10))") }),
-            SelfTestStep(name: "undo sort", run: { e.view?.undoManager?.undo() }, check: { e.expect(e.line(10).contains("ride") && e.line(11).contains("engine"), "line 10: \(e.line(10))") }),
+            SelfTestStep(name: "undo sort", run: { e.undo() }, check: { e.expect(e.line(10).contains("ride") && e.line(11).contains("engine"), "line 10: \(e.line(10))") }),
         ]
     }
 

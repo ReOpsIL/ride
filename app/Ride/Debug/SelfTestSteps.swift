@@ -54,7 +54,7 @@ enum SelfTestSteps {
     }
 
     static func undoOneStep(e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> SelfTestStep {
-        SelfTestStep(name: "undo is one step", run: { e.view?.undoManager?.undo() }, check: {
+        SelfTestStep(name: "undo is one step", run: { e.undo() }, check: {
             e.expect(e.line(file.bodyLine) == scratch.body, "line \(file.bodyLine): \(e.line(file.bodyLine))")
         })
     }
@@ -151,7 +151,7 @@ enum SelfTestSteps {
             }, check: {
                 let dirty = state.activeBuffer?.isDirty == true
                 let undone: Bool = {
-                    e.view?.undoManager?.undo()
+                    e.undo()
                     return e.text == scratch.saved
                 }()
                 return e.expect(dirty && undone, "dirty \(dirty) text \(e.text.suffix(20))")

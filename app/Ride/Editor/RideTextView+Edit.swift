@@ -11,16 +11,23 @@ extension RideTextView {
 
     func applyChanges(_ changes: [TextChange]) {
         breakUndoCoalescing()
-        UndoStep.perform(undoManager) {
-            for change in changes.reversed() {
-                replaceText(in: change.range, with: change.text)
-            }
+        guard let undoSteps else {
+            applyEach(changes)
+            return
         }
-        breakUndoCoalescing()
+        undoSteps.batch {
+            applyEach(changes)
+        }
+    }
+
+    private func applyEach(_ changes: [TextChange]) {
+        for change in changes.reversed() {
+            replaceText(in: change.range, with: change.text)
+        }
     }
 
     override func breakUndoCoalescing() {
         super.breakUndoCoalescing()
-        UndoStep.close(undoManager)
+        undoSteps?.close()
     }
 }

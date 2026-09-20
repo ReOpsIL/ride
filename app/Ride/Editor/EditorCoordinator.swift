@@ -13,15 +13,11 @@ extension EditorPane {
             self.state = state
         }
 
-        func undoManager(for view: NSTextView) -> UndoManager? {
-            document.undoManager
-        }
-
         func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
             if document.isReadOnly {
                 return false
             }
-            UndoStep.open(document.undoManager)
+            document.undo.open()
             document.pending = PendingEdit(
                 range: affectedCharRange,
                 inserted: replacementString ?? "",
@@ -34,11 +30,11 @@ extension EditorPane {
             guard let view = notification.object as? RideTextView else {
                 return
             }
-            UndoStep.close(document.undoManager)
             let typed = document.pending
             document.pending = nil
             let pending = typed ?? replayedEdit(view)
             document.text = view.string
+            document.undo.close()
             document.isDirty = true
             state.noteEdit(view, in: document.id)
             host?.syncGutter()

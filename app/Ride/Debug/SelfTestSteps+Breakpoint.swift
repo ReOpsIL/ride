@@ -94,7 +94,7 @@ extension SelfTestSteps {
             }
             view.window?.makeFirstResponder(view)
             view.breakUndoCoalescing()
-            view.undoManager?.undo()
+            view.undo(nil)
         }, check: {
             e.expect(
                 marks(state) == [breakpointLine] && !lineText(state, aboveLine).isEmpty,

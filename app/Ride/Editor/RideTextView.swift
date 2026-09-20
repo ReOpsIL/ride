@@ -30,6 +30,7 @@ final class RideTextView: NSTextView {
         }
     }
     var hooks = EditorHooks()
+    weak var undoSteps: BufferUndo?
     var hoverArea: NSTrackingArea?
     var selectionStack: [NSRange] = []
     var folds = FoldSet()
@@ -73,7 +74,7 @@ final class RideTextView: NSTextView {
         textContainer?.heightTracksTextView = false
         textContainer?.lineFragmentPadding = 5
         autoresizingMask = [.width]
-        allowsUndo = true
+        allowsUndo = false
         isEditable = true
         isSelectable = true
         setAccessibilityLabel("Rust")

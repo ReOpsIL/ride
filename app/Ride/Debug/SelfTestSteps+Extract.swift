@@ -53,7 +53,7 @@ extension SelfTestSteps {
                     "selected '\(e.selectedText)' lines \(e.lines.filter { $0.contains("value") })"
                 )
             }),
-            SelfTestStep(name: "extract undo", until: { !e.lines.contains(declaration) }, timeout: 10, run: { e.view?.undoManager?.undo() }, check: {
+            SelfTestStep(name: "extract undo", until: { !e.lines.contains(declaration) }, timeout: 10, run: { e.undo() }, check: {
                 e.expect(!e.lines.contains(declaration), "declaration remains")
             }),
             SelfTestStep(name: "extract cleanup", run: {
