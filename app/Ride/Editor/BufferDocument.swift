@@ -31,7 +31,11 @@ final class BufferDocument: ObservableObject, Identifiable {
     var visionCounts: [String: Int] = [:]
     var visionGeneration = 0
     var autoSaveWork: DispatchWorkItem?
-    let undoManager = UndoStep.manager()
+    lazy var undo = BufferUndo(document: self)
+
+    var undoManager: UndoManager {
+        undo.manager
+    }
 
     var hasCompletions: Bool {
         language.hasCompletions
@@ -105,6 +109,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     func bind(_ textView: RideTextView) {
         let caret = caretByte
         let scroll = scrollLine
+        textView.undoSteps = undo
         textView.folds.removeAll()
         textView.selectionStack = []
         textView.string = text

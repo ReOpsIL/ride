@@ -124,6 +124,10 @@ struct SelfTestEditor {
         return (text as NSString).substring(with: view.selectedRange())
     }
 
+    func undo() {
+        view?.undo(nil)
+    }
+
     func focus() {
         guard let view else {
             return

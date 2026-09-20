@@ -13,7 +13,7 @@ extension SelfTestSteps {
                 let source = "fn unused_safe_delete() {}\n\nfn main() {}\n"
                 let full = NSRange(location: 0, length: (view.string as NSString).length)
                 view.insertText(source, replacementRange: full)
-                view.undoManager?.removeAllActions()
+                view.undoSteps?.manager.removeAllActions()
                 view.breakUndoCoalescing()
                 resyncSession(e: e)
             }, check: {
@@ -38,7 +38,7 @@ extension SelfTestSteps {
                 )
             }),
             SelfTestStep(name: "safe delete undo", until: { e.text.contains("fn unused_safe_delete()") }, timeout: 10, run: {
-                e.view?.undoManager?.undo()
+                e.undo()
             }, check: {
                 e.expect(e.text.contains("fn unused_safe_delete()"), "fn missing after undo")
             }),

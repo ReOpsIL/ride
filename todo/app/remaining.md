@@ -38,3 +38,7 @@
 
 - `RenameApply.applyBackground` commits through `host.bind(doc)`, which assigns `textView.string` while the document is bound; that rewrite bypasses the edit path and leaves every NSTextView undo record on the stack pointing at ranges of the old text. Route it through `EditorHostView.replaceText` (or drop the records) so a background rename stays undoable.
 - Format, Reload and Replace in Project still clear the undo stack (see the bound-host review item above); they now share `applyChanges`, so registering them as one step is a small change.
+
+# C++ live debug (2026-09-20, seen while gating the undo-record fix)
+
+- `cpp debug stops in Circle::area`, `cpp debug frames`, `cpp debug vector local` and `cpp debug step out` fail deterministically on this machine (`state.debug.isStopped` stays false, no frames), while the Rust debug steps of the same run pass and developer mode is enabled. Reproduced unchanged on `3cbfb52` with a base build, so it predates the undo-record fix: the debuggee built from the copied `samples/cpp-demo` never stops at the breakpoint. Bisect the C++ debug launch (`DebugProgram.located`, the CMake copy's binary path, the breakpoint path sent to lldb).

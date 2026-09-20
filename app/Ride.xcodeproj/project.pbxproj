@@ -377,6 +377,12 @@
 		E500000000000000000001A0 /* UndoStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000A0 /* UndoStep.swift */; };
 		E500000000000000000002A0 /* UndoStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000A0 /* UndoStep.swift */; };
 		E600000000000000000000A1 /* UndoStepTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E600000000000000000000A0 /* UndoStepTests.swift */; };
+		E600000000000000000000B1 /* UndoEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E600000000000000000000B0 /* UndoEditTests.swift */; };
+		E500000000000000000001B0 /* UndoEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000B0 /* UndoEdit.swift */; };
+		E500000000000000000002B0 /* UndoEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000B0 /* UndoEdit.swift */; };
+		E500000000000000000001C0 /* UndoRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000C0 /* UndoRecord.swift */; };
+		E500000000000000000001D0 /* BufferUndo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000D0 /* BufferUndo.swift */; };
+		E500000000000000000001E0 /* RideTextView+Undo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000E0 /* RideTextView+Undo.swift */; };
 		E50000000000000000000102 /* LineSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000002 /* LineSpan.swift */; };
 		E50000000000000000000103 /* CommentTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000003 /* CommentTokens.swift */; };
 		E50000000000000000000104 /* LineOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000004 /* LineOps.swift */; };
@@ -962,7 +968,12 @@
 		E40000000000000000000001 /* MenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuModel.swift"; sourceTree = "<group>"; };
 		E50000000000000000000001 /* TextChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextChange.swift"; sourceTree = "<group>"; };
 		E500000000000000000000A0 /* UndoStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoStep.swift"; sourceTree = "<group>"; };
+		E500000000000000000000B0 /* UndoEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoEdit.swift"; sourceTree = "<group>"; };
+		E500000000000000000000C0 /* UndoRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoRecord.swift"; sourceTree = "<group>"; };
+		E500000000000000000000D0 /* BufferUndo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BufferUndo.swift"; sourceTree = "<group>"; };
+		E500000000000000000000E0 /* RideTextView+Undo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Undo.swift"; sourceTree = "<group>"; };
 		E600000000000000000000A0 /* UndoStepTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoStepTests.swift"; sourceTree = "<group>"; };
+		E600000000000000000000B0 /* UndoEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoEditTests.swift"; sourceTree = "<group>"; };
 		E50000000000000000000002 /* LineSpan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineSpan.swift"; sourceTree = "<group>"; };
 		E50000000000000000000003 /* CommentTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentTokens.swift"; sourceTree = "<group>"; };
 		E50000000000000000000004 /* LineOps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOps.swift"; sourceTree = "<group>"; };
@@ -1153,6 +1164,7 @@
 				E60000000000000000000036 /* FindMatcherTests.swift */,
 				E60000000000000000000038 /* FoldSetTests.swift */,
 				E600000000000000000000A0 /* UndoStepTests.swift */,
+				E600000000000000000000B0 /* UndoEditTests.swift */,
 				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
 				E5000000000000000000000C /* EditingFixtures.swift */,
 				E5000000000000000000000D /* LineOpsTests.swift */,
@@ -1483,6 +1495,7 @@
 				E60000000000000000000128 /* GutterLines.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
+				E500000000000000000000E0 /* RideTextView+Undo.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000090A /* BufferLanguage.swift */,
 				R11000000000000000000010 /* BufferLanguage+Engine.swift */,
@@ -1745,6 +1758,9 @@
 			children = (
 				E50000000000000000000001 /* TextChange.swift */,
 				E500000000000000000000A0 /* UndoStep.swift */,
+				E500000000000000000000B0 /* UndoEdit.swift */,
+				E500000000000000000000C0 /* UndoRecord.swift */,
+				E500000000000000000000D0 /* BufferUndo.swift */,
 				E50000000000000000000002 /* LineSpan.swift */,
 				E50000000000000000000003 /* CommentTokens.swift */,
 				E50000000000000000000004 /* LineOps.swift */,
@@ -1965,6 +1981,8 @@
 				E50000000000000000000201 /* TextChange.swift in Sources */,
 				E500000000000000000002A0 /* UndoStep.swift in Sources */,
 				E600000000000000000000A1 /* UndoStepTests.swift in Sources */,
+				E600000000000000000000B1 /* UndoEditTests.swift in Sources */,
+				E500000000000000000002B0 /* UndoEdit.swift in Sources */,
 				E50000000000000000000202 /* LineSpan.swift in Sources */,
 				E50000000000000000000203 /* CommentTokens.swift in Sources */,
 				E50000000000000000000204 /* LineOps.swift in Sources */,
@@ -2374,6 +2392,10 @@
 				A00000000000000000000023 /* RootView.swift in Sources */,
 				E50000000000000000000101 /* TextChange.swift in Sources */,
 				E500000000000000000001A0 /* UndoStep.swift in Sources */,
+				E500000000000000000001B0 /* UndoEdit.swift in Sources */,
+				E500000000000000000001C0 /* UndoRecord.swift in Sources */,
+				E500000000000000000001D0 /* BufferUndo.swift in Sources */,
+				E500000000000000000001E0 /* RideTextView+Undo.swift in Sources */,
 				E50000000000000000000102 /* LineSpan.swift in Sources */,
 				E50000000000000000000103 /* CommentTokens.swift in Sources */,
 				E50000000000000000000104 /* LineOps.swift in Sources */,
