@@ -6,6 +6,7 @@ use crate::ffi::{
     SymbolAt, TextEdit,
 };
 
+use crate::intentions::MatchSite;
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::context::Context;
@@ -74,6 +75,9 @@ pub trait Syntax: Send + Sync {
         None
     }
     fn inline_spans(&self, _text: &str, _byte: u32) -> Option<InlineSpans> {
+        None
+    }
+    fn match_site(&self, _text: &str, _byte: u32) -> Option<MatchSite> {
         None
     }
 

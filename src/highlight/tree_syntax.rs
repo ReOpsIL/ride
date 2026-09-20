@@ -8,6 +8,7 @@ use crate::ffi::{
     TextEdit,
 };
 
+use crate::intentions::MatchSite;
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::context::Context;
@@ -196,6 +197,11 @@ impl Syntax for TreeSyntax {
     fn inline_spans(&self, text: &str, byte: u32) -> Option<InlineSpans> {
         let tree = self.tree.as_ref()?;
         crate::refactor::inline_spans(tree.root_node(), text, byte)
+    }
+
+    fn match_site(&self, text: &str, byte: u32) -> Option<MatchSite> {
+        let tree = self.tree.as_ref()?;
+        crate::intentions::match_site(tree.root_node(), text, byte)
     }
 
     fn statement_range(&self, _text: &str, byte: u32) -> Option<ByteRange> {

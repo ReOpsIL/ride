@@ -109,7 +109,7 @@ extension SelfTestSteps {
         ]
     }
 
-    private static func restore(name: String, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+    static func restore(name: String, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
         SelfTestStep(name: name, run: {
             guard let view = e.view else {
                 return
@@ -120,7 +120,7 @@ extension SelfTestSteps {
         }, check: { e.expect(e.text == scratch.saved, "not restored") })
     }
 
-    private static func resync(e: SelfTestEditor) {
+    static func resync(e: SelfTestEditor) {
         guard let view = e.view, let binding = view.hooks.binding?() else {
             return
         }

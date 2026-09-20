@@ -33,6 +33,7 @@ pub(crate) mod headers;
 mod identifier;
 pub(crate) mod include_graph;
 mod includes;
+mod intentions;
 mod lists;
 mod merge;
 mod paths;

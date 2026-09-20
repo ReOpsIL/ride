@@ -1,4 +1,5 @@
 use crate::ffi::{BracketPair, ByteRange, FoldRange, SymbolAt, TextEdit};
+use crate::intentions::MatchSite;
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::call_site::CallSite;
@@ -57,6 +58,10 @@ impl BufferSession {
 
     pub fn inline_spans(&self, byte: u32) -> Option<InlineSpans> {
         self.syntax.inline_spans(&self.replica, byte)
+    }
+
+    pub fn match_site(&self, byte: u32) -> Option<MatchSite> {
+        self.syntax.match_site(&self.replica, byte)
     }
 
     pub fn enclosing_ranges(&self, range: ByteRange) -> Vec<ByteRange> {

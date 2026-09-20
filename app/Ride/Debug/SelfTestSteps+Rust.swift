@@ -12,6 +12,7 @@ extension SelfTestSteps {
             + renameSteps(state: state, e: e)
             + rustExtract(e: e, scratch: scratch)
             + rustRefactor(e: e, scratch: scratch)
+            + rustIntentions(e: e, scratch: scratch)
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {

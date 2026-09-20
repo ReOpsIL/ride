@@ -18,6 +18,7 @@
 		D4000000000000000000008A /* DeveloperMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000008F /* DeveloperMode.swift */; };
 		D4000000000000000000009A /* SelfTestSteps+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000009F /* SelfTestSteps+Debug.swift */; };
 		D400000000000000000000AA /* GutterGlyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000AF /* GutterGlyphs.swift */; };
+		E60000000000000000000129 /* GutterLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000128 /* GutterLines.swift */; };
 		D400000000000000000000BA /* HighlightApply+Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000BF /* HighlightApply+Line.swift */; };
 		D400000000000000000000CA /* DebugCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000CF /* DebugCommands.swift */; };
 		D400000000000000000000DA /* Breakpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = D400000000000000000000DF /* Breakpoints.swift */; };
@@ -82,6 +83,7 @@
 		A0000000000000000000012C /* Underlines.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012B /* Underlines.swift */; };
 		A0000000000000000000012E /* SessionService+Paint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012D /* SessionService+Paint.swift */; };
 		A00000000000000000000130 /* ProblemsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000012F /* ProblemsPanel.swift */; };
+		E60000000000000000000125 /* ProblemFixes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000124 /* ProblemFixes.swift */; };
 		A00000000000000000000902 /* DemoLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000901 /* DemoLaunch.swift */; };
 		A00000000000000000000904 /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000903 /* DemoScene.swift */; };
 		F20000000000000000000002 /* DemoScene+Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DemoScene+Popups.swift */; };
@@ -229,6 +231,7 @@
 		D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000001 /* SelfTestSteps+Rust.swift */; };
 		D19200000000000000000102 /* SelfTestSteps+Extract.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000101 /* SelfTestSteps+Extract.swift */; };
 		D19200000000000000000202 /* SelfTestSteps+Refactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000201 /* SelfTestSteps+Refactor.swift */; };
+		E60000000000000000000127 /* SelfTestSteps+Intentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000126 /* SelfTestSteps+Intentions.swift */; };
 		D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000003 /* SelfTestSteps+Cpp.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
@@ -385,6 +388,9 @@
 		E6000000000000000000001B /* EditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001A /* EditorCommand.swift */; };
 		E6000000000000000000001D /* EditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001C /* EditorCommands.swift */; };
 		E6000000000000000000011D /* EditorCommands+Refactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000011C /* EditorCommands+Refactor.swift */; };
+		E60000000000000000000123 /* IntentionGutter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000122 /* IntentionGutter.swift */; };
+		E60000000000000000000121 /* IntentionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000120 /* IntentionMenu.swift */; };
+		E6000000000000000000011F /* IntentionActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000011E /* IntentionActions.swift */; };
 		E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000001E /* EditorCommands+Selection.swift */; };
 		E60000000000000000000021 /* SurroundWith.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000020 /* SurroundWith.swift */; };
 		E6000000000000000000003D /* GenerateMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000003C /* GenerateMenu.swift */; };
@@ -525,6 +531,7 @@
 		D4000000000000000000008F /* DeveloperMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeveloperMode.swift"; sourceTree = "<group>"; };
 		D4000000000000000000009F /* SelfTestSteps+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Debug.swift"; sourceTree = "<group>"; };
 		D400000000000000000000AF /* GutterGlyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GutterGlyphs.swift"; sourceTree = "<group>"; };
+		E60000000000000000000128 /* GutterLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GutterLines.swift"; sourceTree = "<group>"; };
 		D400000000000000000000BF /* HighlightApply+Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HighlightApply+Line.swift"; sourceTree = "<group>"; };
 		D400000000000000000000CF /* DebugCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugCommands.swift"; sourceTree = "<group>"; };
 		D400000000000000000000DF /* Breakpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Breakpoints.swift"; sourceTree = "<group>"; };
@@ -567,6 +574,7 @@
 		A0000000000000000000012B /* Underlines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Underlines.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012D /* SessionService+Paint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Paint.swift"; sourceTree = "<group>"; };
 		A0000000000000000000012F /* ProblemsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProblemsPanel.swift"; sourceTree = "<group>"; };
+		E60000000000000000000124 /* ProblemFixes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProblemFixes.swift"; sourceTree = "<group>"; };
 		A00000000000000000000901 /* DemoLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoLaunch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000903 /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene.swift"; sourceTree = "<group>"; };
 		F20000000000000000000001 /* DemoScene+Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Popups.swift"; sourceTree = "<group>"; };
@@ -779,6 +787,7 @@
 		D19200000000000000000001 /* SelfTestSteps+Rust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rust.swift"; sourceTree = "<group>"; };
 		D19200000000000000000101 /* SelfTestSteps+Extract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Extract.swift"; sourceTree = "<group>"; };
 		D19200000000000000000201 /* SelfTestSteps+Refactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Refactor.swift"; sourceTree = "<group>"; };
+		E60000000000000000000126 /* SelfTestSteps+Intentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Intentions.swift"; sourceTree = "<group>"; };
 		D19200000000000000000003 /* SelfTestSteps+Cpp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Cpp.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
@@ -903,6 +912,9 @@
 		E6000000000000000000001A /* EditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommand.swift"; sourceTree = "<group>"; };
 		E6000000000000000000001C /* EditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands.swift"; sourceTree = "<group>"; };
 		E6000000000000000000011C /* EditorCommands+Refactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands+Refactor.swift"; sourceTree = "<group>"; };
+		E60000000000000000000122 /* IntentionGutter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntentionGutter.swift"; sourceTree = "<group>"; };
+		E60000000000000000000120 /* IntentionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntentionMenu.swift"; sourceTree = "<group>"; };
+		E6000000000000000000011E /* IntentionActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntentionActions.swift"; sourceTree = "<group>"; };
 		E6000000000000000000001E /* EditorCommands+Selection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorCommands+Selection.swift"; sourceTree = "<group>"; };
 		E60000000000000000000020 /* SurroundWith.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurroundWith.swift"; sourceTree = "<group>"; };
 		E6000000000000000000003C /* GenerateMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenerateMenu.swift"; sourceTree = "<group>"; };
@@ -1326,6 +1338,7 @@
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
 				A0000000000000000000011E /* FunctionKeys.swift */,
 				D400000000000000000000AF /* GutterGlyphs.swift */,
+				E60000000000000000000128 /* GutterLines.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
@@ -1493,6 +1506,7 @@
 			isa = PBXGroup;
 			children = (
 				A0000000000000000000012F /* ProblemsPanel.swift */,
+				E60000000000000000000124 /* ProblemFixes.swift */,
 				A00000000000000000000185 /* DiagnosticStore.swift */,
 				FEE0000000000000000000A5 /* DiagnosticDocLink.swift */,
 				FEE0000000000000000000A6 /* ClangTidyParse.swift */,
@@ -1526,6 +1540,7 @@
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000101 /* SelfTestSteps+Extract.swift */,
 				D19200000000000000000201 /* SelfTestSteps+Refactor.swift */,
+				E60000000000000000000126 /* SelfTestSteps+Intentions.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
 				FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
@@ -1584,6 +1599,9 @@
 				E6000000000000000000001A /* EditorCommand.swift */,
 				E6000000000000000000001C /* EditorCommands.swift */,
 				E6000000000000000000011C /* EditorCommands+Refactor.swift */,
+				E60000000000000000000122 /* IntentionGutter.swift */,
+				E60000000000000000000120 /* IntentionMenu.swift */,
+				E6000000000000000000011E /* IntentionActions.swift */,
 				E6000000000000000000001E /* EditorCommands+Selection.swift */,
 				E60000000000000000000020 /* SurroundWith.swift */,
 				E6000000000000000000003C /* GenerateMenu.swift */,
@@ -1946,6 +1964,7 @@
 				D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */,
 				D19200000000000000000102 /* SelfTestSteps+Extract.swift in Sources */,
 				D19200000000000000000202 /* SelfTestSteps+Refactor.swift in Sources */,
+				E60000000000000000000127 /* SelfTestSteps+Intentions.swift in Sources */,
 				D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
@@ -1966,6 +1985,9 @@
 				E6000000000000000000001B /* EditorCommand.swift in Sources */,
 				E6000000000000000000001D /* EditorCommands.swift in Sources */,
 				E6000000000000000000011D /* EditorCommands+Refactor.swift in Sources */,
+				E60000000000000000000123 /* IntentionGutter.swift in Sources */,
+				E60000000000000000000121 /* IntentionMenu.swift in Sources */,
+				E6000000000000000000011F /* IntentionActions.swift in Sources */,
 				E6000000000000000000001F /* EditorCommands+Selection.swift in Sources */,
 				E60000000000000000000021 /* SurroundWith.swift in Sources */,
 				E6000000000000000000003D /* GenerateMenu.swift in Sources */,
@@ -2031,6 +2053,7 @@
 				A0000000000000000000012C /* Underlines.swift in Sources */,
 				A0000000000000000000012E /* SessionService+Paint.swift in Sources */,
 				A00000000000000000000130 /* ProblemsPanel.swift in Sources */,
+				E60000000000000000000125 /* ProblemFixes.swift in Sources */,
 				A00000000000000000000186 /* DiagnosticStore.swift in Sources */,
 				FEE0000000000000000000B1 /* AppState+LiveCheck.swift in Sources */,
 				FEE0000000000000000000B2 /* CheckService+Live.swift in Sources */,
@@ -2108,6 +2131,7 @@
 				D4000000000000000000008A /* DeveloperMode.swift in Sources */,
 				D4000000000000000000009A /* SelfTestSteps+Debug.swift in Sources */,
 				D400000000000000000000AA /* GutterGlyphs.swift in Sources */,
+				E60000000000000000000129 /* GutterLines.swift in Sources */,
 				D400000000000000000000BA /* HighlightApply+Line.swift in Sources */,
 				D400000000000000000000CA /* DebugCommands.swift in Sources */,
 				D400000000000000000000DA /* Breakpoints.swift in Sources */,
