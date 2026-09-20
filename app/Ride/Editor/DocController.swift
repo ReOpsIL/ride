@@ -43,10 +43,10 @@ final class DocController {
 
     static func showCompletion(in view: RideTextView, name: String? = nil) {
         let popup = CompletionSession.shared.popup
-        let hit = name.flatMap { popup.hitNamed($0) }
+        let item = name.flatMap { popup.hitNamed($0) }
             ?? name.flatMap { n in CompletionSession.shared.list?.base.first { $0.name == n } }
             ?? popup.selectedHit
-        guard let hit else {
+        guard let hit = item?.hit else {
             return
         }
         EditorPanes.shared.host(for: view)?.docs.show(hit: hit, in: view)

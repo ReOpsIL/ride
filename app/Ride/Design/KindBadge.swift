@@ -73,8 +73,11 @@ final class KindBadgeView: NSView {
     }
 
     func fill(_ kind: ItemKind) {
-        let color = KindStyle.color(kind)
-        label.stringValue = KindStyle.letter(kind)
+        fill(text: KindStyle.letter(kind), color: KindStyle.color(kind))
+    }
+
+    func fill(text: String, color: NSColor) {
+        label.stringValue = text
         label.textColor = color
         layer?.backgroundColor = color.withAlphaComponent(0.18).cgColor
     }

@@ -12,6 +12,8 @@ struct PreferencesView: View {
                 .tabItem { Label("Editor", systemImage: "text.alignleft") }
             ToolsSettings(bind: bind)
                 .tabItem { Label("Tools", systemImage: "hammer") }
+            AISettingsPane(bind: bind)
+                .tabItem { Label("AI", systemImage: "sparkles") }
         }
         .frame(width: 460)
         .frame(minHeight: 300)

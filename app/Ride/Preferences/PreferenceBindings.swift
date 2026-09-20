@@ -17,6 +17,13 @@ struct PreferenceBindings {
         )
     }
 
+    func string(_ key: WritableKeyPath<Preferences, String>) -> Binding<String> {
+        Binding(
+            get: { state.prefs[keyPath: key] },
+            set: { value in state.updatePrefs { $0[keyPath: key] = value } }
+        )
+    }
+
     var theme: Binding<String> {
         Binding(
             get: { state.prefs.theme },

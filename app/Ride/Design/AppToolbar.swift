@@ -12,7 +12,7 @@ struct AppToolbar: ToolbarContent {
             } label: {
                 Image(systemName: "sidebar.left")
             }
-            .help("Toggle Sidebar (⌃⌘S)")
+            .help("Toggle Sidebar (⌘1)")
             .accessibilityLabel("Toggle Sidebar")
         }
         if #available(macOS 26.0, *) {
@@ -48,7 +48,7 @@ struct AppToolbar: ToolbarContent {
             } label: {
                 Image(systemName: "exclamationmark.triangle")
             }
-            .help("Problems (⇧⌘M)")
+            .help("Problems (⌘6)")
             .accessibilityLabel("Problems")
             Button {
                 state.toggleQuickOpen()

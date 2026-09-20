@@ -63,7 +63,9 @@ extension EditorPane {
             let session = CompletionSession.shared
             session.textChanged(document: document, view: view, state: state, range: pending.range, inserted: pending.inserted)
             if session.editSource == .user {
-                SignatureHelpController.shared.textChanged(document: document, view: view, inserted: pending.inserted)
+                if state.prefs.signatureHelp {
+                    SignatureHelpController.shared.textChanged(document: document, view: view, inserted: pending.inserted)
+                }
                 CheatSheetController.shared.textChanged(document: document, view: view)
             }
         }

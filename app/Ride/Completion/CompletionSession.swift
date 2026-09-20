@@ -39,6 +39,7 @@ final class CompletionSession {
 
     func reset() {
         hide()
+        AICompletionSource.shared.cancel()
         snippet = nil
         SignatureHelpController.shared.hide()
         CheatSheetController.shared.close()
@@ -56,19 +57,17 @@ final class CompletionSession {
         case .user:
             keepSnippet(range: range, length: length)
         }
-        guard document.hasCompletions, state.prefs.completions else {
-            hide()
-            return
-        }
+        AICompletionSource.shared.textChanged(document: document, view: view, state: state, inserted: inserted)
+        let engineOn = document.hasCompletions && state.prefs.completions
         let line = CompletionList.lineBeforeCaret(view)
         if inserted.isEmpty {
-            deleted(document: document, view: view, state: state, line: line)
+            deleted(document: document, view: view, state: state, line: line, engineOn: engineOn)
             return
         }
         if inserted.allSatisfy(CompletionTriggerGate.isIdentifierChar), narrow(in: view) {
             return
         }
-        guard CompletionTriggerGate.trigger(language: document.language, line: line, inserted: inserted) != nil else {
+        guard engineOn, CompletionTriggerGate.trigger(language: document.language, line: line, inserted: inserted) != nil else {
             hide()
             return
         }
@@ -76,10 +75,25 @@ final class CompletionSession {
     }
 
     func trigger(view: RideTextView) {
-        guard let binding = view.hooks.binding?(), binding.document.hasCompletions else {
+        AICompletionSource.shared.trigger(view: view)
+        guard let binding = view.hooks.binding?(), binding.document.hasCompletions, binding.state.prefs.completions else {
             return
         }
         schedule(document: binding.document, view: view, state: binding.state)
+    }
+
+    /// Adds AI suggestions to the visible list, or shows a list of just them. Returns whether the popup is showing them.
+    @discardableResult
+    func merge(ai: [AISuggestion], anchor: Int, in view: RideTextView) -> Bool {
+        let caret = view.selectedRange()
+        guard caret.length == 0, caret.location >= anchor, view.window?.firstResponder === view,
+              !CompletionList.typed(in: view, from: anchor).contains("\n")
+        else {
+            return false
+        }
+        let current = popup.isVisible && popup.textView === view ? list : nil
+        let next = current?.merging(ai: ai, anchor: anchor) ?? CompletionList(ai: ai, anchor: anchor)
+        return present(next, in: view, keepSelection: current != nil)
     }
 
     func schedule(document: BufferDocument, view: RideTextView, state: AppState) {
@@ -117,14 +131,14 @@ final class CompletionSession {
         }
     }
 
-    private func deleted(document: BufferDocument, view: RideTextView, state: AppState, line: String) {
+    private func deleted(document: BufferDocument, view: RideTextView, state: AppState, line: String, engineOn: Bool) {
         guard popup.isVisible else {
             return
         }
         if narrow(in: view) {
             return
         }
-        guard let last = line.last,
+        guard engineOn, let last = line.last,
               CompletionTriggerGate.trigger(language: document.language, line: line, inserted: String(last)) != nil
         else {
             hide()
@@ -143,7 +157,7 @@ final class CompletionSession {
     @discardableResult
     private func present(_ list: CompletionList, in view: RideTextView, keepSelection: Bool) -> Bool {
         let prefix = CompletionList.typed(in: view, from: list.replaceUtf16)
-        let hits = list.narrowed(prefix)
+        let hits = list.narrowed(prefix, in: view)
         guard !hits.isEmpty else {
             hide()
             return false
@@ -168,7 +182,8 @@ final class CompletionSession {
             hide()
             return
         }
-        present(CompletionList(response: resp, text: view.string), in: view, keepSelection: false)
+        let kept = popup.isVisible && popup.textView === view ? list : nil
+        present(CompletionList(response: resp, text: view.string, ai: kept?.ai ?? [], aiAnchor: kept?.aiAnchor), in: view, keepSelection: false)
         if resp.truncated, view.selectedRange().location != caret, let document = request.document {
             schedule(document: document, view: view, state: state)
         }

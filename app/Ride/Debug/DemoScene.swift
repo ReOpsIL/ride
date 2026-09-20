@@ -15,6 +15,7 @@ enum DemoScene {
 
     private static func prepare(_ state: AppState) {
         state.prefs.autoSave = false
+        state.prefs.aiComplete = false
         state.persistLayout = false
         DemoLaunch.activate()
         guard let theme = DemoLaunch.theme else {

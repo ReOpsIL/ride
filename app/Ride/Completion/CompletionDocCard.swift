@@ -51,7 +51,7 @@ final class CompletionDocCard: NSView {
         nil
     }
 
-    func fill(_ hit: CompletionHit?) {
+    func fill(_ hit: CompletionItem?) {
         let chrome = ThemeStore.shared.chrome
         separator.layer?.backgroundColor = chrome.border.cgColor
         signature.textColor = chrome.textPrimary

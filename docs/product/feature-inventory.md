@@ -19,6 +19,7 @@ What Ride can do today for building, running, testing and debugging native code,
 | Build command | `cargo build -p <pkg> --bin <name>` with `--message-format=json-diagnostic-rendered-ansi` | `cmake --build build/<profile> --target <name>` or `make <target>` | live (Rust), built (C++) | Q3, Q4b |
 | Build diagnostics into Problems | rendered cargo messages | clang text output parsed with the build's base directory | live (Rust), built (C++) | `src/engine/build_output.rs`, Q4b |
 | Whole-project C check | | `clang -fsyntax-only` over the compile database on ⇧⌥⌘B; a header save rechecks its includers | live | 1.1-6b |
+| New Project… (⇧⌘N) | `Cargo.toml` + `src/main.rs` or `src/lib.rs` | `CMakeLists.txt` (exports `compile_commands.json`) or `Makefile`, plus `src/main.c` / `src/main.cpp` | built | `ProjectScaffold.swift`, `NewProjectSheet.swift`; the new folder opens as the workspace with its main file |
 | Reload on manifest change | `Cargo.toml`, `Cargo.lock` | `CMakeLists.txt`, `Makefile`, `compile_commands.json` at the root or `build/` | built | `ManifestWatch.swift` |
 
 ## 2. Run

@@ -64,6 +64,7 @@ final class AppState: ObservableObject {
     @Published var notice: String?
     @Published var noticeAction: (title: String, run: () -> Void)?
     @Published var showToolsSheet = false
+    @Published var showNewProjectSheet = false
     @Published var showRunConfigSheet = false
     @Published var showRenamePreview = false
     let renamePreview = RenamePreviewModel()
@@ -129,6 +130,9 @@ final class AppState: ObservableObject {
             self?.syncMenu()
         }
         runOutput.onChange = { [weak self] in
+            self?.syncMenu()
+        }
+        AIAssistant.shared.onPanelChange = { [weak self] in
             self?.syncMenu()
         }
         observeDebug()

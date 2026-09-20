@@ -24,6 +24,13 @@ struct Preferences: Codable, Equatable {
     var testsHeight: Double
     var debugHeight: Double
     var previewWidth: Double
+    var signatureHelp: Bool
+    var hoverDocs: Bool
+    var aiComplete: Bool
+    var aiProvider: String
+    var aiModel: String
+    var aiAuth: String
+    var aiContext: String
 
     static let defaults = Preferences(
         theme: "dark",
@@ -74,7 +81,14 @@ struct Preferences: Codable, Equatable {
         previewWidth: Double = 460,
         cheatSheet: Bool = true,
         softWrap: Bool = true,
-        askMissingTools: Bool = true
+        askMissingTools: Bool = true,
+        signatureHelp: Bool = true,
+        hoverDocs: Bool = true,
+        aiComplete: Bool = false,
+        aiProvider: String = "anthropic",
+        aiModel: String = "",
+        aiAuth: String = "login",
+        aiContext: String = "function"
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -99,6 +113,13 @@ struct Preferences: Codable, Equatable {
         self.cheatSheet = cheatSheet
         self.softWrap = softWrap
         self.askMissingTools = askMissingTools
+        self.signatureHelp = signatureHelp
+        self.hoverDocs = hoverDocs
+        self.aiComplete = aiComplete
+        self.aiProvider = aiProvider
+        self.aiModel = aiModel
+        self.aiAuth = aiAuth
+        self.aiContext = aiContext
     }
 
     init(from decoder: Decoder) throws {
@@ -127,6 +148,13 @@ struct Preferences: Codable, Equatable {
         testsHeight = try c.decodeIfPresent(Double.self, forKey: .testsHeight) ?? d.testsHeight
         debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
+        signatureHelp = try c.decodeIfPresent(Bool.self, forKey: .signatureHelp) ?? d.signatureHelp
+        hoverDocs = try c.decodeIfPresent(Bool.self, forKey: .hoverDocs) ?? d.hoverDocs
+        aiComplete = try c.decodeIfPresent(Bool.self, forKey: .aiComplete) ?? d.aiComplete
+        aiProvider = try c.decodeIfPresent(String.self, forKey: .aiProvider) ?? d.aiProvider
+        aiModel = try c.decodeIfPresent(String.self, forKey: .aiModel) ?? d.aiModel
+        aiAuth = try c.decodeIfPresent(String.self, forKey: .aiAuth) ?? d.aiAuth
+        aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
     }
 
     var clamped: Preferences {
@@ -145,31 +173,5 @@ struct Preferences: Codable, Equatable {
             next.theme = "dark"
         }
         return next
-    }
-}
-
-enum PreferencesStore {
-    static func load() -> Preferences {
-        guard let data = try? Data(contentsOf: fileURL()),
-              let decoded = try? JSONDecoder().decode(Preferences.self, from: data)
-        else {
-            return .defaults
-        }
-        return decoded.clamped
-    }
-
-    static func save(_ prefs: Preferences) {
-        let dir = fileURL().deletingLastPathComponent()
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let enc = JSONEncoder()
-        enc.outputFormatting = [.prettyPrinted, .sortedKeys]
-        if let data = try? enc.encode(prefs.clamped) {
-            try? data.write(to: fileURL(), options: .atomic)
-        }
-    }
-
-    static func fileURL() -> URL {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return base.appendingPathComponent("Ride/preferences.json")
     }
 }

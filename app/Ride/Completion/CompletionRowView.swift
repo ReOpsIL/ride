@@ -44,15 +44,19 @@ final class CompletionRowView: NSTableCellView {
         nil
     }
 
-    func fill(_ hit: CompletionHit, prefix: String) {
+    func fill(_ item: CompletionItem, prefix: String) {
         let chrome = ThemeStore.shared.chrome
-        badge.fill(hit.itemKind)
-        name.attributedStringValue = CompletionRowStyle.name(hit.name, prefix: prefix, chrome: chrome, deprecated: hit.deprecated)
-        detail.stringValue = CompletionRowStyle.detail(hit)
+        if let kind = item.itemKind {
+            badge.fill(kind)
+        } else {
+            badge.fill(text: "AI", color: chrome.accent)
+        }
+        name.attributedStringValue = CompletionRowStyle.name(item.name, prefix: prefix, chrome: chrome, deprecated: item.deprecated)
+        detail.stringValue = CompletionRowStyle.detail(item)
         detail.textColor = chrome.textSecondary
-        useTag.isHidden = hit.importPath == nil
+        useTag.isHidden = item.importPath == nil
         useTag.apply(chrome)
-        origin.stringValue = CompletionRowStyle.origin(hit)
+        origin.stringValue = CompletionRowStyle.origin(item)
         origin.textColor = chrome.textTertiary
     }
 }

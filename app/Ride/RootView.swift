@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 struct RootView: View {
+    @ObservedObject private var assistant = AIAssistant.shared
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
 
@@ -24,6 +25,12 @@ struct RootView: View {
         .toolbarBackground(.visible, for: .windowToolbar)
         .sheet(isPresented: $state.showToolsSheet) {
             ToolsInstallView().environmentObject(state)
+        }
+        .sheet(isPresented: $state.showNewProjectSheet) {
+            NewProjectSheet().environmentObject(state)
+        }
+        .sheet(isPresented: $assistant.showPrompt) {
+            AIAskSheet(assistant: assistant)
         }
         .sheet(isPresented: $state.showRunConfigSheet) {
             RunConfigSheet().environmentObject(state)
@@ -77,6 +84,7 @@ struct DetailColumn: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
     @ObservedObject private var debugPanel = DebugPanelModel.shared
+    @ObservedObject private var assistant = AIAssistant.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -111,6 +119,10 @@ struct DetailColumn: View {
                 if state.showUsages {
                     UsagesPanel(model: state.usages)
                         .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)
+                }
+                if assistant.showPanel {
+                    AIAnswerPanel(assistant: assistant)
+                        .frame(minHeight: 80, idealHeight: 260, maxHeight: 600)
                 }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)

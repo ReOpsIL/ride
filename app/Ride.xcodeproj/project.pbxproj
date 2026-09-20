@@ -141,6 +141,36 @@
 		A0000000000000000000090F /* RangeShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000090D /* RangeShift.swift */; };
 		A00000000000000000000911 /* RangeShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000910 /* RangeShiftTests.swift */; };
 		A0000000000000000000002C /* EditorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* EditorPane.swift */; };
+		AA0000000000000000000023 /* AISuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000022 /* AISuggestion.swift */; };
+		AA0000000000000000000024 /* AISuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000022 /* AISuggestion.swift */; };
+		AA0000000000000000000026 /* AIPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AIPrompt.swift */; };
+		AA0000000000000000000027 /* AIPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AIPrompt.swift */; };
+		AA0000000000000000000029 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000028 /* Keychain.swift */; };
+		AA000000000000000000002B /* AnthropicLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002A /* AnthropicLogin.swift */; };
+		AA000000000000000000002D /* AIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002C /* AIClient.swift */; };
+		AA000000000000000000002F /* AnthropicMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002E /* AnthropicMessages.swift */; };
+		AA0000000000000000000031 /* OpenRouterChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000030 /* OpenRouterChat.swift */; };
+		AA0000000000000000000033 /* AIContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000032 /* AIContextBuilder.swift */; };
+		AA0000000000000000000035 /* AICompletionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000034 /* AICompletionSource.swift */; };
+		AA0000000000000000000037 /* CompletionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000036 /* CompletionItem.swift */; };
+		AA0000000000000000000042 /* PreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000041 /* PreferencesStore.swift */; };
+		AA0000000000000000000044 /* AISettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000043 /* AISettingsPane.swift */; };
+		AA0000000000000000000081 /* ProjectScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000080 /* ProjectScaffold.swift */; };
+		AA0000000000000000000082 /* ProjectScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000080 /* ProjectScaffold.swift */; };
+		AA0000000000000000000084 /* AppState+NewProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000083 /* AppState+NewProject.swift */; };
+		AA0000000000000000000086 /* NewProjectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000085 /* NewProjectSheet.swift */; };
+		AA0000000000000000000088 /* ProjectScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000087 /* ProjectScaffoldTests.swift */; };
+		AA0000000000000000000046 /* AIPromptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000045 /* AIPromptTests.swift */; };
+		AA0000000000000000000062 /* AICommentPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000061 /* AICommentPrompt.swift */; };
+		AA0000000000000000000063 /* AICommentPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000061 /* AICommentPrompt.swift */; };
+		AA0000000000000000000065 /* AIAnswerText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000064 /* AIAnswerText.swift */; };
+		AA0000000000000000000066 /* AIAnswerText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000064 /* AIAnswerText.swift */; };
+		AA0000000000000000000068 /* AIActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000067 /* AIActivity.swift */; };
+		AA000000000000000000006A /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000069 /* AIAssistant.swift */; };
+		AA000000000000000000006C /* AIAskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006B /* AIAskSheet.swift */; };
+		AA000000000000000000006E /* AIAnswerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006D /* AIAnswerPanel.swift */; };
+		AA0000000000000000000070 /* AIStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000006F /* AIStatusView.swift */; };
+		AA0000000000000000000072 /* AICommentPromptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000071 /* AICommentPromptTests.swift */; };
 		BF0000000000000000000011 /* EditorHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000010 /* EditorHostView.swift */; };
 		BF0000000000000000000017 /* Confirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000016 /* Confirm.swift */; };
 		BF0000000000000000000015 /* Buffers+SavePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0000000000000000000014 /* Buffers+SavePanel.swift */; };
@@ -593,6 +623,31 @@
 		A0000000000000000000090D /* RangeShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShift.swift; sourceTree = "<group>"; };
 		A00000000000000000000910 /* RangeShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeShiftTests.swift; sourceTree = "<group>"; };
 		A0000000000000000000001C /* EditorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPane.swift; sourceTree = "<group>"; };
+		AA0000000000000000000022 /* AISuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AISuggestion.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000025 /* AIPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIPrompt.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000028 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Keychain.swift"; sourceTree = "<group>"; };
+		AA000000000000000000002A /* AnthropicLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnthropicLogin.swift"; sourceTree = "<group>"; };
+		AA000000000000000000002C /* AIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIClient.swift"; sourceTree = "<group>"; };
+		AA000000000000000000002E /* AnthropicMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnthropicMessages.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000030 /* OpenRouterChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenRouterChat.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000032 /* AIContextBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIContextBuilder.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000034 /* AICompletionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AICompletionSource.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000036 /* CompletionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionItem.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000041 /* PreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferencesStore.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000043 /* AISettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AISettingsPane.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000080 /* ProjectScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectScaffold.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000083 /* AppState+NewProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+NewProject.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000085 /* NewProjectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewProjectSheet.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000087 /* ProjectScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectScaffoldTests.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000045 /* AIPromptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIPromptTests.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000061 /* AICommentPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AICommentPrompt.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000064 /* AIAnswerText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIAnswerText.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000067 /* AIActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIActivity.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000069 /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIAssistant.swift"; sourceTree = "<group>"; };
+		AA000000000000000000006B /* AIAskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIAskSheet.swift"; sourceTree = "<group>"; };
+		AA000000000000000000006D /* AIAnswerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIAnswerPanel.swift"; sourceTree = "<group>"; };
+		AA000000000000000000006F /* AIStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AIStatusView.swift"; sourceTree = "<group>"; };
+		AA0000000000000000000071 /* AICommentPromptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AICommentPromptTests.swift"; sourceTree = "<group>"; };
 		BF0000000000000000000010 /* EditorHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHostView.swift; sourceTree = "<group>"; };
 		BF0000000000000000000016 /* Confirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Confirm.swift"; sourceTree = "<group>"; };
 		BF0000000000000000000014 /* Buffers+SavePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Buffers+SavePanel.swift"; sourceTree = "<group>"; };
@@ -1000,6 +1055,9 @@
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
 				BF0000000000000000000004 /* BufferTextUndoTests.swift */,
+				AA0000000000000000000045 /* AIPromptTests.swift */,
+				AA0000000000000000000087 /* ProjectScaffoldTests.swift */,
+				AA0000000000000000000071 /* AICommentPromptTests.swift */,
 				F13000000000000000000007 /* UsageModelTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
@@ -1071,6 +1129,7 @@
 				A00000000000000000000059 /* Engine */,
 				A0000000000000000000005B /* Outline */,
 				A0000000000000000000005C /* Completion */,
+				AA0000000000000000000021 /* AI */,
 				EA0000000000000000000007 /* Tools */,
 				E6000000000000000000003A /* Navigate */,
 				E6000000000000000000003B /* Menus */,
@@ -1096,6 +1155,7 @@
 			isa = PBXGroup;
 			children = (
 				B0E018E55E618A879AC6440A /* IndexStatusView.swift */,
+				AA000000000000000000006F /* AIStatusView.swift */,
 				B084975AB10551D4A79998C2 /* StatusSegment.swift */,
 				A00000000000000000000132 /* CheckStatusView.swift */,
 				A00000000000000000000014 /* StatusBarView.swift */,
@@ -1199,6 +1259,9 @@
 			children = (
 				P20000000000000000000001 /* TargetRows.swift */,
 				P20000000000000000000003 /* ProjectModelStore.swift */,
+				AA0000000000000000000085 /* NewProjectSheet.swift */,
+				AA0000000000000000000083 /* AppState+NewProject.swift */,
+				AA0000000000000000000080 /* ProjectScaffold.swift */,
 				P20000000000000000000005 /* TargetsPanel.swift */,
 				Q3000000000000000000000F /* ProjectModelStore+Run.swift */,
 				Q30000000000000000000011 /* TargetPicker.swift */,
@@ -1319,6 +1382,8 @@
 				D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */,
 				D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */,
 				A00000000000000000000064 /* Preferences.swift */,
+				AA0000000000000000000043 /* AISettingsPane.swift */,
+				AA0000000000000000000041 /* PreferencesStore.swift */,
 				A00000000000000000000065 /* PreferencesView.swift */,
 			);
 			path = Preferences;
@@ -1368,6 +1433,28 @@
 			path = Outline;
 			sourceTree = "<group>";
 		};
+		AA0000000000000000000021 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000034 /* AICompletionSource.swift */,
+				AA0000000000000000000032 /* AIContextBuilder.swift */,
+				AA0000000000000000000030 /* OpenRouterChat.swift */,
+				AA000000000000000000002E /* AnthropicMessages.swift */,
+				AA000000000000000000002C /* AIClient.swift */,
+				AA000000000000000000002A /* AnthropicLogin.swift */,
+				AA0000000000000000000028 /* Keychain.swift */,
+				AA0000000000000000000025 /* AIPrompt.swift */,
+				AA0000000000000000000022 /* AISuggestion.swift */,
+				AA000000000000000000006D /* AIAnswerPanel.swift */,
+				AA000000000000000000006B /* AIAskSheet.swift */,
+				AA0000000000000000000069 /* AIAssistant.swift */,
+				AA0000000000000000000067 /* AIActivity.swift */,
+				AA0000000000000000000064 /* AIAnswerText.swift */,
+				AA0000000000000000000061 /* AICommentPrompt.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
 		A0000000000000000000005C /* Completion */ = {
 			isa = PBXGroup;
 			children = (
@@ -1390,6 +1477,7 @@
 				A0000000000000000000009A /* CompletionSession.swift */,
 				A0000000000000000000009B /* CatalogPath.swift */,
 				A000000000000000000000CF /* CompletionGate.swift */,
+				AA0000000000000000000036 /* CompletionItem.swift */,
 				A000000000000000000000D3 /* CompletionPlacement.swift */,
 				A000000000000000000000D5 /* CompletionLifecycle.swift */,
 				A000000000000000000000E3 /* CompletionRowStyle.swift */,
@@ -1788,6 +1876,14 @@
 				B1000000000000000000000D /* LineIndex.swift in Sources */,
 				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
 				A000000000000000000000D1 /* CompletionGate.swift in Sources */,
+				AA0000000000000000000072 /* AICommentPromptTests.swift in Sources */,
+				AA0000000000000000000066 /* AIAnswerText.swift in Sources */,
+				AA0000000000000000000063 /* AICommentPrompt.swift in Sources */,
+				AA0000000000000000000046 /* AIPromptTests.swift in Sources */,
+				AA0000000000000000000082 /* ProjectScaffold.swift in Sources */,
+				AA0000000000000000000088 /* ProjectScaffoldTests.swift in Sources */,
+				AA0000000000000000000027 /* AIPrompt.swift in Sources */,
+				AA0000000000000000000024 /* AISuggestion.swift in Sources */,
 				S10000000000000000000022 /* UpdateController.swift in Sources */,
 				S10000000000000000000026 /* UpdateControllerTests.swift in Sources */,
 			);
@@ -2049,6 +2145,9 @@
 				A00000000000000000000181 /* TreeModel.swift in Sources */,
 				P20000000000000000000002 /* TargetRows.swift in Sources */,
 				P20000000000000000000004 /* ProjectModelStore.swift in Sources */,
+				AA0000000000000000000081 /* ProjectScaffold.swift in Sources */,
+				AA0000000000000000000084 /* AppState+NewProject.swift in Sources */,
+				AA0000000000000000000086 /* NewProjectSheet.swift in Sources */,
 				P20000000000000000000006 /* TargetsPanel.swift in Sources */,
 				Q10000000000000000000002 /* RunConfig.swift in Sources */,
 				Q10000000000000000000004 /* RunConfig+Sanitizers.swift in Sources */,
@@ -2088,6 +2187,25 @@
 				A0000000000000000000090E /* RangeShift.swift in Sources */,
 				A0000000000000000000002C /* EditorPane.swift in Sources */,
 				BF0000000000000000000011 /* EditorHostView.swift in Sources */,
+				AA0000000000000000000070 /* AIStatusView.swift in Sources */,
+				AA000000000000000000006E /* AIAnswerPanel.swift in Sources */,
+				AA000000000000000000006C /* AIAskSheet.swift in Sources */,
+				AA000000000000000000006A /* AIAssistant.swift in Sources */,
+				AA0000000000000000000068 /* AIActivity.swift in Sources */,
+				AA0000000000000000000065 /* AIAnswerText.swift in Sources */,
+				AA0000000000000000000062 /* AICommentPrompt.swift in Sources */,
+				AA0000000000000000000044 /* AISettingsPane.swift in Sources */,
+				AA0000000000000000000042 /* PreferencesStore.swift in Sources */,
+				AA0000000000000000000037 /* CompletionItem.swift in Sources */,
+				AA0000000000000000000035 /* AICompletionSource.swift in Sources */,
+				AA0000000000000000000033 /* AIContextBuilder.swift in Sources */,
+				AA0000000000000000000031 /* OpenRouterChat.swift in Sources */,
+				AA000000000000000000002F /* AnthropicMessages.swift in Sources */,
+				AA000000000000000000002D /* AIClient.swift in Sources */,
+				AA000000000000000000002B /* AnthropicLogin.swift in Sources */,
+				AA0000000000000000000029 /* Keychain.swift in Sources */,
+				AA0000000000000000000026 /* AIPrompt.swift in Sources */,
+				AA0000000000000000000023 /* AISuggestion.swift in Sources */,
 				BF0000000000000000000017 /* Confirm.swift in Sources */,
 				BF0000000000000000000015 /* Buffers+SavePanel.swift in Sources */,
 				BF0000000000000000000013 /* PendingDelivery.swift in Sources */,

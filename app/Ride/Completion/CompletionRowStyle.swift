@@ -17,7 +17,10 @@ enum CompletionRowStyle {
         }
     }
 
-    static func detail(_ hit: CompletionHit) -> String {
+    static func detail(_ item: CompletionItem) -> String {
+        guard let hit = item.hit else {
+            return item.label
+        }
         if !hit.detail.isEmpty {
             return hit.detail
         }
@@ -27,7 +30,10 @@ enum CompletionRowStyle {
         return hit.path == hit.name ? "" : hit.path
     }
 
-    static func origin(_ hit: CompletionHit) -> String {
+    static func origin(_ item: CompletionItem) -> String {
+        guard let hit = item.hit else {
+            return "AI"
+        }
         if hit.crateName.isEmpty {
             return ""
         }
@@ -37,8 +43,11 @@ enum CompletionRowStyle {
         return "\(hit.crateName) \(hit.crateVersion)"
     }
 
-    static func docOrigin(_ hit: CompletionHit) -> String {
-        let crate = origin(hit)
+    static func docOrigin(_ item: CompletionItem) -> String {
+        guard let hit = item.hit else {
+            return "AI suggestion"
+        }
+        let crate = origin(item)
         if crate.isEmpty {
             return hit.path
         }
@@ -59,11 +68,14 @@ enum CompletionRowStyle {
         return out
     }
 
-    static func docText(_ hit: CompletionHit) -> String {
-        hit.docParagraph.isEmpty ? hit.docFirstSentence : hit.docParagraph
+    static func docText(_ item: CompletionItem) -> String {
+        guard let hit = item.hit else {
+            return item.insertText
+        }
+        return hit.docParagraph.isEmpty ? hit.docFirstSentence : hit.docParagraph
     }
 
-    static func hasDoc(_ hit: CompletionHit) -> Bool {
-        !docText(hit).isEmpty
+    static func hasDoc(_ item: CompletionItem) -> Bool {
+        !docText(item).isEmpty
     }
 }

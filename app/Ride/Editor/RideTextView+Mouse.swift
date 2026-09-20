@@ -18,7 +18,9 @@ extension RideTextView {
 
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
-        HoverController.shared.mouseMoved(view: self, event: event)
+        if hooks.binding?()?.state.prefs.hoverDocs != false {
+            HoverController.shared.mouseMoved(view: self, event: event)
+        }
     }
 
     override func mouseExited(with event: NSEvent) {

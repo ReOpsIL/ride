@@ -4,16 +4,20 @@ extension CompletionSession {
     private static let callable: Set<ItemKind> = [.fn, .method, .macro]
 
     func accept() -> Bool {
-        guard popup.isVisible, let hit = popup.selectedHit, let list, let view = popup.textView,
+        guard popup.isVisible, let item = popup.selectedHit, let list, let view = popup.textView,
               let binding = view.hooks.binding?()
         else {
             return false
         }
         hide()
         let caret = view.selectedRange().location
-        let start = min(Self.replaceStart(for: hit, list: list, in: view), caret)
+        let start = min(Self.replaceStart(for: item, list: list, in: view), caret)
         editSource = .completion
-        insert(hit, replacing: NSRange(location: start, length: caret - start), in: view)
+        insertSnippet(item.insertText, snippet: item.snippet, replacing: NSRange(location: start, length: caret - start), in: view)
+        guard let hit = item.hit else {
+            editSource = .user
+            return true
+        }
         if list.site == .include, hit.itemKind == .header {
             Self.closeInclude(in: view, before: start)
         }
@@ -24,21 +28,20 @@ extension CompletionSession {
         if list.site == .include, hit.itemKind == .mod {
             schedule(document: binding.document, view: view, state: binding.state)
         }
-        if Self.callable.contains(hit.itemKind) {
+        if Self.callable.contains(hit.itemKind), binding.state.prefs.signatureHelp {
             SignatureHelpController.shared.show(document: binding.document, view: view)
         }
         return true
     }
 
-    private static func replaceStart(for hit: CompletionHit, list: CompletionList, in view: RideTextView) -> Int {
-        guard let byte = hit.replaceStartByte else {
+    private static func replaceStart(for item: CompletionItem, list: CompletionList, in view: RideTextView) -> Int {
+        if item.isAI {
+            return list.aiAnchor ?? list.replaceUtf16
+        }
+        guard let byte = item.replaceStartByte else {
             return list.replaceUtf16
         }
         return Utf16.utf16Offset(in: view.string, utf8: Int(byte))
-    }
-
-    private func insert(_ hit: CompletionHit, replacing range: NSRange, in view: RideTextView) {
-        insertSnippet(hit.insertText, snippet: hit.snippet, replacing: range, in: view)
     }
 
     private static func closeInclude(in view: RideTextView, before start: Int) {

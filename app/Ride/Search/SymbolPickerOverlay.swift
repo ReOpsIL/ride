@@ -28,7 +28,7 @@ struct SymbolPickerOverlay: View {
                         title: hit.name,
                         query: model.query,
                         subtitle: hit.path == hit.name ? hit.signature : hit.path,
-                        trailing: CompletionRowStyle.origin(hit),
+                        trailing: CompletionRowStyle.origin(.engine(hit)),
                         selected: model.selection == i,
                         action: {
                             model.selection = i

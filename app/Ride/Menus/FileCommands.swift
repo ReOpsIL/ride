@@ -6,6 +6,8 @@ struct FileCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
+            Button("New Project…") { state.newProject() }
+                .keyboardShortcut("n", modifiers: [.command, .shift])
             Button("New File…") { state.newFile() }
                 .keyboardShortcut("n", modifiers: .command)
                 .disabled(!menu.hasWorkspace)

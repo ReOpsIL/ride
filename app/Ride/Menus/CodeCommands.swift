@@ -27,6 +27,9 @@ struct CodeCommands: Commands {
             Button("Extract Variable") { EditorCommands.extractVariable() }
                 .keyboardShortcut("v", modifiers: [.command, .option])
                 .disabled(!menu.canRefactor)
+            Button("Ask AI from Comment…") { AIAssistant.shared.askFromEditor(state: state) }
+                .keyboardShortcut("?", modifiers: .control)
+                .disabled(!menu.hasEditor)
             Divider()
             Button("Surround With…") { EditorCommands.surroundWith() }
                 .keyboardShortcut("t", modifiers: [.command, .option])

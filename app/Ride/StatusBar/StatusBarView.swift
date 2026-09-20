@@ -15,6 +15,7 @@ struct StatusBarView: View {
                 StatusSegment(icon: "exclamationmark.circle", text: "\(formatter): \(error)", tint: ts.ui.error, help: error)
             }
             Spacer(minLength: 0)
+            AIStatusView()
             CheckStatusView()
             IndexStatusView()
             if let buffer = state.activeBuffer {
