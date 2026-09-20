@@ -70,32 +70,57 @@ extension SelfTestSteps {
     static let buildErrorLine = 13
     static let buildErrorSuffix = " let _ride_bad: u32 = \"x\";"
 
-    static func buildDiagnostic(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+    static func buildDiagnostic(
+        state: AppState,
+        e: SelfTestEditor,
+        scratch: SelfTestScratch,
+        line: Int = buildErrorLine,
+        suffix: String = buildErrorSuffix
+    ) -> SelfTestStep {
         SelfTestStep(name: "build diagnostic", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
-            scratch.buildLine = e.line(buildErrorLine)
-            replaceLine(e, buildErrorLine, scratch.buildLine + buildErrorSuffix)
+            scratch.buildLine = e.line(line)
+            replaceLine(e, line, scratch.buildLine + suffix)
             state.saveAll()
             state.runAction(.build)
         }, check: {
             let built = CheckService.shared.buildDiagnostics
             return e.expect(
-                built.count == 1 && built.first?.line == UInt32(buildErrorLine) && built.first?.origin == .build,
+                built.count == 1 && built.first?.line == UInt32(line) && built.first?.origin == .build,
                 "built \(built.map { "\($0.line):\($0.message)" }) status \(state.runOutput.status ?? "nil")"
             )
         })
     }
 
-    static func buildDiagnosticCleared(state: AppState, e: SelfTestEditor, scratch: SelfTestScratch) -> SelfTestStep {
+    static func buildDiagnosticCleared(
+        state: AppState,
+        e: SelfTestEditor,
+        scratch: SelfTestScratch,
+        line: Int = buildErrorLine
+    ) -> SelfTestStep {
         SelfTestStep(name: "build diagnostic cleared", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 240, run: {
-            replaceLine(e, buildErrorLine, scratch.buildLine)
+            replaceLine(e, line, scratch.buildLine)
             state.saveAll()
             state.runAction(.build)
         }, check: {
             e.expect(
                 CheckService.shared.buildDiagnostics.isEmpty
                     && state.runOutput.status == "exit 0"
-                    && e.line(buildErrorLine) == scratch.buildLine,
-                "built \(CheckService.shared.buildDiagnostics.count) status \(state.runOutput.status ?? "nil") line \(e.line(buildErrorLine))"
+                    && e.line(line) == scratch.buildLine,
+                "built \(CheckService.shared.buildDiagnostics.count) status \(state.runOutput.status ?? "nil") line \(e.line(line))"
+            )
+        })
+    }
+
+    static func recompileFile(state: AppState, e: SelfTestEditor, relative: String) -> SelfTestStep {
+        SelfTestStep(name: "recompile file", wait: 0.8, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 120, run: {
+            if let url = state.workspaceRoot?.appendingPathComponent(relative) {
+                state.openFile(url)
+            }
+            state.recompileFile()
+        }, check: {
+            e.expect(
+                state.runOutput.status == "exit 0",
+                "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(240))"
             )
         })
     }

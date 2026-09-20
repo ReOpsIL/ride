@@ -36,13 +36,13 @@ extension SelfTestSteps {
             workspaceSnapshotAfterOpen(state: state, e: e),
             headerSourceSwitch(state: state, e: e),
             runFileError(state: state, e: e),
-            recompileFile(state: state, e: e),
+            recompileFile(state: state, e: e, relative: "src/shapes.cpp"),
             generatePrep(state: state, e: e, scratch: scratch),
             generateConstructor(e: e),
             generateGetters(e: e),
             generateCleanup(e: e, scratch: scratch),
         ] + liveSteps(state: state, e: e) + cppExtract(state: state, e: e, scratch: scratch)
-            + cppRefactor(e: e, scratch: scratch)
+            + cppRefactor(e: e, scratch: scratch) + cppDebugSteps(state: state, e: e)
     }
 
     private static func commentLine(e: SelfTestEditor) -> SelfTestStep {
@@ -158,20 +158,6 @@ extension SelfTestSteps {
             return e.expect(
                 state.runOutput.status != "exit 0" && linked && !lower.contains("file not found"),
                 "status \(state.runOutput.status ?? "nil") text \(text.suffix(400))"
-            )
-        })
-    }
-
-    private static func recompileFile(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "recompile file", wait: 0.8, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 120, run: {
-            if let url = state.workspaceRoot?.appendingPathComponent("src/shapes.cpp") {
-                state.openFile(url)
-            }
-            state.recompileFile()
-        }, check: {
-            e.expect(
-                state.runOutput.status == "exit 0",
-                "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(240))"
             )
         })
     }
