@@ -38,3 +38,8 @@
 
 - `RenameApply.applyBackground` commits through `host.bind(doc)`, which assigns `textView.string` while the document is bound; that rewrite bypasses the edit path and leaves every NSTextView undo record on the stack pointing at ranges of the old text. Route it through `EditorHostView.replaceText` (or drop the records) so a background rename stays undoable.
 - Format, Reload and Replace in Project still clear the undo stack (see the bound-host review item above); they now share `applyChanges`, so registering them as one step is a small change.
+
+# Editor (added 2026-09-20, P-6 review)
+
+- `LineEndingMenu` in the status bar writes the global `prefs.lineEndings`; "Convert to LF" on one buffer changes every future save. Make it a per-buffer override with the preference as the default.
+- `Engine::statement_range` / `sibling_statement_range` are no longer called by the app after `statement_bounds`; remove them and their FFI records once `tests/editing.rs` moves to `statement_bounds`.
