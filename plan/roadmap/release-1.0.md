@@ -91,3 +91,5 @@ State on 2026-09-20 (facts, not assumptions): no git tag, no `CHANGELOG.md`, `MA
 | P-1 | Version 1.0.0, `CHANGELOG.md`, `release.sh --dry-run` with version agreement, dSYM and RELEASE.md, tag-triggered `release.yml` with optional secrets and a GitHub release, Homebrew cask and bump script | merge |
 
 Verification on `main` after all eight cards (2026-09-20): 466 engine tests, 443 RideTests, `check-lines.sh` clean with an empty allowlist, Rust self-test 140/0 (every undo step passes after the undo-records fix), C self-test 23/0, C++ self-test 66/4: the four `cpp debug` steps added by P-5 fail deterministically on main although they passed in P-5's worktree (`todo/app/remaining.md`, "C++ live debug"). That is the open item before tagging v1.0.0.
+
+C++ debug resolved: `src/debug/session/store.rs` canonicalized every breakpoint path, which binds for rustc debug info and never for clang under a symlinked root (`/tmp`, `$TMPDIR`); P-5's worktree run had used a non-symlinked path. Breakpoints now go out as the editor spells them, with the resolved twin as a second attempt (`docs/product/debug-source-paths.md`). C++ self-test 70/0 twice, Rust 140/0.
