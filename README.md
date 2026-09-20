@@ -95,6 +95,15 @@ Light and dark themes are peers; every screen above is also reviewed in light.
 ## Install
 
 ```sh
+brew tap ReOpsIL/ride
+brew install --cask ride
+```
+
+Or download the zip from [GitHub Releases](https://github.com/ReOpsIL/ride/releases/latest).
+
+From source:
+
+```sh
 ./scripts/install.sh            # builds a Release Ride.app and installs it to /Applications
 ./scripts/install.sh ~/Applications
 ```

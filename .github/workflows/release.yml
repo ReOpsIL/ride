@@ -1,0 +1,138 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      RIDE_SIGN_P12_BASE64: ${{ secrets.RIDE_SIGN_P12_BASE64 }}
+      RIDE_SIGN_P12_PASSWORD: ${{ secrets.RIDE_SIGN_P12_PASSWORD }}
+      RIDE_SIGN_IDENTITY: ${{ secrets.RIDE_SIGN_IDENTITY }}
+      RIDE_SPARKLE_PUBLIC_KEY: ${{ secrets.RIDE_SPARKLE_PUBLIC_KEY }}
+      RIDE_SPARKLE_PRIVATE_KEY: ${{ secrets.RIDE_SPARKLE_PRIVATE_KEY }}
+      RIDE_NOTARY_KEY_ID: ${{ secrets.RIDE_NOTARY_KEY_ID }}
+      RIDE_NOTARY_ISSUER: ${{ secrets.RIDE_NOTARY_ISSUER }}
+      RIDE_NOTARY_KEY_BASE64: ${{ secrets.RIDE_NOTARY_KEY_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - name: metal-toolchain
+        run: xcodebuild -downloadComponent MetalToolchain
+      - name: credentials
+        run: |
+          set -euo pipefail
+          summary=()
+          if [[ -n "${RIDE_SIGN_P12_BASE64:-}" ]]; then
+            if [[ -z "${RIDE_SIGN_P12_PASSWORD:-}" ]]; then
+              echo "RIDE_SIGN_P12_PASSWORD is required when RIDE_SIGN_P12_BASE64 is set" >&2
+              exit 1
+            fi
+            if [[ -z "${RIDE_SIGN_IDENTITY:-}" ]]; then
+              echo "RIDE_SIGN_IDENTITY is required when RIDE_SIGN_P12_BASE64 is set" >&2
+              exit 1
+            fi
+            keychain="$RUNNER_TEMP/ride-signing.keychain-db"
+            p12="$RUNNER_TEMP/ride-sign.p12"
+            password="$(openssl rand -base64 24)"
+            echo "$RIDE_SIGN_P12_BASE64" | base64 --decode >"$p12"
+            security create-keychain -p "$password" "$keychain"
+            security set-keychain-settings -lut 21600 "$keychain"
+            security unlock-keychain -p "$password" "$keychain"
+            security import "$p12" -k "$keychain" -P "$RIDE_SIGN_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+            keychains=()
+            while IFS= read -r line; do
+              line="$(printf '%s' "$line" | tr -d '"' | xargs)"
+              if [[ -n "$line" ]]; then
+                keychains+=("$line")
+              fi
+            done < <(security list-keychain -d user)
+            if [[ ${#keychains[@]} -gt 0 ]]; then
+              security list-keychain -d user -s "$keychain" "${keychains[@]}"
+            else
+              security list-keychain -d user -s "$keychain"
+            fi
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain"
+            rm -f "$p12"
+            echo "RIDE_SIGN_IDENTITY=$RIDE_SIGN_IDENTITY" >>"$GITHUB_ENV"
+            summary+=("signing certificate imported")
+          else
+            summary+=("no signing certificate; ad-hoc zip")
+          fi
+          if [[ -n "${RIDE_SPARKLE_PRIVATE_KEY:-}" ]]; then
+            if [[ -z "${RIDE_SPARKLE_PUBLIC_KEY:-}" ]]; then
+              echo "RIDE_SPARKLE_PUBLIC_KEY is required when RIDE_SPARKLE_PRIVATE_KEY is set" >&2
+              exit 1
+            fi
+            keyfile="$RUNNER_TEMP/sparkle-ed.key"
+            printf '%s\n' "$RIDE_SPARKLE_PRIVATE_KEY" >"$keyfile"
+            echo "RIDE_SPARKLE_PRIVATE_KEY_FILE=$keyfile" >>"$GITHUB_ENV"
+            echo "RIDE_SPARKLE_PUBLIC_KEY=$RIDE_SPARKLE_PUBLIC_KEY" >>"$GITHUB_ENV"
+            summary+=("Sparkle keys present")
+          else
+            summary+=("no Sparkle keys; no appcast")
+          fi
+          if [[ -n "${RIDE_NOTARY_KEY_BASE64:-}" || -n "${RIDE_NOTARY_KEY_ID:-}" || -n "${RIDE_NOTARY_ISSUER:-}" ]]; then
+            if [[ -z "${RIDE_NOTARY_KEY_BASE64:-}" || -z "${RIDE_NOTARY_KEY_ID:-}" || -z "${RIDE_NOTARY_ISSUER:-}" ]]; then
+              echo "RIDE_NOTARY_KEY_ID, RIDE_NOTARY_ISSUER and RIDE_NOTARY_KEY_BASE64 are all required together" >&2
+              exit 1
+            fi
+            key="$RUNNER_TEMP/AuthKey.p8"
+            echo "$RIDE_NOTARY_KEY_BASE64" | base64 --decode >"$key"
+            xcrun notarytool store-credentials ride-notary \
+              --key "$key" \
+              --key-id "$RIDE_NOTARY_KEY_ID" \
+              --issuer "$RIDE_NOTARY_ISSUER"
+            rm -f "$key"
+            echo "RIDE_NOTARY_PROFILE=ride-notary" >>"$GITHUB_ENV"
+            summary+=("notary credentials stored")
+          else
+            summary+=("no notary credentials")
+          fi
+          {
+            echo "### Release secrets"
+            for line in "${summary[@]}"; do
+              echo "- $line"
+            done
+          } >>"$GITHUB_STEP_SUMMARY"
+      - name: release
+        run: bash scripts/release.sh
+      - name: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="$(grep -m1 '^version' Cargo.toml | sed 's/.*"\(.*\)".*/\1/')"
+          TAG="${GITHUB_REF_NAME}"
+          notes="$RUNNER_TEMP/release-notes.md"
+          awk -v ver="$VERSION" '
+            index($0, "## " ver) == 1 { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md >"$notes"
+          if [[ ! -s "$notes" ]]; then
+            echo "no CHANGELOG.md section for $VERSION" >&2
+            exit 1
+          fi
+          assets=()
+          seen=" "
+          for f in target/release-app/Ride-*.zip target/release-app/*.sha256 target/release-app/Ride-*.dSYM.zip target/release-app/appcast.xml; do
+            [[ -f "$f" ]] || continue
+            case "$seen" in
+              *" $f "*) continue ;;
+            esac
+            seen+="$f "
+            assets+=("$f")
+          done
+          if [[ ${#assets[@]} -eq 0 ]]; then
+            echo "no release assets under target/release-app" >&2
+            exit 1
+          fi
+          gh release create "$TAG" --title "Ride $VERSION" --notes-file "$notes" "${assets[@]}"
