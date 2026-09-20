@@ -257,6 +257,7 @@
 		F1E000000000000000000009 /* RenameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000008 /* RenameController.swift */; };
 		F1E00000000000000000000B /* AppState+Rename.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000A /* AppState+Rename.swift */; };
 		F1E00000000000000000000D /* RenameApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000C /* RenameApply.swift */; };
+		F1E00000000000000000001D /* RenameExpected.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000001C /* RenameExpected.swift */; };
 		F1E00000000000000000000F /* RenameInlineBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E00000000000000000000E /* RenameInlineBox.swift */; };
 		F1E000000000000000000011 /* RenamePreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000010 /* RenamePreviewSheet.swift */; };
 		F1E000000000000000000013 /* SelfTestSteps+Rename.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E000000000000000000012 /* SelfTestSteps+Rename.swift */; };
@@ -278,6 +279,7 @@
 		F14000000000000000000007 /* HierarchyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000006 /* HierarchyPanel.swift */; };
 		F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000008 /* AppState+Hierarchy.swift */; };
 		F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */; };
+		F1500000000000000000000B /* SelfTestSteps+SafeDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */; };
 		F1400000000000000000000D /* HierarchyQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000C /* HierarchyQuery.swift */; };
 		F14000000000000000000011 /* HierarchySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000010 /* HierarchySession.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
@@ -835,6 +837,7 @@
 		F1E000000000000000000008 /* RenameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameController.swift"; sourceTree = "<group>"; };
 		F1E00000000000000000000A /* AppState+Rename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Rename.swift"; sourceTree = "<group>"; };
 		F1E00000000000000000000C /* RenameApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameApply.swift"; sourceTree = "<group>"; };
+		F1E00000000000000000001C /* RenameExpected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameExpected.swift"; sourceTree = "<group>"; };
 		F1E00000000000000000000E /* RenameInlineBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenameInlineBox.swift"; sourceTree = "<group>"; };
 		F1E000000000000000000010 /* RenamePreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenamePreviewSheet.swift"; sourceTree = "<group>"; };
 		F1E000000000000000000012 /* SelfTestSteps+Rename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rename.swift"; sourceTree = "<group>"; };
@@ -852,6 +855,7 @@
 		F14000000000000000000006 /* HierarchyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyPanel.swift; sourceTree = "<group>"; };
 		F14000000000000000000008 /* AppState+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Hierarchy.swift"; sourceTree = "<group>"; };
 		F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Hierarchy.swift"; sourceTree = "<group>"; };
+		F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+SafeDelete.swift"; sourceTree = "<group>"; };
 		F1400000000000000000000C /* HierarchyQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyQuery.swift; sourceTree = "<group>"; };
 		F14000000000000000000010 /* HierarchySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchySession.swift; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
@@ -1238,6 +1242,7 @@
 				F1E000000000000000000008 /* RenameController.swift */,
 				F1E00000000000000000000A /* AppState+Rename.swift */,
 				F1E00000000000000000000C /* RenameApply.swift */,
+				F1E00000000000000000001C /* RenameExpected.swift */,
 				F1E00000000000000000000E /* RenameInlineBox.swift */,
 				F1E000000000000000000010 /* RenamePreviewSheet.swift */,
 			);
@@ -1635,6 +1640,7 @@
 				DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */,
 				F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */,
 				CV0000000000000000000005 /* SelfTestSteps+Vision.swift */,
+				F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -2167,6 +2173,7 @@
 				F1E000000000000000000009 /* RenameController.swift in Sources */,
 				F1E00000000000000000000B /* AppState+Rename.swift in Sources */,
 				F1E00000000000000000000D /* RenameApply.swift in Sources */,
+				F1E00000000000000000001D /* RenameExpected.swift in Sources */,
 				F1E00000000000000000000F /* RenameInlineBox.swift in Sources */,
 				F1E000000000000000000011 /* RenamePreviewSheet.swift in Sources */,
 				F1E000000000000000000013 /* SelfTestSteps+Rename.swift in Sources */,
@@ -2202,6 +2209,7 @@
 				F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */,
 				F14000000000000000000007 /* HierarchyPanel.swift in Sources */,
 				F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */,
+				F1500000000000000000000B /* SelfTestSteps+SafeDelete.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
 				F2000000000000000000A002 /* PaneTabStrips.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,

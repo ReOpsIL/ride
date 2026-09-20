@@ -9,7 +9,7 @@ struct RenamePreviewSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.l) {
-            Text("Rename \(model.selection.name) to \(model.selection.newName)")
+            Text(model.title)
                 .font(Tokens.ui(15, weight: .semibold))
             Text(summary)
                 .font(Tokens.ui(12))
@@ -26,7 +26,7 @@ struct RenamePreviewSheet: View {
                 Spacer()
                 Button("Cancel", action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                Button("Rename", action: onApply)
+                Button(model.applyTitle, action: onApply)
                     .keyboardShortcut(.defaultAction)
                     .disabled(!model.selection.canApply)
             }
@@ -77,7 +77,7 @@ struct RenamePreviewSheet: View {
     private var reviewSection: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s) {
             HStack {
-                Text("Review — could not verify these are the same symbol")
+                Text(model.reviewTitle)
                     .font(Tokens.ui(11, weight: .semibold))
                     .foregroundStyle(ts.ui.textSecondary)
                 Spacer()

@@ -16,6 +16,7 @@ extension SelfTestSteps {
             + breakpointShiftSteps(state: state, e: e)
             + [callHierarchy(state: state, e: e)]
             + [codeVision(state: state, e: e)]
+            + safeDeleteSteps(state: state, e: e, scratch: scratch)
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {

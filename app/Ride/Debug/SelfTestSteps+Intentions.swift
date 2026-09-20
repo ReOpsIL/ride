@@ -28,7 +28,7 @@ extension SelfTestSteps {
                     "line 9: '\(e.line(9))' notice \(e.state.notice ?? "nil")"
                 )
             }),
-            SelfTestStep(name: "intention undo", run: { e.view?.undoManager?.undo() }, check: {
+            SelfTestStep(name: "intention undo", until: { e.line(9) == "    let unused = 1;" }, timeout: 10, run: { e.view?.undoManager?.undo() }, check: {
                 e.expect(e.line(9) == "    let unused = 1;", "line 9: '\(e.line(9))'")
             }),
             restore(name: "intention cleanup", e: e, scratch: scratch),

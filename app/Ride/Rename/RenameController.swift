@@ -39,6 +39,32 @@ final class RenameController {
         resolve(newName, present: false, localOnly: false)
     }
 
+    func beginSafeDelete(state: AppState) {
+        guard prepare(state: state), let plan = fetchSafeDelete() else {
+            state.showNotice("Place the caret on an item name to delete")
+            return
+        }
+        _ = load(
+            plan,
+            present: true,
+            title: "Safe Delete \(plan.name)",
+            applyTitle: "Delete",
+            reviewTitle: "Usages that would break"
+        )
+    }
+
+    @discardableResult
+    func applySafeDeleteDirect(state: AppState) -> Bool {
+        guard prepare(state: state), let plan = fetchSafeDelete(), plan.review.isEmpty else {
+            return false
+        }
+        guard let context, let edits = plan.files.first?.edits, !edits.isEmpty else {
+            return false
+        }
+        RenameApply.applyLocal(edits, to: context.view)
+        return true
+    }
+
     func applyWorkspace() {
         guard let state, let plan = state.renamePlan else {
             return
@@ -48,10 +74,12 @@ final class RenameController {
             state: state,
             plan: plan,
             chosenFiles: Set(selection.chosenFilePaths),
-            chosenReview: Set(selection.chosenReviewIds)
+            chosenReview: Set(selection.chosenReviewIds),
+            expected: state.renameExpected
         )
         state.showRenamePreview = false
         state.renamePlan = nil
+        state.renameExpected = [:]
     }
 
     @discardableResult
@@ -90,18 +118,55 @@ final class RenameController {
             return false
         }
         let plan = engine.renamePlan(sessionId: context.sessionId, cursorByte: context.caretByte, newName: trimmed)
-        return load(plan, present: present)
+        return load(
+            plan,
+            present: present,
+            title: "Rename \(plan.name) to \(plan.newName)",
+            applyTitle: "Rename",
+            reviewTitle: "Review — could not verify these are the same symbol"
+        )
     }
 
-    private func load(_ plan: RenamePlan, present: Bool) -> Bool {
+    private func fetchSafeDelete() -> RenamePlan? {
+        guard let context, let engine = RideEngineClient.shared.engine else {
+            return nil
+        }
+        let id = context.sessionId
+        let text = context.view.string
+        SessionService.shared.queue(id).sync {
+            _ = try? engine.setText(sessionId: id, text: text, visible: nil)
+        }
+        let plan = engine.safeDeletePlan(sessionId: id, cursorByte: context.caretByte)
+        if plan.files.isEmpty && plan.review.isEmpty {
+            return nil
+        }
+        return plan
+    }
+
+    private func load(
+        _ plan: RenamePlan,
+        present: Bool,
+        title: String,
+        applyTitle: String,
+        reviewTitle: String
+    ) -> Bool {
         guard let state, !(plan.files.isEmpty && plan.review.isEmpty) else {
             return false
         }
         state.renamePlan = plan
+        state.renameExpected = RenameExpected.capture(plan: plan, state: state)
         let files = plan.files.map { RenamePreviewFile(path: $0.path, count: $0.edits.count) }
         let reviewFiles = plan.review.map { RenamePreviewFile(path: $0.path, count: $0.edits.count) }
         let review = RenameSelection.reviewRows(from: reviewFiles)
-        state.renamePreview.load(name: plan.name, newName: plan.newName, files: files, review: review)
+        state.renamePreview.load(
+            name: plan.name,
+            newName: plan.newName,
+            files: files,
+            review: review,
+            title: title,
+            applyTitle: applyTitle,
+            reviewTitle: reviewTitle
+        )
         if present {
             state.showRenamePreview = true
         }

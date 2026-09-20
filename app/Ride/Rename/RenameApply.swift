@@ -20,7 +20,13 @@ enum RenameApply {
         EditorCommand.apply(result, to: view)
     }
 
-    static func applyWorkspace(state: AppState, plan: RenamePlan, chosenFiles: Set<String>, chosenReview: Set<Int>) {
+    static func applyWorkspace(
+        state: AppState,
+        plan: RenamePlan,
+        chosenFiles: Set<String>,
+        chosenReview: Set<Int>,
+        expected: [String: [String: String]] = [:]
+    ) {
         var applied = 0
         var files = 0
         var written: [String] = []
@@ -28,7 +34,7 @@ enum RenameApply {
         var failed: [String] = []
         for (path, edits) in gather(plan: plan, chosenFiles: chosenFiles, chosenReview: chosenReview) {
             let url = state.resolveRenameURL(path)
-            switch applyFile(state: state, url: url, name: plan.name, edits: edits) {
+            switch applyFile(state: state, url: url, name: plan.name, edits: edits, expected: expected[path] ?? [:]) {
             case let .applied(count):
                 applied += count
                 files += 1
@@ -44,7 +50,7 @@ enum RenameApply {
         if !written.isEmpty {
             state.filesChanged(written)
         }
-        if let text = summary(applied: applied, files: files, changed: changed, failed: failed) {
+        if let text = summary(applied: applied, files: files, changed: changed, failed: failed, deleted: plan.newName.isEmpty) {
             state.notice = text
         }
     }
@@ -62,13 +68,19 @@ enum RenameApply {
             .sorted { $0.0 < $1.0 }
     }
 
-    private static func applyFile(state: AppState, url: URL, name: String, edits: [TextEdit]) -> Outcome {
+    private static func applyFile(
+        state: AppState,
+        url: URL,
+        name: String,
+        edits: [TextEdit],
+        expected: [String: String]
+    ) -> Outcome {
         let buffer = state.buffer(for: url)
         let view = buffer.flatMap { state.editorView(for: $0) }
         guard let text = view?.string ?? buffer?.text ?? state.liveText(url) else {
             return .failed
         }
-        guard let changes = validate(text: text, name: name, edits: edits) else {
+        guard let changes = RenameExpected.changes(text: text, name: name, edits: edits, expected: expected) else {
             return .changed
         }
         guard !changes.isEmpty else {
@@ -108,20 +120,6 @@ enum RenameApply {
         return ok ? .applied(count) : .failed
     }
 
-    private static func validate(text: String, name: String, edits: [TextEdit]) -> [TextChange]? {
-        let map = Utf16Map(text)
-        let ns = text as NSString
-        var changes: [TextChange] = []
-        for edit in edits {
-            let range = map.nsRange(startByte: edit.startByte, endByte: edit.endByte)
-            guard NSMaxRange(range) <= ns.length, ns.substring(with: range) == name else {
-                return nil
-            }
-            changes.append(TextChange(range: range, text: edit.text))
-        }
-        return changes.sorted { $0.range.location < $1.range.location }
-    }
-
     private static func persist(_ state: AppState, _ buffer: BufferDocument) -> Bool {
         guard !buffer.isReadOnly else {
             return false
@@ -155,10 +153,11 @@ enum RenameApply {
         return .applied(count)
     }
 
-    private static func summary(applied: Int, files: Int, changed: [String], failed: [String]) -> String? {
+    private static func summary(applied: Int, files: Int, changed: [String], failed: [String], deleted: Bool) -> String? {
         var parts: [String] = []
         if files > 0 {
-            parts.append("Renamed \(Plural.count(applied, "occurrence")) in \(Plural.count(files, "file"))")
+            let verb = deleted ? "Deleted" : "Renamed"
+            parts.append("\(verb) \(Plural.count(applied, "occurrence")) in \(Plural.count(files, "file"))")
         }
         if !changed.isEmpty {
             parts.append("\(Plural.count(changed.count, "file")) skipped — changed since indexing")

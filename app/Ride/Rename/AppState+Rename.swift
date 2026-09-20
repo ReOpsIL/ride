@@ -5,6 +5,10 @@ extension AppState {
         RenameController.shared.begin(state: self)
     }
 
+    func beginSafeDelete() {
+        RenameController.shared.beginSafeDelete(state: self)
+    }
+
     func resolveRenameURL(_ path: String) -> URL {
         if path.hasPrefix("/") {
             return URL(fileURLWithPath: path).standardizedFileURL

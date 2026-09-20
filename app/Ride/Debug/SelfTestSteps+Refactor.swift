@@ -67,7 +67,7 @@ extension SelfTestSteps {
                     "selected '\(e.selectedText)' lines \(e.lines.filter { $0.contains("VALUE") })"
                 )
             }),
-            SelfTestStep(name: "constant undo", run: { e.view?.undoManager?.undo() }, check: {
+            SelfTestStep(name: "constant undo", until: { !e.lines.contains(declaration) }, timeout: 10, run: { e.view?.undoManager?.undo() }, check: {
                 e.expect(!e.lines.contains(declaration), "declaration remains")
             }),
             restore(name: "constant cleanup", e: e, scratch: scratch),
@@ -102,7 +102,7 @@ extension SelfTestSteps {
                     "notice \(e.state.notice ?? "nil") caret \(e.caretLine) lines \(e.lines.filter { $0.contains("inl") })"
                 )
             }),
-            SelfTestStep(name: "inline undo", run: { e.view?.undoManager?.undo() }, check: {
+            SelfTestStep(name: "inline undo", until: { e.lines.contains(declaration) }, timeout: 10, run: { e.view?.undoManager?.undo() }, check: {
                 e.expect(e.lines.contains(declaration), "declaration missing")
             }),
             restore(name: "inline cleanup", e: e, scratch: scratch),

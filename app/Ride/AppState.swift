@@ -72,6 +72,7 @@ final class AppState: ObservableObject {
     @Published var showRenamePreview = false
     let renamePreview = RenamePreviewModel()
     var renamePlan: RenamePlan?
+    var renameExpected: [String: [String: String]] = [:]
     @Published var runConfigs: [RunConfig] = [] {
         didSet { scheduleWorkspaceSave() }
     }
