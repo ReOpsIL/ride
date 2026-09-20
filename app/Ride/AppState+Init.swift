@@ -4,7 +4,7 @@ import Combine
 extension AppState {
     func configure() {
         prefs = PreferencesStore.load()
-        recent = recents.load()
+        recent = DemoLaunch.isDemo ? [] : recents.load()
         menu.recent = recent
         ThemeStore.shared.apply(name: prefs.theme)
         watcher.handler = { [weak self] paths in

@@ -66,6 +66,14 @@ SCENES=(
   "tests rust-demo"
   "terminal rust-demo"
   "debug rust-demo"
+  "welcome none"
+  "usages rust-demo"
+  "hierarchy rust-demo"
+  "codevision rust-demo"
+  "rename rust-demo"
+  "intentions rust-demo"
+  "livecheck cpp-demo"
+  "cppdebug cpp-demo"
 )
 
 if (($# > 0)); then
@@ -144,11 +152,14 @@ shoot() {
 
 capture() {
   local scene="$1"
-  local folder="$WORK/$2"
   local ready="$WORK/ready-$scene"
   local png="$IMAGES/ride-$scene.png"
+  local workspace=(--open "$WORK/$2")
+  if [[ "$2" == "none" ]]; then
+    workspace=()
+  fi
   rm -f "$ready"
-  "$APP" --open "$folder" --demo "$scene" --frame "$FRAME" \
+  "$APP" ${workspace[@]+"${workspace[@]}"} --demo "$scene" --frame "$FRAME" \
     --ready-file "$ready" --quit-after 15 >"$WORK/log-$scene.txt" 2>&1 &
   local pid=$!
   if ! await "$scene" "$ready" "$pid"; then

@@ -43,7 +43,10 @@ while index + 2 < arguments.count {
         exit(1)
     }
     let size = part.size
-    let origin = NSPoint(x: Double(x), y: Double(height) - Double(y) - size.height)
+    let full = Int(size.width.rounded()) == width && Int(size.height.rounded()) == height
+    let origin = full
+        ? NSPoint.zero
+        : NSPoint(x: Double(x), y: Double(height) - Double(y) - size.height)
     part.draw(at: origin, from: .zero, operation: .sourceOver, fraction: 1)
     index += 3
 }

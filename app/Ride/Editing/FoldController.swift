@@ -130,14 +130,12 @@ final class FoldController {
             UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
         }
         view.refreshFolds()
-        (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
     }
 
     private func after(_ view: RideTextView, caret: Int) {
         view.setSelectedRange(NSRange(location: caret, length: 0))
         refreshStarts(view)
         view.refreshFolds()
-        (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
         rememberFolds(view)
     }
 
