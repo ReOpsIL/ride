@@ -18,20 +18,6 @@ enum ToolInstaller {
     }
 
     static func shell(_ command: String) -> (String, Bool) {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        process.arguments = ["-lc", command]
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-        do {
-            try process.run()
-        } catch {
-            return ("\(error)", false)
-        }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
-        let text = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
-        return (text.isEmpty ? (process.terminationStatus == 0 ? "done" : "exit \(process.terminationStatus)") : text, process.terminationStatus == 0)
+        ProcessRun.capture("/bin/zsh", ["-lc", command])
     }
 }

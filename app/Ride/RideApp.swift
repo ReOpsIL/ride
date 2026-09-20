@@ -61,6 +61,23 @@ final class RideAppDelegate: NSObject, NSApplicationDelegate {
         Self.state?.closeAll() == false ? .terminateCancel : .terminateNow
     }
 
+    func application(_ application: NSApplication, open urls: [URL]) {
+        Self.open(urls)
+    }
+
+    static func open(_ urls: [URL]) {
+        guard let state else {
+            return
+        }
+        for url in urls {
+            if url.isFileURL {
+                state.openPath(url)
+            } else if let request = OpenURLParser.request(from: url) {
+                state.openRequest(request)
+            }
+        }
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         DemoRefsDir.remove()
     }

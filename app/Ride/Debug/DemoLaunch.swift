@@ -118,10 +118,6 @@ enum DemoLaunch {
     }
 
     private static func value(after flag: String) -> String? {
-        let args = ProcessInfo.processInfo.arguments
-        guard let i = args.firstIndex(of: flag), args.indices.contains(i + 1) else {
-            return nil
-        }
-        return args[i + 1]
+        LaunchArguments.value(after: flag)
     }
 }
