@@ -41,3 +41,8 @@
 - Rename (`src/engine/rename.rs`) buckets hits by `in_definition_scope`, which is per file, while `refs/rust.rs` records every identifier; a local `let record = 1;` in the definition file is renamed together with `fn record`. Filter the auto bucket by `RefKind` compatible with the definition's `ItemKind` (`RefKind::from_label` is unused today) and stamp `RenameFile` with the indexed file hash.
 - Duplicated shapes to fold: outline item builder across `c_outline`/`c_types`/`c_scopes`/`cmake_outline`/`make_outline`/`rust_types`; C declarator walkers; C doc-comment extraction (`c_docs.rs` vs `engine/doc_comment.rs`, adjacency rules already drift); relative→absolute path helper (4 copies); diagnostic dedup key (3 copies); compile_commands entry load; default completion limit (`if limit == 0 { 20 }`, 7 copies); DAP framing shared with `fake_dap`.
 - `index/status.rs` `status.jsonl` is append-only and re-read every 250 ms by the watcher; `refs/index.rs` has no schema version; `debug/transport/frame.rs` allocates `Content-Length` bytes uncapped.
+
+# Refactor (added 2026-09-20, 1.3-6b review)
+
+- refactor: Introduce Constant anchors at the item node, so a `const` lands between a doc comment or attribute and its item; anchor above the contiguous run of `line_comment`/`attribute_item` siblings that precede the item.
+- menus: Inline Variable is ⌃⌥N because ⌥⌘N is New Buffer; decide whether New Buffer moves so the JetBrains chord can be used.
