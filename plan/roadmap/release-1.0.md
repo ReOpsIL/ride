@@ -80,4 +80,5 @@ State on 2026-09-20 (facts, not assumptions): no git tag, no `CHANGELOG.md`, `MA
 
 | Card | What landed | Merge |
 |---|---|---|
+| P-7 | `docs/site` static page and Pages workflow (reviewer fix: served at the root URL, image paths rewritten at assembly), `docs/manuals` (getting started, shortcuts generated from `Shortcuts.entries` by a RideTests test, three tutorials) | merge |
 | P-1 | Version 1.0.0, `CHANGELOG.md`, `release.sh --dry-run` with version agreement, dSYM and RELEASE.md, tag-triggered `release.yml` with optional secrets and a GitHub release, Homebrew cask and bump script | merge |

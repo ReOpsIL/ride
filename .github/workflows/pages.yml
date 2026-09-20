@@ -23,8 +23,9 @@ jobs:
       - uses: actions/configure-pages@v5
       - name: Assemble
         run: |
-          mkdir -p public/site public/images
-          cp docs/site/index.html docs/site/site.css public/site/
+          mkdir -p public/images
+          sed 's#\.\./images/#images/#g' docs/site/index.html > public/index.html
+          cp docs/site/site.css public/
           cp docs/images/*.png public/images/
       - uses: actions/upload-pages-artifact@v3
         with:
