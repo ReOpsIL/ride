@@ -5,4 +5,5 @@ pub struct ToolInfo {
     pub path: Option<String>,
     pub install: Option<String>,
     pub hint: String,
+    pub manual: bool,
 }

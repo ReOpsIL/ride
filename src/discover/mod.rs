@@ -9,6 +9,7 @@ pub(crate) mod metadata;
 mod metadata_json;
 mod name_version;
 mod registry;
+mod setup;
 mod sysroot;
 pub mod system_includes;
 mod tools;

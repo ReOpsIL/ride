@@ -7,6 +7,11 @@ struct ToolRow: Identifiable, Equatable {
 
     var id: String { info.name }
     var missing: Bool { info.path == nil }
+    var installable: Bool { missing && !info.manual && info.install != nil }
+
+    var setup: SetupTool {
+        SetupTool(name: info.name, installed: !missing, command: info.install, manual: info.manual)
+    }
 }
 
 final class ToolsModel: ObservableObject {
@@ -14,13 +19,19 @@ final class ToolsModel: ObservableObject {
     @Published var rows: [ToolRow] = []
     @Published var installing = false
     @Published var log = ""
+    @Published var focus: String?
 
     var missing: [ToolRow] {
         rows.filter(\.missing)
     }
 
     var selectedInstallable: [ToolRow] {
-        rows.filter { $0.missing && $0.selected && $0.info.install != nil }
+        rows.filter { $0.installable && $0.selected }
+    }
+
+    func present(_ name: String) {
+        focus = name
+        refresh()
     }
 
     func refresh(done: (() -> Void)? = nil) {
@@ -31,9 +42,14 @@ final class ToolsModel: ObservableObject {
                 return
             }
             let previous = Dictionary(uniqueKeysWithValues: self.rows.map { ($0.id, $0) })
+            let focus = self.focus
             self.rows = tools.map { info in
-                ToolRow(info: info, selected: previous[info.name]?.selected ?? (info.install != nil), result: previous[info.name]?.result)
+                let selected = focus.map { $0 == info.name }
+                    ?? previous[info.name]?.selected
+                    ?? (info.install != nil)
+                return ToolRow(info: info, selected: selected && !info.manual, result: previous[info.name]?.result)
             }
+            self.focus = nil
             done?()
         }
     }

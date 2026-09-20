@@ -48,7 +48,7 @@ struct ToolsInstallView: View {
         VStack(alignment: .leading, spacing: Tokens.Space.s) {
             ForEach($model.rows) { $row in
                 HStack(alignment: .top, spacing: Tokens.Space.m) {
-                    if row.missing, row.info.install != nil {
+                    if row.installable {
                         Toggle("", isOn: $row.selected)
                             .labelsHidden()
                             .disabled(model.installing)
@@ -63,6 +63,11 @@ struct ToolsInstallView: View {
                             Text(row.info.purpose).font(Tokens.ui(11)).foregroundStyle(ts.ui.textSecondary)
                             if let result = row.result {
                                 Text(result).font(Tokens.ui(10)).foregroundStyle(result == "installed" ? ts.ui.accent : ts.ui.error)
+                            }
+                            if row.missing, row.info.manual, let command = row.info.install {
+                                Spacer()
+                                Text("run it yourself").font(Tokens.ui(10)).foregroundStyle(ts.ui.textTertiary)
+                                CopyCommandButton(command: command)
                             }
                         }
                         Text(row.missing ? (row.info.install ?? row.info.hint) : (row.info.path ?? ""))
