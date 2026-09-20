@@ -44,7 +44,7 @@ enum RenameApply {
         if !written.isEmpty {
             state.filesChanged(written)
         }
-        if let text = summary(applied: applied, files: files, changed: changed, failed: failed) {
+        if let text = summary(applied: applied, files: files, changed: changed, failed: failed, deleted: plan.newName.isEmpty) {
             state.notice = text
         }
     }
@@ -114,7 +114,14 @@ enum RenameApply {
         var changes: [TextChange] = []
         for edit in edits {
             let range = map.nsRange(startByte: edit.startByte, endByte: edit.endByte)
-            guard NSMaxRange(range) <= ns.length, ns.substring(with: range) == name else {
+            guard NSMaxRange(range) <= ns.length else {
+                return nil
+            }
+            if edit.text.isEmpty {
+                changes.append(TextChange(range: range, text: edit.text))
+                continue
+            }
+            guard ns.substring(with: range) == name else {
                 return nil
             }
             changes.append(TextChange(range: range, text: edit.text))
@@ -155,10 +162,11 @@ enum RenameApply {
         return .applied(count)
     }
 
-    private static func summary(applied: Int, files: Int, changed: [String], failed: [String]) -> String? {
+    private static func summary(applied: Int, files: Int, changed: [String], failed: [String], deleted: Bool) -> String? {
         var parts: [String] = []
         if files > 0 {
-            parts.append("Renamed \(Plural.count(applied, "occurrence")) in \(Plural.count(files, "file"))")
+            let verb = deleted ? "Deleted" : "Renamed"
+            parts.append("\(verb) \(Plural.count(applied, "occurrence")) in \(Plural.count(files, "file"))")
         }
         if !changed.isEmpty {
             parts.append("\(Plural.count(changed.count, "file")) skipped — changed since indexing")

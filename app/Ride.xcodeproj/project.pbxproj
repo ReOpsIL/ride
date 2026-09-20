@@ -274,6 +274,7 @@
 		F14000000000000000000007 /* HierarchyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000006 /* HierarchyPanel.swift */; };
 		F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000008 /* AppState+Hierarchy.swift */; };
 		F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */; };
+		F1500000000000000000000B /* SelfTestSteps+SafeDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */; };
 		F1400000000000000000000D /* HierarchyQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000C /* HierarchyQuery.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
@@ -834,6 +835,7 @@
 		F14000000000000000000006 /* HierarchyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyPanel.swift; sourceTree = "<group>"; };
 		F14000000000000000000008 /* AppState+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Hierarchy.swift"; sourceTree = "<group>"; };
 		F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Hierarchy.swift"; sourceTree = "<group>"; };
+		F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+SafeDelete.swift"; sourceTree = "<group>"; };
 		F1400000000000000000000C /* HierarchyQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyQuery.swift; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
@@ -1598,6 +1600,7 @@
 				DA0000000000000000000001 /* BreakpointShift.swift */,
 				DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */,
 				F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */,
+				F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -2152,6 +2155,7 @@
 				F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */,
 				F14000000000000000000007 /* HierarchyPanel.swift in Sources */,
 				F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */,
+				F1500000000000000000000B /* SelfTestSteps+SafeDelete.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
 				F2000000000000000000A002 /* PaneTabStrips.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,
