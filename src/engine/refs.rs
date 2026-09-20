@@ -3,14 +3,28 @@ use std::path::{Path, PathBuf};
 
 use crate::error::EngineError;
 use crate::ffi::UsagesResponse;
-use crate::refs::{DefContext, RefIndex, RefRecord, build_response, extractor_for, ref_index_dir};
+use crate::refs::{
+    DefContext, RefIndex, RefKind, RefRecord, build_response, extractor_for, ref_index_dir,
+};
 
 use super::Engine;
 
 #[uniffi::export]
 impl Engine {
     pub fn find_usages(&self, session_id: u64, cursor_byte: u32) -> UsagesResponse {
-        match catch_unwind(AssertUnwindSafe(|| usages(self, session_id, cursor_byte))) {
+        match catch_unwind(AssertUnwindSafe(|| {
+            usages(self, session_id, cursor_byte, None)
+        })) {
+            Ok(resp) => resp,
+            Err(_) => UsagesResponse::empty(),
+        }
+    }
+
+    pub fn callers(&self, session_id: u64, cursor_byte: u32) -> UsagesResponse {
+        let kind = Some(RefKind::Call);
+        match catch_unwind(AssertUnwindSafe(|| {
+            usages(self, session_id, cursor_byte, kind)
+        })) {
             Ok(resp) => resp,
             Err(_) => UsagesResponse::empty(),
         }
@@ -41,7 +55,7 @@ impl Engine {
         refs.update_file(&path, &records)
     }
 
-    fn ensure_refs(&self) -> Result<(), EngineError> {
+    pub(super) fn ensure_refs(&self) -> Result<(), EngineError> {
         self.write(|i| {
             let Some(root) = i.workspace.as_ref().map(|w| PathBuf::from(&w.root)) else {
                 return Ok(());
@@ -58,7 +72,12 @@ impl Engine {
     }
 }
 
-fn usages(engine: &Engine, session_id: u64, cursor_byte: u32) -> UsagesResponse {
+fn usages(
+    engine: &Engine,
+    session_id: u64,
+    cursor_byte: u32,
+    kind: Option<RefKind>,
+) -> UsagesResponse {
     let Ok(Some((name, session_path))) = engine.read(|i| {
         let session = i.sessions.get(&session_id)?;
         let name = symbol_name(session, cursor_byte)?;
@@ -79,9 +98,10 @@ fn usages(engine: &Engine, session_id: u64, cursor_byte: u32) -> UsagesResponse 
         return UsagesResponse::empty();
     }
     let refs = engine.read(|i| i.refs.clone()).ok().flatten();
-    let rows = match refs {
-        Some(refs) => refs.usages(&name).unwrap_or_default(),
-        None => Vec::new(),
+    let rows = match (refs, kind) {
+        (Some(refs), Some(kind)) => refs.usages_of_kind(&name, kind).unwrap_or_default(),
+        (Some(refs), None) => refs.usages(&name).unwrap_or_default(),
+        (None, _) => Vec::new(),
     };
     let root = engine
         .read(|i| i.workspace.as_ref().map(|w| PathBuf::from(&w.root)))
@@ -90,7 +110,7 @@ fn usages(engine: &Engine, session_id: u64, cursor_byte: u32) -> UsagesResponse 
     build_response(name, rows, root.as_deref(), &ctx)
 }
 
-fn symbol_name(session: &crate::highlight::BufferSession, byte: u32) -> Option<String> {
+pub(super) fn symbol_name(session: &crate::highlight::BufferSession, byte: u32) -> Option<String> {
     if let Some(symbol) = session.symbol_at(byte) {
         return Some(symbol.name);
     }

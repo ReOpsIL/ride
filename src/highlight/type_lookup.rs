@@ -78,10 +78,8 @@ fn collect(
                 m
             }));
         }
-        if let Some(bases) = table.bases_of(name) {
-            for base in bases {
-                collect(tables, base, depth + 1, seen, out);
-            }
+        for base in table.bases_of(name) {
+            collect(tables, &base, depth + 1, seen, out);
         }
     }
 }
