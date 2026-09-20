@@ -16,38 +16,61 @@ final class BreakpointShiftTests: XCTestCase {
         BreakpointShift.lineEdit(before: text, range: range, inserted: inserted)
     }
 
-    func testInsertedLineAboveShiftsDown() {
-        let insertion = edit(NSRange(location: 3, length: 0), "\n")
-        XCTAssertEqual(insertion, LineEdit(firstLine: 2, lastLine: 2, newLastLine: 3))
-        var set = marks([4])
-        XCTAssertTrue(set.shift(path: path, edit: insertion))
-        XCTAssertEqual(set.lines(path: path), [5])
+    private func shifted(_ lines: [UInt32], _ range: NSRange, _ inserted: String) -> (Bool, Set<UInt32>) {
+        var set = marks(lines)
+        let changed = set.shift(path: path, edit: edit(range, inserted))
+        return (changed, set.lines(path: path))
     }
 
-    func testDeletedLinesAboveShiftUp() {
-        let removal = edit(NSRange(location: 3, length: 6), "")
-        XCTAssertEqual(removal, LineEdit(firstLine: 2, lastLine: 4, newLastLine: 2))
-        var set = marks([5])
-        XCTAssertTrue(set.shift(path: path, edit: removal))
-        XCTAssertEqual(set.lines(path: path), [3])
+    func testInsertedLineAboveShiftsDown() {
+        let (changed, lines) = shifted([2, 4], NSRange(location: 3, length: 0), "\n")
+        XCTAssertTrue(changed)
+        XCTAssertEqual(lines, [3, 5])
+    }
+
+    func testDeletedWholeLinesAboveShiftUp() {
+        let (changed, lines) = shifted([5], NSRange(location: 3, length: 6), "")
+        XCTAssertTrue(changed)
+        XCTAssertEqual(lines, [3])
+    }
+
+    func testMarkOnTheLineRightAfterDeletedLinesMovesUp() {
+        let (changed, lines) = shifted([4, 6], NSRange(location: 3, length: 6), "")
+        XCTAssertTrue(changed)
+        XCTAssertEqual(lines, [2, 4])
+    }
+
+    func testDeletedLinesDropTheirMarks() {
+        let (_, lines) = shifted([2, 3, 5], NSRange(location: 3, length: 6), "")
+        XCTAssertEqual(lines, [3])
+    }
+
+    func testMidLineDeletionAcrossLinesKeepsFirstAndDropsInside() {
+        let (_, lines) = shifted([2, 3, 4, 5], NSRange(location: 4, length: 6), "")
+        XCTAssertEqual(lines, [2, 3])
     }
 
     func testEditOnOwnLineKeepsMark() {
-        var set = marks([4])
-        XCTAssertFalse(set.shift(path: path, edit: edit(NSRange(location: 10, length: 0), "X")))
-        XCTAssertEqual(set.lines(path: path), [4])
-    }
-
-    func testDeletedLinesDropMarks() {
-        var set = marks([2, 3, 5])
-        XCTAssertTrue(set.shift(path: path, edit: edit(NSRange(location: 3, length: 6), "")))
-        XCTAssertEqual(set.lines(path: path), [2, 3])
+        let (changed, lines) = shifted([4], NSRange(location: 10, length: 0), "X")
+        XCTAssertFalse(changed)
+        XCTAssertEqual(lines, [4])
     }
 
     func testSameLineReplacementChangesNothing() {
-        var set = marks([4, 6])
-        XCTAssertFalse(set.shift(path: path, edit: edit(NSRange(location: 9, length: 2), "zz")))
-        XCTAssertEqual(set.lines(path: path), [4, 6])
+        let (changed, lines) = shifted([4, 6], NSRange(location: 9, length: 2), "zz")
+        XCTAssertFalse(changed)
+        XCTAssertEqual(lines, [4, 6])
+    }
+
+    func testInsertWithoutNewlineAtLineStartKeepsMark() {
+        let (changed, lines) = shifted([4], NSRange(location: 9, length: 0), "x")
+        XCTAssertFalse(changed)
+        XCTAssertEqual(lines, [4])
+    }
+
+    func testReplaceLineWithTwoLinesShiftsFollowing() {
+        let (_, lines) = shifted([4, 5], NSRange(location: 9, length: 3), "a\nb\n")
+        XCTAssertEqual(lines, [6])
     }
 
     func testShiftKeepsConditionAndOrder() {

@@ -122,3 +122,7 @@ Render the dimmed, clickable "N usages" line above each outline item from the ex
 
 | Card | What landed | Merge |
 |---|---|---|
+| 1.3-5a | `Diagnostic.fixes`: cargo `MachineApplicable`/`MaybeIncorrect` child suggestions and clang parseable fix-its (`-fno-caret-diagnostics` had to go, clang gates fix-its on the caret renderer) | `aec0eab` |
+| 1.3-6b | Introduce Constant (⌥⌘C) and Inline Variable (⌃⌥N, ⌥⌘N is New Buffer); follow-ups in `todo/engine/remaining.md` | `d085425` |
+| DS-2 | `RideEngineClient.withEngine`; six global-queue prologues rewritten, serial-queue and synchronous sites left as they were | `a6f1687` |
+| DS-1 | Breakpoints, highlights, folds and underlines shift on every edit including undo/redo replay; whole-text replacement is a minimal undoable edit; reviewer replaced the line rule with one keyed on where each mark's line starts relative to the edit | `67ce7d8` + fix |
