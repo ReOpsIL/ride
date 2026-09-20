@@ -44,6 +44,6 @@
 - `LineEndingMenu` in the status bar writes the global `prefs.lineEndings`; "Convert to LF" on one buffer changes every future save. Make it a per-buffer override with the preference as the default.
 - `Engine::statement_range` / `sibling_statement_range` are no longer called by the app after `statement_bounds`; remove them and their FFI records once `tests/editing.rs` moves to `statement_bounds`.
 
-# C++ live debug (2026-09-20, seen while gating the undo-record fix)
+# Debug paths (2026-09-20, from the breakpoint spelling fix)
 
-- `cpp debug stops in Circle::area`, `cpp debug frames`, `cpp debug vector local` and `cpp debug step out` fail deterministically on this machine (`state.debug.isStopped` stays false, no frames), while the Rust debug steps of the same run pass and developer mode is enabled. Reproduced unchanged on `3cbfb52` with a base build, so it predates the undo-record fix: the debuggee built from the copied `samples/cpp-demo` never stops at the breakpoint. Bisect the C++ debug launch (`DebugProgram.located`, the CMake copy's binary path, the breakpoint path sent to lldb).
+- A stopped frame's path arrives in the spelling the debug info holds (rustc resolves symlinks, clang keeps them), so under a symlinked workspace root `AppState.showStoppedLine` can open a second, read-only buffer for a file already open: `Buffers.buffer(for:)` matches `fileURL` exactly. Match an incoming debugger path to an open buffer through the resolved path, the way `source_path::same_file` does in the engine.

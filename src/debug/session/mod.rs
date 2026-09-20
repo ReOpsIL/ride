@@ -4,6 +4,7 @@ mod lifecycle;
 mod progress;
 mod registration;
 mod requests;
+mod source_path;
 mod store;
 mod wire;
 

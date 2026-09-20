@@ -37,19 +37,26 @@ pub fn set_breakpoints(state: &mut State, arguments: &Value) -> Value {
     if let Some(line) = lines.first() {
         state.line = *line;
     }
+    let verified = !state.verify_canonical || is_canonical(&state.path);
     let breakpoints: Vec<Value> = lines
         .iter()
         .enumerate()
         .map(|(index, line)| {
             json!({
                 "id": index as i64 + 1,
-                "verified": true,
+                "verified": verified,
                 "line": line,
                 "source": { "path": state.path },
             })
         })
         .collect();
     json!({ "breakpoints": breakpoints })
+}
+
+fn is_canonical(path: &str) -> bool {
+    std::fs::canonicalize(path)
+        .map(|resolved| resolved.to_string_lossy() == path)
+        .unwrap_or(false)
 }
 
 pub fn stack_trace(state: &State) -> Value {
