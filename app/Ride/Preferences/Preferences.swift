@@ -18,6 +18,7 @@ struct Preferences: Codable, Equatable {
     var indentGuides: Bool
     var sidebarWidth: Double
     var outlineWidth: Double
+    var hierarchyWidth: Double
     var problemsHeight: Double
     var runOutputHeight: Double
     var terminalHeight: Double
@@ -47,6 +48,7 @@ struct Preferences: Codable, Equatable {
         indentGuides: true,
         sidebarWidth: 230,
         outlineWidth: 220,
+        hierarchyWidth: 220,
         problemsHeight: 180,
         runOutputHeight: 200,
         terminalHeight: 220,
@@ -73,6 +75,7 @@ struct Preferences: Codable, Equatable {
         indentGuides: Bool = true,
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
+        hierarchyWidth: Double = 220,
         problemsHeight: Double = 180,
         runOutputHeight: Double = 200,
         terminalHeight: Double = 220,
@@ -104,6 +107,7 @@ struct Preferences: Codable, Equatable {
         self.indentGuides = indentGuides
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
+        self.hierarchyWidth = hierarchyWidth
         self.problemsHeight = problemsHeight
         self.runOutputHeight = runOutputHeight
         self.terminalHeight = terminalHeight
@@ -142,6 +146,7 @@ struct Preferences: Codable, Equatable {
         indentGuides = try c.decodeIfPresent(Bool.self, forKey: .indentGuides) ?? d.indentGuides
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
+        hierarchyWidth = try c.decodeIfPresent(Double.self, forKey: .hierarchyWidth) ?? d.hierarchyWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
@@ -163,6 +168,7 @@ struct Preferences: Codable, Equatable {
         next.tabWidth = min(8, max(2, tabWidth))
         next.sidebarWidth = min(420, max(180, sidebarWidth))
         next.outlineWidth = min(420, max(160, outlineWidth))
+        next.hierarchyWidth = min(420, max(160, hierarchyWidth))
         next.problemsHeight = min(480, max(80, problemsHeight))
         next.runOutputHeight = min(480, max(80, runOutputHeight))
         next.terminalHeight = min(480, max(80, terminalHeight))

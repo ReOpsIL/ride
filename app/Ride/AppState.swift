@@ -54,6 +54,9 @@ final class AppState: ObservableObject {
     @Published var showUsages = false {
         didSet { syncMenu() }
     }
+    @Published var showHierarchy = false {
+        didSet { syncMenu() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -92,6 +95,7 @@ final class AppState: ObservableObject {
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()
     let usages = UsagesModel.shared
+    @Published var hierarchy = HierarchyModel()
     var cargoWork: DispatchWorkItem?
     var gitSink: AnyCancellable?
     var layoutSaveWork: DispatchWorkItem?

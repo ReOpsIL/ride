@@ -37,6 +37,7 @@ struct TabState: Codable, Equatable {
 struct LayoutState: Codable, Equatable {
     var sidebarWidth: Double
     var outlineWidth: Double
+    var hierarchyWidth: Double
     var problemsHeight: Double
     var runOutputHeight: Double
     var terminalHeight: Double
@@ -54,6 +55,7 @@ struct LayoutState: Codable, Equatable {
     static let defaults = LayoutState(
         sidebarWidth: 230,
         outlineWidth: 220,
+        hierarchyWidth: 220,
         problemsHeight: 180,
         runOutputHeight: 200,
         terminalHeight: 220,
@@ -72,6 +74,7 @@ struct LayoutState: Codable, Equatable {
     init(
         sidebarWidth: Double,
         outlineWidth: Double,
+        hierarchyWidth: Double = 220,
         problemsHeight: Double,
         runOutputHeight: Double,
         terminalHeight: Double = 220,
@@ -88,6 +91,7 @@ struct LayoutState: Codable, Equatable {
     ) {
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
+        self.hierarchyWidth = hierarchyWidth
         self.problemsHeight = problemsHeight
         self.runOutputHeight = runOutputHeight
         self.terminalHeight = terminalHeight
@@ -108,6 +112,7 @@ struct LayoutState: Codable, Equatable {
         let d = LayoutState.defaults
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
+        hierarchyWidth = try c.decodeIfPresent(Double.self, forKey: .hierarchyWidth) ?? d.hierarchyWidth
         problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
         runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
         terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight

@@ -22,6 +22,7 @@ extension AppState {
         LayoutState(
             sidebarWidth: prefs.sidebarWidth,
             outlineWidth: prefs.outlineWidth,
+            hierarchyWidth: prefs.hierarchyWidth,
             problemsHeight: prefs.problemsHeight,
             runOutputHeight: prefs.runOutputHeight,
             terminalHeight: prefs.terminalHeight,
@@ -43,6 +44,7 @@ extension AppState {
         persistLayout = false
         prefs.sidebarWidth = layout.sidebarWidth
         prefs.outlineWidth = layout.outlineWidth
+        prefs.hierarchyWidth = layout.hierarchyWidth
         prefs.problemsHeight = layout.problemsHeight
         prefs.runOutputHeight = layout.runOutputHeight
         prefs.terminalHeight = layout.terminalHeight

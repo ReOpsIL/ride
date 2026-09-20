@@ -34,6 +34,12 @@ struct NavigateCommands: Commands {
             Button("Find Usages") { state.findUsages() }
                 .keyboardShortcut(FunctionKeys.f7, modifiers: .option)
                 .disabled(!menu.hasEditor)
+            Button("Call Hierarchy") { state.showCallHierarchy() }
+                .keyboardShortcut("h", modifiers: [.control, .option])
+                .disabled(!menu.canRefactor)
+            Button("Type Hierarchy") { state.showTypeHierarchy() }
+                .keyboardShortcut("h", modifiers: .control)
+                .disabled(!menu.canRefactor)
             Button("Rename…") { state.beginRename() }
                 .keyboardShortcut(FunctionKeys.f6, modifiers: .shift)
                 .disabled(!menu.hasEditor)

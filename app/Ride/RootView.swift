@@ -157,6 +157,11 @@ struct DetailColumn: View {
                 FileOutlineView()
                     .frame(width: state.prefs.outlineWidth)
             }
+            if state.showHierarchy {
+                SplitHandle(axis: .horizontal, value: hierarchyWidth, range: 160...420, inverted: true)
+                HierarchyPanel()
+                    .frame(width: state.prefs.hierarchyWidth)
+            }
         }
     }
 
@@ -164,6 +169,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.outlineWidth },
             set: { value in state.saveLayout { $0.outlineWidth = value } }
+        )
+    }
+
+    private var hierarchyWidth: Binding<Double> {
+        Binding(
+            get: { state.prefs.hierarchyWidth },
+            set: { value in state.saveLayout { $0.hierarchyWidth = value } }
         )
     }
 
