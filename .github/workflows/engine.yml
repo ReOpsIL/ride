@@ -87,6 +87,8 @@ jobs:
             -derivedDataPath target/xcode -destination 'platform=macOS,arch=arm64' \
             -skipPackagePluginValidation -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO build
+      - name: developer-mode
+        run: sudo DevToolsSecurity -enable
       - name: selftest
         timeout-minutes: 20
         run: |
@@ -118,3 +120,4 @@ jobs:
           }
           run 1 samples/rust-demo
           run 2 samples/cpp-demo --file src/shapes.cpp
+          run 3 samples/c-demo --file src/main.c

@@ -246,6 +246,8 @@
 		D19200000000000000000202 /* SelfTestSteps+Refactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000201 /* SelfTestSteps+Refactor.swift */; };
 		E60000000000000000000127 /* SelfTestSteps+Intentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000126 /* SelfTestSteps+Intentions.swift */; };
 		D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000003 /* SelfTestSteps+Cpp.swift */; };
+		P50000000000000000000004 /* SelfTestSteps+C.swift in Sources */ = {isa = PBXBuildFile; fileRef = P50000000000000000000003 /* SelfTestSteps+C.swift */; };
+		P50000000000000000000002 /* SelfTestSteps+CppDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = P50000000000000000000001 /* SelfTestSteps+CppDebug.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
 		F1A000000000000000000002 /* PeekSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A000000000000000000001 /* PeekSegments.swift */; };
@@ -852,6 +854,8 @@
 		D19200000000000000000201 /* SelfTestSteps+Refactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Refactor.swift"; sourceTree = "<group>"; };
 		E60000000000000000000126 /* SelfTestSteps+Intentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Intentions.swift"; sourceTree = "<group>"; };
 		D19200000000000000000003 /* SelfTestSteps+Cpp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Cpp.swift"; sourceTree = "<group>"; };
+		P50000000000000000000003 /* SelfTestSteps+C.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+C.swift"; sourceTree = "<group>"; };
+		P50000000000000000000001 /* SelfTestSteps+CppDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppDebug.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
 		F1A000000000000000000001 /* PeekSegments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekSegments.swift; sourceTree = "<group>"; };
@@ -1682,6 +1686,8 @@
 				D19200000000000000000201 /* SelfTestSteps+Refactor.swift */,
 				E60000000000000000000126 /* SelfTestSteps+Intentions.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
+				P50000000000000000000003 /* SelfTestSteps+C.swift */,
+				P50000000000000000000001 /* SelfTestSteps+CppDebug.swift */,
 				FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
 				F1E000000000000000000012 /* SelfTestSteps+Rename.swift */,
@@ -2156,6 +2162,8 @@
 				D19200000000000000000202 /* SelfTestSteps+Refactor.swift in Sources */,
 				E60000000000000000000127 /* SelfTestSteps+Intentions.swift in Sources */,
 				D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */,
+				P50000000000000000000004 /* SelfTestSteps+C.swift in Sources */,
+				P50000000000000000000002 /* SelfTestSteps+CppDebug.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
 				D2500000000000000000000B /* SelfTestSteps+Tests.swift in Sources */,

@@ -15,7 +15,10 @@ struct DebugProgram: Equatable {
             guard let first = plan.argv.first, !first.isEmpty else {
                 return nil
             }
-            return DebugProgram(program: first, args: Array(plan.argv.dropFirst()))
+            return DebugProgram(
+                program: located(first, base: plan.cwd ?? emptyToNil(workingDir)),
+                args: Array(plan.argv.dropFirst())
+            )
         }
         guard !targetName.isEmpty, !workingDir.isEmpty else {
             return nil
@@ -26,6 +29,20 @@ struct DebugProgram: Equatable {
             .appendingPathComponent(directory)
             .appendingPathComponent(targetName)
         return DebugProgram(program: binary.path, args: passthrough(plan.argv))
+    }
+
+    static func located(_ program: String, base: String?) -> String {
+        guard !program.hasPrefix("/"), program.contains("/"), let base, !base.isEmpty else {
+            return program
+        }
+        return URL(fileURLWithPath: base)
+            .appendingPathComponent(program)
+            .standardizedFileURL
+            .path
+    }
+
+    private static func emptyToNil(_ text: String) -> String? {
+        text.isEmpty ? nil : text
     }
 
     private static func passthrough(_ argv: [String]) -> [String] {

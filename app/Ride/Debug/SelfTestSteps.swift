@@ -9,7 +9,9 @@ enum SelfTestSteps {
         let file = SelfTestOpened.from(state)
         let scratch = SelfTestScratch()
         switch state.activeBuffer?.language ?? .rust {
-        case .c, .cpp:
+        case .c:
+            return c(state: state, e: e, file: file, scratch: scratch)
+        case .cpp:
             return cpp(state: state, e: e, file: file, scratch: scratch)
         default:
             return rust(state: state, e: e, file: file, scratch: scratch)
