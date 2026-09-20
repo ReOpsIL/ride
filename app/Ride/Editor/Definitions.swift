@@ -7,15 +7,14 @@ enum Definitions {
         utf16: Int,
         done: @escaping (DefinitionResponse) -> Void
     ) {
-        guard let engine = RideEngineClient.shared.engine, let id = document.sessionId else {
+        guard let id = document.sessionId else {
             return
         }
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: utf16))
-        DispatchQueue.global(qos: .userInitiated).async {
-            let resp = engine.findDefinitions(sessionId: id, cursorByte: byte)
-            DispatchQueue.main.async {
-                done(resp)
-            }
+        RideEngineClient.shared.withEngine { engine in
+            engine.findDefinitions(sessionId: id, cursorByte: byte)
+        } then: { resp in
+            done(resp)
         }
     }
 }

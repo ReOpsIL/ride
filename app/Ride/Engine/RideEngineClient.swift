@@ -35,6 +35,24 @@ final class RideEngineClient: ObservableObject {
         apply(engine.status())
     }
 
+    @discardableResult
+    func withEngine<T>(
+        qos: DispatchQoS.QoSClass = .userInitiated,
+        _ work: @escaping (Engine) -> T,
+        then done: @escaping (T) -> Void
+    ) -> Bool {
+        guard let engine else {
+            return false
+        }
+        DispatchQueue.global(qos: qos).async {
+            let value = work(engine)
+            DispatchQueue.main.async {
+                done(value)
+            }
+        }
+        return true
+    }
+
     func openWorkspace(_ url: URL, then completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self, let engine = self.engine else {
