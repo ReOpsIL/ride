@@ -96,7 +96,7 @@ struct Preferences: Codable, Equatable {
         aiModel: String = "",
         aiAuth: String = "login",
         aiContext: String = "function",
-        reportsAcknowledged: Double = 0
+        reportsAcknowledged: Double = 0,
         lineEndings: String = LineEndings.keep
     ) {
         self.theme = theme

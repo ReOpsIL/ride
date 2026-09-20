@@ -587,6 +587,19 @@
 		RP0000000000000000000007 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000006 /* CrashReporter.swift */; };
 		RP0000000000000000000009 /* CrashSignals.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000008 /* CrashSignals.swift */; };
 		RP0000000000000000000011 /* AppState+Reports.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000010 /* AppState+Reports.swift */; };
+		P8B000000000000000000002 /* RideTextView+Apply.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000001 /* RideTextView+Apply.swift */; };
+		P8B000000000000000000004 /* DetailColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000003 /* DetailColumn.swift */; };
+		P8B000000000000000000006 /* AppState+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000005 /* AppState+Init.swift */; };
+		P8B000000000000000000008 /* AppState+Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000007 /* AppState+Tree.swift */; };
+		P8B00000000000000000000A /* SelfTestSteps+RustGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000009 /* SelfTestSteps+RustGenerate.swift */; };
+		P8B00000000000000000000C /* SelfTestSteps+RustEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B00000000000000000000B /* SelfTestSteps+RustEdit.swift */; };
+		P8B00000000000000000000E /* SelfTestSteps+RustSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B00000000000000000000D /* SelfTestSteps+RustSelect.swift */; };
+		P8B000000000000000000010 /* SelfTestSteps+RustTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B00000000000000000000F /* SelfTestSteps+RustTools.swift */; };
+		P8B000000000000000000012 /* SelfTestSteps+RustClose.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000011 /* SelfTestSteps+RustClose.swift */; };
+		P8B000000000000000000014 /* SelfTestSteps+RustRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000013 /* SelfTestSteps+RustRun.swift */; };
+		P8B000000000000000000016 /* SelfTestSteps+CppEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000015 /* SelfTestSteps+CppEdit.swift */; };
+		P8B000000000000000000018 /* SelfTestSteps+CppGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000017 /* SelfTestSteps+CppGenerate.swift */; };
+		P8B00000000000000000001A /* SelfTestSteps+CppPeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000019 /* SelfTestSteps+CppPeek.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1077,6 +1090,19 @@
 		RP0000000000000000000008 /* CrashSignals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashSignals.swift"; sourceTree = "<group>"; };
 		RP0000000000000000000010 /* AppState+Reports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Reports.swift"; sourceTree = "<group>"; };
 		RP0000000000000000000004 /* ReportStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReportStoreTests.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000001 /* RideTextView+Apply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Apply.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000003 /* DetailColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailColumn.swift; sourceTree = "<group>"; };
+		P8B000000000000000000005 /* AppState+Init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Init.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000007 /* AppState+Tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Tree.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000009 /* SelfTestSteps+RustGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustGenerate.swift"; sourceTree = "<group>"; };
+		P8B00000000000000000000B /* SelfTestSteps+RustEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustEdit.swift"; sourceTree = "<group>"; };
+		P8B00000000000000000000D /* SelfTestSteps+RustSelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustSelect.swift"; sourceTree = "<group>"; };
+		P8B00000000000000000000F /* SelfTestSteps+RustTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustTools.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000011 /* SelfTestSteps+RustClose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustClose.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000013 /* SelfTestSteps+RustRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+RustRun.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000015 /* SelfTestSteps+CppEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppEdit.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000017 /* SelfTestSteps+CppGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppGenerate.swift"; sourceTree = "<group>"; };
+		P8B000000000000000000019 /* SelfTestSteps+CppPeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppPeek.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1280,9 +1306,12 @@
 				S10000000000000000000023 /* UpdateController+Sparkle.swift */,
 				S10000000000000000000003 /* Info.plist */,
 				A00000000000000000000012 /* AppState.swift */,
+				P8B000000000000000000005 /* AppState+Init.swift */,
+				P8B000000000000000000007 /* AppState+Tree.swift */,
 				E40000000000000000000001 /* MenuModel.swift */,
 				A0000000000000000000009D /* AppState+Nav.swift */,
 				A00000000000000000000013 /* RootView.swift */,
+				P8B000000000000000000003 /* DetailColumn.swift */,
 				A00000000000000000000053 /* StatusBar */,
 				A00000000000000000000054 /* Workspace */,
 				P20000000000000000000010 /* Project */,
@@ -1521,6 +1550,7 @@
 				E60000000000000000000128 /* GutterLines.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
+				P8B000000000000000000001 /* RideTextView+Apply.swift */,
 				A0000000000000000000001B /* BufferDocument.swift */,
 				A0000000000000000000090A /* BufferLanguage.swift */,
 				R11000000000000000000010 /* BufferLanguage+Engine.swift */,
@@ -1721,10 +1751,19 @@
 				E80000000000000000000003 /* SelfTestSteps.swift */,
 				P6100000000000000000000B /* SelfTestSteps+Move.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
+				P8B000000000000000000009 /* SelfTestSteps+RustGenerate.swift */,
+				P8B00000000000000000000B /* SelfTestSteps+RustEdit.swift */,
+				P8B00000000000000000000D /* SelfTestSteps+RustSelect.swift */,
+				P8B00000000000000000000F /* SelfTestSteps+RustTools.swift */,
+				P8B000000000000000000011 /* SelfTestSteps+RustClose.swift */,
+				P8B000000000000000000013 /* SelfTestSteps+RustRun.swift */,
 				D19200000000000000000101 /* SelfTestSteps+Extract.swift */,
 				D19200000000000000000201 /* SelfTestSteps+Refactor.swift */,
 				E60000000000000000000126 /* SelfTestSteps+Intentions.swift */,
 				D19200000000000000000003 /* SelfTestSteps+Cpp.swift */,
+				P8B000000000000000000015 /* SelfTestSteps+CppEdit.swift */,
+				P8B000000000000000000017 /* SelfTestSteps+CppGenerate.swift */,
+				P8B000000000000000000019 /* SelfTestSteps+CppPeek.swift */,
 				P50000000000000000000003 /* SelfTestSteps+C.swift */,
 				P50000000000000000000001 /* SelfTestSteps+CppDebug.swift */,
 				FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */,
@@ -2214,10 +2253,19 @@
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
 				D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */,
+				P8B00000000000000000000A /* SelfTestSteps+RustGenerate.swift in Sources */,
+				P8B00000000000000000000C /* SelfTestSteps+RustEdit.swift in Sources */,
+				P8B00000000000000000000E /* SelfTestSteps+RustSelect.swift in Sources */,
+				P8B000000000000000000010 /* SelfTestSteps+RustTools.swift in Sources */,
+				P8B000000000000000000012 /* SelfTestSteps+RustClose.swift in Sources */,
+				P8B000000000000000000014 /* SelfTestSteps+RustRun.swift in Sources */,
 				D19200000000000000000102 /* SelfTestSteps+Extract.swift in Sources */,
 				D19200000000000000000202 /* SelfTestSteps+Refactor.swift in Sources */,
 				E60000000000000000000127 /* SelfTestSteps+Intentions.swift in Sources */,
 				D19200000000000000000004 /* SelfTestSteps+Cpp.swift in Sources */,
+				P8B000000000000000000016 /* SelfTestSteps+CppEdit.swift in Sources */,
+				P8B000000000000000000018 /* SelfTestSteps+CppGenerate.swift in Sources */,
+				P8B00000000000000000001A /* SelfTestSteps+CppPeek.swift in Sources */,
 				P50000000000000000000004 /* SelfTestSteps+C.swift in Sources */,
 				P50000000000000000000002 /* SelfTestSteps+CppDebug.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
@@ -2426,8 +2474,11 @@
 				S20000000000000000000010 /* TerminalPanel.swift in Sources */,
 				S20000000000000000000012 /* AppState+Terminal.swift in Sources */,
 				A00000000000000000000022 /* AppState.swift in Sources */,
+				P8B000000000000000000006 /* AppState+Init.swift in Sources */,
+				P8B000000000000000000008 /* AppState+Tree.swift in Sources */,
 				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
+				P8B000000000000000000004 /* DetailColumn.swift in Sources */,
 				E50000000000000000000101 /* TextChange.swift in Sources */,
 				E500000000000000000001A0 /* UndoStep.swift in Sources */,
 				E50000000000000000000102 /* LineSpan.swift in Sources */,
@@ -2488,6 +2539,7 @@
 				RB0000000000000000000002 /* RunInvocation.swift in Sources */,
 				P20000000000000000000008 /* ManifestWatch.swift in Sources */,
 				A0000000000000000000002A /* RideTextView.swift in Sources */,
+				P8B000000000000000000002 /* RideTextView+Apply.swift in Sources */,
 				A0000000000000000000002B /* BufferDocument.swift in Sources */,
 				A0000000000000000000090B /* BufferLanguage.swift in Sources */,
 				R11000000000000000000011 /* BufferLanguage+Engine.swift in Sources */,
