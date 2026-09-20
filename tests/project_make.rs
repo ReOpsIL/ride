@@ -35,6 +35,7 @@ fn model(root: &Path) -> ProjectModel {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     });
     engine.project_model(root.display().to_string()).unwrap()
 }
@@ -117,6 +118,7 @@ fn the_make_detector_reads_the_real_cpp_demo_beside_its_cmake_lists() {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     };
     let model = Make::detect(&root, &config).unwrap().unwrap();
     assert_eq!(model.kind, ProjectKind::Make);

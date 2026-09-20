@@ -66,6 +66,7 @@ final class AppState: ObservableObject {
     @Published var formatError: String?
     @Published var notice: String?
     @Published var noticeAction: (title: String, run: () -> Void)?
+    var noticeDismiss: (() -> Void)?
     @Published var showToolsSheet = false
     @Published var showNewProjectSheet = false
     @Published var showRunConfigSheet = false
@@ -169,6 +170,9 @@ final class AppState: ObservableObject {
         }
         if let url = Self.launchFolder() {
             open(url)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.checkCrashReports()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             self?.checkTools()

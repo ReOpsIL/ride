@@ -33,6 +33,7 @@ struct Preferences: Codable, Equatable {
     var aiModel: String
     var aiAuth: String
     var aiContext: String
+    var reportsAcknowledged: Double
 
     static let defaults = Preferences(
         theme: "dark",
@@ -93,7 +94,8 @@ struct Preferences: Codable, Equatable {
         aiProvider: String = "anthropic",
         aiModel: String = "",
         aiAuth: String = "login",
-        aiContext: String = "function"
+        aiContext: String = "function",
+        reportsAcknowledged: Double = 0
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -127,6 +129,7 @@ struct Preferences: Codable, Equatable {
         self.aiModel = aiModel
         self.aiAuth = aiAuth
         self.aiContext = aiContext
+        self.reportsAcknowledged = reportsAcknowledged
     }
 
     init(from decoder: Decoder) throws {
@@ -164,6 +167,7 @@ struct Preferences: Codable, Equatable {
         aiModel = try c.decodeIfPresent(String.self, forKey: .aiModel) ?? d.aiModel
         aiAuth = try c.decodeIfPresent(String.self, forKey: .aiAuth) ?? d.aiAuth
         aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
+        reportsAcknowledged = try c.decodeIfPresent(Double.self, forKey: .reportsAcknowledged) ?? d.reportsAcknowledged
     }
 
     var clamped: Preferences {
@@ -179,6 +183,7 @@ struct Preferences: Codable, Equatable {
         next.testsHeight = min(480, max(80, testsHeight))
         next.debugHeight = min(600, max(320, debugHeight))
         next.previewWidth = min(900, max(260, previewWidth))
+        next.reportsAcknowledged = max(0, reportsAcknowledged)
         if next.theme != "light" {
             next.theme = "dark"
         }

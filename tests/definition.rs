@@ -14,6 +14,7 @@ fn config(index_dir: &std::path::Path) -> EngineConfig {
         sysroot: Some(fixtures().join("sysroot").display().to_string()),
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     }
 }
 
@@ -106,6 +107,7 @@ fn fresh() -> (tempfile::TempDir, Arc<Engine>) {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     });
     (dir, engine)
 }

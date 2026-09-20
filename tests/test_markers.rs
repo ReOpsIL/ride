@@ -9,6 +9,7 @@ fn engine() -> Arc<Engine> {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     })
 }
 

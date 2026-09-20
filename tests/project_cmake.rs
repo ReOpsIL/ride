@@ -12,6 +12,7 @@ fn engine() -> (tempfile::TempDir, std::sync::Arc<ride_engine::Engine>) {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     });
     (index, engine)
 }

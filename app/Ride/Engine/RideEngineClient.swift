@@ -26,7 +26,8 @@ final class RideEngineClient: ObservableObject {
             cargoHome: nil,
             sysroot: nil,
             offlineMetadata: true,
-            refsDir: DemoRefsDir.prepare()
+            refsDir: DemoRefsDir.prepare(),
+            reportDir: ReportPaths.directory.path
         )
         let engine = engineStart(config: config)
         let listener = StatusForwarder(client: self)

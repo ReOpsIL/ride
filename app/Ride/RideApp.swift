@@ -9,6 +9,7 @@ struct RideApp: App {
     @ObservedObject private var menu: MenuModel
 
     init() {
+        CrashReporter.install()
         UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
         UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
         NSWindow.allowsAutomaticWindowTabbing = false

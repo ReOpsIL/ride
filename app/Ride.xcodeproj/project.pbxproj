@@ -545,6 +545,12 @@
 		CV0000000000000000000023 /* VisionLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000003 /* VisionLayoutTests.swift */; };
 		CV0000000000000000000014 /* RideTextView+Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000004 /* RideTextView+Vision.swift */; };
 		CV0000000000000000000015 /* SelfTestSteps+Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000005 /* SelfTestSteps+Vision.swift */; };
+		RP0000000000000000000002 /* ReportStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000001 /* ReportStore.swift */; };
+		RP0000000000000000000003 /* ReportStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000001 /* ReportStore.swift */; };
+		RP0000000000000000000005 /* ReportStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000004 /* ReportStoreTests.swift */; };
+		RP0000000000000000000007 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000006 /* CrashReporter.swift */; };
+		RP0000000000000000000009 /* CrashSignals.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000008 /* CrashSignals.swift */; };
+		RP0000000000000000000011 /* AppState+Reports.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP0000000000000000000010 /* AppState+Reports.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1001,6 +1007,11 @@
 		CV0000000000000000000003 /* VisionLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionLayoutTests.swift; sourceTree = "<group>"; };
 		CV0000000000000000000004 /* RideTextView+Vision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Vision.swift"; sourceTree = "<group>"; };
 		CV0000000000000000000005 /* SelfTestSteps+Vision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Vision.swift"; sourceTree = "<group>"; };
+		RP0000000000000000000001 /* ReportStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReportStore.swift"; sourceTree = "<group>"; };
+		RP0000000000000000000006 /* CrashReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashReporter.swift"; sourceTree = "<group>"; };
+		RP0000000000000000000008 /* CrashSignals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashSignals.swift"; sourceTree = "<group>"; };
+		RP0000000000000000000010 /* AppState+Reports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Reports.swift"; sourceTree = "<group>"; };
+		RP0000000000000000000004 /* ReportStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReportStoreTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1119,6 +1130,7 @@
 				Q30000000000000000000013 /* RunPlanTests.swift */,
 				F1000000000000000000000A /* PaneLayoutTests.swift */,
 				F12000000000000000000004 /* SplitLayoutTests.swift */,
+				RP0000000000000000000004 /* ReportStoreTests.swift */,
 				BF0000000000000000000004 /* BufferTextUndoTests.swift */,
 				AA0000000000000000000045 /* AIPromptTests.swift */,
 				AA0000000000000000000087 /* ProjectScaffoldTests.swift */,
@@ -1208,6 +1220,7 @@
 				E20000000000000000000015 /* CheatSheet */,
 				A00000000000000000000131 /* Problems */,
 				A00000000000000000000905 /* Debug */,
+				RP0000000000000000000012 /* Reports */,
 				D0A55E7500000000000A55E7 /* Assets.xcassets */,
 			);
 			path = Ride;
@@ -1737,6 +1750,17 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		RP0000000000000000000012 /* Reports */ = {
+			isa = PBXGroup;
+			children = (
+				RP0000000000000000000001 /* ReportStore.swift */,
+				RP0000000000000000000006 /* CrashReporter.swift */,
+				RP0000000000000000000008 /* CrashSignals.swift */,
+				RP0000000000000000000010 /* AppState+Reports.swift */,
+			);
+			path = Reports;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1967,6 +1991,8 @@
 				F1000000000000000000000B /* PaneLayoutTests.swift in Sources */,
 				F12000000000000000000003 /* SplitLayout.swift in Sources */,
 				F12000000000000000000005 /* SplitLayoutTests.swift in Sources */,
+				RP0000000000000000000003 /* ReportStore.swift in Sources */,
+				RP0000000000000000000005 /* ReportStoreTests.swift in Sources */,
 				BF0000000000000000000003 /* BufferTextUndo.swift in Sources */,
 				BF0000000000000000000005 /* BufferTextUndoTests.swift in Sources */,
 				F13000000000000000000003 /* UsageRows.swift in Sources */,
@@ -2194,6 +2220,10 @@
 				F10000000000000000000002 /* PaneLayout.swift in Sources */,
 				F1A000000000000000000002 /* PeekSegments.swift in Sources */,
 				F12000000000000000000002 /* SplitLayout.swift in Sources */,
+				RP0000000000000000000002 /* ReportStore.swift in Sources */,
+				RP0000000000000000000007 /* CrashReporter.swift in Sources */,
+				RP0000000000000000000009 /* CrashSignals.swift in Sources */,
+				RP0000000000000000000011 /* AppState+Reports.swift in Sources */,
 				BF0000000000000000000002 /* BufferTextUndo.swift in Sources */,
 				F13000000000000000000002 /* UsageRows.swift in Sources */,
 				F13000000000000000000005 /* UsageVision.swift in Sources */,
