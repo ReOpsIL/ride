@@ -80,11 +80,11 @@ extension SelfTestSteps {
         ]
     }
 
-    private static func debugPath(_ state: AppState) -> String? {
+    static func debugPath(_ state: AppState) -> String? {
         state.activeBuffer?.fileURL?.standardizedFileURL.path
     }
 
-    private static func marks(_ state: AppState) -> Set<UInt32> {
+    static func marks(_ state: AppState) -> Set<UInt32> {
         guard let path = debugPath(state) else {
             return []
         }

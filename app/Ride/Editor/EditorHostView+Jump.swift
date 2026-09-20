@@ -32,8 +32,13 @@ extension EditorHostView {
     }
 
     func replaceText(_ text: String) {
-        textView.undoManager?.removeAllActions()
-        textView.string = text
+        if let edit = TextDiff.minimalEdit(from: textView.string, to: text) {
+            textView.breakUndoCoalescing()
+            textView.undoManager?.beginUndoGrouping()
+            textView.replaceText(in: edit.range, with: edit.text)
+            textView.undoManager?.endUndoGrouping()
+            textView.breakUndoCoalescing()
+        }
         textView.lines.invalidate()
         syncGutter()
         textView.updateCurrentLineHighlight()

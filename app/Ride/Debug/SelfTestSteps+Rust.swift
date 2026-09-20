@@ -11,6 +11,7 @@ extension SelfTestSteps {
             + rustGenerate(e: e, scratch: scratch)
             + renameSteps(state: state, e: e)
             + rustExtract(e: e, scratch: scratch)
+            + breakpointShiftSteps(state: state, e: e)
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {
