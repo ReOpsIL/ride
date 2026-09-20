@@ -272,6 +272,13 @@
 		F13000000000000000000013 /* UsageIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13000000000000000000012 /* UsageIndexer.swift */; };
 		F13000000000000000000015 /* AppState+Usages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13000000000000000000014 /* AppState+Usages.swift */; };
 		F13000000000000000000017 /* UsagesPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13000000000000000000016 /* UsagesPanel.swift */; };
+		F14000000000000000000002 /* HierarchyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000001 /* HierarchyModel.swift */; };
+		F14000000000000000000003 /* HierarchyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000001 /* HierarchyModel.swift */; };
+		F14000000000000000000005 /* HierarchyModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000004 /* HierarchyModelTests.swift */; };
+		F14000000000000000000007 /* HierarchyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000006 /* HierarchyPanel.swift */; };
+		F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000008 /* AppState+Hierarchy.swift */; };
+		F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */; };
+		F1400000000000000000000D /* HierarchyQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000C /* HierarchyQuery.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
 		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
@@ -833,6 +840,12 @@
 		F13000000000000000000012 /* UsageIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageIndexer.swift; sourceTree = "<group>"; };
 		F13000000000000000000014 /* AppState+Usages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Usages.swift"; sourceTree = "<group>"; };
 		F13000000000000000000016 /* UsagesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagesPanel.swift; sourceTree = "<group>"; };
+		F14000000000000000000001 /* HierarchyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyModel.swift; sourceTree = "<group>"; };
+		F14000000000000000000004 /* HierarchyModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyModelTests.swift; sourceTree = "<group>"; };
+		F14000000000000000000006 /* HierarchyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyPanel.swift; sourceTree = "<group>"; };
+		F14000000000000000000008 /* AppState+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Hierarchy.swift"; sourceTree = "<group>"; };
+		F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Hierarchy.swift"; sourceTree = "<group>"; };
+		F1400000000000000000000C /* HierarchyQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyQuery.swift; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
 		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
@@ -1114,6 +1127,7 @@
 				DA0000000000000000000006 /* BreakpointShiftTests.swift */,
 				DA0000000000000000000007 /* TextDiffTests.swift */,
 				DA0000000000000000000008 /* ByteSpanShiftTests.swift */,
+				F14000000000000000000004 /* HierarchyModelTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -1159,6 +1173,7 @@
 				S20000000000000000000020 /* Terminal */,
 				T20000000000000000000100 /* Tests */,
 				F13000000000000000000100 /* Usages */,
+				F14000000000000000000100 /* Hierarchy */,
 				F1E0000000000000000000A0 /* Rename */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
@@ -1226,6 +1241,17 @@
 				F13000000000000000000016 /* UsagesPanel.swift */,
 			);
 			path = Usages;
+			sourceTree = "<group>";
+		};
+		F14000000000000000000100 /* Hierarchy */ = {
+			isa = PBXGroup;
+			children = (
+				F14000000000000000000001 /* HierarchyModel.swift */,
+				F1400000000000000000000C /* HierarchyQuery.swift */,
+				F14000000000000000000008 /* AppState+Hierarchy.swift */,
+				F14000000000000000000006 /* HierarchyPanel.swift */,
+			);
+			path = Hierarchy;
 			sourceTree = "<group>";
 		};
 		T20000000000000000000100 /* Tests */ = {
@@ -1589,6 +1615,7 @@
 				D400000000000000000000DF /* Breakpoints.swift */,
 				DA0000000000000000000001 /* BreakpointShift.swift */,
 				DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */,
+				F1400000000000000000000A /* SelfTestSteps+Hierarchy.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -1905,6 +1932,8 @@
 				DA0000000000000000000026 /* BreakpointShiftTests.swift in Sources */,
 				DA0000000000000000000027 /* TextDiffTests.swift in Sources */,
 				DA0000000000000000000028 /* ByteSpanShiftTests.swift in Sources */,
+				F14000000000000000000003 /* HierarchyModel.swift in Sources */,
+				F14000000000000000000005 /* HierarchyModelTests.swift in Sources */,
 				D400000000000000000000EB /* SplitState.swift in Sources */,
 				D400000000000000000000FB /* BreakpointsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
@@ -2144,6 +2173,11 @@
 				F13000000000000000000013 /* UsageIndexer.swift in Sources */,
 				F13000000000000000000015 /* AppState+Usages.swift in Sources */,
 				F13000000000000000000017 /* UsagesPanel.swift in Sources */,
+				F14000000000000000000002 /* HierarchyModel.swift in Sources */,
+				F1400000000000000000000D /* HierarchyQuery.swift in Sources */,
+				F14000000000000000000009 /* AppState+Hierarchy.swift in Sources */,
+				F14000000000000000000007 /* HierarchyPanel.swift in Sources */,
+				F1400000000000000000000B /* SelfTestSteps+Hierarchy.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
 				F2000000000000000000A002 /* PaneTabStrips.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,

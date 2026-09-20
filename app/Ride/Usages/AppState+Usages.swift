@@ -23,7 +23,7 @@ extension AppState {
         UsageIndexer.index(buffers)
     }
 
-    private func usageURL(_ path: String) -> URL {
+    func usageURL(_ path: String) -> URL {
         if path.hasPrefix("/") {
             return URL(fileURLWithPath: path).standardizedFileURL
         }
