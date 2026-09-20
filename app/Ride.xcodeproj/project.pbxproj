@@ -2725,7 +2725,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers\"\ncp \"$SRCROOT/Resources/ride\" \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride\"\nchmod +x \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride\"\n";
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers\"\ncp \"$SRCROOT/Resources/ride\" \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride\"\nchmod +x \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride\"\nif [ \"${CODE_SIGNING_ALLOWED:-YES}\" != \"NO\" ]; then\n  codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:--}\" \"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/ride\"\nfi\n";
 		};
 		SU0000000000000000000030 /* Copy samples */ = {
 			isa = PBXShellScriptBuildPhase;
