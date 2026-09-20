@@ -49,7 +49,7 @@ mod toml_outline;
 mod tree_syntax;
 mod type_lookup;
 mod types;
-mod walk;
+pub(crate) mod walk;
 
 pub use call_site::CallSite;
 pub use context::Context;

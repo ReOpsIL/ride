@@ -1,18 +1,17 @@
-const BASE: &str = "value";
 const LIMIT: u32 = 200;
 
-pub fn placeholder(text: &str) -> String {
+pub fn placeholder(text: &str, base: &str) -> String {
     for n in 1..=LIMIT {
         let candidate = if n == 1 {
-            BASE.to_string()
+            base.to_string()
         } else {
-            format!("{BASE}{n}")
+            format!("{base}{n}")
         };
         if !contains_word(text, &candidate) {
             return candidate;
         }
     }
-    format!("{BASE}{LIMIT}")
+    format!("{base}{LIMIT}")
 }
 
 fn contains_word(text: &str, word: &str) -> bool {

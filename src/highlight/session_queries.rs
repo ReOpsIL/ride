@@ -1,5 +1,5 @@
 use crate::ffi::{BracketPair, ByteRange, FoldRange, SymbolAt, TextEdit};
-use crate::refactor::ExtractSpans;
+use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::call_site::CallSite;
 use super::context::Context;
@@ -49,6 +49,14 @@ impl BufferSession {
 
     pub fn extract_spans(&self, range: ByteRange) -> Option<ExtractSpans> {
         self.syntax.extract_spans(&self.replica, range)
+    }
+
+    pub fn constant_spans(&self, range: ByteRange) -> Option<ConstantSpans> {
+        self.syntax.constant_spans(&self.replica, range)
+    }
+
+    pub fn inline_spans(&self, byte: u32) -> Option<InlineSpans> {
+        self.syntax.inline_spans(&self.replica, byte)
     }
 
     pub fn enclosing_ranges(&self, range: ByteRange) -> Vec<ByteRange> {
