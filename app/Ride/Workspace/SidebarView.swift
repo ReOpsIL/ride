@@ -29,7 +29,7 @@ struct SidebarView: View {
             Spacer(minLength: 0)
             if let root = state.workspaceRoot {
                 IconButton(symbol: "doc.badge.plus", help: "New File") {
-                    if let url = TreeActions.newFile(in: root) {
+                    if let url = TreeActions.newFile(in: root, kind: state.projectModel.model?.kind) {
                         state.fileCreated(url)
                     }
                 }

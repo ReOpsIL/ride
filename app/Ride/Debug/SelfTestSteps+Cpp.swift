@@ -43,6 +43,15 @@ extension SelfTestSteps {
             generateCleanup(e: e, scratch: scratch),
         ] + liveSteps(state: state, e: e) + cppExtract(state: state, e: e, scratch: scratch)
             + cppRefactor(e: e, scratch: scratch)
+            + moveStatementSteps(
+                state: state,
+                e: e,
+                scratch: scratch,
+                file: "src/shapes.cpp",
+                source: "void ride_move() {\n    int move_a = 1;\n    int move_b = 2;\n}\n",
+                first: "int move_a = 1;",
+                second: "int move_b = 2;"
+            )
     }
 
     private static func commentLine(e: SelfTestEditor) -> SelfTestStep {

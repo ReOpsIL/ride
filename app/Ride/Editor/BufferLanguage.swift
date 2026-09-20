@@ -1,6 +1,6 @@
 import Foundation
 
-enum BufferLanguage {
+enum BufferLanguage: Equatable {
     case rust
     case c
     case cpp

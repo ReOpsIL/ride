@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		P61000000000000000000002 /* LineEndings.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000001 /* LineEndings.swift */; };
+		P61000000000000000000003 /* LineEndings.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000001 /* LineEndings.swift */; };
+		P61000000000000000000005 /* LineEndingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000004 /* LineEndingsTests.swift */; };
+		P61000000000000000000007 /* NewFilePrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000006 /* NewFilePrompt.swift */; };
+		P61000000000000000000008 /* NewFilePrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000006 /* NewFilePrompt.swift */; };
+		P6100000000000000000000A /* NewFilePromptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P61000000000000000000009 /* NewFilePromptTests.swift */; };
+		P6100000000000000000000C /* SelfTestSteps+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = P6100000000000000000000B /* SelfTestSteps+Move.swift */; };
 		T20000000000000000000002 /* TestTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20000000000000000000001 /* TestTree.swift */; };
 		D4000000000000000000001A /* DebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000001F /* DebugController.swift */; };
 		D4000000000000000000002A /* DebugController+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000002F /* DebugController+Events.swift */; };
@@ -933,6 +940,11 @@
 		E5000000000000000000000B /* BracketPairing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BracketPairing.swift"; sourceTree = "<group>"; };
 		E5000000000000000000000C /* EditingFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditingFixtures.swift"; sourceTree = "<group>"; };
 		E5000000000000000000000D /* LineOpsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOpsTests.swift"; sourceTree = "<group>"; };
+		P61000000000000000000001 /* LineEndings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineEndings.swift; sourceTree = "<group>"; };
+		P61000000000000000000004 /* LineEndingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineEndingsTests.swift; sourceTree = "<group>"; };
+		P61000000000000000000006 /* NewFilePrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFilePrompt.swift; sourceTree = "<group>"; };
+		P61000000000000000000009 /* NewFilePromptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFilePromptTests.swift; sourceTree = "<group>"; };
+		P6100000000000000000000B /* SelfTestSteps+Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Move.swift"; sourceTree = "<group>"; };
 		E5000000000000000000000E /* CommentToggleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentToggleTests.swift"; sourceTree = "<group>"; };
 		E5000000000000000000000F /* SmartIndentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SmartIndentTests.swift"; sourceTree = "<group>"; };
 		E50000000000000000000010 /* BracketPairingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BracketPairingTests.swift"; sourceTree = "<group>"; };
@@ -1094,6 +1106,8 @@
 				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
 				E5000000000000000000000C /* EditingFixtures.swift */,
 				E5000000000000000000000D /* LineOpsTests.swift */,
+				P61000000000000000000004 /* LineEndingsTests.swift */,
+				P61000000000000000000009 /* NewFilePromptTests.swift */,
 				E5000000000000000000000E /* CommentToggleTests.swift */,
 				E5000000000000000000000F /* SmartIndentTests.swift */,
 				E50000000000000000000010 /* BracketPairingTests.swift */,
@@ -1369,6 +1383,7 @@
 				A00000000000000000000017 /* FileWatcher.swift */,
 				A00000000000000000000018 /* RecentProjects.swift */,
 				A00000000000000000000019 /* TreeActions.swift */,
+				P61000000000000000000006 /* NewFilePrompt.swift */,
 				A00000000000000000000180 /* TreeModel.swift */,
 				P20000000000000000000007 /* ManifestWatch.swift */,
 				D400000000000000000000EF /* SplitState.swift */,
@@ -1614,6 +1629,7 @@
 				F20000000000000000000005 /* DemoScene+Run.swift */,
 				F20000000000000000000007 /* DemoScene+Lang.swift */,
 				E80000000000000000000003 /* SelfTestSteps.swift */,
+				P6100000000000000000000B /* SelfTestSteps+Move.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				D19200000000000000000101 /* SelfTestSteps+Extract.swift */,
 				D19200000000000000000201 /* SelfTestSteps+Refactor.swift */,
@@ -1678,6 +1694,7 @@
 				E50000000000000000000002 /* LineSpan.swift */,
 				E50000000000000000000003 /* CommentTokens.swift */,
 				E50000000000000000000004 /* LineOps.swift */,
+				P61000000000000000000001 /* LineEndings.swift */,
 				E6000000000000000000001A /* EditorCommand.swift */,
 				E6000000000000000000001C /* EditorCommands.swift */,
 				E6000000000000000000011C /* EditorCommands+Refactor.swift */,
@@ -1877,6 +1894,10 @@
 				E50000000000000000000202 /* LineSpan.swift in Sources */,
 				E50000000000000000000203 /* CommentTokens.swift in Sources */,
 				E50000000000000000000204 /* LineOps.swift in Sources */,
+				P61000000000000000000003 /* LineEndings.swift in Sources */,
+				P61000000000000000000005 /* LineEndingsTests.swift in Sources */,
+				P61000000000000000000008 /* NewFilePrompt.swift in Sources */,
+				P6100000000000000000000A /* NewFilePromptTests.swift in Sources */,
 				E50000000000000000000205 /* LineOps+Move.swift in Sources */,
 				E50000000000000000000206 /* LineOps+Case.swift in Sources */,
 				E50000000000000000000207 /* CommentToggle.swift in Sources */,
@@ -2266,6 +2287,9 @@
 				E50000000000000000000102 /* LineSpan.swift in Sources */,
 				E50000000000000000000103 /* CommentTokens.swift in Sources */,
 				E50000000000000000000104 /* LineOps.swift in Sources */,
+				P61000000000000000000002 /* LineEndings.swift in Sources */,
+				P61000000000000000000007 /* NewFilePrompt.swift in Sources */,
+				P6100000000000000000000C /* SelfTestSteps+Move.swift in Sources */,
 				E50000000000000000000105 /* LineOps+Move.swift in Sources */,
 				E50000000000000000000106 /* LineOps+Case.swift in Sources */,
 				E50000000000000000000107 /* CommentToggle.swift in Sources */,

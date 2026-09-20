@@ -63,14 +63,15 @@ enum EditorCommands {
         }
         let text = target.text
         let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        guard let current = engine.statementRange(sessionId: id, byte: byte),
-              let other = engine.siblingStatementRange(sessionId: id, byte: byte, up: up)
-        else {
+        guard let bounds = engine.statementBounds(sessionId: id, byte: byte) else {
+            return
+        }
+        guard let other = up ? bounds.previous : bounds.next else {
             return
         }
         let result = LineOps.moveStatement(
             text,
-            current: Utf16.nsRange(in: text, startByte: current.startByte, endByte: current.endByte),
+            current: Utf16.nsRange(in: text, startByte: bounds.current.startByte, endByte: bounds.current.endByte),
             other: Utf16.nsRange(in: text, startByte: other.startByte, endByte: other.endByte),
             selection: target.selection
         )

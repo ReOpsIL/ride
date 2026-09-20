@@ -17,8 +17,26 @@ enum TreeActions {
         return name.isEmpty ? nil : name
     }
 
-    static func newFile(in directory: URL) -> URL? {
-        guard let name = prompt(title: "New File", defaultName: "untitled.rs") else {
+    static func newFile(in directory: URL, kind: ProjectKind?) -> URL? {
+        let mapped: NewFileKind
+        switch kind {
+        case .cMake: mapped = .cmake
+        case .make: mapped = .make
+        case .cargo: mapped = .cargo
+        default: mapped = .other
+        }
+        let picker = LanguageNameField(language: NewFilePrompt.language(for: mapped))
+        let alert = NSAlert()
+        alert.messageText = "New File"
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        alert.accessoryView = picker.accessory
+        alert.window.initialFirstResponder = picker.field
+        guard withExtendedLifetime(picker, { alert.runModal() }) == .alertFirstButtonReturn else {
+            return nil
+        }
+        let name = picker.field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
             return nil
         }
         let url = directory.appendingPathComponent(name)

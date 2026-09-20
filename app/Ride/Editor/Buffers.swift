@@ -91,7 +91,7 @@ extension AppState {
         } else {
             EditorPanes.shared.host(bound: buffer)?.capture()
         }
-        try? buffer.save(from: nil)
+        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
         objectWillChange.send()
         didSave(buffer)
     }
@@ -117,7 +117,7 @@ extension AppState {
             return
         }
         EditorPanes.shared.host(bound: buffer)?.capture()
-        try? buffer.save(from: nil)
+        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
         objectWillChange.send()
         didSave(buffer)
     }
