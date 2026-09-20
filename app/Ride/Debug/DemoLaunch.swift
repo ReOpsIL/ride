@@ -78,7 +78,15 @@ enum DemoLaunch {
     }
 
     static func after(_ seconds: Double, _ work: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
+        let schedule = {
+            let timer = Timer(timeInterval: max(seconds, 0.001), repeats: false) { _ in work() }
+            RunLoop.main.add(timer, forMode: .common)
+        }
+        if Thread.isMainThread {
+            schedule()
+        } else {
+            DispatchQueue.main.async(execute: schedule)
+        }
     }
 
     private static let guardSeconds = 600.0

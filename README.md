@@ -8,11 +8,11 @@ Completions come from the open buffer, the workspace and every crate already on 
 
 ![The completion popup on a partial `HashM`, the documentation card on the right and the cheat sheet stacked below it](docs/images/ride-completion.png)
 
-Reformat Document runs rustfmt, clang-format (found in the Xcode toolchain, so no Homebrew install is needed), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing basics follow RustRover's menus: smart Enter, Tab and ⇧Tab on a selection, ⌘/ comments, bracket pairing, duplicate, delete, join and move lines, extend selection (⌥↑), matching brace, folding, Surround With, Back/Forward (⌘[ / ⌘]), Go to Line (⌘L), Recent Files (⌘E), next problem (F2) and header/source switch. ⌘? lists every shortcut.
+Reformat Document runs rustfmt, clang-format (found in the Xcode toolchain, so no Homebrew install is needed), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing basics follow RustRover's menus: smart Enter, Tab and ⇧Tab on a selection, ⌘/ comments, bracket pairing, duplicate, delete, join and move lines, Move Statement (⇧⌘↑ / ⇧⌘↓), which lifts a whole block over its neighbour instead of one line, extend selection (⌥↑), matching brace, folding, Surround With, Back/Forward (⌘[ / ⌘]), Go to Line (⌘L), Recent Files (⌘E), next problem (F2) and header/source switch. ⌘? lists every shortcut.
 
 ## Cheat sheet
 
-A second popup shows the part of the language cheat sheet that fits the caret: items at file level, statements inside a body, patterns in a `match` arm, `$(...)` functions in a Makefile. Rust, C, C++ and GNU Make each ship a full sheet (about 1,900 templates in total) as TOML data under `cheatsheets/`.
+A second popup shows the part of the language cheat sheet that fits the caret: items at file level, statements inside a body, patterns in a `match` arm, `$(...)` functions in a Makefile. Rust, C, C++, GNU Make, CMake and Cargo manifests each ship a sheet — about 2,000 templates across the six — as TOML data under `cheatsheets/`.
 
 ![The cheat sheet popup below the completion list, with the Control flow section first and the full match template previewed on the right](docs/images/ride-cheatsheet.png)
 
@@ -40,6 +40,10 @@ Hover an identifier for its signature and first doc paragraph; F12 jumps to the 
 
 ![Problems panel listing a cargo check error with the offending line underlined](docs/images/ride-problems.png)
 
+The same checks also run while you type. The unsaved buffer goes to clang in memory, and the underline and the Problems row appear with a `live` badge a moment after the typo, then clear themselves when the line is fixed; nothing is written to disk in between.
+
+![shapes.cpp with an undeclared identifier underlined in red while unsaved, and the Problems panel showing "use of undeclared identifier 'factr'" with a live badge](docs/images/ride-livecheck.png)
+
 C++ files get the same treatment: highlighting, outline, member and `::` completion through the included headers, definitions into `include/` and clang-format.
 
 ![A C++ source file from the cpp-demo sample with namespaces, methods and member calls highlighted next to its outline](docs/images/ride-cpp.png)
@@ -60,6 +64,30 @@ CMake files get the same: highlighting of commands, variables and options, an ou
 
 ![Completion on a partial key under [package] in Cargo.toml, with the manifest cheat sheet below it](docs/images/ride-toml.png)
 
+## Understand and change
+
+⌥F7 finds every usage of the symbol at the caret. The panel groups the hits by file and by enclosing item, keeps the ones from the file that defines the symbol at the top and folds the rest under Other matches.
+
+![The Usages panel under the editor: "record · 5 usages", the three hits in src/util.rs with their line numbers and kinds, and a collapsed "Other matches · 2" row](docs/images/ride-usages.png)
+
+Code vision writes a grey "N usages" line above every item in the file, counted from the same index, and a click on it opens the usages.
+
+![src/util.rs with "6 usages" above the Counter struct, "3 usages" above the Recorder trait and "5 usages" above each fn record](docs/images/ride-codevision.png)
+
+⇧F6 renames. A rename that stays inside one scope is applied in place; one that reaches other files opens a preview sheet first. Occurrences the engine verified are ticked, and everything it could not prove is the same symbol waits under Review until you tick it.
+
+![The rename sheet over util.rs: "Rename record to logged", 3 occurrences in src/util.rs ticked, and src/main.rs with 2 hits under "Review — could not verify these are the same symbol"](docs/images/ride-rename.png)
+
+⌃⌥H opens the call hierarchy of the function at the caret and ⌃H its type hierarchy. Rows expand into their own callers, the Callers/Callees/Types tabs switch the direction, and a click jumps to the call site.
+
+![The Hierarchy panel on the right showing record as the root with its two callers in main, each with its file and line](docs/images/ride-hierarchy.png)
+
+⌥↩ opens the intention menu on the caret's line: fixes for the compiler diagnostic under it, imports for an unresolved name, the missing arms of a `match`, and the refactorings that fit the selection. A bulb in the gutter marks the lines that have one.
+
+![The intention menu open on an unused local in main.rs, offering two imports, "Rename to _unused" and "Extract Variable"](docs/images/ride-intentions.png)
+
+Extract Variable (⌥⌘V), Introduce Constant (⌥⌘C), Inline Variable (⌃⌥N) and Safe Delete (⌥⌘⌫) work on the same engine index, in Rust and in C and C++; Safe Delete lists the usages that would break before it removes anything. Generate (⌃⌘G) offers what the item at the caret is missing — a constructor or `new`, getters and setters, an `impl` block, `Default`, `Display`, equality operators, a stream insert.
+
 ## Build, run, test and debug
 
 The project model reads `cargo metadata`, the CMake File API, a Makefile or a bare `compile_commands.json` and lists the targets in the sidebar. ⌘B builds the selected target, ⌘R runs it, ⇧⌘R runs its tests and ⌃⌘R debugs it; run configurations (arguments, environment, working directory, `RUST_BACKTRACE`, sanitizers) are saved with the workspace. Build errors from Cargo and clang land in the Problems panel, run output goes to a panel with clickable `path:line:col` links, a ▶ in the gutter runs a single test, and the Tests panel groups results per suite with output per test and Rerun Failed. A terminal panel on SwiftTerm opens with ⌥F12.
@@ -72,9 +100,13 @@ The project model reads `cargo metadata`, the CMake File API, a Makefile or a ba
 
 ![A terminal tab open in the workspace root under the editor](docs/images/ride-terminal.png)
 
-![Debugging the rust-demo crate: stopped on the breakpoint at src/main.rs:10, the frame list, the locals tree, a watch on counter and the adapter output below](docs/images/ride-debug.png)
+![Debugging the rust-demo crate: stopped on the breakpoint at src/main.rs:10, the frame list on the left, the locals tree with counter expanded, and a watch on counter on the right](docs/images/ride-debug.png)
 
 The debugger drives `lldb-dap` from Xcode. Click a line number to set a breakpoint, right-click it for a condition or hit count; C++ exception and Rust panic breakpoints are in the Debug menu. F7, F8 and ⇧F8 step, ⌘F2 stops. The Debug panel (⌘3) shows threads and frames, a lazily expanded locals tree with the toolchain's Rust formatters and lldb's libc++ ones, watches re-evaluated on every stop, and Evaluate Expression (⌥F8); hovering an identifier while stopped shows its value. Debugging needs macOS developer mode (`sudo DevToolsSecurity -enable`, once).
+
+C and C++ binaries take the same path: CMake builds the target, the breakpoint is sent in the spelling the debug info holds, and the frames come back with libc++ formatters, so a `std::vector` opens into its elements. Stopping inside a method of the cpp-demo sample and stepping back out to its caller is checked by the self-test on every run.
+
+![Stopped at the breakpoint in Circle::area in shapes.cpp: the frame list with Circle::area, Shape::describe and main, and main's locals with a std::vector expanded into its three elements](docs/images/ride-cppdebug.png)
 
 ## Navigation and search
 
@@ -91,6 +123,14 @@ Markdown files get tree-sitter highlighting, a heading outline and a rendered pr
 Light and dark themes are peers; every screen above is also reviewed in light.
 
 ![The editor in the light theme](docs/images/ride-light.png)
+
+## Getting started
+
+With no folder open, Ride offers a copy of the Rust, C or C++ sample instead of an empty window, and lists under Set up whatever it still needs — Command Line Tools, rustup, the `rust-src` component, CMake, developer mode for the debugger — with the command that installs each one. The list is gone once they are all there, as below.
+
+![The welcome view with no folder open: the Open Folder button, "Try a sample project" with Rust demo, C demo and C++ demo, and the shortcut hints below](docs/images/ride-welcome.png)
+
+Settings installs a `ride` command in `/usr/local/bin`. `ride .` opens a folder, `ride src/main.rs:20:5` opens a file in the running app and puts the caret on that line and column; both go through the `ride://open` URL scheme. If Ride ever dies on a signal, the next launch offers the crash report it wrote, with a button that copies it for an issue.
 
 ## Install
 
@@ -132,7 +172,7 @@ target/debug/ride-engine cheat src/main.rs --find "fn main() {" --typed $'\n    
 target/debug/ride-engine status --index-dir <dir>
 ```
 
-Every screenshot above is regenerated by `./scripts/screenshots.sh`. It builds the Debug app and runs one demo scene per image on a temporary copy of the sample it needs: `Ride --open <folder> --demo <scene> --frame 1440x900 --ready-file <path> --quit-after <seconds>`. Each scene stages itself in-process without synthetic input and touches the ready file when it is on screen; the script then reads the window ids of that process through `CGWindowListCopyWindowInfo` (`scripts/windowid.swift`), captures each window with `screencapture -l`, composes them (`scripts/compose.swift`) and checks the result is not a single colour (`scripts/pngcheck.swift`). The scenes are `editor`, `completion`, `cheatsheet`, `hover`, `quickdoc`, `peek`, `split`, `symbols`, `find`, `preview`, `light`, `problems`, `toml`, `c`, `cpp`, `makefile`, `cmake`, `targets`, `run`, `tests`, `terminal` and `debug`, plus `quickopen`, `outline`, `tools`, `unformatted`, `file --file <path>` and `selftest`.
+Every screenshot above is regenerated by `./scripts/screenshots.sh`. It builds the Debug app and runs one demo scene per image on a temporary copy of the sample it needs: `Ride --open <folder> --demo <scene> --frame 1440x900 --ready-file <path> --quit-after <seconds>`. Each scene stages itself in-process without synthetic input and touches the ready file when it is on screen; the script then reads the window ids of that process through `CGWindowListCopyWindowInfo` (`scripts/windowid.swift`), captures each window with `screencapture -l`, composes them (`scripts/compose.swift`) and checks the result is not a single colour (`scripts/pngcheck.swift`). The scenes are `editor`, `completion`, `cheatsheet`, `hover`, `quickdoc`, `peek`, `split`, `symbols`, `find`, `preview`, `light`, `problems`, `toml`, `c`, `cpp`, `makefile`, `cmake`, `targets`, `run`, `tests`, `terminal`, `debug`, `welcome`, `usages`, `hierarchy`, `codevision`, `rename`, `intentions`, `livecheck` and `cppdebug`, plus `quickopen`, `outline`, `tools`, `unformatted`, `empty`, `file --file <path>` and `selftest`. `welcome` runs without `--open`; `livecheck` and `cppdebug` need the C++ sample, and `cppdebug` needs developer mode.
 
 ## Where things live
 

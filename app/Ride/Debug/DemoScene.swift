@@ -8,6 +8,10 @@ enum DemoScene {
             || docs(name, state: state)
             || running(name, state: state)
             || languages(name, state: state)
+            || code(name, state: state)
+            || diagnose(name, state: state)
+            || cppDebug(name, state: state)
+            || welcome(name, state: state)
         if !handled {
             DemoLaunch.ready()
         }
@@ -53,6 +57,8 @@ enum DemoScene {
             editor(state)
             ready(after: 1.2)
         case "preview":
+            state.prefs.outlinePanel = false
+            state.prefs.previewWidth = 520
             editor(state, file: "README.md", line: 1)
             DemoLaunch.after(0.8) {
                 state.showPreview = true

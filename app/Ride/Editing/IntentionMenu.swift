@@ -45,6 +45,10 @@ enum IntentionMenu {
     static let emptyNotice = "No intention actions here"
 
     static func pop(_ items: [Intention], target: EditorTarget) {
+        menu(items, view: target.view).popUp(positioning: nil, at: origin(of: target), in: target.view)
+    }
+
+    static func menu(_ items: [Intention], view: RideTextView) -> NSMenu {
         let menu = NSMenu()
         for item in items {
             let entry = NSMenuItem(
@@ -52,16 +56,19 @@ enum IntentionMenu {
                 action: #selector(IntentionMenuTarget.pick(_:)),
                 keyEquivalent: ""
             )
-            entry.representedObject = IntentionBox(intention: item, view: target.view)
+            entry.representedObject = IntentionBox(intention: item, view: view)
             entry.target = IntentionMenuTarget.shared
             menu.addItem(entry)
         }
+        return menu
+    }
+
+    static func origin(of target: EditorTarget) -> NSPoint {
         var actual = NSRange()
         let rect = target.view.firstRect(forCharacterRange: target.selection, actualRange: &actual)
-        let origin = target.view.window.map {
+        return target.view.window.map {
             target.view.convert($0.convertFromScreen(rect).origin, from: nil)
         } ?? .zero
-        menu.popUp(positioning: nil, at: NSPoint(x: origin.x, y: origin.y), in: target.view)
     }
 }
 

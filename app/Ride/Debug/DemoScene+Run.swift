@@ -35,7 +35,7 @@ extension DemoScene {
         !state.runOutput.isRunning && state.runOutput.status != nil
     }
 
-    private static func selectBinary(_ state: AppState) {
+    static func selectBinary(_ state: AppState) {
         state.selectTarget(state.projectModel.rows.first { $0.kind == .bin } ?? state.projectModel.rows.first)
     }
 
@@ -62,7 +62,7 @@ extension DemoScene {
             DemoLaunch.after(1.0) { expandLocals(state, attempt: attempt + 1) }
             return
         }
-        stage(state)
+        stageDebugPanel(state)
         selectTopFrame(state)
         state.debugPanel.addWatch("counter")
         for row in state.debugPanel.tree.rows where row.depth == 0 && !row.expanded {
@@ -71,7 +71,7 @@ extension DemoScene {
         DemoLaunch.after(1.0) { expandCounter(state) }
     }
 
-    private static func stage(_ state: AppState) {
+    static func stageDebugPanel(_ state: AppState) {
         state.debugPanel.visible = true
         state.showRunOutput = false
         state.saveLayout { $0.debugHeight = max(320, $0.debugHeight) }
@@ -89,7 +89,7 @@ extension DemoScene {
         guard attempt < 60 else {
             return
         }
-        stage(state)
+        stageDebugPanel(state)
         let local = state.debugPanel.tree.rows.first { $0.depth == 1 && $0.node.name == "counter" }
         guard let local, local.node.isExpandable else {
             DemoLaunch.after(1.0) { expandCounter(state, attempt: attempt + 1) }
