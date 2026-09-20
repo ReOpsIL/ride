@@ -732,8 +732,8 @@ fn the_live_adapter_stops_in_the_rust_demo() {
     });
 }
 
-fn symlinked_source() -> (PathBuf, PathBuf) {
-    let root = std::env::temp_dir().join("ride-fake-dap-canonical");
+fn symlinked_source(name: &str) -> (PathBuf, PathBuf) {
+    let root = std::env::temp_dir().join(name);
     let _ = std::fs::remove_dir_all(&root);
     std::fs::create_dir_all(root.join("real")).expect("the fixture directory");
     std::fs::write(root.join("real/main.rs"), b"fn main() {}\n").expect("the fixture source");
@@ -743,10 +743,27 @@ fn symlinked_source() -> (PathBuf, PathBuf) {
 }
 
 #[test]
-fn a_symlinked_breakpoint_path_reaches_the_adapter_canonicalised() {
-    let (linked, canonical) = symlinked_source();
+fn a_symlinked_breakpoint_path_reaches_the_adapter_as_opened() {
+    let (linked, canonical) = symlinked_source("ride-fake-dap-as-opened");
     let linked = linked.to_string_lossy().to_string();
+    assert_ne!(linked.as_str(), canonical.to_string_lossy().as_ref());
     let (session, listener) = scripted(vec![Breakpoint::at(&linked, 10)]);
+    listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
+    let threads = session.threads().expect("threads");
+    let stack = session.stack(threads[0].id).expect("stackTrace");
+    assert_eq!(stack[0].path.as_deref(), Some(linked.as_str()));
+    assert_eq!(session.breakpoints(&linked).len(), 1);
+    let _ = session.command(DebugCommand::Disconnect);
+}
+
+#[test]
+fn a_breakpoint_the_adapter_binds_only_resolved_is_sent_again_resolved() {
+    let (linked, canonical) = symlinked_source("ride-fake-dap-resolved");
+    let linked = linked.to_string_lossy().to_string();
+    let (session, listener) = scripted_with(
+        &["--verify-canonical".to_string()],
+        vec![Breakpoint::at(&linked, 10)],
+    );
     listener.wait("the breakpoint stop", |event| stopped(event, "breakpoint"));
     let threads = session.threads().expect("threads");
     let stack = session.stack(threads[0].id).expect("stackTrace");
@@ -754,6 +771,8 @@ fn a_symlinked_breakpoint_path_reaches_the_adapter_canonicalised() {
         stack[0].path.as_deref(),
         Some(canonical.to_string_lossy().as_ref())
     );
-    assert_eq!(session.breakpoints(&linked).len(), 1);
+    let stored = session.breakpoints(&linked);
+    assert_eq!(stored.len(), 1);
+    assert!(stored[0].verified, "{stored:?}");
     let _ = session.command(DebugCommand::Disconnect);
 }

@@ -1,13 +1,13 @@
 use std::collections::BTreeMap;
-use std::path::Path;
 
 use crate::error::EngineError;
 use crate::ffi::{Breakpoint, DebugEvent};
 
 use super::DebugSession;
+use super::source_path::{same_file, source_of, twin};
 use super::wire::{arguments, body};
 use crate::debug::protocol::{
-    SetBreakpointsArguments, SetBreakpointsResponseBody, Source, SourceBreakpoint,
+    SetBreakpointsArguments, SetBreakpointsResponseBody, SourceBreakpoint,
 };
 
 pub const SET_BREAKPOINTS: &str = "setBreakpoints";
@@ -23,26 +23,15 @@ pub fn group(breakpoints: Vec<Breakpoint>) -> BTreeMap<String, Vec<Breakpoint>> 
     grouped
 }
 
-pub fn canonical(path: &str) -> String {
-    std::fs::canonicalize(path)
-        .map(|resolved| resolved.to_string_lossy().to_string())
-        .unwrap_or_else(|_| path.to_string())
-}
-
-fn source_of(path: &str) -> Source {
-    let resolved = canonical(path);
-    let name = Path::new(&resolved)
-        .file_name()
-        .map(|name| name.to_string_lossy().to_string())
-        .unwrap_or_else(|| resolved.clone());
-    Source::file(&resolved, &name)
-}
-
 fn stored_key(store: &BTreeMap<String, Vec<Breakpoint>>, reported: &str) -> Option<String> {
     if store.contains_key(reported) {
         return Some(reported.to_string());
     }
-    store.keys().find(|key| canonical(key) == reported).cloned()
+    store.keys().find(|key| same_file(key, reported)).cloned()
+}
+
+fn bound(breakpoints: &[Breakpoint]) -> bool {
+    breakpoints.iter().any(|breakpoint| breakpoint.verified)
 }
 
 fn wanted(breakpoint: &Breakpoint) -> SourceBreakpoint {
@@ -74,13 +63,7 @@ impl DebugSession {
         path: &str,
         breakpoints: Vec<Breakpoint>,
     ) -> Result<Vec<Breakpoint>, EngineError> {
-        let request =
-            SetBreakpointsArguments::new(source_of(path), breakpoints.iter().map(wanted).collect());
-        let response = self
-            .transport
-            .request(SET_BREAKPOINTS, arguments(SET_BREAKPOINTS, &request)?)?;
-        let reported = body::<SetBreakpointsResponseBody>(SET_BREAKPOINTS, response)?;
-        let merged = verified(breakpoints, reported);
+        let merged = self.bind_breakpoints(path, breakpoints)?;
         if let Ok(mut store) = self.breakpoints.lock() {
             store.insert(path.to_string(), merged.clone());
         }
@@ -89,6 +72,36 @@ impl DebugSession {
             breakpoints: merged.clone(),
         });
         Ok(merged)
+    }
+
+    fn bind_breakpoints(
+        &self,
+        path: &str,
+        breakpoints: Vec<Breakpoint>,
+    ) -> Result<Vec<Breakpoint>, EngineError> {
+        let opened = self.request_breakpoints(path, &breakpoints)?;
+        if bound(&opened) {
+            return Ok(opened);
+        }
+        let Some(twin) = twin(path) else {
+            return Ok(opened);
+        };
+        let resolved = self.request_breakpoints(&twin, &breakpoints)?;
+        Ok(if bound(&resolved) { resolved } else { opened })
+    }
+
+    fn request_breakpoints(
+        &self,
+        path: &str,
+        breakpoints: &[Breakpoint],
+    ) -> Result<Vec<Breakpoint>, EngineError> {
+        let request =
+            SetBreakpointsArguments::new(source_of(path), breakpoints.iter().map(wanted).collect());
+        let response = self
+            .transport
+            .request(SET_BREAKPOINTS, arguments(SET_BREAKPOINTS, &request)?)?;
+        let reported = body::<SetBreakpointsResponseBody>(SET_BREAKPOINTS, response)?;
+        Ok(verified(breakpoints.to_vec(), reported))
     }
 
     pub(super) fn send_stored_breakpoints(&self) -> Result<(), EngineError> {
