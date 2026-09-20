@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ride — native macOS IDE for Rust, C and C++</title>
+  <meta name="description" content="Ride is a native macOS IDE for Rust, with C and C++ editing. Completions from every crate on disk, in-process, in under a millisecond.">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="#top">Ride</a>
+    <nav>
+      <a href="#editing">Editing</a>
+      <a href="#build">Build</a>
+      <a href="#search">Search</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/ReOpsIL/ride">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero" id="top">
+    <h1>Ride</h1>
+    <p class="lede">Native macOS IDE for Rust, with C and C++ editing. A SwiftUI/AppKit shell over a Rust language engine that discovers crates on disk, extracts items with tree-sitter, indexes them with Tantivy, and answers completion, highlight and outline queries in-process.</p>
+    <div class="actions">
+      <a class="button" href="https://github.com/ReOpsIL/ride/releases/latest">Download</a>
+      <p class="one-liner"><code>brew tap ReOpsIL/ride &amp;&amp; brew install --cask ride</code></p>
+    </div>
+    <ul class="reqs">
+      <li>macOS with Xcode (debugger, clang, clang-format)</li>
+      <li>Rust toolchain via rustup; Ride adds <code>rust-src</code> if it is missing</li>
+    </ul>
+  </div>
+
+  <main>
+    <section id="editor">
+      <h2>The editor</h2>
+      <p>Completions come from the open buffer, the workspace and every crate already on disk, including the rustc sysroot, in under a millisecond. Rows carry the signature, origin crate and an <code>use</code> tag when accepting will add the import; the doc card on the right shows the documentation of the selected row.</p>
+      <figure>
+        <img src="../images/ride-editor.png" alt="The rust-demo crate open: project tree and targets on the left, the file outline on the right, the index ready in the status bar" width="1440" height="900">
+        <figcaption>The rust-demo crate open: project tree and targets on the left, the file outline on the right, the index ready in the status bar.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-completion.png" alt="The completion popup on a partial HashM, the documentation card on the right and the cheat sheet stacked below it" width="1440" height="900">
+        <figcaption>The completion popup on a partial <code>HashM</code>, the documentation card on the right and the cheat sheet stacked below it.</figcaption>
+      </figure>
+    </section>
+
+    <section id="cheatsheet">
+      <h2>Cheat sheet</h2>
+      <p>A second popup shows the part of the language cheat sheet that fits the caret: items at file level, statements inside a body, patterns in a <code>match</code> arm, <code>$(...)</code> functions in a Makefile. Rust, C, C++ and GNU Make each ship a full sheet as TOML data.</p>
+      <p>Arrow keys or a click select a row and the preview pane shows the complete example; <code>↩</code>, <code>⇥</code>, a second click or a double-click inserts it as a snippet with tab stops. The sheet follows the completion popup automatically; <code>⌃⇧Space</code> pins it open on its own.</p>
+      <figure>
+        <img src="../images/ride-cheatsheet.png" alt="The cheat sheet popup below the completion list, with the Control flow section first and the full match template previewed on the right" width="1440" height="900">
+        <figcaption>The cheat sheet popup below the completion list, with the Control flow section first.</figcaption>
+      </figure>
+    </section>
+
+    <section id="editing">
+      <h2>Editing</h2>
+      <p>Hover an identifier for its signature and first doc paragraph; F12 jumps to the definition in the buffer, a crate on disk or an included header. ⌃J (or F1) opens Quick Documentation for the whole doc block; ⌥Space peeks the definition without leaving the file. ⌘\ splits the editor into two panes.</p>
+      <p>Reformat Document runs rustfmt, clang-format (from the Xcode toolchain), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing follows RustRover’s menus: smart Enter, comments, folding, Surround With, Back/Forward, Go to Line, Recent Files, next problem and header/source switch. ⌘? lists every shortcut.</p>
+      <figure>
+        <img src="../images/ride-hover.png" alt="Hover card over HashMap showing the struct signature and documentation" width="1440" height="900">
+        <figcaption>Hover card over HashMap showing the struct signature and documentation.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-quickdoc.png" alt="Quick Documentation on Counter: the rendered doc block under the struct signature, with its origin file in the header" width="1440" height="900">
+        <figcaption>Quick Documentation on Counter, with its origin file in the header.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-peek.png" alt="Quick Definition on record: the trait declaration with a segment per implementation and util.rs:10 in the header" width="1440" height="900">
+        <figcaption>Quick Definition on record, with a segment per implementation.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-split.png" alt="src/main.rs and src/util.rs open side by side in a split" width="1440" height="900">
+        <figcaption><code>src/main.rs</code> and <code>src/util.rs</code> open side by side in a split.</figcaption>
+      </figure>
+      <p><code>cargo check</code> runs on save (or ⌥⌘B), and <code>clang -fsyntax-only</code> does the same for C and C++ files with flags from <code>compile_commands.json</code>. Diagnostics land in the Problems panel and as underlines in the editor.</p>
+      <figure>
+        <img src="../images/ride-problems.png" alt="Problems panel listing a cargo check error with the offending line underlined" width="1440" height="900">
+        <figcaption>Problems panel listing a cargo check error with the offending line underlined.</figcaption>
+      </figure>
+      <p>C++ files get highlighting, outline, member and <code>::</code> completion through the included headers, definitions into <code>include/</code> and clang-format. C sources get member completion through <code>.</code> and <code>-&gt;</code> from the struct behind the expression. Makefiles, CMake files and <code>Cargo.toml</code> get highlighting, an outline and a cheat sheet.</p>
+      <figure>
+        <img src="../images/ride-cpp.png" alt="A C++ source file from the cpp-demo sample with namespaces, methods and member calls highlighted next to its outline" width="1440" height="900">
+        <figcaption>A C++ source from the cpp-demo sample next to its outline.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-c.png" alt="Member completion on a struct shape pointer in the c-demo sample, with the strings section of the C cheat sheet below it" width="1440" height="900">
+        <figcaption>Member completion on a struct shape pointer in the c-demo sample.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-makefile.png" alt="A Makefile with variables, pattern rules and recipes highlighted and its targets in the outline" width="1440" height="900">
+        <figcaption>A Makefile with variables, pattern rules and recipes highlighted.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-cmake.png" alt="CMakeLists.txt from the cpp-demo sample with its project, variables, function and targets in the outline" width="1440" height="900">
+        <figcaption><code>CMakeLists.txt</code> from the cpp-demo sample with its project in the outline.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-toml.png" alt="Completion on a partial key under [package] in Cargo.toml, with the manifest cheat sheet below it" width="1440" height="900">
+        <figcaption>Completion on a partial key under <code>[package]</code> in Cargo.toml.</figcaption>
+      </figure>
+    </section>
+
+    <section id="build">
+      <h2>Build, run, test and debug</h2>
+      <p>The project model reads <code>cargo metadata</code>, the CMake File API, a Makefile or a bare <code>compile_commands.json</code> and lists the targets in the sidebar. ⌘B builds the selected target, ⌘R runs it, ⇧⌘R runs its tests and ⌃⌘R debugs it. Build errors land in the Problems panel, run output goes to a panel with clickable <code>path:line:col</code> links, a ▶ in the gutter runs a single test, and the Tests panel groups results per suite. A terminal panel opens with ⌥F12.</p>
+      <figure>
+        <img src="../images/ride-targets.png" alt="The Targets section of the sidebar listing the ride-demo binary and its test target with the profile picker" width="1440" height="900">
+        <figcaption>The Targets section of the sidebar with the profile picker.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-run.png" alt="cargo run in the Run panel: the cargo lines, the program output and the exit status next to the command" width="1440" height="900">
+        <figcaption><code>cargo run</code> in the Run panel.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-tests.png" alt="The Tests panel after Run Tests: counts_one passed under the util suite, with the raw cargo output below it" width="1440" height="900">
+        <figcaption>The Tests panel after Run Tests, with output per test.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-terminal.png" alt="A terminal tab open in the workspace root under the editor" width="1440" height="900">
+        <figcaption>A terminal tab open in the workspace root.</figcaption>
+      </figure>
+      <p>The debugger drives <code>lldb-dap</code> from Xcode. Click a line number to set a breakpoint; F7, F8 and ⇧F8 step, ⌘F2 stops. The Debug panel (⌘3) shows threads and frames, a lazily expanded locals tree, watches, and Evaluate Expression (⌥F8). Debugging needs macOS developer mode (<code>sudo DevToolsSecurity -enable</code>, once).</p>
+      <figure>
+        <img src="../images/ride-debug.png" alt="Debugging the rust-demo crate: stopped on the breakpoint at src/main.rs:10, the frame list, the locals tree, a watch on counter and the adapter output below" width="1440" height="900">
+        <figcaption>Stopped on the breakpoint at <code>src/main.rs:10</code>.</figcaption>
+      </figure>
+    </section>
+
+    <section id="search">
+      <h2>Navigation and search</h2>
+      <p>⇧⌥⌘O searches every symbol in the workspace and the crate catalog; ⌘P opens files quickly; ⇧⌘F finds text across the project. Markdown files get tree-sitter highlighting, a heading outline and a rendered preview. Light and dark themes are peers.</p>
+      <figure>
+        <img src="../images/ride-symbols.png" alt="Go to Symbol in Project listing Hash, Hasher, HashMap and HashSet with their paths" width="1440" height="900">
+        <figcaption>Go to Symbol in Project listing Hash, Hasher, HashMap and HashSet.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-find.png" alt="Find in Project results for counter grouped by file" width="1440" height="900">
+        <figcaption>Find in Project results for “counter” grouped by file.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-preview.png" alt="A markdown file next to its rendered preview" width="1440" height="900">
+        <figcaption>A markdown file next to its rendered preview.</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/ride-light.png" alt="The editor in the light theme" width="1440" height="900">
+        <figcaption>The editor in the light theme.</figcaption>
+      </figure>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p><a class="button" href="https://github.com/ReOpsIL/ride/releases/latest">Download the latest release</a></p>
+      <p>Or the Homebrew cask:</p>
+      <pre><code>brew tap ReOpsIL/ride &amp;&amp; brew install --cask ride</code></pre>
+      <p>To build from source:</p>
+      <pre><code>./scripts/install.sh            # Release Ride.app → /Applications
+./scripts/install.sh ~/Applications</code></pre>
+      <p>Requires Xcode and a Rust toolchain (rustup). The script adds the <code>rust-src</code> component if it is missing. First launch indexes the Cargo registry and the Rust sysroot; later launches are incremental.</p>
+    </section>
+  </main>
+
+  <footer>
+    <nav>
+      <a href="https://github.com/ReOpsIL/ride">Source</a>
+      <a href="https://github.com/ReOpsIL/ride/blob/main/docs/manuals/getting-started.md">Getting started</a>
+      <a href="https://github.com/ReOpsIL/ride/blob/main/docs/manuals/shortcuts.md">Shortcuts</a>
+      <a href="https://github.com/ReOpsIL/ride/releases/latest">Releases</a>
+    </nav>
+    <p>Ride is a native macOS IDE for Rust, C and C++.</p>
+  </footer>
+</body>
+</html>

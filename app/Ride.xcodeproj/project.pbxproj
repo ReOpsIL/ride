@@ -310,6 +310,9 @@
 		D0A55E7500000000000A55E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0A55E7500000000000A55E7 /* Assets.xcassets */; };
 		D08D4ACEF7E7A00DA95D8804 /* KeyCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = D011963E31E5B2B0818804D2 /* KeyCap.swift */; };
 		D04525284BED8960C5AB24B7 /* ShortcutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */; };
+		P70000000000000000000002 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = P70000000000000000000001 /* Shortcuts.swift */; };
+		P70000000000000000000003 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = P70000000000000000000001 /* Shortcuts.swift */; };
+		P70000000000000000000005 /* ShortcutsManualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P70000000000000000000004 /* ShortcutsManualTests.swift */; };
 		D06FC25E5C41405EA48FC089 /* ShortcutsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */; };
 		D02B66BD78B1038B32B10A61 /* AboutPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0805A44393AFDF81FEFB357 /* AboutPanel.swift */; };
 		D0E9C9E1392729A70EA5DE1A /* EmptyEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */; };
@@ -882,6 +885,8 @@
 		D0A55E7500000000000A55E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D011963E31E5B2B0818804D2 /* KeyCap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyCap.swift"; sourceTree = "<group>"; };
 		D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutsView.swift"; sourceTree = "<group>"; };
+		P70000000000000000000001 /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
+		P70000000000000000000004 /* ShortcutsManualTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsManualTests.swift; sourceTree = "<group>"; };
 		D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutsPanel.swift"; sourceTree = "<group>"; };
 		D0805A44393AFDF81FEFB357 /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AboutPanel.swift"; sourceTree = "<group>"; };
 		D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EmptyEditorView.swift"; sourceTree = "<group>"; };
@@ -1044,6 +1049,7 @@
 				D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */,
 				D0805A44393AFDF81FEFB357 /* AboutPanel.swift */,
 				D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */,
+				P70000000000000000000001 /* Shortcuts.swift */,
 				D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */,
 				D011963E31E5B2B0818804D2 /* KeyCap.swift */,
 				E90000000000000000000001 /* NoticeBar.swift */,
@@ -1146,6 +1152,7 @@
 				DA0000000000000000000007 /* TextDiffTests.swift */,
 				DA0000000000000000000008 /* ByteSpanShiftTests.swift */,
 				F14000000000000000000004 /* HierarchyModelTests.swift */,
+				P70000000000000000000004 /* ShortcutsManualTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -1999,6 +2006,8 @@
 				AA0000000000000000000024 /* AISuggestion.swift in Sources */,
 				S10000000000000000000022 /* UpdateController.swift in Sources */,
 				S10000000000000000000026 /* UpdateControllerTests.swift in Sources */,
+				P70000000000000000000003 /* Shortcuts.swift in Sources */,
+				P70000000000000000000005 /* ShortcutsManualTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2041,6 +2050,7 @@
 				D0E9C9E1392729A70EA5DE1A /* EmptyEditorView.swift in Sources */,
 				D02B66BD78B1038B32B10A61 /* AboutPanel.swift in Sources */,
 				D06FC25E5C41405EA48FC089 /* ShortcutsPanel.swift in Sources */,
+				P70000000000000000000002 /* Shortcuts.swift in Sources */,
 				D04525284BED8960C5AB24B7 /* ShortcutsView.swift in Sources */,
 				D08D4ACEF7E7A00DA95D8804 /* KeyCap.swift in Sources */,
 				C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */,
