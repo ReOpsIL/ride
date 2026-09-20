@@ -136,3 +136,5 @@ Render the dimmed, clickable "N usages" line above each outline item from the ex
 Verification on `main` after batch 3 minus 1.3-6c (2026-09-20): 455 engine tests, 395 RideTests, Rust self-test 128/0 and C++ 57/0 run alone. Self-test runs must not overlap on one machine: concurrent runs fail popup steps ("visible false") and the breakpoint undo step spuriously.
 
 After 1.3-6c: 457 engine tests, 395 RideTests; the card's four steps and the C++ suite minus `inline undo` pass; the `* undo` self-test steps flake across groups (see `todo/app/remaining.md`, self-test undo flake), which is the first item for the next session.
+
+Undo flake resolved (`ca03891`): `BufferDocument.undoManager` grouped by event, and AppKit closes that group only when it dispatches an NSEvent, so edits made from timers and callbacks (self-test steps, autosave formatting, async applies) merged with everything after them into one undo. `UndoStep` now owns grouping (`groupsByEvent = false`; one text change or one programmatic batch is one step). Rust self-test 132/0 three times, C++ 57/0.
