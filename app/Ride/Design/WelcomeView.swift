@@ -15,28 +15,36 @@ struct WelcomeView: View {
     private var welcome: some View {
         ZStack {
             ts.editorBackground
-            VStack(spacing: Tokens.Space.xxl) {
-                VStack(spacing: Tokens.Space.m) {
-                    mark
-                    Text("Ride")
-                        .font(Tokens.ui(24, weight: .semibold))
-                        .foregroundStyle(ts.ui.textPrimary)
-                    Text("Native Rust editor")
-                        .font(Tokens.ui(13))
-                        .foregroundStyle(ts.ui.textSecondary)
-                }
-                Button("Open Folder…") {
-                    state.openFolder()
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                recents
-                RustSrcHint()
-                shortcuts
+            ScrollView {
+                column
+                    .padding(.vertical, Tokens.Space.xxl)
             }
-            .frame(maxWidth: 440)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var column: some View {
+        VStack(spacing: Tokens.Space.xl) {
+            VStack(spacing: Tokens.Space.m) {
+                mark
+                Text("Ride")
+                    .font(Tokens.ui(24, weight: .semibold))
+                    .foregroundStyle(ts.ui.textPrimary)
+                Text("Native Rust editor")
+                    .font(Tokens.ui(13))
+                    .foregroundStyle(ts.ui.textSecondary)
+            }
+            Button("Open Folder…") {
+                state.openFolder()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            recents
+            WelcomeSamples()
+            WelcomeSetupSection()
+            shortcuts
+        }
+        .frame(maxWidth: 440)
     }
 
     private var mark: some View {
