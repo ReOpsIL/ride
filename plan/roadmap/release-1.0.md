@@ -82,4 +82,5 @@ State on 2026-09-20 (facts, not assumptions): no git tag, no `CHANGELOG.md`, `MA
 |---|---|---|
 | P-7 | `docs/site` static page and Pages workflow (reviewer fix: served at the root URL, image paths rewritten at assembly), `docs/manuals` (getting started, shortcuts generated from `Shortcuts.entries` by a RideTests test, three tutorials) | merge |
 | P-8a | `tests/latency.rs` (release only: completion p95 0.04–0.45 ms per site, editor queries under 0.1 ms, gates 5 ms and 1 ms), `tests/index_size.rs` (302 bytes/doc on the fixture, gate 600), `scripts/check-lines.sh` with an allowlist of the seven oversized files, CI jobs `latency` and `lines` | merge |
+| P-3 | Engine panic hook writing `reports/panics.jsonl`, app crash reporter (uncaught exceptions and fatal signals, async-signal-safe) writing `reports/crash-<time>.txt`, launch notice with Copy Report and Dismiss, pruning to 20, `reportsAcknowledged` preference | `95fe704` |
 | P-1 | Version 1.0.0, `CHANGELOG.md`, `release.sh --dry-run` with version agreement, dSYM and RELEASE.md, tag-triggered `release.yml` with optional secrets and a GitHub release, Homebrew cask and bump script | merge |
