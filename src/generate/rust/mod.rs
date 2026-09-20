@@ -1,6 +1,17 @@
-use super::{Field, GenType};
+mod default;
+mod display;
+mod impl_block;
+mod new;
+mod scan;
+
+use self::default::default_impl;
+use self::display::display_impl;
+use self::impl_block::impl_block;
+use self::new::new_fn;
+use self::scan::{has_derive, inherent_impl_has_new};
+
+use super::GenType;
 use crate::ffi::{GenKind, GenOption};
-use crate::text::is_word;
 
 const RUST_KINDS: [GenKind; 4] = [
     GenKind::New,
@@ -51,137 +62,6 @@ fn already_present(t: &GenType, buffer: &str, kind: GenKind) -> bool {
         GenKind::DisplayImpl => buffer.contains(&format!("Display for {}", t.name)),
         _ => false,
     }
-}
-
-fn new_fn(t: &GenType) -> String {
-    let params = t
-        .fields
-        .iter()
-        .map(|f| format!("{}: {}", f.name, f.type_name))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let inits = field_names(t).join(", ");
-    format!(
-        "impl {name} {{\n    pub fn new({params}) -> Self {{\n        Self {{ {inits} }}\n    }}\n}}\n",
-        name = t.name,
-    )
-}
-
-fn impl_block(t: &GenType) -> String {
-    format!("impl {} {{}}\n", t.name)
-}
-
-fn default_impl(t: &GenType) -> String {
-    let inits = t
-        .fields
-        .iter()
-        .map(|f| format!("{}: Default::default()", f.name))
-        .collect::<Vec<_>>()
-        .join(", ");
-    format!(
-        "impl Default for {name} {{\n    fn default() -> Self {{\n        Self {{ {inits} }}\n    }}\n}}\n",
-        name = t.name,
-    )
-}
-
-fn display_impl(t: &GenType) -> String {
-    let fmt = t
-        .fields
-        .iter()
-        .map(|f| format!("{}: {{:?}}", f.name))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let args = t
-        .fields
-        .iter()
-        .map(|f| format!("self.{}", f.name))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let call = if args.is_empty() {
-        format!("write!(f, \"{}\")", t.name)
-    } else {
-        format!("write!(f, \"{fmt}\", {args})")
-    };
-    format!(
-        "impl std::fmt::Display for {name} {{\n    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{\n        {call}\n    }}\n}}\n",
-        name = t.name,
-    )
-}
-
-fn field_names(t: &GenType) -> Vec<String> {
-    t.fields.iter().map(|f: &Field| f.name.clone()).collect()
-}
-
-fn has_derive(buffer: &str, name: &str, trait_name: &str) -> bool {
-    let Some(pos) = find_struct(buffer, name) else {
-        return false;
-    };
-    for line in buffer[..pos].lines().rev() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        if let Some(rest) = line.strip_prefix("#[") {
-            if rest.contains("derive") && rest.contains(trait_name) {
-                return true;
-            }
-            continue;
-        }
-        break;
-    }
-    false
-}
-
-fn inherent_impl_has_new(buffer: &str, name: &str) -> bool {
-    let needle = "impl ";
-    for (idx, _) in buffer.match_indices(needle) {
-        let rest = buffer[idx + needle.len()..].trim_start();
-        let Some(rest) = rest.strip_prefix(name) else {
-            continue;
-        };
-        if rest.starts_with(is_word) {
-            continue;
-        }
-        let Some(open) = rest.find('{') else {
-            continue;
-        };
-        if rest[..open].contains(" for ") {
-            continue;
-        }
-        if let Some(body) = balanced_block(&rest[open..])
-            && body.contains("fn new")
-        {
-            return true;
-        }
-    }
-    false
-}
-
-fn find_struct(buffer: &str, name: &str) -> Option<usize> {
-    let needle = format!("struct {name}");
-    let idx = buffer.find(&needle)?;
-    let after = &buffer[idx + needle.len()..];
-    if after.starts_with(is_word) {
-        return None;
-    }
-    Some(idx)
-}
-
-fn balanced_block(text: &str) -> Option<&str> {
-    let mut depth = 0i32;
-    for (i, ch) in text.char_indices() {
-        match ch {
-            '{' => depth += 1,
-            '}' => {
-                depth -= 1;
-                if depth == 0 {
-                    return Some(&text[..=i]);
-                }
-            }
-            _ => {}
-        }
-    }
-    None
 }
 
 #[cfg(test)]
