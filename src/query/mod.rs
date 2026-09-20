@@ -50,7 +50,7 @@ pub fn run_query(
     let (kind, prefix) = parse_prefix(&q.prefix, q.kind_filter);
     q.kind_filter = kind.or(q.kind_filter);
     q.prefix = prefix;
-    let limit = if q.limit == 0 { 20 } else { q.limit };
+    let limit = q.limit_or_default();
     let keywords = lang.keywords();
     match q.mode {
         QueryMode::BufferLocal => merge_buffer(&q, keywords, buffer_hits, limit),

@@ -32,8 +32,4 @@ enum BuildParse {
         let trimmed = text.hasSuffix("\n") ? String(text.dropLast()) : text
         return trimmed.isEmpty ? nil : trimmed
     }
-
-    static func panelLine(_ line: String) -> String? {
-        isMessage(line) ? rendered(line) : line
-    }
 }

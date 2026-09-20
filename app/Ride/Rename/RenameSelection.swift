@@ -34,10 +34,6 @@ struct RenameSelection: Equatable {
         includedReview = []
     }
 
-    var filesEmpty: Bool {
-        files.isEmpty
-    }
-
     var showBanner: Bool {
         files.isEmpty
     }
@@ -62,10 +58,6 @@ struct RenameSelection: Equatable {
 
     var canApply: Bool {
         !chosenFilePaths.isEmpty || !chosenReviewIds.isEmpty
-    }
-
-    var allFilesSelected: Bool {
-        !files.isEmpty && includedFiles.count == files.count
     }
 
     var allReviewSelected: Bool {

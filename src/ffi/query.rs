@@ -2,6 +2,8 @@ use super::kind::ItemKind;
 use super::session::OutlineItem;
 use crate::text::first_sentence;
 
+const DEFAULT_LIMIT: u32 = 20;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Enum)]
 pub enum QueryMode {
     BufferLocal,
@@ -76,6 +78,16 @@ pub struct CompletionResponse {
     pub truncated: bool,
     pub replace_start_byte: u32,
     pub site: CompletionSiteKind,
+}
+
+impl CompletionQuery {
+    pub fn limit_or_default(&self) -> u32 {
+        if self.limit == 0 {
+            DEFAULT_LIMIT
+        } else {
+            self.limit
+        }
+    }
 }
 
 impl CompletionHit {

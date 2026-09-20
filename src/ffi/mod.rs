@@ -50,6 +50,6 @@ pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
 };
 pub use symbol::{DefinitionExcerpt, DefinitionResponse, SymbolAt};
-pub use tests::{TestCase, TestCommands, TestEvent, TestFramework, TestMarker, TestStatus};
+pub use tests::{TestEvent, TestFramework, TestMarker, TestStatus};
 pub use tools::ToolInfo;
 pub use workspace::WorkspaceInfo;

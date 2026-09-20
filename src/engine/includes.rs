@@ -7,7 +7,7 @@ use super::merge;
 use super::snapshot::Snapshot;
 
 pub fn hits(snap: &Snapshot, q: &CompletionQuery, quoted: bool, dir: &str) -> CompletionResponse {
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let Some(scope) = snap.scope() else {
         return CompletionResponse::empty(q.query_id);
     };

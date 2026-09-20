@@ -85,7 +85,7 @@ pub fn finish(
     hits: Vec<CompletionHit>,
     truncated: bool,
 ) -> CompletionResponse {
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let mut groups: HashMap<String, CompletionHit> = HashMap::new();
     for hit in hits {
         match groups.get_mut(&hit.name) {

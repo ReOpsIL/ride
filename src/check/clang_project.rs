@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, VecDeque};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
@@ -8,6 +8,7 @@ use crate::ffi::{CheckResult, Diagnostic};
 
 use super::clang::run_clang_check;
 use super::compile_db;
+use super::dedup::Seen;
 use super::output::stderr_tail;
 
 const WORKERS: usize = 4;
@@ -104,7 +105,7 @@ impl Merge {
     fn finish(self) -> CheckResult {
         let mut success = true;
         let mut diagnostics = Vec::new();
-        let mut seen = HashSet::new();
+        let mut seen = Seen::default();
         let mut tails = String::new();
         for check in self.jobs.into_values() {
             success &= check.success;
@@ -119,13 +120,9 @@ impl Merge {
     }
 }
 
-fn take_diagnostics(
-    diagnostics: &mut Vec<Diagnostic>,
-    seen: &mut HashSet<(String, u32, String)>,
-    incoming: Vec<Diagnostic>,
-) {
+fn take_diagnostics(diagnostics: &mut Vec<Diagnostic>, seen: &mut Seen, incoming: Vec<Diagnostic>) {
     for d in incoming {
-        if seen.insert((d.path.clone(), d.byte_start, d.message.clone())) {
+        if seen.accepts(&d) {
             diagnostics.push(d);
         }
     }

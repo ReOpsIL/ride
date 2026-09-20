@@ -39,7 +39,7 @@ What Ride can do today for building, running, testing and debugging native code,
 
 | Capability | Rust | C / C++ | Status |
 |---|---|---|---|
-| Frameworks | `cargo test` human output, `cargo test -- --list` | GoogleTest (`--gtest_list_tests`, `[ RUN ]`/`[ OK ]` lines), Catch2 (`--reporter xml`, also for `--list-tests`, with locations and durations), CTest (`--show-only=json-v1`, `--output-on-failure`) | live (cargo), built with real captured fixtures (GoogleTest hand-written from the documented format, Catch2 and CTest captured from real runs) |
+| Frameworks | `cargo test` human output | GoogleTest (`[ RUN ]`/`[ OK ]` lines), Catch2 (`--reporter xml`, with locations and durations), CTest (`--output-on-failure`) | live (cargo), built with real captured fixtures (GoogleTest hand-written from the documented format, Catch2 and CTest captured from real runs) |
 | Gutter run markers | `#[test]` and `fn main`, module-qualified, block comments ignored | `TEST(`, `TEST_F(`, `TEST_P(`, `TEST_CASE(` at column 0 (block comments not yet ignored, see `todo/engine/remaining.md`) | live (Rust), built (C++) |
 | Tests panel (⌘5) | pass/fail tree per suite, output per test, filter, Rerun Failed with the right filter per framework (`mod::leaf`, `Suite.Leaf`, `-R a|b`) | same | live (Rust), built (C++) |
 | Run Tests (⇧⌘R) | `cargo test -p <pkg>` | `ctest --test-dir build/<profile>` or `make test` when the rule exists; a GoogleTest or Catch2 binary needs a marker click or a Test-kind target | live (Rust), built (C++) |

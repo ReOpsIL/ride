@@ -407,20 +407,6 @@ fn engine_exports_editor_queries() {
     assert!(engine.fold_ranges(999).is_empty());
     assert!(engine.bracket_pair(999, 0).is_none());
     let let_at = src.find("s = ").unwrap() as u32;
-    assert_eq!(
-        span(src, engine.statement_range(open.session_id, let_at)).as_deref(),
-        Some("let s = (1);")
-    );
-    assert_eq!(
-        span(
-            src,
-            engine.sibling_statement_range(open.session_id, let_at, false)
-        )
-        .as_deref(),
-        Some("g();")
-    );
-    assert!(engine.statement_range(999, 0).is_none());
-    assert!(engine.sibling_statement_range(999, 0, true).is_none());
     let bounds = engine.statement_bounds(open.session_id, let_at).unwrap();
     assert_eq!(
         span(src, Some(bounds.current)).as_deref(),
@@ -434,13 +420,15 @@ fn engine_exports_editor_queries() {
 fn statement(lang: Lang, src: &str) -> Option<String> {
     let (text, at) = caret(src);
     let (session, _) = BufferSession::open_lang(lang, text.clone(), None).unwrap();
-    span(&text, session.statement_range(at.start_byte))
+    let bounds = session.statement_bounds(at.start_byte)?;
+    span(&text, Some(bounds.current))
 }
 
 fn sibling(lang: Lang, src: &str, up: bool) -> Option<String> {
     let (text, at) = caret(src);
     let (session, _) = BufferSession::open_lang(lang, text.clone(), None).unwrap();
-    span(&text, session.sibling_statement(at.start_byte, up))
+    let bounds = session.statement_bounds(at.start_byte)?;
+    span(&text, if up { bounds.previous } else { bounds.next })
 }
 
 fn complete(lang: Lang, src: &str) -> String {
@@ -461,7 +449,7 @@ fn span(text: &str, range: Option<ByteRange>) -> Option<String> {
 }
 
 #[test]
-fn rust_statement_range_covers_each_kind() {
+fn rust_statement_bounds_covers_each_kind() {
     assert_eq!(
         statement(Lang::Rust, "fn f() {\n    let x| = 1;\n    g();\n}\n").as_deref(),
         Some("let x = 1;")
@@ -529,7 +517,7 @@ fn rust_statement_range_covers_each_kind() {
 }
 
 #[test]
-fn c_and_cpp_statement_range_covers_each_kind() {
+fn c_and_cpp_statement_bounds_covers_each_kind() {
     assert_eq!(
         statement(Lang::C, "int f(void) {\n    g|();\n    return 0;\n}\n").as_deref(),
         Some("g();")
@@ -597,7 +585,7 @@ fn c_and_cpp_statement_range_covers_each_kind() {
 }
 
 #[test]
-fn statement_range_none_for_other_languages() {
+fn statement_bounds_none_for_other_languages() {
     assert_eq!(statement(Lang::Toml, "name = \"ri|de\"\n"), None);
     assert_eq!(statement(Lang::Make, "all:\n\t@ec|ho\n"), None);
     assert_eq!(statement(Lang::Cmake, "set(x| 1)\n"), None);
@@ -605,7 +593,7 @@ fn statement_range_none_for_other_languages() {
 }
 
 #[test]
-fn sibling_statement_skips_comments_and_stops_at_edges() {
+fn statement_bounds_siblings_skip_comments_and_stop_at_edges() {
     let src = "fn main() {\n    let a = 1;\n    let b| = 2;\n}\n";
     assert_eq!(
         sibling(Lang::Rust, src, true).as_deref(),

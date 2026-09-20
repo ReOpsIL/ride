@@ -1,16 +1,17 @@
-use std::collections::HashSet;
 use std::path::Path;
 
+use crate::abspath::absolute_string;
 use crate::ffi::{Diagnostic, DiagnosticLevel};
 
+use super::dedup::Seen;
 use super::fixes::fixes;
 use super::message::{CargoLine, CompilerMessage};
 
 pub fn parse_lines(root: &Path, text: &str) -> Vec<Diagnostic> {
-    let mut seen = HashSet::new();
+    let mut seen = Seen::default();
     text.lines()
         .flat_map(|line| parse_message_line(root, line))
-        .filter(|d| seen.insert((d.path.clone(), d.byte_start, d.message.clone())))
+        .filter(|d| seen.accepts(d))
         .collect()
 }
 
@@ -33,7 +34,7 @@ fn diagnostics(root: &Path, m: CompilerMessage) -> Vec<Diagnostic> {
         .into_iter()
         .filter(|s| s.is_primary)
         .map(|s| {
-            let path = absolute(root, &s.file_name);
+            let path = absolute_string(root, &s.file_name);
             let fixes = fixes(root, &children, &path);
             Diagnostic {
                 path,
@@ -58,12 +59,4 @@ fn level(label: &str) -> Option<DiagnosticLevel> {
         "help" => Some(DiagnosticLevel::Help),
         _ => None,
     }
-}
-
-pub(super) fn absolute(root: &Path, file: &str) -> String {
-    let p = Path::new(file);
-    if p.is_absolute() {
-        return p.display().to_string();
-    }
-    root.join(p).display().to_string()
 }

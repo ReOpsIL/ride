@@ -1,10 +1,11 @@
-use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
+use crate::abspath::absolute;
 use crate::ffi::{Diagnostic, DiagnosticFix, DiagnosticLevel};
 
 use super::clang_fixit;
-use super::offsets::{LineOffsets, resolve};
+use super::dedup::Seen;
+use super::offsets::LineOffsets;
 
 const STDIN: &str = "<stdin>";
 
@@ -39,13 +40,13 @@ fn collect(
     live: Option<&Path>,
 ) -> Vec<Diagnostic> {
     let mut out: Vec<Diagnostic> = Vec::new();
-    let mut seen = HashSet::new();
+    let mut seen = Seen::default();
     for line in text.lines() {
         if let Some(fixit) = clang_fixit::parse(line, base, &mut offsets) {
             attach(&mut out, &remap(fixit.path, live), fixit.fix);
         } else if let Some(mut d) = parse_line(line, base, &mut offsets) {
             d.path = remap(PathBuf::from(d.path), live).display().to_string();
-            if seen.insert((d.path.clone(), d.byte_start, d.message.clone())) {
+            if seen.accepts(&d) {
                 out.push(d);
             }
         }
@@ -77,7 +78,7 @@ fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diag
         .filter_map(|(m, l)| line.find(m).map(|i| (i, *m, *l)))
         .min_by_key(|(i, _, _)| *i)?;
     let mut loc = location(&line[..at])?;
-    loc.path = resolve(loc.path, base);
+    loc.path = absolute(base, &loc.path);
     let (message, code) = split_code(&line[at + marker.len()..]);
     let byte_start = offsets.byte_at(&loc.path, loc.line, loc.column);
     let byte_end = loc

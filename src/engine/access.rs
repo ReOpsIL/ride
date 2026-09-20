@@ -8,7 +8,7 @@ pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
     if let Some(resp) = rust_members::try_hits(snap, q) {
         return resp;
     }
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let Some(local) = &snap.local else {
         return CompletionResponse::empty(q.query_id);
     };

@@ -42,7 +42,6 @@
 # Editor (added 2026-09-20, P-6 review)
 
 - `LineEndingMenu` in the status bar writes the global `prefs.lineEndings`; "Convert to LF" on one buffer changes every future save. Make it a per-buffer override with the preference as the default.
-- `Engine::statement_range` / `sibling_statement_range` are no longer called by the app after `statement_bounds`; remove them and their FFI records once `tests/editing.rs` moves to `statement_bounds`.
 
 # Debug paths (2026-09-20, from the breakpoint spelling fix)
 

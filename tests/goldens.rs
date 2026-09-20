@@ -1,45 +1,17 @@
 use std::fs;
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::path::Path;
 
-use ride_engine::{
-    CompletionContext, CompletionQuery, CompletionSiteKind, Engine, EngineConfig, QueryMode,
-    engine_start, write_index,
-};
+use ride_engine::{CompletionContext, CompletionQuery, CompletionSiteKind, Engine, QueryMode};
 
 #[path = "goldens/io.rs"]
 mod io;
+#[path = "support/sample.rs"]
+mod sample;
 
 use io::Case;
+use sample::{engine, manifest};
 
 const TOP: usize = 5;
-
-fn manifest() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-}
-
-fn config(index_dir: &Path) -> EngineConfig {
-    let fixtures = manifest().join("tests/fixtures");
-    EngineConfig {
-        index_dir: index_dir.display().to_string(),
-        cargo_home: Some(fixtures.join("cargo_home").display().to_string()),
-        sysroot: Some(fixtures.join("sysroot").display().to_string()),
-        offline_metadata: true,
-        refs_dir: None,
-        report_dir: None,
-    }
-}
-
-fn engine() -> (tempfile::TempDir, Arc<Engine>) {
-    let dir = tempfile::tempdir().unwrap();
-    let crate_root = manifest().join("tests/fixtures/sample_crate");
-    write_index(&crate_root, dir.path(), &config(dir.path())).unwrap();
-    let engine = engine_start(config(dir.path()));
-    engine
-        .open_workspace(crate_root.display().to_string())
-        .unwrap();
-    (dir, engine)
-}
 
 fn sites() -> [(&'static str, CompletionSiteKind); 9] {
     use CompletionSiteKind::*;

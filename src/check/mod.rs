@@ -3,6 +3,7 @@ mod clang_fixit;
 mod clang_parse;
 mod clang_project;
 mod compile_db;
+mod dedup;
 mod fixes;
 mod fmt;
 mod fmt_run;

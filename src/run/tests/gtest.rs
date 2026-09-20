@@ -1,4 +1,4 @@
-use crate::ffi::{TestCase, TestEvent, TestStatus};
+use crate::ffi::{TestEvent, TestStatus};
 
 use super::event;
 
@@ -6,50 +6,6 @@ const RUN: &str = "[ RUN      ] ";
 const OK: &str = "[       OK ] ";
 const FAILED: &str = "[  FAILED  ] ";
 const SKIPPED: &str = "[  SKIPPED ] ";
-
-pub fn list(text: &str) -> Vec<TestCase> {
-    let mut cases = Vec::new();
-    let mut suite: Option<String> = None;
-    for line in text.lines() {
-        if let Some(name) = suite_line(line) {
-            suite = Some(name.to_string());
-            continue;
-        }
-        let Some(name) = case_line(line) else {
-            continue;
-        };
-        cases.push(TestCase {
-            suite: suite.clone(),
-            name: name.to_string(),
-            file: None,
-            line: None,
-        });
-    }
-    cases
-}
-
-fn suite_line(line: &str) -> Option<&str> {
-    if line.starts_with(char::is_whitespace) {
-        return None;
-    }
-    let name = strip_comment(line).strip_suffix('.')?;
-    (!name.is_empty()).then_some(name)
-}
-
-fn case_line(line: &str) -> Option<&str> {
-    if !line.starts_with("  ") {
-        return None;
-    }
-    let name = strip_comment(line);
-    (!name.is_empty() && !name.ends_with('.')).then_some(name)
-}
-
-fn strip_comment(line: &str) -> &str {
-    match line.split_once(" # ") {
-        Some((head, _)) => head.trim(),
-        None => line.trim(),
-    }
-}
 
 pub fn parse(text: &str) -> Vec<TestEvent> {
     let mut events = Vec::new();

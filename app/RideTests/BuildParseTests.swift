@@ -18,15 +18,14 @@ final class BuildParseTests: XCTestCase {
         )
     }
 
-    func testPanelLineKeepsPlainTextAndUnwrapsRenderedMessages() {
-        XCTAssertEqual(BuildParse.panelLine("   Compiling demo v0.1.0"), "   Compiling demo v0.1.0")
+    func testRenderedUnwrapsCompilerMessages() {
         let json = "{\"reason\":\"compiler-message\",\"message\":{\"rendered\":\"error: bad\\n\"}}"
-        XCTAssertEqual(BuildParse.panelLine(json), "error: bad")
+        XCTAssertEqual(BuildParse.rendered(json), "error: bad")
     }
 
-    func testPanelLineDropsMessagesWithoutRenderedText() {
-        XCTAssertNil(BuildParse.panelLine("{\"reason\":\"build-finished\",\"success\":true}"))
-        XCTAssertNil(BuildParse.panelLine("{not json"))
+    func testRenderedDropsMessagesWithoutRenderedText() {
+        XCTAssertNil(BuildParse.rendered("{\"reason\":\"build-finished\",\"success\":true}"))
+        XCTAssertNil(BuildParse.rendered("{not json"))
         XCTAssertTrue(BuildParse.isMessage("{\"reason\":\"x\"}"))
         XCTAssertFalse(BuildParse.isMessage(" warning: x"))
     }
