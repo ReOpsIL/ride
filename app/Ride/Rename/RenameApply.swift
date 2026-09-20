@@ -125,7 +125,7 @@ enum RenameApply {
             return false
         }
         do {
-            try buffer.save(from: nil)
+            try buffer.save(from: nil, lineEndings: state.prefs.lineEndings)
         } catch {
             return false
         }

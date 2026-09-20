@@ -421,6 +421,14 @@ fn engine_exports_editor_queries() {
     );
     assert!(engine.statement_range(999, 0).is_none());
     assert!(engine.sibling_statement_range(999, 0, true).is_none());
+    let bounds = engine.statement_bounds(open.session_id, let_at).unwrap();
+    assert_eq!(
+        span(src, Some(bounds.current)).as_deref(),
+        Some("let s = (1);")
+    );
+    assert!(bounds.previous.is_none());
+    assert_eq!(span(src, bounds.next).as_deref(), Some("g();"));
+    assert!(engine.statement_bounds(999, 0).is_none());
 }
 
 fn statement(lang: Lang, src: &str) -> Option<String> {

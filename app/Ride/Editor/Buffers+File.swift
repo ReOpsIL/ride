@@ -69,7 +69,7 @@ extension AppState {
     func saveAll() {
         for buffer in buffers where buffer.isDirty && buffer.fileURL != nil && !buffer.isReadOnly {
             EditorPanes.shared.host(bound: buffer)?.capture()
-            try? buffer.save(from: nil)
+            try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
             didSave(buffer, allowFormat: false)
         }
         objectWillChange.send()
@@ -80,7 +80,7 @@ extension AppState {
             return
         }
         rebind(buffer, to: url)
-        try? buffer.save(from: nil)
+        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
         selectedURL = buffer.fileURL
         objectWillChange.send()
         didSave(buffer)

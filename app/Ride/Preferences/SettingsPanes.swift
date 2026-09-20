@@ -16,6 +16,10 @@ struct GeneralSettings: View {
                 Stepper(value: bind.int(\.tabWidth), in: 2...8) {
                     LabeledContent("Tab width", value: "\(state.prefs.tabWidth) spaces")
                 }
+                Picker("Line endings", selection: bind.string(\.lineEndings)) {
+                    Text("Keep").tag(LineEndings.keep)
+                    Text("Convert to LF").tag(LineEndings.lf)
+                }
             }
             Section("Files") {
                 Toggle("Show hidden files", isOn: bind.bool(\.showHidden))

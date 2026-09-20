@@ -68,7 +68,7 @@ extension AppState {
         let dirty = buffer.isDirty
         buffer.text = text
         do {
-            try buffer.save(from: nil)
+            try buffer.save(from: nil, lineEndings: prefs.lineEndings)
         } catch {
             buffer.text = previous
             buffer.isDirty = dirty

@@ -3,7 +3,7 @@ use tree_sitter::InputEdit;
 use crate::error::EngineError;
 use crate::ffi::{
     BracketPair, ByteRange, CalleeHit, CompletionHit, FoldRange, HighlightSpan, OutlineItem,
-    ParseErrorSpan, SymbolAt, TextEdit,
+    ParseErrorSpan, StatementBounds, SymbolAt, TextEdit,
 };
 
 use crate::intentions::MatchSite;
@@ -88,6 +88,9 @@ pub trait Syntax: Send + Sync {
         None
     }
     fn sibling_statement(&self, _text: &str, _byte: u32, _up: bool) -> Option<ByteRange> {
+        None
+    }
+    fn statement_bounds(&self, _text: &str, _byte: u32) -> Option<StatementBounds> {
         None
     }
     fn complete_statement(&self, text: &str, byte: u32) -> TextEdit {

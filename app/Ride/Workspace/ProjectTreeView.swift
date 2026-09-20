@@ -133,7 +133,7 @@ struct TreeRow: View {
     private func menu(for node: FileNode) -> some View {
         let dir = WorkspaceFS.parentDir(for: node.url, isDirectory: node.isDirectory)
         Button("New File") {
-            if let url = TreeActions.newFile(in: dir) {
+            if let url = TreeActions.newFile(in: dir, kind: state.projectModel.model?.kind) {
                 state.fileCreated(url)
             }
         }

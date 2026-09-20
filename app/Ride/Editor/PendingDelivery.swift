@@ -70,7 +70,7 @@ extension AppState {
         SessionService.shared.resync(document: document, view: view)
         switch pending.disk {
         case .save:
-            try? document.save(from: view)
+            try? document.save(from: view, lineEndings: prefs.lineEndings)
             didSave(document, allowFormat: false)
         case .dirty:
             document.isDirty = true

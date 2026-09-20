@@ -142,15 +142,25 @@ final class BufferDocument: ObservableObject, Identifiable {
         }
     }
 
-    func save(from textView: RideTextView?) throws {
+    func convertToLF() {
+        guard usesCRLF else {
+            return
+        }
+        usesCRLF = false
+        isDirty = true
+        objectWillChange.send()
+    }
+
+    func save(from textView: RideTextView?, lineEndings: String = LineEndings.keep) throws {
         if let textView {
             text = textView.string
         }
         guard let fileURL, !isReadOnly else {
             return
         }
-        let output = usesCRLF ? text.replacingOccurrences(of: "\n", with: "\r\n") : text
-        try output.write(to: fileURL, atomically: true, encoding: .utf8)
+        let encoded = LineEndings.encode(text: text, usesCRLF: usesCRLF, policy: lineEndings)
+        try encoded.text.write(to: fileURL, atomically: true, encoding: .utf8)
+        usesCRLF = encoded.usesCRLF
         diskText = text
         changedOnDisk = false
         isDirty = false

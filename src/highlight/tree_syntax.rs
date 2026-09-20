@@ -3,7 +3,7 @@ use tree_sitter::InputEdit;
 use crate::error::EngineError;
 use crate::ffi::{
     BracketPair, ByteRange, CalleeHit, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan,
-    SymbolAt, TextEdit,
+    StatementBounds, SymbolAt, TextEdit,
 };
 
 use crate::intentions::MatchSite;
@@ -180,6 +180,11 @@ impl Syntax for TreeSyntax {
             up,
             self.grammar.editing.is_statement,
         )
+    }
+
+    fn statement_bounds(&self, _text: &str, byte: u32) -> Option<StatementBounds> {
+        let tree = self.tree.as_ref()?;
+        editing::statement_bounds(tree.root_node(), byte, self.grammar.editing.is_statement)
     }
 
     fn complete_statement(&self, text: &str, byte: u32) -> TextEdit {

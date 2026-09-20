@@ -34,6 +34,7 @@ struct Preferences: Codable, Equatable {
     var aiAuth: String
     var aiContext: String
     var reportsAcknowledged: Double
+    var lineEndings: String
 
     static let defaults = Preferences(
         theme: "dark",
@@ -96,6 +97,7 @@ struct Preferences: Codable, Equatable {
         aiAuth: String = "login",
         aiContext: String = "function",
         reportsAcknowledged: Double = 0
+        lineEndings: String = LineEndings.keep
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -130,6 +132,7 @@ struct Preferences: Codable, Equatable {
         self.aiAuth = aiAuth
         self.aiContext = aiContext
         self.reportsAcknowledged = reportsAcknowledged
+        self.lineEndings = lineEndings
     }
 
     init(from decoder: Decoder) throws {
@@ -168,6 +171,7 @@ struct Preferences: Codable, Equatable {
         aiAuth = try c.decodeIfPresent(String.self, forKey: .aiAuth) ?? d.aiAuth
         aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
         reportsAcknowledged = try c.decodeIfPresent(Double.self, forKey: .reportsAcknowledged) ?? d.reportsAcknowledged
+        lineEndings = try c.decodeIfPresent(String.self, forKey: .lineEndings) ?? d.lineEndings
     }
 
     var clamped: Preferences {
@@ -186,6 +190,9 @@ struct Preferences: Codable, Equatable {
         next.reportsAcknowledged = max(0, reportsAcknowledged)
         if next.theme != "light" {
             next.theme = "dark"
+        }
+        if next.lineEndings != LineEndings.lf {
+            next.lineEndings = LineEndings.keep
         }
         return next
     }

@@ -19,6 +19,15 @@ extension SelfTestSteps {
             + safeDeleteSteps(state: state, e: e, scratch: scratch)
             + openURLSteps(state: state, e: e)
             + sampleSteps(state: state, e: e)
+            + moveStatementSteps(
+                state: state,
+                e: e,
+                scratch: scratch,
+                file: "src/main.rs",
+                source: "fn _ride_move() {\n    let move_a = 1;\n    let move_b = 2;\n}\n",
+                first: "let move_a = 1;",
+                second: "let move_b = 2;"
+            )
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {

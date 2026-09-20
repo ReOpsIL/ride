@@ -31,7 +31,7 @@ pub use debug::{
 };
 pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
-pub use editing::{BracketPair, FoldRange};
+pub use editing::{BracketPair, FoldRange, StatementBounds};
 pub use generate::{GenKind, GenOption};
 pub use hierarchy::{CalleeHit, TypeHierarchy, TypeNode};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
