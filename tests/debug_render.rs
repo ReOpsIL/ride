@@ -112,6 +112,7 @@ fn configured(sysroot: &Path) -> Option<PathBuf> {
         cargo_home: None,
         sysroot: Some(sysroot.to_string_lossy().to_string()),
         offline_metadata: true,
+        refs_dir: None,
     };
     sysroot_path(&config).expect("the configured sysroot")
 }

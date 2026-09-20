@@ -189,6 +189,7 @@
 		A00000000000000000000081 /* RideEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00000000000000000000080 /* RideEngine.xcframework */; };
 		A00000000000000000000083 /* RideEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000082 /* RideEngine.swift */; };
 		A00000000000000000000085 /* RideEngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000084 /* RideEngineClient.swift */; };
+		A00000000000000000000A01 /* DemoRefsDir.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000A02 /* DemoRefsDir.swift */; };
 		A00000000000000000000087 /* IndexerProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000086 /* IndexerProcess.swift */; };
 		A000000000000000000000A1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000091 /* Theme.swift */; };
 		A000000000000000000000A2 /* Utf16.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000092 /* Utf16.swift */; };
@@ -667,6 +668,7 @@
 		A00000000000000000000080 /* RideEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RideEngine.xcframework; sourceTree = "<group>"; };
 		A00000000000000000000082 /* RideEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngine.swift; sourceTree = "<group>"; };
 		A00000000000000000000084 /* RideEngineClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngineClient.swift; sourceTree = "<group>"; };
+		A00000000000000000000A02 /* DemoRefsDir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRefsDir.swift; sourceTree = "<group>"; };
 		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
 		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A00000000000000000000092 /* Utf16.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16.swift; sourceTree = "<group>"; };
@@ -1411,6 +1413,7 @@
 				FEE0000000000000000000A2 /* CheckService+Live.swift */,
 				H16000000000000000000010 /* CheckConvert.swift */,
 				A00000000000000000000084 /* RideEngineClient.swift */,
+				A00000000000000000000A02 /* DemoRefsDir.swift */,
 				A00000000000000000000086 /* IndexerProcess.swift */,
 				A00000000000000000000095 /* SessionService.swift */,
 				A000000000000000000000D7 /* IndexStatusLabel.swift */,
@@ -2225,6 +2228,7 @@
 				A00000000000000000000075 /* PreferencesView.swift in Sources */,
 				A00000000000000000000083 /* RideEngine.swift in Sources */,
 				A00000000000000000000085 /* RideEngineClient.swift in Sources */,
+				A00000000000000000000A01 /* DemoRefsDir.swift in Sources */,
 				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
 				A000000000000000000000A1 /* Theme.swift in Sources */,
 				A000000000000000000000A2 /* Utf16.swift in Sources */,

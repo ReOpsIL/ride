@@ -4,4 +4,5 @@ pub struct EngineConfig {
     pub cargo_home: Option<String>,
     pub sysroot: Option<String>,
     pub offline_metadata: bool,
+    pub refs_dir: Option<String>,
 }

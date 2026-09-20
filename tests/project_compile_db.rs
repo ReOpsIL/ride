@@ -16,6 +16,7 @@ fn model(root: &Path) -> ProjectModel {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     engine.project_model(root.display().to_string()).unwrap()
 }

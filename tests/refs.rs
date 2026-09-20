@@ -12,6 +12,7 @@ fn config(dir: &Path) -> EngineConfig {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     }
 }
 
@@ -185,4 +186,39 @@ fn rust_extractor_yields_type_mentions() {
         .collect();
     assert!(types.len() >= 2, "{records:?}");
     assert!(types.iter().all(|t| t.kind == RefKind::TypeMention));
+}
+
+#[test]
+fn refs_dir_override_keeps_the_support_directory_clean() {
+    let dir = tempfile::tempdir().unwrap();
+    let isolated = dir.path().join("isolated");
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/rust-demo");
+    let mut cfg = config(dir.path());
+    cfg.refs_dir = Some(isolated.display().to_string());
+    let engine = engine_start(cfg);
+    engine.open_workspace(root.display().to_string()).unwrap();
+
+    let main = root.join("src/main.rs");
+    let text = std::fs::read_to_string(&main).unwrap();
+    let open = engine
+        .open_session(
+            "demo".into(),
+            Some(main.display().to_string()),
+            text.clone(),
+            None,
+        )
+        .unwrap();
+    engine.note_saved(open.session_id).unwrap();
+
+    let digests: Vec<PathBuf> = std::fs::read_dir(&isolated)
+        .unwrap()
+        .filter_map(Result::ok)
+        .map(|e| e.path())
+        .collect();
+    assert_eq!(digests.len(), 1, "{digests:?}");
+    assert!(digests[0].read_dir().unwrap().next().is_some());
+    assert!(!dir.path().join("refs").exists());
+
+    let at = text.find("record(").unwrap() as u32 + 1;
+    assert_eq!(engine.find_usages(open.session_id, at).hits.len(), 2);
 }
