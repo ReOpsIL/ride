@@ -203,5 +203,6 @@ fn config(index_dir: Option<String>) -> EngineConfig {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     }
 }

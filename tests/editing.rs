@@ -383,6 +383,7 @@ fn engine_exports_editor_queries() {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let src = "fn main() {\n    let s = (1);\n    g();\n}\n";
     let open = engine
@@ -692,6 +693,7 @@ fn complete_statement_engine_none_without_session() {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     assert!(engine.complete_statement(999, 0).is_none());
     let src = "fn main() {\n    let x = 1\n}\n";

@@ -63,7 +63,11 @@ impl Engine {
             if i.refs.is_some() && i.refs_root.as_deref() == Some(root.as_path()) {
                 return Ok(());
             }
-            let dir = ref_index_dir(Path::new(&i.config.index_dir), &root);
+            let dir = ref_index_dir(
+                Path::new(&i.config.index_dir),
+                i.config.refs_dir.as_deref(),
+                &root,
+            );
             let index = RefIndex::open(&dir)?;
             i.refs = Some(std::sync::Arc::new(index));
             i.refs_root = Some(root);

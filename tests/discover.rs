@@ -12,6 +12,7 @@ fn config() -> EngineConfig {
         cargo_home: Some(fixtures().join("cargo_home").display().to_string()),
         sysroot: Some(fixtures().join("sysroot").display().to_string()),
         offline_metadata: true,
+        refs_dir: None,
     }
 }
 
@@ -89,6 +90,7 @@ fn engine_starts_idle() {
         cargo_home: config().cargo_home,
         sysroot: config().sysroot,
         offline_metadata: true,
+        refs_dir: None,
     });
     let s = engine.status();
     assert_eq!(s.state, IndexState::Idle);

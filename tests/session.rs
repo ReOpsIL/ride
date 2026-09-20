@@ -162,6 +162,7 @@ fn engine_session_round_trip() {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let open = engine
         .open_session(
@@ -314,6 +315,7 @@ fn engine_picks_language_from_path() {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let md = engine
         .open_session(

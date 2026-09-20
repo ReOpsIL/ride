@@ -7,6 +7,7 @@ fn model(root: &str) -> (tempfile::TempDir, ProjectModel) {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let model = engine.project_model(root.to_string()).unwrap();
     (index, model)

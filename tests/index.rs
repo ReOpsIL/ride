@@ -19,6 +19,7 @@ fn config(index_dir: &std::path::Path) -> EngineConfig {
         cargo_home: Some(fixtures().join("cargo_home").display().to_string()),
         sysroot: Some(fixtures().join("sysroot").display().to_string()),
         offline_metadata: true,
+        refs_dir: None,
     }
 }
 

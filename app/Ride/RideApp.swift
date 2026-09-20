@@ -61,6 +61,10 @@ final class RideAppDelegate: NSObject, NSApplicationDelegate {
         Self.state?.closeAll() == false ? .terminateCancel : .terminateNow
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        DemoRefsDir.remove()
+    }
+
     func application(_ app: NSApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
         false
     }

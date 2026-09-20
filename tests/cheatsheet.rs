@@ -185,6 +185,7 @@ fn engine_cheat_sheet_uses_site_prefix_and_indent() {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let src = "fn main() {\n    ma\n}\n";
     let open = engine

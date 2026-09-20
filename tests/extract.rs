@@ -119,6 +119,7 @@ fn find_unpacked(name: &str) -> Option<PathBuf> {
         cargo_home: None,
         sysroot: None,
         offline_metadata: true,
+        refs_dir: None,
     });
     let src = home.join("registry/src");
     let prefix = format!("{name}-");
