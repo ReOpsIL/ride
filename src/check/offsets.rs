@@ -31,6 +31,13 @@ impl LineOffsets {
     }
 }
 
+pub fn resolve(path: PathBuf, base: &Path) -> PathBuf {
+    if path.is_absolute() || base.as_os_str().is_empty() {
+        return path;
+    }
+    base.join(path)
+}
+
 fn read_lines(path: &Path) -> FileLines {
     lines_of(&std::fs::read(path).unwrap_or_default())
 }

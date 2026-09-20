@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
-use crate::ffi::{Diagnostic, DiagnosticLevel};
+use crate::ffi::{Diagnostic, DiagnosticFix, DiagnosticLevel};
 
-use super::offsets::LineOffsets;
+use super::clang_fixit;
+use super::offsets::{LineOffsets, resolve};
 
 const STDIN: &str = "<stdin>";
 
@@ -22,38 +23,52 @@ struct Location {
 }
 
 pub fn parse_clang(text: &str, base: &Path) -> Vec<Diagnostic> {
-    collect(text, base, LineOffsets::default(), |d| d)
+    collect(text, base, LineOffsets::default(), None)
 }
 
 pub fn parse_clang_live(text: &str, base: &Path, file: &Path, buffer: &str) -> Vec<Diagnostic> {
     let mut offsets = LineOffsets::default();
     offsets.seed(&base.join(STDIN), buffer);
-    collect(text, base, offsets, |mut d| {
-        remap(&mut d, file);
-        d
-    })
+    collect(text, base, offsets, Some(file))
 }
 
 fn collect(
     text: &str,
     base: &Path,
     mut offsets: LineOffsets,
-    map: impl Fn(Diagnostic) -> Diagnostic,
+    live: Option<&Path>,
 ) -> Vec<Diagnostic> {
+    let mut out: Vec<Diagnostic> = Vec::new();
     let mut seen = HashSet::new();
-    text.lines()
-        .filter_map(|line| parse_line(line, base, &mut offsets))
-        .map(map)
-        .filter(|d| seen.insert((d.path.clone(), d.byte_start, d.message.clone())))
-        .collect()
+    for line in text.lines() {
+        if let Some(fixit) = clang_fixit::parse(line, base, &mut offsets) {
+            attach(&mut out, &remap(fixit.path, live), fixit.fix);
+        } else if let Some(mut d) = parse_line(line, base, &mut offsets) {
+            d.path = remap(PathBuf::from(d.path), live).display().to_string();
+            if seen.insert((d.path.clone(), d.byte_start, d.message.clone())) {
+                out.push(d);
+            }
+        }
+    }
+    out
 }
 
-fn remap(d: &mut Diagnostic, file: &Path) {
-    let is_stdin =
-        d.path.is_empty() || Path::new(&d.path).file_name().and_then(|s| s.to_str()) == Some(STDIN);
-    if is_stdin {
-        d.path = file.display().to_string();
+fn attach(out: &mut [Diagnostic], path: &Path, fix: DiagnosticFix) {
+    let path = path.display().to_string();
+    if let Some(d) = out.iter_mut().rev().find(|d| d.path == path) {
+        d.fixes.push(fix);
     }
+}
+
+fn remap(path: PathBuf, live: Option<&Path>) -> PathBuf {
+    match live {
+        Some(file) if is_stdin(&path) => file.to_path_buf(),
+        _ => path,
+    }
+}
+
+fn is_stdin(path: &Path) -> bool {
+    path.as_os_str().is_empty() || path.file_name().and_then(|s| s.to_str()) == Some(STDIN)
 }
 
 fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diagnostic> {
@@ -79,14 +94,8 @@ fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diag
         level,
         message: message.to_string(),
         code,
+        fixes: Vec::new(),
     })
-}
-
-fn resolve(path: PathBuf, base: &Path) -> PathBuf {
-    if path.is_absolute() || base.as_os_str().is_empty() {
-        return path;
-    }
-    base.join(path)
 }
 
 fn location(loc: &str) -> Option<Location> {

@@ -3,6 +3,7 @@ use std::path::Path;
 
 use crate::ffi::{Diagnostic, DiagnosticLevel};
 
+use super::fixes::fixes;
 use super::message::{CargoLine, CompilerMessage};
 
 pub fn parse_lines(root: &Path, text: &str) -> Vec<Diagnostic> {
@@ -27,18 +28,24 @@ fn diagnostics(root: &Path, m: CompilerMessage) -> Vec<Diagnostic> {
         return Vec::new();
     };
     let code = m.code.map(|c| c.code);
+    let children = m.children;
     m.spans
         .into_iter()
         .filter(|s| s.is_primary)
-        .map(|s| Diagnostic {
-            path: absolute(root, &s.file_name),
-            byte_start: s.byte_start,
-            byte_end: s.byte_end.max(s.byte_start),
-            line: s.line_start,
-            column: s.column_start,
-            level,
-            message: m.message.clone(),
-            code: code.clone(),
+        .map(|s| {
+            let path = absolute(root, &s.file_name);
+            let fixes = fixes(root, &children, &path);
+            Diagnostic {
+                path,
+                byte_start: s.byte_start,
+                byte_end: s.byte_end.max(s.byte_start),
+                line: s.line_start,
+                column: s.column_start,
+                level,
+                message: m.message.clone(),
+                code: code.clone(),
+                fixes,
+            }
         })
         .collect()
 }
@@ -53,7 +60,7 @@ fn level(label: &str) -> Option<DiagnosticLevel> {
     }
 }
 
-fn absolute(root: &Path, file: &str) -> String {
+pub(super) fn absolute(root: &Path, file: &str) -> String {
     let p = Path::new(file);
     if p.is_absolute() {
         return p.display().to_string();

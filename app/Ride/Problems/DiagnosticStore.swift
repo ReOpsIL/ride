@@ -11,6 +11,18 @@ enum DiagnosticOrigin: Equatable, Hashable {
     case live
 }
 
+struct StoredEdit: Equatable, Hashable {
+    var startByte: UInt32
+    var endByte: UInt32
+    var text: String
+    var caretByte: UInt32
+}
+
+struct StoredFix: Equatable, Hashable {
+    var title: String
+    var edits: [StoredEdit]
+}
+
 struct StoredDiagnostic: Equatable, Hashable {
     var path: String
     var byteStart: UInt32
@@ -20,6 +32,7 @@ struct StoredDiagnostic: Equatable, Hashable {
     var level: ProblemLevel
     var message: String
     var code: String?
+    var fixes: [StoredFix] = []
     var origin: DiagnosticOrigin = .check
 }
 

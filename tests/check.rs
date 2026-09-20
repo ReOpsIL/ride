@@ -19,6 +19,47 @@ const LINES: &str = r#"{"reason":"compiler-artifact","target":{"name":"x"}}
 {"reason":"build-finished","success":false}
 "#;
 
+const FIX_LINES: &str = r#"{"reason":"compiler-message","message":{"message":"unused import: `std::collections::HashMap`","code":{"code":"unused_imports"},"level":"warning","spans":[{"file_name":"src/main.rs","byte_start":4,"byte_end":29,"line_start":1,"line_end":1,"column_start":5,"column_end":30,"is_primary":true}],"children":[{"children":[],"code":null,"level":"note","message":"`#[warn(unused_imports)]` on by default","spans":[]},{"children":[],"code":null,"level":"help","message":"remove the whole `use` item","spans":[{"file_name":"src/main.rs","byte_start":0,"byte_end":31,"line_start":1,"line_end":2,"column_start":1,"column_end":1,"is_primary":true,"suggested_replacement":"","suggestion_applicability":"MachineApplicable"}]}]}}
+{"reason":"compiler-message","message":{"message":"cannot find type `BTreeMap` in this scope","code":{"code":"E0425"},"level":"error","spans":[{"file_name":"src/main.rs","byte_start":55,"byte_end":63,"line_start":4,"line_end":4,"column_start":12,"column_end":20,"is_primary":true}],"children":[{"children":[],"code":null,"level":"help","message":"consider importing this struct","spans":[{"file_name":"src/main.rs","byte_start":0,"byte_end":0,"line_start":1,"line_end":1,"column_start":1,"column_end":1,"is_primary":true,"suggested_replacement":"use std::collections::BTreeMap;\n","suggestion_applicability":"MaybeIncorrect"}]}]}}
+{"reason":"compiler-message","message":{"message":"missing structure fields","code":null,"level":"error","spans":[{"file_name":"src/main.rs","byte_start":70,"byte_end":75,"line_start":6,"line_end":6,"column_start":5,"column_end":10,"is_primary":true}],"children":[{"children":[],"code":null,"level":"help","message":"provide a value","spans":[{"file_name":"src/main.rs","byte_start":70,"byte_end":75,"line_start":6,"line_end":6,"column_start":5,"column_end":10,"is_primary":true,"suggested_replacement":"field: /* value */","suggestion_applicability":"HasPlaceholders"}]}]}}
+{"reason":"compiler-message","message":{"message":"cross file suggestion","code":null,"level":"error","spans":[{"file_name":"src/main.rs","byte_start":80,"byte_end":81,"line_start":7,"line_end":7,"column_start":1,"column_end":2,"is_primary":true}],"children":[{"children":[],"code":null,"level":"help","message":"edit the other file","spans":[{"file_name":"src/lib.rs","byte_start":0,"byte_end":0,"line_start":1,"line_end":1,"column_start":1,"column_end":1,"is_primary":true,"suggested_replacement":"pub mod x;\n","suggestion_applicability":"MachineApplicable"}]}]}}
+"#;
+
+#[test]
+fn machine_applicable_children_become_fixes() {
+    let diags = parse_lines(Path::new("/proj"), FIX_LINES);
+    assert_eq!(diags.len(), 4);
+
+    let unused = &diags[0];
+    assert_eq!(unused.fixes.len(), 1, "{:?}", unused.fixes);
+    assert_eq!(unused.fixes[0].title, "remove the whole `use` item");
+    let removal = &unused.fixes[0].edits[0];
+    assert_eq!((removal.start_byte, removal.end_byte), (0, 31));
+    assert_eq!(removal.text, "");
+    assert_eq!(removal.caret_byte, 31);
+
+    let import = &diags[1];
+    assert_eq!(import.fixes.len(), 1, "{:?}", import.fixes);
+    assert_eq!(import.fixes[0].title, "consider importing this struct");
+    let insert = &import.fixes[0].edits[0];
+    assert_eq!((insert.start_byte, insert.end_byte), (0, 0));
+    assert_eq!(insert.text, "use std::collections::BTreeMap;\n");
+    assert_eq!(insert.caret_byte, 0);
+}
+
+#[test]
+fn placeholder_and_cross_file_suggestions_yield_no_fix() {
+    let diags = parse_lines(Path::new("/proj"), FIX_LINES);
+    assert!(diags[2].fixes.is_empty(), "{:?}", diags[2].fixes);
+    assert!(diags[3].fixes.is_empty(), "{:?}", diags[3].fixes);
+}
+
+#[test]
+fn diagnostics_without_children_have_no_fixes() {
+    let diags = parse_lines(Path::new("/proj"), LINES);
+    assert!(diags.iter().all(|d| d.fixes.is_empty()));
+}
+
 #[test]
 fn parses_primary_spans_only() {
     let diags = parse_lines(Path::new("/proj"), LINES);
