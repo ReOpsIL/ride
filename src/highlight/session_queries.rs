@@ -1,4 +1,6 @@
-use crate::ffi::{BracketPair, ByteRange, CalleeHit, FoldRange, SymbolAt, TextEdit};
+use crate::ffi::{
+    BracketPair, ByteRange, CalleeHit, FoldRange, HighlightSpan, OutlineItem, SymbolAt, TextEdit,
+};
 use crate::intentions::MatchSite;
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
@@ -9,6 +11,20 @@ use super::site::SiteAt;
 use super::syntax::{Lang, LocalHits, LocalQuery};
 
 impl BufferSession {
+    pub fn highlights(&self) -> Vec<HighlightSpan> {
+        self.syntax.highlights(
+            &self.replica,
+            &[ByteRange {
+                start_byte: 0,
+                end_byte: self.replica.len() as u32,
+            }],
+        )
+    }
+
+    pub fn outline_items(&self) -> Vec<OutlineItem> {
+        self.syntax.outline(&self.replica)
+    }
+
     pub fn local_hits(&self, q: &LocalQuery<'_>) -> LocalHits {
         self.syntax.local_hits(&self.replica, &self.last_outline, q)
     }

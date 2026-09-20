@@ -1,0 +1,7 @@
+src/generate/rust.rs
+app/Ride/Debug/SelfTestSteps+Rust.swift
+app/Ride/Debug/SelfTestSteps+Cpp.swift
+app/Ride/Editor/RideTextView.swift
+src/generate/mod.rs
+app/Ride/AppState.swift
+app/Ride/RootView.swift
