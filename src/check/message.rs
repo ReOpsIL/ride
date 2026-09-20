@@ -13,6 +13,8 @@ pub struct CompilerMessage {
     pub code: Option<Code>,
     #[serde(default)]
     pub spans: Vec<Span>,
+    #[serde(default)]
+    pub children: Vec<CompilerMessage>,
 }
 
 #[derive(Deserialize)]
@@ -28,4 +30,8 @@ pub struct Span {
     pub line_start: u32,
     pub column_start: u32,
     pub is_primary: bool,
+    #[serde(default)]
+    pub suggested_replacement: Option<String>,
+    #[serde(default)]
+    pub suggestion_applicability: Option<String>,
 }

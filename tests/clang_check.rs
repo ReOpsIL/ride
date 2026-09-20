@@ -222,6 +222,85 @@ fn editing_cpp_demo_header_yields_diagnostic_from_including_source() {
     );
 }
 
+#[test]
+fn parseable_fixits_attach_to_their_diagnostic() {
+    let dir = scratch("fixit");
+    let file = dir.join("m.c");
+    fs::write(
+        &file,
+        "int f(void) {\n  int alpha = 1;\n  return alpah;\n}\n",
+    )
+    .unwrap();
+    let path = file.display();
+    let text = format!(
+        "{path}:3:10:{{3:10-3:15}}: error: use of undeclared identifier 'alpah'\n\
+         fix-it:\"{path}\":{{3:10-3:15}}:\"alpha\"\n\
+         {path}:2:7:{{2:7-2:12}}: warning: unused variable 'alpha' [-Wunused-variable]\n\
+         fix-it:\"{path}\":{{2:3-2:17}}:\"\"\n\
+         2 diagnostics generated.\n"
+    );
+    let diags = parse_clang(&text, Path::new(""));
+    assert_eq!(diags.len(), 2, "{diags:?}");
+
+    let err = &diags[0];
+    assert_eq!(err.fixes.len(), 1, "{:?}", err.fixes);
+    assert_eq!(err.fixes[0].title, "Apply fix: alpha");
+    let edit = &err.fixes[0].edits[0];
+    assert_eq!((edit.start_byte, edit.end_byte), (40, 45));
+    assert_eq!(edit.text, "alpha");
+    assert_eq!(edit.caret_byte, 45);
+
+    let warn = &diags[1];
+    assert_eq!(warn.fixes.len(), 1, "{:?}", warn.fixes);
+    assert_eq!(warn.fixes[0].title, "Remove");
+    let removal = &warn.fixes[0].edits[0];
+    assert_eq!((removal.start_byte, removal.end_byte), (16, 30));
+    assert_eq!(removal.text, "");
+}
+
+#[test]
+fn fixit_text_unescapes_quotes_and_backslashes() {
+    let dir = scratch("fixit-escape");
+    let file = dir.join("s.c");
+    fs::write(&file, "const char *s = 0;\n").unwrap();
+    let path = file.display();
+    let text = format!(
+        "{path}:1:17:{{1:17-1:18}}: warning: prefer a string [-Wride]\n\
+         fix-it:\"{path}\":{{1:17-1:18}}:\"\\\"a\\\\b\\\"\"\n"
+    );
+    let diags = parse_clang(&text, Path::new(""));
+    assert_eq!(diags.len(), 1, "{diags:?}");
+    assert_eq!(diags[0].fixes.len(), 1, "{:?}", diags[0].fixes);
+    let edit = &diags[0].fixes[0].edits[0];
+    assert_eq!((edit.start_byte, edit.end_byte), (16, 17));
+    assert_eq!(edit.text, "\"a\\b\"");
+    assert_eq!(diags[0].fixes[0].title, "Apply fix: \"a\\b\"");
+}
+
+#[test]
+fn clang_reports_its_own_spelling_fix() {
+    if !clang_available() {
+        return;
+    }
+    let dir = scratch("fixit-clang");
+    let file = dir.join("t.cpp");
+    fs::write(
+        &file,
+        "class Gamma { public: int x; };\nint f() {\n  gamma g;\n  return g.x;\n}\n",
+    )
+    .unwrap();
+    let result = run_clang_check(&file).unwrap();
+    let fix = result
+        .diagnostics
+        .iter()
+        .flat_map(|d| &d.fixes)
+        .find(|f| f.title == "Apply fix: Gamma")
+        .unwrap_or_else(|| panic!("{:?}", result.diagnostics));
+    assert_eq!(fix.edits.len(), 1);
+    assert_eq!(fix.edits[0].text, "Gamma");
+    assert_eq!((fix.edits[0].start_byte, fix.edits[0].end_byte), (44, 49));
+}
+
 fn indexed_check(path: &str, tail: &str) -> CheckResult {
     CheckResult {
         success: false,
@@ -234,6 +313,7 @@ fn indexed_check(path: &str, tail: &str) -> CheckResult {
             level: DiagnosticLevel::Error,
             message: path.into(),
             code: None,
+            fixes: Vec::new(),
         }],
         stderr_tail: tail.into(),
     }

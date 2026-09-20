@@ -21,7 +21,7 @@ mod tools;
 mod workspace;
 
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
-pub use check::{CheckResult, Diagnostic, DiagnosticLevel};
+pub use check::{CheckResult, Diagnostic, DiagnosticFix, DiagnosticLevel};
 pub use config::EngineConfig;
 pub use debug::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,

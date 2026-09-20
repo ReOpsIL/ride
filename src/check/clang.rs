@@ -12,8 +12,8 @@ use super::output::stderr_tail;
 const DIAG_FLAGS: &[&str] = &[
     "-fsyntax-only",
     "-fno-color-diagnostics",
-    "-fno-caret-diagnostics",
     "-fdiagnostics-print-source-range-info",
+    "-fdiagnostics-parseable-fixits",
 ];
 
 pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {

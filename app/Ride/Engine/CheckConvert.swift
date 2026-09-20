@@ -19,7 +19,34 @@ enum CheckConvert {
             column: diag.column,
             level: level,
             message: diag.message,
-            code: diag.code
+            code: diag.code,
+            fixes: diag.fixes.map(stored)
+        )
+    }
+
+    static func stored(_ fix: DiagnosticFix) -> StoredFix {
+        StoredFix(title: fix.title, edits: fix.edits.map(stored))
+    }
+
+    static func stored(_ edit: TextEdit) -> StoredEdit {
+        StoredEdit(
+            startByte: edit.startByte,
+            endByte: edit.endByte,
+            text: edit.text,
+            caretByte: edit.caretByte
+        )
+    }
+
+    static func ffi(_ fix: StoredFix) -> DiagnosticFix {
+        DiagnosticFix(title: fix.title, edits: fix.edits.map(ffi))
+    }
+
+    static func ffi(_ edit: StoredEdit) -> TextEdit {
+        TextEdit(
+            startByte: edit.startByte,
+            endByte: edit.endByte,
+            text: edit.text,
+            caretByte: edit.caretByte
         )
     }
 
@@ -32,7 +59,8 @@ enum CheckConvert {
             column: item.column,
             level: item.level == .error ? .error : .warning,
             message: item.message,
-            code: item.code
+            code: item.code,
+            fixes: item.fixes.map(ffi)
         )
     }
 
