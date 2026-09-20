@@ -20,6 +20,21 @@ jobs:
       - name: test
         run: cargo test
 
+  latency:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: latency
+        run: cargo test --release --test latency
+
+  lines:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: lines
+        run: bash scripts/check-lines.sh
+
   xcframework:
     runs-on: macos-latest
     steps:
