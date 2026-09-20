@@ -28,3 +28,8 @@
 - UsageVision ("N usages" editor overlay) has a pure model and tests but no view (see `plan/roadmap/next-1.3.md`).
 - Files over 200 lines to split: `SelfTestSteps+Cpp.swift`, `SelfTestSteps+Rust.swift`, `RideTextView.swift` (apply* helpers), `AppState.swift` (overlay flags), `PeekPanel.swift` (`PeekChrome`), `RootView.swift` (`DetailColumn`), `Buffers+File.swift` (new/open/close workspace).
 - 17 copies of the `guard let engine = RideEngineClient.shared.engine` + background queue + main hop prologue; add `RideEngineClient.withEngine(_:then:)`.
+
+# Run output (added 2026-09-20, dropped from 1.3-1e at merge)
+
+- `LineSplitter` treats only `\r\n` as a terminator, so a bare `\r` (cargo's progress lines) stays inside the line until the next `\n`; the 1.3-1e executor split on bare `\r` too. Land it as its own card with tests on captured cargo output.
+- Code vision "N usages" and Find Usages count every same-name identifier from the reference index, including the definition, a trait declaration and its impl (`record` reports 5 with both sample files indexed). Decide whether both should exclude definition sites once `RefKind` filtering (1.3-8a) is used by Find Usages.

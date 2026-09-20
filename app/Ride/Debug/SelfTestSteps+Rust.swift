@@ -15,6 +15,7 @@ extension SelfTestSteps {
             + rustIntentions(e: e, scratch: scratch)
             + breakpointShiftSteps(state: state, e: e)
             + [callHierarchy(state: state, e: e)]
+            + [codeVision(state: state, e: e)]
     }
 
     private static func rustGenerate(e: SelfTestEditor, scratch: SelfTestScratch) -> [SelfTestStep] {

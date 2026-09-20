@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use tantivy::collector::TopDocs;
+use tantivy::collector::{Count, TopDocs};
 use tantivy::query::Query;
 use tantivy::{Index, IndexWriter, TantivyDocument};
 
@@ -58,6 +58,16 @@ impl RefIndex {
 
     pub fn usages_of_kind(&self, name: &str, kind: RefKind) -> Result<Vec<UsageRow>, EngineError> {
         self.rows(self.fields.name_kind_query(name, kind))
+    }
+
+    pub fn count(&self, name: &str) -> Result<u32, EngineError> {
+        let reader = self.index.reader().map_err(tv)?;
+        let query = self.fields.name_query(name);
+        let n = reader
+            .searcher()
+            .search(query.as_ref(), &Count)
+            .map_err(tv)?;
+        Ok(n as u32)
     }
 
     fn rows(&self, query: Box<dyn Query>) -> Result<Vec<UsageRow>, EngineError> {

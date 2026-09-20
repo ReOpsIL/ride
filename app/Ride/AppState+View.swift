@@ -25,6 +25,10 @@ extension AppState {
         updatePrefs { $0.indentGuides.toggle() }
     }
 
+    func toggleCodeVision() {
+        updatePrefs { $0.codeVision.toggle() }
+    }
+
     func showNotice(_ text: String, seconds: Double = 6, action: (title: String, run: () -> Void)? = nil) {
         notice = text
         noticeAction = action

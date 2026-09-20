@@ -8,7 +8,12 @@ extension SessionService {
         mergeHighlights(document: document, update: update)
         HighlightApply.apply(update, text: text, view: view)
         if let outline = update.outline {
-            document.outline = outline.map(Self.row)
+            let rows = outline.map(Self.row)
+            let namesChanged = rows.map(\.name) != document.outline.map(\.name)
+            document.outline = rows
+            if namesChanged {
+                UsageCounter.refresh(document: document)
+            }
         }
         Underlines.apply(document: document, view: view, parseErrors: update.errors)
         TestMarkers.refresh(document: document, view: view)

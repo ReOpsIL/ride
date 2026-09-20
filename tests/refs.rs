@@ -87,6 +87,14 @@ fn find_usages_groups_and_replaces() {
     assert_eq!(resp.hits.len(), 2, "{:?}", resp.hits);
     assert!(resp.hits.iter().all(|h| h.path == "src/main.rs"));
 
+    let counted = engine.usage_counts(
+        open.session_id,
+        vec!["record".into(), "count".into(), "missing".into()],
+    );
+    assert_eq!(counted, vec![2, 1, 0], "{counted:?}");
+    let capped: Vec<String> = (0..250).map(|i| format!("n{i}")).collect();
+    assert_eq!(engine.usage_counts(open.session_id, capped).len(), 200);
+
     engine
         .refs_update("src/main.rs".to_string(), records)
         .unwrap();
@@ -114,6 +122,37 @@ fn note_saved_indexes_rust_buffer() {
     let resp = engine.find_usages(open.session_id, at);
     assert_eq!(resp.name, "record");
     assert_eq!(resp.hits.len(), 2, "{:?}", resp.hits);
+    assert_eq!(
+        engine.usage_counts(open.session_id, vec!["record".into()]),
+        vec![2]
+    );
+}
+
+#[test]
+fn usage_counts_after_both_demo_files() {
+    let (_dir, engine, root) = demo_engine();
+    let main = std::fs::read_to_string(root.join("src/main.rs")).unwrap();
+    let util = std::fs::read_to_string(root.join("src/util.rs")).unwrap();
+    let open_main = engine
+        .open_session(
+            "main".into(),
+            Some(root.join("src/main.rs").display().to_string()),
+            main,
+            None,
+        )
+        .unwrap();
+    let open_util = engine
+        .open_session(
+            "util".into(),
+            Some(root.join("src/util.rs").display().to_string()),
+            util,
+            None,
+        )
+        .unwrap();
+    engine.note_saved(open_main.session_id).unwrap();
+    engine.note_saved(open_util.session_id).unwrap();
+    let counted = engine.usage_counts(open_util.session_id, vec!["record".into()]);
+    assert_eq!(counted, vec![5], "{counted:?}");
 }
 
 #[test]

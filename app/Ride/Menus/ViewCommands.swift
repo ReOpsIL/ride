@@ -35,6 +35,7 @@ struct ViewCommands: Commands {
             Toggle("Soft Wrap", isOn: Binding(get: { menu.softWrap }, set: { _ in state.toggleSoftWrap() }))
             Toggle("Show Whitespace", isOn: Binding(get: { menu.visibleWhitespace }, set: { _ in state.toggleWhitespace() }))
             Toggle("Indent Guides", isOn: Binding(get: { menu.indentGuides }, set: { _ in state.toggleIndentGuides() }))
+            Toggle("Code Vision", isOn: Binding(get: { menu.codeVision }, set: { _ in state.toggleCodeVision() }))
             Divider()
             Button("Open in Split") { state.openInSplit() }
                 .disabled(!menu.hasEditor)
