@@ -204,5 +204,6 @@ fn config(index_dir: Option<String>) -> EngineConfig {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     }
 }

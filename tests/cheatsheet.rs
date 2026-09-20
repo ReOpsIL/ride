@@ -186,6 +186,7 @@ fn engine_cheat_sheet_uses_site_prefix_and_indent() {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     });
     let src = "fn main() {\n    ma\n}\n";
     let open = engine

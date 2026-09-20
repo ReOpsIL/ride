@@ -17,6 +17,7 @@ fn model(root: &Path) -> ProjectModel {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     });
     engine.project_model(root.display().to_string()).unwrap()
 }

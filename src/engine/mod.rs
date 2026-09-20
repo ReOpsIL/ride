@@ -141,6 +141,9 @@ impl Engine {
 #[uniffi::export]
 pub fn engine_start(config: EngineConfig) -> Arc<Engine> {
     crate::process::ignore_sigpipe();
+    if let Some(dir) = config.report_dir.as_deref() {
+        crate::report::install_panic_hook(Path::new(dir));
+    }
     let engine = Arc::new(Engine::new(config));
     engine.poll_index();
     watch::spawn(Arc::downgrade(&engine));

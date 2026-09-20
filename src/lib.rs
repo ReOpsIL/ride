@@ -20,6 +20,7 @@ pub mod project;
 mod query;
 mod refactor;
 mod refs;
+mod report;
 mod run;
 mod score;
 mod skip;
@@ -55,4 +56,5 @@ pub use index::{
 };
 pub use markdown::render as render_markdown;
 pub use refs::{RefExtractor, RefKind, RefRecord, extractor_for};
+pub use report::{install_panic_hook, panic_line};
 pub use toolchain::tool_path;

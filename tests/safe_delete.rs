@@ -10,6 +10,7 @@ fn config(dir: &Path) -> EngineConfig {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     }
 }
 

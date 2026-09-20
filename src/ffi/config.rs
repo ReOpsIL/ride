@@ -5,4 +5,5 @@ pub struct EngineConfig {
     pub sysroot: Option<String>,
     pub offline_metadata: bool,
     pub refs_dir: Option<String>,
+    pub report_dir: Option<String>,
 }

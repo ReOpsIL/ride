@@ -91,8 +91,7 @@ struct DetailColumn: View {
             PaneTabStrips()
             if let notice = state.notice {
                 NoticeBar(text: notice, actionTitle: state.noticeAction?.title, action: state.noticeAction?.run) {
-                    state.notice = nil
-                    state.noticeAction = nil
+                    state.dismissNotice()
                 }
             }
             VSplitView {

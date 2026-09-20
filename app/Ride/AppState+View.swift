@@ -29,16 +29,35 @@ extension AppState {
         updatePrefs { $0.codeVision.toggle() }
     }
 
-    func showNotice(_ text: String, seconds: Double = 6, action: (title: String, run: () -> Void)? = nil) {
+    func showNotice(
+        _ text: String,
+        seconds: Double = 6,
+        action: (title: String, run: () -> Void)? = nil,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        noticeWork?.cancel()
         notice = text
         noticeAction = action
-        noticeWork?.cancel()
+        noticeDismiss = onDismiss
         let work = DispatchWorkItem { [weak self] in
-            self?.notice = nil
-            self?.noticeAction = nil
+            self?.clearNotice()
         }
         noticeWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
+    }
+
+    func dismissNotice() {
+        let run = noticeDismiss
+        clearNotice()
+        run?()
+    }
+
+    func clearNotice() {
+        noticeWork?.cancel()
+        noticeWork = nil
+        notice = nil
+        noticeAction = nil
+        noticeDismiss = nil
     }
 
     func checkTools() {
@@ -55,7 +74,7 @@ extension AppState {
             }
             let names = missing.joined(separator: ", ")
             showNotice("Missing tools: \(names)", seconds: 20, action: ("Install…", { [weak self] in
-                self?.notice = nil
+                self?.clearNotice()
                 self?.showToolsSheet = true
             }))
         }

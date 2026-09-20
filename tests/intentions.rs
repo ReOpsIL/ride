@@ -22,6 +22,7 @@ fn indexed_config(index_dir: &Path) -> EngineConfig {
         sysroot: Some(fixtures().join("sysroot").display().to_string()),
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     }
 }
 
@@ -32,6 +33,7 @@ fn engine() -> std::sync::Arc<Engine> {
         sysroot: None,
         offline_metadata: true,
         refs_dir: None,
+        report_dir: None,
     })
 }
 
