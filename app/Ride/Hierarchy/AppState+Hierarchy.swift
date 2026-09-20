@@ -89,17 +89,9 @@ extension AppState {
     private func loadHierarchyChildren(_ node: HierarchyNode) {
         let generation = hierarchy.generation
         let mode = hierarchy.mode
-        let started = RideEngineClient.shared.withEngine({ [weak self] engine in
-            guard let self else {
-                return [HierarchyNode]()
-            }
-            return HierarchyQuery.children(
-                engine: engine,
-                mode: mode,
-                node: node,
-                buffers: self.buffers,
-                workspace: self.workspaceRoot
-            )
+        let (file, open) = HierarchyQuery.locate(node.path, buffers: buffers, workspace: workspaceRoot)
+        let started = RideEngineClient.shared.withEngine({ engine in
+            HierarchyQuery.children(engine: engine, mode: mode, node: node, file: file, open: open)
         }, then: { [weak self] nodes in
             guard let self, self.hierarchy.isCurrent(generation) else {
                 return

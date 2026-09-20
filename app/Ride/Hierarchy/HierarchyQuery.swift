@@ -38,22 +38,35 @@ enum HierarchyQuery {
         }
     }
 
+    struct OpenBuffer {
+        let sessionId: UInt64
+        let rows: [OutlineRow]
+    }
+
+    static func locate(_ path: String, buffers: [BufferDocument], workspace: URL?) -> (file: String, open: OpenBuffer?) {
+        let file = resolved(path, workspace: workspace)
+        let open = buffers.first { matches($0, path: path, file: file) }.flatMap { document in
+            document.sessionId.map { OpenBuffer(sessionId: $0, rows: document.outline) }
+        }
+        return (file, open)
+    }
+
     static func children(
         engine: Engine,
         mode: HierarchyMode,
         node: HierarchyNode,
-        buffers: [BufferDocument],
-        workspace: URL?
+        file: String,
+        open: OpenBuffer?
     ) -> [HierarchyNode] {
         switch mode {
         case .callers:
-            return withSession(engine, path: node.path, buffers: buffers, workspace: workspace) { session in
+            return withSession(engine, file: file, open: open) { session in
                 let at = session.expandByte(name: node.name, byte: node.byte)
                 return callerNodes(engine.callers(sessionId: session.id, cursorByte: at).hits, parent: node.id)
             }
         case .types:
-            return withSession(engine, path: node.path, buffers: buffers, workspace: workspace) { session in
-                return typeNodes(engine.typeHierarchy(sessionId: session.id, cursorByte: node.byte), parent: node.id)
+            return withSession(engine, file: file, open: open) { session in
+                typeNodes(engine.typeHierarchy(sessionId: session.id, cursorByte: node.byte), parent: node.id)
             }
         case .callees:
             return []
@@ -103,12 +116,11 @@ enum HierarchyQuery {
 
     private static func withSession(
         _ engine: Engine,
-        path: String,
-        buffers: [BufferDocument],
-        workspace: URL?,
+        file: String,
+        open: OpenBuffer?,
         work: (HierarchySession) -> [HierarchyNode]
     ) -> [HierarchyNode] {
-        guard let session = openSession(engine, path: path, buffers: buffers, workspace: workspace) else {
+        guard let session = openSession(engine, file: file, open: open) else {
             return []
         }
         let nodes = work(session)
@@ -116,15 +128,9 @@ enum HierarchyQuery {
         return nodes
     }
 
-    private static func openSession(
-        _ engine: Engine,
-        path: String,
-        buffers: [BufferDocument],
-        workspace: URL?
-    ) -> HierarchySession? {
-        let file = resolved(path, workspace: workspace)
-        if let document = buffers.first(where: { matches($0, path: path, file: file) }), let id = document.sessionId {
-            return HierarchySession(id: id, owned: false, rows: document.outline)
+    private static func openSession(_ engine: Engine, file: String, open: OpenBuffer?) -> HierarchySession? {
+        if let open {
+            return HierarchySession(id: open.sessionId, owned: false, rows: open.rows)
         }
         let text = (try? String(contentsOfFile: file, encoding: .utf8)) ?? ""
         guard let opened = try? engine.openSession(bufferId: UUID().uuidString, path: file, text: text, visible: nil) else {
@@ -148,52 +154,5 @@ enum HierarchyQuery {
             return false
         }
         return url.path == file || url.path == path || url.path.hasSuffix("/\(path)")
-    }
-}
-
-private struct HierarchySession {
-    let id: UInt64
-    let owned: Bool
-    let names: [String]
-    let start: [UInt32]
-    let end: [UInt32]
-    let nameStart: [UInt32]
-
-    init(id: UInt64, owned: Bool, rows: [OutlineRow]) {
-        self.id = id
-        self.owned = owned
-        names = rows.map(\.name)
-        start = rows.map(\.startByte)
-        end = rows.map(\.endByte)
-        nameStart = rows.map(\.startByte)
-    }
-
-    init(id: UInt64, owned: Bool, items: [OutlineItem]) {
-        self.id = id
-        self.owned = owned
-        names = items.map(\.name)
-        start = items.map(\.startByte)
-        end = items.map(\.endByte)
-        nameStart = items.map(\.nameStartByte)
-    }
-
-    func close(_ engine: Engine) {
-        if owned {
-            engine.closeSession(sessionId: id)
-        }
-    }
-
-    func expandByte(name: String, byte: UInt32) -> UInt32 {
-        var best: (size: UInt32, at: UInt32)?
-        for index in start.indices where start[index] <= byte && byte < end[index] {
-            if !name.isEmpty && names[index] != name {
-                continue
-            }
-            let size = end[index] - start[index]
-            if best.map({ size < $0.size }) ?? true {
-                best = (size, nameStart[index])
-            }
-        }
-        return best?.at ?? byte
     }
 }
