@@ -33,19 +33,18 @@ extension DebugController {
     }
 
     private func locateTopFrame(threadId: Int64) {
-        guard let engine = RideEngineClient.shared.engine, let id = sessionId else {
+        guard let id = sessionId else {
             return
         }
         let sequence = stopSequence
-        DispatchQueue.global(qos: .utility).async { [weak self] in
+        RideEngineClient.shared.withEngine(qos: .utility) { engine in
             let frames = (try? engine.debugStack(sessionId: id, threadId: threadId)) ?? []
-            let frame = frames.first { $0.path != nil } ?? frames.first
-            DispatchQueue.main.async {
-                guard let self, self.stopSequence == sequence, self.isStopped else {
-                    return
-                }
-                self.locate(path: frame?.path, line: frame?.line ?? 0)
+            return frames.first { $0.path != nil } ?? frames.first
+        } then: { [weak self] frame in
+            guard let self, self.stopSequence == sequence, self.isStopped else {
+                return
             }
+            self.locate(path: frame?.path, line: frame?.line ?? 0)
         }
     }
 }

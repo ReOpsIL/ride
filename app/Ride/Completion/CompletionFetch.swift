@@ -9,7 +9,7 @@ enum CompletionFetch {
     }
 
     static func run(_ request: Request, done: @escaping (CompletionResponse, Int) -> Void) {
-        guard let engine = RideEngineClient.shared.engine, let view = request.view else {
+        guard let view = request.view else {
             return
         }
         let text = view.string
@@ -28,11 +28,10 @@ enum CompletionFetch {
             kindFilter: nil,
             limit: 50
         )
-        DispatchQueue.global(qos: .userInitiated).async {
-            let resp = engine.queryCompletions(q: q)
-            DispatchQueue.main.async {
-                done(resp, caretUtf16)
-            }
+        RideEngineClient.shared.withEngine { engine in
+            engine.queryCompletions(q: q)
+        } then: { resp in
+            done(resp, caretUtf16)
         }
     }
 }

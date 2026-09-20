@@ -118,7 +118,7 @@ extension AppState {
     }
 
     private func formatNow(_ buffer: BufferDocument, thenSave: Bool, startByte: UInt32?, endByte: UInt32?) {
-        guard !buffer.isReadOnly, let engine = RideEngineClient.shared.engine else {
+        guard !buffer.isReadOnly else {
             return
         }
         EditorPanes.shared.host(bound: buffer)?.capture()
@@ -127,8 +127,8 @@ extension AppState {
         let path = buffer.fileURL?.path ?? "untitled.\(buffer.language.fileExtension)"
         let language = buffer.language
         let id = buffer.id
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let result = Result {
+        RideEngineClient.shared.withEngine { engine in
+            Result {
                 try Self.invokeFormat(
                     engine: engine,
                     language: language,
@@ -139,9 +139,8 @@ extension AppState {
                     endByte: endByte
                 )
             }
-            DispatchQueue.main.async {
-                self?.formatFinished(result, bufferID: id, thenSave: thenSave)
-            }
+        } then: { [weak self] result in
+            self?.formatFinished(result, bufferID: id, thenSave: thenSave)
         }
     }
 

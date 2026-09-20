@@ -24,21 +24,17 @@ final class ToolsModel: ObservableObject {
     }
 
     func refresh(done: (() -> Void)? = nil) {
-        guard let engine = RideEngineClient.shared.engine else {
-            return
-        }
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            let tools = engine.toolStatus()
-            DispatchQueue.main.async {
-                guard let self else {
-                    return
-                }
-                let previous = Dictionary(uniqueKeysWithValues: self.rows.map { ($0.id, $0) })
-                self.rows = tools.map { info in
-                    ToolRow(info: info, selected: previous[info.name]?.selected ?? (info.install != nil), result: previous[info.name]?.result)
-                }
-                done?()
+        RideEngineClient.shared.withEngine(qos: .utility) { engine in
+            engine.toolStatus()
+        } then: { [weak self] tools in
+            guard let self else {
+                return
             }
+            let previous = Dictionary(uniqueKeysWithValues: self.rows.map { ($0.id, $0) })
+            self.rows = tools.map { info in
+                ToolRow(info: info, selected: previous[info.name]?.selected ?? (info.install != nil), result: previous[info.name]?.result)
+            }
+            done?()
         }
     }
 
