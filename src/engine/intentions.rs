@@ -50,7 +50,7 @@ fn sources(
     hits: &[CompletionHit],
 ) -> Vec<Draft> {
     let mut out = intentions::fix_drafts(diagnostics, caret, line_of(session.replica(), caret));
-    out.extend(reference_drafts(inner, session_id, session, hits));
+    out.extend(reference_drafts(inner, session_id, session, caret, hits));
     out.extend(intentions::underscore_drafts(session, caret));
     out.extend(arm_drafts(session, caret));
     out.extend(intentions::refactor_drafts(session, caret));
@@ -61,10 +61,14 @@ fn reference_drafts(
     inner: &Inner,
     session_id: u64,
     session: &BufferSession,
+    caret: u32,
     hits: &[CompletionHit],
 ) -> Vec<Draft> {
     match session.lang() {
-        Lang::Rust => intentions::import_drafts(session, hits),
+        Lang::Rust => match session.symbol_at(caret) {
+            Some(symbol) => intentions::import_drafts(session, &symbol.name, hits),
+            None => Vec::new(),
+        },
         Lang::C | Lang::Cpp => include_drafts(inner, session_id, session, hits),
         _ => Vec::new(),
     }

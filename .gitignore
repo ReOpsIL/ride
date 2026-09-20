@@ -12,3 +12,4 @@ xcuserdata
 !/samples/*/build/compile_commands.json
 /samples/*/target/
 .claude/
+app/target/

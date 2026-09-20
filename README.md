@@ -84,7 +84,7 @@ Code vision writes a grey "N usages" line above every item in the file, counted 
 
 ⌥↩ opens the intention menu on the caret's line: fixes for the compiler diagnostic under it, imports for an unresolved name, the missing arms of a `match`, and the refactorings that fit the selection. A bulb in the gutter marks the lines that have one.
 
-![The intention menu open on an unused local in main.rs, offering two imports, "Rename to _unused" and "Extract Variable"](docs/images/ride-intentions.png)
+![The intention menu open on an unused local in main.rs, offering "Rename to _unused" and "Extract Variable"](docs/images/ride-intentions.png)
 
 Extract Variable (⌥⌘V), Introduce Constant (⌥⌘C), Inline Variable (⌃⌥N) and Safe Delete (⌥⌘⌫) work on the same engine index, in Rust and in C and C++; Safe Delete lists the usages that would break before it removes anything. Generate (⌃⌘G) offers what the item at the caret is missing — a constructor or `new`, getters and setters, an `impl` block, `Default`, `Display`, equality operators, a stream insert.
 

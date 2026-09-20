@@ -46,3 +46,7 @@
 # Debug paths (2026-09-20, from the breakpoint spelling fix)
 
 - A stopped frame's path arrives in the spelling the debug info holds (rustc resolves symlinks, clang keeps them), so under a symlinked workspace root `AppState.showStoppedLine` can open a second, read-only buffer for a file already open: `Buffers.buffer(for:)` matches `fileURL` exactly. Match an incoming debugger path to an open buffer through the resolved path, the way `source_path::same_file` does in the engine.
+
+# Search (added 2026-09-20, screenshot review)
+
+- Find in Project lists one row per match, so a line with two matches (`let mut counter = Counter::new();`) appears twice with every match highlighted in both. Group results per line with a match count instead.

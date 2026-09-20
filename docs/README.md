@@ -18,6 +18,7 @@
 | Implementation plan for a delegated model: executor contract, tiers, task cards for 1.1 and 1.2 | `plan/roadmap/next-impl.md` |
 | Feature inventory for running and debugging C, C++, Rust and assembly, with verification status | `docs/product/feature-inventory.md` |
 | Editor binding rules: hosts own documents, pending text and jumps are per document, focus follows the pane layout | `docs/product/editor-binding.md` |
+| Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
 | AI suggestions in the completion popup: providers, account login, context levels, request shape | `docs/product/ai-complete.md` |
 | Next features after 1.2: 1.3 understand and change code, 1.4 completion that knows types, 1.5 debugging depth and assembly | `plan/roadmap/next-1.3.md` |
