@@ -522,6 +522,12 @@
 		DA0000000000000000000026 /* BreakpointShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000006 /* BreakpointShiftTests.swift */; };
 		DA0000000000000000000027 /* TextDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000007 /* TextDiffTests.swift */; };
 		DA0000000000000000000028 /* ByteSpanShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000008 /* ByteSpanShiftTests.swift */; };
+		CV0000000000000000000011 /* UsageCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000001 /* UsageCounter.swift */; };
+		CV0000000000000000000012 /* VisionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000002 /* VisionLayout.swift */; };
+		CV0000000000000000000022 /* VisionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000002 /* VisionLayout.swift */; };
+		CV0000000000000000000023 /* VisionLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000003 /* VisionLayoutTests.swift */; };
+		CV0000000000000000000014 /* RideTextView+Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000004 /* RideTextView+Vision.swift */; };
+		CV0000000000000000000015 /* SelfTestSteps+Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV0000000000000000000005 /* SelfTestSteps+Vision.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -957,6 +963,11 @@
 		DA0000000000000000000006 /* BreakpointShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakpointShiftTests.swift; sourceTree = "<group>"; };
 		DA0000000000000000000007 /* TextDiffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDiffTests.swift; sourceTree = "<group>"; };
 		DA0000000000000000000008 /* ByteSpanShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteSpanShiftTests.swift; sourceTree = "<group>"; };
+		CV0000000000000000000001 /* UsageCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageCounter.swift; sourceTree = "<group>"; };
+		CV0000000000000000000002 /* VisionLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionLayout.swift; sourceTree = "<group>"; };
+		CV0000000000000000000003 /* VisionLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionLayoutTests.swift; sourceTree = "<group>"; };
+		CV0000000000000000000004 /* RideTextView+Vision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Vision.swift"; sourceTree = "<group>"; };
+		CV0000000000000000000005 /* SelfTestSteps+Vision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Vision.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1080,6 +1091,7 @@
 				AA0000000000000000000087 /* ProjectScaffoldTests.swift */,
 				AA0000000000000000000071 /* AICommentPromptTests.swift */,
 				F13000000000000000000007 /* UsageModelTests.swift */,
+				CV0000000000000000000003 /* VisionLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				S10000000000000000000025 /* UpdateControllerTests.swift */,
@@ -1206,6 +1218,8 @@
 			children = (
 				F13000000000000000000001 /* UsageRows.swift */,
 				F13000000000000000000004 /* UsageVision.swift */,
+				CV0000000000000000000002 /* VisionLayout.swift */,
+				CV0000000000000000000001 /* UsageCounter.swift */,
 				F13000000000000000000010 /* UsagesModel.swift */,
 				F13000000000000000000012 /* UsageIndexer.swift */,
 				F13000000000000000000014 /* AppState+Usages.swift */,
@@ -1349,6 +1363,7 @@
 				A00000000000000000000118 /* HoverController.swift */,
 				A0000000000000000000011A /* HoverText.swift */,
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
+				CV0000000000000000000004 /* RideTextView+Vision.swift */,
 				A0000000000000000000011E /* FunctionKeys.swift */,
 				D400000000000000000000AF /* GutterGlyphs.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
@@ -1571,6 +1586,7 @@
 				D400000000000000000000DF /* Breakpoints.swift */,
 				DA0000000000000000000001 /* BreakpointShift.swift */,
 				DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */,
+				CV0000000000000000000005 /* SelfTestSteps+Vision.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -1896,6 +1912,8 @@
 				BF0000000000000000000005 /* BufferTextUndoTests.swift in Sources */,
 				F13000000000000000000003 /* UsageRows.swift in Sources */,
 				F13000000000000000000006 /* UsageVision.swift in Sources */,
+				CV0000000000000000000022 /* VisionLayout.swift in Sources */,
+				CV0000000000000000000023 /* VisionLayoutTests.swift in Sources */,
 				F13000000000000000000008 /* UsageModelTests.swift in Sources */,
 				D19000000000000000000003 /* DocPage.swift in Sources */,
 				D1900000000000000000000D /* DocPageTests.swift in Sources */,
@@ -2116,6 +2134,8 @@
 				F13000000000000000000005 /* UsageVision.swift in Sources */,
 				F13000000000000000000011 /* UsagesModel.swift in Sources */,
 				F13000000000000000000013 /* UsageIndexer.swift in Sources */,
+				CV0000000000000000000011 /* UsageCounter.swift in Sources */,
+				CV0000000000000000000012 /* VisionLayout.swift in Sources */,
 				F13000000000000000000015 /* AppState+Usages.swift in Sources */,
 				F13000000000000000000017 /* UsagesPanel.swift in Sources */,
 				F10000000000000000000005 /* EditorPanes.swift in Sources */,
@@ -2125,6 +2145,7 @@
 				A00000000000000000000119 /* HoverController.swift in Sources */,
 				A0000000000000000000011B /* HoverText.swift in Sources */,
 				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
+				CV0000000000000000000014 /* RideTextView+Vision.swift in Sources */,
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,
 				A00000000000000000000021 /* RideApp.swift in Sources */,
 				S10000000000000000000002 /* UpdateController.swift in Sources */,
@@ -2146,6 +2167,7 @@
 				D400000000000000000000DA /* Breakpoints.swift in Sources */,
 				DA0000000000000000000011 /* BreakpointShift.swift in Sources */,
 				DA0000000000000000000012 /* SelfTestSteps+Breakpoint.swift in Sources */,
+				CV0000000000000000000015 /* SelfTestSteps+Vision.swift in Sources */,
 				DA0000000000000000000013 /* TextDiff.swift in Sources */,
 				DA0000000000000000000014 /* ByteSpanShift.swift in Sources */,
 				DA0000000000000000000015 /* HighlightSpanShift.swift in Sources */,

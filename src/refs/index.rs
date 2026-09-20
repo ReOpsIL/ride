@@ -2,7 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use sha2::{Digest, Sha256};
-use tantivy::collector::TopDocs;
+use tantivy::collector::{Count, TopDocs};
 use tantivy::query::TermQuery;
 use tantivy::schema::IndexRecordOption;
 use tantivy::schema::{Field, STORED, STRING, Schema, Value};
@@ -105,10 +105,7 @@ impl RefIndex {
     pub fn usages(&self, name: &str) -> Result<Vec<UsageRow>, EngineError> {
         let reader = self.index.reader().map_err(tv)?;
         let searcher = reader.searcher();
-        let query = TermQuery::new(
-            Term::from_field_text(self.fields.name_exact, name),
-            IndexRecordOption::Basic,
-        );
+        let query = name_query(self.fields.name_exact, name);
         let top = searcher
             .search(&query, &TopDocs::with_limit(MAX_HITS))
             .map_err(tv)?;
@@ -118,6 +115,15 @@ impl RefIndex {
             rows.push(self.row(&doc));
         }
         Ok(rows)
+    }
+
+    pub fn count(&self, name: &str) -> Result<u32, EngineError> {
+        let reader = self.index.reader().map_err(tv)?;
+        let n = reader
+            .searcher()
+            .search(&name_query(self.fields.name_exact, name), &Count)
+            .map_err(tv)?;
+        Ok(n as u32)
     }
 
     fn document(&self, path: &str, r: &RefRecord) -> TantivyDocument {
@@ -153,6 +159,10 @@ impl RefIndex {
             enclosing_kind: item_kind_from_label(&text(self.fields.enclosing_kind)),
         }
     }
+}
+
+fn name_query(field: Field, name: &str) -> TermQuery {
+    TermQuery::new(Term::from_field_text(field, name), IndexRecordOption::Basic)
 }
 
 fn tv(err: tantivy::TantivyError) -> EngineError {

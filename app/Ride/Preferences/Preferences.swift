@@ -26,6 +26,7 @@ struct Preferences: Codable, Equatable {
     var previewWidth: Double
     var signatureHelp: Bool
     var hoverDocs: Bool
+    var codeVision: Bool
     var aiComplete: Bool
     var aiProvider: String
     var aiModel: String
@@ -84,6 +85,7 @@ struct Preferences: Codable, Equatable {
         askMissingTools: Bool = true,
         signatureHelp: Bool = true,
         hoverDocs: Bool = true,
+        codeVision: Bool = true,
         aiComplete: Bool = false,
         aiProvider: String = "anthropic",
         aiModel: String = "",
@@ -115,6 +117,7 @@ struct Preferences: Codable, Equatable {
         self.askMissingTools = askMissingTools
         self.signatureHelp = signatureHelp
         self.hoverDocs = hoverDocs
+        self.codeVision = codeVision
         self.aiComplete = aiComplete
         self.aiProvider = aiProvider
         self.aiModel = aiModel
@@ -150,6 +153,7 @@ struct Preferences: Codable, Equatable {
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
         signatureHelp = try c.decodeIfPresent(Bool.self, forKey: .signatureHelp) ?? d.signatureHelp
         hoverDocs = try c.decodeIfPresent(Bool.self, forKey: .hoverDocs) ?? d.hoverDocs
+        codeVision = try c.decodeIfPresent(Bool.self, forKey: .codeVision) ?? d.codeVision
         aiComplete = try c.decodeIfPresent(Bool.self, forKey: .aiComplete) ?? d.aiComplete
         aiProvider = try c.decodeIfPresent(String.self, forKey: .aiProvider) ?? d.aiProvider
         aiModel = try c.decodeIfPresent(String.self, forKey: .aiModel) ?? d.aiModel

@@ -16,6 +16,10 @@ impl Engine {
         }
     }
 
+    pub fn usage_counts(&self, session_id: u64, names: Vec<String>) -> Vec<u32> {
+        catch_unwind(AssertUnwindSafe(|| counts(self, session_id, names))).unwrap_or_default()
+    }
+
     pub fn note_saved(&self, session_id: u64) -> Result<(), EngineError> {
         let snap = self.read(|i| {
             let session = i.sessions.get(&session_id)?;
@@ -56,6 +60,29 @@ impl Engine {
             Ok(())
         })?
     }
+}
+
+const MAX_COUNT_NAMES: usize = 200;
+
+fn counts(engine: &Engine, session_id: u64, names: Vec<String>) -> Vec<u32> {
+    let names: Vec<String> = names.into_iter().take(MAX_COUNT_NAMES).collect();
+    let zeros = || vec![0; names.len()];
+    let exists = engine
+        .read(|i| i.sessions.contains_key(&session_id))
+        .unwrap_or(false);
+    if !exists {
+        return zeros();
+    }
+    if engine.ensure_refs().is_err() {
+        return zeros();
+    }
+    let Some(refs) = engine.read(|i| i.refs.clone()).ok().flatten() else {
+        return zeros();
+    };
+    names
+        .iter()
+        .map(|name| refs.count(name).unwrap_or(0))
+        .collect()
 }
 
 fn usages(engine: &Engine, session_id: u64, cursor_byte: u32) -> UsagesResponse {

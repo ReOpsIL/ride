@@ -42,4 +42,13 @@ final class LineSplitterTests: XCTestCase {
         var splitter = LineSplitter()
         XCTAssertEqual(splitter.take(Array("a\r\n".utf8)), ["a"])
     }
+
+    func testBareCarriageReturnSplitsAProgressLineFromJson() {
+        var splitter = LineSplitter()
+        let raw = "    Building [ ] 0/1: ride-demo(bin)              \r{\"reason\":\"compiler-message\"}\n"
+        XCTAssertEqual(
+            splitter.take(Array(raw.utf8)),
+            ["    Building [ ] 0/1: ride-demo(bin)              ", "{\"reason\":\"compiler-message\"}"]
+        )
+    }
 }

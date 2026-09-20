@@ -6,6 +6,9 @@ enum UsageIndexer {
     static func index(sessionId: UInt64) {
         queue.async {
             _ = try? RideEngineClient.shared.engine?.noteSaved(sessionId: sessionId)
+            DispatchQueue.main.async {
+                UsageCounter.refresh(sessionId: sessionId)
+            }
         }
     }
 
@@ -17,6 +20,11 @@ enum UsageIndexer {
         queue.async {
             for id in ids {
                 _ = try? RideEngineClient.shared.engine?.noteSaved(sessionId: id)
+            }
+            DispatchQueue.main.async {
+                for document in documents {
+                    UsageCounter.refresh(document: document)
+                }
             }
         }
     }

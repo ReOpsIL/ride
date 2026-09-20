@@ -5,6 +5,7 @@ final class RideTextView: NSTextView {
     private(set) var baseFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
     private var appliedFontSize = 0
     var showIndentGuides = true
+    var showCodeVision = true
     let lines = LineIndex()
 
     func lineIndex() -> LineIndex {
@@ -92,6 +93,7 @@ final class RideTextView: NSTextView {
             showIndentGuides = prefs.indentGuides
             needsDisplay = true
         }
+        applyCodeVision(prefs.codeVision)
         applySoftWrap(prefs.softWrap)
         if tabWidth == prefs.tabWidth, appliedFontSize == prefs.fontSize {
             return

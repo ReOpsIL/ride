@@ -55,4 +55,14 @@ final class UsageModelTests: XCTestCase {
         let lines = UsageVision.lines(items: [VisionItem(name: "x", line: 1)], counts: [:])
         XCTAssertTrue(lines.isEmpty)
     }
+
+    func testVisionRepeatsCountForDuplicateNames() {
+        let items = [
+            VisionItem(name: "record", line: 10),
+            VisionItem(name: "record", line: 14),
+        ]
+        let lines = UsageVision.lines(items: items, counts: ["record": 2, "other": 9])
+        XCTAssertEqual(lines.map(\.line), [10, 14])
+        XCTAssertEqual(lines.map(\.label), ["2 usages", "2 usages"])
+    }
 }

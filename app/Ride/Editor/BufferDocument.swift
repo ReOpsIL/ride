@@ -28,6 +28,8 @@ final class BufferDocument: ObservableObject, Identifiable {
     var pendingJump: PendingJump?
     var sessionGeneration = 0
     var sessionOpening = false
+    var visionCounts: [String: Int] = [:]
+    var visionGeneration = 0
     var autoSaveWork: DispatchWorkItem?
     let undoManager = UndoManager()
 
