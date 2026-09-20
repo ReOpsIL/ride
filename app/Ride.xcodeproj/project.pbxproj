@@ -360,6 +360,9 @@
 		E30000000000000000000009 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06689A7D426576E81967851 /* DesignTokens.swift */; };
 		E40000000000000000000002 /* MenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40000000000000000000001 /* MenuModel.swift */; };
 		E50000000000000000000101 /* TextChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000001 /* TextChange.swift */; };
+		E500000000000000000001A0 /* UndoStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000A0 /* UndoStep.swift */; };
+		E500000000000000000002A0 /* UndoStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E500000000000000000000A0 /* UndoStep.swift */; };
+		E600000000000000000000A1 /* UndoStepTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E600000000000000000000A0 /* UndoStepTests.swift */; };
 		E50000000000000000000102 /* LineSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000002 /* LineSpan.swift */; };
 		E50000000000000000000103 /* CommentTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000003 /* CommentTokens.swift */; };
 		E50000000000000000000104 /* LineOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50000000000000000000004 /* LineOps.swift */; };
@@ -926,6 +929,8 @@
 		E20000000000000000000013 /* CheatSheetRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetRowsTests.swift"; sourceTree = "<group>"; };
 		E40000000000000000000001 /* MenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuModel.swift"; sourceTree = "<group>"; };
 		E50000000000000000000001 /* TextChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextChange.swift"; sourceTree = "<group>"; };
+		E500000000000000000000A0 /* UndoStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoStep.swift"; sourceTree = "<group>"; };
+		E600000000000000000000A0 /* UndoStepTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UndoStepTests.swift"; sourceTree = "<group>"; };
 		E50000000000000000000002 /* LineSpan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineSpan.swift"; sourceTree = "<group>"; };
 		E50000000000000000000003 /* CommentTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentTokens.swift"; sourceTree = "<group>"; };
 		E50000000000000000000004 /* LineOps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineOps.swift"; sourceTree = "<group>"; };
@@ -1097,6 +1102,7 @@
 				E60000000000000000000034 /* SiblingSourceTests.swift */,
 				E60000000000000000000036 /* FindMatcherTests.swift */,
 				E60000000000000000000038 /* FoldSetTests.swift */,
+				E600000000000000000000A0 /* UndoStepTests.swift */,
 				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
 				E5000000000000000000000C /* EditingFixtures.swift */,
 				E5000000000000000000000D /* LineOpsTests.swift */,
@@ -1682,6 +1688,7 @@
 			isa = PBXGroup;
 			children = (
 				E50000000000000000000001 /* TextChange.swift */,
+				E500000000000000000000A0 /* UndoStep.swift */,
 				E50000000000000000000002 /* LineSpan.swift */,
 				E50000000000000000000003 /* CommentTokens.swift */,
 				E50000000000000000000004 /* LineOps.swift */,
@@ -1881,6 +1888,8 @@
 				E60000000000000000000039 /* FoldSetTests.swift in Sources */,
 				E20000000000000000000014 /* CheatSheetRowsTests.swift in Sources */,
 				E50000000000000000000201 /* TextChange.swift in Sources */,
+				E500000000000000000002A0 /* UndoStep.swift in Sources */,
+				E600000000000000000000A1 /* UndoStepTests.swift in Sources */,
 				E50000000000000000000202 /* LineSpan.swift in Sources */,
 				E50000000000000000000203 /* CommentTokens.swift in Sources */,
 				E50000000000000000000204 /* LineOps.swift in Sources */,
@@ -2273,6 +2282,7 @@
 				E40000000000000000000002 /* MenuModel.swift in Sources */,
 				A00000000000000000000023 /* RootView.swift in Sources */,
 				E50000000000000000000101 /* TextChange.swift in Sources */,
+				E500000000000000000001A0 /* UndoStep.swift in Sources */,
 				E50000000000000000000102 /* LineSpan.swift in Sources */,
 				E50000000000000000000103 /* CommentTokens.swift in Sources */,
 				E50000000000000000000104 /* LineOps.swift in Sources */,

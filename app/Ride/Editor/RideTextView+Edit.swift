@@ -8,4 +8,19 @@ extension RideTextView {
         textStorage?.replaceCharacters(in: range, with: text)
         didChangeText()
     }
+
+    func applyChanges(_ changes: [TextChange]) {
+        breakUndoCoalescing()
+        UndoStep.perform(undoManager) {
+            for change in changes.reversed() {
+                replaceText(in: change.range, with: change.text)
+            }
+        }
+        breakUndoCoalescing()
+    }
+
+    override func breakUndoCoalescing() {
+        super.breakUndoCoalescing()
+        UndoStep.close(undoManager)
+    }
 }
