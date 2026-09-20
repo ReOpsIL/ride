@@ -229,10 +229,11 @@ final class RideTextView: NSTextView {
     }
 
     private func nsRangeToTextRange(_ range: NSRange, storage: NSTextContentStorage) -> NSTextRange? {
-        guard let start = storage.location(storage.documentRange.location, offsetBy: range.location) else {
+        let clamped = RangeShift.clamp(range, length: (string as NSString).length)
+        guard let start = storage.location(storage.documentRange.location, offsetBy: clamped.location) else {
             return nil
         }
-        let end = storage.location(start, offsetBy: range.length) ?? start
+        let end = storage.location(start, offsetBy: clamped.length) ?? start
         return NSTextRange(location: start, end: end)
     }
 }

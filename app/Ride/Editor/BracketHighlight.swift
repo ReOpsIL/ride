@@ -5,11 +5,12 @@ enum BracketHighlight {
     private static var marks: [NSRange] = []
 
     static func update(document: BufferDocument, view: RideTextView) {
+        guard document.pending == nil else {
+            return
+        }
         strip()
         view.updateCurrentLineHighlight()
-        guard document.pending == nil, view.selectedRange().length == 0,
-              let pair = query(document: document, view: view)
-        else {
+        guard view.selectedRange().length == 0, let pair = query(document: document, view: view) else {
             return
         }
         let text = view.string

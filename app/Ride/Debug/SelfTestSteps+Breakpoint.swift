@@ -86,7 +86,9 @@ extension SelfTestSteps {
     }
 
     private static func shiftUndo(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "breakpoint shift undo", wait: 0.5, run: {
+        SelfTestStep(name: "breakpoint shift undo", wait: 0.5, until: {
+            marks(state) == [breakpointLine] && !lineText(state, aboveLine).isEmpty
+        }, timeout: 10, run: {
             guard let view = shiftView(state) else {
                 return
             }
