@@ -2,6 +2,12 @@
 
 | Topic | Where |
 |---|---|
+| Public site | `docs/site/index.html` |
+| Getting started | `docs/manuals/getting-started.md` |
+| Keyboard shortcuts | `docs/manuals/shortcuts.md` |
+| Rust tutorial | `docs/manuals/tutorial-rust.md` |
+| C tutorial | `docs/manuals/tutorial-c.md` |
+| C++ tutorial | `docs/manuals/tutorial-cpp.md` |
 | Product and architecture spec | `plan/ride_draft.md` |
 | Roadmap and phases | `plan/roadmap/improve-extend.md` |
 | UI design plan and audit | `plan/roadmap/ui-design.md` |
