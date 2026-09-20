@@ -4,7 +4,7 @@ use crate::error::EngineError;
 use crate::ffi::{ByteRange, HighlightSpan};
 
 use super::syntax::{Lang, Syntax};
-use super::tree_syntax::TreeSyntax;
+use super::tree_parser::TreeSyntax;
 
 const FENCE_LANGS: [Lang; 6] = [
     Lang::Rust,

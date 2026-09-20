@@ -13,7 +13,11 @@ pub fn build(tree: &Tree, text: &str) -> TypeTable {
     each_node(tree.root_node(), &mut |node| match node.kind() {
         "struct_item" | "union_item" => register(&mut table, node, text, field_kind),
         "enum_item" => register(&mut table, node, text, variant_kind),
-        "trait_item" | "impl_item" => register(&mut table, node, text, assoc_kind),
+        "trait_item" => register(&mut table, node, text, assoc_kind),
+        "impl_item" => {
+            trait_impl(&mut table, node, text);
+            register(&mut table, node, text, assoc_kind);
+        }
         "type_item" => alias(&mut table, node, text),
         _ => {}
     });
@@ -32,6 +36,16 @@ pub fn field_type(tree: &Tree, text: &str, owner_name: &str, field: &str) -> Opt
         found = declared_field(node, text, field);
     });
     found
+}
+
+fn trait_impl(table: &mut TypeTable, node: Node<'_>, text: &str) {
+    if let Some(type_node) = node.child_by_field_name("type")
+        && let Some(trait_node) = node.child_by_field_name("trait")
+        && let Some(implementor) = type_name(type_node, text)
+        && let Some(implemented) = type_name(trait_node, text)
+    {
+        table.add_impl(implementor, implemented);
+    }
 }
 
 fn owner(node: Node<'_>, text: &str) -> Option<String> {

@@ -8,6 +8,7 @@ pub struct UsageHit {
     pub byte_end: u32,
     pub enclosing_item: String,
     pub enclosing_kind: ItemKind,
+    pub ref_kind: String,
     pub in_definition_scope: bool,
 }
 

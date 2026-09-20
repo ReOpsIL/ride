@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use crate::ffi::{UsageHit, UsagesResponse};
 
-use super::index::UsageRow;
+use super::schema::UsageRow;
 
 pub struct DefContext {
     pub has_definition: bool,
@@ -26,6 +26,7 @@ pub fn build_response(
                 byte_end: row.byte_end,
                 enclosing_item: row.enclosing_item,
                 enclosing_kind: row.enclosing_kind,
+                ref_kind: row.kind.label().to_string(),
                 in_definition_scope: in_scope,
             }
         })

@@ -1,65 +1,21 @@
-use std::sync::OnceLock;
-
-use tree_sitter::{InputEdit, Parser, Query, Range, Tree};
+use tree_sitter::InputEdit;
 
 use crate::error::EngineError;
 use crate::ffi::{
-    BracketPair, ByteRange, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt,
-    TextEdit,
+    BracketPair, ByteRange, CalleeHit, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan,
+    SymbolAt, TextEdit,
 };
 
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::context::Context;
-use super::grammar::Grammar;
 use super::includes::IncludeRef;
 use super::ranges::from_ts;
 use super::site::SiteAt;
-use super::syntax::{LocalHits, LocalQuery, Syntax, lang_err, parse_failed, query_err};
+use super::syntax::{LocalHits, LocalQuery, Syntax, parse_failed};
+use super::tree_parser::TreeSyntax;
 use super::types::TypeTable;
 use super::{editing, errors, locals, spans, symbol};
-
-pub struct TreeSyntax {
-    grammar: Grammar,
-    parser: Parser,
-    query: OnceLock<Option<Query>>,
-    tree: Option<Tree>,
-}
-
-impl TreeSyntax {
-    pub fn new(grammar: Grammar) -> Result<Self, EngineError> {
-        let mut parser = Parser::new();
-        parser.set_language(&grammar.language).map_err(lang_err)?;
-        Ok(Self {
-            grammar,
-            parser,
-            query: OnceLock::new(),
-            tree: None,
-        })
-    }
-
-    fn query(&self) -> Option<&Query> {
-        self.query
-            .get_or_init(|| {
-                Query::new(&self.grammar.language, self.grammar.highlights)
-                    .map_err(query_err)
-                    .ok()
-            })
-            .as_ref()
-    }
-
-    pub fn set_included_ranges(&mut self, ranges: &[Range]) -> Result<(), EngineError> {
-        self.parser
-            .set_included_ranges(ranges)
-            .map_err(|e| EngineError::InvalidEdit {
-                message: format!("{e:?}"),
-            })
-    }
-
-    pub fn clear(&mut self) {
-        self.tree = None;
-    }
-}
 
 impl Syntax for TreeSyntax {
     fn parse_full(&mut self, text: &str) -> Result<(), EngineError> {
@@ -163,6 +119,13 @@ impl Syntax for TreeSyntax {
         self.tree
             .as_ref()
             .map(|tree| super::rename_local::occurrences(tree, text, byte, &self.grammar))
+            .unwrap_or_default()
+    }
+
+    fn callees(&self, text: &str, outline: &[OutlineItem], byte: u32) -> Vec<CalleeHit> {
+        self.tree
+            .as_ref()
+            .map(|tree| super::callees::collect(tree, text, outline, byte))
             .unwrap_or_default()
     }
 

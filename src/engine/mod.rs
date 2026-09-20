@@ -30,6 +30,7 @@ mod generate;
 mod header_hits;
 mod header_store;
 pub(crate) mod headers;
+mod hierarchy;
 mod identifier;
 pub(crate) mod include_graph;
 mod includes;

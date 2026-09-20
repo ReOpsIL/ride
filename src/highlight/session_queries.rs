@@ -1,4 +1,4 @@
-use crate::ffi::{BracketPair, ByteRange, FoldRange, SymbolAt, TextEdit};
+use crate::ffi::{BracketPair, ByteRange, CalleeHit, FoldRange, SymbolAt, TextEdit};
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::call_site::CallSite;
@@ -45,6 +45,10 @@ impl BufferSession {
 
     pub fn local_occurrences(&self, byte: u32) -> Vec<ByteRange> {
         self.syntax.local_occurrences(&self.replica, byte)
+    }
+
+    pub fn callees(&self, byte: u32) -> Vec<CalleeHit> {
+        self.syntax.callees(&self.replica, &self.last_outline, byte)
     }
 
     pub fn extract_spans(&self, range: ByteRange) -> Option<ExtractSpans> {

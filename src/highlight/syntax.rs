@@ -2,8 +2,8 @@ use tree_sitter::InputEdit;
 
 use crate::error::EngineError;
 use crate::ffi::{
-    BracketPair, ByteRange, CompletionHit, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan,
-    SymbolAt, TextEdit,
+    BracketPair, ByteRange, CalleeHit, CompletionHit, FoldRange, HighlightSpan, OutlineItem,
+    ParseErrorSpan, SymbolAt, TextEdit,
 };
 
 use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
@@ -38,6 +38,9 @@ pub trait Syntax: Send + Sync {
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;
     fn local_occurrences(&self, _text: &str, _byte: u32) -> Vec<ByteRange> {
+        Vec::new()
+    }
+    fn callees(&self, _text: &str, _outline: &[OutlineItem], _byte: u32) -> Vec<CalleeHit> {
         Vec::new()
     }
     fn includes(&self, _text: &str) -> Vec<IncludeRef> {
@@ -108,7 +111,7 @@ pub fn query_err(e: tree_sitter::QueryError) -> EngineError {
 
 pub fn make(lang: Lang) -> Result<Box<dyn Syntax>, EngineError> {
     Ok(match lang.grammar() {
-        Some(grammar) => Box::new(super::tree_syntax::TreeSyntax::new(grammar)?),
+        Some(grammar) => Box::new(super::tree_parser::TreeSyntax::new(grammar)?),
         None => Box::new(super::markdown::MarkdownSyntax::new()?),
     })
 }
