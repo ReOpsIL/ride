@@ -113,6 +113,7 @@ extension EditorPane {
                 CompletionSession.shared.selectionChanged(view: view)
                 SignatureHelpController.shared.caretMoved(document: document, view: view)
                 CheatSheetController.shared.caretMoved(view: view)
+                IntentionGutter.shared.caretMoved(document: document, view: view)
                 host?.docsCaretMoved()
             }
         }

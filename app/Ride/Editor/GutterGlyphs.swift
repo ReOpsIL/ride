@@ -31,6 +31,15 @@ extension GutterView {
         path.fill()
     }
 
+    func drawBulb(at dest: NSRect, color: NSColor) {
+        let cx = Self.markerColumn + Self.glyphColumn / 2
+        let cy = dest.midY
+        color.setFill()
+        NSBezierPath(ovalIn: NSRect(x: cx - 3, y: cy - 4.5, width: 6, height: 6)).fill()
+        NSBezierPath(rect: NSRect(x: cx - 2, y: cy + 1.5, width: 4, height: 1.5)).fill()
+        NSBezierPath(rect: NSRect(x: cx - 1.5, y: cy + 3.5, width: 3, height: 1.5)).fill()
+    }
+
     func drawBreakpoint(verified: Bool, at dest: NSRect, color: NSColor) {
         let rect = NSRect(
             x: Self.markerColumn + Self.glyphColumn,

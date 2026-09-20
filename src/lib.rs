@@ -12,6 +12,7 @@ mod generate;
 mod highlight;
 pub mod includes;
 mod index;
+mod intentions;
 mod markdown;
 mod params;
 mod process;

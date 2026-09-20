@@ -33,6 +33,9 @@ struct CodeCommands: Commands {
             Button("Inline Variable") { EditorCommands.inlineVariable() }
                 .keyboardShortcut("n", modifiers: [.control, .option])
                 .disabled(!menu.canRefactor)
+            Button("Show Intention Actions") { EditorCommands.showIntentions() }
+                .keyboardShortcut(.return, modifiers: .option)
+                .disabled(!menu.hasEditor)
             Button("Ask AI from Comment…") { AIAssistant.shared.askFromEditor(state: state) }
                 .keyboardShortcut("?", modifiers: .control)
                 .disabled(!menu.hasEditor)

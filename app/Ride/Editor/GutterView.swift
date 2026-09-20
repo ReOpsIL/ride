@@ -12,6 +12,13 @@ final class GutterView: NSView {
             }
         }
     }
+    var intentionLines: Set<Int> = [] {
+        didSet {
+            if intentionLines != oldValue {
+                needsDisplay = true
+            }
+        }
+    }
     var breakpointLines: [Int: Bool] = [:] {
         didSet {
             if breakpointLines != oldValue {
@@ -19,7 +26,7 @@ final class GutterView: NSView {
             }
         }
     }
-    private var viewport: NSTextViewportLayoutController?
+    var viewport: NSTextViewportLayoutController?
     static let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
     static let currentFont = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
     static let glyphColumn: CGFloat = 14
@@ -116,47 +123,6 @@ final class GutterView: NSView {
         textView.hooks.binding?()?.document.fileURL?.standardizedFileURL.path
     }
 
-    private func line(at point: NSPoint) -> Int? {
-        var found: Int?
-        enumerateVisibleLines { lineNo, dest in
-            guard point.y >= dest.minY, point.y < dest.maxY else {
-                return true
-            }
-            found = lineNo
-            return false
-        }
-        return found
-    }
-
-    private func enumerateVisibleLines(_ body: (Int, NSRect) -> Bool) {
-        guard let textView, let tlm = textView.textLayoutManager else {
-            return
-        }
-        let storage = textView.textContentStorage
-        let origin = textView.textContainerOrigin
-        let index = textView.lineIndex()
-        let start = viewport?.viewportRange?.location ?? tlm.documentRange.location
-        tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
-            let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
-            let lineNo = index.line(at: utf16)
-            if let lineFragment = fragment.textLineFragments.first {
-                var r = lineFragment.typographicBounds
-                r.origin.x = 0
-                r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
-                r.size.width = bounds.width
-                if !body(lineNo, convert(r, from: textView)) {
-                    return false
-                }
-            }
-            if let end = viewport?.viewportRange?.endLocation,
-               fragment.rangeInElement.endLocation.compare(end) != .orderedAscending
-            {
-                return false
-            }
-            return true
-        }
-    }
-
     private func drawLine(_ lineNo: Int, at dest: NSRect, attrs: [NSAttributedString.Key: Any], theme: Theme) {
         var attributes = attrs
         if let verified = breakpointLines[lineNo] {
@@ -176,19 +142,11 @@ final class GutterView: NSView {
             let color = level == .error ? theme.chrome.error : theme.chrome.warning
             color.setFill()
             NSBezierPath(ovalIn: NSRect(x: Self.markerColumn + 5, y: dest.midY - 3, width: 6, height: 6)).fill()
+        } else if intentionLines.contains(lineNo) {
+            drawBulb(at: dest, color: theme.chrome.accent)
         }
         if runMarkers[lineNo] != nil {
             drawRunMarker(at: dest, color: theme.chrome.accent)
         }
-    }
-
-    private func lineRange(_ line: Int, in view: RideTextView) -> NSRange {
-        let starts = view.lineIndex().starts
-        guard line >= 1, line <= starts.count else {
-            return NSRange(location: 0, length: 0)
-        }
-        let start = starts[line - 1]
-        let end = line < starts.count ? starts[line] : (view.string as NSString).length
-        return NSRange(location: start, length: max(0, end - start))
     }
 }

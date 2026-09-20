@@ -8,6 +8,7 @@ mod editing;
 mod generate;
 mod hierarchy;
 mod index;
+mod intentions;
 mod kind;
 mod project;
 mod query;
@@ -34,6 +35,7 @@ pub use editing::{BracketPair, FoldRange};
 pub use generate::{GenKind, GenOption};
 pub use hierarchy::{CalleeHit, TypeHierarchy, TypeNode};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
+pub use intentions::Intention;
 pub use kind::{CaptureKind, ItemKind};
 pub use project::{ProjectKind, ProjectModel, Target, TargetKind};
 pub use query::{

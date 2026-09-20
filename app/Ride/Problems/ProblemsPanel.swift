@@ -71,7 +71,12 @@ struct ProblemsPanel: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(visible.enumerated()), id: \.element) { index, diag in
-                        ProblemRow(diag: diag, location: location(diag), selected: selected == index) {
+                        ProblemRow(
+                            diag: diag,
+                            location: location(diag),
+                            selected: selected == index,
+                            fix: { state.applyDiagnosticFix(diag, fix: $0) }
+                        ) {
                             selected = index
                             state.openDiagnostic(diag)
                         }
@@ -93,11 +98,24 @@ struct ProblemRow: View {
     let diag: StoredDiagnostic
     let location: String
     let selected: Bool
+    let fix: (StoredFix) -> Void
     let action: () -> Void
     @ObservedObject private var ts = ThemeStore.shared
     @State private var hovering = false
 
     var body: some View {
+        if diag.fixes.isEmpty {
+            row
+        } else {
+            row.contextMenu {
+                ForEach(Array(diag.fixes.enumerated()), id: \.offset) { _, entry in
+                    Button(entry.title) { fix(entry) }
+                }
+            }
+        }
+    }
+
+    private var row: some View {
         HStack(spacing: Tokens.Space.m) {
             Image(systemName: diag.level == .error ? "xmark.octagon.fill" : "exclamationmark.triangle.fill")
                 .font(.system(size: 11))

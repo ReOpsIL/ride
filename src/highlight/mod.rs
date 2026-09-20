@@ -1,5 +1,6 @@
 mod c_decls;
 mod c_docs;
+pub(crate) mod c_include_edit;
 mod c_locals;
 mod c_member_types;
 mod c_members;
