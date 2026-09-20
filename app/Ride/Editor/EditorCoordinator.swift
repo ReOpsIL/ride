@@ -33,23 +33,19 @@ extension EditorPane {
             guard let view = notification.object as? RideTextView else {
                 return
             }
+            let typed = document.pending
+            document.pending = nil
+            let pending = typed ?? replayedEdit(view)
             document.text = view.string
             document.isDirty = true
             state.noteEdit(view, in: document.id)
             host?.syncGutter()
             publishCursor(view)
-            let pending = document.pending
-            document.pending = nil
             if let pending {
-                let folds = view.folds
-                view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
-                if folds != view.folds {
-                    view.refreshFolds()
-                }
-                Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
-                let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
-                SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
-                assist(view, pending: pending)
+                shift(view, pending: pending)
+            }
+            if let typed {
+                assist(view, pending: typed)
             } else {
                 CompletionSession.shared.reset()
             }
@@ -57,6 +53,41 @@ extension EditorPane {
             state.previewTextChanged(document, text: view.string)
             state.scheduleAutoSave(document)
             state.scheduleLiveCheck(document, view: view)
+        }
+
+        private func replayedEdit(_ view: RideTextView) -> PendingEdit? {
+            let before = document.text
+            guard let edit = TextDiff.minimalEdit(from: before, to: view.string) else {
+                return nil
+            }
+            return PendingEdit(range: edit.range, inserted: edit.text, before: before)
+        }
+
+        private func shift(_ view: RideTextView, pending: PendingEdit) {
+            let folds = view.folds
+            view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
+            if folds != view.folds {
+                view.refreshFolds()
+            }
+            Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
+            let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
+            HighlightShift.apply(document: document, edit: edit)
+            shiftBreakpoints(pending)
+            SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
+        }
+
+        private func shiftBreakpoints(_ pending: PendingEdit) {
+            guard let path = document.fileURL?.standardizedFileURL.path else {
+                return
+            }
+            let edit = BreakpointShift.lineEdit(
+                before: pending.before,
+                range: pending.range,
+                inserted: pending.inserted
+            )
+            if DebugController.shared.breakpoints.shift(path: path, edit: edit) {
+                state.breakpointsChanged(path: path)
+            }
         }
 
         private func assist(_ view: RideTextView, pending: PendingEdit) {

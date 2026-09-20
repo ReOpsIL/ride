@@ -74,8 +74,7 @@ struct Breakpoints: Codable, Equatable {
     }
 
     mutating func remove(path: String, line: UInt32) {
-        let kept = marks(path: path).filter { $0.line != line }
-        files[path] = kept.isEmpty ? nil : kept
+        replace(path: path, marks: marks(path: path).filter { $0.line != line })
     }
 
     mutating func removeAll(path: String) {
@@ -97,13 +96,16 @@ struct Breakpoints: Codable, Equatable {
             next.verified = verified.contains(mark.line)
             return next
         }
-        files[path] = updated.isEmpty ? nil : updated
+        replace(path: path, marks: updated)
+    }
+
+    mutating func replace(path: String, marks: [BreakpointMark]) {
+        let cleaned = Self.normalized(marks)
+        files[path] = cleaned.isEmpty ? nil : cleaned
     }
 
     private mutating func put(path: String, _ mark: BreakpointMark) {
-        var marks = self.marks(path: path).filter { $0.line != mark.line }
-        marks.append(mark)
-        files[path] = Self.normalized(marks)
+        replace(path: path, marks: marks(path: path).filter { $0.line != mark.line } + [mark])
     }
 
     private static func normalized(_ marks: [BreakpointMark]) -> [BreakpointMark] {

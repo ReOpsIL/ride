@@ -511,6 +511,17 @@
 		D50000000000000000000032 /* DebugLoadState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000030 /* DebugLoadState.swift */; };
 		D50000000000000000000034 /* DebugEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000033 /* DebugEvaluate.swift */; };
 		D50000000000000000000036 /* DebugLoadStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000035 /* DebugLoadStateTests.swift */; };
+		DA0000000000000000000011 /* BreakpointShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000001 /* BreakpointShift.swift */; };
+		DA0000000000000000000021 /* BreakpointShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000001 /* BreakpointShift.swift */; };
+		DA0000000000000000000012 /* SelfTestSteps+Breakpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */; };
+		DA0000000000000000000013 /* TextDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000003 /* TextDiff.swift */; };
+		DA0000000000000000000023 /* TextDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000003 /* TextDiff.swift */; };
+		DA0000000000000000000014 /* ByteSpanShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000004 /* ByteSpanShift.swift */; };
+		DA0000000000000000000024 /* ByteSpanShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000004 /* ByteSpanShift.swift */; };
+		DA0000000000000000000015 /* HighlightSpanShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000005 /* HighlightSpanShift.swift */; };
+		DA0000000000000000000026 /* BreakpointShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000006 /* BreakpointShiftTests.swift */; };
+		DA0000000000000000000027 /* TextDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000007 /* TextDiffTests.swift */; };
+		DA0000000000000000000028 /* ByteSpanShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000008 /* ByteSpanShiftTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -938,6 +949,14 @@
 		D50000000000000000000030 /* DebugLoadState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLoadState.swift; sourceTree = "<group>"; };
 		D50000000000000000000033 /* DebugEvaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugEvaluate.swift; sourceTree = "<group>"; };
 		D50000000000000000000035 /* DebugLoadStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLoadStateTests.swift; sourceTree = "<group>"; };
+		DA0000000000000000000001 /* BreakpointShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakpointShift.swift; sourceTree = "<group>"; };
+		DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Breakpoint.swift"; sourceTree = "<group>"; };
+		DA0000000000000000000003 /* TextDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDiff.swift; sourceTree = "<group>"; };
+		DA0000000000000000000004 /* ByteSpanShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteSpanShift.swift; sourceTree = "<group>"; };
+		DA0000000000000000000005 /* HighlightSpanShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightSpanShift.swift; sourceTree = "<group>"; };
+		DA0000000000000000000006 /* BreakpointShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakpointShiftTests.swift; sourceTree = "<group>"; };
+		DA0000000000000000000007 /* TextDiffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDiffTests.swift; sourceTree = "<group>"; };
+		DA0000000000000000000008 /* ByteSpanShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteSpanShiftTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1078,6 +1097,9 @@
 				S20000000000000000000013 /* TerminalTabsTests.swift */,
 				T20000000000000000000090 /* TestTreeTests.swift */,
 				D400000000000000000000FF /* BreakpointsTests.swift */,
+				DA0000000000000000000006 /* BreakpointShiftTests.swift */,
+				DA0000000000000000000007 /* TextDiffTests.swift */,
+				DA0000000000000000000008 /* ByteSpanShiftTests.swift */,
 			);
 			path = RideTests;
 			sourceTree = "<group>";
@@ -1301,6 +1323,9 @@
 				C00E2B0384B23C50A5620F92 /* IndentGuides.swift */,
 				B0355AEC5E462433212D91A0 /* TabItem.swift */,
 				A0000000000000000000012B /* Underlines.swift */,
+				DA0000000000000000000003 /* TextDiff.swift */,
+				DA0000000000000000000004 /* ByteSpanShift.swift */,
+				DA0000000000000000000005 /* HighlightSpanShift.swift */,
 				A00000000000000000000128 /* DiagnosticRange.swift */,
 				A0000000000000000000010D /* EditorHooks.swift */,
 				A0000000000000000000010F /* EditorPane+Nav.swift */,
@@ -1544,6 +1569,8 @@
 				D4000000000000000000008F /* DeveloperMode.swift */,
 				D4000000000000000000009F /* SelfTestSteps+Debug.swift */,
 				D400000000000000000000DF /* Breakpoints.swift */,
+				DA0000000000000000000001 /* BreakpointShift.swift */,
+				DA0000000000000000000002 /* SelfTestSteps+Breakpoint.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -1851,6 +1878,12 @@
 				T20000000000000000000091 /* TestTreeTests.swift in Sources */,
 				T20000000000000000000092 /* TestTree.swift in Sources */,
 				D400000000000000000000DB /* Breakpoints.swift in Sources */,
+				DA0000000000000000000021 /* BreakpointShift.swift in Sources */,
+				DA0000000000000000000023 /* TextDiff.swift in Sources */,
+				DA0000000000000000000024 /* ByteSpanShift.swift in Sources */,
+				DA0000000000000000000026 /* BreakpointShiftTests.swift in Sources */,
+				DA0000000000000000000027 /* TextDiffTests.swift in Sources */,
+				DA0000000000000000000028 /* ByteSpanShiftTests.swift in Sources */,
 				D400000000000000000000EB /* SplitState.swift in Sources */,
 				D400000000000000000000FB /* BreakpointsTests.swift in Sources */,
 				F10000000000000000000003 /* PaneLayout.swift in Sources */,
@@ -2111,6 +2144,11 @@
 				D400000000000000000000BA /* HighlightApply+Line.swift in Sources */,
 				D400000000000000000000CA /* DebugCommands.swift in Sources */,
 				D400000000000000000000DA /* Breakpoints.swift in Sources */,
+				DA0000000000000000000011 /* BreakpointShift.swift in Sources */,
+				DA0000000000000000000012 /* SelfTestSteps+Breakpoint.swift in Sources */,
+				DA0000000000000000000013 /* TextDiff.swift in Sources */,
+				DA0000000000000000000014 /* ByteSpanShift.swift in Sources */,
+				DA0000000000000000000015 /* HighlightSpanShift.swift in Sources */,
 				D400000000000000000000EA /* SplitState.swift in Sources */,
 				T20000000000000000000004 /* TestRunStore.swift in Sources */,
 				T20000000000000000000006 /* TestSession.swift in Sources */,
