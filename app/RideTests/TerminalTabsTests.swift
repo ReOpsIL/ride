@@ -1,6 +1,14 @@
 import XCTest
 
 final class TerminalTabsTests: XCTestCase {
+    private func selectedItem(_ tabs: TerminalTabs) -> TerminalTabItem? {
+        tabs.items.first { $0.id == tabs.selected }
+    }
+
+    private func selectedTitle(_ tabs: TerminalTabs) -> String? {
+        selectedItem(tabs)?.title
+    }
+
     func testAddSelectsNewTab() {
         var tabs = TerminalTabs()
         let first = TerminalTabItem(title: "one")
@@ -9,7 +17,7 @@ final class TerminalTabsTests: XCTestCase {
         tabs.add(second)
         XCTAssertEqual(tabs.count, 2)
         XCTAssertEqual(tabs.selected, second.id)
-        XCTAssertEqual(tabs.selectedItem?.title, "two")
+        XCTAssertEqual(selectedTitle(tabs), "two")
     }
 
     func testCloseSelectedFallsBackToNeighbour() {
@@ -51,7 +59,7 @@ final class TerminalTabsTests: XCTestCase {
         tabs.rename(a.id, title: "")
         tabs.close(stranger)
         XCTAssertEqual(tabs.selected, a.id)
-        XCTAssertEqual(tabs.selectedItem?.title, "a")
+        XCTAssertEqual(selectedTitle(tabs), "a")
         XCTAssertEqual(tabs.count, 1)
     }
 
@@ -60,8 +68,8 @@ final class TerminalTabsTests: XCTestCase {
         let a = TerminalTabItem(title: "a", directory: "/tmp")
         tabs.add(a)
         tabs.rename(a.id, title: "zsh")
-        XCTAssertEqual(tabs.selectedItem?.title, "zsh")
-        XCTAssertEqual(tabs.selectedItem?.directory, "/tmp")
+        XCTAssertEqual(selectedTitle(tabs), "zsh")
+        XCTAssertEqual(selectedItem(tabs)?.directory, "/tmp")
         tabs.removeAll()
         XCTAssertTrue(tabs.isEmpty)
         XCTAssertNil(tabs.selected)

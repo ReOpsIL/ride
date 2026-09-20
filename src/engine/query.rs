@@ -9,9 +9,7 @@ pub fn run(engine: &Engine, mut q: CompletionQuery) -> CompletionResponse {
     let (kind, prefix) = query::parse_prefix(&q.prefix, q.kind_filter);
     q.kind_filter = kind.or(q.kind_filter);
     q.prefix = prefix;
-    if q.limit == 0 {
-        q.limit = 20;
-    }
+    q.limit = q.limit_or_default();
     let (query_id, session_id) = (q.query_id, q.session_id);
     let Some(snap) = snapshot::take(engine, &q, q.limit) else {
         return CompletionResponse::empty(query_id);

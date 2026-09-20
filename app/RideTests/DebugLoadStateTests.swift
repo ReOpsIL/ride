@@ -36,7 +36,6 @@ final class DebugLoadStateTests: XCTestCase {
         XCTAssertNotNil(state.begin("threads"))
         let first = state.invalidate()
         XCTAssertEqual(state.pending, 0)
-        XCTAssertFalse(state.isInFlight("threads"))
         XCTAssertEqual(state.begin("threads"), first)
         let second = state.invalidate()
         XCTAssertEqual(second, first + 1)

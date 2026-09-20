@@ -2,20 +2,6 @@ use tree_sitter::Node;
 
 use crate::ffi::{ByteRange, StatementBounds};
 
-pub fn range(root: Node<'_>, byte: u32, is_statement: fn(&str) -> bool) -> Option<ByteRange> {
-    Some(bytes(node_at(root, byte, is_statement)?))
-}
-
-pub fn sibling(
-    root: Node<'_>,
-    byte: u32,
-    up: bool,
-    is_statement: fn(&str) -> bool,
-) -> Option<ByteRange> {
-    let found = bounds(root, byte, is_statement)?;
-    if up { found.previous } else { found.next }
-}
-
 pub fn bounds(
     root: Node<'_>,
     byte: u32,

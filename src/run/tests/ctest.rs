@@ -1,62 +1,6 @@
-use serde::Deserialize;
-
-use crate::ffi::{TestCase, TestEvent, TestStatus};
+use crate::ffi::{TestEvent, TestStatus};
 
 use super::event;
-
-#[derive(Deserialize)]
-struct Listing {
-    #[serde(default)]
-    tests: Vec<Entry>,
-    #[serde(rename = "backtraceGraph", default)]
-    graph: Graph,
-}
-
-#[derive(Deserialize)]
-struct Entry {
-    name: String,
-    #[serde(default)]
-    backtrace: Option<usize>,
-}
-
-#[derive(Deserialize, Default)]
-struct Graph {
-    #[serde(default)]
-    files: Vec<String>,
-    #[serde(default)]
-    nodes: Vec<Node>,
-}
-
-#[derive(Deserialize)]
-struct Node {
-    #[serde(default)]
-    file: Option<usize>,
-    #[serde(default)]
-    line: Option<u32>,
-}
-
-pub fn list(text: &str) -> Vec<TestCase> {
-    let Ok(listing) = serde_json::from_str::<Listing>(text) else {
-        return Vec::new();
-    };
-    listing
-        .tests
-        .iter()
-        .map(|entry| {
-            let node = entry.backtrace.and_then(|i| listing.graph.nodes.get(i));
-            let file = node
-                .and_then(|n| n.file)
-                .and_then(|i| listing.graph.files.get(i))
-                .cloned();
-            TestCase {
-                suite: suite_of(&entry.name),
-                name: entry.name.clone(),
-                file,
-                line: node.and_then(|n| n.line),
-            }
-        })
-        .collect()
-}
 
 fn suite_of(name: &str) -> Option<String> {
     name.rsplit_once('.').map(|(suite, _)| suite.to_string())

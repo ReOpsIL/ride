@@ -1,32 +1,10 @@
 use std::collections::HashMap;
 
-use crate::ffi::{TestCase, TestEvent, TestStatus};
+use crate::ffi::{TestEvent, TestStatus};
 
 use super::{event, suite_of};
 
 type Key = (String, String);
-
-pub fn list(text: &str) -> Vec<TestCase> {
-    text.lines().filter_map(case).collect()
-}
-
-fn case(line: &str) -> Option<TestCase> {
-    if line.starts_with(char::is_whitespace) {
-        return None;
-    }
-    let name = line
-        .strip_suffix(": test")
-        .or_else(|| line.strip_suffix(": benchmark"))?;
-    if name.is_empty() {
-        return None;
-    }
-    Some(TestCase {
-        suite: suite_of(name),
-        name: name.to_string(),
-        file: None,
-        line: None,
-    })
-}
 
 pub fn parse(text: &str) -> Vec<TestEvent> {
     let mut outputs = stdout_blocks(text);

@@ -93,7 +93,6 @@
 		B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B037435DCB732FB951116C82 /* IconButton.swift */; };
 		B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04E875F537AC051D62D8653 /* AppToolbar.swift */; };
 		B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */; };
-		B04310B616ED144666AD4307 /* Contrast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E24DEA7816D2F286932927 /* Contrast.swift */; };
 		B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05134279C118A62C90B7732 /* ContrastTests.swift */; };
 		B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09832F616F69FF9D72097BD /* ThemeStore.swift */; };
 		B05C6371DB36F5743ABC7452 /* ThemeJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */; };
@@ -665,7 +664,6 @@
 		B04E875F537AC051D62D8653 /* AppToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppToolbar.swift"; sourceTree = "<group>"; };
 		B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowConfigurator.swift"; sourceTree = "<group>"; };
 		B05134279C118A62C90B7732 /* ContrastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContrastTests.swift"; sourceTree = "<group>"; };
-		B0E24DEA7816D2F286932927 /* Contrast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contrast.swift"; sourceTree = "<group>"; };
 		B09832F616F69FF9D72097BD /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeStore.swift"; sourceTree = "<group>"; };
 		B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeJSON.swift"; sourceTree = "<group>"; };
 		B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChromePalette.swift"; sourceTree = "<group>"; };
@@ -1188,7 +1186,6 @@
 				B037435DCB732FB951116C82 /* IconButton.swift */,
 				B04E875F537AC051D62D8653 /* AppToolbar.swift */,
 				B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */,
-				B0E24DEA7816D2F286932927 /* Contrast.swift */,
 				B09832F616F69FF9D72097BD /* ThemeStore.swift */,
 				B093B0C92D38E38D33B7A5CF /* ThemeJSON.swift */,
 				B0DBE99C37A7A5DDDB0AC8EA /* ChromePalette.swift */,
@@ -2089,7 +2086,6 @@
 				C08F35A287DE5D839BDF9B50 /* MatchHighlightTests.swift in Sources */,
 				C01E726C442EA71EFCA8CDBE /* MatchHighlight.swift in Sources */,
 				C009D8110230ED36CA278F06 /* Plural.swift in Sources */,
-				B04310B616ED144666AD4307 /* Contrast.swift in Sources */,
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,

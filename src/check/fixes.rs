@@ -1,9 +1,9 @@
 use std::path::Path;
 
+use crate::abspath::absolute_string;
 use crate::ffi::{DiagnosticFix, TextEdit};
 
 use super::message::{CompilerMessage, Span};
-use super::parse::absolute;
 
 const APPLICABLE: &[&str] = &["MachineApplicable", "MaybeIncorrect"];
 
@@ -16,7 +16,11 @@ pub fn fixes(root: &Path, children: &[CompilerMessage], file: &str) -> Vec<Diagn
 
 fn fix(root: &Path, child: &CompilerMessage, file: &str) -> Option<DiagnosticFix> {
     let spans: Vec<&Span> = child.spans.iter().filter(|s| applicable(s)).collect();
-    if spans.is_empty() || spans.iter().any(|s| absolute(root, &s.file_name) != file) {
+    if spans.is_empty()
+        || spans
+            .iter()
+            .any(|s| absolute_string(root, &s.file_name) != file)
+    {
         return None;
     }
     let caret = spans.last().map(|s| s.byte_end.max(s.byte_start))?;

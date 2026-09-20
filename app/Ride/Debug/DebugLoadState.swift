@@ -15,10 +15,6 @@ struct DebugLoadState: Equatable {
         value == generation
     }
 
-    func isInFlight(_ key: String) -> Bool {
-        inFlight.contains(key)
-    }
-
     var pending: Int {
         inFlight.count
     }

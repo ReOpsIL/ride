@@ -24,13 +24,6 @@ struct TerminalTabs: Equatable {
         items.isEmpty
     }
 
-    var selectedItem: TerminalTabItem? {
-        guard let selected else {
-            return nil
-        }
-        return items.first { $0.id == selected }
-    }
-
     func index(of id: UUID) -> Int? {
         items.firstIndex { $0.id == id }
     }

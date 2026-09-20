@@ -19,7 +19,7 @@ final class RenameSelectionTests: XCTestCase {
     func testFilesTickedReviewUntickedByDefault() {
         let s = selection()
         XCTAssertEqual(Set(s.chosenFilePaths), ["src/main.rs", "src/util.rs"])
-        XCTAssertTrue(s.allFilesSelected)
+        XCTAssertEqual(s.chosenFilePaths.count, s.files.count)
         XCTAssertTrue(s.includedReview.isEmpty)
         XCTAssertFalse(s.allReviewSelected)
         XCTAssertEqual(s.chosenEditCount, 3)
@@ -33,7 +33,7 @@ final class RenameSelectionTests: XCTestCase {
         s.setFile("src/util.rs", false)
         XCTAssertEqual(s.chosenFilePaths, ["src/main.rs"])
         XCTAssertEqual(s.chosenEditCount, 2)
-        XCTAssertFalse(s.allFilesSelected)
+        XCTAssertLessThan(s.chosenFilePaths.count, s.files.count)
     }
 
     func testTickReviewAddsEditsAndTargets() {
@@ -78,7 +78,6 @@ final class RenameSelectionTests: XCTestCase {
             files: [],
             review: RenameSelection.reviewRows(from: [RenamePreviewFile(path: "src/main.rs", count: 2)])
         )
-        XCTAssertTrue(s.filesEmpty)
         XCTAssertTrue(s.showBanner)
         XCTAssertFalse(s.canApply)
         s.setReview(0, true)

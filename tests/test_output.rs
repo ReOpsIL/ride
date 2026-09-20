@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use ride_engine::{
-    Engine, EngineConfig, Target, TargetKind, TestEvent, TestFramework, TestStatus, engine_start,
-};
+use ride_engine::{Engine, EngineConfig, TestEvent, TestFramework, TestStatus, engine_start};
 
 fn fixture(name: &str) -> String {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -28,32 +26,6 @@ fn named<'a>(events: &'a [TestEvent], name: &str) -> &'a TestEvent {
         .iter()
         .find(|e| e.name == name && e.status != TestStatus::Started)
         .unwrap()
-}
-
-fn target(name: &str, kind: TargetKind, run: Option<Vec<String>>) -> Target {
-    Target {
-        name: name.to_string(),
-        kind,
-        build: Vec::new(),
-        run,
-        sources: Vec::new(),
-        working_dir: "/project".to_string(),
-    }
-}
-
-#[test]
-fn cargo_list_yields_names_and_modules() {
-    let cases = engine().list_tests(TestFramework::Cargo, fixture("cargo-list.txt"));
-    assert_eq!(cases.len(), 3);
-    assert_eq!(
-        cases[0].name,
-        "util::runner_fixture_tests::adds_two_numbers"
-    );
-    assert_eq!(
-        cases[0].suite.as_deref(),
-        Some("util::runner_fixture_tests")
-    );
-    assert!(cases[0].file.is_none());
 }
 
 #[test]
@@ -85,16 +57,6 @@ fn cargo_output_keeps_one_block_per_binary() {
 }
 
 #[test]
-fn gtest_list_groups_cases_by_suite() {
-    let cases = engine().list_tests(TestFramework::GoogleTest, fixture("gtest-list.txt"));
-    assert_eq!(cases.len(), 3);
-    assert_eq!(cases[0].suite.as_deref(), Some("GeoSuite"));
-    assert_eq!(cases[0].name, "AddsPoints");
-    assert_eq!(cases[2].suite.as_deref(), Some("TextSuite"));
-    assert_eq!(cases[2].name, "TrimsBlanks");
-}
-
-#[test]
 fn gtest_output_pairs_run_with_result() {
     let events = engine().parse_test_output(TestFramework::GoogleTest, fixture("gtest-run.txt"));
     assert_eq!(
@@ -111,19 +73,6 @@ fn gtest_output_pairs_run_with_result() {
     assert!(failed.output.contains("arithmetic drifted"));
     assert_eq!(named(&events, "AddsPoints").status, TestStatus::Passed);
     assert_eq!(named(&events, "TrimsBlanks").duration_ms, Some(0));
-}
-
-#[test]
-fn catch2_list_carries_tags_and_locations() {
-    let cases = engine().list_tests(TestFramework::Catch2, fixture("catch2-list.xml"));
-    assert_eq!(cases.len(), 6);
-    assert_eq!(cases[1].name, "detects drift");
-    assert_eq!(cases[1].suite.as_deref(), Some("[geo]"));
-    assert_eq!(cases[1].file.as_deref(), Some("c2.cpp"));
-    assert_eq!(cases[1].line, Some(5));
-    assert_eq!(cases[4].name, "skips slow path");
-    assert_eq!(cases[5].name, "counts twice");
-    assert_eq!(cases[5].line, Some(15));
 }
 
 #[test]
@@ -180,16 +129,6 @@ fn catch2_truncated_output_keeps_earlier_events() {
 }
 
 #[test]
-fn ctest_list_reads_json_with_source_lines() {
-    let cases = engine().list_tests(TestFramework::CTest, fixture("ctest-list.json"));
-    assert_eq!(cases.len(), 3);
-    assert_eq!(cases[0].name, "geo.adds_points");
-    assert_eq!(cases[0].suite.as_deref(), Some("geo"));
-    assert_eq!(cases[0].file.as_deref(), Some("/project/CMakeLists.txt"));
-    assert_eq!(cases[0].line, Some(5));
-}
-
-#[test]
 fn ctest_output_attaches_failure_text() {
     let events = engine().parse_test_output(TestFramework::CTest, fixture("ctest-run.txt"));
     assert_eq!(
@@ -206,86 +145,6 @@ fn ctest_output_attaches_failure_text() {
     assert_eq!(
         named(&events, "text.trims_blanks").status,
         TestStatus::Passed
-    );
-}
-
-#[test]
-fn cargo_commands_select_the_target() {
-    let engine = engine();
-    let commands = engine
-        .test_commands(target("demo", TargetKind::Lib, None), TestFramework::Cargo)
-        .unwrap();
-    assert_eq!(commands.run, ["cargo", "test", "--lib"]);
-    assert_eq!(commands.list, ["cargo", "test", "--lib", "--", "--list"]);
-    let commands = engine
-        .test_commands(target("geo", TargetKind::Test, None), TestFramework::Cargo)
-        .unwrap();
-    assert_eq!(commands.run, ["cargo", "test", "--test", "geo"]);
-}
-
-#[test]
-fn binary_commands_extend_the_run_argv() {
-    let engine = engine();
-    let exe = Some(vec!["/project/build/geo_tests".to_string()]);
-    let commands = engine
-        .test_commands(
-            target("geo_tests", TargetKind::Bin, exe.clone()),
-            TestFramework::GoogleTest,
-        )
-        .unwrap();
-    assert_eq!(
-        commands.list,
-        ["/project/build/geo_tests", "--gtest_list_tests"]
-    );
-    assert_eq!(
-        commands.run,
-        ["/project/build/geo_tests", "--gtest_color=no"]
-    );
-    let commands = engine
-        .test_commands(
-            target("geo_tests", TargetKind::Bin, exe),
-            TestFramework::Catch2,
-        )
-        .unwrap();
-    assert_eq!(
-        commands.list,
-        [
-            "/project/build/geo_tests",
-            "--reporter",
-            "xml",
-            "--list-tests"
-        ]
-    );
-    assert_eq!(
-        commands.run,
-        [
-            "/project/build/geo_tests",
-            "--reporter",
-            "xml",
-            "--durations",
-            "yes"
-        ]
-    );
-}
-
-#[test]
-fn ctest_commands_are_fixed_and_missing_binaries_error() {
-    let engine = engine();
-    let commands = engine
-        .test_commands(
-            target("all", TargetKind::Custom, None),
-            TestFramework::CTest,
-        )
-        .unwrap();
-    assert_eq!(commands.list, ["ctest", "--show-only=json-v1"]);
-    assert_eq!(commands.run, ["ctest", "--output-on-failure"]);
-    assert!(
-        engine
-            .test_commands(
-                target("geo_tests", TargetKind::Bin, None),
-                TestFramework::Catch2
-            )
-            .is_err()
     );
 }
 

@@ -38,7 +38,7 @@ pub fn search_open(
     if prefix.is_empty() {
         return empty;
     }
-    let limit = if q.limit == 0 { 20 } else { q.limit };
+    let limit = q.limit_or_default();
     match q.mode {
         QueryMode::PrefixCrates => {
             let mut crates = q.clone();

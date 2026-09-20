@@ -1,5 +1,6 @@
 uniffi::setup_scaffolding!();
 
+mod abspath;
 mod cheatsheet;
 mod check;
 pub mod debug;

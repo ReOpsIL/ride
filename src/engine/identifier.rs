@@ -7,7 +7,7 @@ use super::{header_hits, merge};
 const CATALOG_MIN_CHARS: usize = 2;
 
 pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let prefix = q.prefix.as_str();
     let mut pool: Vec<CompletionHit> = Vec::new();
     let mut truncated = false;

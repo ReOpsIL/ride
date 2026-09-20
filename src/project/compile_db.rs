@@ -1,6 +1,7 @@
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
+use crate::abspath;
 use crate::check::Entry;
 use crate::error::EngineError;
 use crate::ffi::{EngineConfig, Target, TargetKind};
@@ -43,8 +44,8 @@ fn targets(root: &Path, db: &Path, entries: &[Entry]) -> Vec<Target> {
     let base = db.parent().unwrap_or(root);
     let mut out: Vec<Target> = Vec::new();
     for entry in entries {
-        let dir = absolute(base, &entry.directory);
-        let source = absolute(&dir, &entry.file);
+        let dir = abspath::absolute(base, Path::new(&entry.directory));
+        let source = abspath::absolute(&dir, Path::new(&entry.file));
         let name = display_name(root, &source);
         if out.iter().any(|t| t.name == name) {
             continue;
@@ -59,14 +60,6 @@ fn targets(root: &Path, db: &Path, entries: &[Entry]) -> Vec<Target> {
         });
     }
     out
-}
-
-fn absolute(base: &Path, path: &str) -> PathBuf {
-    let path = Path::new(path);
-    if path.is_absolute() {
-        return path.to_path_buf();
-    }
-    base.join(path)
 }
 
 fn display_name(root: &Path, source: &Path) -> String {

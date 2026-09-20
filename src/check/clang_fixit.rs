@@ -1,8 +1,9 @@
 use std::path::{Path, PathBuf};
 
+use crate::abspath::absolute;
 use crate::ffi::{DiagnosticFix, TextEdit};
 
-use super::offsets::{LineOffsets, resolve};
+use super::offsets::LineOffsets;
 
 const PREFIX: &str = "fix-it:\"";
 
@@ -17,7 +18,7 @@ pub fn parse(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Fixit
     let (range, rest) = rest.split_once("}:\"")?;
     let text = unescape(rest.strip_suffix('"')?);
     let (start, end) = span(range)?;
-    let path = resolve(PathBuf::from(file), base);
+    let path = absolute(base, Path::new(file));
     let start_byte = offsets.byte_at(&path, start.0, start.1);
     let end_byte = offsets.byte_at(&path, end.0, end.1).max(start_byte);
     Some(Fixit {

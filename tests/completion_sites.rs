@@ -1,41 +1,14 @@
 use std::fs;
-use std::path::PathBuf;
-use std::sync::Arc;
 
 use ride_engine::{
-    CompletionContext, CompletionQuery, CompletionResponse, CompletionSiteKind, Engine,
-    EngineConfig, ItemKind, QueryMode, engine_start, write_index,
+    CompletionContext, CompletionQuery, CompletionResponse, CompletionSiteKind, Engine, ItemKind,
+    QueryMode,
 };
 
-fn fixtures() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
-}
+#[path = "support/sample.rs"]
+mod sample;
 
-fn config(index_dir: &std::path::Path) -> EngineConfig {
-    EngineConfig {
-        index_dir: index_dir.display().to_string(),
-        cargo_home: Some(fixtures().join("cargo_home").display().to_string()),
-        sysroot: Some(fixtures().join("sysroot").display().to_string()),
-        offline_metadata: true,
-        refs_dir: None,
-        report_dir: None,
-    }
-}
-
-fn engine() -> (tempfile::TempDir, Arc<Engine>) {
-    let dir = tempfile::tempdir().unwrap();
-    write_index(
-        &fixtures().join("sample_crate"),
-        dir.path(),
-        &config(dir.path()),
-    )
-    .unwrap();
-    let engine = engine_start(config(dir.path()));
-    engine
-        .open_workspace(fixtures().join("sample_crate").display().to_string())
-        .unwrap();
-    (dir, engine)
-}
+use sample::engine;
 
 fn complete(engine: &Engine, path: &str, src: &str) -> CompletionResponse {
     let at = src.find('|').expect("caret");

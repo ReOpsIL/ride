@@ -167,21 +167,6 @@ impl Syntax for TreeSyntax {
         crate::intentions::match_site(tree.root_node(), text, byte)
     }
 
-    fn statement_range(&self, _text: &str, byte: u32) -> Option<ByteRange> {
-        let tree = self.tree.as_ref()?;
-        editing::statement_range(tree.root_node(), byte, self.grammar.editing.is_statement)
-    }
-
-    fn sibling_statement(&self, _text: &str, byte: u32, up: bool) -> Option<ByteRange> {
-        let tree = self.tree.as_ref()?;
-        editing::sibling_statement(
-            tree.root_node(),
-            byte,
-            up,
-            self.grammar.editing.is_statement,
-        )
-    }
-
     fn statement_bounds(&self, _text: &str, byte: u32) -> Option<StatementBounds> {
         let tree = self.tree.as_ref()?;
         editing::statement_bounds(tree.root_node(), byte, self.grammar.editing.is_statement)

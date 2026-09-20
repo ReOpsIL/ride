@@ -37,7 +37,7 @@ pub fn scoped_hits(
 }
 
 fn scoped_tables(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> CompletionResponse {
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let Some(scope) = snap.scope().filter(|_| !segments.is_empty()) else {
         return CompletionResponse::empty(q.query_id);
     };
@@ -48,7 +48,7 @@ fn scoped_tables(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> C
 }
 
 fn crates(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let mut pool = Vec::new();
     if snap.lang.has_catalog() {
         let mut hits = query::listed(
@@ -71,7 +71,7 @@ fn children(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> Vec<Co
     if !snap.lang.has_catalog() {
         return Vec::new();
     }
-    let limit = if q.limit == 0 { 20 } else { q.limit } as usize;
+    let limit = q.limit_or_default() as usize;
     let Some(parent) = resolve(snap, segments) else {
         return Vec::new();
     };

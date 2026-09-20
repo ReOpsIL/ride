@@ -1,24 +1,13 @@
 mod cargo;
 mod catch2;
-mod commands;
 mod ctest;
 mod gtest;
 mod markers;
 mod markers_cpp;
 
-use crate::ffi::{TestCase, TestEvent, TestFramework};
+use crate::ffi::{TestEvent, TestFramework};
 
-pub use commands::test_commands;
 pub use markers::{markers, rust_module_path};
-
-pub fn list_tests(framework: TestFramework, text: &str) -> Vec<TestCase> {
-    match framework {
-        TestFramework::Cargo => cargo::list(text),
-        TestFramework::GoogleTest => gtest::list(text),
-        TestFramework::Catch2 => catch2::list(text),
-        TestFramework::CTest => ctest::list(text),
-    }
-}
 
 pub fn parse_test_output(framework: TestFramework, text: &str) -> Vec<TestEvent> {
     match framework {
