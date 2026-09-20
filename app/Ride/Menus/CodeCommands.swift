@@ -27,6 +27,12 @@ struct CodeCommands: Commands {
             Button("Extract Variable") { EditorCommands.extractVariable() }
                 .keyboardShortcut("v", modifiers: [.command, .option])
                 .disabled(!menu.canRefactor)
+            Button("Introduce Constant") { EditorCommands.introduceConstant() }
+                .keyboardShortcut("c", modifiers: [.command, .option])
+                .disabled(!menu.canRefactor)
+            Button("Inline Variable") { EditorCommands.inlineVariable() }
+                .keyboardShortcut("n", modifiers: [.control, .option])
+                .disabled(!menu.canRefactor)
             Button("Ask AI from Comment…") { AIAssistant.shared.askFromEditor(state: state) }
                 .keyboardShortcut("?", modifiers: .control)
                 .disabled(!menu.hasEditor)

@@ -65,7 +65,7 @@ fn enclosing(node: Node<'_>) -> Option<Node<'_>> {
     None
 }
 
-fn trimmed(text: &str, range: ByteRange) -> Option<(usize, usize)> {
+pub(super) fn trimmed(text: &str, range: ByteRange) -> Option<(usize, usize)> {
     let start = (range.start_byte as usize).min(text.len());
     let end = (range.end_byte as usize).min(text.len());
     let slice = text.get(start..end)?;

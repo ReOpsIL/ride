@@ -6,7 +6,7 @@ use crate::ffi::{
     SymbolAt, TextEdit,
 };
 
-use crate::refactor::ExtractSpans;
+use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::context::Context;
 use super::includes::IncludeRef;
@@ -68,6 +68,12 @@ pub trait Syntax: Send + Sync {
         None
     }
     fn extract_spans(&self, _text: &str, _range: ByteRange) -> Option<ExtractSpans> {
+        None
+    }
+    fn constant_spans(&self, _text: &str, _range: ByteRange) -> Option<ConstantSpans> {
+        None
+    }
+    fn inline_spans(&self, _text: &str, _byte: u32) -> Option<InlineSpans> {
         None
     }
 

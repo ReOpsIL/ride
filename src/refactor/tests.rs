@@ -2,19 +2,12 @@ use crate::ffi::ExtractPlan;
 use crate::highlight::{BufferSession, Lang};
 
 use super::extract_variable;
+use super::tests_apply::applied;
 
 fn plan(lang: Lang, text: &str, needle: &str) -> Option<ExtractPlan> {
     let (session, _) = BufferSession::open_lang(lang, text.to_string(), None).unwrap();
     let start = text.find(needle).unwrap() as u32;
     extract_variable(&session, start, start + needle.len() as u32)
-}
-
-fn applied(text: &str, plan: &ExtractPlan) -> String {
-    let mut out = text.to_string();
-    for edit in plan.edits.iter().rev() {
-        out.replace_range(edit.start_byte as usize..edit.end_byte as usize, &edit.text);
-    }
-    out
 }
 
 const RUST_SRC: &str = "fn main() {\n    let x = a * b + c;\n    println!(\"{x}\");\n}\n";
