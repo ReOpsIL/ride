@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -uo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="${ROOT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 CARDS_FILE="${CARDS_FILE:-plan/roadmap/next-impl.md}"
 MAIN_ROOT="${MAIN_ROOT:-/Users/dovcaspi/develop/ride}"
-LOGS="$ROOT/target/executor-logs"
+LOGS="${LOGS_DIR:-$HOME/Library/Logs/ride-executor/$(basename "$ROOT")}"
 mkdir -p "$LOGS"
 cd "$ROOT"
 
