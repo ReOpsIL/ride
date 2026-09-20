@@ -9,11 +9,7 @@ enum EditorCommand {
         let session = CompletionSession.shared
         let previous = session.editSource
         session.editSource = .completion
-        view.undoManager?.beginUndoGrouping()
-        for change in result.changes.reversed() {
-            view.replaceText(in: change.range, with: change.text)
-        }
-        view.undoManager?.endUndoGrouping()
+        view.applyChanges(result.changes)
         session.editSource = previous
         let length = (view.string as NSString).length
         let location = min(max(result.selection.location, 0), length)

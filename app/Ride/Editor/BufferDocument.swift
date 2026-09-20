@@ -31,7 +31,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     var visionCounts: [String: Int] = [:]
     var visionGeneration = 0
     var autoSaveWork: DispatchWorkItem?
-    let undoManager = UndoManager()
+    let undoManager = UndoStep.manager()
 
     var hasCompletions: Bool {
         language.hasCompletions

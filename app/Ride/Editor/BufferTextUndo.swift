@@ -20,10 +20,10 @@ enum BufferTextUndo {
         guard let manager else {
             return
         }
-        manager.beginUndoGrouping()
-        manager.registerUndo(withTarget: target) { restored in
-            apply(previous, to: restored, undo: manager, commit: commit)
+        UndoStep.perform(manager) {
+            manager.registerUndo(withTarget: target) { restored in
+                apply(previous, to: restored, undo: manager, commit: commit)
+            }
         }
-        manager.endUndoGrouping()
     }
 }

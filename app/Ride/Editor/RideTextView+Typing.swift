@@ -77,13 +77,7 @@ extension RideTextView {
         if !keepCompletion {
             CompletionSession.shared.hide()
         }
-        let session = CompletionSession.shared
-        undoManager?.beginUndoGrouping()
-        for change in result.changes.reversed() {
-            replaceText(in: change.range, with: change.text)
-        }
-        undoManager?.endUndoGrouping()
-        _ = session
+        applyChanges(result.changes)
         let length = (string as NSString).length
         let location = min(max(result.selection.location, 0), length)
         setSelectedRange(NSRange(location: location, length: min(max(result.selection.length, 0), length - location)))

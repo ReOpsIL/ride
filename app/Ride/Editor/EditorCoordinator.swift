@@ -21,6 +21,7 @@ extension EditorPane {
             if document.isReadOnly {
                 return false
             }
+            UndoStep.open(document.undoManager)
             document.pending = PendingEdit(
                 range: affectedCharRange,
                 inserted: replacementString ?? "",
@@ -33,6 +34,7 @@ extension EditorPane {
             guard let view = notification.object as? RideTextView else {
                 return
             }
+            UndoStep.close(document.undoManager)
             let typed = document.pending
             document.pending = nil
             let pending = typed ?? replayedEdit(view)
