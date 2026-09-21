@@ -3,7 +3,7 @@ import SwiftUI
 struct WelcomeSetupSection: View {
     @ObservedObject private var model = ToolsModel.shared
     @ObservedObject private var ts = ThemeStore.shared
-    @State private var developerMode = DeveloperMode.isEnabled
+    @State private var developerMode = false
 
     private var rows: [SetupRow] {
         SetupRows.rows(tools: model.rows.map(\.setup), developerMode: developerMode)
@@ -24,8 +24,15 @@ struct WelcomeSetupSection: View {
             }
         }
         .onAppear {
-            developerMode = DeveloperMode.isEnabled
             model.refresh()
+            // DeveloperMode.isEnabled runs DevToolsSecurity and waits for it, which spins the
+            // run loop; never do that while SwiftUI is building the view.
+            DispatchQueue.global(qos: .utility).async {
+                let enabled = DeveloperMode.isEnabled
+                DispatchQueue.main.async {
+                    developerMode = enabled
+                }
+            }
         }
     }
 }

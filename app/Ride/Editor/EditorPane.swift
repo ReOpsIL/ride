@@ -12,6 +12,8 @@ struct EditorPane: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> EditorHostView {
+        context.coordinator.inViewUpdate = true
+        defer { context.coordinator.inViewUpdate = false }
         let host = EditorHostView()
         host.paneID = paneID
         host.textView.applyDefaults()
@@ -35,6 +37,8 @@ struct EditorPane: NSViewRepresentable {
     }
 
     func updateNSView(_ host: EditorHostView, context: Context) {
+        context.coordinator.inViewUpdate = true
+        defer { context.coordinator.inViewUpdate = false }
         context.coordinator.state = state
         host.textView.applyPrefs(state.prefs)
         if focused {
@@ -50,7 +54,17 @@ struct EditorPane: NSViewRepresentable {
             SessionService.shared.attach(document: document, view: host.textView)
             EditorPanes.shared.attach(host, pane: paneID)
         }
-        state.flushPending(host)
+        if document.pendingText != nil || document.pendingJump != nil {
+            // Delivering text or a jump edits the view and publishes document and app state,
+            // which SwiftUI forbids inside updateNSView. Deliver on the next turn instead.
+            let document = document
+            let state = state
+            DispatchQueue.main.async {
+                if let bound = EditorPanes.shared.host(bound: document) {
+                    state.flushPending(bound)
+                }
+            }
+        }
     }
 
     static func dismantleNSView(_ host: EditorHostView, coordinator: Coordinator) {

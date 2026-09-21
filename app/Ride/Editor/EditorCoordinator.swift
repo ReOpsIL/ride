@@ -5,6 +5,9 @@ extension EditorPane {
         var document: BufferDocument
         var state: AppState
         var boundID: UUID?
+        /// True while SwiftUI runs makeNSView or updateNSView. AppState must not publish then,
+        /// so cursor updates raised by binding the document are delivered on the next turn.
+        var inViewUpdate = false
         weak var textView: RideTextView?
         weak var host: EditorHostView?
 
@@ -125,12 +128,20 @@ extension EditorPane {
             let line = index.line(at: loc)
             let column = index.column(at: loc)
             document.caretByte = UInt32(Utf16.utf8Offset(in: ride.string, utf16: loc))
-            if document.id == state.activeID {
-                if state.cursorLine != line {
-                    state.cursorLine = line
-                }
-                if state.cursorColumn != column {
-                    state.cursorColumn = column
+            if document.id == state.activeID, state.cursorLine != line || state.cursorColumn != column {
+                if inViewUpdate {
+                    DispatchQueue.main.async { [weak self, weak ride] in
+                        if let self, let ride {
+                            self.publishCursor(ride)
+                        }
+                    }
+                } else {
+                    if state.cursorLine != line {
+                        state.cursorLine = line
+                    }
+                    if state.cursorColumn != column {
+                        state.cursorColumn = column
+                    }
                 }
             }
             state.scheduleWorkspaceSave()
