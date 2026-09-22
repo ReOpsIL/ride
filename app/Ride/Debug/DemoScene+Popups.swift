@@ -35,6 +35,10 @@ extension DemoScene {
             editor(state)
             DemoLaunch.after(0.8) { find(state) }
             ready(after: 2.4)
+        case "findbar":
+            editor(state)
+            DemoLaunch.after(0.8) { findBar(state) }
+            ready(after: 2.0)
         case "problems":
             editor(state)
             DemoLaunch.after(1.2) { problems(state) }
@@ -104,6 +108,12 @@ extension DemoScene {
         state.toggleProjectFind()
         state.projectFind.query = "counter"
         state.projectFind.run(root: state.workspaceRoot, showHidden: state.prefs.showHidden)
+    }
+
+    private static func findBar(_ state: AppState) {
+        state.toggleFind()
+        state.findQuery = "counter"
+        state.findNext()
     }
 
     private static func problems(_ state: AppState) {

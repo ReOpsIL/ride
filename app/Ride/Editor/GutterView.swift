@@ -35,6 +35,15 @@ final class GutterView: NSView {
 
     override var isFlipped: Bool { true }
 
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        clipsToBounds = true
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:)")
+    }
+
     static func width(digits: Int) -> CGFloat {
         let digit = ("0" as NSString).size(withAttributes: [.font: font]).width
         return markerColumn + glyphColumn + digit * CGFloat(max(digits, 3)) + trailing + 4
@@ -50,7 +59,7 @@ final class GutterView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         let theme = ThemeStore.shared.theme
         theme.editor.background.setFill()
-        dirtyRect.fill()
+        bounds.intersection(dirtyRect).fill()
         if let textView, textView.folds.startsDirty {
             FoldController.shared.refreshStarts(textView)
         }

@@ -53,6 +53,7 @@ SCENES=(
   "split rust-demo"
   "symbols rust-demo"
   "find rust-demo"
+  "findbar rust-demo"
   "preview rust-demo"
   "light rust-demo"
   "problems clean/rust-demo"
