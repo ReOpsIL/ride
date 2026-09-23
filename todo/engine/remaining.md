@@ -47,3 +47,7 @@
 - refactor: Introduce Constant anchors at the item node, so a `const` lands between a doc comment or attribute and its item; anchor above the contiguous run of `line_comment`/`attribute_item` siblings that precede the item.
 - menus: Inline Variable is ⌃⌥N because ⌥⌘N is New Buffer; decide whether New Buffer moves so the JetBrains chord can be used.
 
+
+# Multi-project indexing (2026-09-23, see docs/product/multi-project.md)
+
+- A folder that is not a Cargo project is indexed as one plain crate named after the folder (`index/crates.rs` `plain_workspace`), so nested crates' items get the folder's crate name and wrong module paths, and their dependencies are not scoped as direct. Run `load_metadata` on each nested Cargo root from `project::project_roots`, add their packages as workspace crates, and exclude those roots from the plain folder walk.

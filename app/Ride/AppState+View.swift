@@ -25,6 +25,10 @@ extension AppState {
         updatePrefs { $0.indentGuides.toggle() }
     }
 
+    func toggleLineNumbers() {
+        updatePrefs { $0.lineNumbers.toggle() }
+    }
+
     func toggleCodeVision() {
         updatePrefs { $0.codeVision.toggle() }
     }

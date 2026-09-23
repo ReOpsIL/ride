@@ -79,7 +79,7 @@ extension AppState {
         return DebugLaunch(
             program: resolved.program,
             args: resolved.args,
-            cwd: plan.cwd ?? nonEmpty(target.workingDir) ?? workspaceRoot?.path,
+            cwd: plan.cwd ?? nonEmpty(target.workingDir) ?? activeProjectRoot?.path,
             env: plan.env,
             stopOnEntry: false,
             exceptionFilters: DebugFilters.shared.enabledIds

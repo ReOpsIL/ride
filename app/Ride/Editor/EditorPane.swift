@@ -21,7 +21,7 @@ struct EditorPane: NSViewRepresentable {
         context.coordinator.textView = host.textView
         context.coordinator.host = host
         host.bind(document)
-        host.textView.applyPrefs(state.prefs)
+        host.applyPrefs(state.prefs)
         context.coordinator.boundID = document.id
         host.onViewport = { [weak coordinator = context.coordinator] in
             coordinator?.viewportChanged()
@@ -40,7 +40,7 @@ struct EditorPane: NSViewRepresentable {
         context.coordinator.inViewUpdate = true
         defer { context.coordinator.inViewUpdate = false }
         context.coordinator.state = state
-        host.textView.applyPrefs(state.prefs)
+        host.applyPrefs(state.prefs)
         if focused {
             EditorPanes.shared.adopt(pane: paneID)
         }

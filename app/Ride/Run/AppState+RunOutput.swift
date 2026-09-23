@@ -42,7 +42,7 @@ extension AppState {
     }
 
     func openConsoleLink(_ link: ConsoleLink) {
-        let path = ConsoleLinks.absolutePath(link, root: workspaceRoot?.path)
+        let path = ConsoleLinks.absolutePath(link, root: runOutput.workingDir ?? workspaceRoot?.path)
         let url = URL(fileURLWithPath: path).standardizedFileURL
         guard FileManager.default.fileExists(atPath: url.path) else {
             return

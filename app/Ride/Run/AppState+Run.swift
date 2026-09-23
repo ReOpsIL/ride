@@ -10,7 +10,7 @@ extension AppState {
         return RunConfig.config(
             for: target?.name ?? "",
             in: runConfigs,
-            workingDir: target?.workingDir ?? workspaceRoot?.path
+            workingDir: target?.workingDir ?? activeProjectRoot?.path
         )
     }
 
@@ -54,7 +54,7 @@ extension AppState {
         BuildSession.shared.begin(
             runId: runId,
             kind: kind,
-            baseDir: plan.cwd ?? workspaceRoot?.path ?? ""
+            baseDir: plan.cwd ?? activeProjectRoot?.path ?? ""
         )
     }
 

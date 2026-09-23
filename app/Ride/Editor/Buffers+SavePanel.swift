@@ -19,6 +19,7 @@ extension AppState {
         buffer.fileURL = url
         buffer.detectedLanguage = nil
         buffer.isReadOnly = false
+        activeFileDidChange()
         guard let host = EditorPanes.shared.host(bound: buffer) else {
             return
         }

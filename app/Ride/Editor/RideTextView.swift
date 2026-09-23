@@ -7,6 +7,8 @@ final class RideTextView: NSTextView {
     var showIndentGuides = true
     var showCodeVision = true
     let lines = LineIndex()
+    let vision = VisionIndex()
+    private(set) var textGeneration = 0
 
     func lineIndex() -> LineIndex {
         lines.refresh(textStorage?.mutableString ?? "")
@@ -15,6 +17,7 @@ final class RideTextView: NSTextView {
 
     override func didChangeText() {
         lines.invalidate()
+        textGeneration &+= 1
         super.didChangeText()
     }
 

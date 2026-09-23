@@ -24,11 +24,11 @@ final class DiagnosticStoreTests: XCTestCase {
         var store = DiagnosticStore()
         store.insert(item("/a.c", 4, "clang-a"))
         store.insert(item("/b.c", 4, "clang-b"))
-        store.replaceCargo([item("/a.c", 1, "cargo-a"), item("/c.rs", 2, "cargo-c")])
+        store.replaceCargo(root: "/", [item("/a.c", 1, "cargo-a"), item("/c.rs", 2, "cargo-c")])
         XCTAssertTrue(store.remove(path: "/a.c"))
         XCTAssertFalse(store.remove(path: "/a.c"))
         XCTAssertEqual(store.snapshot.map(\.message), ["cargo-a", "clang-b", "cargo-c"])
-        store.replaceCargo([item("/c.rs", 9, "next")])
+        store.replaceCargo(root: "/", [item("/c.rs", 9, "next")])
         XCTAssertEqual(store.snapshot.map(\.message), ["clang-b", "next"])
     }
 
@@ -58,7 +58,7 @@ final class DiagnosticStoreTests: XCTestCase {
     func testReplaceAllClangDropsPreviousClangAndKeepsCargo() {
         var store = DiagnosticStore()
         store.replace(from: "/a.c", with: [item("/a.c", 1, "old-a"), item("/h.h", 2, "old-h")])
-        store.replaceCargo([item("/r.rs", 3, "cargo")])
+        store.replaceCargo(root: "/", [item("/r.rs", 3, "cargo")])
         store.replaceAllClang(from: "clang-project", with: [item("/b.c", 4, "new-b")])
         XCTAssertEqual(store.snapshot.map(\.message), ["new-b", "cargo"])
         store.replaceAllClang(from: "clang-project", with: [])
@@ -68,7 +68,7 @@ final class DiagnosticStoreTests: XCTestCase {
     func testBuildOwnerIsSeparateFromCheckOwners() {
         var store = DiagnosticStore()
         store.replace(from: "/a.c", with: [item("/a.c", 1, "check-a")])
-        store.replaceCargo([item("/r.rs", 2, "cargo")])
+        store.replaceCargo(root: "/", [item("/r.rs", 2, "cargo")])
         store.replaceBuild([item("/a.c", 5, "build-a"), item("/b.c", 1, "build-b")])
         XCTAssertEqual(store.buildDiagnostics.map(\.message), ["build-a", "build-b"])
         XCTAssertTrue(store.buildDiagnostics.allSatisfy { $0.origin == .build })
@@ -101,7 +101,7 @@ final class DiagnosticStoreTests: XCTestCase {
         store.insert(item("/b.c", 10, "b10"))
         store.insert(item("/a.c", 20, "a20"))
         store.insert(item("/a.c", 5, "a5"))
-        store.replaceCargo([item("/a.c", 1, "cargo")])
+        store.replaceCargo(root: "/", [item("/a.c", 1, "cargo")])
         XCTAssertEqual(
             store.snapshot.map { "\($0.path):\($0.byteStart):\($0.message)" },
             ["/a.c:1:cargo", "/a.c:5:a5", "/a.c:20:a20", "/b.c:10:b10"]
@@ -120,18 +120,28 @@ final class DiagnosticStoreTests: XCTestCase {
 
     func testSaveCargoAfterLiveCargoWins() {
         var store = DiagnosticStore()
-        store.replaceLiveCargo([])
-        store.replaceCargo([item("/r.rs", 3, "save-err")])
+        store.replaceLiveCargo(root: "/", [])
+        store.replaceCargo(root: "/", [item("/r.rs", 3, "save-err")])
         XCTAssertEqual(store.snapshot.map(\.message), ["save-err"])
         XCTAssertEqual(store.snapshot.first?.origin, .check)
     }
 
     func testLiveCargoAfterSaveCargoWins() {
         var store = DiagnosticStore()
-        store.replaceCargo([item("/r.rs", 1, "save-r")])
-        store.replaceLiveCargo([item("/r.rs", 2, "live-r")])
+        store.replaceCargo(root: "/", [item("/r.rs", 1, "save-r")])
+        store.replaceLiveCargo(root: "/", [item("/r.rs", 2, "live-r")])
         XCTAssertEqual(store.snapshot.map(\.message), ["live-r"])
         XCTAssertEqual(store.snapshot.first?.origin, .live)
+    }
+
+    func testCargoProjectsKeepTheirOwnDiagnostics() {
+        var store = DiagnosticStore()
+        store.replaceCargo(root: "/l1", [item("/l1/src/main.rs", 1, "one")])
+        store.replaceCargo(root: "/l2", [item("/l2/src/main.rs", 1, "two")])
+        store.replaceLiveCargo(root: "/l1", [])
+        XCTAssertEqual(store.snapshot.map(\.message), ["two"])
+        store.replaceCargo(root: "/l1", [item("/l1/src/main.rs", 4, "again")])
+        XCTAssertEqual(store.snapshot.map(\.message), ["again", "two"])
     }
 
     func testEmptyLiveFallsBackToSave() {

@@ -7,14 +7,14 @@ extension AppState {
         }
         if buffer.language.usesClang, let url = buffer.fileURL {
             CheckService.shared.scheduleLive(file: url, text: view.string)
-        } else if buffer.language == .rust, let root = workspaceRoot {
+        } else if buffer.language == .rust, let root = projectRoot(for: buffer.fileURL) {
             CheckService.shared.scheduleLiveCargo(root: root, clippy: prefs.useClippy)
         }
     }
 
     func runClangTidyOnSave(_ buffer: BufferDocument) {
         guard prefs.checkOnSave, buffer.language.usesClang,
-              let url = buffer.fileURL, let root = workspaceRoot,
+              let url = buffer.fileURL, let root = projectRoot(for: url),
               ClangTidyService.hasConfig(root: root)
         else {
             return

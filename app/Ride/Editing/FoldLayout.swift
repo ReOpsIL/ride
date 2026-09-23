@@ -110,31 +110,3 @@ final class FoldLayoutDelegate: NSObject, NSTextLayoutManagerDelegate {
         return NSTextLayoutFragment(textElement: textElement, range: range)
     }
 }
-
-extension RideTextView {
-    func refreshFolds() {
-        guard let tlm = textLayoutManager else {
-            return
-        }
-        rebuildFragments()
-        tlm.invalidateLayout(for: tlm.documentRange)
-        tlm.textViewportLayoutController.layoutViewport()
-        needsLayout = true
-        needsDisplay = true
-        enclosingScrollView?.contentView.needsDisplay = true
-        (enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
-    }
-
-    private func rebuildFragments() {
-        guard let storage = textContentStorage, let backing = storage.textStorage else {
-            return
-        }
-        storage.performEditingTransaction {
-            backing.edited(
-                .editedAttributes,
-                range: NSRange(location: 0, length: backing.length),
-                changeInLength: 0
-            )
-        }
-    }
-}

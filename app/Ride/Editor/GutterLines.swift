@@ -26,10 +26,10 @@ extension GutterView {
             let lineNo = index.line(at: utf16)
             if let lineFragment = fragment.textLineFragments.first {
                 var r = lineFragment.typographicBounds
-                r.origin.x = 0
                 r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
-                r.size.width = bounds.width
-                if !body(lineNo, convert(r, from: textView)) {
+                let line = convert(r, from: textView)
+                let row = NSRect(x: 0, y: line.minY, width: bounds.width, height: line.height)
+                if !body(lineNo, row) {
                     return false
                 }
             }

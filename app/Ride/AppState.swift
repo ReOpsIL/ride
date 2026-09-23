@@ -8,6 +8,7 @@ final class AppState: ObservableObject {
     }
     @Published var rootNodes: [FileNode] = []
     @Published var selectedURL: URL?
+    var followedFileURL: URL?
     @Published var expanded: Set<URL> = []
     @Published var recent: [URL] = [] {
         didSet { menu.recent = recent }
@@ -16,7 +17,7 @@ final class AppState: ObservableObject {
         didSet { paneLayout.retain(Set(buffers.map(\.id))); syncMenu(); dropClosedClangDiagnostics(from: oldValue); scheduleWorkspaceSave() }
     }
     @Published var paneLayout = PaneLayout() {
-        didSet { syncMenu(); scheduleWorkspaceSave() }
+        didSet { syncMenu(); scheduleWorkspaceSave(); activeFileDidChange() }
     }
     @Published var splitLayout = SplitLayout() {
         didSet { syncMenu(); scheduleWorkspaceSave() }

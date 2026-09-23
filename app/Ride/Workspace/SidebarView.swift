@@ -8,8 +8,18 @@ struct SidebarView: View {
         VStack(spacing: 0) {
             header
             ts.ui.border.frame(height: Tokens.Size.hairline)
-            ScrollView {
-                ProjectTreeView()
+            ScrollViewReader { proxy in
+                ScrollView {
+                    ProjectTreeView(projects: state.projectModel)
+                }
+                .onChange(of: state.selectedURL) { _, url in
+                    guard let url else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        proxy.scrollTo(url)
+                    }
+                }
             }
             TargetsPanel(store: state.projectModel)
         }

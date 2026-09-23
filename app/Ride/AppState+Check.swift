@@ -4,13 +4,13 @@ extension AppState {
     func runCheck() {
         if let buffer = activeBuffer, buffer.language.usesClang, let url = buffer.fileURL {
             CheckService.shared.run(file: url)
-        } else if let root = workspaceRoot {
+        } else if let root = activeProjectRoot {
             CheckService.shared.run(root: root)
         }
     }
 
     func runProjectCheck() {
-        guard let root = workspaceRoot else {
+        guard let root = activeProjectRoot else {
             return
         }
         CheckService.shared.runProject(root: root)
@@ -33,7 +33,7 @@ extension AppState {
                 CheckService.shared.schedule(file: url)
             }
             runClangTidyOnSave(buffer)
-        } else if let root = workspaceRoot {
+        } else if let root = projectRoot(for: buffer.fileURL) {
             CheckService.shared.schedule(root: root)
         }
     }
@@ -123,7 +123,7 @@ extension AppState {
         }
         EditorPanes.shared.host(bound: buffer)?.capture()
         let text = buffer.text
-        let edition = workspaceRoot.flatMap(cargoEdition)
+        let edition = projectRoot(for: buffer.fileURL).flatMap(cargoEdition)
         let path = buffer.fileURL?.path ?? "untitled.\(buffer.language.fileExtension)"
         let language = buffer.language
         let id = buffer.id

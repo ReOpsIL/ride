@@ -5,7 +5,7 @@ struct VisionItem: Equatable {
     let line: Int
 }
 
-struct VisionLine: Equatable, Identifiable {
+struct VisionLine: Hashable, Identifiable {
     let line: Int
     let count: Int
     var id: Int { line }

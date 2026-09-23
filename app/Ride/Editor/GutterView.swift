@@ -26,12 +26,20 @@ final class GutterView: NSView {
             }
         }
     }
+    var showsNumbers = true {
+        didSet {
+            if showsNumbers != oldValue {
+                needsDisplay = true
+            }
+        }
+    }
     var viewport: NSTextViewportLayoutController?
     static let font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
     static let currentFont = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
     static let glyphColumn: CGFloat = 14
     static let markerColumn: CGFloat = 13
     static let trailing: CGFloat = 8
+    static let breakpointColumn: CGFloat = 18
 
     override var isFlipped: Bool { true }
 
@@ -44,7 +52,10 @@ final class GutterView: NSView {
         fatalError("init(coder:)")
     }
 
-    static func width(digits: Int) -> CGFloat {
+    static func width(digits: Int, numbers: Bool) -> CGFloat {
+        guard numbers else {
+            return markerColumn + glyphColumn + breakpointColumn
+        }
         let digit = ("0" as NSString).size(withAttributes: [.font: font]).width
         return markerColumn + glyphColumn + digit * CGFloat(max(digits, 3)) + trailing + 4
     }
@@ -138,12 +149,9 @@ final class GutterView: NSView {
             drawBreakpoint(verified: verified, at: dest, color: theme.chrome.error)
             attributes[.foregroundColor] = theme.editor.background
         }
-        let label = "\(lineNo)" as NSString
-        let size = label.size(withAttributes: attributes)
-        label.draw(
-            at: CGPoint(x: bounds.width - size.width - Self.trailing, y: dest.midY - size.height / 2),
-            withAttributes: attributes
-        )
+        if showsNumbers {
+            drawNumber(lineNo, at: dest, attrs: attributes)
+        }
         if let textView, textView.folds.isFoldStart(line: lineNo) {
             let collapsed = textView.folds.startsFold(at: lineRange(lineNo, in: textView))
             drawChevron(collapsed: collapsed, at: dest, color: collapsed ? theme.chrome.accent : theme.editor.gutterText)

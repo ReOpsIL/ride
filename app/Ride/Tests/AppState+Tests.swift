@@ -53,7 +53,7 @@ extension AppState {
             return
         }
         let plan = runPlan(.test)
-        let cwd = plan?.cwd ?? workspaceRoot?.path
+        let cwd = plan?.cwd ?? activeProjectRoot?.path
         guard let runId = runInOutput(RunInvocation(argv: argv, workingDir: cwd, env: plan?.env ?? [:])) else {
             return
         }

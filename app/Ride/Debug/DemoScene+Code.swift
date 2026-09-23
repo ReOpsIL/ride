@@ -88,7 +88,7 @@ extension DemoScene {
             return true
         }
         state.indexOpenBuffers()
-        view?.refreshFolds()
+        view?.refreshVision(from: [])
         return false
     }
 

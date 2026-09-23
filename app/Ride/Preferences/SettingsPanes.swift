@@ -46,6 +46,7 @@ struct EditorSettings: View {
             }
             Section("Display") {
                 Toggle("Outline panel", isOn: bind.bool(\.outlinePanel))
+                Toggle("Line numbers", isOn: bind.bool(\.lineNumbers))
                 Toggle("Indent guides", isOn: bind.bool(\.indentGuides))
                 Toggle("Visible whitespace", isOn: bind.bool(\.visibleWhitespace))
                 Toggle("Code vision", isOn: bind.bool(\.codeVision))

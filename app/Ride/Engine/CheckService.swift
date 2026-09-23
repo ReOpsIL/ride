@@ -2,8 +2,6 @@ import Foundation
 
 final class CheckService: ObservableObject {
     static let shared = CheckService()
-    static let cargoSource = "cargo"
-    static let projectSource = "clang-project"
     @Published var diagnostics: [Diagnostic] = []
     @Published var running = false
     @Published var hasRun = false
@@ -38,19 +36,19 @@ final class CheckService: ObservableObject {
     }
 
     func run(root: URL) {
-        start(source: Self.cargoSource, progress: "Checking…") { engine in
+        start(.cargo(root: root.path), progress: "Checking…") { engine in
             try engine.runCheck(projectRoot: root.path)
         }
     }
 
     func run(file: URL) {
-        start(source: file.path, progress: "Checking…") { engine in
+        start(.file(file.path), progress: "Checking…") { engine in
             try engine.runCheckC(path: file.path)
         }
     }
 
     func runProject(root: URL) {
-        start(source: Self.projectSource, progress: "Checking project…") { engine in
+        start(.clangProject, progress: "Checking project…") { engine in
             try engine.runCheckCProject(root: root.path)
         }
     }
@@ -114,33 +112,27 @@ final class CheckService: ObservableObject {
         self.progress = progress
     }
 
-    private func start(source: String, progress: String, _ job: @escaping (Engine) throws -> CheckResult) {
+    private func start(_ scope: CheckScope, progress: String, _ job: @escaping (Engine) throws -> CheckResult) {
         guard let engine = RideEngineClient.shared.engine else { return }
-        let gen = bump(source)
+        let gen = bump(scope.source)
         begin(progress: progress)
         queue.async { [weak self] in
             let result = Result { try job(engine) }
             DispatchQueue.main.async {
-                self?.finish(result, source: source, generation: gen)
+                self?.finish(result, scope: scope, generation: gen)
             }
         }
     }
 
-    private func finish(_ result: Result<CheckResult, Error>, source: String, generation gen: UInt64) {
-        guard generations[source] == gen else { return }
+    private func finish(_ result: Result<CheckResult, Error>, scope: CheckScope, generation gen: UInt64) {
+        guard generations[scope.source] == gen else { return }
         running = false
         progress = ""
         hasRun = true
         switch result {
         case .success(let check):
             let mine = check.diagnostics.compactMap(CheckConvert.stored)
-            if source == Self.cargoSource {
-                store.replaceCargo(mine)
-            } else if source == Self.projectSource {
-                store.replaceAllClang(from: source, with: mine)
-            } else {
-                store.replace(from: source, with: mine)
-            }
+            store.replace(scope, with: mine)
             publish()
             failure = check.success || !mine.isEmpty ? nil : CheckConvert.lastLine(check.stderrTail)
             stderrTail = failure == nil ? "" : check.stderrTail

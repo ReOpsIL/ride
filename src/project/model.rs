@@ -13,6 +13,13 @@ pub fn unmatched(root: &Path) -> ProjectModel {
     }
 }
 
+pub fn unreadable(root: &Path, notice: String) -> ProjectModel {
+    ProjectModel {
+        notice: Some(notice),
+        ..unmatched(root)
+    }
+}
+
 pub fn marked(root: &Path, kind: ProjectKind, names: &[&str]) -> Option<ProjectModel> {
     names
         .iter()

@@ -3,7 +3,7 @@ import Foundation
 extension CheckService {
     static let liveDelay: TimeInterval = 0.8
     static let livePrefix = "live:"
-    static let liveCargoSource = "live-cargo"
+    static let liveCargoPrefix = "live-cargo:"
 
     func scheduleLive(file: URL, text: String, delay: TimeInterval = CheckService.liveDelay) {
         let path = file.path
@@ -14,9 +14,10 @@ extension CheckService {
     }
 
     func scheduleLiveCargo(root: URL, clippy: Bool, delay: TimeInterval = CheckService.liveDelay) {
-        liveTimers[Self.liveCargoSource]?.cancel()
+        let source = Self.liveCargoPrefix + root.path
+        liveTimers[source]?.cancel()
         let work = DispatchWorkItem { [weak self] in self?.runLiveCargo(root: root, clippy: clippy) }
-        liveTimers[Self.liveCargoSource] = work
+        liveTimers[source] = work
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
 
@@ -55,16 +56,16 @@ extension CheckService {
 
     private func runLiveCargo(root: URL, clippy: Bool) {
         guard let engine = RideEngineClient.shared.engine else { return }
-        let gen = bump(Self.liveCargoSource)
+        let gen = bump(Self.liveCargoPrefix + root.path)
         queue.async { [weak self] in
             let result = Result { try engine.runCheck(projectRoot: root.path, clippy: clippy) }
-            DispatchQueue.main.async { self?.finishLiveCargo(result, generation: gen) }
+            DispatchQueue.main.async { self?.finishLiveCargo(result, root: root.path, generation: gen) }
         }
     }
 
-    private func finishLiveCargo(_ result: Result<CheckResult, Error>, generation gen: UInt64) {
-        guard generations[Self.liveCargoSource] == gen, case let .success(check) = result else { return }
-        store.replaceLiveCargo(check.diagnostics.compactMap(CheckConvert.stored))
+    private func finishLiveCargo(_ result: Result<CheckResult, Error>, root: String, generation gen: UInt64) {
+        guard generations[Self.liveCargoPrefix + root] == gen, case let .success(check) = result else { return }
+        store.replaceLiveCargo(root: root, check.diagnostics.compactMap(CheckConvert.stored))
         hasRun = true
         publish()
         onLiveFinished?(diagnostics)

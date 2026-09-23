@@ -41,4 +41,32 @@ final class FoldSetTests: XCTestCase {
         folds.removeAll()
         XCTAssertFalse(folds.isFoldStart(line: 8))
     }
+
+    func testEditInsideAFoldReleasesItsRegionInNewCoordinates() {
+        var set = FoldSet()
+        set.add(NSRange(location: 10, length: 20))
+        set.add(NSRange(location: 50, length: 5))
+        let released = set.textChanged(range: NSRange(location: 15, length: 2), insertedLength: 6)
+        XCTAssertEqual(released, [NSRange(location: 10, length: 24)])
+        XCTAssertEqual(set.ranges, [NSRange(location: 54, length: 5)])
+    }
+
+    func testShiftedFoldsReleaseNothing() {
+        var set = FoldSet()
+        set.add(NSRange(location: 10, length: 20))
+        XCTAssertEqual(set.textChanged(range: NSRange(location: 0, length: 0), insertedLength: 3), [])
+    }
+
+    func testChangedListsFoldsOnlyInOneSet() {
+        var old = FoldSet()
+        old.add(NSRange(location: 0, length: 10))
+        old.add(NSRange(location: 20, length: 5))
+        var new = old
+        new.remove(containing: 22)
+        new.add(NSRange(location: 40, length: 3))
+        XCTAssertEqual(
+            Set(FoldSet.changed(from: old, to: new)),
+            [NSRange(location: 20, length: 5), NSRange(location: 40, length: 3)]
+        )
+    }
 }

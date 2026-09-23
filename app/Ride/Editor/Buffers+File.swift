@@ -81,7 +81,6 @@ extension AppState {
         }
         rebind(buffer, to: url)
         try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
-        selectedURL = buffer.fileURL
         objectWillChange.send()
         didSave(buffer)
     }

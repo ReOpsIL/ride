@@ -32,7 +32,7 @@ fn opened_on_demo() -> (Arc<Engine>, PathBuf) {
 #[test]
 fn cargo_error_line_yields_one_primary_diagnostic() {
     let (engine, root) = opened_on_demo();
-    let diags = engine.parse_cargo_line(fixture("cargo-error.json"));
+    let diags = engine.parse_cargo_line(fixture("cargo-error.json"), root.display().to_string());
     assert_eq!(diags.len(), 1);
     assert_eq!(
         diags[0].path,
@@ -48,8 +48,8 @@ fn cargo_error_line_yields_one_primary_diagnostic() {
 
 #[test]
 fn cargo_warning_line_carries_the_lint_name() {
-    let (engine, _) = opened_on_demo();
-    let diags = engine.parse_cargo_line(fixture("cargo-warning.json"));
+    let (engine, root) = opened_on_demo();
+    let diags = engine.parse_cargo_line(fixture("cargo-warning.json"), root.display().to_string());
     assert_eq!(diags.len(), 1);
     assert_eq!(diags[0].level, DiagnosticLevel::Warning);
     assert_eq!(diags[0].code.as_deref(), Some("unused_variables"));
@@ -62,15 +62,22 @@ fn non_message_lines_are_ignored() {
     let engine = engine();
     assert!(
         engine
-            .parse_cargo_line("{\"reason\":\"build-finished\",\"success\":false}".into())
+            .parse_cargo_line(
+                "{\"reason\":\"build-finished\",\"success\":false}".into(),
+                String::new()
+            )
             .is_empty()
     );
     assert!(
         engine
-            .parse_cargo_line("Compiling q4demo v0.1.0".into())
+            .parse_cargo_line("Compiling q4demo v0.1.0".into(), String::new())
             .is_empty()
     );
-    assert!(engine.parse_cargo_line(String::new()).is_empty());
+    assert!(
+        engine
+            .parse_cargo_line(String::new(), String::new())
+            .is_empty()
+    );
 }
 
 #[test]
@@ -139,7 +146,7 @@ fn member_crate_diagnostics_resolve_against_the_workspace_root() {
     let member =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/workspace_members/app");
     let info = engine.open_workspace(member.display().to_string()).unwrap();
-    let diags = engine.parse_cargo_line(fixture("cargo-error.json"));
+    let diags = engine.parse_cargo_line(fixture("cargo-error.json"), member.display().to_string());
     assert_eq!(diags.len(), 1);
     assert_eq!(
         diags[0].path,
@@ -149,4 +156,31 @@ fn member_crate_diagnostics_resolve_against_the_workspace_root() {
             .to_string()
     );
     assert!(!diags[0].path.starts_with(&member.display().to_string()));
+}
+
+#[test]
+fn nested_crate_diagnostics_resolve_against_the_nested_crate() {
+    let folder = tempfile::tempdir().unwrap();
+    let lesson = folder.path().join("lesson01");
+    std::fs::create_dir_all(lesson.join("src")).unwrap();
+    std::fs::write(
+        lesson.join("Cargo.toml"),
+        "[package]\nname = \"lesson01\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+    )
+    .unwrap();
+    std::fs::write(lesson.join("src/main.rs"), "fn main() {}\n").unwrap();
+    let engine = engine();
+    engine
+        .open_workspace(folder.path().display().to_string())
+        .unwrap();
+    let diags = engine.parse_cargo_line(fixture("cargo-error.json"), lesson.display().to_string());
+    assert_eq!(diags.len(), 1);
+    let expected = lesson.canonicalize().unwrap().join("src/main.rs");
+    assert_eq!(
+        Path::new(&diags[0].path)
+            .canonicalize()
+            .ok()
+            .unwrap_or_default(),
+        expected
+    );
 }

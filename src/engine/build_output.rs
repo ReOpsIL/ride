@@ -8,8 +8,8 @@ use super::Engine;
 
 #[uniffi::export]
 impl Engine {
-    pub fn parse_cargo_line(&self, line: String) -> Vec<Diagnostic> {
-        let root = self.cargo_root(None);
+    pub fn parse_cargo_line(&self, line: String, project_root: String) -> Vec<Diagnostic> {
+        let root = self.cargo_root(Path::new(&project_root));
         catch_unwind(AssertUnwindSafe(|| parse_message_line(&root, &line))).unwrap_or_default()
     }
 
@@ -20,24 +20,19 @@ impl Engine {
 }
 
 impl Engine {
-    pub(crate) fn cargo_root(&self, project: Option<&Path>) -> PathBuf {
-        let workspace = self
-            .read(|i| {
-                i.workspace
-                    .as_ref()
-                    .map(|w| (PathBuf::from(&w.root), PathBuf::from(&w.workspace_root)))
-            })
-            .ok()
-            .flatten();
-        match (workspace, project) {
-            (Some((_, workspace_root)), None) => workspace_root,
-            (Some((root, workspace_root)), Some(project))
-                if project.starts_with(&root) || project.starts_with(&workspace_root) =>
-            {
-                workspace_root
-            }
-            (_, Some(project)) => project.to_path_buf(),
-            (None, None) => PathBuf::new(),
+    pub(crate) fn cargo_root(&self, project: &Path) -> PathBuf {
+        if let Ok(Some(root)) = self.read(|i| i.cargo_roots.get(project).cloned()) {
+            return root;
         }
+        let root =
+            crate::discover::cargo_workspace_root(project).unwrap_or_else(|| project.to_path_buf());
+        let _ = self.write(|i| {
+            i.cargo_roots.insert(project.to_path_buf(), root.clone());
+        });
+        root
+    }
+
+    pub(crate) fn forget_cargo_roots(&self) {
+        let _ = self.write(|i| i.cargo_roots.clear());
     }
 }

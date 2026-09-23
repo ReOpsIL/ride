@@ -32,6 +32,7 @@ struct ViewCommands: Commands {
             Button("Actual Size") { state.resetZoom() }
                 .keyboardShortcut("0", modifiers: [.command, .control])
             Divider()
+            Toggle("Line Numbers", isOn: Binding(get: { menu.lineNumbers }, set: { _ in state.toggleLineNumbers() }))
             Toggle("Soft Wrap", isOn: Binding(get: { menu.softWrap }, set: { _ in state.toggleSoftWrap() }))
             Toggle("Show Whitespace", isOn: Binding(get: { menu.visibleWhitespace }, set: { _ in state.toggleWhitespace() }))
             Toggle("Indent Guides", isOn: Binding(get: { menu.indentGuides }, set: { _ in state.toggleIndentGuides() }))

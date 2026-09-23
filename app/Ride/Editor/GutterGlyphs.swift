@@ -40,6 +40,15 @@ extension GutterView {
         NSBezierPath(rect: NSRect(x: cx - 1.5, y: cy + 3.5, width: 3, height: 1.5)).fill()
     }
 
+    func drawNumber(_ lineNo: Int, at dest: NSRect, attrs: [NSAttributedString.Key: Any]) {
+        let label = "\(lineNo)" as NSString
+        let size = label.size(withAttributes: attrs)
+        label.draw(
+            at: CGPoint(x: bounds.width - size.width - Self.trailing, y: dest.midY - size.height / 2),
+            withAttributes: attrs
+        )
+    }
+
     func drawBreakpoint(verified: Bool, at dest: NSRect, color: NSColor) {
         let rect = NSRect(
             x: Self.markerColumn + Self.glyphColumn,

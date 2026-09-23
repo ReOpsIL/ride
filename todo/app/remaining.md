@@ -50,3 +50,9 @@
 # Search (added 2026-09-20, screenshot review)
 
 - Find in Project lists one row per match, so a line with two matches (`let mut counter = Counter::new();`) appears twice with every match highlighted in both. Group results per line with a match count instead.
+
+# Multi-project follow-ups (2026-09-23, see docs/product/multi-project.md)
+
+- Build diagnostics are one slot (`DiagnosticStore.build`): building project B drops the build problems of project A. Key them by project root like cargo check diagnostics.
+- Cargo diagnostics of a project that disappears on rescan stay in the Problems panel until the app restarts; drop the slots of roots no longer listed.
+- Run configurations are keyed by target name only; two projects with a target of the same name share one configuration. Key them by project root and target.

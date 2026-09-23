@@ -609,6 +609,25 @@
 		P8B000000000000000000016 /* SelfTestSteps+CppEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000015 /* SelfTestSteps+CppEdit.swift */; };
 		P8B000000000000000000018 /* SelfTestSteps+CppGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000017 /* SelfTestSteps+CppGenerate.swift */; };
 		P8B00000000000000000001A /* SelfTestSteps+CppPeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = P8B000000000000000000019 /* SelfTestSteps+CppPeek.swift */; };
+		C70000000000000000000002 /* CheckScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000001 /* CheckScope.swift */; };
+		C70000000000000000000004 /* ProjectOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000003 /* ProjectOwner.swift */; };
+		C70000000000000000000005 /* ProjectOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000003 /* ProjectOwner.swift */; };
+		C70000000000000000000007 /* ProjectSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000006 /* ProjectSwitcher.swift */; };
+		C70000000000000000000009 /* TreePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000008 /* TreePath.swift */; };
+		C7000000000000000000000A /* TreePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000008 /* TreePath.swift */; };
+		C7000000000000000000000C /* AppState+ActiveFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000000B /* AppState+ActiveFile.swift */; };
+		C7000000000000000000000E /* FileTreeRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000000D /* FileTreeRows.swift */; };
+		C7000000000000000000000F /* FileTreeRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000000D /* FileTreeRows.swift */; };
+		C70000000000000000000011 /* TreeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000010 /* TreeRow.swift */; };
+		C70000000000000000000013 /* TreeKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000012 /* TreeKeyView.swift */; };
+		C70000000000000000000015 /* ProjectOwnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000014 /* ProjectOwnerTests.swift */; };
+		C70000000000000000000017 /* TreePathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000016 /* TreePathTests.swift */; };
+		C70000000000000000000019 /* FileTreeRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000018 /* FileTreeRowsTests.swift */; };
+		C7000000000000000000001B /* SelfTestSteps+Gutter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001A /* SelfTestSteps+Gutter.swift */; };
+		C7000000000000000000001D /* SelfTestSteps+TypeAtEnd.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */; };
+		C7000000000000000000001F /* ViewportWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001E /* ViewportWatch.swift */; };
+		C70000000000000000000023 /* VisionIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000022 /* VisionIndex.swift */; };
+		C70000000000000000000025 /* FragmentRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000024 /* FragmentRefresh.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1120,6 +1139,22 @@
 		P8B000000000000000000015 /* SelfTestSteps+CppEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppEdit.swift"; sourceTree = "<group>"; };
 		P8B000000000000000000017 /* SelfTestSteps+CppGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppGenerate.swift"; sourceTree = "<group>"; };
 		P8B000000000000000000019 /* SelfTestSteps+CppPeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CppPeek.swift"; sourceTree = "<group>"; };
+		C70000000000000000000001 /* CheckScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckScope.swift; sourceTree = "<group>"; };
+		C70000000000000000000003 /* ProjectOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectOwner.swift; sourceTree = "<group>"; };
+		C70000000000000000000006 /* ProjectSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSwitcher.swift; sourceTree = "<group>"; };
+		C70000000000000000000008 /* TreePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreePath.swift; sourceTree = "<group>"; };
+		C7000000000000000000000B /* AppState+ActiveFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+ActiveFile.swift"; sourceTree = "<group>"; };
+		C7000000000000000000000D /* FileTreeRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeRows.swift; sourceTree = "<group>"; };
+		C70000000000000000000010 /* TreeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeRow.swift; sourceTree = "<group>"; };
+		C70000000000000000000012 /* TreeKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeKeyView.swift; sourceTree = "<group>"; };
+		C70000000000000000000014 /* ProjectOwnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectOwnerTests.swift; sourceTree = "<group>"; };
+		C70000000000000000000016 /* TreePathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreePathTests.swift; sourceTree = "<group>"; };
+		C70000000000000000000018 /* FileTreeRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeRowsTests.swift; sourceTree = "<group>"; };
+		C7000000000000000000001A /* SelfTestSteps+Gutter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Gutter.swift"; sourceTree = "<group>"; };
+		C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+TypeAtEnd.swift"; sourceTree = "<group>"; };
+		C7000000000000000000001E /* ViewportWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportWatch.swift; sourceTree = "<group>"; };
+		C70000000000000000000022 /* VisionIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionIndex.swift; sourceTree = "<group>"; };
+		C70000000000000000000024 /* FragmentRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentRefresh.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1214,6 +1249,9 @@
 		A000000000000000000000C5 /* RideTests */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000018 /* FileTreeRowsTests.swift */,
+				C70000000000000000000016 /* TreePathTests.swift */,
+				C70000000000000000000014 /* ProjectOwnerTests.swift */,
 				P40000000000000000000009 /* WorkspaceRootFinderTests.swift */,
 				P4000000000000000000000A /* OpenURLParserTests.swift */,
 				D50000000000000000000022 /* VariableTreeTests.swift */,
@@ -1490,6 +1528,8 @@
 		P20000000000000000000010 /* Project */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000006 /* ProjectSwitcher.swift */,
+				C70000000000000000000003 /* ProjectOwner.swift */,
 				P20000000000000000000001 /* TargetRows.swift */,
 				P20000000000000000000003 /* ProjectModelStore.swift */,
 				AA0000000000000000000085 /* NewProjectSheet.swift */,
@@ -1507,6 +1547,11 @@
 		A00000000000000000000054 /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000012 /* TreeKeyView.swift */,
+				C70000000000000000000010 /* TreeRow.swift */,
+				C7000000000000000000000D /* FileTreeRows.swift */,
+				C7000000000000000000000B /* AppState+ActiveFile.swift */,
+				C70000000000000000000008 /* TreePath.swift */,
 				B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */,
 				A00000000000000000000141 /* GitStatusService.swift */,
 				A0000000000000000000013E /* GitStatus.swift */,
@@ -1529,6 +1574,7 @@
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000022 /* VisionIndex.swift */,
 				E10000000000000000000018 /* RideTextView+Edit.swift */,
 				E1000000000000000000001A /* EditorCoordinator.swift */,
 				EB0000000000000000000001 /* BracketHighlight.swift */,
@@ -1645,6 +1691,7 @@
 		A00000000000000000000059 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000001 /* CheckScope.swift */,
 				E10000000000000000000103 /* SessionService+Kinds.swift */,
 				E1000000000000000000001C /* SessionService+Query.swift */,
 				A0000000000000000000012D /* SessionService+Paint.swift */,
@@ -1747,6 +1794,9 @@
 		A00000000000000000000905 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
+				C7000000000000000000001E /* ViewportWatch.swift */,
+				C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */,
+				C7000000000000000000001A /* SelfTestSteps+Gutter.swift */,
 				P40000000000000000000008 /* SelfTestSteps+OpenURL.swift */,
 				D50000000000000000000001 /* VariableTree.swift */,
 				D50000000000000000000030 /* DebugLoadState.swift */,
@@ -1844,6 +1894,7 @@
 		E50000000000000000000300 /* Editing */ = {
 			isa = PBXGroup;
 			children = (
+				C70000000000000000000024 /* FragmentRefresh.swift */,
 				E50000000000000000000001 /* TextChange.swift */,
 				E500000000000000000000A0 /* UndoStep.swift */,
 				E500000000000000000000B0 /* UndoEdit.swift */,
@@ -2040,6 +2091,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C70000000000000000000019 /* FileTreeRowsTests.swift in Sources */,
+				C70000000000000000000017 /* TreePathTests.swift in Sources */,
+				C70000000000000000000015 /* ProjectOwnerTests.swift in Sources */,
+				C7000000000000000000000F /* FileTreeRows.swift in Sources */,
+				C7000000000000000000000A /* TreePath.swift in Sources */,
+				C70000000000000000000005 /* ProjectOwner.swift in Sources */,
 				P40000000000000000000021 /* WorkspaceRootFinder.swift in Sources */,
 				SU0000000000000000000021 /* SetupRows.swift in Sources */,
 				SU0000000000000000000022 /* SetupRowsTests.swift in Sources */,
@@ -2215,6 +2272,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C70000000000000000000025 /* FragmentRefresh.swift in Sources */,
+				C70000000000000000000023 /* VisionIndex.swift in Sources */,
+				C7000000000000000000001F /* ViewportWatch.swift in Sources */,
+				C7000000000000000000001D /* SelfTestSteps+TypeAtEnd.swift in Sources */,
+				C7000000000000000000001B /* SelfTestSteps+Gutter.swift in Sources */,
+				C70000000000000000000013 /* TreeKeyView.swift in Sources */,
+				C70000000000000000000011 /* TreeRow.swift in Sources */,
+				C7000000000000000000000E /* FileTreeRows.swift in Sources */,
+				C7000000000000000000000C /* AppState+ActiveFile.swift in Sources */,
+				C70000000000000000000009 /* TreePath.swift in Sources */,
+				C70000000000000000000007 /* ProjectSwitcher.swift in Sources */,
+				C70000000000000000000004 /* ProjectOwner.swift in Sources */,
+				C70000000000000000000002 /* CheckScope.swift in Sources */,
 				P40000000000000000000011 /* LaunchArguments.swift in Sources */,
 				SU0000000000000000000011 /* SetupRows.swift in Sources */,
 				SU0000000000000000000012 /* WelcomeSetupSection.swift in Sources */,

@@ -28,6 +28,10 @@ final class RunOutput: ObservableObject {
         buffer.lines.map { AnsiSpans.plain($0) }.joined(separator: "\n")
     }
 
+    var workingDir: String? {
+        last?.workingDir
+    }
+
     var canRerun: Bool {
         last != nil
     }

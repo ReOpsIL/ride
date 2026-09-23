@@ -38,7 +38,7 @@ struct StoredDiagnostic: Equatable, Hashable {
 
 struct DiagnosticStore {
     private var clang: [String: [StoredDiagnostic]] = [:]
-    private var cargo: [StoredDiagnostic] = []
+    private var cargo: [String: [StoredDiagnostic]] = [:]
     private var build: [StoredDiagnostic] = []
     private var owner: [String: String] = [:]
     private var liveClang: [String: [StoredDiagnostic]] = [:]
@@ -90,8 +90,8 @@ struct DiagnosticStore {
         }
     }
 
-    mutating func replaceLiveCargo(_ items: [StoredDiagnostic]) {
-        cargo = items.map(Self.asLive)
+    mutating func replaceLiveCargo(root: String, _ items: [StoredDiagnostic]) {
+        cargo[root] = items.map(Self.asLive)
     }
 
     private static func asLive(_ item: StoredDiagnostic) -> StoredDiagnostic {
@@ -100,8 +100,8 @@ struct DiagnosticStore {
         return next
     }
 
-    mutating func replaceCargo(_ items: [StoredDiagnostic]) {
-        cargo = items
+    mutating func replaceCargo(root: String, _ items: [StoredDiagnostic]) {
+        cargo[root] = items
     }
 
     mutating func replaceBuild(_ items: [StoredDiagnostic]) {
@@ -122,7 +122,7 @@ struct DiagnosticStore {
         let liveKeys = Set(liveClang.keys)
         let liveItems = liveClang.values.flatMap { $0 }
         let saveClang = clang.filter { !liveKeys.contains($0.key) }.values.flatMap { $0 }
-        return (liveItems + saveClang + cargo + build).sorted {
+        return (liveItems + saveClang + cargo.values.flatMap { $0 } + build).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)
         }
     }

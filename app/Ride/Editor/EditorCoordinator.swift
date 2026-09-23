@@ -65,11 +65,8 @@ extension EditorPane {
         }
 
         private func shift(_ view: RideTextView, pending: PendingEdit) {
-            let folds = view.folds
-            view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
-            if folds != view.folds {
-                view.refreshFolds()
-            }
+            let released = view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
+            view.refreshFragments(in: released)
             Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
             let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
             HighlightShift.apply(document: document, edit: edit)

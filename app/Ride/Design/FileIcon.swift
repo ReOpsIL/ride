@@ -49,6 +49,10 @@ enum FileIcon {
         }
     }
 
+    static func project(chrome: ChromeColors) -> FileIconSpec {
+        FileIconSpec(symbol: "shippingbox", color: chrome.accent)
+    }
+
     private static func c(_ chrome: ChromeColors) -> FileIconSpec {
         FileIconSpec(symbol: "c.square.fill", color: chrome.info)
     }

@@ -11,6 +11,9 @@ enum PreferencesStore {
     }
 
     static func save(_ prefs: Preferences) {
+        guard !DemoLaunch.isDemo else {
+            return
+        }
         let dir = fileURL().deletingLastPathComponent()
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let enc = JSONEncoder()

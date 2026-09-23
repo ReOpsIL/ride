@@ -75,7 +75,7 @@ extension AppState {
         RideEngineClient.shared.openWorkspace(url) { [weak self] in
             self?.indexOpenBuffers()
         }
-        projectModel.load(root: url)
+        projectModel.load(workspace: url)
         git.clear()
         git.refresh(root: url, delay: 0)
         restoreOpenedWorkspace()
@@ -122,7 +122,6 @@ extension AppState {
         buffers = restored
         restoreSplit(saved, restored)
         syncSplitFocus()
-        selectedURL = activeBuffer?.fileURL
         cursorLine = 1
         cursorColumn = 1
         refreshPreview()

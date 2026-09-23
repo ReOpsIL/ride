@@ -63,7 +63,6 @@ extension AppState {
         CompletionSession.shared.reset()
         paneLayout.select(id)
         syncSplitFocus()
-        selectedURL = activeBuffer?.fileURL
         refreshPreview()
     }
 

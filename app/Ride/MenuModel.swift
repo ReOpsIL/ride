@@ -12,6 +12,7 @@ final class MenuModel: ObservableObject {
     @Published var softWrap = true
     @Published var visibleWhitespace = false
     @Published var indentGuides = true
+    @Published var lineNumbers = true
     @Published var codeVision = true
     @Published var showSidebar = true
     @Published var outlinePanel = true
@@ -47,6 +48,7 @@ final class MenuModel: ObservableObject {
         set(\.softWrap, state.prefs.softWrap)
         set(\.visibleWhitespace, state.prefs.visibleWhitespace)
         set(\.indentGuides, state.prefs.indentGuides)
+        set(\.lineNumbers, state.prefs.lineNumbers)
         set(\.codeVision, state.prefs.codeVision)
         set(\.showSidebar, state.showSidebar)
         set(\.outlinePanel, state.prefs.outlinePanel)

@@ -7,7 +7,9 @@ final class BufferDocument: ObservableObject, Identifiable {
     let untitledIndex: Int?
     var text: String
     @Published var isDirty = false
-    @Published var outline: [OutlineRow] = []
+    @Published var outline: [OutlineRow] = [] {
+        didSet { visionInputs &+= 1 }
+    }
     var sessionId: UInt64?
     var editCount = 0
     var pending: PendingEdit?
@@ -28,7 +30,10 @@ final class BufferDocument: ObservableObject, Identifiable {
     var pendingJump: PendingJump?
     var sessionGeneration = 0
     var sessionOpening = false
-    var visionCounts: [String: Int] = [:]
+    var visionCounts: [String: Int] = [:] {
+        didSet { visionInputs &+= 1 }
+    }
+    private(set) var visionInputs = 0
     var visionGeneration = 0
     var autoSaveWork: DispatchWorkItem?
     lazy var undo = BufferUndo(document: self)

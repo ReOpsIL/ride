@@ -61,8 +61,10 @@ struct FoldSet: Equatable {
         return location
     }
 
-    mutating func textChanged(range: NSRange, insertedLength: Int) {
+    @discardableResult
+    mutating func textChanged(range: NSRange, insertedLength: Int) -> [NSRange] {
         let delta = insertedLength - range.length
+        var released: [NSRange] = []
         ranges = ranges.compactMap { fold in
             if NSMaxRange(range) <= fold.location {
                 return NSRange(location: fold.location + delta, length: fold.length)
@@ -70,9 +72,16 @@ struct FoldSet: Equatable {
             if range.location >= NSMaxRange(fold) {
                 return fold
             }
+            let start = min(fold.location, range.location)
+            released.append(NSRange(location: start, length: max(0, NSMaxRange(fold) + delta - start)))
             return nil
         }
         startLines = []
         startsDirty = true
+        return released
+    }
+
+    static func changed(from old: FoldSet, to new: FoldSet) -> [NSRange] {
+        Array(Set(old.ranges).symmetricDifference(new.ranges))
     }
 }

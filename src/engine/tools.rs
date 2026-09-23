@@ -20,7 +20,7 @@ impl Engine {
         clippy: bool,
     ) -> Result<CheckResult, EngineError> {
         let project = Path::new(&project_root);
-        let workspace_root = self.cargo_root(Some(project));
+        let workspace_root = self.cargo_root(project);
         self.guard(|| run_check(project, &workspace_root, None, clippy))
     }
 

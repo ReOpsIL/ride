@@ -12,8 +12,9 @@ final class FoldController {
         guard let innermost = candidates.min(by: { $0.length < $1.length }) else {
             return
         }
+        let before = target.view.folds
         target.view.folds.add(innermost)
-        after(target.view, caret: innermost.location)
+        after(target.view, caret: innermost.location, before: before)
     }
 
     func unfold() {
@@ -21,28 +22,31 @@ final class FoldController {
             return
         }
         let caret = target.selection.location
+        let before = target.view.folds
         guard target.view.folds.remove(containing: caret) else {
             return
         }
-        after(target.view, caret: caret)
+        after(target.view, caret: caret, before: before)
     }
 
     func foldAll() {
         guard let target = EditorCommands.target(), let ranges = ranges(for: target) else {
             return
         }
+        let before = target.view.folds
         for range in ranges {
             target.view.folds.add(range)
         }
-        after(target.view, caret: 0)
+        after(target.view, caret: 0, before: before)
     }
 
     func unfoldAll() {
         guard let target = EditorCommands.target() else {
             return
         }
+        let before = target.view.folds
         target.view.folds.removeAll()
-        after(target.view, caret: target.selection.location)
+        after(target.view, caret: target.selection.location, before: before)
     }
 
     func toggle(line: Int) {
@@ -122,6 +126,7 @@ final class FoldController {
         let text = view.string
         let wanted = Set(document.foldStarts)
         let ranges = engine.foldRanges(sessionId: id)
+        let before = view.folds
         view.folds.removeAll()
         for range in ranges where wanted.contains(range.startByte) {
             view.folds.add(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte))
@@ -129,13 +134,13 @@ final class FoldController {
         document.foldStarts = view.folds.ranges.map { range in
             UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
         }
-        view.refreshFolds()
+        view.refreshFolds(from: before)
     }
 
-    private func after(_ view: RideTextView, caret: Int) {
+    private func after(_ view: RideTextView, caret: Int, before: FoldSet) {
         view.setSelectedRange(NSRange(location: caret, length: 0))
         refreshStarts(view)
-        view.refreshFolds()
+        view.refreshFolds(from: before)
         rememberFolds(view)
     }
 

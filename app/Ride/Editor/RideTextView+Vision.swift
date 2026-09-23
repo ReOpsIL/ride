@@ -5,11 +5,11 @@ extension RideTextView {
         guard showCodeVision != enabled else {
             return
         }
+        let before = visionLines()
         showCodeVision = enabled
+        refreshVision(from: before)
         if showCodeVision, let document = hooks.binding?()?.document {
             UsageCounter.refresh(document: document)
-        } else {
-            refreshFolds()
         }
     }
 
@@ -26,25 +26,36 @@ extension RideTextView {
     }
 
     func visionLines() -> [VisionLine] {
-        guard showCodeVision, let document = hooks.binding?()?.document else {
-            return []
-        }
-        let text = string
-        let index = lineIndex()
-        let items = document.outline.map { row -> VisionItem in
-            let utf16 = Utf16.utf16Offset(in: text, utf8: Int(row.startByte))
-            return VisionItem(name: row.name, line: index.line(at: utf16))
-        }
-        return UsageVision.lines(items: items, counts: document.visionCounts)
+        resolveVision() ? vision.lines : []
     }
 
     func visionLabel(forLine line: Int) -> String? {
-        visionLines().first { $0.line == line }?.label
+        resolveVision() ? vision.line(line)?.label : nil
     }
 
     func visionLine(at paragraph: NSRange) -> VisionLine? {
-        let line = lineIndex().line(at: paragraph.location)
-        return visionLines().first { $0.line == line }
+        resolveVision() ? vision.line(lineIndex().line(at: paragraph.location)) : nil
+    }
+
+    private func resolveVision() -> Bool {
+        guard showCodeVision, let document = hooks.binding?()?.document else {
+            return false
+        }
+        let key = VisionIndex.Key(
+            document: ObjectIdentifier(document),
+            text: textGeneration,
+            length: (string as NSString).length,
+            inputs: document.visionInputs
+        )
+        vision.resolve(key) {
+            let index = lineIndex()
+            let map = Utf16Map(string)
+            let items = document.outline.map { row in
+                VisionItem(name: row.name, line: index.line(at: map.utf16(byte: Int(row.startByte))))
+            }
+            return UsageVision.lines(items: items, counts: document.visionCounts)
+        }
+        return true
     }
 
     func visionIndent(at paragraph: NSRange) -> CGFloat {

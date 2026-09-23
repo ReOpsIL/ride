@@ -26,7 +26,7 @@ final class EditorHostView: NSView {
         scroll.translatesAutoresizingMaskIntoConstraints = false
         addSubview(gutter)
         addSubview(scroll)
-        gutterWidth = gutter.widthAnchor.constraint(equalToConstant: GutterView.width(digits: 3))
+        gutterWidth = gutter.widthAnchor.constraint(equalToConstant: GutterView.width(digits: 3, numbers: true))
         NSLayoutConstraint.activate([
             gutter.leadingAnchor.constraint(equalTo: leadingAnchor),
             gutter.topAnchor.constraint(equalTo: topAnchor),
@@ -66,6 +66,14 @@ final class EditorHostView: NSView {
         document?.capture(textView)
     }
 
+    func applyPrefs(_ prefs: Preferences) {
+        textView.applyPrefs(prefs)
+        if gutter.showsNumbers != prefs.lineNumbers {
+            gutter.showsNumbers = prefs.lineNumbers
+            syncGutter()
+        }
+    }
+
     func applyTheme(_ theme: Theme) {
         scroll.backgroundColor = theme.editor.background
         gutter.needsDisplay = true
@@ -73,7 +81,7 @@ final class EditorHostView: NSView {
 
     @objc func syncGutter() {
         let lines = max(1, textView.lineIndex().lineCount)
-        gutterWidth.constant = GutterView.width(digits: String(lines).count)
+        gutterWidth.constant = GutterView.width(digits: String(lines).count, numbers: gutter.showsNumbers)
         gutter.needsDisplay = true
     }
 

@@ -5,6 +5,7 @@ use crate::extract::Scope;
 use crate::ffi::{EngineConfig, WorkspaceInfo};
 
 mod home;
+mod locate;
 pub(crate) mod metadata;
 mod metadata_json;
 mod name_version;
@@ -15,6 +16,7 @@ pub mod system_includes;
 mod tools;
 
 pub use home::cargo_home;
+pub use locate::cargo_workspace_root;
 pub use metadata::workspace_info;
 pub use sysroot::{rust_src_available, rustc_sysroot, sysroot_path};
 pub use system_includes::{SystemIncludes, probe_args};

@@ -1,6 +1,7 @@
 import Foundation
 
 final class ProjectModelStore: ObservableObject {
+    @Published private(set) var projects: [ProjectModel] = []
     @Published private(set) var rows: [TargetRow] = []
     @Published private(set) var kindLabel = ""
     @Published private(set) var profiles: [String] = []
@@ -10,38 +11,34 @@ final class ProjectModelStore: ObservableObject {
     @Published private(set) var model: ProjectModel?
 
     var onChange: (() -> Void)?
-    private var root: URL?
-    private var loading = false
+    private(set) var workspace: URL?
+    private var fetches = 0
     private var wanted: String?
+    private var focusedPath: String?
 
     var groups: [TargetGroup] { TargetRows.grouped(rows) }
 
-    func load(root: URL) {
-        if self.root != root {
+    func load(workspace root: URL) {
+        if workspace != root {
             clear()
         }
-        self.root = root
+        workspace = root
         fetch(root: root, reload: false)
     }
 
     func reload() {
-        guard let root else {
+        guard let workspace else {
             return
         }
-        fetch(root: root, reload: true)
+        fetch(root: workspace, reload: true)
     }
 
     func clear() {
-        root = nil
-        rows = []
-        kindLabel = ""
-        profiles = []
-        profile = ""
-        notice = nil
-        selected = nil
+        workspace = nil
+        projects = []
+        focusedPath = nil
         wanted = nil
-        model = nil
-        onChange?()
+        activate(nil)
     }
 
     func select(_ row: TargetRow?) {
@@ -55,34 +52,65 @@ final class ProjectModelStore: ObservableObject {
         applySelection()
     }
 
-    private func fetch(root: URL, reload: Bool) {
-        guard !loading, let engine = RideEngineClient.shared.engine else {
+    func focus(file: URL?) {
+        guard let path = file?.standardizedFileURL.path else {
             return
         }
-        loading = true
+        focusedPath = path
+        if let owner = owner(ofPath: path), owner.root != model?.root {
+            activate(owner)
+        }
+    }
+
+    func choose(root: String) {
+        if let project = projects.first(where: { $0.root == root }), project.root != model?.root {
+            activate(project)
+        }
+    }
+
+    func owner(of url: URL) -> ProjectModel? {
+        owner(ofPath: url.standardizedFileURL.path)
+    }
+
+    func title(_ project: ProjectModel) -> String {
+        ProjectOwner.title(root: project.root, workspace: workspace?.path ?? "")
+    }
+
+    private func owner(ofPath path: String) -> ProjectModel? {
+        ProjectOwner.owner(of: path, roots: projects.map(\.root)).map { projects[$0] }
+    }
+
+    private func fetch(root: URL, reload: Bool) {
+        guard let engine = RideEngineClient.shared.engine else {
+            return
+        }
+        fetches += 1
+        let fetch = fetches
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let model = try? reload
-                ? engine.reloadProject(root: root.path)
-                : engine.projectModel(root: root.path)
+            let found = try? reload
+                ? engine.reloadWorkspaceProjects(root: root.path)
+                : engine.workspaceProjects(root: root.path)
             DispatchQueue.main.async {
-                self?.loading = false
-                guard let self, self.root == root else {
+                guard let self, self.fetches == fetch, self.workspace == root, let found else {
                     return
                 }
-                self.apply(model)
+                self.apply(found)
             }
         }
     }
 
-    private func apply(_ model: ProjectModel?) {
-        guard let model else {
-            return
-        }
-        self.model = model
-        rows = model.targets.map(ProjectModelStore.row(from:))
-        kindLabel = ProjectModelStore.label(model.kind)
-        profiles = model.profiles
-        notice = model.notice
+    private func apply(_ found: [ProjectModel]) {
+        projects = found
+        let keep = model.flatMap { current in found.first { $0.root == current.root } }
+        activate(keep ?? focusedPath.flatMap(owner(ofPath:)) ?? found.first)
+    }
+
+    private func activate(_ project: ProjectModel?) {
+        model = project
+        rows = project?.targets.map(ProjectModelStore.row(from:)) ?? []
+        kindLabel = project.map { ProjectModelStore.label($0.kind) } ?? ""
+        profiles = project?.profiles ?? []
+        notice = project?.notice
         if !profiles.contains(profile) {
             profile = profiles.first ?? ""
         }

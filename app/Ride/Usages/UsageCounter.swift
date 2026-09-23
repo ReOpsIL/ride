@@ -69,7 +69,9 @@ enum UsageCounter {
         guard document.visionCounts != map else {
             return
         }
+        let view = EditorPanes.shared.host(bound: document)?.textView
+        let before = view?.visionLines() ?? []
         document.visionCounts = map
-        EditorPanes.shared.host(bound: document)?.textView.refreshFolds()
+        view?.refreshVision(from: before)
     }
 }

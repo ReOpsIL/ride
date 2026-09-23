@@ -40,7 +40,7 @@ final class BuildSession {
         guard BuildParse.isMessage(line) else {
             return line
         }
-        cargo += RideEngineClient.shared.engine?.parseCargoLine(line: line) ?? []
+        cargo += RideEngineClient.shared.engine?.parseCargoLine(line: line, projectRoot: baseDir) ?? []
         return BuildParse.rendered(line)
     }
 

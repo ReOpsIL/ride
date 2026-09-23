@@ -27,7 +27,6 @@ extension AppState {
             CompletionSession.shared.reset()
             paneLayout.focus(paneID)
             syncSplitFocus()
-            selectedURL = activeBuffer?.fileURL
             if let view = EditorPanes.shared.host(paneID)?.textView {
                 let index = view.lineIndex()
                 let loc = view.selectedRange().location
@@ -73,7 +72,6 @@ extension AppState {
         if !splitLayout.isSplit {
             openSplit()
             paneLayout.move(id, to: paneLayout.focusedID)
-            selectedURL = buffer(id)?.fileURL
             makeFocusedEditorFirstResponder()
             return
         }
@@ -81,7 +79,6 @@ extension AppState {
             return
         }
         paneLayout.move(id, to: other.id)
-        selectedURL = buffer(id)?.fileURL
         syncSplitFocus()
         makeFocusedEditorFirstResponder()
     }
@@ -91,7 +88,6 @@ extension AppState {
             return
         }
         paneLayout.move(bufferID, to: paneID)
-        selectedURL = buffer(bufferID)?.fileURL
         syncSplitFocus()
         refreshPreview()
         makeFocusedEditorFirstResponder()

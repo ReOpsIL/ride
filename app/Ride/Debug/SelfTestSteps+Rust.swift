@@ -2,7 +2,7 @@ import AppKit
 
 extension SelfTestSteps {
     static func rust(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
-        [setup(e: e, file: file, scratch: scratch), findUsages(state: state, e: e)]
+        [setup(e: e, file: file, scratch: scratch)] + gutterSteps(state: state, e: e) + [findUsages(state: state, e: e)]
             + rustRun(state: state, e: e, scratch: scratch)
             + rustEdit(e: e, file: file, scratch: scratch)
             + rustSelect(e: e)
@@ -28,6 +28,7 @@ extension SelfTestSteps {
                 first: "let move_a = 1;",
                 second: "let move_b = 2;"
             )
+            + [typeAtEnd(state: state, e: e)]
     }
 
     private static func findUsages(state: AppState, e: SelfTestEditor) -> SelfTestStep {

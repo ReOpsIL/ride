@@ -7,7 +7,7 @@ struct TargetsPanel: View {
     private let maxHeight: CGFloat = 220
 
     var body: some View {
-        if store.rows.isEmpty, store.notice == nil {
+        if store.rows.isEmpty, store.notice == nil, store.projects.count < 2 {
             EmptyView()
         } else {
             panel
@@ -20,6 +20,7 @@ struct TargetsPanel: View {
             PanelHeader(icon: "square.stack.3d.up", title: "Targets", badges: badges) {
                 EmptyView()
             }
+            ProjectSwitcher(store: store)
             optionsRow
             if let notice = store.notice {
                 Text(notice)

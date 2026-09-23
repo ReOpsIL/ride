@@ -40,14 +40,6 @@ enum HighlightApply {
             }
         }
         storage.endEditing()
-        if let tlm = view.textLayoutManager {
-            for range in update.changed {
-                let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
-                if let tr = view.textRange(utf16: ns) {
-                    tlm.invalidateLayout(for: tr)
-                }
-            }
-        }
         view.needsDisplay = true
         view.updateCurrentLineHighlight()
     }

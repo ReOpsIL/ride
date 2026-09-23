@@ -16,6 +16,7 @@ struct Preferences: Codable, Equatable {
     var useClippy: Bool
     var formatOnSave: Bool
     var indentGuides: Bool
+    var lineNumbers: Bool
     var sidebarWidth: Double
     var outlineWidth: Double
     var hierarchyWidth: Double
@@ -76,6 +77,7 @@ struct Preferences: Codable, Equatable {
         useClippy: Bool = false,
         formatOnSave: Bool = false,
         indentGuides: Bool = true,
+        lineNumbers: Bool = true,
         sidebarWidth: Double = 230,
         outlineWidth: Double = 220,
         hierarchyWidth: Double = 220,
@@ -111,6 +113,7 @@ struct Preferences: Codable, Equatable {
         self.useClippy = useClippy
         self.formatOnSave = formatOnSave
         self.indentGuides = indentGuides
+        self.lineNumbers = lineNumbers
         self.sidebarWidth = sidebarWidth
         self.outlineWidth = outlineWidth
         self.hierarchyWidth = hierarchyWidth
@@ -153,6 +156,7 @@ struct Preferences: Codable, Equatable {
         useClippy = try c.decodeIfPresent(Bool.self, forKey: .useClippy) ?? d.useClippy
         formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
         indentGuides = try c.decodeIfPresent(Bool.self, forKey: .indentGuides) ?? d.indentGuides
+        lineNumbers = try c.decodeIfPresent(Bool.self, forKey: .lineNumbers) ?? d.lineNumbers
         sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
         outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
         hierarchyWidth = try c.decodeIfPresent(Double.self, forKey: .hierarchyWidth) ?? d.hierarchyWidth

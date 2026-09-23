@@ -6,7 +6,6 @@ extension AppState {
             return
         }
         let standard = url.standardizedFileURL
-        selectedURL = standard
         CompletionSession.shared.reset()
         noteOpened(standard)
         if activeBuffer?.fileURL != standard {
@@ -38,7 +37,6 @@ extension AppState {
         let buffer = BufferDocument(untitled: untitledSeq)
         buffers.append(buffer)
         activeID = buffer.id
-        selectedURL = nil
         cursorLine = 1
         cursorColumn = 1
     }
@@ -53,7 +51,6 @@ extension AppState {
             paneLayout.select(id)
         }
         syncSplitFocus()
-        selectedURL = buffers.first { $0.id == id }?.fileURL
         cursorLine = 1
         cursorColumn = 1
         refreshPreview()
@@ -70,7 +67,6 @@ extension AppState {
         SessionService.shared.close(buffer)
         history.forget(bufferID: id)
         buffers.removeAll { $0.id == id }
-        selectedURL = activeBuffer?.fileURL
     }
 
     func saveActive() {

@@ -51,13 +51,13 @@ extension RideTextView {
         switch BracketPairing.onType(typed, text: target.text, selection: target.selection, language: target.document.language) {
         case let .insertPair(close):
             super.insertText(typed + close, replacementRange: replacementRange)
-            setSelectedRange(NSRange(location: target.selection.location + (typed as NSString).length, length: 0))
+            placeTypedCaret(NSRange(location: target.selection.location + (typed as NSString).length, length: 0))
         case .typeOver:
-            setSelectedRange(NSRange(location: target.selection.location + 1, length: 0))
+            placeTypedCaret(NSRange(location: target.selection.location + 1, length: 0))
         case let .wrap(open, close):
             let selected = (target.text as NSString).substring(with: target.selection)
             super.insertText(open + selected + close, replacementRange: target.selection)
-            setSelectedRange(NSRange(location: target.selection.location + (open as NSString).length, length: (selected as NSString).length))
+            placeTypedCaret(NSRange(location: target.selection.location + (open as NSString).length, length: (selected as NSString).length))
         case .none:
             super.insertText(string, replacementRange: replacementRange)
         }
@@ -67,7 +67,7 @@ extension RideTextView {
         let caret = selectedRange()
         if caret.length == 0, BracketPairing.deletesPair(string, caret: caret.location) {
             replaceText(in: NSRange(location: caret.location - 1, length: 2), with: "")
-            setSelectedRange(NSRange(location: caret.location - 1, length: 0))
+            placeTypedCaret(NSRange(location: caret.location - 1, length: 0))
             return
         }
         super.deleteBackward(sender)
@@ -80,6 +80,11 @@ extension RideTextView {
         applyChanges(result.changes)
         let length = (string as NSString).length
         let location = min(max(result.selection.location, 0), length)
-        setSelectedRange(NSRange(location: location, length: min(max(result.selection.length, 0), length - location)))
+        placeTypedCaret(NSRange(location: location, length: min(max(result.selection.length, 0), length - location)))
+    }
+
+    private func placeTypedCaret(_ range: NSRange) {
+        setSelectedRange(range)
+        scrollRangeToVisible(range)
     }
 }

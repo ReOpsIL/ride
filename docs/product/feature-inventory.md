@@ -52,7 +52,7 @@ Engine: `src/debug/` (transport with framing and a `RIDE_DAP_TRACE=<file>` frame
 |---|---|---|
 | Launch the selected target (⌃⌘R) | live (Rust, C++) | builds first, then launches `target/<profile>/<bin>` for Cargo or argv[0] for other kinds, with the run configuration's arguments, environment and cwd |
 | Attach to a process | none in the app | the protocol types carry `attach` (pid, core file) and the D2 fixtures were captured through a core-file attach; no menu, no engine entry point |
-| Line breakpoints | live | click the line number or ⌘F8; paths canonicalised before `setBreakpoints` (R32) so symlinked directories verify; red marker filled when verified, hollow when not |
+| Line breakpoints | live | click the line number (or the breakpoint column when View → Line Numbers is off) or ⌘F8; paths canonicalised before `setBreakpoints` (R32) so symlinked directories verify; red marker filled when verified, hollow when not |
 | Conditional and hit-count breakpoints | built | right-click the marker; sent as `condition` and `hitCondition`; re-sent for that file while the process runs |
 | Breakpoints persist per workspace | live | in the workspace state, keyed by absolute path |
 | Exception breakpoints | built | the filters the adapter advertises (`cpp_throw`, `cpp_catch` on Xcode 26's adapter), toggled in the Debug menu, enabled ones sent on launch |

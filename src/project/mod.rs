@@ -5,6 +5,7 @@ mod cmake_targets;
 mod compile_db;
 pub mod make;
 mod model;
+mod scan;
 
 use std::path::Path;
 
@@ -12,6 +13,8 @@ use crate::error::EngineError;
 use crate::ffi::EngineConfig;
 
 use self::model::ProjectModel;
+pub use self::model::unreadable;
+pub use self::scan::{is_project_root, project_roots};
 
 pub trait Detect {
     fn detect(root: &Path, config: &EngineConfig) -> Result<Option<ProjectModel>, EngineError>;

@@ -19,7 +19,7 @@ extension SelfTestSteps {
                 return true
             }
             UsageCounter.refresh(document: document)
-            e.view?.refreshFolds()
+            e.view?.refreshVision(from: [])
             e.view?.layoutSubtreeIfNeeded()
             return false
         }, timeout: 30, run: {
