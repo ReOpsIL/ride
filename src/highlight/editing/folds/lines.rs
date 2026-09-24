@@ -74,16 +74,24 @@ pub fn between(out: &mut Vec<FoldRange>, text: &str, starts: &[usize], close: us
 pub fn runs(out: &mut Vec<FoldRange>, text: &str, spans: &[(usize, usize)], kind: &str) {
     let mut run: Vec<(usize, usize)> = Vec::new();
     for &(start, end) in spans {
-        let continues = run.last().is_some_and(|&(_, prev)| {
-            line_start(text, start) == after_line(text, last_char_start(&text[..prev]))
-        });
+        let whole = starts_line(text, start);
+        let continues = whole
+            && run.last().is_some_and(|&(_, prev)| {
+                line_start(text, start) == after_line(text, last_char_start(&text[..prev]))
+            });
         if !continues {
             flush(out, text, &run, kind);
             run.clear();
         }
-        run.push((start, end));
+        if whole {
+            run.push((start, end));
+        }
     }
     flush(out, text, &run, kind);
+}
+
+fn starts_line(text: &str, start: usize) -> bool {
+    text[line_start(text, start)..start].trim().is_empty()
 }
 
 fn flush(out: &mut Vec<FoldRange>, text: &str, run: &[(usize, usize)], kind: &str) {

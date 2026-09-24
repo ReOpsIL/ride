@@ -712,3 +712,24 @@ fn folds_end_on_a_line_whose_last_char_is_multibyte() {
     let got = folds(Lang::Rust, "fn f() {\n    a();\n    b();\n    é\n}\n");
     assert_fold(&got, "fn", "\n    a();\n    b();\n    é\n");
 }
+
+#[test]
+fn trailing_comments_never_form_a_comment_fold() {
+    let src = "fn main() {\n    let a = [1, 2];       // array: stack\n    let b = vec![1, 2];   // Vec: heap\n    static T: [i32; 1] = [7]; // static\n    let c = 1;\n}\n";
+    let got = folds(Lang::Rust, src);
+    assert!(got.iter().all(|(k, _)| k != "comment"), "{got:?}");
+    let got = folds(Lang::C, "int a; // one\nint b; // two\nint c; // three\n");
+    assert!(got.iter().all(|(k, _)| k != "comment"), "{got:?}");
+}
+
+#[test]
+fn a_trailing_comment_breaks_a_comment_run() {
+    let src = "fn f() {\n    x(); // trailing\n    // one\n    // two\n    // three\n    y();\n}\n";
+    let got = folds(Lang::Rust, src);
+    assert_fold(&got, "comment", "\n    // two\n    // three\n");
+    assert_eq!(
+        got.iter().filter(|(k, _)| k == "comment").count(),
+        1,
+        "{got:?}"
+    );
+}
