@@ -1,0 +1,184 @@
+title = "Ownership: lifetimes"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "fn returning reference"
+keys = ["fn", "return", "reference", "lifetime", "borrow", "elision", "first"]
+doc = "Return a reference into the single reference argument; the lifetime is elided."
+snippet = '''
+fn ${1:first}(${2:items}: &[${3:T}]) -> &${3:T} {
+    &${2:items}[0]$0
+}'''
+
+[[entries]]
+name = "fn with one lifetime"
+keys = ["fn", "lifetime", "longest", "two", "references", "explicit", "tick"]
+doc = "Tie the returned reference to two input references with one named lifetime."
+snippet = '''
+fn ${1:longest}<'a>(${2:a}: &'a str, ${3:b}: &'a str) -> &'a str {
+    if ${2:a}.len() >= ${3:b}.len() { ${2:a} } else { ${3:b} }$0
+}'''
+
+[[entries]]
+name = "fn with two lifetimes"
+keys = ["fn", "lifetimes", "two", "independent", "references", "explicit"]
+doc = "Give inputs separate lifetimes so only one is tied to the output."
+snippet = '''
+fn ${1:pick}<'a, 'b>(${2:keep}: &'a str, ${3:other}: &'b str) -> &'a str {
+    $0
+}'''
+
+[[entries]]
+name = "fn returning &'static str"
+keys = ["fn", "static", "str", "return", "literal", "lifetime", "constant"]
+doc = "Return a string literal, which lives for the whole program."
+snippet = '''
+fn ${1:name}(&self) -> &'static str {
+    "${2:text}"$0
+}'''
+
+[[entries]]
+name = "method returning &self field"
+keys = ["method", "return", "reference", "field", "self", "elision", "getter"]
+doc = "Return a borrow of a field; the lifetime is elided from &self."
+snippet = '''
+fn ${1:name}(&self) -> &${2:str} {
+    &self.${3:name}$0
+}'''
+
+[[entries]]
+name = "method returning &mut field"
+keys = ["method", "return", "mut", "reference", "field", "self", "getter", "mutable"]
+doc = "Return a mutable borrow of a field for in-place edits."
+snippet = '''
+fn ${1:name_mut}(&mut self) -> &mut ${2:Vec<T>} {
+    &mut self.${3:items}$0
+}'''
+
+[[entries]]
+name = "elision rules"
+keys = ["elision", "rules", "lifetime", "implicit", "omit", "when", "infer"]
+doc = "One input reference gives its lifetime to the output; with &self the output borrows self; otherwise annotate."
+snippet = '''
+fn ${1:name}(${2:input}: &${3:str}) -> &${3:str} {
+    $0
+}'''
+
+[[entries]]
+name = "struct holding a reference"
+keys = ["struct", "lifetime", "reference", "field", "borrow", "hold", "view"]
+doc = "Struct borrowing data from elsewhere must declare the lifetime of that borrow."
+snippet = '''
+struct ${1:Parser}<'${2:a}> {
+    ${3:input}: &'${2:a} str,$0
+}'''
+
+[[entries]]
+name = "impl for struct with lifetime"
+keys = ["impl", "lifetime", "struct", "methods", "borrow", "tick"]
+doc = "Implement methods on a struct that holds a reference."
+snippet = '''
+impl<'${1:a}> ${2:Parser}<'${1:a}> {
+    fn ${3:rest}(&self) -> &'${1:a} str {
+        self.${4:input}$0
+    }
+}'''
+
+[[entries]]
+name = "impl with anonymous lifetime"
+keys = ["impl", "lifetime", "anonymous", "underscore", "elide", "tick"]
+doc = "Implement methods that do not need to name the struct's lifetime."
+snippet = '''
+impl ${1:Parser}<'_> {
+    fn ${2:len}(&self) -> usize {
+        self.${3:input}.len()$0
+    }
+}'''
+
+[[entries]]
+name = "constructor taking a borrow"
+keys = ["new", "constructor", "lifetime", "borrow", "struct", "reference", "from"]
+doc = "Constructor that stores a borrowed argument inside the struct."
+snippet = '''
+fn new(${1:input}: &'${2:a} str) -> Self {
+    Self { ${1:input} }$0
+}'''
+
+[[entries]]
+name = "struct with lifetime and generic"
+keys = ["struct", "lifetime", "generic", "both", "reference", "slice", "t"]
+doc = "Struct borrowing a slice of a generic element type."
+snippet = '''
+struct ${1:Window}<'${2:a}, ${3:T}> {
+    ${4:items}: &'${2:a} [${3:T}],$0
+}'''
+
+[[entries]]
+name = "trait object with lifetime field"
+keys = ["struct", "dyn", "lifetime", "field", "borrowed", "trait", "object"]
+doc = "Store a borrowed trait object in a struct."
+snippet = '''
+struct ${1:Logger}<'${2:a}> {
+    ${3:sink}: &'${2:a} dyn ${4:std::io::Write},$0
+}'''
+
+[[entries]]
+name = "'static bound on generic"
+keys = ["static", "bound", "generic", "owned", "thread", "no", "borrows"]
+doc = "Require that T contain no borrows, as thread::spawn does."
+snippet = '''
+fn ${1:spawn_with}<T: ${2:Send} + 'static>(${3:value}: T) {
+    $0
+}'''
+
+[[entries]]
+name = "static item with 'static str"
+keys = ["static", "const", "str", "item", "global", "literal", "lifetime"]
+doc = "Global string constant, which has the 'static lifetime."
+snippet = '''
+${1:const} ${2:NAME}: &str = "${3:value}";$0'''
+
+[[entries]]
+name = "return impl Iterator borrowing self"
+keys = ["impl", "iterator", "borrow", "self", "lifetime", "underscore", "return"]
+doc = "Return an iterator that borrows from self, marking the borrow with '_."
+snippet = '''
+fn ${1:names}(&self) -> impl Iterator<Item = &str> + '_ {
+    self.${2:items}.iter().map(|${3:i}| ${3:i}.${4:name}.as_str())$0
+}'''
+
+[[entries]]
+name = "Box<dyn Trait + 'a> return"
+keys = ["box", "dyn", "lifetime", "return", "borrow", "erased", "iterator"]
+doc = "Return a boxed trait object that borrows from an argument."
+snippet = '''
+fn ${1:make}<'a>(${2:input}: &'a str) -> Box<dyn ${3:Iterator<Item = &'a str>} + 'a> {
+    Box::new(${2:input}.${4:split(' ')})$0
+}'''
+
+[[entries]]
+name = "lifetime on enum"
+keys = ["enum", "lifetime", "reference", "variant", "borrow", "token"]
+doc = "Enum whose variants borrow from source data, the shape of a token."
+snippet = '''
+enum ${1:Token}<'${2:a}> {
+    ${3:Word}(&'${2:a} str),
+    ${4:Number}(${5:i64}),$0
+}'''
+
+[[entries]]
+name = "where 'a: 'b"
+keys = ["where", "lifetime", "outlives", "bound", "clause", "longer"]
+doc = "State in a where clause that one lifetime outlives another."
+snippet = '''
+where
+    '${1:a}: '${2:b},$0'''
+
+[[entries]]
+name = "prefer owned in structs"
+keys = ["owned", "string", "struct", "field", "avoid", "lifetime", "simpler"]
+doc = "Store String and Vec instead of references when a struct should outlive its inputs."
+snippet = '''
+struct ${1:Record} {
+    ${2:name}: String,$0
+}'''

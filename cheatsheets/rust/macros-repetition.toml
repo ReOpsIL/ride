@@ -1,0 +1,123 @@
+title = "macro_rules! repetition"
+contexts = ["item", "statement"]
+
+[[entries]]
+name = "macro comma-separated repetition"
+keys = ["macro", "rules", "repetition", "comma", "list", "variadic", "star"]
+doc = "Accept zero or more comma-separated arguments with an optional trailing comma."
+snippet = '''
+macro_rules! ${1:sum} {
+    ($($x:expr),* $(,)?) => {
+        0 $(+ $x)*$0
+    };
+}'''
+
+[[entries]]
+name = "macro one-or-more repetition"
+keys = ["macro", "rules", "repetition", "plus", "atleast", "one", "nonempty"]
+doc = "Require at least one argument with a plus repetition."
+snippet = '''
+macro_rules! ${1:max} {
+    ($first:expr $(, $rest:expr)+) => {
+        ${2:std::cmp::max($first, max!($($rest),+))}$0
+    };
+}'''
+
+[[entries]]
+name = "macro optional part"
+keys = ["macro", "rules", "optional", "question", "maybe", "repetition", "zero", "one"]
+doc = "Make a trailing part of the input optional with a question-mark repetition."
+snippet = '''
+macro_rules! ${1:name} {
+    ($x:expr $(, $label:literal)?) => {
+        $0
+    };
+}'''
+
+[[entries]]
+name = "macro semicolon-separated repetition"
+keys = ["macro", "rules", "repetition", "semicolon", "separator", "statements"]
+doc = "Repeat with a semicolon separator, typical for lists of declarations."
+snippet = '''
+macro_rules! ${1:name} {
+    ($($key:ident = $value:expr);* $(;)?) => {
+        $( let $key = $value; )*$0
+    };
+}'''
+
+[[entries]]
+name = "macro key-value pairs"
+keys = ["macro", "rules", "map", "hashmap", "pairs", "arrow", "key", "value"]
+doc = "Match key => value pairs to build a map."
+snippet = '''
+macro_rules! ${1:map} {
+    ($($k:expr => $v:expr),* $(,)?) => {{
+        let mut m = std::collections::HashMap::new();
+        $( m.insert($k, $v); )*
+        m$0
+    }};
+}'''
+
+[[entries]]
+name = "macro nested repetition"
+keys = ["macro", "rules", "nested", "repetition", "matrix", "rows", "groups"]
+doc = "Repeat a group that itself contains a repetition."
+snippet = '''
+macro_rules! ${1:matrix} {
+    ($([$($x:expr),*]),* $(,)?) => {
+        vec![$(vec![$($x),*]),*]$0
+    };
+}'''
+
+[[entries]]
+name = "macro recursive"
+keys = ["macro", "rules", "recursive", "recursion", "count", "munch", "base"]
+doc = "Recurse on the remaining tokens with a base case rule first."
+snippet = '''
+macro_rules! ${1:count} {
+    () => { 0usize };
+    ($head:tt $($tail:tt)*) => { 1usize + ${1:count}!($($tail)*) };$0
+}'''
+
+[[entries]]
+name = "macro internal rule"
+keys = ["macro", "rules", "internal", "private", "helper", "at", "rule"]
+doc = "Mark a helper rule with an @ prefix so users do not call it directly."
+snippet = '''
+macro_rules! ${1:name} {
+    (@inner $x:expr) => { $x };
+    ($x:expr) => { ${1:name}!(@inner $x) };$0
+}'''
+
+[[entries]]
+name = "macro $crate path"
+keys = ["macro", "rules", "crate", "dollar", "path", "hygiene", "export"]
+doc = "Refer to items of the defining crate so the macro works from other crates."
+snippet = '''
+#[macro_export]
+macro_rules! ${1:name} {
+    ($x:expr) => {
+        $crate::${2:module}::${3:function}($x)$0
+    };
+}'''
+
+[[entries]]
+name = "macro emitting items"
+keys = ["macro", "rules", "items", "struct", "generate", "boilerplate", "item"]
+doc = "Generate several items such as a struct and its impl from one invocation."
+snippet = '''
+macro_rules! ${1:define} {
+    ($name:ident { $($field:ident: $t:ty),* $(,)? }) => {
+        #[derive(Debug, Default)]
+        pub struct $name { $(pub $field: $t),* }$0
+    };
+}'''
+
+[[entries]]
+name = "macro invocation delimiters"
+keys = ["macro", "call", "brackets", "braces", "parentheses", "delimiter", "invoke"]
+doc = "Invoke a macro with any delimiter, using braces when it expands to items or statements."
+snippet = '''
+${1:name}! {
+    $0
+}'''

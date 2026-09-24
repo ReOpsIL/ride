@@ -168,3 +168,52 @@ keys = ["sender", "receiver", "mpsc", "channel"]
 doc = "Sending and receiving halves of an mpsc channel."
 snippet = '''
 std::sync::mpsc::${1:Sender}<${2:T}>$0'''
+
+[[entries]]
+name = "Box<dyn FnMut>"
+keys = ["box", "dyn", "fnmut", "closure", "stored", "mutable", "state"]
+doc = "Owned closure that may mutate its captures, stored for repeated calls."
+snippet = '''
+Box<dyn FnMut(${1:i32})${2: + Send}>$0'''
+
+[[entries]]
+name = "Box<dyn FnOnce>"
+keys = ["box", "dyn", "fnonce", "closure", "stored", "once", "task", "job"]
+doc = "Owned closure that is called exactly once, the shape of a queued task."
+snippet = '''
+Box<dyn FnOnce()${1: + Send + 'static}>$0'''
+
+[[entries]]
+name = "fn() no-arg pointer"
+keys = ["fn", "pointer", "function", "callback", "thunk", "noarg"]
+doc = "Pointer to a function taking no arguments and returning nothing."
+snippet = '''
+fn()$0'''
+
+[[entries]]
+name = "extern \"C\" fn pointer"
+keys = ["extern", "fn", "pointer", "callback", "ffi", "c", "abi"]
+doc = "Function pointer with the C ABI, for callbacks handed to foreign code."
+snippet = '''
+${1:unsafe }extern "C" fn(${2:*mut c_void}) -> ${3:i32}$0'''
+
+[[entries]]
+name = "Option<fn()>"
+keys = ["option", "fn", "pointer", "callback", "optional", "hook", "null"]
+doc = "Optional function pointer, same size as the pointer thanks to the null niche."
+snippet = '''
+Option<fn(${1:i32}) -> ${2:i32}>$0'''
+
+[[entries]]
+name = "impl Iterator<Item = T>"
+keys = ["impl", "iterator", "item", "return", "lazy", "sequence", "yield"]
+doc = "Opaque iterator return type with its element type fixed."
+snippet = '''
+impl Iterator<Item = ${1:T}>${2: + '_}$0'''
+
+[[entries]]
+name = "Box<dyn Iterator<Item = T> + 'a>"
+keys = ["box", "dyn", "iterator", "item", "lifetime", "erased", "branch"]
+doc = "Type-erased iterator, used when different branches return different iterators."
+snippet = '''
+Box<dyn Iterator<Item = ${1:T}> + '${2:a}>$0'''

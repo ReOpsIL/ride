@@ -1,0 +1,219 @@
+title = "Types: std utilities, time, paths and I/O"
+contexts = ["type"]
+
+[[entries]]
+name = "OnceCell<T>"
+keys = ["oncecell", "once", "lazy", "init", "cell", "single", "cache"]
+doc = "Single-threaded cell written at most once, for lazy initialization."
+snippet = '''
+std::cell::OnceCell<${1:T}>$0'''
+
+[[entries]]
+name = "OnceLock<T>"
+keys = ["oncelock", "once", "lazy", "static", "global", "thread", "init"]
+doc = "Thread-safe cell written at most once, the usual type of a lazily set static."
+snippet = '''
+std::sync::OnceLock<${1:T}>$0'''
+
+[[entries]]
+name = "LazyLock<T>"
+keys = ["lazylock", "lazy", "static", "global", "init", "thread", "closure"]
+doc = "Thread-safe value computed on first access from a closure given at definition."
+snippet = '''
+std::sync::LazyLock<${1:T}>$0'''
+
+[[entries]]
+name = "Pin<&mut T>"
+keys = ["pin", "mut", "future", "poll", "async", "self"]
+doc = "Pinned exclusive reference, the receiver type of Future::poll."
+snippet = '''
+Pin<&mut ${1:Self}>$0'''
+
+[[entries]]
+name = "Pin<Box<T>>"
+keys = ["pin", "box", "heap", "future", "async", "selfref"]
+doc = "Heap value that promises never to move, produced by Box::pin."
+snippet = '''
+Pin<Box<${1:T}>>$0'''
+
+[[entries]]
+name = "MaybeUninit<T>"
+keys = ["maybeuninit", "uninit", "uninitialized", "unsafe", "buffer", "ffi"]
+doc = "Storage for a T that may not be initialized yet, for FFI and manual init."
+snippet = '''
+std::mem::MaybeUninit<${1:T}>$0'''
+
+[[entries]]
+name = "ManuallyDrop<T>"
+keys = ["manuallydrop", "drop", "leak", "manual", "destructor", "unsafe"]
+doc = "Wrapper that suppresses the automatic destructor of its contents."
+snippet = '''
+std::mem::ManuallyDrop<${1:T}>$0'''
+
+[[entries]]
+name = "NonZeroU32 and friends"
+keys = ["nonzero", "nonzerou32", "nonzerousize", "niche", "option", "zero"]
+doc = "Integer that is never zero, letting Option of it stay the same size."
+snippet = '''
+std::num::NonZero${1:U32}$0'''
+
+[[entries]]
+name = "Wrapping<T>"
+keys = ["wrapping", "overflow", "modular", "hash", "arithmetic", "num"]
+doc = "Integer whose arithmetic wraps on overflow instead of panicking in debug builds."
+snippet = '''
+std::num::Wrapping<${1:u32}>$0'''
+
+[[entries]]
+name = "Saturating<T>"
+keys = ["saturating", "overflow", "clamp", "arithmetic", "num"]
+doc = "Integer whose arithmetic clamps at the type's limits instead of overflowing."
+snippet = '''
+std::num::Saturating<${1:u32}>$0'''
+
+[[entries]]
+name = "Range<T>"
+keys = ["range", "span", "start", "end", "half", "open", "interval"]
+doc = "Half-open interval start..end as a value type."
+snippet = '''
+std::ops::Range<${1:usize}>$0'''
+
+[[entries]]
+name = "RangeInclusive<T>"
+keys = ["range", "inclusive", "span", "closed", "interval", "bounds"]
+doc = "Closed interval start..=end as a value type."
+snippet = '''
+std::ops::RangeInclusive<${1:u32}>$0'''
+
+[[entries]]
+name = "impl RangeBounds<T>"
+keys = ["range", "bounds", "generic", "any", "drain", "slice"]
+doc = "Parameter accepting any range syntax, as drain and slice methods do."
+snippet = '''
+impl std::ops::RangeBounds<${1:usize}>$0'''
+
+[[entries]]
+name = "cmp::Ordering"
+keys = ["ordering", "cmp", "compare", "less", "equal", "greater", "sort"]
+doc = "Result of a comparison: Less, Equal or Greater."
+snippet = '''
+std::cmp::Ordering$0'''
+
+[[entries]]
+name = "Reverse<T>"
+keys = ["reverse", "cmp", "descending", "sort", "heap", "key"]
+doc = "Wrapper that flips ordering, for descending sort keys and min-heaps."
+snippet = '''
+std::cmp::Reverse<${1:T}>$0'''
+
+[[entries]]
+name = "BinaryHeap<T>"
+keys = ["binaryheap", "heap", "priority", "queue", "max"]
+doc = "Max-heap priority queue."
+snippet = '''
+std::collections::BinaryHeap<${1:T}>$0'''
+
+[[entries]]
+name = "Instant"
+keys = ["instant", "time", "clock", "monotonic", "elapsed", "stopwatch"]
+doc = "Monotonic point in time for measuring elapsed durations."
+snippet = '''
+std::time::Instant$0'''
+
+[[entries]]
+name = "SystemTime"
+keys = ["systemtime", "time", "wall", "clock", "epoch", "timestamp", "date"]
+doc = "Wall-clock time that can be converted to seconds since the Unix epoch."
+snippet = '''
+std::time::SystemTime$0'''
+
+[[entries]]
+name = "&Path parameter"
+keys = ["path", "file", "dir", "borrowed", "filename", "parameter"]
+doc = "Borrowed filesystem path, accepted from &str, &String and &PathBuf."
+snippet = '''
+&std::path::Path$0'''
+
+[[entries]]
+name = "PathBuf"
+keys = ["pathbuf", "path", "owned", "file", "dir", "filename"]
+doc = "Owned, growable filesystem path."
+snippet = '''
+std::path::PathBuf$0'''
+
+[[entries]]
+name = "impl AsRef<Path>"
+keys = ["path", "asref", "generic", "parameter", "file", "any", "string"]
+doc = "Parameter accepting anything path-like, as std::fs functions do."
+snippet = '''
+impl AsRef<std::path::Path>$0'''
+
+[[entries]]
+name = "OsString / OsStr"
+keys = ["osstring", "osstr", "os", "string", "platform", "env", "args"]
+doc = "Owned or borrowed platform-native string that may not be valid UTF-8."
+snippet = '''
+std::ffi::${1:OsString}$0'''
+
+[[entries]]
+name = "File"
+keys = ["file", "io", "fs", "handle", "open"]
+doc = "Open file handle implementing Read, Write and Seek."
+snippet = '''
+std::fs::File$0'''
+
+[[entries]]
+name = "BufReader<File>"
+keys = ["bufreader", "reader", "buffered", "file", "lines", "io"]
+doc = "Buffered reader over a file, needed for the lines and read_line methods."
+snippet = '''
+std::io::BufReader<${1:std::fs::File}>$0'''
+
+[[entries]]
+name = "BufWriter<File>"
+keys = ["bufwriter", "writer", "buffered", "file", "io", "output"]
+doc = "Buffered writer over a file, flushed on drop."
+snippet = '''
+std::io::BufWriter<${1:std::fs::File}>$0'''
+
+[[entries]]
+name = "io::Error"
+keys = ["io", "error", "file", "kind", "os"]
+doc = "Error type of std I/O operations, inspectable through its kind."
+snippet = '''
+std::io::Error$0'''
+
+[[entries]]
+name = "impl Read / impl Write"
+keys = ["read", "write", "impl", "generic", "stream", "io", "any"]
+doc = "Parameter accepting any readable or writable stream."
+snippet = '''
+impl std::io::${1:Read}$0'''
+
+[[entries]]
+name = "Box<dyn Read> / Box<dyn Write>"
+keys = ["box", "dyn", "read", "write", "stream", "stdin", "stdout", "file", "io"]
+doc = "Type-erased stream chosen at runtime, such as stdin or a file."
+snippet = '''
+Box<dyn std::io::${1:Write}>$0'''
+
+[[entries]]
+name = "Stdin / Stdout / Stderr"
+keys = ["stdin", "stdout", "stderr", "console", "terminal", "io"]
+doc = "Handles to the process's standard streams."
+snippet = '''
+std::io::${1:Stdout}$0'''
+
+[[entries]]
+name = "fmt::Formatter and fmt::Result"
+keys = ["formatter", "fmt", "result", "display", "debug", "write"]
+doc = "Formatter target and result type used inside a Display or Debug impl."
+snippet = '''
+&mut std::fmt::Formatter<'_>$0'''
+
+[[entries]]
+name = "Any"
+keys = ["any", "dyn", "downcast", "typeid", "dynamic", "erase"]
+doc = "Trait object that can be downcast back to a concrete type at runtime."
+snippet = '''
+Box<dyn std::any::Any>$0'''

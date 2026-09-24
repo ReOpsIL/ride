@@ -1,10 +1,10 @@
-title = "Lambdas and functional"
+title = "Lambdas and captures"
 contexts = ["expression", "statement"]
 
 [[entries]]
 name = "lambda"
-keys = ["lambda", "closure", "fn", "[]"]
-doc = "Anonymous function object."
+keys = ["lambda", "closure", "fn", "[]", "anonymous", "function", "inline"]
+doc = "Anonymous function object; the brackets list what it captures."
 snippet = """
 [${1:}](${2:}) {
     $0
@@ -12,24 +12,42 @@ snippet = """
 
 [[entries]]
 name = "lambda one-liner"
-keys = ["lambda", "closure", "inline"]
-doc = "Single-expression lambda."
+keys = ["lambda", "closure", "inline", "short", "return", "expression"]
+doc = "Single-expression lambda with a deduced return type."
 snippet = """
 [${1:}](${2:auto x}) { return ${3:x}; }$0"""
 
 [[entries]]
+name = "lambda stored in auto"
+keys = ["lambda", "auto", "variable", "store", "assign", "named", "local"]
+doc = "Keep a lambda in a local variable and call it by name."
+snippet = """
+auto ${1:name} = [${2:}](${3:int x}) {
+    $0
+};"""
+
+[[entries]]
 name = "lambda with return type"
-keys = ["lambda", "return", "arrow"]
-doc = "Lambda with an explicit return type."
+keys = ["lambda", "return", "arrow", "type", "explicit", "->"]
+doc = "Lambda with an explicit return type after an arrow."
 snippet = """
 [${1:}](${2:}) -> ${3:int} {
     $0
 }"""
 
 [[entries]]
+name = "lambda no capture"
+keys = ["lambda", "capture", "none", "empty", "stateless", "[]", "pure"]
+doc = "Lambda that uses no locals; convertible to a plain function pointer."
+snippet = """
+[](${1:}) {
+    $0
+}"""
+
+[[entries]]
 name = "lambda capture by value"
-keys = ["lambda", "capture", "value", "="]
-doc = "Copy every used local into the closure."
+keys = ["lambda", "capture", "value", "=", "copy", "all", "default"]
+doc = "Copy every used local into the closure (this is no longer implied in C++20)."
 snippet = """
 [=](${1:}) {
     $0
@@ -37,154 +55,135 @@ snippet = """
 
 [[entries]]
 name = "lambda capture by reference"
-keys = ["lambda", "capture", "reference", "&"]
-doc = "Refer to every used local by reference."
+keys = ["lambda", "capture", "reference", "&", "all", "default", "borrow"]
+doc = "Refer to every used local by reference; the lambda must not outlive them."
 snippet = """
 [&](${1:}) {
     $0
 }"""
 
 [[entries]]
+name = "lambda capture one by value"
+keys = ["lambda", "capture", "value", "copy", "one", "named", "explicit"]
+doc = "Copy one named local into the closure."
+snippet = """
+[${1:x}](${2:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture one by reference"
+keys = ["lambda", "capture", "reference", "&x", "one", "named", "explicit"]
+doc = "Refer to one named local by reference."
+snippet = """
+[&${1:x}](${2:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture list"
+keys = ["lambda", "capture", "list", "several", "multiple", "mixed", "comma"]
+doc = "Capture several locals, each by value or by reference."
+snippet = """
+[${1:a}, &${2:b}](${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture default with exceptions"
+keys = ["lambda", "capture", "mixed", "default", "except", "=, &", "&, ="]
+doc = "Default capture with named exceptions, e.g. everything by value but one by reference."
+snippet = """
+[${1:=}, ${2:&out}](${3:}) {
+    $0
+}"""
+
+[[entries]]
 name = "lambda capture this"
-keys = ["lambda", "capture", "this", "member"]
-doc = "Capture the enclosing object pointer."
+keys = ["lambda", "capture", "this", "member", "method", "class", "self"]
+doc = "Capture the enclosing object pointer so members are usable inside."
 snippet = """
 [this](${1:}) {
     $0
 }"""
 
 [[entries]]
+name = "lambda capture *this"
+keys = ["lambda", "capture", "*this", "copy", "object", "member", "async"]
+doc = "C++17 copy the whole enclosing object into the closure, safe after it dies."
+snippet = """
+[*this](${1:}) {
+    $0
+}"""
+
+[[entries]]
 name = "lambda init capture"
-keys = ["lambda", "capture", "init", "move"]
-doc = "Capture by moving or by a new named value."
+keys = ["lambda", "capture", "init", "expression", "new", "named", "="]
+doc = "Capture a new name initialized from any expression."
+snippet = """
+[${1:total} = ${2:compute()}](${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda move capture"
+keys = ["lambda", "capture", "move", "unique_ptr", "init", "ownership", "transfer"]
+doc = "Move a local such as a unique_ptr into the closure."
 snippet = """
 [${1:p} = std::move(${2:p})](${3:}) {
     $0
 }"""
 
 [[entries]]
+name = "lambda capture reference by init"
+keys = ["lambda", "capture", "init", "reference", "alias", "&name"]
+doc = "Init capture that binds a reference under a new name."
+snippet = """
+[&${1:ref} = ${2:object}](${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "lambda capture in member function"
+keys = ["lambda", "member", "this", "method", "callback", "class", "field"]
+doc = "Lambda inside a member function that uses fields through this."
+snippet = """
+auto ${1:callback} = [this](${2:int value}) {
+    ${3:total_} += ${4:value};$0
+};"""
+
+[[entries]]
 name = "mutable lambda"
-keys = ["lambda", "mutable", "state"]
-doc = "Lambda that may modify its by-value captures."
+keys = ["lambda", "mutable", "state", "counter", "modify", "capture"]
+doc = "Lambda that may modify its by-value captures between calls."
 snippet = """
 [${1:count} = ${2:0}](${3:}) mutable {
     $0
 }"""
 
 [[entries]]
-name = "generic lambda"
-keys = ["lambda", "generic", "auto", "template"]
-doc = "Lambda with auto parameters, templated on call."
+name = "lambda with default argument"
+keys = ["lambda", "default", "argument", "parameter", "optional"]
+doc = "Lambda parameter with a default value."
 snippet = """
-[](const auto &${1:x}) {
+[](${1:int x}, ${2:int step = 1}) {
     $0
 }"""
 
 [[entries]]
-name = "template lambda"
-keys = ["lambda", "template", "typename"]
-doc = "C++20 lambda with an explicit template parameter list."
+name = "lambda returning lambda"
+keys = ["lambda", "factory", "closure", "return", "nested", "curry", "adder"]
+doc = "Function or lambda that builds and returns another closure."
 snippet = """
-[]<typename ${1:T}>(${1:T} ${2:x}) {
-    $0
-}"""
-
-[[entries]]
-name = "immediately invoked lambda"
-keys = ["lambda", "iife", "invoke", "init"]
-doc = "Call a lambda immediately, often to initialize a const."
-snippet = """
-const auto ${1:value} = [&] {
-    $0
-}();"""
-
-[[entries]]
-name = "recursive lambda"
-keys = ["lambda", "recursive", "self", "deducing this"]
-doc = "C++23 lambda that calls itself through an explicit self parameter."
-snippet = """
-auto ${1:fib} = [](this auto self, ${2:int n}) -> ${3:int} {
-    return ${4:n < 2 ? n : self(n - 1) + self(n - 2)};
+auto ${1:make_adder} = [](${2:int n}) {
+    return [${3:n}](${4:int x}) { return ${5:x + n}; };
 };$0"""
 
 [[entries]]
-name = "std::function"
-keys = ["function", "callback", "std::function"]
-doc = "Type-erased callable holder."
+name = "lambda called immediately"
+keys = ["lambda", "call", "invoke", "immediately", "()", "run"]
+doc = "Define a lambda and call it in the same expression."
 snippet = """
-std::function<${1:void}(${2:int})> ${3:fn} = ${4:callback};$0"""
-
-[[entries]]
-name = "function pointer"
-keys = ["function", "pointer", "fnptr", "callback"]
-doc = "Pointer to a free function."
-snippet = """
-${1:int} (*${2:fn})(${3:int}) = &${4:func};$0"""
-
-[[entries]]
-name = "std::bind"
-keys = ["bind", "placeholders", "partial"]
-doc = "Bind some arguments of a callable (prefer lambdas)."
-snippet = """
-auto ${1:bound} = std::bind(${2:func}, ${3:std::placeholders::_1}, ${4:arg});$0"""
-
-[[entries]]
-name = "std::bind_front"
-keys = ["bind_front", "bind", "partial"]
-doc = "C++20 bind leading arguments of a callable."
-snippet = """
-auto ${1:bound} = std::bind_front(${2:func}, ${3:arg});$0"""
-
-[[entries]]
-name = "std::invoke"
-keys = ["invoke", "call", "member"]
-doc = "Call any callable uniformly, including member pointers."
-snippet = """
-std::invoke(${1:fn}, ${2:args})$0"""
-
-[[entries]]
-name = "std::apply"
-keys = ["apply", "tuple", "unpack", "call"]
-doc = "Call a function with the elements of a tuple as arguments."
-snippet = """
-std::apply(${1:fn}, ${2:tuple})$0"""
-
-[[entries]]
-name = "std::mem_fn"
-keys = ["mem_fn", "member", "function"]
-doc = "Wrap a member function pointer as a callable."
-snippet = """
-std::mem_fn(&${1:Class}::${2:method})$0"""
-
-[[entries]]
-name = "std::ref"
-keys = ["ref", "reference_wrapper", "cref"]
-doc = "Pass a reference where a value would be copied."
-snippet = """
-std::ref(${1:value})$0"""
-
-[[entries]]
-name = "callback parameter"
-keys = ["callback", "invocable", "template", "functor"]
-doc = "Accept any callable as a template parameter."
-snippet = """
-template <std::invocable<${1:int}> ${2:F}>
-void ${3:name}(${2:F} &&${4:fn}) {
-    ${4:fn}($0);
-}"""
-
-[[entries]]
-name = "functor struct"
-keys = ["functor", "struct", "operator()", "callable"]
-doc = "Struct with a call operator."
-snippet = """
-struct ${1:Name} {
-    ${2:int} operator()(${3:int x}) const { return $0; }
-};"""
-
-[[entries]]
-name = "std::plus / std::less"
-keys = ["plus", "less", "greater", "functional", "operator"]
-doc = "Standard function objects for operators."
-snippet = """
-std::${1:less}<${2:}>()$0"""
+[${1:&}](${2:}) {
+    $0
+}(${3:});"""

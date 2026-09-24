@@ -1,0 +1,163 @@
+title = "Built-in operators"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "assignment"
+keys = ["assign", "=", "set", "store", "equals"]
+doc = "Store a value into a variable."
+snippet = """
+${1:x} = ${2:value};$0"""
+
+[[entries]]
+name = "compound assignment"
+keys = ["assign", "+=", "-=", "*=", "/=", "%=", "compound", "increase"]
+doc = "Apply an operator and store the result: += -= *= /= %= <<= >>= &= |= ^=."
+snippet = """
+${1:x} ${2:+=} ${3:value};$0"""
+
+[[entries]]
+name = "chained assignment"
+keys = ["assign", "=", "chain", "multiple", "same"]
+doc = "Assign one value to several variables."
+snippet = """
+${1:a} = ${2:b} = ${3:0};$0"""
+
+[[entries]]
+name = "pre-increment"
+keys = ["increment", "++", "decrement", "--", "prefix", "add", "one"]
+doc = "Increment in place and yield the new value (prefer prefix for iterators)."
+snippet = """
+++${1:i}$0"""
+
+[[entries]]
+name = "post-increment"
+keys = ["increment", "++", "decrement", "--", "postfix", "old"]
+doc = "Increment in place but yield the old value."
+snippet = """
+${1:i}++$0"""
+
+[[entries]]
+name = "arithmetic"
+keys = ["arithmetic", "+", "-", "*", "/", "%", "plus", "minus", "times"]
+doc = "Binary arithmetic: + - * / %."
+snippet = """
+${1:a} ${2:+} ${3:b}$0"""
+
+[[entries]]
+name = "unary minus"
+keys = ["negate", "minus", "-", "unary", "sign", "negative"]
+doc = "Negate a value."
+snippet = """
+-${1:x}$0"""
+
+[[entries]]
+name = "comparison"
+keys = ["compare", "<", ">", "<=", ">=", "less", "greater", "relational"]
+doc = "Relational operators yield bool: < > <= >=."
+snippet = """
+${1:a} ${2:<} ${3:b}$0"""
+
+[[entries]]
+name = "equality"
+keys = ["equal", "==", "!=", "compare", "same", "different"]
+doc = "Equality operators yield bool: == !=."
+snippet = """
+${1:a} ${2:==} ${3:b}$0"""
+
+[[entries]]
+name = "logical and / or"
+keys = ["logical", "and", "or", "&&", "||", "both", "either", "short-circuit"]
+doc = "Logical && and || short-circuit and yield bool."
+snippet = """
+${1:a} ${2:&&} ${3:b}$0"""
+
+[[entries]]
+name = "logical not"
+keys = ["logical", "not", "!", "negate", "invert", "bool"]
+doc = "Invert a boolean."
+snippet = """
+!${1:condition}$0"""
+
+[[entries]]
+name = "alternative tokens"
+keys = ["and", "or", "not", "alternative", "tokens", "keywords"]
+doc = "and, or, not are spellings of &&, ||, !."
+snippet = """
+${1:a} ${2:and} ${3:b}$0"""
+
+[[entries]]
+name = "dereference"
+keys = ["deref", "dereference", "*", "pointer", "value", "at"]
+doc = "Object a pointer or iterator refers to."
+snippet = """
+*${1:ptr}$0"""
+
+[[entries]]
+name = "address of"
+keys = ["address", "&", "pointer", "of", "reference"]
+doc = "Pointer to an object."
+snippet = """
+&${1:value}$0"""
+
+[[entries]]
+name = "member access"
+keys = ["member", ".", "dot", "field", "access", "method"]
+doc = "Member of an object."
+snippet = """
+${1:obj}.${2:member}$0"""
+
+[[entries]]
+name = "member access through pointer"
+keys = ["member", "->", "arrow", "pointer", "field", "access"]
+doc = "Member of the object a pointer refers to."
+snippet = """
+${1:ptr}->${2:member}$0"""
+
+[[entries]]
+name = "subscript"
+keys = ["subscript", "[]", "index", "element", "array", "at"]
+doc = "Element by index."
+snippet = """
+${1:arr}[${2:i}]$0"""
+
+[[entries]]
+name = "function call"
+keys = ["call", "()", "invoke", "function", "arguments"]
+doc = "Call a function or callable with arguments."
+snippet = """
+${1:fn}(${2:args})$0"""
+
+[[entries]]
+name = "scope operator"
+keys = ["scope", "::", "namespace", "static", "qualified"]
+doc = "Name inside a namespace or class."
+snippet = """
+${1:ns}::${2:name}$0"""
+
+[[entries]]
+name = "placement new"
+keys = ["new", "placement", "construct", "buffer", "in", "place"]
+doc = "Construct an object in existing storage."
+snippet = """
+new (${1:buffer}) ${2:T}(${3:});$0"""
+
+[[entries]]
+name = "explicit destructor call"
+keys = ["destructor", "call", "placement", "destroy", "~", "explicit"]
+doc = "Destroy an object created with placement new."
+snippet = """
+${1:ptr}->~${2:T}();$0"""
+
+[[entries]]
+name = "throw expression"
+keys = ["throw", "expression", "ternary", "error", "raise"]
+doc = "throw usable inside an expression such as a conditional."
+snippet = """
+${1:ok} ? ${2:value} : throw ${3:std::runtime_error}("${4:message}")$0"""
+
+[[entries]]
+name = "operator precedence parentheses"
+keys = ["precedence", "parentheses", "()", "order", "group", "mixed"]
+doc = "Parenthesize mixed operators; bitwise and comparison bind unexpectedly."
+snippet = """
+(${1:a} & ${2:mask}) == ${3:value}$0"""

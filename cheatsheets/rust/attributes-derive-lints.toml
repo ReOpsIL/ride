@@ -1,0 +1,172 @@
+title = "Derives, lints and layout"
+contexts = ["attribute", "item"]
+
+[[entries]]
+name = "derive full list"
+keys = ["derive", "all", "debug", "clone", "copy", "eq", "ord", "hash", "default"]
+doc = "Derive every standard trait a plain data type can support."
+snippet = '''
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]$0'''
+
+[[entries]]
+name = "#[derive(PartialOrd, Ord)]"
+keys = ["derive", "ord", "partialord", "compare", "sort", "order", "less"]
+doc = "Derive ordering, comparing fields or variants in declaration order."
+snippet = '''
+#[derive(PartialEq, Eq, PartialOrd, Ord)]$0'''
+
+[[entries]]
+name = "#[derive(Hash, Eq)]"
+keys = ["derive", "hash", "eq", "key", "hashmap", "hashset", "set"]
+doc = "Derive what a type needs to be a HashMap key or HashSet element."
+snippet = '''
+#[derive(PartialEq, Eq, Hash)]$0'''
+
+[[entries]]
+name = "#[derive(Default)]"
+keys = ["derive", "default", "zero", "empty", "new", "construct"]
+doc = "Derive a constructor that defaults every field."
+snippet = '''
+#[derive(Default)]$0'''
+
+[[entries]]
+name = "#[derive(Serialize, Deserialize)]"
+keys = ["derive", "serde", "serialize", "deserialize", "json", "toml", "config"]
+doc = "Derive serde conversions, optionally renaming all fields for the wire format."
+snippet = '''
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+${1:#[serde(rename_all = "camelCase")]}$0'''
+
+[[entries]]
+name = "#[serde] field attribute"
+keys = ["serde", "field", "rename", "default", "skip", "flatten", "alias"]
+doc = "Control how one field is serialized, such as its name, default or skipping it."
+snippet = '''
+#[serde(${1:default}${2:, rename = "name"})]$0'''
+
+[[entries]]
+name = "#[allow(unused)]"
+keys = ["allow", "unused", "variables", "imports", "mut", "lint", "warning"]
+doc = "Silence the unused-code family of lints on an item."
+snippet = '''
+#[allow(unused${1:_variables})]$0'''
+
+[[entries]]
+name = "#[allow(clippy::lint)]"
+keys = ["allow", "clippy", "lint", "warning", "suppress", "too_many_arguments"]
+doc = "Silence a specific clippy lint for the following item."
+snippet = '''
+#[allow(clippy::${1:too_many_arguments})]$0'''
+
+[[entries]]
+name = "#![allow] crate-wide"
+keys = ["allow", "crate", "dead_code", "inner", "global", "lint", "prototype"]
+doc = "Silence a lint for the whole crate from the root file."
+snippet = '''
+#![allow(${1:dead_code})]$0'''
+
+[[entries]]
+name = "#![deny] crate-wide"
+keys = ["deny", "warnings", "unsafe_code", "crate", "inner", "strict", "lint"]
+doc = "Turn a lint or all warnings into hard errors for the whole crate."
+snippet = '''
+#![deny(${1:unsafe_code})]$0'''
+
+[[entries]]
+name = "#![warn(clippy)]"
+keys = ["warn", "clippy", "pedantic", "crate", "inner", "lint", "strict"]
+doc = "Enable a clippy lint group for the whole crate."
+snippet = '''
+#![warn(clippy::${1:pedantic})]$0'''
+
+[[entries]]
+name = "#[cfg(debug_assertions)]"
+keys = ["cfg", "debug", "release", "assertions", "build", "profile"]
+doc = "Compile the following item only in debug builds."
+snippet = '''
+#[cfg(${1:debug_assertions})]$0'''
+
+[[entries]]
+name = "#[cfg(unix / windows)]"
+keys = ["cfg", "unix", "windows", "macos", "linux", "platform", "family"]
+doc = "Compile the following item only on one operating system family."
+snippet = '''
+#[cfg(${1:unix})]$0'''
+
+[[entries]]
+name = "#[cfg(target_arch)]"
+keys = ["cfg", "target", "arch", "x86_64", "aarch64", "wasm", "cpu"]
+doc = "Compile the following item only for one CPU architecture."
+snippet = '''
+#[cfg(target_arch = "${1:x86_64}")]$0'''
+
+[[entries]]
+name = "#[cfg(target_pointer_width)]"
+keys = ["cfg", "pointer", "width", "64", "32", "bits", "target"]
+doc = "Compile the following item only for a given pointer width."
+snippet = '''
+#[cfg(target_pointer_width = "${1:64}")]$0'''
+
+[[entries]]
+name = "#[cfg(test)] mod tests"
+keys = ["cfg", "test", "mod", "tests", "module", "unit"]
+doc = "Declare the unit test module compiled only under cargo test."
+snippet = '''
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ${1:it_works}() {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "#[doc = include_str!]"
+keys = ["doc", "include", "readme", "markdown", "crate", "documentation"]
+doc = "Use a Markdown file as the documentation of the crate or an item."
+snippet = '''
+#![doc = include_str!("${1:../README.md}")]$0'''
+
+[[entries]]
+name = "#[doc(alias)]"
+keys = ["doc", "alias", "search", "rustdoc", "name"]
+doc = "Add an extra search term for an item in rustdoc."
+snippet = '''
+#[doc(alias = "${1:other_name}")]$0'''
+
+[[entries]]
+name = "#[cold]"
+keys = ["cold", "unlikely", "error", "path", "performance", "hint"]
+doc = "Hint that a function is rarely called, keeping it out of the hot path."
+snippet = '''
+#[cold]$0'''
+
+[[entries]]
+name = "#[repr(transparent)]"
+keys = ["repr", "transparent", "newtype", "ffi", "layout", "wrapper"]
+doc = "Give a single-field wrapper exactly the layout of its field."
+snippet = '''
+#[repr(transparent)]$0'''
+
+[[entries]]
+name = "#[repr(packed / align)]"
+keys = ["repr", "packed", "align", "padding", "alignment", "layout"]
+doc = "Remove padding or force a minimum alignment for a type."
+snippet = '''
+#[repr(${1:C, packed})]$0'''
+
+[[entries]]
+name = "#[must_use] on type"
+keys = ["must_use", "type", "struct", "result", "warn", "discard"]
+doc = "Warn whenever a value of this type is discarded, as with Result."
+snippet = '''
+#[must_use = "${1:reason}"]$0'''
+
+[[entries]]
+name = "#[inline(never)]"
+keys = ["inline", "never", "noinline", "profile", "stack", "performance"]
+doc = "Keep a function out of line, useful for profiling or code size."
+snippet = '''
+#[inline(never)]$0'''

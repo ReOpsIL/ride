@@ -1,0 +1,206 @@
+title = "Error codes and results"
+contexts = ["statement"]
+
+[[entries]]
+name = "std::expected"
+keys = ["expected", "result", "error", "unexpected", "either", "c++23"]
+doc = "C++23 return a value or an error without exceptions."
+snippet = """
+std::expected<${1:int}, ${2:std::string}> ${3:result} = ${4:compute()};
+if (!${3:result}) {
+    ${5:return std::unexpected(result.error());}
+}
+$0"""
+
+[[entries]]
+name = "std::unexpected"
+keys = ["unexpected", "expected", "error", "return", "fail"]
+doc = "Return the error alternative of std::expected."
+snippet = """
+return std::unexpected(${1:error});$0"""
+
+[[entries]]
+name = "expected function"
+keys = ["expected", "function", "result", "fn", "return", "fallible"]
+doc = "Function returning std::expected."
+snippet = """
+std::expected<${1:int}, ${2:std::string}> ${3:name}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "expected value_or"
+keys = ["expected", "value_or", "default", "fallback", "value", "error"]
+doc = "Take the value or a fallback; also .value() which throws bad_expected_access and .error()."
+snippet = """
+${1:result}.value_or(${2:fallback})$0"""
+
+[[entries]]
+name = "expected and_then"
+keys = ["expected", "and_then", "transform", "or_else", "monadic", "chain", "map"]
+doc = "Chain fallible steps: and_then, transform, or_else, transform_error."
+snippet = """
+${1:result}.and_then([](${2:int v}) -> std::expected<${3:int}, ${4:std::string}> {
+    return ${5:v * 2};
+})$0"""
+
+[[entries]]
+name = "optional error return"
+keys = ["optional", "nullopt", "error", "return", "absent", "none"]
+doc = "Return nullopt to signal absence."
+snippet = """
+return std::nullopt;$0"""
+
+[[entries]]
+name = "optional function"
+keys = ["optional", "function", "maybe", "return", "find", "lookup"]
+doc = "Function returning a value or nothing."
+snippet = """
+std::optional<${1:int}> ${2:find}(${3:}) {
+    if (${4:not_found}) {
+        return std::nullopt;
+    }
+    return ${5:value};
+}$0"""
+
+[[entries]]
+name = "optional check and use"
+keys = ["optional", "has_value", "if", "check", "use", "value", "*"]
+doc = "Test an optional and read its value."
+snippet = """
+if (auto ${1:r} = ${2:find()}) {
+    ${3:use(*r);}$0
+}"""
+
+[[entries]]
+name = "variant as result"
+keys = ["variant", "result", "error", "either", "holds_alternative", "get_if"]
+doc = "Pre-C++23 result type as a variant of value and error."
+snippet = """
+std::variant<${1:int}, ${2:Error}> ${3:result} = ${4:compute()};
+if (auto *${5:err} = std::get_if<${2:Error}>(&${3:result})) {
+    $0
+}"""
+
+[[entries]]
+name = "std::error_code"
+keys = ["error_code", "errc", "system_error", "code", "portable"]
+doc = "Portable error code with a category."
+snippet = """
+std::error_code ${1:ec} = std::make_error_code(std::errc::${2:invalid_argument});$0"""
+
+[[entries]]
+name = "error_code check"
+keys = ["error_code", "check", "if", "message", "value", "failed"]
+doc = "An error_code is truthy on failure; message() describes it."
+snippet = """
+if (${1:ec}) {
+    ${2:std::cerr << ec.message() << '\\n';}$0
+}"""
+
+[[entries]]
+name = "error_code out parameter"
+keys = ["error_code", "parameter", "out", "filesystem", "noexcept", "overload"]
+doc = "Non-throwing overload that reports failure through an error_code reference."
+snippet = """
+std::error_code ${1:ec};
+${2:std::filesystem::remove(path, ec)};
+if (${1:ec}) {
+    $0
+}"""
+
+[[entries]]
+name = "std::system_error"
+keys = ["system_error", "errno", "throw", "os", "generic_category"]
+doc = "Throw an exception carrying errno."
+snippet = """
+throw std::system_error(errno, std::generic_category(), "${1:message}");$0"""
+
+[[entries]]
+name = "std::system_error from error_code"
+keys = ["system_error", "error_code", "throw", "convert", "wrap"]
+doc = "Throw an error_code as an exception."
+snippet = """
+throw std::system_error(${1:ec}, "${2:message}");$0"""
+
+[[entries]]
+name = "errno"
+keys = ["errno", "strerror", "perror", "c", "last error", "cerrno"]
+doc = "C error number after a failed C call, described by std::strerror."
+snippet = """
+if (${1:call()} < 0) {
+    std::perror("${2:call}");$0
+}"""
+
+[[entries]]
+name = "custom error enum"
+keys = ["enum", "error", "code", "custom", "status", "result"]
+doc = "Plain enum class used as a lightweight error code."
+snippet = """
+enum class ${1:Error} {
+    ${2:none},
+    ${3:not_found},
+    $0
+};"""
+
+[[entries]]
+name = "assert"
+keys = ["assert", "cassert", "check", "debug", "invariant", "precondition"]
+doc = "Abort in debug builds when a condition is false; compiled out by NDEBUG."
+snippet = """
+assert(${1:condition} && "${2:message}");$0"""
+
+[[entries]]
+name = "static_assert"
+keys = ["static_assert", "compile", "check", "constant", "assert"]
+doc = "Compile-time assertion with a message."
+snippet = """
+static_assert(${1:condition}, "${2:message}");$0"""
+
+[[entries]]
+name = "std::abort"
+keys = ["abort", "crash", "fatal", "core", "exit"]
+doc = "Abort immediately without running destructors or atexit handlers."
+snippet = """
+std::abort();$0"""
+
+[[entries]]
+name = "std::exit"
+keys = ["exit", "quit", "exit_failure", "exit_success", "status", "return"]
+doc = "Exit the program with a status code, running atexit handlers but not local destructors."
+snippet = """
+std::exit(${1:EXIT_FAILURE});$0"""
+
+[[entries]]
+name = "std::atexit"
+keys = ["atexit", "exit", "handler", "cleanup", "register"]
+doc = "Register a function to run at normal program exit."
+snippet = """
+std::atexit([] { ${1:cleanup();} });$0"""
+
+[[entries]]
+name = "[[noreturn]] fail function"
+keys = ["noreturn", "fail", "throw", "helper", "attribute", "never returns"]
+doc = "Helper that always throws or aborts, marked so callers need no return after it."
+snippet = """
+[[noreturn]] void ${1:fail}(${2:const std::string &message}) {
+    throw ${3:std::runtime_error}(${4:message});
+}$0"""
+
+[[entries]]
+name = "[[unlikely]] error path"
+keys = ["unlikely", "likely", "attribute", "branch", "hint", "cold"]
+doc = "C++20 hint that a branch is rarely taken."
+snippet = """
+if (${1:error}) [[unlikely]] {
+    $0
+}"""
+
+[[entries]]
+name = "std::source_location"
+keys = ["source_location", "file", "line", "function", "current", "log", "c++20"]
+doc = "C++20 capture of the caller's file, line and function without macros."
+snippet = """
+void ${1:log}(${2:std::string_view msg}, const std::source_location ${3:loc} = std::source_location::current()) {
+    ${4:std::cerr << loc.file_name() << ':' << loc.line() << ' ' << msg << '\\n';}$0
+}"""

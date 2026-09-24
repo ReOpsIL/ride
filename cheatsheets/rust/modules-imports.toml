@@ -1,0 +1,158 @@
+title = "Common imports"
+contexts = ["item", "use"]
+
+[[entries]]
+name = "use std::collections"
+keys = ["use", "std", "collections", "hashmap", "hashset", "btreemap", "vecdeque", "import"]
+doc = "Import the standard collection types."
+snippet = '''
+use std::collections::{${1:HashMap, HashSet}};$0'''
+
+[[entries]]
+name = "use std::fmt::Display"
+keys = ["use", "std", "fmt", "display", "formatter", "debug", "import"]
+doc = "Import what a Display implementation needs."
+snippet = '''
+use std::fmt::{self, Display, Formatter};$0'''
+
+[[entries]]
+name = "use std::error::Error"
+keys = ["use", "std", "error", "trait", "box", "import"]
+doc = "Import the Error trait for custom errors and boxed errors."
+snippet = '''
+use std::error::Error;$0'''
+
+[[entries]]
+name = "use std::str::FromStr"
+keys = ["use", "std", "str", "fromstr", "parse", "import"]
+doc = "Import FromStr to implement parse for a type."
+snippet = '''
+use std::str::FromStr;$0'''
+
+[[entries]]
+name = "use std::cmp"
+keys = ["use", "std", "cmp", "ordering", "max", "min", "reverse", "import"]
+doc = "Import ordering helpers for comparisons and sorting."
+snippet = '''
+use std::cmp::{${1:Ordering, Reverse}};$0'''
+
+[[entries]]
+name = "use std::env"
+keys = ["use", "std", "env", "args", "var", "environment", "import"]
+doc = "Import the environment module for command-line arguments and variables."
+snippet = '''
+use std::env;$0'''
+
+[[entries]]
+name = "use std::fs"
+keys = ["use", "std", "fs", "file", "read", "write", "filesystem", "import"]
+doc = "Import the filesystem module and the File type."
+snippet = '''
+use std::fs::{self, ${1:File}};$0'''
+
+[[entries]]
+name = "use std::process"
+keys = ["use", "std", "process", "exit", "command", "spawn", "import"]
+doc = "Import the process module for exiting and running commands."
+snippet = '''
+use std::process::{${1:self, Command}};$0'''
+
+[[entries]]
+name = "use std::thread and time"
+keys = ["use", "std", "thread", "time", "duration", "instant", "sleep", "import"]
+doc = "Import threading and time types together."
+snippet = '''
+use std::thread;
+use std::time::{Duration, Instant};$0'''
+
+[[entries]]
+name = "use std::rc and cell"
+keys = ["use", "std", "rc", "refcell", "cell", "shared", "interior", "import"]
+doc = "Import the single-threaded shared-ownership types."
+snippet = '''
+use std::cell::RefCell;
+use std::rc::Rc;$0'''
+
+[[entries]]
+name = "use std::ops"
+keys = ["use", "std", "ops", "add", "sub", "mul", "index", "operator", "overload", "import"]
+doc = "Import operator traits to overload them for a type."
+snippet = '''
+use std::ops::{${1:Add, Sub, Mul}};$0'''
+
+[[entries]]
+name = "use std::mem"
+keys = ["use", "std", "mem", "take", "replace", "swap", "size_of", "import"]
+doc = "Import memory helpers such as take, replace and swap."
+snippet = '''
+use std::mem;$0'''
+
+[[entries]]
+name = "use std::borrow::Cow"
+keys = ["use", "std", "borrow", "cow", "clone", "write", "import"]
+doc = "Import the clone-on-write smart pointer."
+snippet = '''
+use std::borrow::Cow;$0'''
+
+[[entries]]
+name = "use std::marker::PhantomData"
+keys = ["use", "std", "marker", "phantom", "phantomdata", "generic", "import"]
+doc = "Import PhantomData for unused type parameters."
+snippet = '''
+use std::marker::PhantomData;$0'''
+
+[[entries]]
+name = "use std::iter"
+keys = ["use", "std", "iter", "repeat", "once", "fromiterator", "import"]
+doc = "Import iterator constructors and traits."
+snippet = '''
+use std::iter::{${1:self, FromIterator}};$0'''
+
+[[entries]]
+name = "use std::convert"
+keys = ["use", "std", "convert", "tryfrom", "tryinto", "infallible", "import"]
+doc = "Import conversion traits not already in the prelude."
+snippet = '''
+use std::convert::${1:Infallible};$0'''
+
+[[entries]]
+name = "use serde derives"
+keys = ["use", "serde", "serialize", "deserialize", "json", "derive", "crate", "import"]
+doc = "Import the serde derive macros from the serde crate."
+snippet = '''
+use serde::{Deserialize, Serialize};$0'''
+
+[[entries]]
+name = "use external crate item"
+keys = ["use", "crate", "dependency", "external", "cargo", "library", "import"]
+doc = "Import an item from a dependency listed in Cargo.toml."
+snippet = '''
+use ${1:crate_name}::${2:Item};$0'''
+
+[[entries]]
+name = "use leading ::"
+keys = ["use", "leading", "colon", "absolute", "extern", "disambiguate", "import"]
+doc = "Start a path with a double colon to name an external crate unambiguously."
+snippet = '''
+use ::${1:std}::${2:fmt};$0'''
+
+[[entries]]
+name = "pub(crate) use"
+keys = ["pub", "crate", "use", "reexport", "internal", "import"]
+doc = "Re-export an item for the rest of the crate without making it public."
+snippet = '''
+pub(crate) use ${1:self::inner::Item};$0'''
+
+[[entries]]
+name = "pub use as"
+keys = ["pub", "use", "as", "rename", "reexport", "alias", "import"]
+doc = "Re-export an item under a new name."
+snippet = '''
+pub use ${1:inner::Item} as ${2:PublicName};$0'''
+
+[[entries]]
+name = "use function"
+keys = ["use", "function", "fn", "max", "min", "swap", "import", "free"]
+doc = "Import a free function so it can be called by its bare name."
+snippet = '''
+use std::cmp::${1:max};$0'''

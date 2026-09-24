@@ -1,0 +1,188 @@
+title = "Impls, consts and aliases"
+contexts = ["item"]
+
+[[entries]]
+name = "trait"
+keys = ["trait", "interface", "protocol", "abstract", "contract"]
+doc = "Define a trait with a required method."
+snippet = '''
+trait ${1:Name} {
+    fn ${2:method}(&self${3:, arg: Type}) -> ${4:ReturnType};$0
+}'''
+
+[[entries]]
+name = "impl"
+keys = ["impl", "methods", "inherent", "block", "class"]
+doc = "Add inherent methods to a type."
+snippet = '''
+impl ${1:Type} {
+    $0
+}'''
+
+[[entries]]
+name = "impl for enum"
+keys = ["impl", "enum", "methods", "self", "match"]
+doc = "Add methods to an enum, matching on self inside them."
+snippet = '''
+impl ${1:Enum} {
+    fn ${2:is_first}(&self) -> bool {
+        matches!(self, Self::${3:First})$0
+    }
+}'''
+
+[[entries]]
+name = "impl with associated const"
+keys = ["impl", "const", "associated", "constant", "self", "static"]
+doc = "Define a constant scoped to a type and reached as Type::NAME."
+snippet = '''
+impl ${1:Type} {
+    pub const ${2:MAX}: ${3:usize} = ${4:100};$0
+}'''
+
+[[entries]]
+name = "impl Trait for"
+keys = ["impl", "trait", "for", "implement", "conform"]
+doc = "Implement a trait for a type."
+snippet = '''
+impl ${1:Trait} for ${2:Type} {
+    $0
+}'''
+
+[[entries]]
+name = "generic impl"
+keys = ["impl", "generic", "t", "bound", "parameter"]
+doc = "Add methods to every instantiation of a generic type."
+snippet = '''
+impl<T${1:: Clone}> ${2:Type}<T> {
+    $0
+}'''
+
+[[entries]]
+name = "impl with lifetime"
+keys = ["impl", "lifetime", "borrow", "reference"]
+doc = "Add methods to a type that carries a lifetime parameter."
+snippet = '''
+impl<'a> ${1:Type}<'a> {
+    $0
+}'''
+
+[[entries]]
+name = "impl for specific instantiation"
+keys = ["impl", "specific", "concrete", "instantiation", "generic", "specialize"]
+doc = "Add methods only when the generic type is instantiated with a concrete type."
+snippet = '''
+impl ${1:Type}<${2:f64}> {
+    $0
+}'''
+
+[[entries]]
+name = "const"
+keys = ["const", "constant", "define", "global", "immutable"]
+doc = "Define a compile-time constant inlined at each use."
+snippet = '''
+const ${1:NAME}: ${2:usize} = ${3:value};$0'''
+
+[[entries]]
+name = "pub const"
+keys = ["pub", "const", "constant", "public", "export"]
+doc = "Define a constant visible outside the module."
+snippet = '''
+pub const ${1:NAME}: ${2:u32} = ${3:value};$0'''
+
+[[entries]]
+name = "const computed"
+keys = ["const", "expression", "computed", "calculate", "arithmetic", "shift"]
+doc = "Define a constant from a compile-time expression over other constants."
+snippet = '''
+const ${1:BUFFER_SIZE}: usize = ${2:4} * ${3:1024};$0'''
+
+[[entries]]
+name = "const array"
+keys = ["const", "array", "table", "list", "lookup", "fixed"]
+doc = "Define a constant fixed-size array, typically a lookup table."
+snippet = '''
+const ${1:NAMES}: [&str; ${2:3}] = [${3:"a", "b", "c"}];$0'''
+
+[[entries]]
+name = "const string"
+keys = ["const", "str", "string", "text", "literal", "name"]
+doc = "Define a constant string slice with a static lifetime."
+snippet = '''
+const ${1:GREETING}: &str = "${2:hello}";$0'''
+
+[[entries]]
+name = "static"
+keys = ["static", "global", "variable", "lifetime", "address"]
+doc = "Define a global with a fixed address that lives for the whole program."
+snippet = '''
+static ${1:NAME}: ${2:&str} = ${3:"value"};$0'''
+
+[[entries]]
+name = "static array"
+keys = ["static", "array", "global", "table", "slice", "data"]
+doc = "Define a global fixed-size array shared by the whole program."
+snippet = '''
+static ${1:TABLE}: [${2:u8}; ${3:4}] = [${4:0, 1, 2, 3}];$0'''
+
+[[entries]]
+name = "static mut"
+keys = ["static", "mut", "global", "mutable", "unsafe", "counter"]
+doc = "Define a mutable global that may only be read or written inside unsafe blocks."
+snippet = '''
+static mut ${1:COUNTER}: ${2:u32} = ${3:0};$0'''
+
+[[entries]]
+name = "type alias"
+keys = ["type", "alias", "typedef", "rename", "shorthand"]
+doc = "Give a type a new name without creating a distinct type."
+snippet = '''
+type ${1:Name} = ${2:Type};$0'''
+
+[[entries]]
+name = "generic type alias"
+keys = ["type", "alias", "result", "generic", "shorthand"]
+doc = "Define a shorthand for a generic type, typically a crate-wide Result."
+snippet = '''
+pub type ${1:Result}<T> = std::result::Result<T, ${2:Error}>;$0'''
+
+[[entries]]
+name = "type alias boxed closure"
+keys = ["type", "alias", "closure", "box", "callback", "dyn", "fn"]
+doc = "Name a boxed closure type so signatures stay readable."
+snippet = '''
+type ${1:Callback} = Box<dyn Fn(${2:&str}) ${3:+ Send}>;$0'''
+
+[[entries]]
+name = "type alias with lifetime"
+keys = ["type", "alias", "lifetime", "borrow", "reference"]
+doc = "Define an alias that carries a lifetime parameter."
+snippet = '''
+type ${1:Name}<'a> = ${2:&'a [u8]};$0'''
+
+[[entries]]
+name = "extern crate"
+keys = ["extern", "crate", "import", "alloc", "rename"]
+doc = "Bring a crate into scope explicitly, needed only for alloc or renaming."
+snippet = '''
+extern crate ${1:alloc};$0'''
+
+[[entries]]
+name = "extern block"
+keys = ["extern", "block", "ffi", "link", "c", "foreign"]
+doc = "Declare foreign functions from a C library."
+snippet = '''
+#[link(name = "${1:m}")]
+unsafe extern "C" {
+    fn ${2:sqrt}(${3:x}: ${4:f64}) -> ${5:f64};$0
+}'''
+
+[[entries]]
+name = "macro_rules!"
+keys = ["macro", "rules", "define", "declarative", "custom"]
+doc = "Define a declarative macro by example."
+snippet = '''
+macro_rules! ${1:name} {
+    (${2:$x:expr}) => {
+        $0
+    };
+}'''

@@ -143,3 +143,31 @@ keys = ["unsafe", "impl", "send", "sync", "thread"]
 doc = "Assert that a type with raw pointers is safe to send or share across threads."
 snippet = '''
 unsafe impl ${1:Send} for ${2:Type} {}$0'''
+
+[[entries]]
+name = "impl Deref to slice"
+keys = ["impl", "deref", "slice", "vec", "newtype", "methods", "inherit"]
+doc = "Give a Vec newtype every slice method by dereferencing to a slice."
+snippet = '''
+impl std::ops::Deref for ${1:Type} {
+    type Target = [${2:T}];
+
+    fn deref(&self) -> &[${2:T}] {
+        &self.${3:0}
+    }
+}$0'''
+
+[[entries]]
+name = "impl Drop with guard"
+keys = ["impl", "drop", "guard", "raii", "restore", "cleanup", "scope"]
+doc = "Guard type that undoes something when it goes out of scope."
+snippet = '''
+struct ${1:Guard}<'a> {
+    ${2:target}: &'a mut ${3:State},
+}
+
+impl Drop for ${1:Guard}<'_> {
+    fn drop(&mut self) {
+        $0
+    }
+}'''

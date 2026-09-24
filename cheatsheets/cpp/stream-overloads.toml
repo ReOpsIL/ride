@@ -1,0 +1,59 @@
+title = "Stream operator overloads"
+contexts = ["item", "fields"]
+
+[[entries]]
+name = "operator<< for type"
+keys = ["operator<<", "ostream", "print", "output", "overload", "cout", "insertion"]
+doc = "Free function so a user type can be printed with <<."
+snippet = '''
+std::ostream &operator<<(std::ostream &${1:os}, const ${2:Type} &${3:value}) {
+    return ${1:os} << ${4:value.field};
+}$0'''
+
+[[entries]]
+name = "friend operator<<"
+keys = ["friend", "operator<<", "ostream", "print", "output", "overload", "member"]
+doc = "Inline friend inside the class with access to private members."
+snippet = '''
+friend std::ostream &operator<<(std::ostream &${1:os}, const ${2:Type} &${3:value}) {
+    return ${1:os} << ${4:value.field};
+}$0'''
+
+[[entries]]
+name = "operator>> for type"
+keys = ["operator>>", "istream", "read", "input", "overload", "cin", "extraction", "parse"]
+doc = "Free function so a user type can be read with >>."
+snippet = '''
+std::istream &operator>>(std::istream &${1:is}, ${2:Type} &${3:value}) {
+    return ${1:is} >> ${4:value.field};
+}$0'''
+
+[[entries]]
+name = "friend operator>>"
+keys = ["friend", "operator>>", "istream", "read", "input", "overload", "member"]
+doc = "Inline friend extraction operator inside the class."
+snippet = '''
+friend std::istream &operator>>(std::istream &${1:is}, ${2:Type} &${3:value}) {
+    return ${1:is} >> ${4:value.field};
+}$0'''
+
+[[entries]]
+name = "std::formatter specialization"
+keys = ["formatter", "format", "specialize", "std::format", "print", "custom", "c++20"]
+doc = "Make a user type work with std::format and std::print."
+snippet = '''
+template <>
+struct std::formatter<${1:Type}> : std::formatter<std::string> {
+    auto format(const ${1:Type} &${2:value}, format_context &ctx) const {
+        return std::formatter<std::string>::format(std::format("{}", ${3:value.field}), ctx);
+    }
+};$0'''
+
+[[entries]]
+name = "to_string member"
+keys = ["to_string", "str", "member", "string", "convert", "describe"]
+doc = "Member function returning a textual representation."
+snippet = '''
+std::string to_string() const {
+    return std::format("{}", ${1:field});
+}$0'''

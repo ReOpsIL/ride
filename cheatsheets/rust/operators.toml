@@ -10,14 +10,14 @@ ${1:a} ${2:+} ${3:b}$0'''
 
 [[entries]]
 name = "compound assignment"
-keys = ["assign", "compound", "plus", "equals", "increment", "add"]
+keys = ["assign", "compound", "plus", "equals", "increment", "decrement", "add", "subtract", "multiply"]
 doc = "Apply an operator and assign, the only way to increment since ++ does not exist."
 snippet = '''
 ${1:x} ${2:+=} ${3:1};$0'''
 
 [[entries]]
 name = "comparison == != < <= > >="
-keys = ["compare", "equal", "less", "greater", "eq", "ne", "lt", "gt", "comparison"]
+keys = ["compare", "equal", "equals", "less", "greater", "eq", "ne", "lt", "gt", "lte", "gte", "comparison"]
 doc = "Comparison operators from PartialEq and PartialOrd, which do not chain."
 snippet = '''
 ${1:a} ${2:==} ${3:b}$0'''
@@ -31,7 +31,7 @@ ${1:a} ${2:&&} ${3:b}$0'''
 
 [[entries]]
 name = "bitwise & | ^ ! << >>"
-keys = ["bitwise", "and", "or", "xor", "shift", "bits", "mask"]
+keys = ["bitwise", "and", "or", "xor", "not", "shift", "shl", "shr", "left", "right", "bits", "mask"]
 doc = "Bitwise operators, where ! is bitwise not on integers and shifts panic on overflow in debug."
 snippet = '''
 ${1:a} ${2:&} ${3:b}$0'''
@@ -134,3 +134,52 @@ keys = ["bool", "then", "then_some", "option", "conditional"]
 doc = "Turn a bool into an Option, lazily or with a value."
 snippet = '''
 ${1:cond}.then(|| ${2:value})$0'''
+
+[[entries]]
+name = "assignment ="
+keys = ["assign", "equals", "set", "store", "mutate", "operator"]
+doc = "Store a value into a mutable place; assignment itself yields unit, so it does not chain."
+snippet = '''
+${1:x} = ${2:value};$0'''
+
+[[entries]]
+name = "shift << >>"
+keys = ["shift", "shl", "shr", "left", "right", "bits", "multiply", "divide", "power"]
+doc = "Shift bits left or right, multiplying or dividing by a power of two."
+snippet = '''
+${1:x} ${2:<<} ${3:n}$0'''
+
+[[entries]]
+name = "compound bit assignment"
+keys = ["assign", "bit", "or", "and", "xor", "shift", "flags", "compound"]
+doc = "Combine a bitwise operator with assignment, typically to set flags."
+snippet = '''
+${1:flags} ${2:|=} ${3:MASK};$0'''
+
+[[entries]]
+name = "overflowing_add"
+keys = ["overflowing", "overflow", "add", "carry", "wrap", "tuple", "flag"]
+doc = "Wrapping arithmetic that also reports whether an overflow happened."
+snippet = '''
+let (${1:sum}, ${2:overflowed}) = ${3:a}.overflowing_add(${4:b});$0'''
+
+[[entries]]
+name = "checked_div / checked_rem"
+keys = ["checked", "div", "rem", "divide", "zero", "modulo", "safe", "option"]
+doc = "Divide without panicking, getting None on division by zero or overflow."
+snippet = '''
+${1:a}.checked_div(${2:b})$0'''
+
+[[entries]]
+name = "range contains"
+keys = ["range", "contains", "between", "inside", "bounds", "check", "in"]
+doc = "Test whether a value lies within a range."
+snippet = '''
+(${1:lo}..=${2:hi}).contains(&${3:x})$0'''
+
+[[entries]]
+name = "float partial_cmp / total_cmp"
+keys = ["float", "compare", "partial_cmp", "total_cmp", "sort", "nan", "ordering"]
+doc = "Compare floats, which are not Ord, for sorting or matching on Ordering."
+snippet = '''
+${1:a}.total_cmp(&${2:b})$0'''

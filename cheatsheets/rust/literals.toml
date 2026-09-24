@@ -3,7 +3,7 @@ contexts = []
 
 [[entries]]
 name = "integer literal"
-keys = ["int", "number", "literal", "underscore", "suffix"]
+keys = ["int", "number", "literal", "underscore", "suffix", "decimal", "digits"]
 doc = "Decimal integer, with underscores for readability and an optional type suffix."
 snippet = '''
 ${1:1_000_000}${2:u64}$0'''
@@ -45,14 +45,14 @@ ${1:i32}::${2:MAX}$0'''
 
 [[entries]]
 name = "float constants"
-keys = ["pi", "e", "infinity", "nan", "epsilon", "f64", "constant"]
-doc = "Mathematical and special float constants."
+keys = ["pi", "e", "tau", "sqrt2", "ln2", "f64", "constant", "math"]
+doc = "Mathematical constants from the consts module of f64 or f32."
 snippet = '''
 std::f64::consts::${1:PI}$0'''
 
 [[entries]]
 name = "string literal"
-keys = ["string", "str", "literal", "quote", "text"]
+keys = ["string", "str", "literal", "quote", "text", "static"]
 doc = "UTF-8 string literal of type &'static str."
 snippet = '''
 "${1:text}"$0'''
@@ -176,3 +176,38 @@ keys = ["enum", "variant", "path", "construct", "literal"]
 doc = "Construct an enum variant by path."
 snippet = '''
 ${1:Color}::${2:Red}$0'''
+
+[[entries]]
+name = "float special values"
+keys = ["infinity", "nan", "epsilon", "max", "min", "f64", "special", "constant"]
+doc = "Special float values such as infinity, NaN, epsilon and the type bounds."
+snippet = '''
+f64::${1:INFINITY}$0'''
+
+[[entries]]
+name = "typed integer suffix"
+keys = ["suffix", "u8", "i64", "usize", "typed", "literal", "int", "number"]
+doc = "Pin an integer literal to a type with a suffix instead of an annotation."
+snippet = '''
+${1:42}${2:u8}$0'''
+
+[[entries]]
+name = "negative literal"
+keys = ["negative", "minus", "signed", "literal", "number"]
+doc = "Negative number literal, valid only for signed integer and float types."
+snippet = '''
+-${1:1}$0'''
+
+[[entries]]
+name = "char escape"
+keys = ["char", "escape", "newline", "tab", "quote", "unicode", "literal"]
+doc = "Character literal written with an escape such as newline, tab or a Unicode code point."
+snippet = '''
+'\\${1:n}'$0'''
+
+[[entries]]
+name = "raw identifier"
+keys = ["raw", "identifier", "r#", "keyword", "name", "reserved"]
+doc = "Use a keyword as an identifier by prefixing it with r#."
+snippet = '''
+r#${1:type}$0'''

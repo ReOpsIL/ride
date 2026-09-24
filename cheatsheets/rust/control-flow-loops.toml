@@ -1,0 +1,213 @@
+title = "Loop variants"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "for inclusive range"
+keys = ["for", "range", "inclusive", "dotdoteq", "count", "to", "in"]
+doc = "Iterate over a range that includes its upper bound."
+snippet = '''
+for ${1:i} in ${2:1}..=${3:n} {
+    $0
+}'''
+
+[[entries]]
+name = "for step_by"
+keys = ["for", "step", "step_by", "stride", "every", "skip", "in"]
+doc = "Iterate over a range advancing by a fixed step."
+snippet = '''
+for ${1:i} in (${2:0}..${3:n}).step_by(${4:2}) {
+    $0
+}'''
+
+[[entries]]
+name = "for index"
+keys = ["for", "index", "len", "i", "position", "subscript", "in"]
+doc = "Iterate over indices to read or write elements by position."
+snippet = '''
+for ${1:i} in 0..${2:items}.len() {
+    ${3:let item = &${2:items\}[${1:i\}];}$0
+}'''
+
+[[entries]]
+name = "for zip"
+keys = ["for", "zip", "pair", "two", "parallel", "together", "in"]
+doc = "Iterate over two collections in lockstep, stopping at the shorter."
+snippet = '''
+for (${1:a}, ${2:b}) in ${3:xs}.iter().zip(${4:ys}.iter()) {
+    $0
+}'''
+
+[[entries]]
+name = "for chars"
+keys = ["for", "chars", "string", "char", "character", "letter", "in"]
+doc = "Iterate over the Unicode characters of a string."
+snippet = '''
+for ${1:c} in ${2:text}.chars() {
+    $0
+}'''
+
+[[entries]]
+name = "for bytes"
+keys = ["for", "bytes", "u8", "string", "ascii", "in"]
+doc = "Iterate over the raw bytes of a string or byte slice."
+snippet = '''
+for ${1:b} in ${2:text}.bytes() {
+    $0
+}'''
+
+[[entries]]
+name = "for lines"
+keys = ["for", "lines", "line", "string", "text", "split", "in"]
+doc = "Iterate over the lines of a string without their line endings."
+snippet = '''
+for ${1:line} in ${2:text}.lines() {
+    $0
+}'''
+
+[[entries]]
+name = "for split"
+keys = ["for", "split", "words", "whitespace", "token", "in"]
+doc = "Iterate over the pieces of a string separated by whitespace or a pattern."
+snippet = '''
+for ${1:word} in ${2:text}.split${3:_whitespace}(${4:}) {
+    $0
+}'''
+
+[[entries]]
+name = "for over map"
+keys = ["for", "map", "hashmap", "key", "value", "entries", "pairs", "in"]
+doc = "Iterate over the key-value pairs of a map by reference."
+snippet = '''
+for (${1:key}, ${2:value}) in &${3:map} {
+    $0
+}'''
+
+[[entries]]
+name = "for consuming"
+keys = ["for", "into_iter", "consume", "move", "own", "value", "in"]
+doc = "Iterate by value, moving each element out and consuming the collection."
+snippet = '''
+for ${1:item} in ${2:items} {
+    $0
+}'''
+
+[[entries]]
+name = "for reverse collection"
+keys = ["for", "rev", "reverse", "backwards", "last", "iter", "in"]
+doc = "Iterate over a collection from its last element to its first."
+snippet = '''
+for ${1:item} in ${2:items}.iter().rev() {
+    $0
+}'''
+
+[[entries]]
+name = "for windows / chunks"
+keys = ["for", "windows", "chunks", "pairs", "adjacent", "group", "in"]
+doc = "Iterate over overlapping windows or disjoint chunks of a slice."
+snippet = '''
+for ${1:pair} in ${2:items}.${3:windows}(${4:2}) {
+    $0
+}'''
+
+[[entries]]
+name = "for nested"
+keys = ["for", "nested", "grid", "rows", "cols", "matrix", "2d", "in"]
+doc = "Iterate over rows and columns with two nested loops."
+snippet = '''
+for ${1:row} in 0..${2:rows} {
+    for ${3:col} in 0..${4:cols} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "for with break"
+keys = ["for", "break", "stop", "found", "search", "first", "in"]
+doc = "Stop the loop early when a condition is met."
+snippet = '''
+for ${1:item} in ${2:items} {
+    if ${3:condition} {
+        ${4:found = Some(item);}
+        break;
+    }$0
+}'''
+
+[[entries]]
+name = "for with continue"
+keys = ["for", "continue", "skip", "filter", "next", "in"]
+doc = "Skip elements that fail a condition and process the rest."
+snippet = '''
+for ${1:item} in ${2:items} {
+    if ${3:condition} {
+        continue;
+    }
+    $0
+}'''
+
+[[entries]]
+name = "nested loop with label"
+keys = ["for", "label", "outer", "inner", "nested", "continue", "break"]
+doc = "Continue or break the outer loop from inside the inner one via a label."
+snippet = '''
+'${1:outer}: for ${2:a} in ${3:xs} {
+    for ${4:b} in ${5:ys} {
+        if ${6:condition} {
+            continue '${1:outer};
+        }
+        $0
+    }
+}'''
+
+[[entries]]
+name = "while with counter"
+keys = ["while", "counter", "count", "increment", "index", "loop"]
+doc = "Loop with a manually advanced counter, for when the step depends on the body."
+snippet = '''
+let mut ${1:i} = ${2:0};
+while ${1:i} < ${3:n} {
+    $0
+    ${1:i} += 1;
+}'''
+
+[[entries]]
+name = "do-while via loop"
+keys = ["do", "while", "loop", "once", "atleast", "repeat", "until"]
+doc = "Run the body at least once and test the condition at the end."
+snippet = '''
+loop {
+    $0
+    if !${1:condition} {
+        break;
+    }
+}'''
+
+[[entries]]
+name = "loop retry"
+keys = ["loop", "retry", "attempt", "again", "until", "ok"]
+doc = "Retry an operation until it succeeds, keeping the result as the loop value."
+snippet = '''
+let ${1:value} = loop {
+    match ${2:attempt()} {
+        Ok(v) => break v,
+        Err(_) => ${3:continue},$0
+    }
+};'''
+
+[[entries]]
+name = "while let pop"
+keys = ["while", "let", "pop", "stack", "queue", "drain", "vec"]
+doc = "Drain a Vec or VecDeque from the end until it is empty."
+snippet = '''
+while let Some(${1:item}) = ${2:stack}.pop() {
+    $0
+}'''
+
+[[entries]]
+name = "while let next"
+keys = ["while", "let", "next", "iterator", "manual", "peek"]
+doc = "Drive an iterator by hand, useful with peekable or when the body needs the iterator."
+snippet = '''
+let mut ${1:iter} = ${2:items}.iter()${3:.peekable()};
+while let Some(${4:item}) = ${1:iter}.next() {
+    $0
+}'''

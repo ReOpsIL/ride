@@ -1,0 +1,196 @@
+title = "Types: generic parameters and bounds"
+contexts = ["type"]
+
+[[entries]]
+name = "<T> single parameter"
+keys = ["generic", "parameter", "t", "type", "angle", "template"]
+doc = "Introduce one unconstrained type parameter."
+snippet = '''
+<${1:T}>$0'''
+
+[[entries]]
+name = "<T, U> two parameters"
+keys = ["generic", "parameters", "two", "t", "u", "pair", "template"]
+doc = "Introduce two independent type parameters."
+snippet = '''
+<${1:T}, ${2:U}>$0'''
+
+[[entries]]
+name = "<T: Trait, U: Other> bounded pair"
+keys = ["generic", "bound", "two", "traits", "t", "u", "constrained"]
+doc = "Two type parameters, each constrained by its own trait."
+snippet = '''
+<${1:T}: ${2:Display}, ${3:U}: ${4:Debug}>$0'''
+
+[[entries]]
+name = "T: ?Sized"
+keys = ["sized", "unsized", "question", "dst", "str", "slice", "relax", "generic"]
+doc = "Relax the implicit Sized bound so T may be str, a slice or a trait object."
+snippet = '''
+${1:T}: ?Sized$0'''
+
+[[entries]]
+name = "T: Send + Sync + 'static"
+keys = ["send", "sync", "static", "thread", "bound", "spawn", "generic", "shared"]
+doc = "Bound set required to move a value into a spawned thread or share it globally."
+snippet = '''
+${1:T}: Send + Sync + 'static$0'''
+
+[[entries]]
+name = "T: Send + 'static"
+keys = ["send", "static", "thread", "bound", "spawn", "task", "owned"]
+doc = "Bound set required to hand a value to another thread or an async task."
+snippet = '''
+${1:T}: Send + 'static$0'''
+
+[[entries]]
+name = "T: Clone + Debug + Default"
+keys = ["clone", "debug", "default", "bound", "derive", "traits", "generic", "plus"]
+doc = "Common bound set letting generic code copy, print and construct values."
+snippet = '''
+${1:T}: Clone + ${2:std::fmt::Debug} + ${3:Default}$0'''
+
+[[entries]]
+name = "T: PartialOrd + Copy"
+keys = ["partialord", "ord", "copy", "compare", "bound", "max", "min", "generic"]
+doc = "Bound set for generic numeric comparison functions such as largest."
+snippet = '''
+${1:T}: PartialOrd + Copy$0'''
+
+[[entries]]
+name = "T: Iterator<Item = U>"
+keys = ["iterator", "item", "associated", "bound", "generic", "sequence"]
+doc = "Bound pinning down the element type of a generic iterator."
+snippet = '''
+${1:I}: Iterator<Item = ${2:u8}>$0'''
+
+[[entries]]
+name = "T: IntoIterator<Item = U>"
+keys = ["intoiterator", "item", "bound", "generic", "collection", "any", "for"]
+doc = "Bound accepting any collection or iterator yielding the given element type."
+snippet = '''
+${1:I}: IntoIterator<Item = ${2:T}>$0'''
+
+[[entries]]
+name = "T: Into<String>"
+keys = ["into", "string", "bound", "generic", "convert", "accept", "str"]
+doc = "Bound accepting both &str and String arguments, converted inside."
+snippet = '''
+${1:S}: Into<String>$0'''
+
+[[entries]]
+name = "T: AsRef<str>"
+keys = ["asref", "str", "bound", "generic", "borrow", "accept", "string"]
+doc = "Bound accepting anything viewable as a str without taking ownership."
+snippet = '''
+${1:S}: AsRef<str>$0'''
+
+[[entries]]
+name = "F: Fn(A) -> B"
+keys = ["fn", "closure", "bound", "generic", "callback", "f", "function"]
+doc = "Bound on a type parameter that must be callable like a function."
+snippet = '''
+${1:F}: Fn(${2:i32}) -> ${3:i32}$0'''
+
+[[entries]]
+name = "F: FnMut / FnOnce bound"
+keys = ["fnmut", "fnonce", "closure", "bound", "generic", "callback", "mutate", "consume"]
+doc = "Bound for closures that mutate captures or are called once."
+snippet = '''
+${1:F}: ${2:FnMut}(${3:&str})$0'''
+
+[[entries]]
+name = "T: 'a outlives lifetime"
+keys = ["lifetime", "outlives", "bound", "generic", "borrow", "static"]
+doc = "Require that every reference inside T lives at least as long as 'a."
+snippet = '''
+${1:T}: '${2:a}$0'''
+
+[[entries]]
+name = "'a: 'b lifetime outlives"
+keys = ["lifetime", "outlives", "bound", "two", "longer", "subtype"]
+doc = "Declare that lifetime 'a lasts at least as long as 'b."
+snippet = '''
+<'${1:a}, '${2:b}: '${1:a}>$0'''
+
+[[entries]]
+name = "<const N: usize>"
+keys = ["const", "generic", "n", "usize", "array", "size", "length"]
+doc = "Constant parameter, usually an array length."
+snippet = '''
+<const ${1:N}: ${2:usize}>$0'''
+
+[[entries]]
+name = "<T, const N: usize> mixed"
+keys = ["const", "generic", "type", "n", "array", "mixed", "both"]
+doc = "Type parameter and constant parameter together, as in [T; N] helpers."
+snippet = '''
+<${1:T}, const ${2:N}: usize>$0'''
+
+[[entries]]
+name = "<T = Default> default parameter"
+keys = ["generic", "default", "parameter", "optional", "omit"]
+doc = "Type parameter callers may omit."
+snippet = '''
+<${1:T} = ${2:i32}>$0'''
+
+[[entries]]
+name = "for<'a> HRTB"
+keys = ["hrtb", "for", "lifetime", "higher", "ranked", "closure", "any"]
+doc = "Bound that holds for every lifetime, needed for closures taking references."
+snippet = '''
+for<'a> Fn(&'a ${1:str}) -> &'a ${2:str}$0'''
+
+[[entries]]
+name = "where clause multiple"
+keys = ["where", "bounds", "clause", "generic", "several", "lines"]
+doc = "Where clause listing bounds for several parameters."
+snippet = '''
+where
+    ${1:T}: ${2:Clone},
+    ${3:F}: Fn(&${1:T}) -> ${4:bool},$0'''
+
+[[entries]]
+name = "where with associated type"
+keys = ["where", "associated", "item", "bound", "iterator", "clause"]
+doc = "Constrain an associated type of a parameter in a where clause."
+snippet = '''
+where
+    ${1:I}: Iterator,
+    ${1:I}::Item: ${2:std::fmt::Display},$0'''
+
+[[entries]]
+name = "Self: Sized bound"
+keys = ["self", "sized", "where", "object", "safe", "dyn", "default", "method"]
+doc = "Restrict a trait method to sized implementors so the trait stays dyn compatible."
+snippet = '''
+where
+    Self: Sized,$0'''
+
+[[entries]]
+name = "T::Item associated of parameter"
+keys = ["associated", "item", "type", "parameter", "path", "iterator", "output"]
+doc = "Name an associated type of a type parameter."
+snippet = '''
+${1:I}::${2:Item}$0'''
+
+[[entries]]
+name = "Self::Item in trait"
+keys = ["self", "associated", "item", "output", "trait", "path"]
+doc = "Name the implementor's associated type from inside a trait or impl."
+snippet = '''
+Self::${1:Item}$0'''
+
+[[entries]]
+name = "<Self as Trait>::Type"
+keys = ["self", "as", "trait", "associated", "qualified", "disambiguate", "path"]
+doc = "Fully qualified associated type when several traits define the same name."
+snippet = '''
+<Self as ${1:Trait}>::${2:Output}$0'''
+
+[[entries]]
+name = "generic struct bound in impl"
+keys = ["impl", "generic", "bound", "where", "struct", "method", "conditional"]
+doc = "Bound placed on the impl block so the methods exist only for suitable T."
+snippet = '''
+impl<${1:T}: ${2:Display}> ${3:Wrapper}<${1:T}>$0'''

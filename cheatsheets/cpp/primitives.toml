@@ -1,0 +1,106 @@
+title = "Latches, barriers and semaphores"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "call_once"
+keys = ["call_once", "once_flag", "init", "once", "lazy", "initialize"]
+doc = "Run initialization exactly once across threads."
+snippet = '''
+static std::once_flag ${1:flag};
+std::call_once(${1:flag}, [] {
+    $0
+});'''
+
+[[entries]]
+name = "std::latch"
+keys = ["latch", "countdown", "wait", "start", "gate", "c++20", "single-use"]
+doc = "C++20 single-use countdown that releases waiters when it reaches zero."
+snippet = '''
+std::latch ${1:done}(${2:n});
+${1:done}.count_down();
+${1:done}.wait();$0'''
+
+[[entries]]
+name = "latch wait for workers"
+keys = ["latch", "workers", "wait", "all", "finished", "jthread", "join", "c++20"]
+doc = "Wait for n workers to signal completion through a latch."
+snippet = '''
+std::latch ${1:done}(${2:n});
+for (${3:unsigned} ${4:i} = 0; ${4:i} < ${2:n}; ++${4:i}) {
+    ${5:workers}.emplace_back([&] {
+        $0
+        ${1:done}.count_down();
+    });
+}
+${1:done}.wait();'''
+
+[[entries]]
+name = "std::barrier"
+keys = ["barrier", "phase", "sync", "wait", "arrive_and_wait", "rounds", "c++20"]
+doc = "C++20 reusable barrier for phased work."
+snippet = '''
+std::barrier ${1:sync}(${2:n});
+${1:sync}.arrive_and_wait();$0'''
+
+[[entries]]
+name = "barrier with completion"
+keys = ["barrier", "completion", "callback", "phase", "on_completion", "c++20"]
+doc = "Barrier running a function each time all threads arrive."
+snippet = '''
+std::barrier ${1:sync}(${2:n}, []() noexcept {
+    $0
+});'''
+
+[[entries]]
+name = "counting_semaphore"
+keys = ["semaphore", "counting_semaphore", "acquire", "release", "limit", "slots", "c++20"]
+doc = "C++20 counting semaphore limiting concurrent access to n slots."
+snippet = '''
+std::counting_semaphore<${1:4}> ${2:slots}(${1:4});
+${2:slots}.acquire();
+$0
+${2:slots}.release();'''
+
+[[entries]]
+name = "binary_semaphore"
+keys = ["binary_semaphore", "semaphore", "signal", "wake", "handoff", "c++20"]
+doc = "Semaphore with one slot, handy as a signal between two threads."
+snippet = '''
+std::binary_semaphore ${1:signal}(${2:0});
+${1:signal}.release();
+${1:signal}.acquire();$0'''
+
+[[entries]]
+name = "semaphore try_acquire_for"
+keys = ["try_acquire", "try_acquire_for", "semaphore", "timeout", "non-blocking"]
+doc = "Acquire a semaphore slot with a timeout."
+snippet = '''
+if (${1:slots}.try_acquire_for(${2:std::chrono::milliseconds(100)})) {
+    $0
+    ${1:slots}.release();
+}'''
+
+[[entries]]
+name = "stop_source"
+keys = ["stop_source", "stop_token", "cancel", "cancellation", "request", "c++20"]
+doc = "Issue stop requests to any thread holding one of its tokens."
+snippet = '''
+std::stop_source ${1:src};
+std::stop_token ${2:tok} = ${1:src}.get_token();
+${1:src}.request_stop();$0'''
+
+[[entries]]
+name = "stop_callback"
+keys = ["stop_callback", "stop_token", "cancel", "callback", "on stop", "c++20"]
+doc = "Run a callback when a stop is requested."
+snippet = '''
+std::stop_callback ${1:cb}(${2:token}, [] {
+    $0
+});'''
+
+[[entries]]
+name = "std::osyncstream"
+keys = ["osyncstream", "cout", "thread", "sync", "interleave", "print", "c++20"]
+doc = "C++20 synchronized output that does not interleave between threads."
+snippet = '''
+std::osyncstream(std::cout) << ${1:value} << '\n';$0'''

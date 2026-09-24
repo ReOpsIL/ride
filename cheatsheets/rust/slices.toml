@@ -1,0 +1,206 @@
+title = "Slices: query, search and reshape"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "get"
+keys = ["get", "index", "option", "safe", "bounds", "checked", "element"]
+doc = "Index without panicking, giving None when out of bounds."
+snippet = '''
+${1:items}.get(${2:index})$0'''
+
+[[entries]]
+name = "get_mut"
+keys = ["get", "mut", "index", "modify", "option", "safe", "element"]
+doc = "Borrow an element mutably by index, giving None when out of bounds."
+snippet = '''
+if let Some(${1:x}) = ${2:items}.get_mut(${3:index}) {
+    $0
+}'''
+
+[[entries]]
+name = "index"
+keys = ["index", "subscript", "brackets", "element", "at", "read"]
+doc = "Access an element by index, panicking when out of bounds."
+snippet = '''
+${1:items}[${2:index}]$0'''
+
+[[entries]]
+name = "first / last"
+keys = ["first", "last", "head", "tail", "option", "front", "back"]
+doc = "Borrow the first or last element as an Option."
+snippet = '''
+${1:items}.${2:first}()$0'''
+
+[[entries]]
+name = "split_first / split_last"
+keys = ["split", "first", "last", "head", "rest", "tail", "option"]
+doc = "Separate the first or last element from the remaining slice."
+snippet = '''
+if let Some((${1:head}, ${2:rest})) = ${3:items}.split_first() {
+    $0
+}'''
+
+[[entries]]
+name = "match on slice"
+keys = ["match", "slice", "pattern", "head", "rest", "empty", "destructure"]
+doc = "Destructure a slice by its length and elements with slice patterns."
+snippet = '''
+match ${1:items} {
+    [] => ${2:0},
+    [${3:only}] => ${4:*only},
+    [${5:first}, .., ${6:last}] => ${7:first + last},
+}$0'''
+
+[[entries]]
+name = "len / is_empty"
+keys = ["len", "length", "empty", "size", "count", "elements"]
+doc = "Number of elements, or whether there are none."
+snippet = '''
+${1:items}.${2:len}()$0'''
+
+[[entries]]
+name = "contains"
+keys = ["contains", "includes", "has", "search", "slice", "in", "member"]
+doc = "Test whether a slice holds a value equal to the given one."
+snippet = '''
+${1:items}.contains(&${2:value})$0'''
+
+[[entries]]
+name = "position / rposition"
+keys = ["position", "rposition", "index", "find", "search", "of", "where"]
+doc = "Find the index of the first or last element matching a predicate."
+snippet = '''
+${1:items}.iter().position(|${2:x}| ${3:*x == value})$0'''
+
+[[entries]]
+name = "binary_search"
+keys = ["binary", "search", "sorted", "find", "slice", "index", "lookup"]
+doc = "Search a sorted slice, giving the index or the insertion point."
+snippet = '''
+${1:items}.binary_search(&${2:value})$0'''
+
+[[entries]]
+name = "iter().sum / max"
+keys = ["sum", "max", "min", "aggregate", "vec", "total", "largest", "product"]
+doc = "Aggregate the elements through the iterator."
+snippet = '''
+${1:items}.iter().${2:sum::<i64>}()$0'''
+
+[[entries]]
+name = "max / min element"
+keys = ["max", "min", "largest", "smallest", "element", "option", "copied"]
+doc = "Find the largest or smallest element by value."
+snippet = '''
+${1:items}.iter().${2:max}().copied()$0'''
+
+[[entries]]
+name = "starts_with / ends_with"
+keys = ["starts", "ends", "with", "prefix", "suffix", "slice", "begins"]
+doc = "Test whether a slice begins or ends with another slice."
+snippet = '''
+${1:items}.${2:starts_with}(&${3:[1, 2]})$0'''
+
+[[entries]]
+name = "is_sorted"
+keys = ["sorted", "is", "check", "order", "ascending", "slice"]
+doc = "Test whether the slice is in ascending order."
+snippet = '''
+${1:items}.is_sorted()$0'''
+
+[[entries]]
+name = "slice range"
+keys = ["slice", "range", "subslice", "view", "brackets", "part", "sub"]
+doc = "Borrow part of a vector or array as a slice."
+snippet = '''
+&${1:items}[${2:start}..${3:end}]$0'''
+
+[[entries]]
+name = "split_at"
+keys = ["split", "at", "halves", "slice", "two", "divide"]
+doc = "Split a slice into two at an index."
+snippet = '''
+let (${1:left}, ${2:right}) = ${3:items}.split_at(${4:mid});$0'''
+
+[[entries]]
+name = "split_at_mut"
+keys = ["split", "at", "mut", "halves", "borrow", "two", "disjoint"]
+doc = "Split a mutable slice into two mutable halves that can be used at once."
+snippet = '''
+let (${1:left}, ${2:right}) = ${3:items}.split_at_mut(${4:mid});$0'''
+
+[[entries]]
+name = "split / rsplit slice"
+keys = ["split", "slice", "separator", "delimiter", "groups", "by"]
+doc = "Split a slice into subslices at elements matching a predicate."
+snippet = '''
+${1:items}.split(|${2:x}| ${3:*x == 0})$0'''
+
+[[entries]]
+name = "chunks_exact / rchunks"
+keys = ["chunks", "exact", "rchunks", "batch", "groups", "fixed", "slice"]
+doc = "Iterate over fixed-size chunks, dropping the remainder or starting from the end."
+snippet = '''
+${1:items}.${2:chunks_exact}(${3:n})$0'''
+
+[[entries]]
+name = "reverse"
+keys = ["reverse", "in", "place", "slice", "flip", "backwards", "invert"]
+doc = "Reverse a slice in place."
+snippet = '''
+${1:items}.reverse();$0'''
+
+[[entries]]
+name = "rotate_left / rotate_right"
+keys = ["rotate", "left", "right", "shift", "cycle", "slice", "wrap"]
+doc = "Rotate the elements in place by n positions."
+snippet = '''
+${1:items}.${2:rotate_left}(${3:n});$0'''
+
+[[entries]]
+name = "fill"
+keys = ["fill", "set", "all", "memset", "slice", "reset", "overwrite"]
+doc = "Overwrite every element with a value."
+snippet = '''
+${1:buf}.fill(${2:0});$0'''
+
+[[entries]]
+name = "copy_from_slice / clone_from_slice"
+keys = ["copy", "clone", "from", "slice", "memcpy", "overwrite", "assign"]
+doc = "Overwrite a slice with another slice of equal length."
+snippet = '''
+${1:buf}[${2:..n}].${3:copy_from_slice}(&${4:src});$0'''
+
+[[entries]]
+name = "concat / join"
+keys = ["concat", "join", "flatten", "nested", "vec", "separator", "merge"]
+doc = "Flatten a slice of slices into one vector, optionally with a separator."
+snippet = '''
+${1:parts}.concat()$0'''
+
+[[entries]]
+name = "to_vec"
+keys = ["to_vec", "owned", "copy", "slice", "vec", "clone", "convert"]
+doc = "Copy a slice into a new vector."
+snippet = '''
+${1:slice}.to_vec()$0'''
+
+[[entries]]
+name = "repeat slice"
+keys = ["repeat", "slice", "times", "vec", "tile", "duplicate"]
+doc = "Create a vector holding the slice repeated n times."
+snippet = '''
+${1:items}.repeat(${2:n})$0'''
+
+[[entries]]
+name = "select_nth_unstable"
+keys = ["select", "nth", "median", "kth", "partial", "sort", "quickselect"]
+doc = "Place the nth smallest element at index n in linear time."
+snippet = '''
+${1:items}.select_nth_unstable(${2:k});$0'''
+
+[[entries]]
+name = "slice equality"
+keys = ["equal", "compare", "eq", "same", "assert", "slice", "array"]
+doc = "Compare arrays, vectors or slices element by element with == or cmp."
+snippet = '''
+${1:a} == ${2:b}$0'''

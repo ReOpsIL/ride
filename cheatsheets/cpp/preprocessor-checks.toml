@@ -1,0 +1,197 @@
+title = "Platform and feature checks"
+contexts = ["preprocessor", "item"]
+
+[[entries]]
+name = "platform conditional"
+keys = ["platform", "windows", "linux", "apple", "macos", "ifdef", "os"]
+doc = "Choose code per operating system."
+snippet = """
+#if defined(_WIN32)
+$0
+#elif defined(__APPLE__)
+#elif defined(__linux__)
+#endif"""
+
+[[entries]]
+name = "windows check"
+keys = ["windows", "_win32", "_win64", "win", "ifdef", "msvc"]
+doc = "Compile only on Windows (32 and 64 bit)."
+snippet = """
+#ifdef _WIN32
+$0
+#endif"""
+
+[[entries]]
+name = "unix check"
+keys = ["unix", "posix", "linux", "apple", "__unix__", "ifdef"]
+doc = "Compile only on Unix-like systems."
+snippet = """
+#if defined(__unix__) || defined(__APPLE__)
+$0
+#endif"""
+
+[[entries]]
+name = "compiler conditional"
+keys = ["compiler", "msvc", "gcc", "clang", "ifdef", "vendor"]
+doc = "Choose code per compiler; test clang before GCC since clang defines both."
+snippet = """
+#if defined(_MSC_VER)
+$0
+#elif defined(__clang__)
+#elif defined(__GNUC__)
+#endif"""
+
+[[entries]]
+name = "compiler version check"
+keys = ["gcc", "version", "__gnuc__", "clang", "major", "minimum"]
+doc = "Require a minimum compiler version."
+snippet = """
+#if defined(__GNUC__) && __GNUC__ >= ${1:12}
+$0
+#endif"""
+
+[[entries]]
+name = "architecture check"
+keys = ["architecture", "arch", "x86_64", "arm", "aarch64", "cpu", "64-bit"]
+doc = "Choose code per CPU architecture."
+snippet = """
+#if defined(__x86_64__) || defined(_M_X64)
+$0
+#elif defined(__aarch64__) || defined(_M_ARM64)
+#endif"""
+
+[[entries]]
+name = "__cplusplus check"
+keys = ["cplusplus", "version", "standard", "if", "c++20", "c++17"]
+doc = "Test the C++ standard: 201703L for C++17, 202002L for C++20, 202302L for C++23."
+snippet = """
+#if __cplusplus >= ${1:202002L}
+$0
+#endif"""
+
+[[entries]]
+name = "feature test macro"
+keys = ["feature", "test", "__cpp_", "version", "cpp_lib", "concepts", "available"]
+doc = "Test a language or library feature via <version>, e.g. __cpp_concepts or __cpp_lib_format."
+snippet = """
+#include <version>
+#if defined(${1:__cpp_lib_format}) && ${1:__cpp_lib_format} >= ${2:201907L}
+$0
+#endif"""
+
+[[entries]]
+name = "__has_include"
+keys = ["has_include", "include", "optional", "header", "available", "exists"]
+doc = "Test whether a header is available."
+snippet = """
+#if __has_include(<${1:format}>)
+#include <${1:format}>
+#endif$0"""
+
+[[entries]]
+name = "__has_cpp_attribute"
+keys = ["has_cpp_attribute", "attribute", "nodiscard", "likely", "supported", "check"]
+doc = "Test whether the compiler knows an attribute."
+snippet = """
+#if __has_cpp_attribute(${1:nodiscard})
+$0
+#endif"""
+
+[[entries]]
+name = "__has_builtin"
+keys = ["has_builtin", "builtin", "intrinsic", "gcc", "clang", "check"]
+doc = "Test for a compiler builtin before using it."
+snippet = """
+#if defined(__has_builtin) && __has_builtin(${1:__builtin_expect})
+$0
+#endif"""
+
+[[entries]]
+name = "debug conditional"
+keys = ["debug", "ndebug", "ifdef", "release", "build", "only"]
+doc = "Compile only in debug builds, where NDEBUG is not defined."
+snippet = """
+#ifndef NDEBUG
+$0
+#endif"""
+
+[[entries]]
+name = "NDEBUG define"
+keys = ["ndebug", "define", "release", "assert", "disable", "off"]
+doc = "Define NDEBUG before <cassert> to turn assert into nothing."
+snippet = """
+#define NDEBUG
+#include <cassert>$0"""
+
+[[entries]]
+name = "#pragma GCC diagnostic"
+keys = ["pragma", "diagnostic", "warning", "ignore", "push", "pop", "gcc", "clang"]
+doc = "Silence a GCC or clang warning for a region."
+snippet = """
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "${1:-Wunused-parameter}"
+$0
+#pragma GCC diagnostic pop"""
+
+[[entries]]
+name = "#pragma clang diagnostic"
+keys = ["pragma", "clang", "diagnostic", "warning", "ignore", "push", "pop"]
+doc = "Silence a clang-only warning for a region."
+snippet = """
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "${1:-Wdeprecated-declarations}"
+$0
+#pragma clang diagnostic pop"""
+
+[[entries]]
+name = "#pragma warning MSVC"
+keys = ["pragma", "warning", "msvc", "disable", "push", "pop", "visual"]
+doc = "Silence an MSVC warning number for a region."
+snippet = """
+#pragma warning(push)
+#pragma warning(disable : ${1:4996})
+$0
+#pragma warning(pop)"""
+
+[[entries]]
+name = "#pragma pack"
+keys = ["pragma", "pack", "struct", "padding", "alignment", "binary", "layout"]
+doc = "Change struct packing for a region."
+snippet = """
+#pragma pack(push, ${1:1})
+$0
+#pragma pack(pop)"""
+
+[[entries]]
+name = "#pragma region"
+keys = ["pragma", "region", "endregion", "fold", "editor", "group"]
+doc = "Editor folding markers understood by MSVC and many IDEs."
+snippet = """
+#pragma region ${1:Name}
+$0
+#pragma endregion"""
+
+[[entries]]
+name = "#pragma"
+keys = ["pragma", "compiler", "directive", "specific"]
+doc = "Compiler-specific directive."
+snippet = """
+#pragma ${1:GCC diagnostic push}$0"""
+
+[[entries]]
+name = "_Pragma operator"
+keys = ["_pragma", "pragma", "macro", "operator", "string", "inside"]
+doc = "Pragma usable inside a macro definition."
+snippet = """
+_Pragma("${1:GCC diagnostic push}")$0"""
+
+[[entries]]
+name = "export macro"
+keys = ["export", "dllexport", "visibility", "api", "shared", "library", "dll"]
+doc = "Portable symbol export macro for shared libraries."
+snippet = """
+#if defined(_WIN32)
+#define ${1:API} __declspec(dllexport)
+#else
+#define ${1:API} __attribute__((visibility("default")))
+#endif$0"""

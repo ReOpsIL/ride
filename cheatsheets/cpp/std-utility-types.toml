@@ -1,0 +1,135 @@
+title = "Standard utility types"
+contexts = ["type"]
+
+[[entries]]
+name = "std::pair"
+keys = ["pair", "two", "std::"]
+doc = "Two values."
+snippet = """
+std::pair<${1:int}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::tuple"
+keys = ["tuple", "several", "std::"]
+doc = "Fixed heterogeneous collection."
+snippet = """
+std::tuple<${1:int}, ${2:double}>$0"""
+
+[[entries]]
+name = "std::optional"
+keys = ["optional", "maybe", "nullable", "std::"]
+doc = "Possibly absent value."
+snippet = """
+std::optional<${1:int}>$0"""
+
+[[entries]]
+name = "std::variant"
+keys = ["variant", "union", "either", "std::"]
+doc = "Type-safe union."
+snippet = """
+std::variant<${1:int}, ${2:std::string}>$0"""
+
+[[entries]]
+name = "std::expected"
+keys = ["expected", "result", "error", "std::"]
+doc = "C++23 value or error."
+snippet = """
+std::expected<${1:int}, ${2:std::string}>$0"""
+
+[[entries]]
+name = "std::any"
+keys = ["any", "erased", "dynamic", "std::"]
+doc = "Holder for any copyable type."
+snippet = """
+std::any$0"""
+
+[[entries]]
+name = "std::unique_ptr"
+keys = ["unique_ptr", "ptr", "owning", "std::"]
+doc = "Sole-owner smart pointer."
+snippet = """
+std::unique_ptr<${1:T}>$0"""
+
+[[entries]]
+name = "std::shared_ptr"
+keys = ["shared_ptr", "ptr", "shared", "std::"]
+doc = "Reference-counted smart pointer."
+snippet = """
+std::shared_ptr<${1:T}>$0"""
+
+[[entries]]
+name = "std::weak_ptr"
+keys = ["weak_ptr", "ptr", "weak", "cycle", "std::"]
+doc = "Non-owning observer of a shared_ptr."
+snippet = """
+std::weak_ptr<${1:T}>$0"""
+
+[[entries]]
+name = "std::function"
+keys = ["function", "callback", "callable", "lambda", "std::"]
+doc = "Type-erased callable wrapper."
+snippet = """
+std::function<${1:void}(${2:int})>$0"""
+
+[[entries]]
+name = "std::reference_wrapper"
+keys = ["reference_wrapper", "ref", "reference", "container", "std::"]
+doc = "Copyable reference for storing in containers."
+snippet = """
+std::reference_wrapper<${1:T}>$0"""
+
+[[entries]]
+name = "std::chrono duration"
+keys = ["chrono", "duration", "milliseconds", "seconds", "time", "std::"]
+doc = "Time span type from <chrono>."
+snippet = """
+std::chrono::${1:milliseconds}$0"""
+
+[[entries]]
+name = "std::chrono time_point"
+keys = ["chrono", "time_point", "clock", "now", "steady_clock", "std::"]
+doc = "Point in time on a clock."
+snippet = """
+std::chrono::${1:steady_clock}::time_point$0"""
+
+[[entries]]
+name = "std::thread"
+keys = ["thread", "jthread", "concurrency", "std::"]
+doc = "Thread handle; jthread joins automatically."
+snippet = """
+std::${1:jthread}$0"""
+
+[[entries]]
+name = "std::mutex"
+keys = ["mutex", "lock", "sync", "std::"]
+doc = "Mutual exclusion lock."
+snippet = """
+std::mutex$0"""
+
+[[entries]]
+name = "std::atomic"
+keys = ["atomic", "lockfree", "counter", "std::"]
+doc = "Atomic value."
+snippet = """
+std::atomic<${1:int}>$0"""
+
+[[entries]]
+name = "std::filesystem::path"
+keys = ["filesystem", "path", "file", "fs", "std::"]
+doc = "File system path."
+snippet = """
+std::filesystem::path$0"""
+
+[[entries]]
+name = "std::ostream&"
+keys = ["ostream", "stream", "output", "cout", "print", "std::"]
+doc = "Output stream reference parameter."
+snippet = """
+std::ostream &$0"""
+
+[[entries]]
+name = "std::istream&"
+keys = ["istream", "stream", "input", "cin", "read", "std::"]
+doc = "Input stream reference parameter."
+snippet = """
+std::istream &$0"""

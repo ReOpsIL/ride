@@ -1,0 +1,196 @@
+title = "Match and block forms"
+contexts = ["statement", "expression", "case"]
+
+[[entries]]
+name = "match Option"
+keys = ["match", "option", "some", "none", "maybe", "null"]
+doc = "Handle both cases of an Option exhaustively."
+snippet = '''
+match ${1:value} {
+    Some(${2:inner}) => $0,
+    None => ${3:{\}},
+}'''
+
+[[entries]]
+name = "match Result"
+keys = ["match", "result", "ok", "err", "error", "handle"]
+doc = "Handle both cases of a Result exhaustively."
+snippet = '''
+match ${1:result} {
+    Ok(${2:value}) => $0,
+    Err(${3:e}) => ${4:eprintln!("{e\}")},
+}'''
+
+[[entries]]
+name = "match with guards"
+keys = ["match", "guard", "if", "condition", "arm", "when"]
+doc = "Refine arms with boolean conditions, falling through when a guard is false."
+snippet = '''
+match ${1:n} {
+    ${2:x} if ${3:x < 0} => ${4:"negative"},
+    ${5:0} => ${6:"zero"},
+    _ => ${7:"positive"},$0
+}'''
+
+[[entries]]
+name = "match integer ranges"
+keys = ["match", "range", "number", "bucket", "grade", "between", "int"]
+doc = "Classify a number by inclusive ranges."
+snippet = '''
+match ${1:n} {
+    ${2:0}..=${3:9} => ${4:"single digit"},
+    ${5:10}..=${6:99} => ${7:"two digits"},
+    _ => ${8:"large"},$0
+}'''
+
+[[entries]]
+name = "match on &str"
+keys = ["match", "str", "string", "text", "command", "keyword", "switch"]
+doc = "Dispatch on string literals, matching a String through as_str."
+snippet = '''
+match ${1:command}${2:.as_str()} {
+    "${3:start}" => $0,
+    "${4:stop}" => ${5:{\}},
+    other => ${6:eprintln!("unknown {other\}")},
+}'''
+
+[[entries]]
+name = "match on char"
+keys = ["match", "char", "character", "letter", "digit", "classify"]
+doc = "Classify a character by literal or range patterns."
+snippet = '''
+match ${1:c} {
+    'a'..='z' | 'A'..='Z' => ${2:"letter"},
+    '0'..='9' => ${3:"digit"},
+    ' ' | '\\t' | '\\n' => ${4:"space"},
+    _ => ${5:"other"},$0
+}'''
+
+[[entries]]
+name = "match on tuple"
+keys = ["match", "tuple", "pair", "two", "bool", "combination", "state"]
+doc = "Match several values at once by wrapping them in a tuple."
+snippet = '''
+match (${1:a}, ${2:b}) {
+    (${3:true}, ${4:true}) => $0,
+    (${5:true}, _) | (_, ${6:true}) => ${7:{\}},
+    _ => ${8:{\}},
+}'''
+
+[[entries]]
+name = "match on enum"
+keys = ["match", "enum", "variant", "exhaustive", "dispatch", "switch"]
+doc = "Handle every variant of an enum, with the compiler checking exhaustiveness."
+snippet = '''
+match ${1:value} {
+    ${2:Enum}::${3:First} => $0,
+    ${2:Enum}::${4:Second}(${5:x}) => ${6:{\}},
+    ${2:Enum}::${7:Third} { ${8:field}, .. } => ${9:{\}},
+}'''
+
+[[entries]]
+name = "match self"
+keys = ["match", "self", "enum", "method", "variant", "impl"]
+doc = "Match on self inside a method, naming variants through Self."
+snippet = '''
+match self {
+    Self::${1:First} => $0,
+    Self::${2:Second} => ${3:{\}},
+}'''
+
+[[entries]]
+name = "match on struct"
+keys = ["match", "struct", "fields", "destructure", "point", "origin"]
+doc = "Match on field values of a struct, binding the rest."
+snippet = '''
+match ${1:point} {
+    ${2:Point} { ${3:x}: 0, ${4:y}: 0 } => ${5:"origin"},
+    ${2:Point} { ${3:x}, .. } if ${3:x} > 0 => ${6:"right"},
+    _ => ${7:"elsewhere"},$0
+}'''
+
+[[entries]]
+name = "match on slice"
+keys = ["match", "slice", "array", "args", "empty", "head", "tail", "vec"]
+doc = "Match a slice by its length and leading elements."
+snippet = '''
+match ${1:args}${2:.as_slice()} {
+    [] => $0,
+    [${3:only}] => ${4:{\}},
+    [${5:first}, ${6:rest} @ ..] => ${7:{\}},
+}'''
+
+[[entries]]
+name = "match nested"
+keys = ["match", "nested", "option", "result", "deep", "some", "ok"]
+doc = "Match through several layers of enums in one pattern."
+snippet = '''
+match ${1:value} {
+    Some(Ok(${2:x})) => $0,
+    Some(Err(${3:e})) => ${4:{\}},
+    None => ${5:{\}},
+}'''
+
+[[entries]]
+name = "match with binding @"
+keys = ["match", "at", "binding", "bind", "range", "whole", "name"]
+doc = "Bind the matched value to a name while also testing it against a range."
+snippet = '''
+match ${1:n} {
+    ${2:small} @ ${3:0}..=${4:9} => ${5:println!("{small\}")},
+    ${6:other} => ${7:println!("{other\}")},$0
+}'''
+
+[[entries]]
+name = "match Ordering"
+keys = ["match", "cmp", "ordering", "less", "greater", "equal", "compare"]
+doc = "Branch on the three outcomes of comparing two values."
+snippet = '''
+match ${1:a}.cmp(&${2:b}) {
+    std::cmp::Ordering::Less => $0,
+    std::cmp::Ordering::Equal => ${3:{\}},
+    std::cmp::Ordering::Greater => ${4:{\}},
+}'''
+
+[[entries]]
+name = "match reference"
+keys = ["match", "reference", "ref", "borrow", "ampersand", "no", "move"]
+doc = "Match on a reference so bindings borrow instead of moving out of the value."
+snippet = '''
+match &${1:value} {
+    ${2:Some(inner)} => $0,
+    _ => ${3:{\}},
+}'''
+
+[[entries]]
+name = "match block arms"
+keys = ["match", "block", "arm", "braces", "statements", "multiline"]
+doc = "Run several statements in an arm using a block body."
+snippet = '''
+match ${1:value} {
+    ${2:pattern} => {
+        ${3:statement;}
+        $0
+    }
+    _ => {}
+}'''
+
+[[entries]]
+name = "match diverging arms"
+keys = ["match", "return", "continue", "break", "diverge", "early", "arm"]
+doc = "Use return, continue or break in arms so the match yields the remaining case."
+snippet = '''
+let ${1:value} = match ${2:expr} {
+    Ok(v) => v,
+    Err(e) => ${3:return Err(e.into())},$0
+};'''
+
+[[entries]]
+name = "match unreachable arm"
+keys = ["match", "unreachable", "impossible", "panic", "wildcard", "arm"]
+doc = "Document a case the caller guarantees cannot happen."
+snippet = '''
+match ${1:value} {
+    ${2:pattern} => $0,
+    _ => unreachable!(${3:"already validated"}),
+}'''

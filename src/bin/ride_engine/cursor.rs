@@ -14,7 +14,7 @@ pub struct Placed {
 pub fn place(file: &Path, cursor: &Cursor) -> Result<Placed, String> {
     let mut text =
         std::fs::read_to_string(file).map_err(|_| format!("cannot read {}", file.display()))?;
-    let mut at = match (&cursor.byte, &cursor.find) {
+    let at = match (&cursor.byte, &cursor.find) {
         (Some(b), _) => *b,
         (None, Some(anchor)) => text
             .find(anchor.as_str())
@@ -22,6 +22,10 @@ pub fn place(file: &Path, cursor: &Cursor) -> Result<Placed, String> {
             .ok_or_else(|| format!("anchor not found: {anchor}"))?,
         (None, None) => text.len(),
     };
+    let mut at = at.min(text.len());
+    while !text.is_char_boundary(at) {
+        at -= 1;
+    }
     if let Some(typed) = &cursor.typed {
         text.insert_str(at, typed);
         at += typed.len();

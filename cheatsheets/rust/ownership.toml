@@ -199,3 +199,18 @@ snippet = '''
     let ${1:guard} = ${2:value}.${3:borrow_mut()};
     $0
 }'''
+
+[[entries]]
+name = "move"
+keys = ["move", "transfer", "ownership", "let", "assign", "give", "consumed"]
+doc = "Assigning or passing a non-Copy value moves it; the old name is no longer usable."
+snippet = '''
+let ${1:b} = ${2:a};$0'''
+
+[[entries]]
+name = "copy"
+keys = ["copy", "primitive", "int", "bitwise", "duplicate", "both", "usable"]
+doc = "Copy types such as integers, bools, chars and shared references are duplicated on assignment."
+snippet = '''
+let ${1:b} = ${2:a};
+let ${3:sum} = ${2:a} + ${1:b};$0'''

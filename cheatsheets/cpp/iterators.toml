@@ -1,0 +1,173 @@
+title = "Iterators"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "begin / end"
+keys = ["begin", "end", "iterator", "range", "pair"]
+doc = "Iterator pair over the whole container."
+snippet = '''
+${1:v}.begin(), ${1:v}.end()$0'''
+
+[[entries]]
+name = "cbegin / cend"
+keys = ["cbegin", "cend", "const", "iterator", "readonly"]
+doc = "Const iterators that cannot modify elements."
+snippet = '''
+${1:v}.cbegin(), ${1:v}.cend()$0'''
+
+[[entries]]
+name = "rbegin / rend"
+keys = ["rbegin", "rend", "reverse", "iterator", "backwards"]
+doc = "Reverse iterator pair iterating from the last element."
+snippet = '''
+${1:v}.rbegin(), ${1:v}.rend()$0'''
+
+[[entries]]
+name = "std::begin / std::end"
+keys = ["begin", "end", "std::", "array", "free", "c"]
+doc = "Free iterator functions that also work on built-in arrays."
+snippet = '''
+std::begin(${1:arr}), std::end(${1:arr})$0'''
+
+[[entries]]
+name = "iterator variable"
+keys = ["iterator", "auto", "it", "declare", "const_iterator", "typename"]
+doc = "Hold an iterator with auto instead of spelling the nested type."
+snippet = '''
+auto ${1:it} = ${2:v}.begin();$0'''
+
+[[entries]]
+name = "explicit iterator type"
+keys = ["iterator", "const_iterator", "type", "typename", "declare", "vector"]
+doc = "Spelled-out iterator type for a member or when auto is not allowed."
+snippet = '''
+std::vector<${1:int}>::${2:const_iterator} ${3:it} = ${4:v}.begin();$0'''
+
+[[entries]]
+name = "iterator loop"
+keys = ["iterator", "loop", "for", "begin", "end", "explicit", "traverse"]
+doc = "Classic loop over an iterator range with dereference."
+snippet = '''
+for (auto ${1:it} = ${2:v}.begin(); ${1:it} != ${2:v}.end(); ++${1:it}) {
+    ${3:auto &x = *it;}
+    $0
+}'''
+
+[[entries]]
+name = "reverse loop"
+keys = ["reverse", "loop", "rbegin", "rend", "backwards", "iterator"]
+doc = "Iterate from the last element to the first."
+snippet = '''
+for (auto ${1:it} = ${2:v}.rbegin(); ${1:it} != ${2:v}.rend(); ++${1:it}) {
+    $0
+}'''
+
+[[entries]]
+name = "dereference and arrow"
+keys = ["deref", "*", "->", "iterator", "member", "access", "value"]
+doc = "*it is the element; it->member reaches a field of it."
+snippet = '''
+${1:it}->${2:member}$0'''
+
+[[entries]]
+name = "std::next / std::prev"
+keys = ["next", "prev", "iterator", "advance", "offset", "step"]
+doc = "Iterator n steps after or before another, without modifying it."
+snippet = '''
+std::${1:next}(${2:it}, ${3:1})$0'''
+
+[[entries]]
+name = "std::advance"
+keys = ["advance", "iterator", "move", "step", "forward", "n"]
+doc = "Move an iterator forward n steps in place."
+snippet = '''
+std::advance(${1:it}, ${2:n});$0'''
+
+[[entries]]
+name = "std::distance"
+keys = ["distance", "index", "iterator", "position", "count", "between"]
+doc = "Number of steps between two iterators, e.g. an index from begin."
+snippet = '''
+std::distance(${1:v}.begin(), ${2:it})$0'''
+
+[[entries]]
+name = "iterator to index"
+keys = ["index", "iterator", "position", "convert", "distance", "subtract"]
+doc = "Index of an iterator into a random-access container."
+snippet = '''
+auto ${1:index} = ${2:it} - ${3:v}.begin();$0'''
+
+[[entries]]
+name = "back_inserter"
+keys = ["back_inserter", "inserter", "output", "iterator", "push_back", "copy"]
+doc = "Output iterator that push_backs into a container."
+snippet = '''
+std::back_inserter(${1:v})$0'''
+
+[[entries]]
+name = "front_inserter"
+keys = ["front_inserter", "inserter", "output", "iterator", "push_front", "deque"]
+doc = "Output iterator that push_fronts into a deque or list."
+snippet = '''
+std::front_inserter(${1:d})$0'''
+
+[[entries]]
+name = "inserter"
+keys = ["inserter", "output", "iterator", "insert", "set", "map", "position"]
+doc = "Output iterator that inserts at a position, also for sets and maps."
+snippet = '''
+std::inserter(${1:s}, ${1:s}.${2:end}())$0'''
+
+[[entries]]
+name = "istream_iterator"
+keys = ["istream_iterator", "input", "iterator", "read", "stream", "cin", "all"]
+doc = "Read every whitespace-separated value from a stream into a container."
+snippet = '''
+std::vector<${1:int}> ${2:v}(std::istream_iterator<${1:int}>(${3:std::cin}), std::istream_iterator<${1:int}>());$0'''
+
+[[entries]]
+name = "ostream_iterator"
+keys = ["ostream_iterator", "output", "iterator", "print", "stream", "cout", "copy"]
+doc = "Write a range to a stream with a separator via std::copy."
+snippet = '''
+std::copy(${1:v}.begin(), ${1:v}.end(), std::ostream_iterator<${2:int}>(${3:std::cout}, ${4:" "}));$0'''
+
+[[entries]]
+name = "istreambuf_iterator"
+keys = ["istreambuf_iterator", "chars", "bytes", "read", "file", "iterator"]
+doc = "Character-by-character iterator over a stream buffer."
+snippet = '''
+std::istreambuf_iterator<char>(${1:in}), std::istreambuf_iterator<char>()$0'''
+
+[[entries]]
+name = "std::iter_swap"
+keys = ["iter_swap", "swap", "iterator", "exchange", "elements"]
+doc = "Swap the elements two iterators point to."
+snippet = '''
+std::iter_swap(${1:a}, ${2:b});$0'''
+
+[[entries]]
+name = "iterator_traits"
+keys = ["iterator_traits", "value_type", "category", "traits", "difference_type", "template"]
+doc = "Query an iterator's value type or category in generic code."
+snippet = '''
+typename std::iterator_traits<${1:It}>::${2:value_type}$0'''
+
+[[entries]]
+name = "iterator categories"
+keys = ["category", "input", "forward", "bidirectional", "random", "contiguous", "concept", "iterator"]
+doc = "Constrain a template to an iterator category with a C++20 concept."
+snippet = '''
+template <std::${1:random_access_iterator} ${2:It}>
+${3:void} ${4:name}(${2:It} ${5:first}, ${2:It} ${6:last}) {
+    $0
+}'''
+
+[[entries]]
+name = "iterator invalidation"
+keys = ["invalidation", "invalid", "dangling", "reallocate", "push_back", "iterator", "caveat"]
+doc = "Refresh an index-based position after push_back, since reallocation invalidates vector iterators and pointers."
+snippet = '''
+auto ${1:index} = ${2:it} - ${3:v}.begin();
+${3:v}.push_back(${4:value});
+${2:it} = ${3:v}.begin() + ${1:index};$0'''

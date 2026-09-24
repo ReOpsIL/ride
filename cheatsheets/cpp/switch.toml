@@ -1,0 +1,133 @@
+title = "Switch"
+contexts = ["statement", "case", "default"]
+
+[[entries]]
+name = "switch"
+keys = ["switch", "case", "select", "multiway", "branch"]
+doc = "Multi-way branch on an integral or enum value."
+snippet = """
+switch (${1:value}) {
+    case ${2:0}:
+        $0
+        break;
+    default:
+        break;
+}"""
+
+[[entries]]
+name = "switch on enum class"
+keys = ["switch", "enum", "class", "case", "scoped", "::"]
+doc = "Switch over every enumerator of a scoped enum."
+snippet = """
+switch (${1:color}) {
+    case ${2:Color}::${3:Red}:
+        $0
+        break;
+    case ${2:Color}::${4:Green}:
+        break;
+}"""
+
+[[entries]]
+name = "switch on char"
+keys = ["switch", "char", "character", "case", "'"]
+doc = "Switch over character literals."
+snippet = """
+switch (${1:c}) {
+    case '${2:a}':
+        $0
+        break;
+    default:
+        break;
+}"""
+
+[[entries]]
+name = "switch returning"
+keys = ["switch", "return", "case", "map", "lookup", "function"]
+doc = "Switch where every case returns, so no break is needed."
+snippet = """
+switch (${1:value}) {
+    case ${2:0}:
+        return ${3:a};
+    case ${4:1}:
+        return ${5:b};
+    default:
+        return ${6:c};$0
+}"""
+
+[[entries]]
+name = "switch with initializer"
+keys = ["switch", "init", "scoped", "declare", ";"]
+doc = "C++17 switch with a scoped initializer."
+snippet = """
+switch (${1:auto v = get()}; ${2:v}) {
+    case ${3:0}:
+        $0
+        break;
+    default:
+        break;
+}"""
+
+[[entries]]
+name = "case"
+keys = ["case", "switch", "label", "when"]
+doc = "One label inside a switch."
+snippet = """
+case ${1:value}:
+    $0
+    break;"""
+
+[[entries]]
+name = "case with block"
+keys = ["case", "switch", "block", "braces", "declare", "variable"]
+doc = "Case body in braces so it can declare variables."
+snippet = """
+case ${1:value}: {
+    ${2:int x = 0;}
+    $0
+    break;
+}"""
+
+[[entries]]
+name = "case with several labels"
+keys = ["case", "switch", "multiple", "labels", "or", "several"]
+doc = "Several labels sharing one body."
+snippet = """
+case ${1:1}:
+case ${2:2}:
+case ${3:3}:
+    $0
+    break;"""
+
+[[entries]]
+name = "case fallthrough"
+keys = ["case", "fallthrough", "switch", "attribute", "continue"]
+doc = "Case that intentionally falls into the next label."
+snippet = """
+case ${1:value}:
+    $0
+    [[fallthrough]];"""
+
+[[entries]]
+name = "case returning"
+keys = ["case", "switch", "return", "label"]
+doc = "Case that returns instead of breaking."
+snippet = """
+case ${1:value}:
+    return ${2:result};$0"""
+
+[[entries]]
+name = "default case"
+keys = ["default", "case", "switch", "otherwise", "else"]
+doc = "Label taken when no case matches."
+snippet = """
+default:
+    $0
+    break;"""
+
+[[entries]]
+name = "default unreachable"
+keys = ["default", "case", "switch", "unreachable", "assert", "abort"]
+doc = "Default that marks impossible values."
+snippet = """
+default:
+    ${1:std::unreachable()};$0"""

@@ -1,0 +1,179 @@
+title = "Async, futures and timing"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "std::async"
+keys = ["async", "future", "launch", "task", "background", "run", "parallel"]
+doc = "Run a task on another thread and get a future for its result."
+snippet = '''
+auto ${1:fut} = std::async(std::launch::async, [${2:}] {
+    return $0;
+});'''
+
+[[entries]]
+name = "std::async with function"
+keys = ["async", "function", "args", "future", "call", "launch"]
+doc = "Run a named function asynchronously with arguments."
+snippet = '''
+auto ${1:fut} = std::async(std::launch::async, ${2:compute}, ${3:args});$0'''
+
+[[entries]]
+name = "std::async deferred"
+keys = ["async", "deferred", "lazy", "launch", "policy", "on demand"]
+doc = "Lazy task that runs on the calling thread when get() is called."
+snippet = '''
+auto ${1:fut} = std::async(std::launch::deferred, ${2:fn});$0'''
+
+[[entries]]
+name = "future get"
+keys = ["future", "get", "wait", "result", "block", "value"]
+doc = "Block until the result is ready; rethrows an exception from the task."
+snippet = '''
+auto ${1:result} = ${2:fut}.get();$0'''
+
+[[entries]]
+name = "future wait"
+keys = ["future", "wait", "block", "done", "finish"]
+doc = "Block until the task finishes without taking the value."
+snippet = '''
+${1:fut}.wait();$0'''
+
+[[entries]]
+name = "future wait_for"
+keys = ["future", "wait_for", "timeout", "ready", "poll", "status"]
+doc = "Wait for a result with a timeout and test the status."
+snippet = '''
+if (${1:fut}.wait_for(${2:std::chrono::milliseconds(100)}) == std::future_status::ready) {
+    $0
+}'''
+
+[[entries]]
+name = "future valid"
+keys = ["future", "valid", "check", "empty", "moved", "state"]
+doc = "True while the future still refers to a shared state."
+snippet = '''
+${1:fut}.valid()$0'''
+
+[[entries]]
+name = "vector of futures"
+keys = ["futures", "vector", "async", "many", "collect", "results", "parallel"]
+doc = "Launch several tasks and collect their results in order."
+snippet = '''
+std::vector<std::future<${1:int}>> ${2:futures};
+for (${3:auto &item : items}) {
+    ${2:futures}.push_back(std::async(std::launch::async, [${4:&}] { return ${5:compute(item)}; }));
+}
+for (auto &${6:f} : ${2:futures}) {
+    ${7:auto value = f.get();}
+    $0
+}'''
+
+[[entries]]
+name = "promise / future"
+keys = ["promise", "future", "set_value", "hand off", "signal", "result"]
+doc = "Hand a value from one thread to another."
+snippet = '''
+std::promise<${1:int}> ${2:promise};
+std::future<${1:int}> ${3:fut} = ${2:promise}.get_future();
+std::jthread ${4:t}([&] { ${2:promise}.set_value(${5:value}); });
+auto ${6:result} = ${3:fut}.get();$0'''
+
+[[entries]]
+name = "promise set_exception"
+keys = ["promise", "set_exception", "error", "throw", "future", "current_exception"]
+doc = "Deliver an exception through a promise so get() rethrows it."
+snippet = '''
+try {
+    $0
+} catch (...) {
+    ${1:promise}.set_exception(std::current_exception());
+}'''
+
+[[entries]]
+name = "promise<void> signal"
+keys = ["promise", "void", "signal", "ready", "event", "one shot", "future"]
+doc = "One-shot signal between threads using promise<void>."
+snippet = '''
+std::promise<void> ${1:ready};
+auto ${2:signal} = ${1:ready}.get_future();
+${1:ready}.set_value();
+${2:signal}.wait();$0'''
+
+[[entries]]
+name = "packaged_task"
+keys = ["packaged_task", "future", "task", "wrap", "callable", "queue"]
+doc = "Wrap a callable so its result is delivered via a future."
+snippet = '''
+std::packaged_task<${1:int}(${2:})> ${3:task}(${4:fn});
+auto ${5:fut} = ${3:task}.get_future();
+std::jthread ${6:t}(std::move(${3:task}));$0'''
+
+[[entries]]
+name = "shared_future"
+keys = ["shared_future", "future", "share", "multiple", "waiters", "broadcast", "copy"]
+doc = "Future that several threads can wait on and read."
+snippet = '''
+std::shared_future<${1:int}> ${2:shared} = ${3:fut}.share();$0'''
+
+[[entries]]
+name = "async exception propagation"
+keys = ["async", "exception", "try", "catch", "get", "rethrow", "error"]
+doc = "Exceptions thrown inside the task surface from get()."
+snippet = '''
+try {
+    auto ${1:result} = ${2:fut}.get();
+    $0
+} catch (const std::exception &${3:e}) {
+    ${4:}
+}'''
+
+[[entries]]
+name = "chrono duration"
+keys = ["chrono", "duration", "milliseconds", "seconds", "ms", "literal", "time"]
+doc = "Duration value using chrono literals."
+snippet = '''
+using namespace std::chrono_literals;
+auto ${1:timeout} = ${2:500ms};$0'''
+
+[[entries]]
+name = "chrono now"
+keys = ["chrono", "now", "steady_clock", "time", "timestamp", "clock", "start"]
+doc = "Current time point of the steady clock, right for measuring intervals."
+snippet = '''
+auto ${1:start} = std::chrono::steady_clock::now();$0'''
+
+[[entries]]
+name = "chrono elapsed"
+keys = ["chrono", "elapsed", "duration_cast", "timer", "benchmark", "measure", "stopwatch"]
+doc = "Elapsed time since a time point in milliseconds."
+snippet = '''
+auto ${1:elapsed} = std::chrono::duration_cast<std::chrono::${2:milliseconds}>(std::chrono::steady_clock::now() - ${3:start}).count();$0'''
+
+[[entries]]
+name = "chrono elapsed seconds as double"
+keys = ["chrono", "seconds", "double", "elapsed", "duration", "fractional", "benchmark"]
+doc = "Elapsed time as fractional seconds."
+snippet = '''
+std::chrono::duration<double> ${1:elapsed} = std::chrono::steady_clock::now() - ${2:start};
+double ${3:seconds} = ${1:elapsed}.count();$0'''
+
+[[entries]]
+name = "system_clock to time_t"
+keys = ["system_clock", "time_t", "now", "date", "wall", "localtime", "ctime"]
+doc = "Wall-clock time as a C time_t for printing with ctime or localtime."
+snippet = '''
+std::time_t ${1:now} = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());$0'''
+
+[[entries]]
+name = "format time point"
+keys = ["chrono", "format", "date", "time", "print", "%Y", "timestamp", "c++20"]
+doc = "C++20 print a system_clock time point with std::format."
+snippet = '''
+std::format("{:${1:%Y-%m-%d %H:%M:%S}}", std::chrono::system_clock::now())$0'''
+
+[[entries]]
+name = "deadline"
+keys = ["deadline", "time point", "until", "timeout", "chrono", "expire", "steady_clock"]
+doc = "Time point some duration from now, for wait_until and sleep_until."
+snippet = '''
+auto ${1:deadline} = std::chrono::steady_clock::now() + ${2:std::chrono::seconds(5)};$0'''

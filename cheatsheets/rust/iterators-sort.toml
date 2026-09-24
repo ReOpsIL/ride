@@ -1,0 +1,172 @@
+title = "Sort, dedup and group"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "sort"
+keys = ["sort", "order", "vec", "slice", "ascending", "in", "place"]
+doc = "Sort a slice in place using the natural ordering."
+snippet = '''
+${1:items}.sort();$0'''
+
+[[entries]]
+name = "sort descending"
+keys = ["sort", "descending", "reverse", "order", "largest", "first", "vec"]
+doc = "Sort in place from largest to smallest."
+snippet = '''
+${1:items}.sort_by(|a, b| b.cmp(a));$0'''
+
+[[entries]]
+name = "sort_by_key"
+keys = ["sort", "by", "key", "order", "vec", "field", "attribute"]
+doc = "Sort a slice in place by a key extracted from each element."
+snippet = '''
+${1:items}.sort_by_key(|${2:x}| ${3:x.len()});$0'''
+
+[[entries]]
+name = "sort_by_key descending"
+keys = ["sort", "key", "descending", "reverse", "field", "largest", "vec"]
+doc = "Sort by a key from largest to smallest by wrapping it in Reverse."
+snippet = '''
+${1:items}.sort_by_key(|${2:x}| std::cmp::Reverse(${3:x.score}));$0'''
+
+[[entries]]
+name = "sort_by"
+keys = ["sort", "by", "comparator", "cmp", "order", "closure", "custom"]
+doc = "Sort a slice in place with a comparison closure, reversing via swapped arguments."
+snippet = '''
+${1:items}.sort_by(|a, b| ${2:b.score.cmp(&a.score)});$0'''
+
+[[entries]]
+name = "sort by two keys"
+keys = ["sort", "then", "multiple", "keys", "secondary", "tie", "then_with", "cmp"]
+doc = "Sort by one key and break ties with another."
+snippet = '''
+${1:items}.sort_by(|a, b| a.${2:name}.cmp(&b.${2:name}).then_with(|| a.${3:age}.cmp(&b.${3:age})));$0'''
+
+[[entries]]
+name = "sort floats"
+keys = ["sort", "float", "f64", "partial", "total_cmp", "nan", "order"]
+doc = "Sort floats, which have no total order, with total_cmp."
+snippet = '''
+${1:values}.sort_by(|a, b| a.total_cmp(b));$0'''
+
+[[entries]]
+name = "sort_unstable"
+keys = ["sort", "unstable", "fast", "order", "in", "place", "vec"]
+doc = "Sort in place without preserving the order of equal elements, which is faster."
+snippet = '''
+${1:items}.sort_unstable${2:_by_key(|x| x.key)};$0'''
+
+[[entries]]
+name = "sort_by_cached_key"
+keys = ["sort", "cached", "key", "expensive", "string", "lowercase", "once"]
+doc = "Sort by a key computed once per element, for expensive keys like lowercased strings."
+snippet = '''
+${1:items}.sort_by_cached_key(|${2:x}| ${3:x.to_lowercase()});$0'''
+
+[[entries]]
+name = "sorted copy"
+keys = ["sorted", "copy", "collect", "sort", "new", "vec", "clone", "iterator"]
+doc = "Get a sorted vector from an iterator by collecting then sorting."
+snippet = '''
+let mut ${1:sorted}: Vec<_> = ${2:iter}.collect();
+${1:sorted}.sort();$0'''
+
+[[entries]]
+name = "dedup"
+keys = ["dedup", "unique", "duplicates", "vec", "consecutive", "remove", "repeated"]
+doc = "Remove consecutive duplicate elements from a vector, usually after sorting."
+snippet = '''
+${1:items}.dedup();$0'''
+
+[[entries]]
+name = "sort and dedup"
+keys = ["sort", "dedup", "unique", "distinct", "duplicates", "vec", "set"]
+doc = "Remove all duplicates from a vector by sorting first."
+snippet = '''
+${1:items}.sort();
+${1:items}.dedup();$0'''
+
+[[entries]]
+name = "dedup_by_key"
+keys = ["dedup", "by", "key", "unique", "field", "consecutive", "vec"]
+doc = "Remove consecutive elements with an equal key."
+snippet = '''
+${1:items}.dedup_by_key(|${2:x}| ${3:x.id});$0'''
+
+[[entries]]
+name = "unique preserving order"
+keys = ["unique", "order", "seen", "hashset", "distinct", "first", "filter", "stable"]
+doc = "Keep the first occurrence of each element without reordering."
+snippet = '''
+let mut ${1:seen} = HashSet::new();
+${2:items}.retain(|${3:x}| ${1:seen}.insert(${4:x.clone()}));$0'''
+
+[[entries]]
+name = "group consecutive (chunk_by)"
+keys = ["chunk", "by", "group", "consecutive", "runs", "slice", "adjacent"]
+doc = "Split a slice into runs of elements where the predicate holds for each adjacent pair."
+snippet = '''
+${1:items}.chunk_by(|a, b| ${2:a.key == b.key})$0'''
+
+[[entries]]
+name = "group into HashMap"
+keys = ["group", "by", "hashmap", "fold", "bucket", "map", "categorize", "iterator"]
+doc = "Group an iterator into a map of vectors keyed by a derived value."
+snippet = '''
+let ${1:groups}: HashMap<_, Vec<_>> = ${2:items}.into_iter().fold(HashMap::new(), |mut m, ${3:x}| {
+    m.entry(${4:x.key}).or_insert_with(Vec::new).push(${3:x});
+    m
+});$0'''
+
+[[entries]]
+name = "partition"
+keys = ["partition", "split", "group", "two", "iterator", "halves", "predicate"]
+doc = "Split the elements into two collections by a predicate."
+snippet = '''
+let (${1:yes}, ${2:no}): (Vec<_>, Vec<_>) = ${3:iter}.partition(|${4:x}| ${5:cond});$0'''
+
+[[entries]]
+name = "unzip"
+keys = ["unzip", "split", "pairs", "tuples", "iterator", "two", "columns"]
+doc = "Split an iterator of pairs into two collections."
+snippet = '''
+let (${1:keys}, ${2:values}): (Vec<_>, Vec<_>) = ${3:iter}.unzip();$0'''
+
+[[entries]]
+name = "reverse sorted"
+keys = ["reverse", "sorted", "descending", "rev", "iter", "largest", "top"]
+doc = "Walk a sorted vector from largest to smallest."
+snippet = '''
+${1:items}.iter().rev()$0'''
+
+[[entries]]
+name = "top n"
+keys = ["top", "n", "largest", "first", "sort", "take", "best", "ranking"]
+doc = "Take the n largest elements by sorting descending and truncating."
+snippet = '''
+${1:items}.sort_by(|a, b| b.cmp(a));
+${1:items}.truncate(${2:n});$0'''
+
+[[entries]]
+name = "is_sorted"
+keys = ["sorted", "is", "check", "order", "ascending", "verify"]
+doc = "Test whether a slice or iterator is in ascending order."
+snippet = '''
+${1:items}.is_sorted()$0'''
+
+[[entries]]
+name = "iterator generic bound"
+keys = ["iterator", "generic", "impl", "intoiterator", "bound", "param", "any", "iterable"]
+doc = "Accept any iterable as a function parameter."
+snippet = '''
+${1:items}: impl IntoIterator<Item = ${2:T}>$0'''
+
+[[entries]]
+name = "return impl Iterator"
+keys = ["return", "impl", "iterator", "function", "lazy", "adapter", "yield"]
+doc = "Return an iterator from a function without naming its type."
+snippet = '''
+fn ${1:evens}(${2:items}: &[${3:i32}]) -> impl Iterator<Item = &${3:i32}> + '_ {
+    ${2:items}.iter().filter(|x| ${4:*x % 2 == 0})$0
+}'''

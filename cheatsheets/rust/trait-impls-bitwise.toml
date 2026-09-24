@@ -1,0 +1,183 @@
+title = "Standard trait impls: bitwise, shift and iteration"
+contexts = ["item"]
+
+[[entries]]
+name = "impl Not"
+keys = ["impl", "not", "bang", "invert", "unary", "operator", "flags", "bool"]
+doc = "Overload unary ! for the type."
+snippet = '''
+impl std::ops::Not for ${1:Flags} {
+    type Output = Self;
+
+    fn not(self) -> Self {
+        Self(!self.0)$0
+    }
+}'''
+
+[[entries]]
+name = "impl BitAnd"
+keys = ["impl", "bitand", "and", "ampersand", "bits", "flags", "operator", "mask"]
+doc = "Overload & for bit-flag types."
+snippet = '''
+impl std::ops::BitAnd for ${1:Flags} {
+    type Output = Self;
+
+    fn bitand(self, rhs: Self) -> Self {
+        Self(self.0 & rhs.0)$0
+    }
+}'''
+
+[[entries]]
+name = "impl BitOr"
+keys = ["impl", "bitor", "or", "pipe", "bits", "flags", "operator", "combine"]
+doc = "Overload | for bit-flag types."
+snippet = '''
+impl std::ops::BitOr for ${1:Flags} {
+    type Output = Self;
+
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)$0
+    }
+}'''
+
+[[entries]]
+name = "impl BitXor"
+keys = ["impl", "bitxor", "xor", "caret", "bits", "flags", "operator", "toggle"]
+doc = "Overload ^ for bit-flag types."
+snippet = '''
+impl std::ops::BitXor for ${1:Flags} {
+    type Output = Self;
+
+    fn bitxor(self, rhs: Self) -> Self {
+        Self(self.0 ^ rhs.0)$0
+    }
+}'''
+
+[[entries]]
+name = "impl Shl / Shr"
+keys = ["impl", "shl", "shr", "shift", "left", "right", "bits", "operator"]
+doc = "Overload << or >> with an integer shift amount."
+snippet = '''
+impl std::ops::${1:Shl}<${2:u32}> for ${3:Type} {
+    type Output = Self;
+
+    fn ${4:shl}(self, rhs: ${2:u32}) -> Self {
+        Self(self.0 ${5:<<} rhs)$0
+    }
+}'''
+
+[[entries]]
+name = "impl BitOrAssign / BitAndAssign"
+keys = ["impl", "bitorassign", "bitandassign", "bitxorassign", "compound", "flags", "operator", "inplace"]
+doc = "Overload |=, &= or ^= to update flags in place."
+snippet = '''
+impl std::ops::${1:BitOrAssign} for ${2:Flags} {
+    fn ${3:bitor_assign}(&mut self, rhs: Self) {
+        self.0 ${4:|}= rhs.0;$0
+    }
+}'''
+
+[[entries]]
+name = "impl ShlAssign / ShrAssign"
+keys = ["impl", "shlassign", "shrassign", "shift", "compound", "operator", "inplace"]
+doc = "Overload <<= or >>= to shift in place."
+snippet = '''
+impl std::ops::${1:ShlAssign}<${2:u32}> for ${3:Type} {
+    fn ${4:shl_assign}(&mut self, rhs: ${2:u32}) {
+        self.0 ${5:<<}= rhs;$0
+    }
+}'''
+
+[[entries]]
+name = "bit flags newtype with derives"
+keys = ["flags", "newtype", "bits", "derive", "copy", "eq", "mask", "set"]
+doc = "Newtype over an integer that the bitwise operator impls build on."
+snippet = '''
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ${1:Flags}(pub ${2:u32});
+
+impl ${1:Flags} {
+    pub const ${3:READ}: Self = Self(1);
+    pub const ${4:WRITE}: Self = Self(2);
+
+    pub fn contains(self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }$0
+}'''
+
+[[entries]]
+name = "impl IntoIterator for owned"
+keys = ["impl", "intoiterator", "owned", "value", "for", "loop", "consume", "vec"]
+doc = "Let the type itself be consumed by a for loop, yielding owned items."
+snippet = '''
+impl IntoIterator for ${1:Type} {
+    type Item = ${2:Elem};
+    type IntoIter = std::vec::IntoIter<${2:Elem}>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.${3:items}.into_iter()$0
+    }
+}'''
+
+[[entries]]
+name = "impl IntoIterator for &mut"
+keys = ["impl", "intoiterator", "mut", "mutable", "for", "loop", "iter_mut"]
+doc = "Let a mutable borrow of the type be iterated in a for loop."
+snippet = '''
+impl<'a> IntoIterator for &'a mut ${1:Type} {
+    type Item = &'a mut ${2:Elem};
+    type IntoIter = std::slice::IterMut<'a, ${2:Elem}>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.${3:items}.iter_mut()$0
+    }
+}'''
+
+[[entries]]
+name = "impl Iterator with state"
+keys = ["impl", "iterator", "next", "state", "counter", "struct", "custom", "generator"]
+doc = "Iterator over a struct's own counter, ending when a limit is reached."
+snippet = '''
+struct ${1:Counter} {
+    ${2:n}: ${3:u32},
+}
+
+impl Iterator for ${1:Counter} {
+    type Item = ${3:u32};
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.${2:n} < ${4:5} {
+            self.${2:n} += 1;
+            Some(self.${2:n})
+        } else {
+            None
+        }$0
+    }
+}'''
+
+[[entries]]
+name = "impl DoubleEndedIterator"
+keys = ["impl", "doubleended", "next_back", "rev", "reverse", "iterator", "both"]
+doc = "Support rev on a custom iterator by yielding from the back too."
+snippet = '''
+impl DoubleEndedIterator for ${1:Type} {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl ExactSizeIterator"
+keys = ["impl", "exactsize", "len", "iterator", "size", "hint"]
+doc = "Promise an exact remaining length, given size_hint is precise."
+snippet = '''
+impl ExactSizeIterator for ${1:Type} {}$0'''
+
+[[entries]]
+name = "fn iter() returning impl Iterator"
+keys = ["fn", "iter", "impl", "iterator", "method", "borrow", "expose", "items"]
+doc = "Expose a collection's items without leaking the internal container type."
+snippet = '''
+pub fn iter(&self) -> impl Iterator<Item = &${1:Elem}> + '_ {
+    self.${2:items}.iter()$0
+}'''

@@ -86,7 +86,7 @@ doc = "Run a command to produce an output file."
 snippet = '''
 add_custom_command(
     OUTPUT ${1:generated.cpp}
-    COMMAND ${2:${CMAKE_COMMAND} -E echo}
+    COMMAND ${2:${CMAKE_COMMAND\} -E echo}
     DEPENDS ${3:input}
     VERBATIM)$0'''
 

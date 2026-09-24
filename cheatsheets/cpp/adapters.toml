@@ -1,0 +1,134 @@
+title = "Stacks, queues and heaps"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "stack"
+keys = ["stack", "lifo", "adapter", "push", "pop", "top"]
+doc = "LIFO adapter with push, pop and top."
+snippet = '''
+std::stack<${1:int}> ${2:st};$0'''
+
+[[entries]]
+name = "queue"
+keys = ["queue", "fifo", "adapter", "push", "pop", "front"]
+doc = "FIFO adapter with push, pop, front and back."
+snippet = '''
+std::queue<${1:int}> ${2:q};$0'''
+
+[[entries]]
+name = "priority_queue"
+keys = ["priority_queue", "heap", "queue", "max", "largest", "top"]
+doc = "Max-heap adapter whose top is the largest element."
+snippet = '''
+std::priority_queue<${1:int}> ${2:pq};$0'''
+
+[[entries]]
+name = "priority_queue min-heap"
+keys = ["priority_queue", "heap", "min", "smallest", "greater", "queue"]
+doc = "Min-heap via std::greater so the smallest element is on top."
+snippet = '''
+std::priority_queue<${1:int}, std::vector<${1:int}>, std::greater<${1:int}>> ${2:pq};$0'''
+
+[[entries]]
+name = "priority_queue with comparator"
+keys = ["priority_queue", "heap", "comparator", "lambda", "custom", "order", "queue"]
+doc = "Heap ordered by a lambda; the comparator says which element goes lower."
+snippet = '''
+auto ${1:cmp} = [](${2:const auto &a}, ${3:const auto &b}) { return ${4:a.cost > b.cost}; };
+std::priority_queue<${5:Type}, std::vector<${5:Type}>, decltype(${1:cmp})> ${6:pq}(${1:cmp});$0'''
+
+[[entries]]
+name = "priority_queue of pairs"
+keys = ["priority_queue", "pair", "pairs", "heap", "dijkstra", "distance", "queue"]
+doc = "Min-heap of (priority, id) pairs as used by Dijkstra."
+snippet = '''
+using ${1:Item} = std::pair<${2:int}, ${3:int}>;
+std::priority_queue<${1:Item}, std::vector<${1:Item}>, std::greater<${1:Item}>> ${4:pq};
+${4:pq}.push({${5:dist}, ${6:node}});$0'''
+
+[[entries]]
+name = "stack push"
+keys = ["stack", "push", "emplace", "add", "top"]
+doc = "Push a value onto the top of a stack."
+snippet = '''
+${1:st}.push(${2:value});$0'''
+
+[[entries]]
+name = "stack top / pop"
+keys = ["top", "pop", "stack", "peek", "remove"]
+doc = "Read and remove the top of a stack; pop returns nothing."
+snippet = '''
+auto ${1:x} = ${2:st}.top();
+${2:st}.pop();$0'''
+
+[[entries]]
+name = "queue push"
+keys = ["queue", "push", "emplace", "enqueue", "add", "back"]
+doc = "Enqueue a value at the back of a queue."
+snippet = '''
+${1:q}.push(${2:value});$0'''
+
+[[entries]]
+name = "queue front / pop"
+keys = ["front", "pop", "queue", "dequeue", "peek", "remove"]
+doc = "Read and remove the front of a queue."
+snippet = '''
+auto ${1:x} = ${2:q}.front();
+${2:q}.pop();$0'''
+
+[[entries]]
+name = "priority_queue top / pop"
+keys = ["priority_queue", "top", "pop", "heap", "peek", "extract"]
+doc = "Read and remove the highest-priority element."
+snippet = '''
+auto ${1:x} = ${2:pq}.top();
+${2:pq}.pop();$0'''
+
+[[entries]]
+name = "drain queue loop"
+keys = ["queue", "while", "empty", "loop", "drain", "bfs", "process", "stack"]
+doc = "Process elements until the adapter is empty."
+snippet = '''
+while (!${1:q}.empty()) {
+    auto ${2:x} = ${1:q}.${3:front}();
+    ${1:q}.pop();
+    $0
+}'''
+
+[[entries]]
+name = "BFS with queue"
+keys = ["bfs", "queue", "graph", "visited", "breadth", "search", "traverse"]
+doc = "Breadth-first traversal using a queue and a visited vector."
+snippet = '''
+std::queue<${1:int}> ${2:q};
+std::vector<bool> ${3:visited}(${4:n}, false);
+${2:q}.push(${5:start});
+${3:visited}[${5:start}] = true;
+while (!${2:q}.empty()) {
+    auto ${6:u} = ${2:q}.front();
+    ${2:q}.pop();
+    for (auto ${7:w} : ${8:adj}[${6:u}]) {
+        if (!${3:visited}[${7:w}]) {
+            ${3:visited}[${7:w}] = true;
+            ${2:q}.push(${7:w});
+        }
+    }
+    $0
+}'''
+
+[[entries]]
+name = "adapter size / empty"
+keys = ["size", "empty", "stack", "queue", "count", "length"]
+doc = "Number of elements or emptiness of an adapter."
+snippet = '''
+${1:q}.${2:empty}()$0'''
+
+[[entries]]
+name = "deque as double-ended queue"
+keys = ["deque", "push_front", "push_back", "pop_front", "pop_back", "both", "ends"]
+doc = "Use deque directly when you need push and pop at both ends."
+snippet = '''
+std::deque<${1:int}> ${2:d};
+${2:d}.push_back(${3:value});
+${2:d}.push_front(${4:value});
+${2:d}.pop_front();$0'''

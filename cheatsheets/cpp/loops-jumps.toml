@@ -1,0 +1,178 @@
+title = "While loops and jumps"
+contexts = ["statement"]
+
+[[entries]]
+name = "while"
+keys = ["while", "loop", "until", "condition", "repeat"]
+doc = "Loop while a condition holds."
+snippet = """
+while (${1:condition}) {
+    $0
+}"""
+
+[[entries]]
+name = "while with counter"
+keys = ["while", "loop", "counter", "count", "index", "decrement"]
+doc = "While loop driven by a counter changed inside the body."
+snippet = """
+${1:int} ${2:i} = ${3:0};
+while (${2:i} < ${4:n}) {
+    $0
+    ++${2:i};
+}"""
+
+[[entries]]
+name = "while true"
+keys = ["while", "true", "loop", "forever", "infinite", "break"]
+doc = "Infinite loop that exits with break."
+snippet = """
+while (true) {
+    $0
+    if (${1:done}) {
+        break;
+    }
+}"""
+
+[[entries]]
+name = "while reading input"
+keys = ["while", "cin", "input", "read", "getline", "stream", "eof"]
+doc = "Loop as long as reading from a stream succeeds."
+snippet = """
+while (${1:std::cin} >> ${2:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "while reading lines"
+keys = ["while", "getline", "lines", "read", "file", "stream"]
+doc = "Loop over each line of a stream."
+snippet = """
+std::string ${1:line};
+while (std::getline(${2:in}, ${1:line})) {
+    $0
+}"""
+
+[[entries]]
+name = "while not empty"
+keys = ["while", "empty", "queue", "stack", "pop", "drain", "worklist"]
+doc = "Drain a queue or stack until it is empty."
+snippet = """
+while (!${1:queue}.empty()) {
+    auto ${2:item} = ${1:queue}.${3:front}();
+    ${1:queue}.pop();
+    $0
+}"""
+
+[[entries]]
+name = "do while"
+keys = ["do", "while", "loop", "once", "least", "repeat"]
+doc = "Loop that runs the body at least once."
+snippet = """
+do {
+    $0
+} while (${1:condition});"""
+
+[[entries]]
+name = "do while menu"
+keys = ["do", "while", "menu", "prompt", "retry", "again", "input"]
+doc = "Prompt loop that repeats until the user quits."
+snippet = """
+${1:char} ${2:choice};
+do {
+    $0
+    ${3:std::cin} >> ${2:choice};
+} while (${2:choice} != '${4:q}');"""
+
+[[entries]]
+name = "infinite loop"
+keys = ["for", "while", "loop", "forever", "infinite", ";;"]
+doc = "Loop until a break."
+snippet = """
+for (;;) {
+    $0
+}"""
+
+[[entries]]
+name = "break"
+keys = ["break", "exit", "leave", "stop", "loop"]
+doc = "Leave the innermost loop or switch."
+snippet = """
+break;$0"""
+
+[[entries]]
+name = "break on condition"
+keys = ["break", "if", "exit", "stop", "when", "loop"]
+doc = "Stop the loop when a condition holds."
+snippet = """
+if (${1:condition}) {
+    break;
+}
+$0"""
+
+[[entries]]
+name = "continue"
+keys = ["continue", "next", "skip", "loop"]
+doc = "Jump to the next loop iteration."
+snippet = """
+continue;$0"""
+
+[[entries]]
+name = "continue on condition"
+keys = ["continue", "if", "skip", "next", "filter", "loop"]
+doc = "Skip the rest of the body for some elements."
+snippet = """
+if (${1:condition}) {
+    continue;
+}
+$0"""
+
+[[entries]]
+name = "return"
+keys = ["return", "ret", "result", "value", "exit"]
+doc = "Return a value from the function."
+snippet = """
+return ${1:value};$0"""
+
+[[entries]]
+name = "return void"
+keys = ["return", "ret", "void", "exit", "leave", "early"]
+doc = "Leave a void function early."
+snippet = """
+return;$0"""
+
+[[entries]]
+name = "return braced"
+keys = ["return", "braces", "struct", "pair", "list", "init"]
+doc = "Return by list-initializing the return type."
+snippet = """
+return {${1:a}, ${2:b}};$0"""
+
+[[entries]]
+name = "break out of nested loops"
+keys = ["break", "nested", "goto", "label", "outer", "loops"]
+doc = "Leave several nested loops with goto or a flag."
+snippet = """
+for (${1:int i = 0; i < n; ++i}) {
+    for (${2:int j = 0; j < m; ++j}) {
+        if (${3:found}) {
+            goto ${4:done};
+        }
+    }
+}
+${4:done}:
+$0"""
+
+[[entries]]
+name = "goto"
+keys = ["goto", "label", "jump"]
+doc = "Jump to a label in the same function."
+snippet = """
+goto ${1:label};$0"""
+
+[[entries]]
+name = "label"
+keys = ["label", "goto", "target", ":"]
+doc = "Target for a goto."
+snippet = """
+${1:label}:
+    $0"""

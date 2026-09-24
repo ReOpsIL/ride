@@ -1,0 +1,77 @@
+title = "Output formatting"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "iomanip precision"
+keys = ["setprecision", "fixed", "iomanip", "decimal", "decimals", "float", "round"]
+doc = "Print a floating value with a fixed number of decimals."
+snippet = '''
+std::cout << std::fixed << std::setprecision(${1:2}) << ${2:value};$0'''
+
+[[entries]]
+name = "scientific"
+keys = ["scientific", "exponent", "iomanip", "float", "notation", "defaultfloat"]
+doc = "Print floating values in scientific notation."
+snippet = '''
+std::cout << std::scientific << ${1:value};$0'''
+
+[[entries]]
+name = "iomanip width"
+keys = ["setw", "setfill", "iomanip", "pad", "align", "width", "column"]
+doc = "Pad the next value to a field width with a fill character."
+snippet = '''
+std::cout << std::setw(${1:8}) << std::setfill(${2:' '}) << ${3:value};$0'''
+
+[[entries]]
+name = "left / right alignment"
+keys = ["left", "right", "align", "justify", "setw", "iomanip", "table", "column"]
+doc = "Align padded fields to the left or right."
+snippet = '''
+std::cout << std::${1:left} << std::setw(${2:10}) << ${3:value};$0'''
+
+[[entries]]
+name = "table row"
+keys = ["table", "columns", "setw", "row", "format", "aligned", "print"]
+doc = "Print aligned columns with setw for each field."
+snippet = '''
+std::cout << std::left << std::setw(${1:12}) << ${2:name} << std::right << std::setw(${3:8}) << ${4:value} << '\n';$0'''
+
+[[entries]]
+name = "hex output"
+keys = ["hex", "dec", "oct", "iomanip", "base", "hexadecimal", "showbase"]
+doc = "Print an integer in hexadecimal, then restore decimal."
+snippet = '''
+std::cout << std::hex << ${1:value} << std::dec;$0'''
+
+[[entries]]
+name = "boolalpha"
+keys = ["boolalpha", "bool", "iomanip", "true", "false", "print"]
+doc = "Print booleans as true/false instead of 1/0."
+snippet = '''
+std::cout << std::boolalpha << ${1:flag};$0'''
+
+[[entries]]
+name = "leading zeros"
+keys = ["zeros", "pad", "setw", "setfill", "leading", "format", "number", "digits"]
+doc = "Pad a number with leading zeros."
+snippet = '''
+std::cout << std::setw(${1:4}) << std::setfill('0') << ${2:value};$0'''
+
+[[entries]]
+name = "save and restore flags"
+keys = ["flags", "restore", "iomanip", "state", "precision", "reset", "ios"]
+doc = "Save stream formatting state and restore it afterwards."
+snippet = '''
+auto ${1:saved} = ${2:std::cout}.flags();
+$0
+${2:std::cout}.flags(${1:saved});'''
+
+[[entries]]
+name = "print vector"
+keys = ["print", "vector", "loop", "cout", "elements", "space", "output"]
+doc = "Print the elements of a container separated by spaces."
+snippet = '''
+for (const auto &${1:x} : ${2:v}) {
+    std::cout << ${1:x} << ' ';
+}
+std::cout << '\n';$0'''

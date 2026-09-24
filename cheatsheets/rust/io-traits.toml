@@ -1,0 +1,195 @@
+title = "Read and Write traits, binary and text parsing"
+contexts = ["statement", "expression", "item"]
+
+[[entries]]
+name = "fn taking impl Read"
+keys = ["read", "impl", "generic", "reader", "parameter", "fn", "arg", "any"]
+doc = "Accept any reader, so the function works on files, stdin and buffers."
+snippet = '''
+fn ${1:parse}<R: std::io::Read>(mut ${2:reader}: R) -> std::io::Result<${3:T}> {
+    $0
+}'''
+
+[[entries]]
+name = "fn taking impl BufRead"
+keys = ["bufread", "impl", "lines", "reader", "parameter", "fn", "generic"]
+doc = "Accept a buffered reader so lines and read_line are available."
+snippet = '''
+fn ${1:parse}(${2:reader}: impl std::io::BufRead) -> std::io::Result<${3:T}> {
+    for line in ${2:reader}.lines() {
+        let line = line?;
+        $0
+    }
+}'''
+
+[[entries]]
+name = "fn taking impl Write"
+keys = ["write", "impl", "writer", "parameter", "fn", "generic", "output", "render"]
+doc = "Write output to any writer, so tests can capture it in a Vec."
+snippet = '''
+fn ${1:render}(${2:out}: &mut impl std::io::Write) -> std::io::Result<()> {
+    writeln!(${2:out}, "${3:text}")?;
+    Ok(())
+}'''
+
+[[entries]]
+name = "fn taking &mut dyn Write"
+keys = ["dyn", "write", "writer", "trait", "object", "parameter", "fn"]
+doc = "Take a writer as a trait object to avoid a generic."
+snippet = '''
+fn ${1:render}(${2:out}: &mut dyn std::io::Write) -> std::io::Result<()> {
+    $0
+}'''
+
+[[entries]]
+name = "impl Read"
+keys = ["impl", "read", "trait", "reader", "custom", "source", "struct"]
+doc = "Implement Read for a type by filling the caller's buffer."
+snippet = '''
+impl std::io::Read for ${1:Type} {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Write"
+keys = ["impl", "write", "trait", "writer", "custom", "sink", "struct", "flush"]
+doc = "Implement Write for a type with write and flush."
+snippet = '''
+impl std::io::Write for ${1:Type} {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        $0
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}'''
+
+[[entries]]
+name = "io::Result<()>"
+keys = ["io", "result", "return", "type", "unit", "error", "fn"]
+doc = "Return type for functions that only fail with I/O errors."
+snippet = '''
+std::io::Result<${1:()}>$0'''
+
+[[entries]]
+name = "io::Error new"
+keys = ["io", "error", "new", "errorkind", "other", "construct", "custom"]
+doc = "Construct an I/O error with a kind and message."
+snippet = '''
+std::io::Error::new(std::io::ErrorKind::${1:InvalidData}, ${2:"message"})$0'''
+
+[[entries]]
+name = "io::Error::other"
+keys = ["io", "error", "other", "message", "wrap", "custom", "short"]
+doc = "Construct an Other I/O error from a message or error value."
+snippet = '''
+std::io::Error::other(${1:"message"})$0'''
+
+[[entries]]
+name = "match ErrorKind"
+keys = ["errorkind", "match", "kind", "notfound", "permission", "io", "handle"]
+doc = "Branch on the kind of an I/O error, such as a missing file."
+snippet = '''
+match ${1:std::fs::read_to_string(path)} {
+    Ok(${2:text}) => $0,
+    Err(e) if e.kind() == std::io::ErrorKind::NotFound => ${3:String::new()},
+    Err(e) => return Err(e.into()),
+}'''
+
+[[entries]]
+name = "last_os_error"
+keys = ["last_os_error", "errno", "os", "error", "ffi", "raw_os_error"]
+doc = "Capture errno as an io::Error after a failed C call."
+snippet = '''
+std::io::Error::last_os_error()$0'''
+
+[[entries]]
+name = "io::Cursor"
+keys = ["cursor", "io", "memory", "reader", "bytes", "test", "in", "buffer"]
+doc = "Treat an in-memory buffer as a reader or writer."
+snippet = '''
+std::io::Cursor::new(${1:bytes})$0'''
+
+[[entries]]
+name = "Vec<u8> as writer"
+keys = ["vec", "u8", "writer", "memory", "buffer", "capture", "write"]
+doc = "Write into a Vec, which implements Write, to build bytes in memory."
+snippet = '''
+let mut ${1:buf}: Vec<u8> = Vec::new();
+write!(${1:buf}, "${2:{\}}", ${3:value})?;$0'''
+
+[[entries]]
+name = "take n bytes"
+keys = ["take", "limit", "bytes", "reader", "n", "bounded", "at", "most"]
+doc = "Read at most n bytes from a reader."
+snippet = '''
+${1:reader}.take(${2:n})$0'''
+
+[[entries]]
+name = "bytes iterator"
+keys = ["bytes", "iterator", "reader", "byte", "each", "one", "at", "time"]
+doc = "Iterate over a reader one byte at a time."
+snippet = '''
+for ${1:b} in ${2:reader}.bytes() {
+    let ${1:b} = ${1:b}?;
+    $0
+}'''
+
+[[entries]]
+name = "chain readers"
+keys = ["chain", "readers", "concat", "join", "sequence", "two"]
+doc = "Read one reader to the end and then another."
+snippet = '''
+${1:first}.chain(${2:second})$0'''
+
+[[entries]]
+name = "read_until delimiter"
+keys = ["read_until", "delimiter", "byte", "bufread", "record", "nul", "split"]
+doc = "Read bytes up to and including a delimiter."
+snippet = '''
+let mut ${1:buf} = Vec::new();
+${2:reader}.read_until(b'${3:\n}', &mut ${1:buf})?;$0'''
+
+[[entries]]
+name = "split on byte"
+keys = ["split", "byte", "bufread", "records", "iterator", "delimiter", "lines"]
+doc = "Iterate over byte records separated by a delimiter."
+snippet = '''
+for ${1:record} in ${2:reader}.split(b'${3:\n}') {
+    let ${1:record} = ${1:record}?;
+    $0
+}'''
+
+[[entries]]
+name = "read u32 little-endian"
+keys = ["read", "u32", "integer", "little", "endian", "from_le_bytes", "binary", "header"]
+doc = "Read a fixed-width integer from a binary stream."
+snippet = '''
+let mut ${1:buf} = [0u8; ${2:4}];
+${3:reader}.read_exact(&mut ${1:buf})?;
+let ${4:n} = ${5:u32}::from_${6:le}_bytes(${1:buf});$0'''
+
+[[entries]]
+name = "write u32 little-endian"
+keys = ["write", "u32", "integer", "little", "endian", "to_le_bytes", "binary"]
+doc = "Write a fixed-width integer to a binary stream."
+snippet = '''
+${1:writer}.write_all(&${2:n}.to_${3:le}_bytes())?;$0'''
+
+[[entries]]
+name = "parse integers from bytes slice"
+keys = ["slice", "bytes", "try_into", "from_le_bytes", "parse", "binary", "offset"]
+doc = "Decode an integer from a byte slice at an offset."
+snippet = '''
+let ${1:n} = ${2:u32}::from_${3:le}_bytes(${4:bytes}[${5:0}..${5:0} + ${6:4}].try_into()?);$0'''
+
+[[entries]]
+name = "io::sink / io::empty"
+keys = ["sink", "empty", "null", "discard", "devnull", "reader", "writer"]
+doc = "A writer that discards everything or a reader that is always at EOF."
+snippet = '''
+std::io::${1:sink}()$0'''

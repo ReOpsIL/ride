@@ -1,0 +1,206 @@
+title = "String search and conversion"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "find"
+keys = ["find", "search", "index", "npos", "position", "substring", "contains"]
+doc = "Position of a substring, checked against std::string::npos."
+snippet = '''
+if (auto ${1:pos} = ${2:s}.find(${3:"needle"}); ${1:pos} != std::string::npos) {
+    $0
+}'''
+
+[[entries]]
+name = "find from position"
+keys = ["find", "from", "offset", "next", "pos", "search", "loop"]
+doc = "Search starting at an offset, e.g. to find every occurrence."
+snippet = '''
+for (auto ${1:pos} = ${2:s}.find(${3:needle}); ${1:pos} != std::string::npos; ${1:pos} = ${2:s}.find(${3:needle}, ${1:pos} + 1)) {
+    $0
+}'''
+
+[[entries]]
+name = "rfind"
+keys = ["rfind", "find", "last", "reverse", "position", "suffix"]
+doc = "Position of the last occurrence of a substring."
+snippet = '''
+${1:s}.rfind(${2:"needle"})$0'''
+
+[[entries]]
+name = "find_first_of / find_last_of"
+keys = ["find_first_of", "find_last_of", "any", "chars", "set", "delimiter", "position"]
+doc = "First or last position of any character from a set."
+snippet = '''
+${1:s}.${2:find_first_of}(${3:" ,;"})$0'''
+
+[[entries]]
+name = "find_first_not_of / find_last_not_of"
+keys = ["find_first_not_of", "find_last_not_of", "skip", "whitespace", "trim", "position"]
+doc = "First or last position of a character not in a set."
+snippet = '''
+${1:s}.${2:find_first_not_of}(${3:" \t\n"})$0'''
+
+[[entries]]
+name = "npos check"
+keys = ["npos", "not found", "check", "find", "string::npos", "missing"]
+doc = "npos is the value find returns when nothing matched."
+snippet = '''
+${1:pos} == std::string::npos$0'''
+
+[[entries]]
+name = "starts_with / ends_with"
+keys = ["starts_with", "ends_with", "prefix", "suffix", "begins", "string"]
+doc = "C++20 prefix or suffix test."
+snippet = '''
+${1:s}.${2:starts_with}(${3:"pre"})$0'''
+
+[[entries]]
+name = "contains"
+keys = ["contains", "has", "includes", "substring", "in", "c++23"]
+doc = "C++23 substring presence test."
+snippet = '''
+${1:s}.contains(${2:"needle"})$0'''
+
+[[entries]]
+name = "compare"
+keys = ["compare", "strcmp", "three-way", "order", "less", "string"]
+doc = "Three-way compare returning negative, zero or positive."
+snippet = '''
+${1:a}.compare(${2:b})$0'''
+
+[[entries]]
+name = "string equality"
+keys = ["==", "equal", "compare", "same", "string", "!="]
+doc = "Strings compare by content with == and !=."
+snippet = '''
+${1:a} == ${2:b}$0'''
+
+[[entries]]
+name = "lexicographic compare"
+keys = ["<", "lexicographic", "compare", "order", "sort", "alphabetical", "string"]
+doc = "Strings order lexicographically with <, so sorting works out of the box."
+snippet = '''
+${1:a} < ${2:b}$0'''
+
+[[entries]]
+name = "std::to_string"
+keys = ["to_string", "convert", "itoa", "stringify", "number", "int", "double"]
+doc = "Convert a number to a string."
+snippet = '''
+std::to_string(${1:value})$0'''
+
+[[entries]]
+name = "std::stoi / std::stod"
+keys = ["stoi", "stod", "stol", "stoul", "stoll", "stof", "parse", "atoi", "convert"]
+doc = "Parse a number from a string, throwing on failure."
+snippet = '''
+std::${1:stoi}(${2:s})$0'''
+
+[[entries]]
+name = "stoi with error handling"
+keys = ["stoi", "invalid_argument", "out_of_range", "parse", "try", "catch", "error", "validate"]
+doc = "Parse an int and handle both malformed input and overflow."
+snippet = '''
+try {
+    ${1:int} ${2:value} = std::${3:stoi}(${4:s});
+    $0
+} catch (const std::invalid_argument &) {
+    ${5:}
+} catch (const std::out_of_range &) {
+    ${6:}
+}'''
+
+[[entries]]
+name = "stoi with base or position"
+keys = ["stoi", "base", "hex", "pos", "consumed", "parse", "radix"]
+doc = "Parse with a radix and learn how many characters were consumed."
+snippet = '''
+std::size_t ${1:consumed} = 0;
+auto ${2:value} = std::stoi(${3:s}, &${1:consumed}, ${4:16});$0'''
+
+[[entries]]
+name = "std::from_chars"
+keys = ["from_chars", "parse", "charconv", "fast", "noexcept", "errc", "convert"]
+doc = "Fast non-throwing parse from a character range, checked through errc."
+snippet = '''
+${1:int} ${2:value}{};
+auto [${3:ptr}, ${4:ec}] = std::from_chars(${5:s}.data(), ${5:s}.data() + ${5:s}.size(), ${2:value});
+if (${4:ec} != std::errc{}) {
+    $0
+}'''
+
+[[entries]]
+name = "std::to_chars"
+keys = ["to_chars", "format", "charconv", "fast", "buffer", "number"]
+doc = "Fast non-allocating number to characters."
+snippet = '''
+char ${1:buf}[${2:32}];
+auto [${3:end}, ${4:ec}] = std::to_chars(${1:buf}, ${1:buf} + sizeof ${1:buf}, ${5:value});
+std::string_view ${6:text}(${1:buf}, ${3:end});$0'''
+
+[[entries]]
+name = "std::format"
+keys = ["format", "fmt", "printf", "interpolate", "c++20", "string", "build"]
+doc = "C++20 type-safe formatting into a string."
+snippet = '''
+std::format("{}", ${1:value})$0'''
+
+[[entries]]
+name = "std::format with specs"
+keys = ["format", "width", "precision", "hex", "align", "padding", "spec", "fill"]
+doc = "Format specs: width, fill and alignment, precision, and base."
+snippet = '''
+std::format("{:${1:>8}} {:${2:.2f}} {:${3:#x}}", ${4:name}, ${5:ratio}, ${6:flags})$0'''
+
+[[entries]]
+name = "std::format_to"
+keys = ["format_to", "format", "back_inserter", "append", "buffer"]
+doc = "Format into an output iterator, e.g. appending to a string."
+snippet = '''
+std::format_to(std::back_inserter(${1:out}), "{}", ${2:value});$0'''
+
+[[entries]]
+name = "std::stringstream number parse"
+keys = ["stringstream", "parse", "number", "istringstream", "convert", "fail", "check"]
+doc = "Parse a number with a stream and detect leftover garbage."
+snippet = '''
+std::istringstream ${1:iss}(${2:s});
+${3:int} ${4:value};
+if (!(${1:iss} >> ${4:value}) || !${1:iss}.eof()) {
+    $0
+}'''
+
+[[entries]]
+name = "char to string"
+keys = ["char", "string", "convert", "single", "one", "character"]
+doc = "Build a one-character string."
+snippet = '''
+std::string(1, ${1:c})$0'''
+
+[[entries]]
+name = "char digit to int"
+keys = ["char", "digit", "int", "convert", "'0'", "number", "ascii"]
+doc = "Numeric value of a digit character."
+snippet = '''
+${1:c} - '0'$0'''
+
+[[entries]]
+name = "string_view"
+keys = ["string_view", "view", "sv", "non-owning", "slice", "parameter"]
+doc = "Non-owning view of characters; ideal for read-only parameters."
+snippet = '''
+std::string_view ${1:sv} = ${2:s};$0'''
+
+[[entries]]
+name = "string_view substr"
+keys = ["string_view", "substr", "slice", "view", "no copy", "part"]
+doc = "Sub-view without copying characters."
+snippet = '''
+${1:sv}.substr(${2:pos}, ${3:len})$0'''
+
+[[entries]]
+name = "string_view remove_prefix"
+keys = ["remove_prefix", "remove_suffix", "string_view", "trim", "shrink", "skip"]
+doc = "Shrink a view from the front or back in place."
+snippet = '''
+${1:sv}.${2:remove_prefix}(${3:n});$0'''

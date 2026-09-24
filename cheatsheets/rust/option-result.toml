@@ -1,0 +1,217 @@
+title = "Option and Result combinators"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "map on Option/Result"
+keys = ["map", "option", "result", "transform", "inside", "some", "ok"]
+doc = "Transform the contained success value."
+snippet = '''
+.map(|${1:value}| ${2:expr})$0'''
+
+[[entries]]
+name = "map_or / map_or_else"
+keys = ["map", "or", "default", "option", "result", "transform", "fallback"]
+doc = "Transform the contained value or produce a default in one call."
+snippet = '''
+.map_or(${1:default}, |${2:value}| ${3:expr})$0'''
+
+[[entries]]
+name = "ok"
+keys = ["ok", "result", "option", "discard", "ignore", "error", "convert"]
+doc = "Discard the error and turn a Result into an Option."
+snippet = '''
+.ok()$0'''
+
+[[entries]]
+name = "err"
+keys = ["err", "result", "option", "error", "extract", "convert"]
+doc = "Discard the success value and turn a Result into an Option of its error."
+snippet = '''
+.err()$0'''
+
+[[entries]]
+name = "is_ok / is_err / is_some / is_none"
+keys = ["is", "ok", "err", "some", "none", "check", "test", "variant"]
+doc = "Test which variant a Result or Option holds."
+snippet = '''
+.${1:is_some}()$0'''
+
+[[entries]]
+name = "is_some_and / is_ok_and"
+keys = ["is", "some", "ok", "and", "predicate", "check", "condition", "none_or"]
+doc = "Test the variant and a predicate on its value in one call."
+snippet = '''
+.${1:is_some_and}(|${2:v}| ${3:cond})$0'''
+
+[[entries]]
+name = "matches!"
+keys = ["matches", "pattern", "bool", "test", "variant", "check"]
+doc = "Test whether a value matches a pattern, yielding a bool."
+snippet = '''
+matches!(${1:value}, ${2:Some(_)})$0'''
+
+[[entries]]
+name = "Some / None"
+keys = ["some", "none", "option", "wrap", "value", "absent", "construct"]
+doc = "Construct an Option with or without a value."
+snippet = '''
+Some(${1:value})$0'''
+
+[[entries]]
+name = "match Option"
+keys = ["match", "option", "some", "none", "handle", "both", "cases"]
+doc = "Handle both variants of an Option explicitly."
+snippet = '''
+match ${1:maybe} {
+    Some(${2:value}) => $0,
+    None => ${3:todo!()},
+}'''
+
+[[entries]]
+name = "if let Some"
+keys = ["if", "let", "some", "option", "present", "only", "value"]
+doc = "Run a block only when an Option holds a value."
+snippet = '''
+if let Some(${1:value}) = ${2:maybe} {
+    $0
+}'''
+
+[[entries]]
+name = "let else Some"
+keys = ["let", "else", "some", "option", "return", "early", "continue", "diverge"]
+doc = "Bind the Some value or leave with a diverging else block."
+snippet = '''
+let Some(${1:value}) = ${2:maybe} else {
+    ${3:return};
+};$0'''
+
+[[entries]]
+name = "as_ref"
+keys = ["as_ref", "option", "borrow", "reference", "inside", "without", "moving"]
+doc = "Borrow the contents as Option<&T> so the original is not consumed."
+snippet = '''
+.as_ref()$0'''
+
+[[entries]]
+name = "as_mut"
+keys = ["as_mut", "option", "borrow", "mutable", "modify", "inside", "reference"]
+doc = "Borrow the contents mutably as Option<&mut T>."
+snippet = '''
+if let Some(${1:inner}) = ${2:maybe}.as_mut() {
+    $0
+}'''
+
+[[entries]]
+name = "as_deref"
+keys = ["as_deref", "option", "string", "str", "borrow", "deref", "box"]
+doc = "Borrow Option<String> as Option<&str>, or Option<Box<T>> as Option<&T>."
+snippet = '''
+.as_deref()$0'''
+
+[[entries]]
+name = "take"
+keys = ["take", "option", "replace", "none", "move", "out", "field"]
+doc = "Move the value out of an Option, leaving None in its place."
+snippet = '''
+.take()$0'''
+
+[[entries]]
+name = "replace / insert"
+keys = ["replace", "insert", "option", "set", "old", "value", "swap"]
+doc = "Put a value into an Option, returning the previous one with replace."
+snippet = '''
+.replace(${1:value})$0'''
+
+[[entries]]
+name = "get_or_insert_with"
+keys = ["get", "insert", "option", "lazy", "init", "cache", "memoize", "with"]
+doc = "Return the value, inserting one from a closure if the Option is None."
+snippet = '''
+.get_or_insert_with(|| ${1:compute()})$0'''
+
+[[entries]]
+name = "zip"
+keys = ["zip", "option", "pair", "both", "tuple", "combine", "two"]
+doc = "Combine two Options into an Option of a pair, None if either is None."
+snippet = '''
+${1:a}.zip(${2:b})$0'''
+
+[[entries]]
+name = "filter"
+keys = ["filter", "option", "predicate", "none", "condition", "keep"]
+doc = "Turn Some into None unless its value satisfies the predicate."
+snippet = '''
+.filter(|${1:v}| ${2:cond})$0'''
+
+[[entries]]
+name = "flatten"
+keys = ["flatten", "option", "nested", "option of option", "result", "unwrap", "level"]
+doc = "Collapse an Option<Option<T>> or Result<Result<T, E>, E> by one level."
+snippet = '''
+.flatten()$0'''
+
+[[entries]]
+name = "transpose"
+keys = ["transpose", "option", "result", "swap", "nested", "question", "convert"]
+doc = "Swap Option<Result<T, E>> into Result<Option<T>, E> so ? can be applied."
+snippet = '''
+.transpose()?$0'''
+
+[[entries]]
+name = "copied / cloned"
+keys = ["copied", "cloned", "option", "reference", "owned", "deref", "value"]
+doc = "Turn an Option<&T> into an Option<T> by copying or cloning."
+snippet = '''
+.${1:copied}()$0'''
+
+[[entries]]
+name = "or / and"
+keys = ["or", "and", "option", "result", "fallback", "alternative", "eager"]
+doc = "Pick the first Some or Ok with or, or require both with and."
+snippet = '''
+.or(${1:fallback})$0'''
+
+[[entries]]
+name = "xor"
+keys = ["xor", "option", "exactly", "one", "either", "exclusive"]
+doc = "Some only if exactly one of the two Options is Some."
+snippet = '''
+${1:a}.xor(${2:b})$0'''
+
+[[entries]]
+name = "iterate Option"
+keys = ["option", "iter", "for", "loop", "zero", "one", "into_iter", "chain"]
+doc = "Iterate over zero or one element, handy with chain or flatten."
+snippet = '''
+${1:maybe}.into_iter()$0'''
+
+[[entries]]
+name = "Option in closure ?"
+keys = ["question", "closure", "option", "result", "iterator", "map", "inside", "propagate"]
+doc = "Use ? inside a closure by making the closure return Option or Result."
+snippet = '''
+.map(|${1:x}| -> Result<${2:_}, ${3:_}> {
+    let ${4:v} = ${5:parse(x)}?;
+    Ok(${4:v})
+})$0'''
+
+[[entries]]
+name = "collect Results in closure"
+keys = ["collect", "result", "closure", "iterator", "map", "fallible", "propagate", "vec"]
+doc = "Map with a fallible closure and stop at the first error."
+snippet = '''
+let ${1:values}: Result<Vec<${2:_}>, ${3:_}> = ${4:items}.iter().map(|${5:x}| ${6:x.parse::<i32>()}).collect();$0'''
+
+[[entries]]
+name = "unwrap_or_default"
+keys = ["unwrap", "or", "default", "zero", "empty", "option", "result"]
+doc = "Take the contained value or the type's Default."
+snippet = '''
+.unwrap_or_default()$0'''
+
+[[entries]]
+name = "unwrap_err / expect_err"
+keys = ["unwrap", "expect", "err", "error", "test", "assert", "failure"]
+doc = "Take the error value, panicking if the Result is Ok, useful in tests."
+snippet = '''
+.unwrap_err()$0'''

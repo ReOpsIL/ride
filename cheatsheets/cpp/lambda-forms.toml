@@ -1,0 +1,188 @@
+title = "Lambda variants and uses"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "generic lambda"
+keys = ["lambda", "generic", "auto", "template", "any", "parameter"]
+doc = "Lambda with auto parameters, templated on each call."
+snippet = """
+[](const auto &${1:x}) {
+    $0
+}"""
+
+[[entries]]
+name = "variadic generic lambda"
+keys = ["lambda", "variadic", "auto", "args", "pack", "forward", "..."]
+doc = "Lambda taking any number of arguments."
+snippet = """
+[](auto &&...${1:args}) {
+    $0
+}"""
+
+[[entries]]
+name = "template lambda"
+keys = ["lambda", "template", "typename", "explicit", "generic", "<>"]
+doc = "C++20 lambda with an explicit template parameter list."
+snippet = """
+[]<typename ${1:T}>(${1:T} ${2:x}) {
+    $0
+}"""
+
+[[entries]]
+name = "template lambda with requires"
+keys = ["lambda", "template", "requires", "concept", "constrained", "typename"]
+doc = "Template lambda constrained by a concept."
+snippet = """
+[]<typename ${1:T}>(${1:T} ${2:x}) requires ${3:std::integral<T>} {
+    $0
+}"""
+
+[[entries]]
+name = "constexpr lambda"
+keys = ["lambda", "constexpr", "compile-time", "constant", "consteval"]
+doc = "Lambda usable in constant expressions (implicit when possible since C++17)."
+snippet = """
+constexpr auto ${1:name} = [](${2:int x}) constexpr {
+    return ${3:x * 2};
+};$0"""
+
+[[entries]]
+name = "noexcept lambda"
+keys = ["lambda", "noexcept", "nothrow", "exception", "spec"]
+doc = "Lambda that promises not to throw."
+snippet = """
+[${1:}](${2:}) noexcept {
+    $0
+}"""
+
+[[entries]]
+name = "static lambda"
+keys = ["lambda", "static", "operator()", "stateless", "c++23"]
+doc = "C++23 lambda whose call operator is static, no captures allowed."
+snippet = """
+[](${1:int x}) static {
+    $0
+}"""
+
+[[entries]]
+name = "immediately invoked lambda"
+keys = ["lambda", "iife", "invoke", "init", "const", "initialize", "once"]
+doc = "Call a lambda immediately, often to initialize a const."
+snippet = """
+const auto ${1:value} = [&] {
+    $0
+}();"""
+
+[[entries]]
+name = "recursive lambda"
+keys = ["lambda", "recursive", "self", "deducing this", "c++23", "fib"]
+doc = "C++23 lambda that calls itself through an explicit self parameter."
+snippet = """
+auto ${1:fib} = [](this auto self, ${2:int n}) -> ${3:int} {
+    return ${4:n < 2 ? n : self(n - 1) + self(n - 2)};
+};$0"""
+
+[[entries]]
+name = "recursive lambda std::function"
+keys = ["lambda", "recursive", "function", "std::function", "self", "pre-c++23"]
+doc = "Recursive lambda stored in std::function and captured by reference."
+snippet = """
+std::function<${1:int}(${2:int})> ${3:fib} = [&](${2:int} ${4:n}) -> ${1:int} {
+    return ${5:n < 2 ? n : fib(n - 1) + fib(n - 2)};
+};$0"""
+
+[[entries]]
+name = "lambda in std::function"
+keys = ["lambda", "function", "std::function", "store", "callback", "type"]
+doc = "Store a lambda behind a fixed std::function signature."
+snippet = """
+std::function<${1:void}(${2:int})> ${3:callback} = [${4:}](${2:int} ${5:x}) {
+    $0
+};"""
+
+[[entries]]
+name = "vector of lambdas"
+keys = ["lambda", "vector", "list", "callbacks", "function", "store", "many"]
+doc = "Collect callables of different lambda types in a vector of std::function."
+snippet = """
+std::vector<std::function<${1:void}(${2:})>> ${3:tasks};
+${3:tasks}.push_back([${4:}](${2:}) { $0 });"""
+
+[[entries]]
+name = "lambda in map"
+keys = ["lambda", "map", "dispatch", "table", "command", "function", "string"]
+doc = "Dispatch table from keys to lambdas."
+snippet = """
+std::unordered_map<std::string, std::function<${1:void}(${2:})>> ${3:commands}{
+    {"${4:help}", [](${2:}) { $0 }},
+};"""
+
+[[entries]]
+name = "lambda passed to algorithm"
+keys = ["lambda", "algorithm", "for_each", "predicate", "pass", "argument", "callback"]
+doc = "Pass a lambda as the callable of a standard algorithm."
+snippet = """
+std::for_each(${1:v}.begin(), ${1:v}.end(), [${2:&}](${3:auto &x}) {
+    $0
+});"""
+
+[[entries]]
+name = "lambda as comparator"
+keys = ["lambda", "sort", "comparator", "compare", "less", "order", "by"]
+doc = "Sort with a lambda that says whether a comes before b."
+snippet = """
+std::sort(${1:v}.begin(), ${1:v}.end(), [](const auto &${2:a}, const auto &${3:b}) {
+    return ${4:a.key < b.key};
+});$0"""
+
+[[entries]]
+name = "lambda as predicate"
+keys = ["lambda", "find_if", "predicate", "condition", "filter", "count_if", "any_of"]
+doc = "Lambda returning bool for find_if, count_if, any_of and friends."
+snippet = """
+auto ${1:it} = std::find_if(${2:v}.begin(), ${2:v}.end(), [${3:&}](const auto &${4:x}) {
+    return ${5:x > 0};
+});$0"""
+
+[[entries]]
+name = "set with lambda comparator"
+keys = ["lambda", "set", "map", "comparator", "decltype", "custom", "order"]
+doc = "Ordered container keyed by a lambda comparison (default-constructible since C++20)."
+snippet = """
+auto ${1:cmp} = [](const ${2:T} &${3:a}, const ${2:T} &${4:b}) { return ${5:a.id < b.id}; };
+std::set<${2:T}, decltype(${1:cmp})> ${6:items};$0"""
+
+[[entries]]
+name = "default-constructible lambda"
+keys = ["lambda", "decltype", "default", "construct", "type", "stateless", "c++20"]
+doc = "C++20 captureless lambdas can be default constructed from their type."
+snippet = """
+using ${1:Cmp} = decltype([](${2:int a, int b}) { return ${3:a < b}; });
+${1:Cmp} ${4:cmp}{};$0"""
+
+[[entries]]
+name = "lambda to function pointer"
+keys = ["lambda", "function pointer", "convert", "+", "c", "callback", "captureless"]
+doc = "Captureless lambda converts to a plain function pointer."
+snippet = """
+${1:int} (*${2:fp})(${3:int}) = [](${3:int} ${4:x}) { return ${5:x}; };$0"""
+
+[[entries]]
+name = "overloaded lambdas visit"
+keys = ["overloaded", "visit", "variant", "lambda", "overload set", "match"]
+doc = "Visit a variant with one lambda per alternative via the overloaded helper."
+snippet = """
+std::visit(overloaded{
+    [](${1:int} ${2:v}) { $0 },
+    [](const ${3:std::string} &${2:v}) { },
+}, ${4:var});"""
+
+[[entries]]
+name = "lambda with structured bindings"
+keys = ["lambda", "structured", "binding", "pair", "map", "auto", "[k, v]"]
+doc = "Destructure a pair or tuple parameter inside the lambda body."
+snippet = """
+[](const auto &${1:entry}) {
+    const auto &[${2:key}, ${3:value}] = ${1:entry};
+    $0
+}"""

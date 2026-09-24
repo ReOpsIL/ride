@@ -1,9 +1,9 @@
-title = "Tests and docs"
+title = "Tests"
 contexts = ["item", "body"]
 
 [[entries]]
 name = "test fn"
-keys = ["test", "fn", "unit", "assert"]
+keys = ["test", "fn", "unit", "assert", "case", "define"]
 doc = "Define a unit test."
 snippet = '''
 #[test]
@@ -13,7 +13,7 @@ fn ${1:name}() {
 
 [[entries]]
 name = "tests module"
-keys = ["test", "mod", "cfg", "tests", "module", "unit"]
+keys = ["test", "mod", "cfg", "tests", "module", "unit", "super"]
 doc = "Define the conventional test module compiled only under cargo test."
 snippet = '''
 #[cfg(test)]
@@ -28,7 +28,7 @@ mod tests {
 
 [[entries]]
 name = "test should_panic"
-keys = ["test", "should_panic", "panic", "expected"]
+keys = ["test", "should_panic", "panic", "expected", "fails", "message"]
 doc = "Define a test that passes only when it panics with a matching message."
 snippet = '''
 #[test]
@@ -38,9 +38,20 @@ fn ${2:name}() {
 }'''
 
 [[entries]]
+name = "test should_panic any"
+keys = ["test", "should_panic", "panic", "any", "fails", "crash"]
+doc = "Define a test that passes when it panics for any reason."
+snippet = '''
+#[test]
+#[should_panic]
+fn ${1:name}() {
+    $0
+}'''
+
+[[entries]]
 name = "test ignore"
-keys = ["test", "ignore", "skip", "slow"]
-doc = "Define a test skipped by default."
+keys = ["test", "ignore", "skip", "slow", "disabled", "reason"]
+doc = "Define a test skipped by default and run with --ignored."
 snippet = '''
 #[test]
 #[ignore = "${1:reason}"]
@@ -50,7 +61,7 @@ fn ${2:name}() {
 
 [[entries]]
 name = "test returning Result"
-keys = ["test", "result", "question", "error"]
+keys = ["test", "result", "question", "error", "fallible", "ok"]
 doc = "Define a test that can use the question-mark operator."
 snippet = '''
 #[test]
@@ -61,7 +72,7 @@ fn ${1:name}() -> Result<(), Box<dyn std::error::Error>> {
 
 [[entries]]
 name = "async test (tokio)"
-keys = ["test", "async", "tokio", "await"]
+keys = ["test", "async", "tokio", "await", "runtime"]
 doc = "Define an async test run on the tokio runtime."
 snippet = '''
 #[tokio::test]
@@ -71,7 +82,7 @@ async fn ${1:name}() {
 
 [[entries]]
 name = "table-driven test"
-keys = ["test", "table", "cases", "loop", "parametrized"]
+keys = ["test", "table", "cases", "loop", "parametrized", "inputs", "expected"]
 doc = "Run one assertion over a table of input and expected pairs."
 snippet = '''
 #[test]
@@ -83,8 +94,21 @@ fn ${1:name}() {
 }'''
 
 [[entries]]
+name = "property-style test loop"
+keys = ["property", "random", "loop", "many", "inputs", "fuzz", "invariant", "roundtrip"]
+doc = "Check an invariant over many generated inputs with a plain loop."
+snippet = '''
+#[test]
+fn ${1:roundtrip}() {
+    for ${2:i} in 0..${3:1000} {
+        let ${4:input} = ${5:i * 7919 % 1013};
+        assert_eq!(${6:decode(encode(input))}, ${4:input}, "case {${2:i}}");$0
+    }
+}'''
+
+[[entries]]
 name = "test helper fn"
-keys = ["test", "helper", "fixture", "setup"]
+keys = ["test", "helper", "fixture", "setup", "builder", "make"]
 doc = "Define a fixture builder shared by tests in the module."
 snippet = '''
 fn ${1:fixture}() -> ${2:Type} {
@@ -92,83 +116,29 @@ fn ${1:fixture}() -> ${2:Type} {
 }'''
 
 [[entries]]
-name = "assert float approx"
-keys = ["assert", "float", "approx", "epsilon", "abs"]
-doc = "Assert two floats are equal within a tolerance."
+name = "setup with cleanup guard"
+keys = ["setup", "teardown", "cleanup", "drop", "guard", "fixture", "after"]
+doc = "Run teardown automatically by dropping a guard at the end of the test."
 snippet = '''
-assert!((${1:actual} - ${2:expected}).abs() < ${3:1e-9}, "got {}", ${1:actual});$0'''
+struct ${1:Guard}(${2:std::path::PathBuf});
+
+impl Drop for ${1:Guard} {
+    fn drop(&mut self) {
+        ${3:let _ = std::fs::remove_dir_all(&self.0);}$0
+    }
+}'''
 
 [[entries]]
-name = "assert error variant"
-keys = ["assert", "err", "matches", "error", "variant"]
-doc = "Assert that a call fails with a specific error variant."
+name = "cfg(test) item"
+keys = ["cfg", "test", "only", "item", "helper", "compile", "conditional"]
+doc = "Compile an item only when running tests."
 snippet = '''
-assert!(matches!(${1:call}, Err(${2:Error::NotFound})));$0'''
-
-[[entries]]
-name = "doc comment ///"
-keys = ["doc", "comment", "documentation", "rustdoc"]
-doc = "Document the following item with markdown."
-snippet = '''
-/// ${1:Summary line.}
-///
-/// ${2:Details.}$0'''
-
-[[entries]]
-name = "module doc //!"
-keys = ["doc", "module", "crate", "inner", "comment"]
-doc = "Document the enclosing module or crate."
-snippet = '''
-//! ${1:Crate or module summary.}$0'''
-
-[[entries]]
-name = "doc test"
-keys = ["doc", "test", "example", "fence", "rustdoc"]
-doc = "Add a code example to docs that cargo test compiles and runs."
-snippet = '''
-/// # Examples
-///
-/// ```
-/// ${1:let value = crate_name::function();}
-/// assert_eq!(${2:value}, ${3:expected});
-/// ```$0'''
-
-[[entries]]
-name = "doc test hidden lines"
-keys = ["doc", "test", "hidden", "hash", "setup"]
-doc = "Hide setup lines from rendered docs while still compiling them."
-snippet = '''
-/// ```
-/// # use ${1:crate_name::Type};
-/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// ${2:code}
-/// # Ok(())
-/// # }
-/// ```$0'''
-
-[[entries]]
-name = "doc sections"
-keys = ["doc", "panics", "errors", "safety", "sections"]
-doc = "Document the standard sections of a function."
-snippet = '''
-/// ${1:Summary.}
-///
-/// # Errors
-/// ${2:When this fails.}
-///
-/// # Panics
-/// ${3:When this panics.}$0'''
-
-[[entries]]
-name = "doc link"
-keys = ["doc", "link", "intra", "reference", "see"]
-doc = "Link to another item from docs with an intra-doc link."
-snippet = '''
-/// See [`${1:Type::method}`].$0'''
+#[cfg(test)]
+${1:fn helper() {\}}$0'''
 
 [[entries]]
 name = "integration test file"
-keys = ["test", "integration", "tests", "dir", "file"]
+keys = ["test", "integration", "tests", "dir", "file", "crate", "external"]
 doc = "Skeleton for a file under tests/ that uses the crate as a dependency."
 snippet = '''
 use ${1:crate_name}::*;
@@ -179,8 +149,21 @@ fn ${2:name}() {
 }'''
 
 [[entries]]
+name = "tests/common module"
+keys = ["common", "shared", "helpers", "integration", "mod", "tests", "dir"]
+doc = "Share helpers between integration tests through tests/common/mod.rs."
+snippet = '''
+mod common;
+
+#[test]
+fn ${1:name}() {
+    let ${2:ctx} = common::${3:setup}();
+    $0
+}'''
+
+[[entries]]
 name = "bench (criterion)"
-keys = ["bench", "benchmark", "criterion", "perf"]
+keys = ["bench", "benchmark", "criterion", "perf", "measure"]
 doc = "Skeleton for a criterion benchmark under benches/."
 snippet = '''
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -193,8 +176,30 @@ criterion_group!(benches, ${1:bench});
 criterion_main!(benches);'''
 
 [[entries]]
-name = "test with temp dir"
-keys = ["test", "tempdir", "tempfile", "fs", "fixture"]
+name = "timing test with Instant"
+keys = ["timing", "instant", "elapsed", "benchmark", "slow", "duration", "assert", "perf"]
+doc = "Time a block inside a test and fail when it exceeds a budget."
+snippet = '''
+#[test]
+fn ${1:is_fast_enough}() {
+    let start = std::time::Instant::now();
+    $0
+    assert!(start.elapsed() < std::time::Duration::from_millis(${2:100}), "took {:?}", start.elapsed());
+}'''
+
+[[entries]]
+name = "test with std temp dir"
+keys = ["test", "temp", "dir", "temp_dir", "fixture", "fs", "std", "scratch"]
+doc = "Create a unique scratch directory under the system temp dir without a crate."
+snippet = '''
+let ${1:dir} = std::env::temp_dir().join(format!("${2:test}-{}", std::process::id()));
+std::fs::create_dir_all(&${1:dir})?;
+$0
+std::fs::remove_dir_all(&${1:dir})?;'''
+
+[[entries]]
+name = "test with tempfile crate"
+keys = ["test", "tempdir", "tempfile", "fs", "fixture", "crate"]
 doc = "Create a temporary directory cleaned up when the test ends."
 snippet = '''
 let ${1:dir} = tempfile::tempdir()?;
@@ -202,7 +207,7 @@ let ${2:path} = ${1:dir}.path().join("${3:file.txt}");$0'''
 
 [[entries]]
 name = "cargo test cheat"
-keys = ["cargo", "test", "run", "filter", "nocapture", "command"]
+keys = ["cargo", "test", "run", "filter", "nocapture", "command", "threads"]
 doc = "Common cargo test invocations, as a comment to keep nearby."
 snippet = '''
 // cargo test ${1:name} -- --nocapture --test-threads=1 --ignored$0'''

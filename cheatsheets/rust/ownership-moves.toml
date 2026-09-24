@@ -1,0 +1,175 @@
+title = "Ownership: moves, borrows and slices"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "move into function"
+keys = ["move", "function", "argument", "pass", "ownership", "consume", "give"]
+doc = "Pass a value by value to hand ownership to the callee."
+snippet = '''
+${1:consume}(${2:value});$0'''
+
+[[entries]]
+name = "pass by reference"
+keys = ["borrow", "pass", "reference", "argument", "function", "lend", "keep"]
+doc = "Lend a value to a function and keep using it afterwards."
+snippet = '''
+${1:inspect}(&${2:value});$0'''
+
+[[entries]]
+name = "pass by mutable reference"
+keys = ["borrow", "mut", "pass", "reference", "argument", "function", "modify"]
+doc = "Let a function modify a value in place without taking ownership."
+snippet = '''
+${1:update}(&mut ${2:value});$0'''
+
+[[entries]]
+name = "clone before move"
+keys = ["clone", "move", "keep", "both", "copy", "duplicate", "twice"]
+doc = "Clone when both the original and the moved value are still needed."
+snippet = '''
+let ${1:copy} = ${2:original}.clone();
+${3:consume}(${2:original});$0'''
+
+[[entries]]
+name = "clone_from"
+keys = ["clone_from", "clone", "reuse", "allocation", "assign", "overwrite"]
+doc = "Overwrite a value with a clone of another, reusing its allocation."
+snippet = '''
+${1:target}.clone_from(&${2:source});$0'''
+
+[[entries]]
+name = "return ownership"
+keys = ["return", "move", "ownership", "give", "back", "out"]
+doc = "Move a value out of a function by returning it."
+snippet = '''
+return ${1:value};$0'''
+
+[[entries]]
+name = "take and give back"
+keys = ["take", "give", "back", "return", "tuple", "ownership", "both"]
+doc = "Beginner pattern returning the argument together with a result; prefer borrowing."
+snippet = '''
+let (${1:s}, ${2:len}) = ${3:measure}(${1:s});$0'''
+
+[[entries]]
+name = "reborrow &*"
+keys = ["reborrow", "deref", "star", "shared", "reference", "from", "mut"]
+doc = "Create a shared reference from a mutable one or from a smart pointer."
+snippet = '''
+&*${1:reference}$0'''
+
+[[entries]]
+name = "reborrow &mut *"
+keys = ["reborrow", "mut", "deref", "star", "exclusive", "reference", "pass", "again"]
+doc = "Temporarily re-lend a mutable reference so it stays usable afterwards."
+snippet = '''
+&mut *${1:reference}$0'''
+
+[[entries]]
+name = "let r = &mut then use"
+keys = ["let", "mut", "reference", "borrow", "then", "use", "scope", "end"]
+doc = "Bind a mutable reference, mutate through it, and use the owner again once the borrow ends."
+snippet = '''
+let ${1:r} = &mut ${2:value};
+${1:r}.${3:push(1)};
+${4:println!("{:?\}", value)};$0'''
+
+[[entries]]
+name = "full slice &v[..]"
+keys = ["slice", "full", "whole", "vec", "array", "view", "borrow", "range"]
+doc = "Borrow a whole Vec or array as a slice."
+snippet = '''
+&${1:v}[..]$0'''
+
+[[entries]]
+name = "partial slice &v[a..b]"
+keys = ["slice", "range", "part", "sub", "vec", "array", "view", "window"]
+doc = "Borrow part of a Vec or array as a slice."
+snippet = '''
+&${1:v}[${2:1}..${3:3}]$0'''
+
+[[entries]]
+name = "mutable slice &mut v[..]"
+keys = ["slice", "mut", "mutable", "range", "vec", "inplace", "sort", "part"]
+doc = "Borrow part of a Vec mutably to change elements in place."
+snippet = '''
+&mut ${1:v}[${2:..}]$0'''
+
+[[entries]]
+name = "as_slice / as_mut_slice"
+keys = ["as_slice", "as_mut_slice", "slice", "vec", "view", "convert", "borrow"]
+doc = "Borrow a Vec as a slice by method call."
+snippet = '''
+${1:v}.${2:as_slice}()$0'''
+
+[[entries]]
+name = "string slice &s[..]"
+keys = ["str", "slice", "string", "range", "borrow", "substring", "bytes"]
+doc = "Borrow part of a String as a str on char boundaries."
+snippet = '''
+&${1:s}[${2:..}]$0'''
+
+[[entries]]
+name = "&String to &str"
+keys = ["deref", "string", "str", "coerce", "as_str", "borrow", "convert"]
+doc = "A &String coerces to &str automatically; as_str makes it explicit."
+snippet = '''
+${1:s}.as_str()$0'''
+
+[[entries]]
+name = "&Vec<T> to &[T]"
+keys = ["deref", "vec", "slice", "coerce", "borrow", "convert", "parameter"]
+doc = "A &Vec<T> coerces to &[T] automatically when passed to a slice parameter."
+snippet = '''
+${1:takes_slice}(&${2:v})$0'''
+
+[[entries]]
+name = "split_at_mut split borrow"
+keys = ["split", "borrow", "split_at_mut", "two", "mutable", "halves", "disjoint"]
+doc = "Get two mutable slices of one Vec at once by splitting it."
+snippet = '''
+let (${1:left}, ${2:right}) = ${3:v}.split_at_mut(${4:mid});$0'''
+
+[[entries]]
+name = "disjoint field borrows"
+keys = ["split", "borrow", "fields", "struct", "disjoint", "two", "mutable"]
+doc = "Borrow two different fields of one struct mutably at the same time."
+snippet = '''
+let ${1:Type} { ${2:a}, ${3:b}, .. } = &mut ${4:value};$0'''
+
+[[entries]]
+name = "swap two elements"
+keys = ["swap", "elements", "vec", "indices", "exchange", "borrow", "two"]
+doc = "Exchange two Vec elements without holding two mutable borrows."
+snippet = '''
+${1:v}.swap(${2:i}, ${3:j});$0'''
+
+[[entries]]
+name = "iter_mut in place"
+keys = ["iter_mut", "mutate", "each", "for", "inplace", "loop", "element"]
+doc = "Mutate every element through a mutable iterator."
+snippet = '''
+for ${1:item} in ${2:v}.iter_mut() {
+    *${1:item} ${3:+= 1};$0
+}'''
+
+[[entries]]
+name = "copy out of a reference"
+keys = ["copy", "deref", "star", "out", "reference", "int", "value"]
+doc = "Read a Copy value through a reference by dereferencing it."
+snippet = '''
+let ${1:n} = *${2:reference};$0'''
+
+[[entries]]
+name = "assign through reference"
+keys = ["assign", "deref", "star", "write", "mutable", "reference", "set"]
+doc = "Overwrite the value behind a mutable reference."
+snippet = '''
+*${1:reference} = ${2:value};$0'''
+
+[[entries]]
+name = "ptr::eq same allocation"
+keys = ["ptr", "eq", "same", "identity", "address", "compare", "reference"]
+doc = "Check whether two references point to the same memory rather than equal values."
+snippet = '''
+std::ptr::eq(${1:a}, ${2:b})$0'''

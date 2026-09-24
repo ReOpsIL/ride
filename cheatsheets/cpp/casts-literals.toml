@@ -1,23 +1,86 @@
-title = "Casts and literals"
+title = "Casts and conversions"
 contexts = ["expression"]
 
 [[entries]]
 name = "static_cast"
-keys = ["static_cast", "cast", "convert"]
+keys = ["static_cast", "cast", "convert", "conversion", "to"]
 doc = "Checked compile-time conversion between related types."
 snippet = """
 static_cast<${1:int}>(${2:value})$0"""
 
 [[entries]]
+name = "int to double"
+keys = ["static_cast", "double", "float", "int", "division", "convert"]
+doc = "Convert an integer to floating point, for example before dividing."
+snippet = """
+static_cast<double>(${1:value})$0"""
+
+[[entries]]
+name = "double to int"
+keys = ["static_cast", "int", "double", "truncate", "convert", "round"]
+doc = "Truncate a floating value toward zero; use std::lround to round."
+snippet = """
+static_cast<int>(${1:value})$0"""
+
+[[entries]]
+name = "enum to int"
+keys = ["static_cast", "enum", "int", "underlying", "convert", "number"]
+doc = "Convert a scoped enumerator to its integer value."
+snippet = """
+static_cast<int>(${1:Color::Red})$0"""
+
+[[entries]]
+name = "int to enum"
+keys = ["static_cast", "enum", "int", "from", "convert"]
+doc = "Convert an integer to a scoped enum without validation."
+snippet = """
+static_cast<${1:Color}>(${2:value})$0"""
+
+[[entries]]
+name = "to size_t"
+keys = ["static_cast", "size_t", "unsigned", "signed", "index", "warning"]
+doc = "Convert a signed index to size_t to silence sign comparison warnings."
+snippet = """
+static_cast<std::size_t>(${1:i})$0"""
+
+[[entries]]
+name = "char to digit"
+keys = ["char", "digit", "int", "'0'", "convert", "number"]
+doc = "Digit character to its numeric value."
+snippet = """
+${1:c} - '0'$0"""
+
+[[entries]]
+name = "digit to char"
+keys = ["char", "digit", "int", "'0'", "convert", "character"]
+doc = "Numeric value 0-9 to its digit character."
+snippet = """
+static_cast<char>('0' + ${1:d})$0"""
+
+[[entries]]
+name = "to bool"
+keys = ["bool", "convert", "truthy", "!!", "static_cast"]
+doc = "Convert a value or pointer to bool explicitly."
+snippet = """
+static_cast<bool>(${1:value})$0"""
+
+[[entries]]
+name = "implicit conversion"
+keys = ["implicit", "convert", "promotion", "widen", "assign"]
+doc = "Assign between compatible types; narrowing happens silently."
+snippet = """
+${1:double} ${2:d} = ${3:i};$0"""
+
+[[entries]]
 name = "dynamic_cast"
-keys = ["dynamic_cast", "cast", "downcast", "rtti"]
+keys = ["dynamic_cast", "cast", "downcast", "rtti", "derived", "pointer"]
 doc = "Runtime-checked downcast that yields nullptr on failure."
 snippet = """
 dynamic_cast<${1:Derived} *>(${2:base})$0"""
 
 [[entries]]
 name = "dynamic_cast check"
-keys = ["dynamic_cast", "if", "downcast"]
+keys = ["dynamic_cast", "if", "downcast", "check", "type", "is"]
 doc = "Downcast and branch when it succeeds."
 snippet = """
 if (auto *${1:d} = dynamic_cast<${2:Derived} *>(${3:base})) {
@@ -25,157 +88,99 @@ if (auto *${1:d} = dynamic_cast<${2:Derived} *>(${3:base})) {
 }"""
 
 [[entries]]
+name = "dynamic_cast reference"
+keys = ["dynamic_cast", "reference", "&", "downcast", "throw", "bad_cast"]
+doc = "Reference downcast that throws std::bad_cast on failure."
+snippet = """
+dynamic_cast<${1:Derived} &>(${2:base})$0"""
+
+[[entries]]
+name = "upcast"
+keys = ["upcast", "base", "derived", "pointer", "implicit", "polymorphism"]
+doc = "Derived pointer converts to base pointer implicitly."
+snippet = """
+${1:Base} *${2:b} = ${3:&derived};$0"""
+
+[[entries]]
 name = "const_cast"
-keys = ["const_cast", "cast", "const"]
+keys = ["const_cast", "cast", "const", "remove", "mutable"]
 doc = "Remove or add const."
 snippet = """
 const_cast<${1:T} *>(${2:ptr})$0"""
 
 [[entries]]
 name = "reinterpret_cast"
-keys = ["reinterpret_cast", "cast", "bits", "pointer"]
+keys = ["reinterpret_cast", "cast", "bits", "pointer", "address", "integer"]
 doc = "Reinterpret the bit pattern as another pointer or integer type."
 snippet = """
 reinterpret_cast<${1:std::uintptr_t}>(${2:ptr})$0"""
 
 [[entries]]
+name = "reinterpret_cast to bytes"
+keys = ["reinterpret_cast", "bytes", "char", "buffer", "binary", "write"]
+doc = "View an object as raw bytes for binary I/O."
+snippet = """
+reinterpret_cast<const char *>(&${1:value})$0"""
+
+[[entries]]
 name = "C-style cast"
-keys = ["cast", "c", "()"]
+keys = ["cast", "c", "()", "legacy", "parentheses"]
 doc = "Legacy cast (prefer the named casts)."
 snippet = """
 (${1:int})${2:value}$0"""
 
 [[entries]]
 name = "functional cast"
-keys = ["cast", "functional", "construct"]
+keys = ["cast", "functional", "construct", "()", "convert"]
 doc = "Construct a value of a type from an argument."
 snippet = """
 ${1:int}(${2:value})$0"""
 
 [[entries]]
+name = "brace conversion"
+keys = ["cast", "brace", "{}", "narrowing", "safe", "convert"]
+doc = "Conversion with braces that rejects narrowing."
+snippet = """
+${1:int}{${2:value}}$0"""
+
+[[entries]]
 name = "std::bit_cast"
-keys = ["bit_cast", "cast", "bits", "punning"]
+keys = ["bit_cast", "cast", "bits", "punning", "float", "reinterpret"]
 doc = "C++20 reinterpret the object representation safely."
 snippet = """
 std::bit_cast<${1:std::uint32_t}>(${2:value})$0"""
 
 [[entries]]
-name = "integer literal"
-keys = ["literal", "int", "hex", "binary", "octal", "0x", "0b"]
-doc = "Integer literal forms: decimal, 0x hex, 0b binary, 0 octal, with digit separators."
+name = "std::to_underlying"
+keys = ["to_underlying", "enum", "underlying_type", "int", "c++23"]
+doc = "C++23 convert an enum to its underlying integer."
 snippet = """
-${1:0x}${2:FF}$0"""
+std::to_underlying(${1:value})$0"""
 
 [[entries]]
-name = "integer suffix"
-keys = ["literal", "suffix", "u", "l", "ll", "z"]
-doc = "Integer suffixes: u, l, ll, ul, ull, and C++23 z for size_t."
+name = "std::static_pointer_cast"
+keys = ["static_pointer_cast", "dynamic_pointer_cast", "shared_ptr", "cast", "smart"]
+doc = "Cast a shared_ptr to another element type."
 snippet = """
-${1:42}${2:u}$0"""
+std::${1:static_pointer_cast}<${2:Derived}>(${3:ptr})$0"""
 
 [[entries]]
-name = "floating literal"
-keys = ["literal", "float", "double", "f", "exponent"]
-doc = "Floating literal with an f (float) or L (long double) suffix."
+name = "duration_cast"
+keys = ["duration_cast", "chrono", "milliseconds", "convert", "time"]
+doc = "Convert between chrono duration units."
 snippet = """
-${1:1.0}${2:f}$0"""
+std::chrono::duration_cast<std::chrono::${1:milliseconds}>(${2:elapsed})$0"""
 
 [[entries]]
-name = "digit separator"
-keys = ["literal", "separator", "'", "thousands"]
-doc = "Apostrophes separate digit groups in numeric literals."
+name = "number to string"
+keys = ["to_string", "string", "convert", "number", "int", "format"]
+doc = "Convert a number to std::string."
 snippet = """
-${1:1'000'000}$0"""
+std::to_string(${1:value})$0"""
 
 [[entries]]
-name = "char literal"
-keys = ["literal", "char", "'"]
-doc = "Single character literal."
+name = "string to number"
+keys = ["stoi", "stod", "stol", "string", "convert", "parse", "number"]
+doc = "Parse a number from a string; throws on bad input."
 snippet = """
-'${1:a}'$0"""
-
-[[entries]]
-name = "wide / unicode char literal"
-keys = ["literal", "wchar", "u8", "u16", "u32", "unicode"]
-doc = "Character literal with an encoding prefix: L, u8, u, U."
-snippet = """
-${1:u8}'${2:a}'$0"""
-
-[[entries]]
-name = "string literal"
-keys = ["literal", "string", "\""]
-doc = "Null-terminated const char array."
-snippet = """
-"${1:text}"$0"""
-
-[[entries]]
-name = "raw string literal"
-keys = ["literal", "raw", "string", "r", "regex"]
-doc = "String with no escape processing, useful for regex and paths."
-snippet = """
-R"(${1:text})"$0"""
-
-[[entries]]
-name = "raw string with delimiter"
-keys = ["literal", "raw", "string", "delimiter"]
-doc = "Raw string whose content may contain )\"."
-snippet = """
-R"${1:x}(${2:text})${1:x}"$0"""
-
-[[entries]]
-name = "u8 string literal"
-keys = ["literal", "u8", "utf8", "string", "unicode"]
-doc = "UTF-8 encoded string literal (char8_t in C++20)."
-snippet = """
-u8"${1:text}"$0"""
-
-[[entries]]
-name = "escape sequence"
-keys = ["escape", "newline", "tab", "\\n", "\\t"]
-doc = "Escapes: \\n \\t \\\\ \\' \\\" \\0 \\xHH \\u1234."
-snippet = """
-\\${1:n}$0"""
-
-[[entries]]
-name = "user-defined literal"
-keys = ["literal", "operator\"\"", "udl", "user"]
-doc = "Define a literal suffix operator."
-snippet = """
-constexpr ${1:long double} operator""_${2:km}(${3:long double} ${4:v}) {
-    return ${5:v * 1000};
-}$0"""
-
-[[entries]]
-name = "chrono literal"
-keys = ["literal", "chrono", "ms", "s", "duration"]
-doc = "Duration literals such as 10ms, 2s, 1min."
-snippet = """
-${1:10}${2:ms}$0"""
-
-[[entries]]
-name = "boolean literal"
-keys = ["true", "false", "bool", "literal"]
-doc = "Boolean constants true and false."
-snippet = """
-${1:true}$0"""
-
-[[entries]]
-name = "nullptr"
-keys = ["nullptr", "null", "literal"]
-doc = "Null pointer constant."
-snippet = """
-nullptr$0"""
-
-[[entries]]
-name = "numeric_limits"
-keys = ["numeric_limits", "max", "min", "limits", "infinity"]
-doc = "Extreme values of a numeric type."
-snippet = """
-std::numeric_limits<${1:int}>::${2:max}()$0"""
-
-[[entries]]
-name = "std::numbers::pi"
-keys = ["numbers", "pi", "e", "constants"]
-doc = "C++20 mathematical constants."
-snippet = """
-std::numbers::${1:pi}$0"""
+std::${1:stoi}(${2:text})$0"""

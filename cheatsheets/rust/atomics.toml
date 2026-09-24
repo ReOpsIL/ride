@@ -1,0 +1,188 @@
+title = "Atomics"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "use atomic"
+keys = ["use", "atomic", "import", "ordering", "atomicusize", "atomicbool"]
+doc = "Import the atomic types and Ordering."
+snippet = '''
+use std::sync::atomic::{${1:AtomicUsize}, Ordering};$0'''
+
+[[entries]]
+name = "AtomicBool"
+keys = ["atomic", "bool", "flag", "new", "running", "stop", "done"]
+doc = "Create a thread-safe boolean flag."
+snippet = '''
+let ${1:flag} = std::sync::atomic::AtomicBool::new(${2:false});$0'''
+
+[[entries]]
+name = "AtomicUsize / AtomicU64"
+keys = ["atomic", "usize", "u64", "u32", "counter", "new", "unsigned"]
+doc = "Create a thread-safe unsigned integer."
+snippet = '''
+let ${1:counter} = std::sync::atomic::Atomic${2:Usize}::new(${3:0});$0'''
+
+[[entries]]
+name = "AtomicI32 / AtomicI64"
+keys = ["atomic", "i32", "i64", "isize", "signed", "new", "integer"]
+doc = "Create a thread-safe signed integer."
+snippet = '''
+let ${1:value} = std::sync::atomic::Atomic${2:I32}::new(${3:0});$0'''
+
+[[entries]]
+name = "Arc<AtomicUsize> shared"
+keys = ["arc", "atomic", "shared", "counter", "threads", "clone"]
+doc = "Share an atomic counter between threads without a mutex."
+snippet = '''
+let ${1:counter} = Arc::new(std::sync::atomic::AtomicUsize::new(0));$0'''
+
+[[entries]]
+name = "static atomic"
+keys = ["static", "atomic", "global", "counter", "flag", "declare"]
+doc = "Declare a global atomic that needs no unsafe to use."
+snippet = '''
+static ${1:COUNTER}: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);$0'''
+
+[[entries]]
+name = "atomic load"
+keys = ["atomic", "load", "read", "get", "ordering", "value"]
+doc = "Read an atomic value with a memory ordering."
+snippet = '''
+${1:flag}.load(std::sync::atomic::Ordering::${2:SeqCst})$0'''
+
+[[entries]]
+name = "atomic store"
+keys = ["atomic", "store", "write", "set", "ordering", "flag"]
+doc = "Write an atomic value with a memory ordering."
+snippet = '''
+${1:flag}.store(${2:true}, std::sync::atomic::Ordering::${3:SeqCst});$0'''
+
+[[entries]]
+name = "fetch_add counter"
+keys = ["atomic", "counter", "fetch_add", "increment", "add", "lockfree", "usize"]
+doc = "Increment a shared counter without a lock, returning the previous value."
+snippet = '''
+${1:counter}.fetch_add(${2:1}, std::sync::atomic::Ordering::${3:Relaxed});$0'''
+
+[[entries]]
+name = "fetch_sub"
+keys = ["atomic", "fetch_sub", "decrement", "subtract", "counter"]
+doc = "Decrement an atomic and return the previous value."
+snippet = '''
+${1:counter}.fetch_sub(${2:1}, std::sync::atomic::Ordering::${3:Relaxed})$0'''
+
+[[entries]]
+name = "fetch_max / fetch_min"
+keys = ["atomic", "fetch_max", "fetch_min", "max", "min", "high", "water"]
+doc = "Atomically keep the larger or smaller of the stored and given value."
+snippet = '''
+${1:peak}.fetch_${2:max}(${3:value}, std::sync::atomic::Ordering::${4:Relaxed});$0'''
+
+[[entries]]
+name = "fetch_or / fetch_and"
+keys = ["atomic", "fetch_or", "fetch_and", "fetch_xor", "bits", "mask", "flag"]
+doc = "Atomically combine bits into a value."
+snippet = '''
+${1:bits}.fetch_${2:or}(${3:mask}, std::sync::atomic::Ordering::${4:Relaxed});$0'''
+
+[[entries]]
+name = "swap"
+keys = ["atomic", "swap", "exchange", "replace", "previous", "old"]
+doc = "Store a new value and get the old one atomically."
+snippet = '''
+let ${1:old} = ${2:flag}.swap(${3:true}, std::sync::atomic::Ordering::${4:AcqRel});$0'''
+
+[[entries]]
+name = "compare_exchange"
+keys = ["atomic", "compare_exchange", "cas", "compare", "swap", "expected", "conditional"]
+doc = "Store a value only if the current value equals the expected one."
+snippet = '''
+${1:flag}.compare_exchange(
+    ${2:false},
+    ${3:true},
+    std::sync::atomic::Ordering::${4:AcqRel},
+    std::sync::atomic::Ordering::${5:Acquire},
+)$0'''
+
+[[entries]]
+name = "compare_exchange loop"
+keys = ["atomic", "compare_exchange_weak", "loop", "retry", "cas", "spin"]
+doc = "Retry a compare-and-swap until it succeeds, the lock-free update pattern."
+snippet = '''
+let mut ${1:current} = ${2:value}.load(std::sync::atomic::Ordering::Relaxed);
+loop {
+    let ${3:next} = $0;
+    match ${2:value}.compare_exchange_weak(
+        ${1:current},
+        ${3:next},
+        std::sync::atomic::Ordering::AcqRel,
+        std::sync::atomic::Ordering::Relaxed,
+    ) {
+        Ok(_) => break,
+        Err(actual) => ${1:current} = actual,
+    }
+}'''
+
+[[entries]]
+name = "fetch_update"
+keys = ["atomic", "fetch_update", "closure", "update", "compute", "conditional"]
+doc = "Update an atomic with a closure that may refuse by returning None."
+snippet = '''
+${1:value}.fetch_update(
+    std::sync::atomic::Ordering::${2:AcqRel},
+    std::sync::atomic::Ordering::${3:Acquire},
+    |${4:v}| ${5:Some(v + 1)},
+)$0'''
+
+[[entries]]
+name = "Ordering::Relaxed"
+keys = ["ordering", "relaxed", "counter", "stat", "weakest", "memory"]
+doc = "Ordering for plain counters where no other memory depends on the value."
+snippet = '''
+std::sync::atomic::Ordering::Relaxed$0'''
+
+[[entries]]
+name = "Ordering::Acquire / Release"
+keys = ["ordering", "acquire", "release", "acqrel", "publish", "handoff", "memory"]
+doc = "Release when publishing data behind a flag, Acquire when reading it."
+snippet = '''
+std::sync::atomic::Ordering::${1:Release}$0'''
+
+[[entries]]
+name = "Ordering::SeqCst"
+keys = ["ordering", "seqcst", "sequential", "strongest", "default", "memory"]
+doc = "Strongest ordering, a safe default when unsure."
+snippet = '''
+std::sync::atomic::Ordering::SeqCst$0'''
+
+[[entries]]
+name = "stop flag loop"
+keys = ["stop", "flag", "running", "loop", "while", "atomic", "shutdown", "cancel"]
+doc = "Run a worker loop until a shared flag is cleared."
+snippet = '''
+while ${1:running}.load(std::sync::atomic::Ordering::${2:Relaxed}) {
+    $0
+}'''
+
+[[entries]]
+name = "spin wait"
+keys = ["spin", "wait", "loop", "hint", "busy", "atomic", "until"]
+doc = "Busy-wait on an atomic with a CPU hint in the loop."
+snippet = '''
+while !${1:ready}.load(std::sync::atomic::Ordering::Acquire) {
+    std::hint::spin_loop();
+}$0'''
+
+[[entries]]
+name = "atomic into_inner / get_mut"
+keys = ["atomic", "into_inner", "get_mut", "value", "unwrap", "plain"]
+doc = "Take the plain value out of an atomic you own exclusively."
+snippet = '''
+${1:counter}.into_inner()$0'''
+
+[[entries]]
+name = "AtomicPtr"
+keys = ["atomic", "ptr", "pointer", "raw", "swap", "lockfree", "null"]
+doc = "Store a raw pointer that threads can swap atomically."
+snippet = '''
+let ${1:p} = std::sync::atomic::AtomicPtr::<${2:T}>::new(std::ptr::null_mut());$0'''

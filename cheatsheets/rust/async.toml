@@ -3,7 +3,7 @@ contexts = ["statement", "expression", "item"]
 
 [[entries]]
 name = "async fn"
-keys = ["async", "fn", "future", "function"]
+keys = ["async", "fn", "future", "function", "define"]
 doc = "Define a function that returns a future."
 snippet = '''
 async fn ${1:name}(${2:args}) -> ${3:ReturnType} {
@@ -11,22 +11,48 @@ async fn ${1:name}(${2:args}) -> ${3:ReturnType} {
 }'''
 
 [[entries]]
+name = "async fn returning Result"
+keys = ["async", "fn", "result", "error", "question", "fallible"]
+doc = "Define an async function that can fail and use the question mark."
+snippet = '''
+async fn ${1:name}(${2:args}) -> Result<${3:T}, ${4:Box<dyn std::error::Error>}> {
+    $0
+    Ok(${5:value})
+}'''
+
+[[entries]]
+name = "pub async fn"
+keys = ["pub", "async", "fn", "public", "method", "self"]
+doc = "Define a public async method taking self."
+snippet = '''
+pub async fn ${1:name}(&${2:self}${3:, args}) -> ${4:ReturnType} {
+    $0
+}'''
+
+[[entries]]
 name = ".await"
-keys = ["await", "async", "future", "poll"]
+keys = ["await", "async", "future", "poll", "wait", "suspend"]
 doc = "Suspend until a future completes and yield its output."
 snippet = '''
 ${1:future}.await$0'''
 
 [[entries]]
 name = "await with ?"
-keys = ["await", "question", "try", "async", "error"]
+keys = ["await", "question", "try", "async", "error", "propagate"]
 doc = "Await a fallible future and propagate its error."
 snippet = '''
 ${1:future}.await?$0'''
 
 [[entries]]
+name = "let x = call().await"
+keys = ["let", "await", "bind", "async", "call", "result"]
+doc = "Call an async function and bind its result."
+snippet = '''
+let ${1:value} = ${2:fetch}(${3:args}).await${4:?};$0'''
+
+[[entries]]
 name = "async block"
-keys = ["async", "block", "future", "closure", "move"]
+keys = ["async", "block", "future", "inline", "move", "create"]
 doc = "Create a future inline, moving captured values into it."
 snippet = '''
 async ${1:move }{
@@ -34,15 +60,32 @@ async ${1:move }{
 }'''
 
 [[entries]]
+name = "async block into variable"
+keys = ["async", "block", "let", "future", "lazy", "store", "variable"]
+doc = "Store a future without running it until awaited."
+snippet = '''
+let ${1:fut} = async move {
+    $0
+};
+${1:fut}.await'''
+
+[[entries]]
 name = "async closure"
-keys = ["async", "closure", "lambda", "future"]
+keys = ["async", "closure", "lambda", "future", "callback"]
 doc = "Closure that produces a future when called."
 snippet = '''
 async |${1:x}| { $0 }'''
 
 [[entries]]
+name = "closure returning async block"
+keys = ["closure", "async", "block", "move", "returning", "future", "callback"]
+doc = "Closure that returns an async block, the pre-1.85 async closure shape."
+snippet = '''
+move |${1:x}| async move { $0 }'''
+
+[[entries]]
 name = "async trait method"
-keys = ["async", "trait", "method", "fn"]
+keys = ["async", "trait", "method", "fn", "declare"]
 doc = "Declare an async method in a trait, available natively since Rust 1.75."
 snippet = '''
 trait ${1:Name} {
@@ -50,8 +93,19 @@ trait ${1:Name} {
 }'''
 
 [[entries]]
+name = "impl async trait"
+keys = ["impl", "async", "trait", "method", "for", "implement"]
+doc = "Implement an async trait method for a type."
+snippet = '''
+impl ${1:Trait} for ${2:Type} {
+    async fn ${3:method}(&self) -> ${4:ReturnType} {
+        $0
+    }
+}'''
+
+[[entries]]
 name = "impl Future return"
-keys = ["impl", "future", "return", "async", "send"]
+keys = ["impl", "future", "return", "async", "send", "output"]
 doc = "Return a future explicitly, adding a Send bound for multi-threaded runtimes."
 snippet = '''
 fn ${1:name}(${2:args}) -> impl Future<Output = ${3:T}>${4: + Send} {
@@ -61,8 +115,30 @@ fn ${1:name}(${2:args}) -> impl Future<Output = ${3:T}>${4: + Send} {
 }'''
 
 [[entries]]
+name = "fn taking a future"
+keys = ["future", "generic", "parameter", "bound", "output", "fn", "arg"]
+doc = "Accept any future as a generic parameter."
+snippet = '''
+async fn ${1:run}<F: Future<Output = ${2:T}>>(${3:fut}: F) -> ${2:T} {
+    ${3:fut}.await
+}'''
+
+[[entries]]
+name = "fn taking async closure"
+keys = ["closure", "async", "fn", "parameter", "bound", "future", "callback"]
+doc = "Accept a closure that returns a future."
+snippet = '''
+async fn ${1:with}<F, Fut>(${2:f}: F) -> ${3:T}
+where
+    F: FnOnce(${4:Arg}) -> Fut,
+    Fut: Future<Output = ${3:T}>,
+{
+    ${2:f}(${5:arg}).await
+}'''
+
+[[entries]]
 name = "Pin<Box<dyn Future>>"
-keys = ["pin", "box", "future", "dyn", "boxed", "recursive"]
+keys = ["pin", "box", "future", "dyn", "boxed", "recursive", "recursion"]
 doc = "Box a future for storage, dynamic dispatch or async recursion."
 snippet = '''
 Box::pin(async move {
@@ -71,95 +147,49 @@ Box::pin(async move {
 
 [[entries]]
 name = "boxed future type alias"
-keys = ["boxfuture", "type", "alias", "pin", "future"]
+keys = ["boxfuture", "type", "alias", "pin", "future", "dyn"]
 doc = "Define a shorthand for a pinned boxed future."
 snippet = '''
 type BoxFuture<'a, T> = std::pin::Pin<Box<dyn Future<Output = T> + Send + 'a>>;$0'''
 
 [[entries]]
-name = "tokio::spawn"
-keys = ["tokio", "spawn", "task", "async", "background"]
-doc = "Run a future as a background task on the tokio runtime."
+name = "recursive async fn"
+keys = ["recursive", "async", "fn", "box", "pin", "recursion", "self"]
+doc = "Recurse in an async function by boxing the recursive call."
 snippet = '''
-let ${1:handle} = tokio::spawn(async move {
-    $0
-});'''
-
-[[entries]]
-name = "tokio::join!"
-keys = ["tokio", "join", "concurrent", "futures", "all"]
-doc = "Run several futures concurrently and wait for all of them."
-snippet = '''
-let (${1:a}, ${2:b}) = tokio::join!(${3:fut_a}, ${4:fut_b});$0'''
-
-[[entries]]
-name = "tokio::select!"
-keys = ["tokio", "select", "race", "first", "timeout", "cancel"]
-doc = "Wait on several futures and continue with whichever finishes first."
-snippet = '''
-tokio::select! {
-    ${1:res} = ${2:fut_a} => $0,
-    _ = ${3:tokio::signal::ctrl_c()} => {}
+fn ${1:walk}(${2:n}: ${3:u32}) -> std::pin::Pin<Box<dyn Future<Output = ${4:u64}> + Send>> {
+    Box::pin(async move {
+        $0
+    })
 }'''
 
 [[entries]]
-name = "tokio::time::sleep"
-keys = ["tokio", "sleep", "delay", "async", "timer"]
-doc = "Pause the task without blocking the thread."
+name = "pin! local future"
+keys = ["pin", "macro", "local", "stack", "future", "select", "reuse"]
+doc = "Pin a future on the stack so it can be polled repeatedly, as in select loops."
 snippet = '''
-tokio::time::sleep(std::time::Duration::from_${1:millis}(${2:100})).await;$0'''
+let mut ${1:fut} = std::pin::pin!(${2:future});$0'''
 
 [[entries]]
-name = "tokio::time::timeout"
-keys = ["tokio", "timeout", "deadline", "async", "elapsed"]
-doc = "Cancel a future if it takes longer than a duration."
+name = "std::future::ready / pending"
+keys = ["ready", "pending", "future", "immediate", "never", "std", "stub"]
+doc = "A future that completes immediately or never, handy for stubs."
 snippet = '''
-tokio::time::timeout(std::time::Duration::from_secs(${1:5}), ${2:future}).await??$0'''
+std::future::${1:ready}(${2:value})$0'''
 
 [[entries]]
-name = "tokio mpsc channel"
-keys = ["tokio", "mpsc", "channel", "async", "sender", "receiver"]
-doc = "Create a bounded async channel between tasks."
+name = "poll_fn"
+keys = ["poll_fn", "future", "closure", "poll", "manual", "context"]
+doc = "Build a future from a poll closure without a struct."
 snippet = '''
-let (${1:tx}, mut ${2:rx}) = tokio::sync::mpsc::channel::<${3:T}>(${4:32});$0'''
-
-[[entries]]
-name = "async receive loop"
-keys = ["recv", "while", "let", "async", "channel", "loop"]
-doc = "Process messages from an async channel until it closes."
-snippet = '''
-while let Some(${1:msg}) = ${2:rx}.recv().await {
+std::future::poll_fn(|cx| {
     $0
-}'''
+    std::task::Poll::Ready(${1:value})
+}).await'''
 
 [[entries]]
-name = "tokio Mutex"
-keys = ["tokio", "mutex", "async", "lock", "await"]
-doc = "Lock an async-aware mutex that can be held across await points."
-snippet = '''
-let mut ${1:guard} = ${2:state}.lock().await;$0'''
-
-[[entries]]
-name = "block_on"
-keys = ["block_on", "runtime", "sync", "run", "future"]
-doc = "Run a future to completion from synchronous code."
-snippet = '''
-tokio::runtime::Runtime::new()?.block_on(async {
-    $0
-})'''
-
-[[entries]]
-name = "spawn_blocking"
-keys = ["tokio", "spawn_blocking", "blocking", "cpu", "thread"]
-doc = "Run blocking code on a dedicated thread pool from async code."
-snippet = '''
-tokio::task::spawn_blocking(move || {
-    $0
-}).await?'''
-
-[[entries]]
-name = "poll_fn / manual Future"
-keys = ["future", "poll", "impl", "manual", "pin", "context"]
+name = "manual Future impl"
+keys = ["future", "poll", "impl", "manual", "pin", "context", "waker"]
 doc = "Implement Future by hand with a poll method."
 snippet = '''
 impl Future for ${1:Type} {
@@ -167,5 +197,27 @@ impl Future for ${1:Type} {
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
         $0
+    }
+}'''
+
+[[entries]]
+name = "wake the task"
+keys = ["waker", "wake", "context", "poll", "pending", "notify"]
+doc = "Register the waker and return Pending until the value is ready."
+snippet = '''
+cx.waker().wake_by_ref();
+std::task::Poll::Pending$0'''
+
+[[entries]]
+name = "IntoFuture impl"
+keys = ["intofuture", "into", "future", "builder", "await", "impl"]
+doc = "Let a builder type be awaited directly by implementing IntoFuture."
+snippet = '''
+impl std::future::IntoFuture for ${1:Type} {
+    type Output = ${2:T};
+    type IntoFuture = std::pin::Pin<Box<dyn Future<Output = Self::Output> + Send>>;
+
+    fn into_future(self) -> Self::IntoFuture {
+        Box::pin(async move { $0 })
     }
 }'''

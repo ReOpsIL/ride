@@ -6,116 +6,337 @@ pub const FILES: Files = &[
         include_str!("../../../cheatsheets/rust/functions.toml"),
     ),
     (
+        "functions-params",
+        include_str!("../../../cheatsheets/rust/functions-params.toml"),
+    ),
+    (
+        "functions-returns",
+        include_str!("../../../cheatsheets/rust/functions-returns.toml"),
+    ),
+    (
         "items",
         include_str!("../../../cheatsheets/rust/items.toml"),
+    ),
+    (
+        "items-enums",
+        include_str!("../../../cheatsheets/rust/items-enums.toml"),
+    ),
+    (
+        "items-impls",
+        include_str!("../../../cheatsheets/rust/items-impls.toml"),
     ),
     (
         "control-flow",
         include_str!("../../../cheatsheets/rust/control-flow.toml"),
     ),
     (
+        "control-flow-loops",
+        include_str!("../../../cheatsheets/rust/control-flow-loops.toml"),
+    ),
+    (
+        "control-flow-match",
+        include_str!("../../../cheatsheets/rust/control-flow-match.toml"),
+    ),
+    (
+        "control-flow-blocks",
+        include_str!("../../../cheatsheets/rust/control-flow-blocks.toml"),
+    ),
+    (
         "patterns",
         include_str!("../../../cheatsheets/rust/patterns.toml"),
+    ),
+    (
+        "patterns-let",
+        include_str!("../../../cheatsheets/rust/patterns-let.toml"),
+    ),
+    (
+        "patterns-match",
+        include_str!("../../../cheatsheets/rust/patterns-match.toml"),
     ),
     (
         "types",
         include_str!("../../../cheatsheets/rust/types.toml"),
     ),
     (
+        "types-arrays",
+        include_str!("../../../cheatsheets/rust/types-arrays.toml"),
+    ),
+    (
+        "types-nesting",
+        include_str!("../../../cheatsheets/rust/types-nesting.toml"),
+    ),
+    (
+        "types-std",
+        include_str!("../../../cheatsheets/rust/types-std.toml"),
+    ),
+    (
         "types-abstract",
         include_str!("../../../cheatsheets/rust/types-abstract.toml"),
+    ),
+    (
+        "types-bounds",
+        include_str!("../../../cheatsheets/rust/types-bounds.toml"),
+    ),
+    (
+        "types-impl-dyn",
+        include_str!("../../../cheatsheets/rust/types-impl-dyn.toml"),
     ),
     (
         "traits",
         include_str!("../../../cheatsheets/rust/traits.toml"),
     ),
     (
+        "traits-patterns",
+        include_str!("../../../cheatsheets/rust/traits-patterns.toml"),
+    ),
+    (
+        "traits-calls",
+        include_str!("../../../cheatsheets/rust/traits-calls.toml"),
+    ),
+    (
         "trait-impls",
         include_str!("../../../cheatsheets/rust/trait-impls.toml"),
+    ),
+    (
+        "trait-impls-convert",
+        include_str!("../../../cheatsheets/rust/trait-impls-convert.toml"),
     ),
     (
         "trait-impls-ops",
         include_str!("../../../cheatsheets/rust/trait-impls-ops.toml"),
     ),
     (
+        "trait-impls-arith",
+        include_str!("../../../cheatsheets/rust/trait-impls-arith.toml"),
+    ),
+    (
+        "trait-impls-bitwise",
+        include_str!("../../../cheatsheets/rust/trait-impls-bitwise.toml"),
+    ),
+    (
         "closures",
         include_str!("../../../cheatsheets/rust/closures.toml"),
+    ),
+    (
+        "closures-returning",
+        include_str!("../../../cheatsheets/rust/closures-returning.toml"),
+    ),
+    (
+        "closures-sorting",
+        include_str!("../../../cheatsheets/rust/closures-sorting.toml"),
     ),
     (
         "iterators",
         include_str!("../../../cheatsheets/rust/iterators.toml"),
     ),
     (
+        "iterators-adapters",
+        include_str!("../../../cheatsheets/rust/iterators-adapters.toml"),
+    ),
+    (
         "iterators-consume",
         include_str!("../../../cheatsheets/rust/iterators-consume.toml"),
+    ),
+    (
+        "iterators-sort",
+        include_str!("../../../cheatsheets/rust/iterators-sort.toml"),
     ),
     (
         "errors",
         include_str!("../../../cheatsheets/rust/errors.toml"),
     ),
     (
+        "option-result",
+        include_str!("../../../cheatsheets/rust/option-result.toml"),
+    ),
+    (
+        "errors-types",
+        include_str!("../../../cheatsheets/rust/errors-types.toml"),
+    ),
+    (
         "ownership",
         include_str!("../../../cheatsheets/rust/ownership.toml"),
+    ),
+    (
+        "ownership-moves",
+        include_str!("../../../cheatsheets/rust/ownership-moves.toml"),
+    ),
+    (
+        "ownership-lifetimes",
+        include_str!("../../../cheatsheets/rust/ownership-lifetimes.toml"),
+    ),
+    (
+        "ownership-pointers",
+        include_str!("../../../cheatsheets/rust/ownership-pointers.toml"),
     ),
     (
         "strings",
         include_str!("../../../cheatsheets/rust/strings.toml"),
     ),
     (
+        "strings-search",
+        include_str!("../../../cheatsheets/rust/strings-search.toml"),
+    ),
+    (
+        "chars",
+        include_str!("../../../cheatsheets/rust/chars.toml"),
+    ),
+    (
         "collections-vec",
         include_str!("../../../cheatsheets/rust/collections-vec.toml"),
+    ),
+    (
+        "arrays",
+        include_str!("../../../cheatsheets/rust/arrays.toml"),
+    ),
+    (
+        "slices",
+        include_str!("../../../cheatsheets/rust/slices.toml"),
     ),
     (
         "collections-maps",
         include_str!("../../../cheatsheets/rust/collections-maps.toml"),
     ),
     (
+        "collections-sets",
+        include_str!("../../../cheatsheets/rust/collections-sets.toml"),
+    ),
+    (
+        "collections-queues",
+        include_str!("../../../cheatsheets/rust/collections-queues.toml"),
+    ),
+    (
         "modules",
         include_str!("../../../cheatsheets/rust/modules.toml"),
+    ),
+    (
+        "modules-imports",
+        include_str!("../../../cheatsheets/rust/modules-imports.toml"),
     ),
     (
         "attributes",
         include_str!("../../../cheatsheets/rust/attributes.toml"),
     ),
     (
+        "attributes-derive-lints",
+        include_str!("../../../cheatsheets/rust/attributes-derive-lints.toml"),
+    ),
+    (
         "macros",
         include_str!("../../../cheatsheets/rust/macros.toml"),
+    ),
+    (
+        "macros-std",
+        include_str!("../../../cheatsheets/rust/macros-std.toml"),
+    ),
+    (
+        "macros-rules",
+        include_str!("../../../cheatsheets/rust/macros-rules.toml"),
+    ),
+    (
+        "macros-repetition",
+        include_str!("../../../cheatsheets/rust/macros-repetition.toml"),
     ),
     (
         "format-spec",
         include_str!("../../../cheatsheets/rust/format-spec.toml"),
     ),
     (
+        "format-args",
+        include_str!("../../../cheatsheets/rust/format-args.toml"),
+    ),
+    (
         "concurrency",
         include_str!("../../../cheatsheets/rust/concurrency.toml"),
+    ),
+    (
+        "channels",
+        include_str!("../../../cheatsheets/rust/channels.toml"),
+    ),
+    (
+        "sync-locks",
+        include_str!("../../../cheatsheets/rust/sync-locks.toml"),
+    ),
+    (
+        "atomics",
+        include_str!("../../../cheatsheets/rust/atomics.toml"),
     ),
     (
         "async",
         include_str!("../../../cheatsheets/rust/async.toml"),
     ),
     (
+        "async-tokio",
+        include_str!("../../../cheatsheets/rust/async-tokio.toml"),
+    ),
+    (
+        "async-channels",
+        include_str!("../../../cheatsheets/rust/async-channels.toml"),
+    ),
+    (
         "unsafe-ffi",
         include_str!("../../../cheatsheets/rust/unsafe-ffi.toml"),
     ),
     (
+        "unsafe-mem",
+        include_str!("../../../cheatsheets/rust/unsafe-mem.toml"),
+    ),
+    ("ffi", include_str!("../../../cheatsheets/rust/ffi.toml")),
+    (
         "tests-docs",
         include_str!("../../../cheatsheets/rust/tests-docs.toml"),
     ),
+    (
+        "tests-assert",
+        include_str!("../../../cheatsheets/rust/tests-assert.toml"),
+    ),
+    ("docs", include_str!("../../../cheatsheets/rust/docs.toml")),
     ("io", include_str!("../../../cheatsheets/rust/io.toml")),
+    (
+        "io-stdio",
+        include_str!("../../../cheatsheets/rust/io-stdio.toml"),
+    ),
+    (
+        "io-traits",
+        include_str!("../../../cheatsheets/rust/io-traits.toml"),
+    ),
+    (
+        "text-parsing",
+        include_str!("../../../cheatsheets/rust/text-parsing.toml"),
+    ),
+    (
+        "paths",
+        include_str!("../../../cheatsheets/rust/paths.toml"),
+    ),
+    ("fs", include_str!("../../../cheatsheets/rust/fs.toml")),
     (
         "process-time",
         include_str!("../../../cheatsheets/rust/process-time.toml"),
     ),
+    ("env", include_str!("../../../cheatsheets/rust/env.toml")),
+    ("time", include_str!("../../../cheatsheets/rust/time.toml")),
     (
         "expressions",
         include_str!("../../../cheatsheets/rust/expressions.toml"),
+    ),
+    (
+        "expressions-calls",
+        include_str!("../../../cheatsheets/rust/expressions-calls.toml"),
     ),
     (
         "literals",
         include_str!("../../../cheatsheets/rust/literals.toml"),
     ),
     (
+        "literals-compound",
+        include_str!("../../../cheatsheets/rust/literals-compound.toml"),
+    ),
+    (
         "operators",
         include_str!("../../../cheatsheets/rust/operators.toml"),
+    ),
+    (
+        "operators-bits",
+        include_str!("../../../cheatsheets/rust/operators-bits.toml"),
     ),
 ];

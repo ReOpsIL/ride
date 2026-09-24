@@ -1,0 +1,124 @@
+title = "Deque and list operations"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "push_front"
+keys = ["push_front", "push", "prepend", "front", "deque", "list", "add"]
+doc = "Insert at the front of a deque or list in O(1)."
+snippet = '''
+${1:d}.push_front(${2:value});$0'''
+
+[[entries]]
+name = "emplace_front"
+keys = ["emplace_front", "emplace", "front", "construct", "deque", "list"]
+doc = "Construct an element in place at the front."
+snippet = '''
+${1:d}.emplace_front(${2:args});$0'''
+
+[[entries]]
+name = "pop_front"
+keys = ["pop_front", "pop", "front", "remove", "deque", "list", "dequeue"]
+doc = "Remove the first element of a deque or list."
+snippet = '''
+${1:d}.pop_front();$0'''
+
+[[entries]]
+name = "list insert before iterator"
+keys = ["insert", "list", "iterator", "before", "position", "middle"]
+doc = "Insert before an iterator without invalidating other iterators."
+snippet = '''
+${1:l}.insert(${2:it}, ${3:value});$0'''
+
+[[entries]]
+name = "list erase"
+keys = ["erase", "list", "iterator", "remove", "delete"]
+doc = "Erase the element at an iterator and get the next one."
+snippet = '''
+${1:it} = ${2:l}.erase(${1:it});$0'''
+
+[[entries]]
+name = "list remove"
+keys = ["remove", "list", "value", "delete", "all", "equal"]
+doc = "Remove every element equal to a value (member, no erase needed)."
+snippet = '''
+${1:l}.remove(${2:value});$0'''
+
+[[entries]]
+name = "list remove_if"
+keys = ["remove_if", "list", "predicate", "filter", "delete", "matching"]
+doc = "Remove every element matching a predicate."
+snippet = '''
+${1:l}.remove_if([](${2:const auto &x}) { return ${3:cond}; });$0'''
+
+[[entries]]
+name = "list sort"
+keys = ["sort", "list", "order", "member", "comparator"]
+doc = "Sort a list with its member sort, since std::sort needs random access."
+snippet = '''
+${1:l}.sort(${2:});$0'''
+
+[[entries]]
+name = "list unique"
+keys = ["unique", "list", "dedup", "duplicates", "consecutive"]
+doc = "Drop consecutive duplicates; sort first for all duplicates."
+snippet = '''
+${1:l}.unique();$0'''
+
+[[entries]]
+name = "list reverse"
+keys = ["reverse", "list", "flip", "order"]
+doc = "Reverse a list in place."
+snippet = '''
+${1:l}.reverse();$0'''
+
+[[entries]]
+name = "list merge"
+keys = ["merge", "list", "sorted", "combine", "join"]
+doc = "Merge another sorted list into this one, emptying the source."
+snippet = '''
+${1:l}.merge(${2:other});$0'''
+
+[[entries]]
+name = "list splice"
+keys = ["splice", "list", "move", "transfer", "nodes", "concat"]
+doc = "Move all nodes of another list before an iterator without copying."
+snippet = '''
+${1:l}.splice(${2:pos}, ${3:other});$0'''
+
+[[entries]]
+name = "list splice one element"
+keys = ["splice", "list", "move", "single", "element", "node", "reorder"]
+doc = "Move one node from a list to a position in another (or the same) list."
+snippet = '''
+${1:l}.splice(${2:pos}, ${3:other}, ${4:it});$0'''
+
+[[entries]]
+name = "forward_list insert_after"
+keys = ["insert_after", "forward_list", "insert", "after", "singly", "before_begin"]
+doc = "Insert after an iterator; use before_begin() to insert at the front."
+snippet = '''
+${1:l}.insert_after(${2:l.before_begin()}, ${3:value});$0'''
+
+[[entries]]
+name = "forward_list erase_after"
+keys = ["erase_after", "forward_list", "erase", "after", "singly", "remove"]
+doc = "Erase the element following an iterator."
+snippet = '''
+${1:l}.erase_after(${2:it});$0'''
+
+[[entries]]
+name = "deque index"
+keys = ["deque", "index", "[]", "at", "random", "access"]
+doc = "Deques support indexing like vectors."
+snippet = '''
+${1:d}[${2:i}]$0'''
+
+[[entries]]
+name = "sliding window with deque"
+keys = ["deque", "window", "sliding", "last", "recent", "buffer", "history"]
+doc = "Keep only the last n items by popping the front when full."
+snippet = '''
+${1:window}.push_back(${2:value});
+if (${1:window}.size() > ${3:n}) {
+    ${1:window}.pop_front();
+}$0'''

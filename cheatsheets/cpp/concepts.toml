@@ -3,15 +3,23 @@ contexts = ["item", "type"]
 
 [[entries]]
 name = "concept"
-keys = ["concept", "requires", "constraint"]
-doc = "C++20 named constraint on a type."
+keys = ["concept", "requires", "constraint", "define", "trait", "bool"]
+doc = "C++20 named constraint on a type built from a boolean expression."
 snippet = """
 template <typename ${1:T}>
 concept ${2:Name} = ${3:std::is_integral_v<T>};$0"""
 
 [[entries]]
+name = "concept two parameters"
+keys = ["concept", "two", "pair", "binary", "constraint", "relation"]
+doc = "Concept relating two types."
+snippet = """
+template <typename ${1:T}, typename ${2:U}>
+concept ${3:Name} = ${4:std::convertible_to<T, U>};$0"""
+
+[[entries]]
 name = "concept with requires expression"
-keys = ["concept", "requires", "expression"]
+keys = ["concept", "requires", "expression", "member", "interface", "duck"]
 doc = "Concept defined by expressions that must be valid."
 snippet = """
 template <typename ${1:T}>
@@ -21,9 +29,33 @@ concept ${2:Name} = requires(${1:T} ${3:t}) {
 };"""
 
 [[entries]]
+name = "concept conjunction"
+keys = ["concept", "and", "&&", "combine", "both", "compose"]
+doc = "Concept built from other concepts joined with &&."
+snippet = """
+template <typename ${1:T}>
+concept ${2:Name} = ${3:std::copyable<T>} && ${4:std::default_initializable<T>};$0"""
+
+[[entries]]
+name = "concept disjunction"
+keys = ["concept", "or", "||", "either", "alternative", "compose"]
+doc = "Concept satisfied when either constraint holds."
+snippet = """
+template <typename ${1:T}>
+concept ${2:Number} = ${3:std::integral<T>} || ${4:std::floating_point<T>};$0"""
+
+[[entries]]
+name = "concept negation"
+keys = ["concept", "not", "!", "negate", "except", "exclude"]
+doc = "Concept that excludes types matching another concept."
+snippet = """
+template <typename ${1:T}>
+concept ${2:NotBool} = ${3:std::integral<T>} && !${4:std::same_as<T, bool>};$0"""
+
+[[entries]]
 name = "requires clause"
-keys = ["requires", "constraint", "template"]
-doc = "Constrain a template with a requires clause."
+keys = ["requires", "constraint", "template", "clause", "restrict", "only"]
+doc = "Constrain a template with a requires clause between the header and the body."
 snippet = """
 template <typename ${1:T}>
     requires ${2:std::integral<T>}
@@ -32,9 +64,20 @@ ${3:T} ${4:name}(${1:T} ${5:value}) {
 }"""
 
 [[entries]]
+name = "requires clause combined"
+keys = ["requires", "&&", "||", "and", "or", "constraint", "multiple"]
+doc = "Requires clause joining concepts and boolean expressions."
+snippet = """
+template <typename ${1:T}>
+    requires ${2:std::integral<T>} && ${3:(sizeof(T) > 1)}
+${4:T} ${5:name}(${1:T} ${6:value}) {
+    $0
+}"""
+
+[[entries]]
 name = "trailing requires clause"
-keys = ["requires", "trailing", "constraint"]
-doc = "Requires clause after the parameter list."
+keys = ["requires", "trailing", "constraint", "after", "member"]
+doc = "Requires clause after the parameter list, also usable on member functions."
 snippet = """
 template <typename ${1:T}>
 ${2:void} ${3:name}(${1:T} ${4:value}) requires ${5:std::copyable<T>} {
@@ -42,8 +85,19 @@ ${2:void} ${3:name}(${1:T} ${4:value}) requires ${5:std::copyable<T>} {
 }"""
 
 [[entries]]
+name = "requires requires ad hoc"
+keys = ["requires", "requires requires", "ad hoc", "inline", "expression", "anonymous"]
+doc = "Ad hoc constraint with an inline requires expression."
+snippet = """
+template <typename ${1:T}>
+    requires requires(${1:T} ${2:t}) { ${3:t.foo()}; }
+${4:void} ${5:name}(${1:T} ${2:t}) {
+    $0
+}"""
+
+[[entries]]
 name = "constrained template parameter"
-keys = ["concept", "template", "constrained"]
+keys = ["concept", "template", "constrained", "typename", "replace", "short"]
 doc = "Use a concept in place of typename."
 snippet = """
 template <${1:std::integral} ${2:T}>
@@ -52,25 +106,44 @@ ${3:T} ${4:name}(${2:T} ${5:value}) {
 }"""
 
 [[entries]]
-name = "abbreviated function template"
-keys = ["auto", "template", "abbreviated", "generic"]
-doc = "C++20 function template written with auto parameters."
+name = "constrained class template"
+keys = ["concept", "class", "template", "constrained", "struct", "restrict"]
+doc = "Class template accepting only types satisfying a concept."
 snippet = """
-${1:auto} ${2:name}(${3:const auto &}${4:value}) {
+template <${1:std::floating_point} ${2:T}>
+class ${3:Name} {
+public:
     $0
+};"""
+
+[[entries]]
+name = "constrained partial specialization"
+keys = ["concept", "specialization", "partial", "constrained", "template", "select"]
+doc = "Specialization chosen for types satisfying a concept."
+snippet = """
+template <${1:std::integral} ${2:T}>
+struct ${3:Name}<${2:T}> {
+    $0
+};"""
+
+[[entries]]
+name = "subsumption overloads"
+keys = ["subsumption", "overload", "more constrained", "prefer", "concept", "specific"]
+doc = "The overload with the more specific concept wins when both match."
+snippet = """
+template <${1:std::integral} ${2:T}>
+void ${3:name}(${2:T} ${4:value}) {
+    $0
+}
+
+template <${5:std::signed_integral} ${2:T}>
+void ${3:name}(${2:T} ${4:value}) {
 }"""
 
 [[entries]]
-name = "constrained auto"
-keys = ["auto", "concept", "constrained"]
-doc = "auto parameter or variable constrained by a concept."
-snippet = """
-${1:std::integral} auto ${2:value}$0"""
-
-[[entries]]
 name = "requires expression"
-keys = ["requires", "expression", "check"]
-doc = "Boolean expression that is true when the body is valid."
+keys = ["requires", "expression", "check", "valid", "compile", "body"]
+doc = "Boolean expression that is true when every requirement in the body is valid."
 snippet = """
 requires(${1:T} ${2:t}) {
     ${3:t.foo()};
@@ -78,44 +151,52 @@ requires(${1:T} ${2:t}) {
 }"""
 
 [[entries]]
+name = "requires simple requirement"
+keys = ["requires", "simple", "expression", "valid", "compile"]
+doc = "Require that an expression compiles."
+snippet = """
+${1:t + t};$0"""
+
+[[entries]]
 name = "requires type requirement"
-keys = ["requires", "typename", "nested"]
+keys = ["requires", "typename", "nested", "type", "exists", "member type"]
 doc = "Require that a nested type exists."
 snippet = """
 typename ${1:T}::${2:value_type};$0"""
 
 [[entries]]
 name = "requires compound requirement"
-keys = ["requires", "compound", "convertible"]
+keys = ["requires", "compound", "convertible", "same_as", "result", "braces"]
 doc = "Require an expression to compile with a given result type."
 snippet = """
 { ${1:expr} } -> ${2:std::same_as<bool>};$0"""
 
 [[entries]]
+name = "requires noexcept requirement"
+keys = ["requires", "noexcept", "compound", "nothrow", "braces"]
+doc = "Require an expression to be noexcept."
+snippet = """
+{ ${1:t.swap(t)} } noexcept;$0"""
+
+[[entries]]
 name = "requires nested requirement"
-keys = ["requires", "nested"]
+keys = ["requires", "nested", "condition", "bool", "constant"]
 doc = "Require a constant boolean condition inside a requires expression."
 snippet = """
 requires ${1:sizeof(T) <= 8};$0"""
 
 [[entries]]
-name = "standard concepts"
-keys = ["concepts", "integral", "same_as", "convertible_to", "invocable", "range"]
-doc = "Common library concepts: std::integral, std::same_as, std::convertible_to, std::invocable, std::ranges::range."
-snippet = """
-std::${1:integral}$0"""
-
-[[entries]]
-name = "concept conjunction"
-keys = ["concept", "and", "&&", "combine"]
-doc = "Concept built from other concepts."
-snippet = """
-template <typename ${1:T}>
-concept ${2:Name} = ${3:std::copyable<T>} && ${4:std::default_initializable<T>};$0"""
-
-[[entries]]
 name = "static_assert concept"
-keys = ["static_assert", "concept", "check"]
-doc = "Check a concept at compile time."
+keys = ["static_assert", "concept", "check", "test", "satisfied"]
+doc = "Check that a type satisfies a concept at compile time."
 snippet = """
 static_assert(${1:std::integral}<${2:int}>);$0"""
+
+[[entries]]
+name = "if constexpr concept"
+keys = ["if", "constexpr", "concept", "branch", "check", "satisfied"]
+doc = "Branch on a concept inside a template."
+snippet = """
+if constexpr (${1:std::integral}<${2:T}>) {
+    $0
+}"""

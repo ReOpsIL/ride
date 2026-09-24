@@ -1,0 +1,86 @@
+title = "Return values"
+contexts = ["item"]
+
+[[entries]]
+name = "return by reference"
+keys = ["return", "ref", "reference", "&", "fn", "accessor"]
+doc = "Return a reference to an object that outlives the call."
+snippet = """
+${1:int} &${2:name}(${3:std::vector<int> &v}, ${4:std::size_t i}) {
+    return ${5:v[i]};$0
+}"""
+
+[[entries]]
+name = "return pointer"
+keys = ["return", "pointer", "ptr", "nullable", "find", "fn"]
+doc = "Return a pointer that may be null when nothing is found."
+snippet = """
+${1:Item} *${2:find}(${3:}) {
+    $0
+    return nullptr;
+}"""
+
+[[entries]]
+name = "return std::optional"
+keys = ["return", "optional", "maybe", "nullopt", "fn", "fail"]
+doc = "Return a value or std::nullopt when there is none."
+snippet = """
+std::optional<${1:int}> ${2:name}(${3:}) {
+    if (${4:!ok}) {
+        return std::nullopt;
+    }
+    return ${5:value};$0
+}"""
+
+[[entries]]
+name = "return std::pair"
+keys = ["return", "pair", "two", "values", "fn", "multiple"]
+doc = "Return two values as a pair."
+snippet = """
+std::pair<${1:int}, ${2:int}> ${3:name}(${4:}) {
+    return {${5:a}, ${6:b}};$0
+}"""
+
+[[entries]]
+name = "return std::tuple"
+keys = ["return", "tuple", "multiple", "values", "fn"]
+doc = "Return several values as a tuple."
+snippet = """
+std::tuple<${1:int}, ${2:double}, ${3:std::string}> ${4:name}(${5:}) {
+    return {${6:1, 2.0, "three"}};$0
+}"""
+
+[[entries]]
+name = "return struct"
+keys = ["return", "struct", "multiple", "values", "named", "fn"]
+doc = "Return several named values through a small struct."
+snippet = """
+struct ${1:Result} {
+    ${2:int} ${3:value};
+    ${4:bool} ${5:ok};
+};
+
+${1:Result} ${6:name}(${7:}) {
+    return {${8:0}, ${9:true}};$0
+}"""
+
+[[entries]]
+name = "return std::vector"
+keys = ["return", "vector", "list", "collection", "fn"]
+doc = "Return a container by value; moves make this cheap."
+snippet = """
+std::vector<${1:int}> ${2:name}(${3:}) {
+    std::vector<${1:int}> ${4:out};
+    $0
+    return ${4:out};
+}"""
+
+[[entries]]
+name = "output parameter"
+keys = ["out", "output", "param", "parameter", "ref", "bool"]
+doc = "Report success with the return value and write the result to a reference."
+snippet = """
+bool ${1:try_parse}(${2:std::string_view text}, ${3:int} &${4:out}) {
+    $0
+    return true;
+}"""

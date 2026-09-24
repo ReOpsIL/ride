@@ -3,66 +3,155 @@ contexts = ["preprocessor", "item"]
 
 [[entries]]
 name = "#define"
-keys = ["define", "macro", "constant"]
-doc = "Object-like macro."
+keys = ["define", "macro", "constant", "value", "symbol"]
+doc = "Object-like macro replaced by text (prefer constexpr for constants)."
 snippet = """
 #define ${1:NAME} ${2:value}$0"""
 
 [[entries]]
+name = "#define flag"
+keys = ["define", "flag", "empty", "enable", "switch", "feature", "macro"]
+doc = "Macro with no value, tested with #ifdef."
+snippet = """
+#define ${1:ENABLE_FEATURE}$0"""
+
+[[entries]]
+name = "#define expression"
+keys = ["define", "expression", "parenthesized", "constant", "compute", "macro"]
+doc = "Macro holding an expression, wrapped in parentheses to keep precedence."
+snippet = """
+#define ${1:NAME} (${2:1 << 10})$0"""
+
+[[entries]]
+name = "constexpr instead of #define"
+keys = ["constexpr", "define", "constant", "typed", "replace", "inline"]
+doc = "Typed, scoped constant that replaces a #define."
+snippet = """
+inline constexpr ${1:int} ${2:name} = ${3:value};$0"""
+
+[[entries]]
 name = "function-like macro"
-keys = ["define", "macro", "function"]
-doc = "Macro with parameters, fully parenthesized."
+keys = ["define", "macro", "function", "parameters", "args", "inline"]
+doc = "Macro with parameters, each use and the whole body parenthesized."
 snippet = """
 #define ${1:NAME}(${2:x}) (${3:(x) * (x)})$0"""
 
 [[entries]]
 name = "multi-line macro"
-keys = ["define", "macro", "do while"]
-doc = "Statement macro wrapped in do-while(0)."
-snippet = """
-#define ${1:NAME}(${2:x}) \\
-    do { \\
-        ${3:} \\
-    } while (0)$0"""
+keys = ["define", "macro", "do while", "multi-line", "statement", "backslash"]
+doc = "Statement macro wrapped in do-while(0) so it behaves as one statement."
+snippet = '''
+#define ${1:NAME}(${2:x}) \
+    do { \
+        ${3:} \
+    } while (0)$0'''
+
+[[entries]]
+name = "line continuation"
+keys = ["backslash", "continue", "multi-line", "\\", "define", "wrap"]
+doc = "Backslash at the end of a line continues a directive on the next line."
+snippet = '''
+#define ${1:NAME} \
+    ${2:value}$0'''
 
 [[entries]]
 name = "#undef"
-keys = ["undef", "macro"]
+keys = ["undef", "macro", "remove", "undefine", "clear"]
 doc = "Remove a macro definition."
 snippet = """
 #undef ${1:NAME}$0"""
 
 [[entries]]
-name = "predefined macros"
-keys = ["file", "line", "func", "date", "__file__", "__line__"]
-doc = "Compiler-provided macros: __FILE__, __LINE__, __func__, __DATE__, __TIME__."
+name = "redefine safely"
+keys = ["ifndef", "define", "default", "override", "configurable", "macro"]
+doc = "Define a default only when the build did not set the macro."
 snippet = """
-__${1:FILE}__$0"""
+#ifndef ${1:NAME}
+#define ${1:NAME} ${2:value}
+#endif$0"""
 
 [[entries]]
 name = "stringize operator"
-keys = ["stringize", "stringify", "#", "macro"]
+keys = ["stringize", "stringify", "#", "macro", "string", "name"]
 doc = "Turn a macro argument into a string literal."
 snippet = """
 #define ${1:STR}(x) #x$0"""
 
 [[entries]]
+name = "stringize expanded"
+keys = ["stringize", "stringify", "expand", "two-level", "indirect", "macro"]
+doc = "Two-level stringize so the argument is macro-expanded first."
+snippet = """
+#define ${1:STR_}(x) #x
+#define ${1:STR}(x) ${1:STR_}(x)$0"""
+
+[[entries]]
 name = "token paste operator"
-keys = ["paste", "concat", "##", "macro"]
+keys = ["paste", "concat", "##", "macro", "join", "identifier"]
 doc = "Concatenate tokens inside a macro."
 snippet = """
 #define ${1:CAT}(a, b) a##b$0"""
 
 [[entries]]
+name = "token paste expanded"
+keys = ["paste", "concat", "expand", "two-level", "indirect", "macro"]
+doc = "Two-level paste so arguments such as __LINE__ expand first."
+snippet = """
+#define ${1:CAT_}(a, b) a##b
+#define ${1:CAT}(a, b) ${1:CAT_}(a, b)$0"""
+
+[[entries]]
 name = "variadic macro"
-keys = ["variadic", "va_args", "macro"]
-doc = "Macro accepting variable arguments."
+keys = ["variadic", "va_args", "macro", "...", "printf", "arguments"]
+doc = "Macro accepting variable arguments forwarded through __VA_ARGS__."
 snippet = """
 #define ${1:LOG}(fmt, ...) std::printf(fmt, __VA_ARGS__)$0"""
 
 [[entries]]
-name = "#pragma"
-keys = ["pragma", "compiler"]
-doc = "Compiler-specific directive."
+name = "variadic macro __VA_OPT__"
+keys = ["va_opt", "variadic", "va_args", "comma", "optional", "empty", "c++20"]
+doc = "C++20 emit the comma only when variadic arguments are present."
 snippet = """
-#pragma ${1:GCC diagnostic push}$0"""
+#define ${1:LOG}(fmt, ...) std::printf(fmt __VA_OPT__(,) __VA_ARGS__)$0"""
+
+[[entries]]
+name = "variadic macro forward all"
+keys = ["variadic", "va_args", "forward", "wrap", "call", "macro"]
+doc = "Macro that forwards every argument to a function."
+snippet = """
+#define ${1:CALL}(...) ${2:func}(__VA_ARGS__)$0"""
+
+[[entries]]
+name = "__FILE__ / __LINE__"
+keys = ["file", "line", "__file__", "__line__", "location", "predefined"]
+doc = "Current source file name and line number."
+snippet = """
+__${1:FILE}__$0"""
+
+[[entries]]
+name = "__func__"
+keys = ["func", "function", "name", "__func__", "pretty_function", "current"]
+doc = "Name of the enclosing function; __PRETTY_FUNCTION__ (GCC/clang) or __FUNCSIG__ (MSVC) adds the signature."
+snippet = """
+__func__$0"""
+
+[[entries]]
+name = "__DATE__ / __TIME__"
+keys = ["date", "time", "build", "timestamp", "predefined", "compile"]
+doc = "Compile date and time as string literals."
+snippet = """
+__${1:DATE}__$0"""
+
+[[entries]]
+name = "__COUNTER__"
+keys = ["counter", "unique", "increment", "predefined", "id"]
+doc = "Integer incremented on every expansion, for unique names."
+snippet = """
+__COUNTER__$0"""
+
+[[entries]]
+name = "predefined macros"
+keys = ["predefined", "builtin", "macros", "__file__", "__line__", "__func__", "__cplusplus"]
+doc = "Compiler-provided macros: __FILE__, __LINE__, __func__, __DATE__, __TIME__, __cplusplus, __COUNTER__."
+snippet = """
+__${1:FILE}__$0"""

@@ -1,0 +1,168 @@
+title = "Functional utilities"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "std::function"
+keys = ["function", "callback", "std::function", "holder", "erased", "type"]
+doc = "Type-erased callable holder for any callable with a matching signature."
+snippet = """
+std::function<${1:void}(${2:int})> ${3:fn} = ${4:callback};$0"""
+
+[[entries]]
+name = "std::function check empty"
+keys = ["function", "empty", "null", "check", "if", "callable", "bool"]
+doc = "Call a std::function only when it holds a target."
+snippet = """
+if (${1:fn}) {
+    ${1:fn}(${2:});$0
+}"""
+
+[[entries]]
+name = "std::function as parameter"
+keys = ["function", "parameter", "callback", "argument", "accept", "pass"]
+doc = "Function taking a callback through std::function."
+snippet = """
+void ${1:name}(const std::function<${2:void}(${3:int})> &${4:callback}) {
+    ${4:callback}($0);
+}"""
+
+[[entries]]
+name = "std::function as member"
+keys = ["function", "member", "callback", "field", "handler", "on"]
+doc = "Store a callback in a class member and let callers set it."
+snippet = """
+std::function<${1:void}(${2:})> ${3:on_change};$0"""
+
+[[entries]]
+name = "std::move_only_function"
+keys = ["move_only_function", "function", "unique", "move", "c++23", "callback"]
+doc = "C++23 std::function that accepts move-only callables."
+snippet = """
+std::move_only_function<${1:void}(${2:})> ${3:task} = ${4:std::move(callable)};$0"""
+
+[[entries]]
+name = "function pointer"
+keys = ["function", "pointer", "fnptr", "callback", "c", "address"]
+doc = "Pointer to a free function."
+snippet = """
+${1:int} (*${2:fn})(${3:int}) = &${4:func};$0"""
+
+[[entries]]
+name = "function pointer alias"
+keys = ["function", "pointer", "using", "typedef", "alias", "callback", "type"]
+doc = "Name a function pointer type."
+snippet = """
+using ${1:Callback} = ${2:void} (*)(${3:int});$0"""
+
+[[entries]]
+name = "callback parameter"
+keys = ["callback", "invocable", "template", "functor", "generic", "F"]
+doc = "Accept any callable as a constrained template parameter, no type erasure."
+snippet = """
+template <std::invocable<${1:int}> ${2:F}>
+void ${3:name}(${2:F} &&${4:fn}) {
+    ${4:fn}($0);
+}"""
+
+[[entries]]
+name = "callback template parameter"
+keys = ["callback", "template", "typename", "functor", "generic", "F", "pre-c++20"]
+doc = "Accept any callable through an unconstrained template parameter."
+snippet = """
+template <typename ${1:F}>
+void ${2:name}(${1:F} &&${3:fn}) {
+    ${3:fn}($0);
+}"""
+
+[[entries]]
+name = "std::bind"
+keys = ["bind", "placeholders", "partial", "curry", "adapt"]
+doc = "Bind some arguments of a callable (prefer lambdas)."
+snippet = """
+auto ${1:bound} = std::bind(${2:func}, ${3:std::placeholders::_1}, ${4:arg});$0"""
+
+[[entries]]
+name = "std::bind_front"
+keys = ["bind_front", "bind_back", "bind", "partial", "member", "c++20"]
+doc = "C++20 bind leading arguments of a callable, also bind_back in C++23."
+snippet = """
+auto ${1:bound} = std::bind_front(${2:func}, ${3:arg});$0"""
+
+[[entries]]
+name = "std::bind_front member"
+keys = ["bind_front", "member", "this", "method", "callback", "bind"]
+doc = "Bind a member function to an object for use as a callback."
+snippet = """
+auto ${1:cb} = std::bind_front(&${2:Class}::${3:method}, ${4:this});$0"""
+
+[[entries]]
+name = "std::invoke"
+keys = ["invoke", "call", "member", "uniform", "apply"]
+doc = "Call any callable uniformly, including member pointers."
+snippet = """
+std::invoke(${1:fn}, ${2:args})$0"""
+
+[[entries]]
+name = "std::apply"
+keys = ["apply", "tuple", "unpack", "call", "spread"]
+doc = "Call a function with the elements of a tuple as arguments."
+snippet = """
+std::apply(${1:fn}, ${2:tuple})$0"""
+
+[[entries]]
+name = "std::mem_fn"
+keys = ["mem_fn", "member", "function", "pointer", "adapt"]
+doc = "Wrap a member function pointer as a callable."
+snippet = """
+std::mem_fn(&${1:Class}::${2:method})$0"""
+
+[[entries]]
+name = "std::ref"
+keys = ["ref", "reference_wrapper", "cref", "reference", "thread", "bind"]
+doc = "Pass a reference where a value would be copied, e.g. to std::thread or std::bind."
+snippet = """
+std::ref(${1:value})$0"""
+
+[[entries]]
+name = "std::reference_wrapper"
+keys = ["reference_wrapper", "ref", "vector", "references", "container", "rebind"]
+doc = "Copyable reference usable inside containers."
+snippet = """
+std::vector<std::reference_wrapper<${1:T}>> ${2:refs};$0"""
+
+[[entries]]
+name = "std::not_fn"
+keys = ["not_fn", "negate", "predicate", "invert", "not"]
+doc = "Callable that negates the result of another predicate."
+snippet = """
+std::not_fn(${1:pred})$0"""
+
+[[entries]]
+name = "std::identity"
+keys = ["identity", "projection", "ranges", "passthrough", "default"]
+doc = "Function object returning its argument, the default ranges projection."
+snippet = """
+std::identity{}$0"""
+
+[[entries]]
+name = "functor struct"
+keys = ["functor", "struct", "operator()", "callable", "object", "class"]
+doc = "Struct with a call operator."
+snippet = """
+struct ${1:Name} {
+    ${2:int} operator()(${3:int x}) const { return $0; }
+};"""
+
+[[entries]]
+name = "std::plus / std::less"
+keys = ["plus", "minus", "multiplies", "less", "greater", "equal_to", "functional", "operator"]
+doc = "Standard function objects for operators: plus, minus, multiplies, divides, negate, less, greater, equal_to, logical_and."
+snippet = """
+std::${1:less}<${2:}>()$0"""
+
+[[entries]]
+name = "std::hash"
+keys = ["hash", "functor", "unordered", "key", "custom", "specialize"]
+doc = "Hash function object, specialized for custom key types."
+snippet = """
+std::hash<${1:std::string}>{}(${2:key})$0"""

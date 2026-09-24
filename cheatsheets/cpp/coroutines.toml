@@ -1,0 +1,85 @@
+title = "Coroutines"
+contexts = ["item", "statement"]
+
+[[entries]]
+name = "coroutine co_return"
+keys = ["coroutine", "co_return", "co_await", "task", "async", "function"]
+doc = "Coroutine body returning a value through its promise type."
+snippet = '''
+${1:Task<int>} ${2:name}(${3:}) {
+    ${4:co_await other();}
+    co_return $0;
+}'''
+
+[[entries]]
+name = "coroutine co_yield generator"
+keys = ["coroutine", "co_yield", "generator", "lazy", "sequence", "yield"]
+doc = "Generator coroutine yielding values lazily."
+snippet = '''
+${1:std::generator<int>} ${2:name}(${3:}) {
+    for (${4:int i = 0; i < n; ++i}) {
+        co_yield $0;
+    }
+}'''
+
+[[entries]]
+name = "iterate generator"
+keys = ["generator", "for", "loop", "iterate", "co_yield", "consume", "c++23"]
+doc = "Consume a std::generator with a range for loop."
+snippet = '''
+for (auto ${1:x} : ${2:gen}(${3:})) {
+    $0
+}'''
+
+[[entries]]
+name = "co_await"
+keys = ["co_await", "await", "coroutine", "suspend", "async"]
+doc = "Suspend until an awaitable completes and take its result."
+snippet = '''
+auto ${1:result} = co_await ${2:awaitable};$0'''
+
+[[entries]]
+name = "awaitable skeleton"
+keys = ["awaitable", "await_ready", "await_suspend", "await_resume", "coroutine", "custom"]
+doc = "Minimal awaitable type with the three await_ functions."
+snippet = '''
+struct ${1:Awaitable} {
+    bool await_ready() const noexcept { return ${2:false}; }
+    void await_suspend(std::coroutine_handle<> ${3:h}) { $0 }
+    ${4:void} await_resume() const noexcept {}
+};'''
+
+[[entries]]
+name = "std::suspend_always / suspend_never"
+keys = ["suspend_always", "suspend_never", "awaitable", "trivial", "coroutine", "initial_suspend"]
+doc = "Trivial awaitables that always or never suspend."
+snippet = '''
+std::${1:suspend_always}{}$0'''
+
+[[entries]]
+name = "promise_type skeleton"
+keys = ["promise_type", "coroutine", "return_object", "initial_suspend", "final_suspend", "unhandled_exception", "custom", "task"]
+doc = "Promise type a coroutine return type must expose."
+snippet = '''
+struct ${1:Task} {
+    struct promise_type {
+        ${1:Task} get_return_object() { return ${1:Task}{std::coroutine_handle<promise_type>::from_promise(*this)}; }
+        std::suspend_${2:never} initial_suspend() noexcept { return {}; }
+        std::suspend_${3:always} final_suspend() noexcept { return {}; }
+        void return_${4:void}() {}
+        void unhandled_exception() { ${5:std::terminate();} }
+    };
+    std::coroutine_handle<promise_type> handle;
+    ~${1:Task}() { if (handle) handle.destroy(); }
+};$0'''
+
+[[entries]]
+name = "coroutine_handle resume"
+keys = ["coroutine_handle", "resume", "done", "destroy", "handle", "coroutine", "drive"]
+doc = "Drive a coroutine by hand through its handle."
+snippet = '''
+while (!${1:handle}.done()) {
+    ${1:handle}.resume();
+    $0
+}
+${1:handle}.destroy();'''

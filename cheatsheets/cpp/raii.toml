@@ -1,0 +1,148 @@
+title = "RAII and ownership"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "std::move"
+keys = ["move", "ownership", "transfer", "rvalue", "cast", "steal"]
+doc = "Cast to an rvalue to transfer ownership; the source is left valid but unspecified."
+snippet = """
+std::move(${1:value})$0"""
+
+[[entries]]
+name = "std::forward"
+keys = ["forward", "perfect", "forwarding", "universal", "template", "&&"]
+doc = "Forward an argument preserving its value category inside a template."
+snippet = """
+std::forward<${1:T}>(${2:value})$0"""
+
+[[entries]]
+name = "std::exchange"
+keys = ["exchange", "move", "swap", "reset", "old", "replace"]
+doc = "Replace a value and return the old one, useful in move constructors."
+snippet = """
+std::exchange(${1:other.ptr_}, nullptr)$0"""
+
+[[entries]]
+name = "std::swap"
+keys = ["swap", "exchange", "two", "values", "adl"]
+doc = "Exchange two values, using a type's own swap when found by ADL."
+snippet = """
+using std::swap;
+swap(${1:a}, ${2:b});$0"""
+
+[[entries]]
+name = "RAII guard class"
+keys = ["raii", "guard", "class", "resource", "acquire", "release", "destructor"]
+doc = "Class that acquires in the constructor and releases in the destructor."
+snippet = """
+class ${1:Guard} {
+public:
+    explicit ${1:Guard}(${2:Resource &r}) : ${3:r_(r)} { ${4:acquire()}; }
+    ~${1:Guard}() { ${5:release()}; }
+    ${1:Guard}(const ${1:Guard} &) = delete;
+    ${1:Guard} &operator=(const ${1:Guard} &) = delete;
+private:
+    ${6:Resource &r_};
+};$0"""
+
+[[entries]]
+name = "RAII handle wrapper"
+keys = ["raii", "handle", "wrapper", "c api", "fd", "close", "move-only"]
+doc = "Move-only wrapper around a C handle that closes it in the destructor."
+snippet = """
+class ${1:File} {
+public:
+    explicit ${1:File}(${2:int fd}) : ${3:fd_(fd)} {}
+    ~${1:File}() { if (${3:fd_} >= 0) ${4:close(fd_)}; }
+    ${1:File}(${1:File} &&o) noexcept : ${3:fd_}(std::exchange(o.${3:fd_}, -1)) {}
+    ${1:File} &operator=(${1:File} &&o) noexcept { std::swap(${3:fd_}, o.${3:fd_}); return *this; }
+    ${1:File}(const ${1:File} &) = delete;
+    ${1:File} &operator=(const ${1:File} &) = delete;
+private:
+    ${5:int fd_};
+};$0"""
+
+[[entries]]
+name = "scope_exit idiom"
+keys = ["scope_exit", "defer", "raii", "cleanup", "finally", "on exit"]
+doc = "Run a lambda when the scope ends."
+snippet = """
+struct ScopeExit {
+    std::function<void()> fn;
+    ~ScopeExit() { fn(); }
+};
+ScopeExit ${1:guard}{[&] { $0 }};"""
+
+[[entries]]
+name = "scoped lock guard"
+keys = ["lock_guard", "scoped_lock", "raii", "mutex", "unlock", "scope"]
+doc = "RAII lock released at the end of the block even on exceptions."
+snippet = """
+std::lock_guard<std::mutex> ${1:lock}(${2:mtx});$0"""
+
+[[entries]]
+name = "observer_ptr idiom"
+keys = ["observer_ptr", "raw", "non-owning", "observe", "pointer", "borrow"]
+doc = "A plain raw pointer is the idiomatic non-owning observer; it never deletes."
+snippet = """
+${1:T} *${2:observed} = ${3:owner}.get();$0"""
+
+[[entries]]
+name = "non-owning reference member"
+keys = ["reference", "member", "non-owning", "borrow", "dependency", "inject"]
+doc = "Hold a dependency the object does not own by reference or raw pointer."
+snippet = """
+${1:Service} &${2:service_};$0"""
+
+[[entries]]
+name = "std::optional as value"
+keys = ["optional", "value", "alternative", "pointer", "maybe", "nullable"]
+doc = "Prefer std::optional over a pointer for a value that may be absent."
+snippet = """
+std::optional<${1:T}> ${2:maybe};$0"""
+
+[[entries]]
+name = "std::variant as value"
+keys = ["variant", "value", "alternative", "polymorphism", "either", "sum"]
+doc = "Prefer std::variant over pointers to a base for a closed set of types."
+snippet = """
+std::variant<${1:A}, ${2:B}> ${3:value};$0"""
+
+[[entries]]
+name = "new / delete"
+keys = ["new", "delete", "raw", "heap", "manual", "allocate"]
+doc = "Manual heap allocation (prefer smart pointers)."
+snippet = """
+${1:T} *${2:p} = new ${1:T}(${3:});
+delete ${2:p};$0"""
+
+[[entries]]
+name = "new[] / delete[]"
+keys = ["new", "delete", "array", "heap", "manual", "buffer"]
+doc = "Manual array allocation (prefer std::vector)."
+snippet = """
+${1:int} *${2:arr} = new ${1:int}[${3:n}];
+delete[] ${2:arr};$0"""
+
+[[entries]]
+name = "placement new"
+keys = ["placement", "new", "construct", "buffer", "in place", "memory"]
+doc = "Construct an object in existing storage; destroy it with an explicit destructor call."
+snippet = """
+${1:T} *${2:p} = new (${3:buffer}) ${1:T}(${4:});
+${2:p}->~${1:T}();$0"""
+
+[[entries]]
+name = "std::construct_at"
+keys = ["construct_at", "destroy_at", "placement", "construct", "memory", "c++20"]
+doc = "C++20 constexpr-friendly placement construction and destruction."
+snippet = """
+std::construct_at(${1:p}, ${2:args});
+std::destroy_at(${1:p});$0"""
+
+[[entries]]
+name = "nothrow new"
+keys = ["new", "nothrow", "null", "allocate", "fail", "bad_alloc"]
+doc = "Allocation that returns nullptr instead of throwing bad_alloc."
+snippet = """
+${1:T} *${2:p} = new (std::nothrow) ${1:T}(${3:});$0"""

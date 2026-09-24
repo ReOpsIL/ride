@@ -1,0 +1,178 @@
+title = "Function parameters"
+contexts = ["item"]
+
+[[entries]]
+name = "pass by value"
+keys = ["param", "parameter", "value", "copy", "argument", "fn"]
+doc = "Parameter that receives a copy the function may modify freely."
+snippet = """
+${1:void} ${2:name}(${3:int} ${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "pass by reference"
+keys = ["param", "parameter", "ref", "reference", "&", "out", "modify"]
+doc = "Parameter that aliases the caller's object so changes are visible outside."
+snippet = """
+${1:void} ${2:name}(${3:int} &${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "pass by const reference"
+keys = ["param", "parameter", "const", "ref", "reference", "&", "readonly"]
+doc = "Read-only parameter that avoids copying large objects."
+snippet = """
+${1:void} ${2:name}(const ${3:std::string} &${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "pass by rvalue reference"
+keys = ["param", "parameter", "rvalue", "move", "&&", "sink"]
+doc = "Parameter that takes ownership of a temporary or moved value."
+snippet = """
+${1:void} ${2:name}(${3:std::string} &&${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "pass by pointer"
+keys = ["param", "parameter", "pointer", "ptr", "*", "nullable", "optional"]
+doc = "Parameter that may be null and is dereferenced inside."
+snippet = """
+${1:void} ${2:name}(${3:int} *${4:value}) {
+    if (${4:value} == nullptr) {
+        return;
+    }
+    $0
+}"""
+
+[[entries]]
+name = "sink parameter with move"
+keys = ["param", "parameter", "sink", "move", "value", "store"]
+doc = "Take by value and move into storage so callers may copy or move."
+snippet = """
+void ${1:set_name}(${2:std::string} ${3:value}) {
+    ${4:name_} = std::move(${3:value});$0
+}"""
+
+[[entries]]
+name = "array parameter"
+keys = ["param", "parameter", "array", "size", "pointer", "length"]
+doc = "C array parameter decays to a pointer, so pass the length too."
+snippet = """
+${1:void} ${2:name}(${3:const int} ${4:arr}[], ${5:std::size_t} ${6:n}) {
+    for (${5:std::size_t} i = 0; i < ${6:n}; ++i) {
+        $0
+    }
+}"""
+
+[[entries]]
+name = "span parameter"
+keys = ["param", "parameter", "span", "array", "view", "slice", "vector"]
+doc = "C++20 view parameter that accepts arrays, vectors and std::array alike."
+snippet = """
+${1:void} ${2:name}(std::span<${3:const int}> ${4:items}) {
+    for (${5:int} ${6:item} : ${4:items}) {
+        $0
+    }
+}"""
+
+[[entries]]
+name = "string_view parameter"
+keys = ["param", "parameter", "string", "view", "sv", "text"]
+doc = "Read-only string parameter that accepts literals and std::string."
+snippet = """
+${1:void} ${2:name}(std::string_view ${3:text}) {
+    $0
+}"""
+
+[[entries]]
+name = "default argument"
+keys = ["param", "parameter", "default", "optional", "argument", "="]
+doc = "Trailing parameter with a value used when the caller omits it."
+snippet = """
+${1:void} ${2:name}(${3:int} ${4:value}, ${5:bool} ${6:verbose} = ${7:false}) {
+    $0
+}"""
+
+[[entries]]
+name = "initializer_list parameter"
+keys = ["param", "parameter", "initializer_list", "braces", "list", "variadic"]
+doc = "Accept a braced list of values like f({1, 2, 3})."
+snippet = """
+${1:void} ${2:name}(std::initializer_list<${3:int}> ${4:values}) {
+    for (${3:int} ${5:v} : ${4:values}) {
+        $0
+    }
+}"""
+
+[[entries]]
+name = "variadic template parameters"
+keys = ["param", "parameter", "variadic", "pack", "args", "template", "..."]
+doc = "Accept any number of arguments of any types."
+snippet = """
+template <typename... ${1:Args}>
+${2:void} ${3:name}(${1:Args} &&...${4:args}) {
+    $0
+}"""
+
+[[entries]]
+name = "C variadic parameters"
+keys = ["param", "parameter", "variadic", "va_list", "ellipsis", "..."]
+doc = "C-style variable argument list read with va_list."
+snippet = """
+${1:void} ${2:name}(${3:int} ${4:count}, ...) {
+    va_list args;
+    va_start(args, ${4:count});
+    $0
+    va_end(args);
+}"""
+
+[[entries]]
+name = "function pointer parameter"
+keys = ["param", "parameter", "function", "pointer", "callback", "fnptr"]
+doc = "Parameter that receives a plain function to call back."
+snippet = """
+${1:void} ${2:name}(${3:int} (*${4:callback})(${5:int})) {
+    $0
+}"""
+
+[[entries]]
+name = "std::function parameter"
+keys = ["param", "parameter", "function", "callback", "lambda", "callable"]
+doc = "Parameter that accepts any callable with a fixed signature."
+snippet = """
+${1:void} ${2:name}(const std::function<${3:void(int)}> &${4:callback}) {
+    $0
+}"""
+
+[[entries]]
+name = "callable template parameter"
+keys = ["param", "parameter", "callable", "lambda", "template", "invocable", "generic"]
+doc = "Accept any callable without the overhead of std::function."
+snippet = """
+template <typename ${1:F}>
+${2:void} ${3:name}(${1:F} &&${4:callback}) {
+    ${4:callback}($0);
+}"""
+
+[[entries]]
+name = "[[maybe_unused]] parameter"
+keys = ["maybe_unused", "unused", "attribute", "param", "parameter", "warning"]
+doc = "Silence the unused parameter warning."
+snippet = """
+${1:void} ${2:name}([[maybe_unused]] ${3:int} ${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "unnamed parameter"
+keys = ["unused", "param", "parameter", "unnamed", "anonymous", "ignore"]
+doc = "Leave a parameter unnamed when its value is not used."
+snippet = """
+${1:void} ${2:name}(${3:int}) {
+    $0
+}"""

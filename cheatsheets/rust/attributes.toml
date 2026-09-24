@@ -3,7 +3,7 @@ contexts = ["attribute", "item"]
 
 [[entries]]
 name = "#[derive]"
-keys = ["derive", "debug", "clone", "auto"]
+keys = ["derive", "debug", "clone", "auto", "implement", "traits"]
 doc = "Auto-implement traits for the following type."
 snippet = '''
 #[derive(${1:Debug, Clone, PartialEq})]$0'''
@@ -38,7 +38,7 @@ snippet = '''
 
 [[entries]]
 name = "#[allow]"
-keys = ["allow", "lint", "warning", "suppress", "dead_code", "unused"]
+keys = ["allow", "lint", "warning", "suppress", "silence", "dead_code", "unused", "unused_variables"]
 doc = "Silence a lint for the following item."
 snippet = '''
 #[allow(${1:dead_code})]$0'''
@@ -183,3 +183,38 @@ doc = "Choose the crate's global memory allocator."
 snippet = '''
 #[global_allocator]
 static GLOBAL: ${1:std::alloc::System} = ${1:std::alloc::System};$0'''
+
+[[entries]]
+name = "#[macro_use]"
+keys = ["macro_use", "macro", "import", "mod", "extern", "crate"]
+doc = "Make the macros of the following module or extern crate available afterwards."
+snippet = '''
+#[macro_use]$0'''
+
+[[entries]]
+name = "#[path]"
+keys = ["path", "mod", "file", "location", "custom"]
+doc = "Load the following module from a custom file path."
+snippet = '''
+#[path = "${1:dir/file.rs}"]$0'''
+
+[[entries]]
+name = "#[expect]"
+keys = ["expect", "lint", "allow", "unfulfilled", "warning", "suppress"]
+doc = "Silence a lint and warn if it no longer fires, so stale allows are noticed."
+snippet = '''
+#[expect(${1:dead_code})]$0'''
+
+[[entries]]
+name = "#[default]"
+keys = ["default", "variant", "enum", "derive", "initial"]
+doc = "Mark the variant that a derived Default for an enum returns."
+snippet = '''
+#[default]$0'''
+
+[[entries]]
+name = "#[derive(Copy, Clone)]"
+keys = ["derive", "copy", "clone", "value", "bitwise", "small"]
+doc = "Make a small plain-data type copied implicitly instead of moved."
+snippet = '''
+#[derive(Clone, Copy${1:, Debug})]$0'''

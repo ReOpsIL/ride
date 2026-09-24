@@ -1,0 +1,173 @@
+title = "Pointers and references"
+contexts = ["statement"]
+
+[[entries]]
+name = "reference"
+keys = ["ref", "reference", "&", "alias", "bind"]
+doc = "Alias for an existing object; must be initialized and cannot be reseated."
+snippet = """
+${1:int} &${2:ref} = ${3:value};$0"""
+
+[[entries]]
+name = "const reference"
+keys = ["ref", "reference", "const", "&", "readonly", "alias"]
+doc = "Read-only alias that can also bind to a temporary."
+snippet = """
+const ${1:int} &${2:ref} = ${3:value};$0"""
+
+[[entries]]
+name = "rvalue reference"
+keys = ["rvalue", "ref", "&&", "move", "temporary"]
+doc = "Reference that binds to a temporary or moved-from value."
+snippet = """
+${1:int} &&${2:ref} = ${3:std::move(value)};$0"""
+
+[[entries]]
+name = "pointer"
+keys = ["ptr", "pointer", "*", "address", "&"]
+doc = "Pointer to an object, initialized with its address."
+snippet = """
+${1:int} *${2:ptr} = &${3:value};$0"""
+
+[[entries]]
+name = "pointer to const"
+keys = ["ptr", "pointer", "const", "readonly", "pointee"]
+doc = "Pointer through which the pointee cannot be modified."
+snippet = """
+const ${1:int} *${2:ptr} = &${3:value};$0"""
+
+[[entries]]
+name = "const pointer"
+keys = ["ptr", "pointer", "const", "fixed", "*const"]
+doc = "Pointer that cannot be reseated but whose pointee can change."
+snippet = """
+${1:int} *const ${2:ptr} = &${3:value};$0"""
+
+[[entries]]
+name = "const pointer to const"
+keys = ["ptr", "pointer", "const", "both", "immutable"]
+doc = "Neither the pointer nor the pointee can be modified."
+snippet = """
+const ${1:int} *const ${2:ptr} = &${3:value};$0"""
+
+[[entries]]
+name = "nullptr"
+keys = ["null", "nullptr", "ptr", "pointer", "empty", "none"]
+doc = "Pointer initialized to null."
+snippet = """
+${1:int} *${2:ptr} = nullptr;$0"""
+
+[[entries]]
+name = "pointer to pointer"
+keys = ["ptr", "pointer", "double", "**", "indirect"]
+doc = "Pointer to a pointer."
+snippet = """
+${1:int} **${2:pp} = &${3:ptr};$0"""
+
+[[entries]]
+name = "void pointer"
+keys = ["void", "ptr", "pointer", "generic", "untyped", "c"]
+doc = "Untyped pointer that must be cast before use."
+snippet = """
+void *${1:raw} = ${2:&value};$0"""
+
+[[entries]]
+name = "dereference"
+keys = ["deref", "dereference", "*", "pointer", "read", "value"]
+doc = "Read the object a pointer points to."
+snippet = """
+${1:int} ${2:value} = *${3:ptr};$0"""
+
+[[entries]]
+name = "assign through pointer"
+keys = ["deref", "dereference", "*", "pointer", "write", "assign"]
+doc = "Write to the object a pointer points to."
+snippet = """
+*${1:ptr} = ${2:value};$0"""
+
+[[entries]]
+name = "address of"
+keys = ["address", "&", "pointer", "take", "of"]
+doc = "Take the address of an object."
+snippet = """
+auto *${1:ptr} = &${2:value};$0"""
+
+[[entries]]
+name = "member through pointer"
+keys = ["arrow", "->", "pointer", "member", "field", "access"]
+doc = "Access a member through a pointer."
+snippet = """
+${1:ptr}->${2:member}$0"""
+
+[[entries]]
+name = "pointer arithmetic"
+keys = ["pointer", "arithmetic", "increment", "next", "offset", "+"]
+doc = "Advance a pointer by whole elements."
+snippet = """
+${1:int} *${2:next} = ${3:ptr} + ${4:1};$0"""
+
+[[entries]]
+name = "pointer difference"
+keys = ["pointer", "difference", "distance", "ptrdiff_t", "-", "index"]
+doc = "Number of elements between two pointers into the same array."
+snippet = """
+std::ptrdiff_t ${1:n} = ${2:end} - ${3:begin};$0"""
+
+[[entries]]
+name = "pointer to array"
+keys = ["pointer", "array", "whole", "(*)", "2d"]
+doc = "Pointer to an entire fixed-size array."
+snippet = """
+${1:int} (*${2:parr})[${3:N}] = &${4:arr};$0"""
+
+[[entries]]
+name = "array of pointers"
+keys = ["array", "pointers", "*[]", "table", "strings"]
+doc = "Fixed-size array whose elements are pointers."
+snippet = """
+${1:const char} *${2:names}[] = {${3:"a", "b"}};$0"""
+
+[[entries]]
+name = "function pointer variable"
+keys = ["function", "pointer", "fnptr", "callback", "variable", "(*)"]
+doc = "Variable holding the address of a function."
+snippet = """
+${1:int} (*${2:fn})(${3:int}) = &${4:function};$0"""
+
+[[entries]]
+name = "auto function pointer"
+keys = ["function", "pointer", "auto", "callback", "variable"]
+doc = "Deduced pointer to a non-overloaded function."
+snippet = """
+auto *${1:fn} = &${2:function};$0"""
+
+[[entries]]
+name = "member function pointer variable"
+keys = ["member", "function", "pointer", "method", "::*", "variable"]
+doc = "Pointer to a member function, called through .* or ->*."
+snippet = """
+${1:void} (${2:Class}::*${3:fn})(${4:int}) = &${2:Class}::${5:method};$0"""
+
+[[entries]]
+name = "reference to element"
+keys = ["ref", "reference", "element", "vector", "index", "alias"]
+doc = "Alias an element of a container to avoid repeated indexing."
+snippet = """
+auto &${1:item} = ${2:v}[${3:i}];$0"""
+
+[[entries]]
+name = "std::reference_wrapper"
+keys = ["reference_wrapper", "ref", "vector", "references", "std::ref", "container"]
+doc = "Store references in a container through std::ref."
+snippet = """
+std::vector<std::reference_wrapper<${1:int}>> ${2:refs} = {std::ref(${3:a}), std::ref(${4:b})};$0"""
+
+[[entries]]
+name = "optional reference via pointer"
+keys = ["optional", "reference", "pointer", "nullable", "maybe"]
+doc = "Use a pointer when a reference might be absent."
+snippet = """
+${1:Item} *${2:found} = ${3:lookup()};
+if (${2:found}) {
+    $0
+}"""

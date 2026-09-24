@@ -1,0 +1,195 @@
+title = "Standard trait impls: conversions and borrowing"
+contexts = ["item"]
+
+[[entries]]
+name = "impl From<&str>"
+keys = ["impl", "from", "str", "string", "convert", "literal", "parse"]
+doc = "Build the type from a string slice, so literals convert with into."
+snippet = '''
+impl From<&str> for ${1:Type} {
+    fn from(${2:s}: &str) -> Self {
+        Self { ${3:name}: ${2:s}.to_string() }$0
+    }
+}'''
+
+[[entries]]
+name = "impl From<Type> for String"
+keys = ["impl", "from", "into", "string", "convert", "outgoing", "reverse"]
+doc = "Convert your type into a std type by implementing From on the std type."
+snippet = '''
+impl From<${1:Type}> for ${2:String} {
+    fn from(${3:value}: ${1:Type}) -> Self {
+        ${3:value}.${4:0}$0
+    }
+}'''
+
+[[entries]]
+name = "impl From for each variant"
+keys = ["impl", "from", "enum", "variant", "wrap", "error", "question"]
+doc = "Wrap a value into an enum variant, letting the question mark operator convert it."
+snippet = '''
+impl From<${1:std::io::Error}> for ${2:MyError} {
+    fn from(${3:err}: ${1:std::io::Error}) -> Self {
+        ${2:MyError}::${4:Io}(${3:err})$0
+    }
+}'''
+
+[[entries]]
+name = "impl Into explicitly"
+keys = ["impl", "into", "convert", "explicit", "generic", "target"]
+doc = "Implement Into directly only when From is impossible, such as converting into a foreign generic type."
+snippet = '''
+impl Into<${1:Target}> for ${2:Type} {
+    fn into(self) -> ${1:Target} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl TryFrom<i32> for enum"
+keys = ["impl", "tryfrom", "enum", "discriminant", "number", "int", "convert", "fallible"]
+doc = "Turn an integer back into an enum, rejecting values with no variant."
+snippet = '''
+impl TryFrom<${1:i32}> for ${2:Enum} {
+    type Error = ${3:String};
+
+    fn try_from(${4:value}: ${1:i32}) -> Result<Self, Self::Error> {
+        match ${4:value} {
+            ${5:0} => Ok(${2:Enum}::${6:A}),
+            _ => Err(format!("unknown {}", ${4:value})),$0
+        }
+    }
+}'''
+
+[[entries]]
+name = "impl TryFrom<&str>"
+keys = ["impl", "tryfrom", "str", "string", "validate", "convert", "fallible"]
+doc = "Validate a string and build the type from it, giving TryInto for free."
+snippet = '''
+impl TryFrom<&str> for ${1:Type} {
+    type Error = ${2:String};
+
+    fn try_from(${3:s}: &str) -> Result<Self, Self::Error> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl FromStr with parse error"
+keys = ["impl", "fromstr", "parse", "error", "split", "map_err", "number"]
+doc = "Parse a string field by field, mapping each failure into the error type."
+snippet = '''
+impl std::str::FromStr for ${1:Point} {
+    type Err = ${2:String};
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (${3:x}, ${4:y}) = s.split_once(',').ok_or("missing comma")?;
+        Ok(Self {
+            ${3:x}: ${3:x}.trim().parse().map_err(|e| format!("{e}"))?,
+            ${4:y}: ${4:y}.trim().parse().map_err(|e| format!("{e}"))?,$0
+        })
+    }
+}'''
+
+[[entries]]
+name = "impl AsRef<Path>"
+keys = ["impl", "asref", "path", "file", "borrow", "convert"]
+doc = "Let the type be passed wherever a path is expected."
+snippet = '''
+impl AsRef<std::path::Path> for ${1:Type} {
+    fn as_ref(&self) -> &std::path::Path {
+        &self.${2:path}$0
+    }
+}'''
+
+[[entries]]
+name = "impl AsRef<[T]>"
+keys = ["impl", "asref", "slice", "borrow", "view", "collection"]
+doc = "Expose the contents as a slice so slice-taking functions accept the type."
+snippet = '''
+impl AsRef<[${1:T}]> for ${2:Type} {
+    fn as_ref(&self) -> &[${1:T}] {
+        &self.${3:items}$0
+    }
+}'''
+
+[[entries]]
+name = "impl AsMut"
+keys = ["impl", "asmut", "mutable", "borrow", "convert", "reference"]
+doc = "Offer a cheap mutable reference conversion."
+snippet = '''
+impl AsMut<${1:[u8]}> for ${2:Type} {
+    fn as_mut(&mut self) -> &mut ${1:[u8]} {
+        &mut self.${3:0}$0
+    }
+}'''
+
+[[entries]]
+name = "impl Borrow"
+keys = ["impl", "borrow", "hashmap", "key", "lookup", "str", "newtype"]
+doc = "Let a newtype key be looked up by its borrowed form, with matching Eq and Hash."
+snippet = '''
+impl std::borrow::Borrow<${1:str}> for ${2:Type} {
+    fn borrow(&self) -> &${1:str} {
+        &self.${3:0}$0
+    }
+}'''
+
+[[entries]]
+name = "impl Display with padding"
+keys = ["impl", "display", "pad", "width", "align", "format", "spec"]
+doc = "Honor width and alignment flags by handing the text to the formatter's pad."
+snippet = '''
+impl std::fmt::Display for ${1:Type} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.pad(&self.${2:0})$0
+    }
+}'''
+
+[[entries]]
+name = "impl Default for enum"
+keys = ["impl", "default", "enum", "variant", "attribute", "derive"]
+doc = "Pick the default variant with the attribute instead of a manual impl."
+snippet = '''
+#[derive(Default)]
+enum ${1:Enum} {
+    #[default]
+    ${2:A},
+    ${3:B},$0
+}'''
+
+[[entries]]
+name = "impl Ord by several keys"
+keys = ["impl", "ord", "then", "then_with", "multi", "keys", "compare", "sort"]
+doc = "Order by one field and break ties with another."
+snippet = '''
+impl Ord for ${1:Type} {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.${2:major}
+            .cmp(&other.${2:major})
+            .then_with(|| self.${3:minor}.cmp(&other.${3:minor}))$0
+    }
+}'''
+
+[[entries]]
+name = "impl PartialOrd for float field"
+keys = ["impl", "partialord", "float", "f64", "partial_cmp", "nan", "compare"]
+doc = "Order by a float field, which only offers a partial ordering."
+snippet = '''
+impl PartialOrd for ${1:Type} {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.${2:score}.partial_cmp(&other.${2:score})$0
+    }
+}'''
+
+[[entries]]
+name = "impl Hash matching Eq"
+keys = ["impl", "hash", "eq", "consistent", "key", "same", "fields"]
+doc = "Hash exactly the fields PartialEq compares so map lookups stay correct."
+snippet = '''
+impl std::hash::Hash for ${1:Type} {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.${2:id}.hash(state);
+        self.${3:name}.hash(state);$0
+    }
+}'''

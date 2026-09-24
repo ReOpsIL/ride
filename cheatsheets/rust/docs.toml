@@ -1,0 +1,210 @@
+title = "Doc comments and rustdoc"
+contexts = ["item", "body", "fields"]
+
+[[entries]]
+name = "doc comment ///"
+keys = ["doc", "comment", "documentation", "rustdoc", "describe", "slash"]
+doc = "Document the following item with markdown."
+snippet = '''
+/// ${1:Summary line.}
+///
+/// ${2:Details.}$0'''
+
+[[entries]]
+name = "one-line doc"
+keys = ["doc", "short", "summary", "line", "comment", "field", "variant"]
+doc = "Single-line doc for a field, variant or small item."
+snippet = '''
+/// ${1:What this is.}$0'''
+
+[[entries]]
+name = "module doc //!"
+keys = ["doc", "module", "crate", "inner", "comment", "bang", "top"]
+doc = "Document the enclosing module or crate."
+snippet = '''
+//! ${1:Crate or module summary.}$0'''
+
+[[entries]]
+name = "crate doc with example"
+keys = ["doc", "crate", "lib", "readme", "example", "overview", "inner"]
+doc = "Crate-level docs at the top of lib.rs with an overview and example."
+snippet = '''
+//! ${1:One-line crate summary.}
+//!
+//! # Example
+//!
+//! ```
+//! ${2:use crate_name::Type;}
+//! ```$0'''
+
+[[entries]]
+name = "doc from README"
+keys = ["doc", "readme", "include_str", "crate", "attribute", "reuse"]
+doc = "Use the README as the crate docs."
+snippet = '''
+#![doc = include_str!("${1:../README.md}")]$0'''
+
+[[entries]]
+name = "doc test"
+keys = ["doc", "test", "example", "fence", "rustdoc", "code", "block"]
+doc = "Add a code example to docs that cargo test compiles and runs."
+snippet = '''
+/// # Examples
+///
+/// ```
+/// ${1:let value = crate_name::function();}
+/// assert_eq!(${2:value}, ${3:expected});
+/// ```$0'''
+
+[[entries]]
+name = "doc test hidden lines"
+keys = ["doc", "test", "hidden", "hash", "setup", "boilerplate"]
+doc = "Hide setup lines from rendered docs while still compiling them."
+snippet = '''
+/// ```
+/// # use ${1:crate_name::Type};
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// ${2:code}
+/// # Ok(())
+/// # }
+/// ```$0'''
+
+[[entries]]
+name = "doc test no_run"
+keys = ["doc", "test", "no_run", "compile", "only", "network", "side", "effect"]
+doc = "Compile the example but do not run it, for code with side effects."
+snippet = '''
+/// ```no_run
+/// ${1:code}
+/// ```$0'''
+
+[[entries]]
+name = "doc test ignore"
+keys = ["doc", "test", "ignore", "skip", "pseudo", "code"]
+doc = "Show a code block that rustdoc neither compiles nor runs."
+snippet = '''
+/// ```ignore
+/// ${1:code}
+/// ```$0'''
+
+[[entries]]
+name = "doc test should_panic"
+keys = ["doc", "test", "should_panic", "panic", "example", "fails"]
+doc = "Example that is expected to panic when run."
+snippet = '''
+/// ```should_panic
+/// ${1:code}
+/// ```$0'''
+
+[[entries]]
+name = "doc test compile_fail"
+keys = ["doc", "test", "compile_fail", "compile", "error", "negative", "borrow"]
+doc = "Example that must fail to compile, proving a misuse is rejected."
+snippet = '''
+/// ```compile_fail
+/// ${1:code}
+/// ```$0'''
+
+[[entries]]
+name = "doc text block"
+keys = ["doc", "text", "block", "plain", "shell", "output", "fence", "language"]
+doc = "Non-Rust code block in docs, such as shell output, never compiled."
+snippet = '''
+/// ```${1:text}
+/// ${2:content}
+/// ```$0'''
+
+[[entries]]
+name = "doc sections"
+keys = ["doc", "panics", "errors", "safety", "sections", "headings", "function"]
+doc = "Document the standard sections of a function."
+snippet = '''
+/// ${1:Summary.}
+///
+/// # Errors
+/// ${2:When this fails.}
+///
+/// # Panics
+/// ${3:When this panics.}$0'''
+
+[[entries]]
+name = "doc # Safety"
+keys = ["doc", "safety", "unsafe", "section", "invariant", "contract"]
+doc = "Safety section required on unsafe functions."
+snippet = '''
+/// # Safety
+///
+/// ${1:The caller must ensure ...}$0'''
+
+[[entries]]
+name = "doc # Arguments"
+keys = ["doc", "arguments", "parameters", "params", "list", "section"]
+doc = "Describe each parameter in a list."
+snippet = '''
+/// # Arguments
+///
+/// * `${1:name}` - ${2:what it is}$0'''
+
+[[entries]]
+name = "doc link"
+keys = ["doc", "link", "intra", "reference", "see", "backtick"]
+doc = "Link to another item from docs with an intra-doc link."
+snippet = '''
+/// See [`${1:Type::method}`].$0'''
+
+[[entries]]
+name = "doc link with text"
+keys = ["doc", "link", "text", "url", "markdown", "external", "reference"]
+doc = "Markdown link with custom text to an item or URL."
+snippet = '''
+/// [${1:the builder}](${2:Builder})$0'''
+
+[[entries]]
+name = "#[doc] attribute"
+keys = ["doc", "attribute", "string", "macro", "generated", "concat"]
+doc = "Attach docs through an attribute, useful in macros."
+snippet = '''
+#[doc = "${1:text}"]$0'''
+
+[[entries]]
+name = "#[doc(hidden)]"
+keys = ["doc", "hidden", "hide", "internal", "private", "public"]
+doc = "Keep a public item out of the rendered docs."
+snippet = '''
+#[doc(hidden)]$0'''
+
+[[entries]]
+name = "#[doc(inline)]"
+keys = ["doc", "inline", "reexport", "use", "pub", "show"]
+doc = "Render a re-export as if the item were defined here."
+snippet = '''
+#[doc(inline)]
+pub use ${1:module::Item};$0'''
+
+[[entries]]
+name = "#[doc(alias)]"
+keys = ["doc", "alias", "search", "name", "find", "synonym"]
+doc = "Add a search alias so docs find the item under another name."
+snippet = '''
+#[doc(alias = "${1:other_name}")]$0'''
+
+[[entries]]
+name = "#![warn(missing_docs)]"
+keys = ["missing_docs", "warn", "deny", "lint", "crate", "require", "docs"]
+doc = "Warn on every public item without documentation."
+snippet = '''
+#![warn(missing_docs)]$0'''
+
+[[entries]]
+name = "#[cfg_attr(docsrs, doc(cfg))]"
+keys = ["docsrs", "doc", "cfg", "feature", "badge", "docs.rs"]
+doc = "Show which feature gates an item on docs.rs."
+snippet = '''
+#[cfg_attr(docsrs, doc(cfg(feature = "${1:name}")))]$0'''
+
+[[entries]]
+name = "deprecated note"
+keys = ["deprecated", "note", "since", "warn", "old", "replace"]
+doc = "Mark an item deprecated with a migration hint shown in docs."
+snippet = '''
+#[deprecated(since = "${1:1.0.0}", note = "${2:use `new_name` instead}")]$0'''

@@ -1,0 +1,138 @@
+title = "Inheritance and polymorphism"
+contexts = ["item"]
+
+[[entries]]
+name = "derived class"
+keys = ["class", "inherit", "derived", "extends", "base", "subclass", "public"]
+doc = "Class that publicly inherits from a base."
+snippet = """
+class ${1:Derived} : public ${2:Base} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "derived class with override"
+keys = ["class", "inherit", "derived", "override", "virtual", "subclass"]
+doc = "Subclass that forwards to the base constructor and overrides a virtual."
+snippet = """
+class ${1:Derived} : public ${2:Base} {
+public:
+    using ${2:Base}::${2:Base};
+    ${3:void} ${4:method}(${5:}) override {
+        $0
+    }
+};"""
+
+[[entries]]
+name = "derived struct"
+keys = ["struct", "inherit", "derived", "extends", "base"]
+doc = "Struct inheriting publicly from another struct."
+snippet = """
+struct ${1:Derived} : ${2:Base} {
+    $0
+};"""
+
+[[entries]]
+name = "protected inheritance"
+keys = ["class", "inherit", "protected", "derived", "base"]
+doc = "Base public members become protected in the derived class."
+snippet = """
+class ${1:Derived} : protected ${2:Base} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "private inheritance"
+keys = ["class", "inherit", "private", "derived", "base", "implemented"]
+doc = "Implemented-in-terms-of inheritance that hides the base interface."
+snippet = """
+class ${1:Derived} : private ${2:Base} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "abstract class"
+keys = ["class", "abstract", "pure", "virtual", "base", "polymorphic"]
+doc = "Class with a pure virtual function and a virtual destructor."
+snippet = """
+class ${1:Shape} {
+public:
+    virtual ~${1:Shape}() = default;
+    virtual ${2:double} ${3:area}(${4:}) const = 0;
+    $0
+};"""
+
+[[entries]]
+name = "interface"
+keys = ["interface", "abstract", "pure", "virtual", "contract", "protocol"]
+doc = "Pure interface: only pure virtual functions and a virtual destructor."
+snippet = """
+class ${1:Interface} {
+public:
+    virtual ~${1:Interface}() = default;
+    virtual ${2:void} ${3:method}(${4:}) = 0;
+    $0
+};"""
+
+[[entries]]
+name = "base class with virtual function"
+keys = ["class", "base", "virtual", "polymorphic", "parent", "default"]
+doc = "Base with a virtual function that has a default implementation."
+snippet = """
+class ${1:Base} {
+public:
+    virtual ~${1:Base}() = default;
+    virtual ${2:void} ${3:method}(${4:}) {
+        $0
+    }
+};"""
+
+[[entries]]
+name = "multiple inheritance"
+keys = ["class", "inherit", "multiple", "two", "bases", "mixin"]
+doc = "Class that inherits from more than one base."
+snippet = """
+class ${1:Derived} : public ${2:Base1}, public ${3:Base2} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "virtual inheritance"
+keys = ["class", "inherit", "virtual", "diamond", "shared", "base"]
+doc = "Share one base subobject in a diamond hierarchy."
+snippet = """
+class ${1:Derived} : public virtual ${2:Base} {
+public:
+    $0
+};"""
+
+[[entries]]
+name = "CRTP"
+keys = ["crtp", "template", "static", "polymorphism", "curious", "recurring"]
+doc = "Base template parameterized on the derived class for static dispatch."
+snippet = """
+template <typename ${1:Derived}>
+class ${2:Base} {
+public:
+    void ${3:run}() {
+        static_cast<${1:Derived} *>(this)->${4:impl}();$0
+    }
+};
+
+class ${5:Impl} : public ${2:Base}<${5:Impl}> {
+public:
+    void ${4:impl}() {}
+};"""
+
+[[entries]]
+name = "factory function"
+keys = ["factory", "make", "create", "unique_ptr", "polymorphic", "base"]
+doc = "Create a derived object and return it through a base pointer."
+snippet = """
+std::unique_ptr<${1:Base}> ${2:make}(${3:}) {
+    return std::make_unique<${4:Derived}>($0);
+}"""

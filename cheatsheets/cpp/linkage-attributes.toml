@@ -1,0 +1,144 @@
+title = "Linkage and attributes"
+contexts = ["item"]
+
+[[entries]]
+name = "extern \"C\" function"
+keys = ["extern", "c", "linkage", "fn", "function", "mangling", "ffi"]
+doc = "Single function with C linkage, callable from C and without name mangling."
+snippet = """
+extern "C" ${1:void} ${2:name}(${3:});$0"""
+
+[[entries]]
+name = "extern \"C\" block"
+keys = ["extern", "c", "linkage", "block", "braces", "several"]
+doc = "Give a group of declarations C linkage."
+snippet = """
+extern "C" {
+    $0
+}"""
+
+[[entries]]
+name = "extern \"C\" guarded block"
+keys = ["extern", "c", "cplusplus", "header", "guard", "shared", "ifdef"]
+doc = "C-compatible header block usable from both languages."
+snippet = """
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+$0
+
+#ifdef __cplusplus
+}
+#endif"""
+
+[[entries]]
+name = "extern \"C\" include"
+keys = ["extern", "c", "include", "header", "wrap", "c library"]
+doc = "Wrap a C header that lacks its own extern C guard."
+snippet = """
+extern "C" {
+#include "${1:clib.h}"
+}$0"""
+
+[[entries]]
+name = "extern declaration"
+keys = ["extern", "variable", "declare", "global", "shared", "header", "defined elsewhere"]
+doc = "Declare a global defined in another translation unit."
+snippet = """
+extern ${1:int} ${2:name};$0"""
+
+[[entries]]
+name = "internal linkage"
+keys = ["static", "internal", "linkage", "file", "local", "private", "anonymous"]
+doc = "Restrict a function or variable to this translation unit (or use an anonymous namespace)."
+snippet = """
+static ${1:int} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "inline variable"
+keys = ["inline", "variable", "header", "odr", "global", "constant", "c++17"]
+doc = "C++17 global defined in a header without duplicate-definition errors."
+snippet = """
+inline ${1:constexpr int} ${2:name} = ${3:value};$0"""
+
+[[entries]]
+name = "inline function in header"
+keys = ["inline", "function", "header", "odr", "define", "multiple"]
+doc = "Function defined in a header must be inline to satisfy the one definition rule."
+snippet = """
+inline ${1:int} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "visibility attribute"
+keys = ["visibility", "attribute", "hidden", "default", "shared", "export", "gcc"]
+doc = "GCC/clang symbol visibility for shared libraries."
+snippet = """
+__attribute__((visibility("${1:default}")))$0"""
+
+[[entries]]
+name = "attribute"
+keys = ["attribute", "[[", "nodiscard", "noreturn", "standard", "annotation"]
+doc = "Standard attribute: nodiscard, noreturn, deprecated, maybe_unused, likely, unlikely, fallthrough, assume, no_unique_address."
+snippet = """
+[[${1:nodiscard}]]$0"""
+
+[[entries]]
+name = "[[nodiscard]]"
+keys = ["nodiscard", "attribute", "return", "ignore", "warn", "result"]
+doc = "Warn when the return value is ignored; optionally with a reason."
+snippet = """
+[[nodiscard${1:("reason")}]]$0"""
+
+[[entries]]
+name = "[[deprecated]]"
+keys = ["deprecated", "attribute", "old", "warn", "remove"]
+doc = "Warn when a declaration is used."
+snippet = """
+[[deprecated("${1:reason}")]]$0"""
+
+[[entries]]
+name = "[[maybe_unused]]"
+keys = ["maybe_unused", "attribute", "unused", "silence", "warning"]
+doc = "Suppress unused warnings for a declaration."
+snippet = """
+[[maybe_unused]]$0"""
+
+[[entries]]
+name = "[[noreturn]]"
+keys = ["noreturn", "attribute", "never", "returns", "throw", "abort"]
+doc = "Function never returns to its caller."
+snippet = """
+[[noreturn]]$0"""
+
+[[entries]]
+name = "[[fallthrough]]"
+keys = ["fallthrough", "attribute", "switch", "case", "intentional"]
+doc = "Mark an intentional fall-through between switch cases."
+snippet = """
+[[fallthrough]];$0"""
+
+[[entries]]
+name = "[[no_unique_address]]"
+keys = ["no_unique_address", "attribute", "empty", "member", "ebo", "size"]
+doc = "Let an empty member take no space."
+snippet = """
+[[no_unique_address]] ${1:Empty} ${2:member};$0"""
+
+[[entries]]
+name = "[[assume]]"
+keys = ["assume", "attribute", "optimize", "hint", "c++23"]
+doc = "C++23 tell the optimizer an expression is true."
+snippet = """
+[[assume(${1:condition})]];$0"""
+
+[[entries]]
+name = "namespaced attribute"
+keys = ["attribute", "gnu", "msvc", "vendor", "always_inline", "packed"]
+doc = "Vendor attribute in namespaced form such as gnu::always_inline or gnu::packed."
+snippet = """
+[[${1:gnu}::${2:always_inline}]]$0"""

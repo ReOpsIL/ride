@@ -1,0 +1,134 @@
+title = "Exception classes and unwinding"
+contexts = ["statement"]
+
+[[entries]]
+name = "custom exception class"
+keys = ["exception", "class", "custom", "runtime_error", "derive", "own"]
+doc = "Exception type derived from std::runtime_error, inheriting its constructors."
+snippet = """
+class ${1:MyError} : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+    $0
+};"""
+
+[[entries]]
+name = "custom exception with what"
+keys = ["exception", "class", "what", "custom", "override", "message"]
+doc = "Exception type that overrides what()."
+snippet = """
+class ${1:MyError} : public std::exception {
+public:
+    const char *what() const noexcept override { return "${2:message}"; }
+    $0
+};"""
+
+[[entries]]
+name = "custom exception with data"
+keys = ["exception", "class", "custom", "field", "code", "data", "member"]
+doc = "Exception carrying extra data such as an error code."
+snippet = """
+class ${1:MyError} : public std::runtime_error {
+public:
+    ${1:MyError}(const std::string &msg, ${2:int code})
+        : std::runtime_error(msg), ${3:code_(code)} {}
+    ${2:int code}() const noexcept { return ${4:code_}; }
+private:
+    ${5:int code_};
+};$0"""
+
+[[entries]]
+name = "function try block"
+keys = ["try", "function", "block", "constructor", "initializer", "member"]
+doc = "Try block wrapping a whole function body, including a constructor's member initializers."
+snippet = """
+${1:Name}::${1:Name}(${2:}) try : ${3:member_(init)} {
+    $0
+} catch (const std::exception &e) {
+    ${4:throw;}
+}"""
+
+[[entries]]
+name = "throw in constructor"
+keys = ["throw", "constructor", "fail", "invalid", "construct", "object"]
+doc = "A constructor reports failure by throwing; the partially built object is destroyed."
+snippet = """
+${1:Name}(${2:int value}) : ${3:value_(value)} {
+    if (${4:value < 0}) {
+        throw std::invalid_argument("${5:negative value}");
+    }
+    $0
+}"""
+
+[[entries]]
+name = "destructor must not throw"
+keys = ["destructor", "throw", "noexcept", "terminate", "cleanup", "swallow"]
+doc = "Destructors are implicitly noexcept; catch and swallow inside them."
+snippet = """
+~${1:Name}() {
+    try {
+        ${2:cleanup();}
+    } catch (...) {
+    }$0
+}"""
+
+[[entries]]
+name = "exception_ptr"
+keys = ["exception_ptr", "current_exception", "rethrow_exception", "capture", "store", "thread"]
+doc = "Capture the in-flight exception to rethrow later, e.g. on another thread."
+snippet = """
+std::exception_ptr ${1:eptr} = std::current_exception();$0"""
+
+[[entries]]
+name = "rethrow_exception"
+keys = ["rethrow_exception", "exception_ptr", "rethrow", "later", "thread"]
+doc = "Rethrow a stored exception_ptr."
+snippet = """
+if (${1:eptr}) {
+    std::rethrow_exception(${1:eptr});
+}$0"""
+
+[[entries]]
+name = "make_exception_ptr"
+keys = ["make_exception_ptr", "exception_ptr", "create", "promise", "set_exception"]
+doc = "Build an exception_ptr without throwing, e.g. for promise.set_exception."
+snippet = """
+std::make_exception_ptr(${1:std::runtime_error}("${2:message}"))$0"""
+
+[[entries]]
+name = "throw_with_nested"
+keys = ["throw_with_nested", "nested", "wrap", "context", "chain"]
+doc = "Wrap the current exception inside a new one with more context."
+snippet = """
+std::throw_with_nested(${1:std::runtime_error}("${2:context}"));$0"""
+
+[[entries]]
+name = "print nested exceptions"
+keys = ["rethrow_if_nested", "nested", "print", "chain", "unwrap", "recursive"]
+doc = "Walk a chain of nested exceptions recursively."
+snippet = """
+void ${1:print_chain}(const std::exception &${2:e}, int ${3:depth} = 0) {
+    std::cerr << std::string(${3:depth}, ' ') << ${2:e}.what() << '\\n';
+    try {
+        std::rethrow_if_nested(${2:e});
+    } catch (const std::exception &inner) {
+        ${1:print_chain}(inner, ${3:depth} + 1);
+    }
+}$0"""
+
+[[entries]]
+name = "std::set_terminate"
+keys = ["set_terminate", "terminate", "handler", "uncaught", "hook"]
+doc = "Install a handler that runs before the program aborts."
+snippet = """
+std::set_terminate([] {
+    ${1:std::cerr << "terminate\\n";}
+    std::abort();
+});$0"""
+
+[[entries]]
+name = "std::uncaught_exceptions"
+keys = ["uncaught_exceptions", "unwinding", "destructor", "detect", "in flight"]
+doc = "Number of exceptions currently propagating, for destructors that behave differently while unwinding."
+snippet = """
+std::uncaught_exceptions()$0"""

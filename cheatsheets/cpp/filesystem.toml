@@ -1,0 +1,170 @@
+title = "Filesystem"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "namespace fs alias"
+keys = ["filesystem", "fs", "namespace", "alias", "using"]
+doc = "Short alias for std::filesystem."
+snippet = '''
+namespace fs = std::filesystem;$0'''
+
+[[entries]]
+name = "filesystem path"
+keys = ["path", "filesystem", "fs", "join", "/", "directory", "file"]
+doc = "Construct and join a filesystem path with /."
+snippet = '''
+std::filesystem::path ${1:p} = ${2:dir} / ${3:"file.txt"};$0'''
+
+[[entries]]
+name = "path to string"
+keys = ["path", "string", "convert", "c_str", "native", "generic_string"]
+doc = "Convert a path to std::string."
+snippet = '''
+${1:p}.string()$0'''
+
+[[entries]]
+name = "filesystem path parts"
+keys = ["filename", "extension", "stem", "parent_path", "root", "filesystem", "basename", "dirname"]
+doc = "Extract a component of a path."
+snippet = '''
+${1:p}.${2:filename}()$0'''
+
+[[entries]]
+name = "replace_extension"
+keys = ["replace_extension", "extension", "change", "rename", "suffix", "path"]
+doc = "Path with a different extension."
+snippet = '''
+${1:p}.replace_extension(${2:".txt"})$0'''
+
+[[entries]]
+name = "filesystem exists"
+keys = ["exists", "filesystem", "fs", "file", "check", "present"]
+doc = "Test whether a path exists."
+snippet = '''
+std::filesystem::exists(${1:path})$0'''
+
+[[entries]]
+name = "is_directory / is_regular_file"
+keys = ["is_directory", "is_regular_file", "is_symlink", "type", "check", "filesystem", "folder"]
+doc = "Test the kind of filesystem entry at a path."
+snippet = '''
+std::filesystem::${1:is_directory}(${2:path})$0'''
+
+[[entries]]
+name = "filesystem create_directories"
+keys = ["create_directories", "create_directory", "mkdir", "filesystem", "fs", "folder"]
+doc = "Create a directory and all missing parents."
+snippet = '''
+std::filesystem::create_directories(${1:path});$0'''
+
+[[entries]]
+name = "filesystem directory_iterator"
+keys = ["directory_iterator", "listdir", "filesystem", "fs", "walk", "list", "entries", "ls"]
+doc = "Iterate over the entries of a directory."
+snippet = '''
+for (const auto &${1:entry} : std::filesystem::directory_iterator(${2:dir})) {
+    $0
+}'''
+
+[[entries]]
+name = "recursive_directory_iterator"
+keys = ["recursive_directory_iterator", "recursive", "walk", "tree", "find", "all files", "filesystem"]
+doc = "Walk a directory tree recursively, filtering by extension."
+snippet = '''
+for (const auto &${1:entry} : std::filesystem::recursive_directory_iterator(${2:dir})) {
+    if (${1:entry}.is_regular_file() && ${1:entry}.path().extension() == ${3:".cpp"}) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "directory_entry members"
+keys = ["directory_entry", "entry", "path", "is_regular_file", "file_size", "last_write_time"]
+doc = "Query an entry yielded by a directory iterator."
+snippet = '''
+${1:entry}.${2:path}()$0'''
+
+[[entries]]
+name = "filesystem file_size"
+keys = ["file_size", "size", "bytes", "filesystem", "length"]
+doc = "Size of a regular file in bytes."
+snippet = '''
+std::filesystem::file_size(${1:path})$0'''
+
+[[entries]]
+name = "filesystem remove"
+keys = ["remove", "remove_all", "delete", "unlink", "rmdir", "filesystem"]
+doc = "Delete a file, or a whole tree with remove_all."
+snippet = '''
+std::filesystem::${1:remove}(${2:path});$0'''
+
+[[entries]]
+name = "filesystem rename"
+keys = ["rename", "move", "mv", "filesystem"]
+doc = "Rename or move a file or directory."
+snippet = '''
+std::filesystem::rename(${1:from}, ${2:to});$0'''
+
+[[entries]]
+name = "filesystem copy"
+keys = ["copy", "copy_file", "cp", "filesystem", "duplicate", "overwrite"]
+doc = "Copy a file, overwriting an existing target."
+snippet = '''
+std::filesystem::copy_file(${1:from}, ${2:to}, std::filesystem::copy_options::overwrite_existing);$0'''
+
+[[entries]]
+name = "current_path"
+keys = ["current_path", "cwd", "pwd", "working", "directory", "filesystem", "chdir"]
+doc = "Get or set the current working directory."
+snippet = '''
+std::filesystem::current_path(${1:})$0'''
+
+[[entries]]
+name = "absolute / canonical"
+keys = ["absolute", "canonical", "weakly_canonical", "resolve", "normalize", "path", "realpath"]
+doc = "Resolve a path to an absolute or canonical form."
+snippet = '''
+std::filesystem::${1:absolute}(${2:path})$0'''
+
+[[entries]]
+name = "temp_directory_path"
+keys = ["temp_directory_path", "temp", "tmp", "directory", "filesystem"]
+doc = "The system temporary directory."
+snippet = '''
+std::filesystem::temp_directory_path()$0'''
+
+[[entries]]
+name = "last_write_time"
+keys = ["last_write_time", "mtime", "modified", "timestamp", "filesystem"]
+doc = "Modification time of a file."
+snippet = '''
+auto ${1:mtime} = std::filesystem::last_write_time(${2:path});$0'''
+
+[[entries]]
+name = "filesystem error_code"
+keys = ["error_code", "filesystem", "noexcept", "nothrow", "error", "check"]
+doc = "Filesystem call that reports errors without throwing."
+snippet = '''
+std::error_code ${1:ec};
+std::filesystem::${2:remove}(${3:path}, ${1:ec});
+if (${1:ec}) {
+    $0
+}'''
+
+[[entries]]
+name = "filesystem_error catch"
+keys = ["filesystem_error", "catch", "try", "exception", "filesystem", "error"]
+doc = "Handle a throwing filesystem call."
+snippet = '''
+try {
+    $0
+} catch (const std::filesystem::filesystem_error &${1:e}) {
+    std::cerr << ${1:e}.what() << '\n';
+}'''
+
+[[entries]]
+name = "space"
+keys = ["space", "disk", "free", "capacity", "available", "filesystem"]
+doc = "Capacity and free space of the filesystem holding a path."
+snippet = '''
+auto ${1:info} = std::filesystem::space(${2:path});$0'''

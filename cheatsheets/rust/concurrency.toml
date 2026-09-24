@@ -1,9 +1,9 @@
-title = "Threads and synchronization"
+title = "Threads"
 contexts = ["statement", "expression"]
 
 [[entries]]
 name = "thread::spawn"
-keys = ["thread", "spawn", "new", "concurrent"]
+keys = ["thread", "spawn", "new", "concurrent", "start", "parallel", "closure"]
 doc = "Run a closure on a new thread and get a handle to join it."
 snippet = '''
 let ${1:handle} = std::thread::spawn(move || {
@@ -11,15 +11,45 @@ let ${1:handle} = std::thread::spawn(move || {
 });'''
 
 [[entries]]
+name = "spawn returning a value"
+keys = ["thread", "spawn", "return", "value", "result", "compute", "join"]
+doc = "Compute a value on a thread and receive it from join."
+snippet = '''
+let ${1:handle} = std::thread::spawn(move || -> ${2:u64} {
+    $0
+});
+let ${3:value} = ${1:handle}.join().unwrap();'''
+
+[[entries]]
 name = "join handle"
-keys = ["join", "thread", "wait", "handle", "result"]
+keys = ["join", "thread", "wait", "handle", "result", "finish"]
 doc = "Wait for a thread to finish and take its return value."
 snippet = '''
 let ${1:result} = ${2:handle}.join().${3:unwrap()};$0'''
 
 [[entries]]
+name = "join handling panic"
+keys = ["join", "thread", "panic", "err", "match", "handle", "crash"]
+doc = "Join a thread and treat a panic inside it as an error instead of unwrapping."
+snippet = '''
+match ${1:handle}.join() {
+    Ok(${2:value}) => $0,
+    Err(_) => eprintln!("${3:thread panicked}"),
+}'''
+
+[[entries]]
+name = "move closure capture"
+keys = ["move", "closure", "thread", "capture", "clone", "ownership", "arc"]
+doc = "Clone a shared handle before moving it into a thread closure."
+snippet = '''
+let ${1:shared} = Arc::clone(&${2:data});
+std::thread::spawn(move || {
+    $0
+});'''
+
+[[entries]]
 name = "spawn many and join"
-keys = ["thread", "spawn", "join", "many", "workers", "vec"]
+keys = ["thread", "spawn", "join", "many", "workers", "vec", "loop", "parallel"]
 doc = "Start several threads and wait for all of them."
 snippet = '''
 let handles: Vec<_> = (0..${1:n})
@@ -30,8 +60,21 @@ for h in handles {
 }'''
 
 [[entries]]
+name = "collect results from threads"
+keys = ["thread", "results", "collect", "join", "map", "parallel", "vec"]
+doc = "Run a computation per thread and gather the returned values in order."
+snippet = '''
+let ${1:results}: Vec<${2:u64}> = ${3:inputs}
+    .into_iter()
+    .map(|${4:x}| std::thread::spawn(move || $0))
+    .collect::<Vec<_>>()
+    .into_iter()
+    .map(|h| h.join().unwrap())
+    .collect();'''
+
+[[entries]]
 name = "thread::scope"
-keys = ["thread", "scope", "scoped", "borrow", "stack"]
+keys = ["thread", "scope", "scoped", "borrow", "stack", "reference", "local"]
 doc = "Spawn threads that may borrow local data, all joined when the scope ends."
 snippet = '''
 std::thread::scope(|s| {
@@ -41,158 +84,134 @@ std::thread::scope(|s| {
 });'''
 
 [[entries]]
+name = "scoped chunks in parallel"
+keys = ["chunks", "parallel", "scope", "slice", "split", "rayon", "map", "work"]
+doc = "Split a slice into chunks and process each on its own scoped thread."
+snippet = '''
+let ${1:results}: Vec<${2:u64}> = std::thread::scope(|s| {
+    let handles: Vec<_> = ${3:data}
+        .chunks(${4:chunk_size})
+        .map(|chunk| s.spawn(move || $0))
+        .collect();
+    handles.into_iter().map(|h| h.join().unwrap()).collect()
+});'''
+
+[[entries]]
+name = "scoped mutable borrow"
+keys = ["scope", "chunks_mut", "mutable", "borrow", "parallel", "write", "slice"]
+doc = "Let each scoped thread mutate its own disjoint part of a slice."
+snippet = '''
+std::thread::scope(|s| {
+    for ${1:chunk} in ${2:data}.chunks_mut(${3:chunk_size}) {
+        s.spawn(move || {
+            $0
+        });
+    }
+});'''
+
+[[entries]]
+name = "worker pool with channel"
+keys = ["worker", "pool", "threads", "channel", "jobs", "queue", "arc", "mutex"]
+doc = "Share one receiver among n workers so each job runs on a free thread."
+snippet = '''
+let (${1:tx}, ${2:rx}) = std::sync::mpsc::channel::<${3:Job}>();
+let ${2:rx} = Arc::new(Mutex::new(${2:rx}));
+let workers: Vec<_> = (0..${4:n})
+    .map(|_| {
+        let ${2:rx} = Arc::clone(&${2:rx});
+        std::thread::spawn(move || {
+            while let Ok(${5:job}) = ${2:rx}.lock().unwrap().recv() {
+                $0
+            }
+        })
+    })
+    .collect();'''
+
+[[entries]]
 name = "thread builder"
-keys = ["thread", "builder", "name", "stack", "size"]
+keys = ["thread", "builder", "name", "stack", "size", "configure", "spawn"]
 doc = "Spawn a thread with a name or custom stack size."
 snippet = '''
 std::thread::Builder::new()
     .name("${1:worker}".into())
+    .stack_size(${2:8 * 1024 * 1024})
     .spawn(move || $0)?'''
 
 [[entries]]
+name = "thread::current name / id"
+keys = ["thread", "current", "name", "id", "which", "identify"]
+doc = "Get the running thread's name or id, for example inside a log line."
+snippet = '''
+std::thread::current().${1:name}()$0'''
+
+[[entries]]
 name = "thread::sleep"
-keys = ["sleep", "thread", "wait", "delay", "duration"]
+keys = ["sleep", "thread", "wait", "delay", "duration", "pause", "ms"]
 doc = "Block the current thread for a duration."
 snippet = '''
 std::thread::sleep(std::time::Duration::from_${1:millis}(${2:100}));$0'''
 
 [[entries]]
-name = "Arc<Mutex> shared state"
-keys = ["arc", "mutex", "shared", "state", "counter", "thread"]
-doc = "Create state that several threads can lock and mutate."
+name = "thread::yield_now"
+keys = ["yield", "thread", "spin", "scheduler", "give", "up"]
+doc = "Let the scheduler run another thread, useful in a spin loop."
 snippet = '''
-let ${1:state} = Arc::new(Mutex::new(${2:0}));$0'''
+std::thread::yield_now();$0'''
 
 [[entries]]
-name = "lock mutex"
-keys = ["lock", "mutex", "guard", "unwrap"]
-doc = "Acquire a mutex, getting a guard that unlocks when dropped."
+name = "park / unpark"
+keys = ["park", "unpark", "thread", "block", "wake", "signal", "wait"]
+doc = "Block a thread until another thread unparks its handle."
 snippet = '''
-let mut ${1:guard} = ${2:state}.lock().unwrap();
-*${1:guard} ${3:+= 1};$0'''
-
-[[entries]]
-name = "RwLock read / write"
-keys = ["rwlock", "read", "write", "lock", "guard"]
-doc = "Acquire a shared read lock or an exclusive write lock."
-snippet = '''
-let ${1:guard} = ${2:lock}.${3:read}().unwrap();$0'''
-
-[[entries]]
-name = "mpsc channel"
-keys = ["mpsc", "channel", "sender", "receiver", "queue", "message"]
-doc = "Create a multi-producer single-consumer channel."
-snippet = '''
-let (${1:tx}, ${2:rx}) = std::sync::mpsc::channel::<${3:T}>();$0'''
-
-[[entries]]
-name = "send"
-keys = ["send", "channel", "tx", "sender", "message"]
-doc = "Send a value through a channel, failing if the receiver is gone."
-snippet = '''
-${1:tx}.send(${2:value}).unwrap();$0'''
-
-[[entries]]
-name = "receive loop"
-keys = ["recv", "receive", "channel", "rx", "for", "loop", "iter"]
-doc = "Process messages until every sender has been dropped."
-snippet = '''
-for ${1:msg} in ${2:rx} {
+let ${1:handle} = std::thread::spawn(|| {
+    std::thread::park();
     $0
-}'''
+});
+${1:handle}.thread().unpark();'''
 
 [[entries]]
-name = "recv_timeout / try_recv"
-keys = ["recv", "timeout", "try", "channel", "poll", "nonblocking"]
-doc = "Receive with a timeout or without blocking."
+name = "park_timeout"
+keys = ["park", "timeout", "thread", "block", "wait", "duration"]
+doc = "Block the current thread until unparked or a timeout elapses."
 snippet = '''
-match ${1:rx}.recv_timeout(std::time::Duration::from_${2:millis}(${3:100})) {
-    Ok(${4:msg}) => $0,
-    Err(_) => {}
-}'''
-
-[[entries]]
-name = "sync_channel"
-keys = ["sync", "channel", "bounded", "backpressure", "mpsc"]
-doc = "Create a bounded channel whose senders block when it is full."
-snippet = '''
-let (${1:tx}, ${2:rx}) = std::sync::mpsc::sync_channel::<${3:T}>(${4:capacity});$0'''
-
-[[entries]]
-name = "atomic counter"
-keys = ["atomic", "counter", "fetch_add", "usize", "lockfree"]
-doc = "Increment a shared counter without a lock."
-snippet = '''
-${1:counter}.fetch_add(1, std::sync::atomic::Ordering::${2:Relaxed});$0'''
-
-[[entries]]
-name = "atomic load / store"
-keys = ["atomic", "load", "store", "flag", "bool", "ordering"]
-doc = "Read or write an atomic value with a memory ordering."
-snippet = '''
-${1:flag}.${2:load}(std::sync::atomic::Ordering::${3:SeqCst})$0'''
-
-[[entries]]
-name = "static atomic"
-keys = ["static", "atomic", "global", "counter", "flag"]
-doc = "Declare a global atomic that needs no unsafe to use."
-snippet = '''
-static ${1:COUNTER}: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);$0'''
-
-[[entries]]
-name = "OnceLock"
-keys = ["oncelock", "once", "lazy", "static", "init", "global"]
-doc = "Global initialized exactly once on first access."
-snippet = '''
-static ${1:CONFIG}: std::sync::OnceLock<${2:String}> = std::sync::OnceLock::new();
-${1:CONFIG}.get_or_init(|| ${3:value})$0'''
-
-[[entries]]
-name = "LazyLock"
-keys = ["lazylock", "lazy", "static", "init", "global", "regex"]
-doc = "Global initialized lazily by a closure the first time it is dereferenced."
-snippet = '''
-static ${1:NAME}: std::sync::LazyLock<${2:Type}> = std::sync::LazyLock::new(|| ${3:value});$0'''
-
-[[entries]]
-name = "Once"
-keys = ["once", "call_once", "init", "setup"]
-doc = "Run initialization code exactly once across threads."
-snippet = '''
-static ${1:INIT}: std::sync::Once = std::sync::Once::new();
-${1:INIT}.call_once(|| {
-    $0
-});'''
-
-[[entries]]
-name = "Condvar wait"
-keys = ["condvar", "condition", "variable", "wait", "notify"]
-doc = "Block until another thread signals a condition guarded by a mutex."
-snippet = '''
-let (${1:lock}, ${2:cvar}) = &*${3:pair};
-let mut ${4:ready} = ${1:lock}.lock().unwrap();
-while !*${4:ready} {
-    ${4:ready} = ${2:cvar}.wait(${4:ready}).unwrap();
-}$0'''
-
-[[entries]]
-name = "Barrier"
-keys = ["barrier", "sync", "rendezvous", "wait", "threads"]
-doc = "Make n threads wait for each other at a point."
-snippet = '''
-let ${1:barrier} = Arc::new(std::sync::Barrier::new(${2:n}));
-${1:barrier}.wait();$0'''
+std::thread::park_timeout(std::time::Duration::from_${1:millis}(${2:100}));$0'''
 
 [[entries]]
 name = "available_parallelism"
-keys = ["parallelism", "cpus", "cores", "threads", "count"]
+keys = ["parallelism", "cpus", "cores", "threads", "count", "num", "hardware"]
 doc = "Number of threads the machine can run in parallel."
 snippet = '''
 std::thread::available_parallelism().map_or(1, |n| n.get())$0'''
 
 [[entries]]
+name = "thread_local!"
+keys = ["thread_local", "local", "static", "per", "thread", "cell", "refcell"]
+doc = "Declare a per-thread static and access it through with."
+snippet = '''
+thread_local! {
+    static ${1:COUNTER}: std::cell::RefCell<${2:u32}> = std::cell::RefCell::new(${3:0});
+}
+${1:COUNTER}.with(|${4:c}| {
+    $0
+});'''
+
+[[entries]]
+name = "thread_local with_borrow_mut"
+keys = ["thread_local", "with_borrow", "borrow", "mut", "cell", "local"]
+doc = "Mutate a thread-local RefCell value without a nested closure."
+snippet = '''
+${1:COUNTER}.with_borrow_mut(|${2:c}| *${2:c} += ${3:1});$0'''
+
+[[entries]]
 name = "Send + Sync bound"
-keys = ["send", "sync", "bound", "thread", "safe", "static"]
+keys = ["send", "sync", "bound", "thread", "safe", "static", "generic"]
 doc = "Require a generic type to be safely movable and shareable across threads."
 snippet = '''
 ${1:T}: Send + Sync + 'static$0'''
+
+[[entries]]
+name = "Box<dyn Fn + Send>"
+keys = ["box", "dyn", "fn", "send", "job", "closure", "thread", "task"]
+doc = "Type for a boxed job that can be sent to a worker thread."
+snippet = '''
+Box<dyn FnOnce() + Send + 'static>$0'''

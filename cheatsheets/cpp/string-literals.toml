@@ -1,0 +1,108 @@
+title = "Character and string literals"
+contexts = ["expression"]
+
+[[entries]]
+name = "char literal"
+keys = ["literal", "char", "'", "character", "letter"]
+doc = "Single character literal."
+snippet = """
+'${1:a}'$0"""
+
+[[entries]]
+name = "null character"
+keys = ["literal", "char", "null", "'\\0'", "terminator", "zero"]
+doc = "Null terminator character."
+snippet = '''
+'\0'$0'''
+
+[[entries]]
+name = "wide / unicode char literal"
+keys = ["literal", "wchar", "u8", "u16", "u32", "unicode", "wide"]
+doc = "Character literal with an encoding prefix: L, u8, u, U."
+snippet = """
+${1:u8}'${2:a}'$0"""
+
+[[entries]]
+name = "string literal"
+keys = ["literal", "string", "\"", "text", "const char"]
+doc = "Null-terminated const char array."
+snippet = """
+"${1:text}"$0"""
+
+[[entries]]
+name = "adjacent string literals"
+keys = ["literal", "string", "concatenate", "multiline", "long", "split"]
+doc = "Adjacent literals are joined at compile time, useful for long text."
+snippet = """
+"${1:first part }"
+"${2:second part}"$0"""
+
+[[entries]]
+name = "wide string literal"
+keys = ["literal", "string", "wide", "l", "wchar_t", "windows"]
+doc = "wchar_t string literal."
+snippet = """
+L"${1:text}"$0"""
+
+[[entries]]
+name = "u8 string literal"
+keys = ["literal", "u8", "utf8", "string", "unicode"]
+doc = "UTF-8 encoded string literal (char8_t in C++20)."
+snippet = """
+u8"${1:text}"$0"""
+
+[[entries]]
+name = "UTF-16 / UTF-32 string literal"
+keys = ["literal", "u", "u16", "u32", "string", "unicode", "char16_t"]
+doc = "char16_t (u) or char32_t (U) string literal."
+snippet = """
+${1:u}"${2:text}"$0"""
+
+[[entries]]
+name = "raw string literal"
+keys = ["literal", "raw", "string", "r", "regex", "path", "backslash"]
+doc = "String with no escape processing, useful for regex and paths."
+snippet = """
+R"(${1:text})"$0"""
+
+[[entries]]
+name = "raw string with delimiter"
+keys = ["literal", "raw", "string", "delimiter", "multiline"]
+doc = "Raw string whose content may contain )\"."
+snippet = """
+R"${1:x}(${2:text})${1:x}"$0"""
+
+[[entries]]
+name = "std::string literal"
+keys = ["literal", "s", "string", "suffix", "std::string", "operator"]
+doc = "Literal of type std::string via the s suffix (needs using namespace std::literals)."
+snippet = """
+"${1:text}"s$0"""
+
+[[entries]]
+name = "string_view literal"
+keys = ["literal", "sv", "string_view", "suffix", "operator"]
+doc = "Literal of type std::string_view via the sv suffix."
+snippet = """
+"${1:text}"sv$0"""
+
+[[entries]]
+name = "escape sequence"
+keys = ["escape", "newline", "tab", "\\n", "\\t", "backslash", "quote"]
+doc = "Escapes: \\n \\t \\\\ \\' \\\" \\0 \\xHH \\u1234."
+snippet = '''
+\${1:n}$0'''
+
+[[entries]]
+name = "hex escape"
+keys = ["escape", "hex", "\\x", "byte", "char"]
+doc = "Character given by its hexadecimal code."
+snippet = '''
+\x${1:41}$0'''
+
+[[entries]]
+name = "unicode escape"
+keys = ["escape", "unicode", "\\u", "\\U", "code", "point"]
+doc = "Character given by its Unicode code point."
+snippet = '''
+\u${1:00E9}$0'''

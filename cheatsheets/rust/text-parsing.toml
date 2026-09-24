@@ -1,0 +1,108 @@
+title = "Text parsing by hand"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "csv-like line parsing"
+keys = ["csv", "split", "comma", "fields", "parse", "line", "columns", "record"]
+doc = "Split each line on a delimiter and parse the fields by hand."
+snippet = '''
+for line in ${1:text}.lines().skip(${2:1}) {
+    let mut fields = line.split('${3:,}').map(str::trim);
+    let ${4:name} = fields.next().ok_or("${5:missing name}")?;
+    let ${6:value}: ${7:f64} = fields.next().ok_or("${8:missing value}")?.parse()?;
+    $0
+}'''
+
+[[entries]]
+name = "key = value parsing"
+keys = ["key", "value", "split_once", "config", "parse", "ini", "env", "lines"]
+doc = "Parse key=value lines with split_once."
+snippet = '''
+for line in ${1:text}.lines() {
+    let line = line.trim();
+    if line.is_empty() || line.starts_with('#') {
+        continue;
+    }
+    if let Some((${2:key}, ${3:value})) = line.split_once('${4:=}') {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "JSON by hand"
+keys = ["json", "format", "hand", "write", "object", "manual", "string", "escape"]
+doc = "Emit a small JSON object without a crate, escaping with the Debug formatter."
+snippet = '''
+writeln!(${1:out}, "{{\"${2:name}\": {:?}, \"${3:count}\": {}}}", ${4:name}, ${5:count})?;$0'''
+
+[[entries]]
+name = "parse with line numbers"
+keys = ["lines", "enumerate", "line", "number", "error", "context", "parse", "report"]
+doc = "Parse lines and report the line number in errors."
+snippet = '''
+for (${1:i}, line) in ${2:text}.lines().enumerate() {
+    let ${3:value}: ${4:i64} = line.trim().parse().map_err(|e| format!("line {}: {e}", ${1:i} + 1))?;
+    $0
+}'''
+
+[[entries]]
+name = "whitespace tokens"
+keys = ["split_whitespace", "tokens", "words", "fields", "parse", "columns", "space"]
+doc = "Split a line into whitespace-separated tokens."
+snippet = '''
+let ${1:fields}: Vec<&str> = ${2:line}.split_whitespace().collect();$0'''
+
+[[entries]]
+name = "parse line into struct"
+keys = ["parse", "struct", "record", "fields", "split", "from", "line", "fromstr"]
+doc = "Build a record from the fields of one line."
+snippet = '''
+let [${1:name}, ${2:age}] = ${3:line}.split('${4:,}').collect::<Vec<_>>()[..] else {
+    return Err("${5:bad record}".into());
+};
+let ${6:record} = ${7:Record} { ${1:name}: ${1:name}.to_string(), ${2:age}: ${2:age}.trim().parse()? };$0'''
+
+[[entries]]
+name = "impl FromStr for record"
+keys = ["fromstr", "impl", "parse", "from_str", "record", "struct", "trait"]
+doc = "Let a type be parsed with str::parse by implementing FromStr."
+snippet = '''
+impl std::str::FromStr for ${1:Record} {
+    type Err = ${2:String};
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (${3:a}, ${4:b}) = s.split_once('${5:,}').ok_or("${6:missing comma}")?;
+        Ok(Self { $0 })
+    }
+}'''
+
+[[entries]]
+name = "skip header line"
+keys = ["skip", "header", "first", "line", "csv", "lines", "title"]
+doc = "Iterate lines while skipping the header."
+snippet = '''
+for line in ${1:text}.lines().skip(1) {
+    $0
+}'''
+
+[[entries]]
+name = "quoted csv field"
+keys = ["csv", "quoted", "quotes", "field", "trim_matches", "strip", "escape"]
+doc = "Strip surrounding quotes from a field."
+snippet = '''
+${1:field}.trim().trim_matches('"')$0'''
+
+[[entries]]
+name = "join fields into csv line"
+keys = ["csv", "join", "write", "line", "fields", "output", "format", "comma"]
+doc = "Emit a record as a delimiter-separated line."
+snippet = '''
+writeln!(${1:out}, "{},{},{}", ${2:a}, ${3:b}, ${4:c})?;$0'''
+
+[[entries]]
+name = "JSON array by hand"
+keys = ["json", "array", "list", "join", "format", "manual", "brackets"]
+doc = "Emit a JSON array of strings without a crate."
+snippet = '''
+let ${1:items}: Vec<String> = ${2:values}.iter().map(|v| format!("{v:?}")).collect();
+writeln!(${3:out}, "[{}]", ${1:items}.join(", "))?;$0'''

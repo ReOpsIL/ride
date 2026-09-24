@@ -1,0 +1,195 @@
+title = "Ownership: smart pointers and interior mutability"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "Box deref"
+keys = ["box", "deref", "star", "unbox", "inner", "value", "out"]
+doc = "Move or copy the value out of a Box."
+snippet = '''
+*${1:boxed}$0'''
+
+[[entries]]
+name = "Box::leak"
+keys = ["box", "leak", "static", "forever", "reference", "global"]
+doc = "Turn a Box into a &'static mut that is never freed."
+snippet = '''
+Box::leak(Box::new(${1:value}))$0'''
+
+[[entries]]
+name = "Box<[T]> from Vec"
+keys = ["box", "slice", "vec", "into_boxed_slice", "shrink", "convert"]
+doc = "Convert a Vec into a boxed slice, dropping spare capacity."
+snippet = '''
+${1:v}.into_boxed_slice()$0'''
+
+[[entries]]
+name = "Rc<str> / Arc<str> from"
+keys = ["rc", "arc", "str", "from", "shared", "string", "immutable"]
+doc = "Create a shared immutable string from a str or String."
+snippet = '''
+${1:Arc}::<str>::from(${2:text})$0'''
+
+[[entries]]
+name = "Rc::try_unwrap"
+keys = ["rc", "arc", "try_unwrap", "unwrap", "into_inner", "take", "last", "owner"]
+doc = "Take the value back out of an Rc when it is the only handle."
+snippet = '''
+Rc::try_unwrap(${1:shared}).${2:ok().expect("still shared")}$0'''
+
+[[entries]]
+name = "Rc::make_mut"
+keys = ["rc", "arc", "make_mut", "clone", "write", "cow", "mutate", "unique"]
+doc = "Get a mutable reference, cloning the value first if other handles exist."
+snippet = '''
+Rc::make_mut(&mut ${1:shared})$0'''
+
+[[entries]]
+name = "Rc::get_mut"
+keys = ["rc", "arc", "get_mut", "mutable", "unique", "option", "only"]
+doc = "Get a mutable reference only if no other handle exists."
+snippet = '''
+if let Some(${1:inner}) = Rc::get_mut(&mut ${2:shared}) {
+    $0
+}'''
+
+[[entries]]
+name = "Rc::ptr_eq"
+keys = ["rc", "arc", "ptr_eq", "same", "identity", "compare", "handles"]
+doc = "Check whether two handles point to the same allocation."
+snippet = '''
+Rc::ptr_eq(&${1:a}, &${2:b})$0'''
+
+[[entries]]
+name = "Arc::downgrade"
+keys = ["arc", "downgrade", "weak", "thread", "cycle", "cache"]
+doc = "Create a Weak handle from an Arc."
+snippet = '''
+Arc::downgrade(&${1:shared})$0'''
+
+[[entries]]
+name = "Weak::new empty"
+keys = ["weak", "new", "empty", "dangling", "default", "parent"]
+doc = "Create a Weak that points at nothing, for a field initialized later."
+snippet = '''
+Weak::new()$0'''
+
+[[entries]]
+name = "Rc<RefCell> mutate"
+keys = ["rc", "refcell", "borrow_mut", "mutate", "shared", "push", "update"]
+doc = "Mutate shared state through an Rc<RefCell> handle."
+snippet = '''
+${1:shared}.borrow_mut().${2:push(value)};$0'''
+
+[[entries]]
+name = "RefCell read then drop guard"
+keys = ["refcell", "borrow", "guard", "clone", "copy", "release", "read"]
+doc = "Copy a value out of a RefCell so the borrow guard is released immediately."
+snippet = '''
+let ${1:n} = *${2:cell}.borrow();$0'''
+
+[[entries]]
+name = "RefCell try_borrow_mut"
+keys = ["refcell", "try_borrow", "try_borrow_mut", "fallible", "already", "borrowed", "nopanic"]
+doc = "Borrow a RefCell without panicking when it is already borrowed."
+snippet = '''
+if let Ok(mut ${1:guard}) = ${2:cell}.try_borrow_mut() {
+    $0
+}'''
+
+[[entries]]
+name = "RefCell replace / take"
+keys = ["refcell", "replace", "take", "swap", "default", "out", "set"]
+doc = "Swap the contents of a RefCell, returning the old value."
+snippet = '''
+${1:cell}.${2:replace}(${3:new})$0'''
+
+[[entries]]
+name = "RefCell::new"
+keys = ["refcell", "new", "create", "interior", "mutable", "cell"]
+doc = "Wrap a value for runtime-checked interior mutability."
+snippet = '''
+RefCell::new(${1:value})$0'''
+
+[[entries]]
+name = "Cell::new"
+keys = ["cell", "new", "create", "interior", "copy", "counter"]
+doc = "Wrap a Copy value so it can change through a shared reference."
+snippet = '''
+Cell::new(${1:0})$0'''
+
+[[entries]]
+name = "Cell increment"
+keys = ["cell", "increment", "counter", "get", "set", "update", "shared"]
+doc = "Bump a Cell counter through a shared reference."
+snippet = '''
+${1:counter}.set(${1:counter}.get() + 1);$0'''
+
+[[entries]]
+name = "Cell replace / take"
+keys = ["cell", "replace", "take", "swap", "out", "default", "noncopy"]
+doc = "Swap a Cell's contents, which also works for non-Copy values."
+snippet = '''
+${1:cell}.${2:replace}(${3:new})$0'''
+
+[[entries]]
+name = "Cell in &self method"
+keys = ["cell", "self", "method", "interior", "mutate", "shared", "count", "cache"]
+doc = "Mutate a Cell field from a method that takes &self."
+snippet = '''
+self.${1:hits}.set(self.${1:hits}.get() + 1);$0'''
+
+[[entries]]
+name = "OnceCell get_or_init"
+keys = ["oncecell", "oncelock", "get_or_init", "lazy", "cache", "compute", "once"]
+doc = "Initialize a cell on first access and reuse the value afterwards."
+snippet = '''
+${1:cell}.get_or_init(|| ${2:compute()})$0'''
+
+[[entries]]
+name = "Mutex in &self method"
+keys = ["mutex", "self", "lock", "interior", "thread", "mutate", "shared"]
+doc = "Mutate state behind a Mutex from a method that takes &self."
+snippet = '''
+self.${1:items}.lock().${2:unwrap()}.${3:push(value)};$0'''
+
+[[entries]]
+name = "Cow::from"
+keys = ["cow", "from", "borrowed", "str", "create", "convert"]
+doc = "Create a Cow from a borrowed or owned value."
+snippet = '''
+Cow::from(${1:text})$0'''
+
+[[entries]]
+name = "Cow::into_owned"
+keys = ["cow", "into_owned", "owned", "string", "convert", "clone"]
+doc = "Extract an owned value from a Cow, cloning only if it was borrowed."
+snippet = '''
+${1:cow}.into_owned()$0'''
+
+[[entries]]
+name = "Cow::to_mut"
+keys = ["cow", "to_mut", "mutate", "clone", "write", "owned", "lazy"]
+doc = "Get a mutable reference, converting to owned on first write."
+snippet = '''
+${1:cow}.to_mut().${2:push_str("!")};$0'''
+
+[[entries]]
+name = "ManuallyDrop::new"
+keys = ["manuallydrop", "new", "leak", "skip", "destructor", "ffi", "unsafe"]
+doc = "Wrap a value so its destructor is not run automatically."
+snippet = '''
+std::mem::ManuallyDrop::new(${1:value})$0'''
+
+[[entries]]
+name = "mem::forget"
+keys = ["mem", "forget", "leak", "skip", "drop", "destructor"]
+doc = "Give up a value without running its destructor."
+snippet = '''
+std::mem::forget(${1:value});$0'''
+
+[[entries]]
+name = "mem::drop vs scope end"
+keys = ["drop", "scope", "end", "order", "reverse", "destructor", "when"]
+doc = "Values drop at the end of their scope in reverse declaration order unless dropped explicitly."
+snippet = '''
+drop(${1:guard});$0'''

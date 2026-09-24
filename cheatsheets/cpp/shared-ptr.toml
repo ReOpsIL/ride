@@ -1,0 +1,178 @@
+title = "Smart pointers: shared_ptr and weak_ptr"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "shared_ptr"
+keys = ["shared_ptr", "ptr", "make_shared", "refcount", "shared", "owner", "count"]
+doc = "Reference-counted pointer created with make_shared, freed when the last owner goes."
+snippet = """
+auto ${1:p} = std::make_shared<${2:T}>(${3:});$0"""
+
+[[entries]]
+name = "shared_ptr declaration"
+keys = ["shared_ptr", "ptr", "declare", "empty", "null", "member"]
+doc = "Declare an empty shared_ptr."
+snippet = """
+std::shared_ptr<${1:T}> ${2:p};$0"""
+
+[[entries]]
+name = "shared_ptr typed"
+keys = ["shared_ptr", "typed", "explicit", "make_shared", "declare", "base"]
+doc = "shared_ptr with the type written out, e.g. to a base class."
+snippet = """
+std::shared_ptr<${1:T}> ${2:p} = std::make_shared<${3:T}>(${4:});$0"""
+
+[[entries]]
+name = "shared_ptr from unique_ptr"
+keys = ["shared_ptr", "unique_ptr", "convert", "move", "upgrade", "share"]
+doc = "Convert a unique_ptr into a shared_ptr by moving it."
+snippet = """
+std::shared_ptr<${1:T}> ${2:sp} = std::move(${3:up});$0"""
+
+[[entries]]
+name = "shared_ptr copy"
+keys = ["shared_ptr", "copy", "share", "another", "owner", "assign"]
+doc = "Copying a shared_ptr adds an owner; both point at the same object."
+snippet = """
+std::shared_ptr<${1:T}> ${2:other} = ${3:p};$0"""
+
+[[entries]]
+name = "shared_ptr<const T>"
+keys = ["shared_ptr", "const", "readonly", "immutable", "view", "share"]
+doc = "Share an object that holders may not modify."
+snippet = """
+std::shared_ptr<const ${1:T}> ${2:view} = ${3:p};$0"""
+
+[[entries]]
+name = "shared_ptr array"
+keys = ["shared_ptr", "array", "make_shared", "[]", "buffer", "c++20"]
+doc = "C++20 shared ownership of an array."
+snippet = """
+auto ${1:buf} = std::make_shared<${2:int}[]>(${3:n});$0"""
+
+[[entries]]
+name = "shared_ptr custom deleter"
+keys = ["shared_ptr", "deleter", "lambda", "release", "handle", "resource"]
+doc = "shared_ptr with a custom deleter; the deleter is not part of the type."
+snippet = """
+std::shared_ptr<${1:T}> ${2:p}(${3:acquire()}, [](${1:T} *ptr) { ${4:release(ptr)}; });$0"""
+
+[[entries]]
+name = "use_count"
+keys = ["use_count", "shared_ptr", "refcount", "owners", "count", "debug"]
+doc = "Number of shared_ptr owners, mostly for debugging."
+snippet = """
+${1:p}.use_count()$0"""
+
+[[entries]]
+name = "shared_ptr null check"
+keys = ["shared_ptr", "null", "check", "if", "empty", "bool"]
+doc = "Test whether the shared_ptr holds an object."
+snippet = """
+if (${1:p}) {
+    $0
+}"""
+
+[[entries]]
+name = "shared_ptr reset"
+keys = ["reset", "shared_ptr", "drop", "release", "owner", "null"]
+doc = "Drop this owner's reference; the object dies when the count hits zero."
+snippet = """
+${1:p}.reset();$0"""
+
+[[entries]]
+name = "aliasing shared_ptr"
+keys = ["shared_ptr", "aliasing", "member", "subobject", "constructor", "share"]
+doc = "shared_ptr to a member that keeps the whole owning object alive."
+snippet = """
+std::shared_ptr<${1:Member}> ${2:part}(${3:owner}, &${3:owner}->${4:member});$0"""
+
+[[entries]]
+name = "weak_ptr"
+keys = ["weak_ptr", "ptr", "weak", "cycle", "observer", "non-owning", "cache"]
+doc = "Non-owning observer of a shared_ptr that does not keep the object alive."
+snippet = """
+std::weak_ptr<${1:T}> ${2:w} = ${3:p};$0"""
+
+[[entries]]
+name = "weak_ptr lock"
+keys = ["weak_ptr", "lock", "promote", "if", "alive", "shared_ptr"]
+doc = "Promote a weak_ptr to a shared_ptr if the object is alive."
+snippet = """
+if (auto ${1:sp} = ${2:w}.lock()) {
+    $0
+}"""
+
+[[entries]]
+name = "weak_ptr expired"
+keys = ["weak_ptr", "expired", "dead", "alive", "check", "gone"]
+doc = "True when the observed object has already been destroyed."
+snippet = """
+${1:w}.expired()$0"""
+
+[[entries]]
+name = "break cycle with weak_ptr"
+keys = ["weak_ptr", "cycle", "parent", "child", "leak", "back", "reference"]
+doc = "Children point back at the parent weakly so the pair is not leaked."
+snippet = """
+struct ${1:Node} {
+    std::vector<std::shared_ptr<${1:Node}>> ${2:children};
+    std::weak_ptr<${1:Node}> ${3:parent};
+    $0
+};"""
+
+[[entries]]
+name = "enable_shared_from_this"
+keys = ["shared_from_this", "shared_ptr", "this", "self", "callback", "async"]
+doc = "Let an object obtain a shared_ptr to itself; it must already be owned by one."
+snippet = """
+class ${1:Name} : public std::enable_shared_from_this<${1:Name}> {
+public:
+    std::shared_ptr<${1:Name}> self() { return shared_from_this(); }
+    $0
+};"""
+
+[[entries]]
+name = "weak_from_this"
+keys = ["weak_from_this", "weak_ptr", "this", "self", "callback"]
+doc = "Weak pointer to this from inside an enable_shared_from_this class."
+snippet = """
+std::weak_ptr<${1:Name}> ${2:w} = weak_from_this();$0"""
+
+[[entries]]
+name = "dynamic_pointer_cast"
+keys = ["dynamic_pointer_cast", "static_pointer_cast", "const_pointer_cast", "shared_ptr", "cast", "downcast"]
+doc = "Cast a shared_ptr to a derived type; also static_pointer_cast and const_pointer_cast."
+snippet = """
+auto ${1:d} = std::${2:dynamic_pointer_cast}<${3:Derived}>(${4:base});$0"""
+
+[[entries]]
+name = "owner_before"
+keys = ["owner_before", "shared_ptr", "weak_ptr", "compare", "map", "key", "order"]
+doc = "Owner-based ordering so weak_ptr can be a map key via std::owner_less."
+snippet = """
+std::map<std::weak_ptr<${1:T}>, ${2:int}, std::owner_less<>> ${3:registry};$0"""
+
+[[entries]]
+name = "shared_ptr in container"
+keys = ["shared_ptr", "vector", "container", "push_back", "list", "share"]
+doc = "Vector of shared owners of objects."
+snippet = """
+std::vector<std::shared_ptr<${1:T}>> ${2:items};
+${2:items}.push_back(std::make_shared<${1:T}>(${3:}));$0"""
+
+[[entries]]
+name = "shared_ptr as parameter"
+keys = ["shared_ptr", "parameter", "pass", "const", "reference", "function"]
+doc = "Pass by const reference unless the callee keeps a copy."
+snippet = """
+void ${1:name}(const std::shared_ptr<${2:T}> &${3:p}) {
+    $0
+}"""
+
+[[entries]]
+name = "atomic shared_ptr"
+keys = ["atomic", "shared_ptr", "thread", "safe", "load", "store", "c++20"]
+doc = "C++20 atomic wrapper for a shared_ptr updated from several threads."
+snippet = """
+std::atomic<std::shared_ptr<${1:T}>> ${2:current};$0"""

@@ -1,9 +1,9 @@
-title = "Special members"
+title = "Constructors"
 contexts = ["fields"]
 
 [[entries]]
 name = "default constructor"
-keys = ["constructor", "ctor", "default"]
+keys = ["constructor", "ctor", "default", "empty", "no", "args"]
 doc = "Constructor taking no arguments."
 snippet = """
 ${1:Name}() {
@@ -11,8 +11,15 @@ ${1:Name}() {
 }"""
 
 [[entries]]
+name = "defaulted default constructor"
+keys = ["constructor", "ctor", "default", "= default", "generate"]
+doc = "Ask the compiler for the default constructor next to other user constructors."
+snippet = """
+${1:Name}() = default;$0"""
+
+[[entries]]
 name = "constructor"
-keys = ["constructor", "ctor"]
+keys = ["constructor", "ctor", "init", "parameters", "member", "list"]
 doc = "Constructor with parameters and a member initializer list."
 snippet = """
 ${1:Name}(${2:int value}) : ${3:value_(value)} {
@@ -20,125 +27,128 @@ ${1:Name}(${2:int value}) : ${3:value_(value)} {
 }"""
 
 [[entries]]
+name = "constructor with several members"
+keys = ["constructor", "ctor", "init", "list", "members", "two"]
+doc = "Initializer list setting several members in declaration order."
+snippet = """
+${1:Name}(${2:int} ${3:x}, ${4:int} ${5:y}) : ${3:x}_(${3:x}), ${5:y}_(${5:y}) {
+    $0
+}"""
+
+[[entries]]
+name = "constructor assigning in body"
+keys = ["constructor", "ctor", "assign", "body", "this", "="]
+doc = "Beginner form that assigns members in the body; prefer the initializer list."
+snippet = """
+${1:Name}(${2:int} ${3:value}) {
+    this->${4:value_} = ${3:value};$0
+}"""
+
+[[entries]]
+name = "constructor with move"
+keys = ["constructor", "ctor", "move", "string", "sink", "value"]
+doc = "Take heavy parameters by value and move them into members."
+snippet = """
+${1:Name}(${2:std::string} ${3:name}) : ${4:name_}(std::move(${3:name})) {
+    $0
+}"""
+
+[[entries]]
+name = "constructor with default argument"
+keys = ["constructor", "ctor", "default", "argument", "optional", "="]
+doc = "Constructor whose trailing parameter has a default value."
+snippet = """
+${1:Name}(${2:int} ${3:value} = ${4:0}) : ${5:value_}(${3:value}) {
+    $0
+}"""
+
+[[entries]]
 name = "explicit constructor"
-keys = ["constructor", "ctor", "explicit"]
-doc = "Constructor that cannot be used for implicit conversion."
+keys = ["constructor", "ctor", "explicit", "conversion", "single", "one"]
+doc = "Single-argument constructor that cannot be used for implicit conversion."
 snippet = """
 explicit ${1:Name}(${2:int value}) : ${3:value_(value)} {
     $0
 }"""
 
 [[entries]]
+name = "converting constructor"
+keys = ["constructor", "ctor", "implicit", "converting", "conversion", "from"]
+doc = "Non-explicit single-argument constructor that allows implicit conversion."
+snippet = """
+${1:Name}(${2:int} ${3:value}) : ${4:value_}(${3:value}) {}$0"""
+
+[[entries]]
 name = "constexpr constructor"
-keys = ["constructor", "ctor", "constexpr"]
+keys = ["constructor", "ctor", "constexpr", "compile", "literal"]
 doc = "Constructor usable in constant expressions."
 snippet = """
 constexpr ${1:Name}(${2:int value}) : ${3:value_(value)} {}$0"""
 
 [[entries]]
 name = "delegating constructor"
-keys = ["constructor", "ctor", "delegate"]
+keys = ["constructor", "ctor", "delegate", "forward", "another", "this"]
 doc = "Constructor that forwards to another constructor."
 snippet = """
 ${1:Name}() : ${1:Name}(${2:0}) {}$0"""
 
 [[entries]]
+name = "constructor calling base"
+keys = ["constructor", "ctor", "base", "super", "parent", "derived"]
+doc = "Derived constructor that initializes the base first."
+snippet = """
+${1:Derived}(${2:int value}) : ${3:Base}(${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "constructor initializing base and members"
+keys = ["constructor", "ctor", "base", "member", "list", "derived"]
+doc = "Initializer list that seeds the base and then the new members."
+snippet = """
+${1:Derived}(${2:int} ${3:a}, ${4:int} ${5:b}) : ${6:Base}(${3:a}), ${7:b_}(${5:b}) {
+    $0
+}"""
+
+[[entries]]
 name = "initializer list constructor"
-keys = ["constructor", "ctor", "initializer_list", "braces"]
+keys = ["constructor", "ctor", "initializer_list", "braces", "list", "values"]
 doc = "Constructor that accepts a braced list of values."
 snippet = """
-${1:Name}(std::initializer_list<${2:int}> ${3:items}) {
+${1:Name}(std::initializer_list<${2:int}> ${3:items}) : ${4:items_}(${3:items}) {
     $0
 }"""
 
 [[entries]]
-name = "destructor"
-keys = ["destructor", "dtor"]
-doc = "Run cleanup when the object is destroyed."
+name = "constructor declaration"
+keys = ["constructor", "ctor", "declare", "prototype", "header", "cpp"]
+doc = "Declare a constructor to define outside the class."
 snippet = """
-~${1:Name}() {
+${1:Name}(${2:int value});$0"""
+
+[[entries]]
+name = "noexcept constructor"
+keys = ["constructor", "ctor", "noexcept", "throw"]
+doc = "Constructor that promises not to throw."
+snippet = """
+${1:Name}(${2:}) noexcept {
     $0
 }"""
 
 [[entries]]
-name = "copy constructor"
-keys = ["constructor", "ctor", "copy"]
-doc = "Construct from another instance of the same type."
+name = "constructor template"
+keys = ["constructor", "ctor", "template", "generic", "forward"]
+doc = "Constructor template that accepts any argument type."
 snippet = """
-${1:Name}(const ${1:Name} &${2:other}) {
-    $0
-}"""
+template <typename ${1:T}>
+explicit ${2:Name}(${1:T} &&${3:value}) : ${4:value_}(std::forward<${1:T}>(${3:value})) {}$0"""
 
 [[entries]]
-name = "move constructor"
-keys = ["constructor", "ctor", "move"]
-doc = "Steal resources from an rvalue of the same type."
+name = "private constructor"
+keys = ["constructor", "ctor", "private", "factory", "hidden", "singleton"]
+doc = "Constructor hidden so only friends and static factories can build instances."
 snippet = """
-${1:Name}(${1:Name} &&${2:other}) noexcept {
-    $0
-}"""
-
-[[entries]]
-name = "copy assignment"
-keys = ["assignment", "operator=", "copy"]
-doc = "Assign from another instance and return *this."
-snippet = """
-${1:Name} &operator=(const ${1:Name} &${2:other}) {
-    if (this != &${2:other}) {
+private:
+    ${1:Name}(${2:}) {
         $0
-    }
-    return *this;
-}"""
-
-[[entries]]
-name = "move assignment"
-keys = ["assignment", "operator=", "move"]
-doc = "Move-assign from an rvalue and return *this."
-snippet = """
-${1:Name} &operator=(${1:Name} &&${2:other}) noexcept {
-    $0
-    return *this;
-}"""
-
-[[entries]]
-name = "= default"
-keys = ["default", "defaulted"]
-doc = "Ask the compiler to generate a special member."
-snippet = """
-${1:Name}(${2:const Name &}) = default;$0"""
-
-[[entries]]
-name = "= delete"
-keys = ["delete", "deleted", "noncopyable"]
-doc = "Forbid a special member function."
-snippet = """
-${1:Name}(${2:const Name &}) = delete;$0"""
-
-[[entries]]
-name = "non-copyable"
-keys = ["delete", "noncopyable", "copy"]
-doc = "Delete copy construction and copy assignment."
-snippet = """
-${1:Name}(const ${1:Name} &) = delete;
-${1:Name} &operator=(const ${1:Name} &) = delete;$0"""
-
-[[entries]]
-name = "move-only"
-keys = ["move", "only", "default", "delete"]
-doc = "Delete copying but default moving."
-snippet = """
-${1:Name}(const ${1:Name} &) = delete;
-${1:Name} &operator=(const ${1:Name} &) = delete;
-${1:Name}(${1:Name} &&) noexcept = default;
-${1:Name} &operator=(${1:Name} &&) noexcept = default;$0"""
-
-[[entries]]
-name = "rule of five"
-keys = ["rule", "five", "special", "default"]
-doc = "Declare all five special members as defaulted."
-snippet = """
-~${1:Name}() = default;
-${1:Name}(const ${1:Name} &) = default;
-${1:Name} &operator=(const ${1:Name} &) = default;
-${1:Name}(${1:Name} &&) noexcept = default;
-${1:Name} &operator=(${1:Name} &&) noexcept = default;$0"""
+    }"""

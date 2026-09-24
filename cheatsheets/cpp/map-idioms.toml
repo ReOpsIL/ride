@@ -1,0 +1,188 @@
+title = "Set operations and map idioms"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "set insert"
+keys = ["insert", "set", "add", "unique", "put", "emplace"]
+doc = "Insert a key into a set; duplicates are ignored."
+snippet = '''
+${1:s}.insert(${2:value});$0'''
+
+[[entries]]
+name = "set insert with result"
+keys = ["insert", "set", "inserted", "result", "bool", "new", "first time", "seen"]
+doc = "Insert and learn whether the key was new, e.g. for a seen set."
+snippet = '''
+if (auto [${1:it}, ${2:inserted}] = ${3:seen}.insert(${4:value}); ${2:inserted}) {
+    $0
+}'''
+
+[[entries]]
+name = "set find"
+keys = ["find", "set", "lookup", "contains", "has", "exists", "search"]
+doc = "Find a key in a set and test for presence."
+snippet = '''
+if (${1:s}.find(${2:value}) != ${1:s}.end()) {
+    $0
+}'''
+
+[[entries]]
+name = "set contains"
+keys = ["contains", "set", "has", "exists", "member", "in"]
+doc = "C++20 membership test on a set."
+snippet = '''
+${1:s}.contains(${2:value})$0'''
+
+[[entries]]
+name = "set erase"
+keys = ["erase", "set", "remove", "delete", "key"]
+doc = "Remove a key from a set."
+snippet = '''
+${1:s}.erase(${2:value});$0'''
+
+[[entries]]
+name = "set iterate"
+keys = ["set", "loop", "iterate", "for", "sorted", "each"]
+doc = "Loop over a set in sorted order."
+snippet = '''
+for (const auto &${1:x} : ${2:s}) {
+    $0
+}'''
+
+[[entries]]
+name = "set from vector"
+keys = ["set", "vector", "unique", "dedup", "convert", "distinct", "range"]
+doc = "Build a set from a vector to get sorted unique values."
+snippet = '''
+std::set<${1:int}> ${2:unique}(${3:v}.begin(), ${3:v}.end());$0'''
+
+[[entries]]
+name = "vector from set"
+keys = ["vector", "set", "convert", "sorted", "unique", "to vector"]
+doc = "Copy a set back into a vector."
+snippet = '''
+std::vector<${1:int}> ${2:v}(${3:s}.begin(), ${3:s}.end());$0'''
+
+[[entries]]
+name = "multiset erase one"
+keys = ["multiset", "erase", "one", "single", "find", "duplicate"]
+doc = "Erase a single copy of a key from a multiset via find."
+snippet = '''
+if (auto ${1:it} = ${2:ms}.find(${3:value}); ${1:it} != ${2:ms}.end()) {
+    ${2:ms}.erase(${1:it});
+}$0'''
+
+[[entries]]
+name = "multiset count"
+keys = ["multiset", "count", "occurrences", "duplicates", "how many"]
+doc = "Number of copies of a key in a multiset."
+snippet = '''
+${1:ms}.count(${2:value})$0'''
+
+[[entries]]
+name = "multimap insert"
+keys = ["multimap", "insert", "duplicate", "key", "add", "emplace"]
+doc = "Insert into a multimap, always adding a new entry."
+snippet = '''
+${1:mm}.emplace(${2:key}, ${3:value});$0'''
+
+[[entries]]
+name = "word count"
+keys = ["count", "frequency", "histogram", "word", "map", "tally", "occurrences", "idiom"]
+doc = "Count occurrences with operator[] defaulting to zero."
+snippet = '''
+std::${1:unordered_map}<${2:std::string}, int> ${3:counts};
+for (const auto &${4:word} : ${5:words}) {
+    ++${3:counts}[${4:word}];
+}$0'''
+
+[[entries]]
+name = "group by key"
+keys = ["group", "map", "vector", "groupby", "bucket", "collect", "idiom"]
+doc = "Collect items under a computed key into vectors."
+snippet = '''
+std::map<${1:std::string}, std::vector<${2:Item}>> ${3:groups};
+for (const auto &${4:item} : ${5:items}) {
+    ${3:groups}[${6:item.key}].push_back(${4:item});
+}$0'''
+
+[[entries]]
+name = "map get or default"
+keys = ["map", "default", "get", "find", "fallback", "value_or", "lookup", "idiom"]
+doc = "Read a value without inserting, falling back to a default."
+snippet = '''
+auto ${1:it} = ${2:m}.find(${3:key});
+auto ${4:value} = ${1:it} != ${2:m}.end() ? ${1:it}->second : ${5:default_value};$0'''
+
+[[entries]]
+name = "map keys to vector"
+keys = ["map", "keys", "vector", "extract", "collect", "list", "views::keys"]
+doc = "Collect all keys of a map into a vector."
+snippet = '''
+std::vector<${1:std::string}> ${2:keys};
+for (const auto &[${3:k}, ${4:v}] : ${5:m}) {
+    ${2:keys}.push_back(${3:k});
+}$0'''
+
+[[entries]]
+name = "map sorted by value"
+keys = ["map", "sort", "value", "sorted", "rank", "top", "vector", "pairs"]
+doc = "Copy entries into a vector and sort them by mapped value."
+snippet = '''
+std::vector<std::pair<${1:std::string}, ${2:int}>> ${3:entries}(${4:m}.begin(), ${4:m}.end());
+std::sort(${3:entries}.begin(), ${3:entries}.end(), [](const auto &a, const auto &b) { return ${5:a.second > b.second}; });$0'''
+
+[[entries]]
+name = "map max by value"
+keys = ["map", "max", "largest", "value", "max_element", "best", "most"]
+doc = "Entry with the largest mapped value."
+snippet = '''
+auto ${1:best} = std::max_element(${2:m}.begin(), ${2:m}.end(), [](const auto &a, const auto &b) { return a.second < b.second; });$0'''
+
+[[entries]]
+name = "map with cache lookup"
+keys = ["cache", "memo", "memoize", "map", "try_emplace", "compute", "idiom"]
+doc = "Compute a value once and cache it under its key."
+snippet = '''
+auto ${1:it} = ${2:cache}.find(${3:key});
+if (${1:it} == ${2:cache}.end()) {
+    ${1:it} = ${2:cache}.emplace(${3:key}, ${4:compute(key)}).first;
+}
+auto &${5:value} = ${1:it}->second;$0'''
+
+[[entries]]
+name = "set intersection of sets"
+keys = ["intersection", "set", "common", "both", "set_intersection", "inserter"]
+doc = "Elements in both sets via std::set_intersection and an inserter."
+snippet = '''
+std::set<${1:int}> ${2:common};
+std::set_intersection(${3:a}.begin(), ${3:a}.end(), ${4:b}.begin(), ${4:b}.end(), std::inserter(${2:common}, ${2:common}.begin()));$0'''
+
+[[entries]]
+name = "set union of sets"
+keys = ["union", "set", "either", "merge", "set_union", "inserter"]
+doc = "Elements in either set via std::set_union and an inserter."
+snippet = '''
+std::set<${1:int}> ${2:all};
+std::set_union(${3:a}.begin(), ${3:a}.end(), ${4:b}.begin(), ${4:b}.end(), std::inserter(${2:all}, ${2:all}.begin()));$0'''
+
+[[entries]]
+name = "set difference of sets"
+keys = ["difference", "set", "minus", "except", "set_difference", "inserter"]
+doc = "Elements in the first set but not the second."
+snippet = '''
+std::set<${1:int}> ${2:only_a};
+std::set_difference(${3:a}.begin(), ${3:a}.end(), ${4:b}.begin(), ${4:b}.end(), std::inserter(${2:only_a}, ${2:only_a}.begin()));$0'''
+
+[[entries]]
+name = "unordered_set dedup keeping order"
+keys = ["dedup", "unique", "order", "seen", "unordered_set", "filter", "idiom", "duplicates"]
+doc = "Drop duplicates while preserving first-seen order."
+snippet = '''
+std::unordered_set<${1:int}> ${2:seen};
+std::vector<${1:int}> ${3:out};
+for (const auto &${4:x} : ${5:v}) {
+    if (${2:seen}.insert(${4:x}).second) {
+        ${3:out}.push_back(${4:x});
+    }
+}$0'''

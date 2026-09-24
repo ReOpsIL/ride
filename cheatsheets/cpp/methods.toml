@@ -1,0 +1,211 @@
+title = "Member functions"
+contexts = ["fields"]
+
+[[entries]]
+name = "method"
+keys = ["method", "member", "function", "fn", "define", "inline"]
+doc = "Member function defined inside the class."
+snippet = """
+${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "method declaration"
+keys = ["method", "member", "declare", "prototype", "header", "cpp"]
+doc = "Declare a member function to define later outside the class."
+snippet = """
+${1:void} ${2:name}(${3:});$0"""
+
+[[entries]]
+name = "const method"
+keys = ["const", "method", "getter", "read", "query", "inspect"]
+doc = "Member function that does not modify the object."
+snippet = """
+${1:int} ${2:name}(${3:}) const {
+    return $0;
+}"""
+
+[[entries]]
+name = "const and non-const overloads"
+keys = ["const", "overload", "method", "pair", "accessor", "reference"]
+doc = "Accessor pair: mutable reference on a non-const object, const reference otherwise."
+snippet = """
+${1:T} &${2:get}() { return ${3:value_}; }
+const ${1:T} &${2:get}() const { return ${3:value_}; }$0"""
+
+[[entries]]
+name = "getter"
+keys = ["get", "getter", "accessor", "read", "property"]
+doc = "Const accessor returning a member."
+snippet = """
+${1:const int &} ${2:value}() const { return ${3:value_}; }$0"""
+
+[[entries]]
+name = "getter by value"
+keys = ["get", "getter", "accessor", "value", "copy", "nodiscard"]
+doc = "Accessor that returns a small member by value."
+snippet = """
+[[nodiscard]] ${1:int} ${2:value}() const { return ${3:value_}; }$0"""
+
+[[entries]]
+name = "setter"
+keys = ["set", "setter", "mutator", "write", "property"]
+doc = "Mutator that stores a new value."
+snippet = """
+void set_${1:value}(${2:int} v) { ${3:value_} = v; }$0"""
+
+[[entries]]
+name = "setter with move"
+keys = ["set", "setter", "move", "string", "sink", "mutator"]
+doc = "Setter that takes by value and moves into the member."
+snippet = """
+void set_${1:name}(${2:std::string} v) { ${3:name_} = std::move(v); }$0"""
+
+[[entries]]
+name = "chaining setter"
+keys = ["set", "setter", "chain", "this", "return", "fluent", "builder"]
+doc = "Setter that returns *this so calls can be chained."
+snippet = """
+${1:Name} &${2:with_value}(${3:int} v) {
+    ${4:value_} = v;
+    return *this;$0
+}"""
+
+[[entries]]
+name = "static method"
+keys = ["static", "method", "fn", "class", "no", "instance"]
+doc = "Member function that needs no instance."
+snippet = """
+static ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "static factory"
+keys = ["static", "factory", "create", "make", "named", "constructor"]
+doc = "Static function that builds an instance."
+snippet = """
+static ${1:Name} create(${2:}) {
+    return ${1:Name}($0);
+}"""
+
+[[entries]]
+name = "singleton accessor"
+keys = ["singleton", "instance", "static", "meyers", "global"]
+doc = "Meyers singleton with a function-local static."
+snippet = """
+static ${1:Name} &instance() {
+    static ${1:Name} inst;
+    return inst;
+}$0"""
+
+[[entries]]
+name = "virtual method"
+keys = ["virtual", "method", "fn", "polymorphic", "overridable", "base"]
+doc = "Member function that derived classes may override."
+snippet = """
+virtual ${1:void} ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "override method"
+keys = ["override", "virtual", "method", "derived", "implement"]
+doc = "Override a base class virtual function."
+snippet = """
+${1:void} ${2:name}(${3:}) override {
+    $0
+}"""
+
+[[entries]]
+name = "override calling base"
+keys = ["override", "base", "super", "call", "parent", "extend"]
+doc = "Override that runs the base implementation first."
+snippet = """
+${1:void} ${2:name}(${3:}) override {
+    ${4:Base}::${2:name}(${5:});
+    $0
+}"""
+
+[[entries]]
+name = "final method"
+keys = ["final", "override", "virtual", "last", "seal"]
+doc = "Override that cannot be overridden further."
+snippet = """
+${1:void} ${2:name}(${3:}) final {
+    $0
+}"""
+
+[[entries]]
+name = "pure virtual"
+keys = ["virtual", "pure", "abstract", "= 0", "interface"]
+doc = "Virtual function with no implementation in this class."
+snippet = """
+virtual ${1:void} ${2:name}(${3:}) = 0;$0"""
+
+[[entries]]
+name = "pure virtual const"
+keys = ["virtual", "pure", "abstract", "const", "interface", "query"]
+doc = "Pure virtual query that does not modify the object."
+snippet = """
+virtual ${1:int} ${2:name}(${3:}) const = 0;$0"""
+
+[[entries]]
+name = "virtual destructor"
+keys = ["virtual", "destructor", "dtor", "base", "polymorphic", "delete"]
+doc = "Destructor that lets a derived object be deleted through a base pointer."
+snippet = """
+virtual ~${1:Name}() = default;$0"""
+
+[[entries]]
+name = "noexcept method"
+keys = ["noexcept", "method", "throw", "swap", "move"]
+doc = "Member function that promises not to throw."
+snippet = """
+${1:void} ${2:name}(${3:}) noexcept {
+    $0
+}"""
+
+[[entries]]
+name = "deleted method"
+keys = ["delete", "method", "forbid", "overload", "="]
+doc = "Delete a member overload so it cannot be called."
+snippet = """
+${1:void} ${2:name}(${3:double}) = delete;$0"""
+
+[[entries]]
+name = "ref-qualified method"
+keys = ["ref", "qualified", "&&", "rvalue", "method", "move"]
+doc = "Overloads that differ by whether *this is an lvalue or rvalue."
+snippet = """
+${1:std::string} ${2:name}() const & { return ${3:name_}; }
+${1:std::string} ${2:name}() && { return std::move(${3:name_}); }$0"""
+
+[[entries]]
+name = "explicit this parameter"
+keys = ["this", "deducing", "explicit", "self", "c++23", "method"]
+doc = "C++23 deducing this so one function serves const and non-const objects."
+snippet = """
+auto &${1:name}(this auto &&self) {
+    return self.${2:value_};$0
+}"""
+
+[[entries]]
+name = "method template"
+keys = ["template", "method", "generic", "member", "typename"]
+doc = "Member function template."
+snippet = """
+template <typename ${1:T}>
+${2:void} ${3:name}(const ${1:T} &${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "conversion operator"
+keys = ["operator", "conversion", "explicit", "bool", "cast"]
+doc = "Explicit conversion to another type, often bool."
+snippet = """
+explicit operator ${1:bool}() const {
+    return $0;
+}"""

@@ -1,0 +1,177 @@
+title = "Trait method calls and trait objects"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "trait method call"
+keys = ["trait", "method", "call", "dot", "use", "import", "scope"]
+doc = "Call a trait method with dot syntax; the trait must be in scope."
+snippet = '''
+${1:value}.${2:method}()$0'''
+
+[[entries]]
+name = "Trait::method(&x)"
+keys = ["trait", "method", "call", "qualified", "path", "disambiguate", "ufcs"]
+doc = "Call a trait method by path when two traits define the same method name."
+snippet = '''
+${1:Trait}::${2:method}(&${3:value})$0'''
+
+[[entries]]
+name = "<Type as Trait>::method"
+keys = ["as", "trait", "fully", "qualified", "syntax", "disambiguate", "associated"]
+doc = "Fully qualified call, needed for associated functions without a receiver."
+snippet = '''
+<${1:Type} as ${2:Trait}>::${3:method}(${4:&value})$0'''
+
+[[entries]]
+name = "Type::method(&x) inherent"
+keys = ["type", "method", "call", "path", "inherent", "explicit", "receiver"]
+doc = "Call a method as an associated function, passing the receiver explicitly."
+snippet = '''
+${1:Type}::${2:method}(&${3:value})$0'''
+
+[[entries]]
+name = "T::default() on generic"
+keys = ["default", "generic", "t", "construct", "associated", "call"]
+doc = "Call an associated function of a type parameter."
+snippet = '''
+${1:T}::${2:default}()$0'''
+
+[[entries]]
+name = "T::CONST associated const"
+keys = ["const", "associated", "generic", "t", "constant", "read"]
+doc = "Read an associated constant of a type or type parameter."
+snippet = '''
+${1:T}::${2:NAME}$0'''
+
+[[entries]]
+name = "Default::default()"
+keys = ["default", "infer", "construct", "zero", "empty"]
+doc = "Construct a default value with the type inferred from context."
+snippet = '''
+Default::default()$0'''
+
+[[entries]]
+name = "coerce to &dyn Trait"
+keys = ["dyn", "coerce", "as", "reference", "trait", "object", "cast"]
+doc = "Turn a reference to a concrete type into a borrowed trait object."
+snippet = '''
+let ${1:obj}: &dyn ${2:Trait} = &${3:value};$0'''
+
+[[entries]]
+name = "coerce to Box<dyn Trait>"
+keys = ["box", "dyn", "coerce", "as", "trait", "object", "cast", "owned"]
+doc = "Box a concrete value and erase its type behind a trait."
+snippet = '''
+Box::new(${1:value}) as Box<dyn ${2:Trait}>$0'''
+
+[[entries]]
+name = "Vec of trait objects"
+keys = ["vec", "box", "dyn", "list", "heterogeneous", "shapes", "polymorphic"]
+doc = "Collect differently typed values into one list of boxed trait objects."
+snippet = '''
+let ${1:items}: Vec<Box<dyn ${2:Trait}>> = vec![Box::new(${3:A}), Box::new(${4:B})];$0'''
+
+[[entries]]
+name = "loop over trait objects"
+keys = ["for", "dyn", "iterate", "loop", "call", "each", "trait", "objects"]
+doc = "Call a trait method on every element of a list of trait objects."
+snippet = '''
+for ${1:item} in &${2:items} {
+    ${1:item}.${3:method}();$0
+}'''
+
+[[entries]]
+name = "downcast_ref via Any"
+keys = ["downcast", "any", "dyn", "concrete", "runtime", "type", "check"]
+doc = "Recover the concrete type behind a dyn Any reference."
+snippet = '''
+if let Some(${1:concrete}) = ${2:value}.downcast_ref::<${3:Type}>() {
+    $0
+}'''
+
+[[entries]]
+name = "Box<dyn Any> downcast"
+keys = ["downcast", "any", "box", "owned", "concrete", "runtime"]
+doc = "Take ownership of the concrete value inside a boxed Any."
+snippet = '''
+match ${1:boxed}.downcast::<${2:Type}>() {
+    Ok(${3:concrete}) => $0,
+    Err(${4:other}) => ${5:todo!()},
+}'''
+
+[[entries]]
+name = "type_name / TypeId"
+keys = ["type", "name", "typeid", "any", "reflect", "debug", "which"]
+doc = "Inspect a type's name or identity at runtime for debugging."
+snippet = '''
+std::any::type_name::<${1:T}>()$0'''
+
+[[entries]]
+name = "into() conversion call"
+keys = ["into", "convert", "from", "conversion", "call", "infer"]
+doc = "Convert a value using an Into impl, letting the target type be inferred."
+snippet = '''
+let ${1:target}: ${2:String} = ${3:value}.into();$0'''
+
+[[entries]]
+name = "Type::from(x)"
+keys = ["from", "convert", "conversion", "call", "explicit", "construct"]
+doc = "Convert a value using a From impl with the target named explicitly."
+snippet = '''
+${1:String}::from(${2:value})$0'''
+
+[[entries]]
+name = "try_into() with type"
+keys = ["try_into", "tryinto", "convert", "fallible", "checked", "narrow"]
+doc = "Fallible conversion, such as narrowing an integer."
+snippet = '''
+let ${1:small}: ${2:u8} = ${3:value}.try_into()${4:?};$0'''
+
+[[entries]]
+name = "parse::<T>()"
+keys = ["parse", "fromstr", "str", "turbofish", "convert", "string", "number"]
+doc = "Parse a string into any FromStr type, named with the turbofish."
+snippet = '''
+${1:text}.parse::<${2:i32}>()$0'''
+
+[[entries]]
+name = "to_string() via Display"
+keys = ["to_string", "tostring", "display", "format", "string", "convert"]
+doc = "Produce a String from any Display type."
+snippet = '''
+${1:value}.to_string()$0'''
+
+[[entries]]
+name = "as_ref() call"
+keys = ["as_ref", "asref", "borrow", "convert", "reference", "cheap"]
+doc = "Get a cheap reference view of a value through its AsRef impl."
+snippet = '''
+${1:value}.as_ref()$0'''
+
+[[entries]]
+name = "sum::<T>() turbofish on trait method"
+keys = ["sum", "product", "turbofish", "iterator", "trait", "generic", "call"]
+doc = "Name the result type of a trait-generic iterator method with the turbofish."
+snippet = '''
+${1:iter}.sum::<${2:i64}>()$0'''
+
+[[entries]]
+name = "size_of::<T>()"
+keys = ["size", "mem", "bytes", "layout", "generic", "align"]
+doc = "Size of a type in bytes."
+snippet = '''
+std::mem::size_of::<${1:T}>()$0'''
+
+[[entries]]
+name = "impl Trait argument call"
+keys = ["call", "generic", "argument", "pass", "impl", "trait", "any"]
+doc = "Pass a concrete value where a generic or impl Trait parameter is expected."
+snippet = '''
+${1:run}(&${2:value})$0'''
+
+[[entries]]
+name = "generic call with turbofish"
+keys = ["turbofish", "generic", "call", "explicit", "type", "argument", "infer"]
+doc = "Pin down a type parameter when inference cannot."
+snippet = '''
+${1:function}::<${2:Type}>(${3:args})$0'''

@@ -1,0 +1,205 @@
+title = "Closures: sorting and iterator callbacks"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "sort_by_key"
+keys = ["sort", "key", "closure", "field", "order", "by"]
+doc = "Sort by a key extracted from each element."
+snippet = '''
+${1:items}.sort_by_key(|${2:x}| ${2:x}.${3:key});$0'''
+
+[[entries]]
+name = "sort_by descending"
+keys = ["sort", "descending", "reverse", "closure", "cmp", "order", "largest"]
+doc = "Sort from largest to smallest by comparing in reverse."
+snippet = '''
+${1:items}.sort_by(|a, b| b.${2:key}.cmp(&a.${2:key}));$0'''
+
+[[entries]]
+name = "sort_by_key Reverse"
+keys = ["sort", "key", "reverse", "descending", "cmp", "closure"]
+doc = "Sort descending by wrapping the key in Reverse."
+snippet = '''
+${1:items}.sort_by_key(|${2:x}| std::cmp::Reverse(${2:x}.${3:key}));$0'''
+
+[[entries]]
+name = "sort_by float"
+keys = ["sort", "float", "f64", "partial_cmp", "closure", "nan", "total_cmp"]
+doc = "Sort floats, which lack Ord, with partial_cmp or total_cmp."
+snippet = '''
+${1:values}.sort_by(|a, b| a.${2:partial_cmp(b).unwrap()});$0'''
+
+[[entries]]
+name = "sort_by multiple keys"
+keys = ["sort", "then", "then_with", "multiple", "keys", "tie", "closure"]
+doc = "Sort by one key and break ties with another."
+snippet = '''
+${1:items}.sort_by(|a, b| a.${2:major}.cmp(&b.${2:major}).then_with(|| a.${3:minor}.cmp(&b.${3:minor})));$0'''
+
+[[entries]]
+name = "sort_by_cached_key"
+keys = ["sort", "cached", "key", "expensive", "string", "lowercase", "closure"]
+doc = "Sort by an expensive key computed once per element."
+snippet = '''
+${1:items}.sort_by_cached_key(|${2:x}| ${2:x}.${3:to_lowercase()});$0'''
+
+[[entries]]
+name = "sort_unstable_by"
+keys = ["sort", "unstable", "fast", "closure", "cmp", "order"]
+doc = "Faster sort that may reorder equal elements."
+snippet = '''
+${1:items}.sort_unstable_by(|a, b| a.${2:key}.cmp(&b.${2:key}));$0'''
+
+[[entries]]
+name = "max_by_key / min_by_key"
+keys = ["max", "min", "key", "closure", "largest", "smallest", "by"]
+doc = "Find the element with the largest or smallest key."
+snippet = '''
+${1:items}.iter().${2:max_by_key}(|${3:x}| ${3:x}.${4:key})$0'''
+
+[[entries]]
+name = "max_by float"
+keys = ["max", "min", "float", "partial_cmp", "closure", "largest", "f64"]
+doc = "Find the largest float with an explicit comparison closure."
+snippet = '''
+${1:values}.iter().max_by(|a, b| a.${2:partial_cmp(b).unwrap()})$0'''
+
+[[entries]]
+name = "retain with closure"
+keys = ["retain", "filter", "inplace", "remove", "keep", "closure", "predicate"]
+doc = "Keep only the elements for which the closure returns true."
+snippet = '''
+${1:items}.retain(|${2:x}| ${3:x.active});$0'''
+
+[[entries]]
+name = "dedup_by_key"
+keys = ["dedup", "key", "duplicates", "consecutive", "closure", "remove"]
+doc = "Remove consecutive elements sharing the same key."
+snippet = '''
+${1:items}.dedup_by_key(|${2:x}| ${2:x}.${3:key});$0'''
+
+[[entries]]
+name = "binary_search_by_key"
+keys = ["binary", "search", "key", "sorted", "closure", "find", "index"]
+doc = "Search a sorted list by a key extracted with a closure."
+snippet = '''
+${1:items}.binary_search_by_key(&${2:target}, |${3:x}| ${3:x}.${4:key})$0'''
+
+[[entries]]
+name = "fold with closure"
+keys = ["fold", "reduce", "accumulate", "closure", "acc", "sum", "total"]
+doc = "Combine all elements into one value with an accumulator closure."
+snippet = '''
+${1:items}.iter().fold(${2:0}, |${3:acc}, ${4:x}| ${3:acc} + ${4:x})$0'''
+
+[[entries]]
+name = "for_each closure"
+keys = ["for_each", "each", "loop", "closure", "side", "effect", "print"]
+doc = "Run a closure on every element instead of a for loop."
+snippet = '''
+${1:items}.iter().for_each(|${2:x}| ${3:println!("{x\}")});$0'''
+
+[[entries]]
+name = "any / all closure"
+keys = ["any", "all", "predicate", "closure", "bool", "exists", "every"]
+doc = "Test whether any or every element satisfies a predicate."
+snippet = '''
+${1:items}.iter().${2:any}(|${3:x}| ${4:x.done})$0'''
+
+[[entries]]
+name = "position closure"
+keys = ["position", "index", "find", "closure", "first", "where"]
+doc = "Index of the first element matching a predicate."
+snippet = '''
+${1:items}.iter().position(|${2:x}| ${3:x.id == target})$0'''
+
+[[entries]]
+name = "find with double reference"
+keys = ["find", "closure", "reference", "double", "deref", "pattern", "ampersand"]
+doc = "Find takes a reference to the item, so slice iterators hand the closure a &&T."
+snippet = '''
+${1:items}.iter().find(|&&${2:x}| ${3:x > 10})$0'''
+
+[[entries]]
+name = "filter with &&"
+keys = ["filter", "closure", "reference", "double", "deref", "pattern", "copy"]
+doc = "Filter over a slice iterator sees &&T; destructure or deref to compare."
+snippet = '''
+${1:items}.iter().filter(|${2:x}| **${2:x} ${3:> 0})$0'''
+
+[[entries]]
+name = "map with tuple destructure"
+keys = ["map", "tuple", "destructure", "closure", "pair", "key", "value", "hashmap"]
+doc = "Map over pairs, naming both halves in the closure parameter."
+snippet = '''
+${1:map}.iter().map(|(${2:k}, ${3:v})| ${4:format!("{k\}={v\}")})$0'''
+
+[[entries]]
+name = "enumerate with index closure"
+keys = ["enumerate", "index", "closure", "tuple", "position", "map"]
+doc = "Use the index and element together in a closure."
+snippet = '''
+${1:items}.iter().enumerate().map(|(${2:i}, ${3:x})| ${4:expr})$0'''
+
+[[entries]]
+name = "filter_map parse"
+keys = ["filter_map", "parse", "ok", "closure", "skip", "invalid", "numbers"]
+doc = "Parse each item and keep only the successes."
+snippet = '''
+${1:words}.iter().filter_map(|${2:w}| ${2:w}.parse::<${3:i32}>().ok())$0'''
+
+[[entries]]
+name = "map to_string"
+keys = ["map", "to_string", "owned", "strings", "closure", "convert", "collect"]
+doc = "Turn borrowed items into owned strings."
+snippet = '''
+${1:items}.iter().map(|${2:s}| ${2:s}.to_string()).collect::<Vec<_>>()$0'''
+
+[[entries]]
+name = "or_insert_with closure"
+keys = ["entry", "or_insert_with", "hashmap", "lazy", "closure", "default", "vec"]
+doc = "Insert a lazily built value only when the key is missing."
+snippet = '''
+${1:map}.entry(${2:key}).or_insert_with(|| ${3:Vec::new()})$0'''
+
+[[entries]]
+name = "unwrap_or_else closure"
+keys = ["unwrap_or_else", "fallback", "lazy", "closure", "default", "option", "result"]
+doc = "Compute a fallback only when the value is absent or an error."
+snippet = '''
+${1:value}.unwrap_or_else(|${2:e}| ${3:fallback})$0'''
+
+[[entries]]
+name = "partition closure"
+keys = ["partition", "split", "two", "closure", "predicate", "groups", "collect"]
+doc = "Split elements into two collections by a predicate."
+snippet = '''
+let (${1:yes}, ${2:no}): (Vec<_>, Vec<_>) = ${3:items}.into_iter().partition(|${4:x}| ${5:x.ok});$0'''
+
+[[entries]]
+name = "method reference str::len"
+keys = ["method", "reference", "path", "str", "len", "trim", "map", "function", "name"]
+doc = "Pass a method path where a closure taking the receiver is expected."
+snippet = '''
+.map(${1:str::len})$0'''
+
+[[entries]]
+name = "map(Some) / map(Box::new)"
+keys = ["map", "some", "box", "constructor", "path", "wrap", "function", "name"]
+doc = "Pass a constructor or variant as the mapping function."
+snippet = '''
+.map(${1:Some})$0'''
+
+[[entries]]
+name = "pass fn by name"
+keys = ["function", "name", "pass", "argument", "pointer", "value", "callback"]
+doc = "Pass a named function where a closure or fn pointer is expected."
+snippet = '''
+${1:apply}(${2:double}, ${3:x})$0'''
+
+[[entries]]
+name = "let f: fn(...) = name"
+keys = ["let", "fn", "pointer", "function", "value", "bind", "name"]
+doc = "Bind a named function to a variable as a function pointer."
+snippet = '''
+let ${1:f}: fn(${2:i32}) -> ${3:i32} = ${4:double};$0'''

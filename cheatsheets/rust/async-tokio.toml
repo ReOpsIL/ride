@@ -1,0 +1,214 @@
+title = "Async runtime (tokio)"
+contexts = ["statement", "expression", "item"]
+
+[[entries]]
+name = "tokio::main"
+keys = ["tokio", "main", "runtime", "attribute", "entry", "async"]
+doc = "Start the tokio runtime and run main as an async function."
+snippet = '''
+#[tokio::main]
+async fn main() {
+    $0
+}'''
+
+[[entries]]
+name = "tokio::main returning Result"
+keys = ["tokio", "main", "result", "error", "question", "async"]
+doc = "Async main that can propagate errors with the question mark."
+snippet = '''
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "tokio::main current_thread"
+keys = ["tokio", "main", "flavor", "current_thread", "single", "runtime", "worker"]
+doc = "Run on a single-threaded runtime or set the worker thread count."
+snippet = '''
+#[tokio::main(flavor = "${1:current_thread}")]
+async fn main() {
+    $0
+}'''
+
+[[entries]]
+name = "Runtime::new block_on"
+keys = ["block_on", "runtime", "sync", "run", "future", "manual", "new"]
+doc = "Run a future to completion from synchronous code."
+snippet = '''
+tokio::runtime::Runtime::new()?.block_on(async {
+    $0
+})'''
+
+[[entries]]
+name = "runtime Builder"
+keys = ["runtime", "builder", "threads", "enable_all", "build", "configure", "tokio"]
+doc = "Build a tokio runtime with explicit settings."
+snippet = '''
+let ${1:rt} = tokio::runtime::Builder::new_${2:multi_thread}()
+    .worker_threads(${3:4})
+    .enable_all()
+    .build()?;
+${1:rt}.block_on(async { $0 });'''
+
+[[entries]]
+name = "tokio::spawn"
+keys = ["tokio", "spawn", "task", "async", "background", "start"]
+doc = "Run a future as a background task on the tokio runtime."
+snippet = '''
+let ${1:handle} = tokio::spawn(async move {
+    $0
+});'''
+
+[[entries]]
+name = "await JoinHandle"
+keys = ["join", "handle", "await", "task", "result", "spawn", "output"]
+doc = "Wait for a spawned task and take its output, unwrapping the join error."
+snippet = '''
+let ${1:value} = ${2:handle}.await${3:?};$0'''
+
+[[entries]]
+name = "spawn many tasks and join"
+keys = ["spawn", "tasks", "many", "join", "loop", "vec", "handles", "all"]
+doc = "Spawn a task per item and await every handle."
+snippet = '''
+let mut ${1:handles} = Vec::new();
+for ${2:item} in ${3:items} {
+    ${1:handles}.push(tokio::spawn(async move { $0 }));
+}
+for h in ${1:handles} {
+    h.await?;
+}'''
+
+[[entries]]
+name = "JoinSet"
+keys = ["joinset", "tasks", "set", "join_next", "spawn", "collect", "dynamic"]
+doc = "Spawn a dynamic group of tasks and collect results as they finish."
+snippet = '''
+let mut ${1:set} = tokio::task::JoinSet::new();
+for ${2:item} in ${3:items} {
+    ${1:set}.spawn(async move { $0 });
+}
+while let Some(${4:res}) = ${1:set}.join_next().await {
+    let ${5:value} = ${4:res}?;
+}'''
+
+[[entries]]
+name = "tokio::join!"
+keys = ["tokio", "join", "concurrent", "futures", "all", "both", "parallel"]
+doc = "Run several futures concurrently and wait for all of them."
+snippet = '''
+let (${1:a}, ${2:b}) = tokio::join!(${3:fut_a}, ${4:fut_b});$0'''
+
+[[entries]]
+name = "tokio::try_join!"
+keys = ["tokio", "try_join", "concurrent", "result", "error", "first", "fail"]
+doc = "Run fallible futures concurrently, returning early on the first error."
+snippet = '''
+let (${1:a}, ${2:b}) = tokio::try_join!(${3:fut_a}, ${4:fut_b})?;$0'''
+
+[[entries]]
+name = "futures::join_all"
+keys = ["join_all", "futures", "vec", "all", "concurrent", "collect", "many"]
+doc = "Await a vector of futures concurrently and collect their outputs."
+snippet = '''
+let ${1:results} = futures::future::join_all(${2:futures}).await;$0'''
+
+[[entries]]
+name = "tokio::select!"
+keys = ["tokio", "select", "race", "first", "timeout", "cancel", "either"]
+doc = "Wait on several futures and continue with whichever finishes first."
+snippet = '''
+tokio::select! {
+    ${1:res} = ${2:fut_a} => $0,
+    _ = ${3:tokio::signal::ctrl_c()} => {}
+}'''
+
+[[entries]]
+name = "select! loop with shutdown"
+keys = ["select", "loop", "shutdown", "cancel", "channel", "recv", "graceful"]
+doc = "Event loop that handles messages until a shutdown signal fires."
+snippet = '''
+loop {
+    tokio::select! {
+        Some(${1:msg}) = ${2:rx}.recv() => {
+            $0
+        }
+        _ = &mut ${3:shutdown} => break,
+    }
+}'''
+
+[[entries]]
+name = "select! biased"
+keys = ["select", "biased", "priority", "order", "first", "branch"]
+doc = "Poll select branches in written order instead of randomly."
+snippet = '''
+tokio::select! {
+    biased;
+    ${1:a} = ${2:fut_a} => $0,
+    ${3:b} = ${4:fut_b} => {}
+}'''
+
+[[entries]]
+name = "tokio::time::sleep"
+keys = ["tokio", "sleep", "delay", "async", "timer", "wait", "pause"]
+doc = "Pause the task without blocking the thread."
+snippet = '''
+tokio::time::sleep(std::time::Duration::from_${1:millis}(${2:100})).await;$0'''
+
+[[entries]]
+name = "tokio::time::timeout"
+keys = ["tokio", "timeout", "deadline", "async", "elapsed", "limit"]
+doc = "Cancel a future if it takes longer than a duration."
+snippet = '''
+tokio::time::timeout(std::time::Duration::from_secs(${1:5}), ${2:future}).await??$0'''
+
+[[entries]]
+name = "timeout with match"
+keys = ["timeout", "match", "elapsed", "err", "handle", "slow", "expired"]
+doc = "Handle a timeout explicitly instead of propagating it."
+snippet = '''
+match tokio::time::timeout(std::time::Duration::from_secs(${1:5}), ${2:future}).await {
+    Ok(${3:value}) => $0,
+    Err(_) => eprintln!("${4:timed out}"),
+}'''
+
+[[entries]]
+name = "tokio::time::interval"
+keys = ["interval", "tick", "periodic", "timer", "every", "loop", "repeat"]
+doc = "Run code on a fixed period."
+snippet = '''
+let mut ${1:interval} = tokio::time::interval(std::time::Duration::from_${2:secs}(${3:1}));
+loop {
+    ${1:interval}.tick().await;
+    $0
+}'''
+
+[[entries]]
+name = "spawn_blocking"
+keys = ["tokio", "spawn_blocking", "blocking", "cpu", "thread", "sync", "heavy"]
+doc = "Run blocking code on a dedicated thread pool from async code."
+snippet = '''
+tokio::task::spawn_blocking(move || {
+    $0
+}).await?'''
+
+[[entries]]
+name = "abort task"
+keys = ["abort", "cancel", "task", "handle", "stop", "kill", "join"]
+doc = "Cancel a spawned task through its handle."
+snippet = '''
+${1:handle}.abort();$0'''
+
+[[entries]]
+name = "CancellationToken"
+keys = ["cancellation", "token", "cancel", "shutdown", "tokio_util", "cancelled", "child"]
+doc = "Share a token that tasks await to learn they should stop."
+snippet = '''
+let ${1:token} = tokio_util::sync::CancellationToken::new();
+let ${2:child} = ${1:token}.child_token();
+tokio::select! {
+    _ = ${2:child}.cancelled() => $0,
+    _ = ${3:work} => {}
+}'''

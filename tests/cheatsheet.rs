@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use ride_engine::{BufferSession, Context, Lang, engine_start, select, sheet, validate};
+use ride_engine::{BufferSession, Context, Lang, Section, engine_start, select, sheet, validate};
 
 fn context(lang: Lang, src: &str) -> Context {
     let at = src.find('|').expect("caret");
@@ -40,6 +40,15 @@ fn every_sheet_parses() {
 fn rust_contexts() {
     assert_eq!(context(Lang::Rust, "fn main() {}\n|"), Context::Item);
     assert_eq!(context(Lang::Rust, "fn main() {}\nst|"), Context::Item);
+    assert_eq!(
+        context(Lang::Rust, "fn main() {}\n\nimpl|\n\nstruct S;\n"),
+        Context::Item
+    );
+    assert_eq!(
+        context(Lang::Rust, "fn main() {}\n\nstruct|\n\nstruct S;\n"),
+        Context::Item
+    );
+    assert_eq!(context(Lang::Rust, "impl |\n\nstruct S;\n"), Context::Type);
     assert_eq!(
         context(Lang::Rust, "fn main() {\n    |\n}"),
         Context::Statement
@@ -119,6 +128,19 @@ fn c_contexts() {
     );
     assert_eq!(context(Lang::C, "int f(|);"), Context::Type);
     assert_eq!(context(Lang::Cpp, "class A {\n    |\n};"), Context::Fields);
+    assert_eq!(
+        context(Lang::Cpp, "int main() {}\n\nclass|\n\nstruct S {};\n"),
+        Context::Item
+    );
+    assert_eq!(
+        context(Lang::Cpp, "class |\n\nstruct S {};\n"),
+        Context::Type
+    );
+    assert_eq!(
+        context(Lang::Cpp, "int main() {\n    ar|\n}\n"),
+        Context::Statement
+    );
+    assert_eq!(context(Lang::Cpp, "int x{|};"), Context::Expression);
     assert_eq!(context(Lang::Cpp, "namespace n {\n    |\n}"), Context::Item);
     assert_eq!(context(Lang::Cpp, "template <|"), Context::Type);
     assert_eq!(
@@ -147,6 +169,24 @@ fn make_contexts() {
         context(Lang::Make, "CFLAGS += -Wall $(X) |"),
         Context::Value
     );
+}
+
+#[test]
+fn snippet_placeholders_parse_like_the_app() {
+    let parse = |snippet: &str| {
+        Section::parse(
+            "t",
+            &format!(
+                "title = \"t\"\n[[entries]]\nname = \"e\"\ndoc = \"d\"\nsnippet = '''\n{snippet}'''"
+            ),
+        )
+    };
+    assert!(parse(r"let ${1:x} = $0;").is_ok());
+    assert!(parse(r"${1:{\}}").is_ok());
+    assert!(parse(r"${1:a {b\}}").is_ok());
+    assert!(parse(r"${1:a {b}}").is_err());
+    assert!(parse(r"${1:a").is_err());
+    assert!(parse(r#"${1:println!("{x}")}"#).is_err());
 }
 
 #[test]

@@ -1,0 +1,149 @@
+title = "Numeric literals"
+contexts = ["expression"]
+
+[[entries]]
+name = "integer literal"
+keys = ["literal", "int", "number", "decimal", "42"]
+doc = "Decimal integer literal of type int."
+snippet = """
+${1:42}$0"""
+
+[[entries]]
+name = "hex literal"
+keys = ["literal", "hex", "hexadecimal", "0x", "int"]
+doc = "Hexadecimal integer literal."
+snippet = """
+0x${1:FF}$0"""
+
+[[entries]]
+name = "binary literal"
+keys = ["literal", "binary", "0b", "bits", "int"]
+doc = "C++14 binary integer literal."
+snippet = """
+0b${1:1010}$0"""
+
+[[entries]]
+name = "octal literal"
+keys = ["literal", "octal", "0", "permissions", "int"]
+doc = "Octal literal starting with 0, as in file modes."
+snippet = """
+0${1:755}$0"""
+
+[[entries]]
+name = "integer suffix"
+keys = ["literal", "suffix", "u", "l", "ll", "ull", "z"]
+doc = "Integer suffixes: u, l, ll, ul, ull, and C++23 z for size_t."
+snippet = """
+${1:42}${2:u}$0"""
+
+[[entries]]
+name = "unsigned long long literal"
+keys = ["literal", "ull", "unsigned", "long", "64", "big"]
+doc = "64-bit unsigned literal."
+snippet = """
+${1:1}ULL$0"""
+
+[[entries]]
+name = "size_t literal"
+keys = ["literal", "uz", "size_t", "z", "c++23", "index"]
+doc = "C++23 literal of type std::size_t."
+snippet = """
+${1:0}uz$0"""
+
+[[entries]]
+name = "digit separator"
+keys = ["literal", "separator", "'", "thousands", "readable"]
+doc = "Apostrophes separate digit groups in numeric literals."
+snippet = """
+${1:1'000'000}$0"""
+
+[[entries]]
+name = "floating literal"
+keys = ["literal", "float", "double", "decimal", "point", "real"]
+doc = "Floating literal of type double."
+snippet = """
+${1:1.0}$0"""
+
+[[entries]]
+name = "float suffix"
+keys = ["literal", "float", "f", "suffix", "single"]
+doc = "Floating literal of type float."
+snippet = """
+${1:1.0}f$0"""
+
+[[entries]]
+name = "long double literal"
+keys = ["literal", "long", "double", "l", "suffix", "precision"]
+doc = "Floating literal of type long double."
+snippet = """
+${1:1.0}L$0"""
+
+[[entries]]
+name = "scientific literal"
+keys = ["literal", "exponent", "e", "scientific", "1e9", "double"]
+doc = "Floating literal with an exponent."
+snippet = """
+${1:1}e${2:9}$0"""
+
+[[entries]]
+name = "hex float literal"
+keys = ["literal", "hex", "float", "0x", "p", "exact"]
+doc = "C++17 hexadecimal floating literal with a binary exponent."
+snippet = """
+0x${1:1}.${2:8}p${3:0}$0"""
+
+[[entries]]
+name = "user-defined literal"
+keys = ["literal", "operator\"\"", "udl", "user", "suffix", "custom"]
+doc = "Use a custom literal suffix defined by an operator\"\" function."
+snippet = """
+${1:10}_${2:km}$0"""
+
+[[entries]]
+name = "chrono literal"
+keys = ["literal", "chrono", "ms", "s", "min", "h", "duration", "time"]
+doc = "Duration literals such as 10ms, 2s, 1min, 1h (needs using namespace std::chrono_literals)."
+snippet = """
+${1:10}${2:ms}$0"""
+
+[[entries]]
+name = "boolean literal"
+keys = ["true", "false", "bool", "literal"]
+doc = "Boolean constants true and false."
+snippet = """
+${1:true}$0"""
+
+[[entries]]
+name = "nullptr"
+keys = ["nullptr", "null", "literal", "pointer", "none"]
+doc = "Null pointer constant."
+snippet = """
+nullptr$0"""
+
+[[entries]]
+name = "numeric_limits"
+keys = ["numeric_limits", "max", "min", "limits", "infinity", "epsilon", "lowest"]
+doc = "Extreme values of a numeric type: max, min, lowest, epsilon, infinity."
+snippet = """
+std::numeric_limits<${1:int}>::${2:max}()$0"""
+
+[[entries]]
+name = "INT_MAX"
+keys = ["int_max", "int_min", "climits", "limits", "max", "min", "macro"]
+doc = "C limits macros from <climits>: INT_MAX, INT_MIN, LLONG_MAX, UINT_MAX."
+snippet = """
+${1:INT_MAX}$0"""
+
+[[entries]]
+name = "std::numbers::pi"
+keys = ["numbers", "pi", "e", "constants", "math", "sqrt2"]
+doc = "C++20 mathematical constants: pi, e, sqrt2, ln2, phi."
+snippet = """
+std::numbers::${1:pi}$0"""
+
+[[entries]]
+name = "M_PI"
+keys = ["m_pi", "pi", "cmath", "constant", "macro"]
+doc = "POSIX pi macro from <cmath> (not portable; prefer std::numbers::pi)."
+snippet = """
+M_PI$0"""

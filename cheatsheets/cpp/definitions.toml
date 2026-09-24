@@ -1,0 +1,72 @@
+title = "Out-of-line definitions"
+contexts = ["item"]
+
+[[entries]]
+name = "member function out of line"
+keys = ["method", "define", "scope", "::", "outside", "cpp"]
+doc = "Define a member function outside its class."
+snippet = """
+${1:void} ${2:Name}::${3:method}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "const member function out of line"
+keys = ["method", "const", "define", "scope", "::", "outside"]
+doc = "Define a const member function outside its class."
+snippet = """
+${1:int} ${2:Name}::${3:method}(${4:}) const {
+    return $0;
+}"""
+
+[[entries]]
+name = "function in namespace"
+keys = ["namespace", "fn", "scope", "::", "qualified"]
+doc = "Define a function declared in a namespace using its qualified name."
+snippet = """
+${1:void} ${2:ns}::${3:name}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "constructor out of line"
+keys = ["constructor", "ctor", "define", "outside", "::", "cpp"]
+doc = "Define a constructor outside its class with a member initializer list."
+snippet = """
+${1:Name}::${1:Name}(${2:int value}) : ${3:value_(value)} {
+    $0
+}"""
+
+[[entries]]
+name = "derived constructor calling base"
+keys = ["constructor", "ctor", "base", "super", "parent", "call"]
+doc = "Derived constructor that passes arguments to the base constructor."
+snippet = """
+${1:Derived}::${1:Derived}(${2:int value}) : ${3:Base}(${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "destructor out of line"
+keys = ["destructor", "dtor", "define", "outside", "::", "cpp"]
+doc = "Define a destructor outside its class."
+snippet = """
+${1:Name}::~${1:Name}() {
+    $0
+}"""
+
+[[entries]]
+name = "override out of line"
+keys = ["override", "virtual", "define", "outside", "::", "cpp"]
+doc = "Define an overriding member function outside its class (no override keyword here)."
+snippet = """
+${1:void} ${2:Derived}::${3:method}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "static member definition"
+keys = ["static", "member", "define", "class", "::", "outside"]
+doc = "Define a non-inline static data member outside its class."
+snippet = """
+${1:int} ${2:Name}::${3:count} = ${4:0};$0"""

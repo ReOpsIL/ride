@@ -1,0 +1,143 @@
+title = "Macro idioms"
+contexts = ["preprocessor", "item"]
+
+[[entries]]
+name = "debug log macro"
+keys = ["log", "debug", "macro", "print", "file", "line", "trace"]
+doc = "Logging macro that prints the location and is empty in release builds."
+snippet = '''
+#ifndef NDEBUG
+#define ${1:LOG}(...) \
+    do { \
+        std::fprintf(stderr, "%s:%d: ", __FILE__, __LINE__); \
+        std::fprintf(stderr, __VA_ARGS__); \
+        std::fputc('\n', stderr); \
+    } while (0)
+#else
+#define ${1:LOG}(...) ((void)0)
+#endif$0'''
+
+[[entries]]
+name = "assert-like macro"
+keys = ["assert", "check", "macro", "abort", "condition", "ensure", "verify"]
+doc = "Check a condition and abort with location on failure."
+snippet = '''
+#define ${1:CHECK}(cond) \
+    do { \
+        if (!(cond)) { \
+            std::fprintf(stderr, "%s:%d: check failed: %s\n", __FILE__, __LINE__, #cond); \
+            std::abort(); \
+        } \
+    } while (0)$0'''
+
+[[entries]]
+name = "unique name macro"
+keys = ["unique", "name", "counter", "line", "paste", "anonymous", "macro"]
+doc = "Generate a unique identifier per expansion via token pasting."
+snippet = """
+#define ${1:CONCAT_}(a, b) a##b
+#define ${1:CONCAT}(a, b) ${1:CONCAT_}(a, b)
+#define ${2:UNIQUE_NAME}(base) ${1:CONCAT}(base, __COUNTER__)$0"""
+
+[[entries]]
+name = "X-macro"
+keys = ["x-macro", "xmacro", "list", "table", "enum", "generate", "repeat"]
+doc = "Define a list once and expand it into an enum, strings or a table."
+snippet = """
+#define ${1:COLORS}(X) \\
+    X(${2:Red}) \\
+    X(${3:Green}) \\
+    X(${4:Blue})
+
+enum class ${5:Color} {
+#define X(name) name,
+    ${1:COLORS}(X)
+#undef X
+};$0"""
+
+[[entries]]
+name = "array size macro"
+keys = ["array", "size", "count", "sizeof", "length", "macro", "elements"]
+doc = "Element count of a C array (prefer std::size)."
+snippet = """
+#define ${1:ARRAY_SIZE}(a) (sizeof(a) / sizeof((a)[0]))$0"""
+
+[[entries]]
+name = "unused parameter macro"
+keys = ["unused", "parameter", "void", "warning", "silence", "macro"]
+doc = "Silence an unused variable warning (prefer [[maybe_unused]])."
+snippet = """
+#define ${1:UNUSED}(x) ((void)(x))$0"""
+
+[[entries]]
+name = "likely / unlikely macro"
+keys = ["likely", "unlikely", "builtin_expect", "branch", "hint", "macro"]
+doc = "Branch hints for compilers without the C++20 attributes."
+snippet = """
+#if defined(__GNUC__)
+#define ${1:LIKELY}(x) __builtin_expect(!!(x), 1)
+#define ${2:UNLIKELY}(x) __builtin_expect(!!(x), 0)
+#else
+#define ${1:LIKELY}(x) (x)
+#define ${2:UNLIKELY}(x) (x)
+#endif$0"""
+
+[[entries]]
+name = "force inline macro"
+keys = ["inline", "force", "always_inline", "forceinline", "macro", "portable"]
+doc = "Portable forced inlining across compilers."
+snippet = """
+#if defined(_MSC_VER)
+#define ${1:FORCE_INLINE} __forceinline
+#else
+#define ${1:FORCE_INLINE} inline __attribute__((always_inline))
+#endif$0"""
+
+[[entries]]
+name = "deprecated macro"
+keys = ["deprecated", "macro", "warning", "old", "attribute", "portable"]
+doc = "Portable deprecation marker (prefer [[deprecated]] in C++14 and later)."
+snippet = """
+#if defined(__GNUC__)
+#define ${1:DEPRECATED}(msg) __attribute__((deprecated(msg)))
+#elif defined(_MSC_VER)
+#define ${1:DEPRECATED}(msg) __declspec(deprecated(msg))
+#else
+#define ${1:DEPRECATED}(msg)
+#endif$0"""
+
+[[entries]]
+name = "no-copy macro"
+keys = ["nocopy", "noncopyable", "delete", "copy", "class", "macro", "disallow"]
+doc = "Delete copy operations of a class in one line."
+snippet = """
+#define ${1:DISALLOW_COPY}(T) \\
+    T(const T &) = delete; \\
+    T &operator=(const T &) = delete$0"""
+
+[[entries]]
+name = "test case macro"
+keys = ["test", "case", "macro", "register", "unit", "framework", "self-registering"]
+doc = "Minimal self-registering test macro."
+snippet = """
+#define ${1:TEST}(name) \\
+    static void name(); \\
+    static const bool name##_registered = ${2:register_test}(#name, &name); \\
+    static void name()$0"""
+
+[[entries]]
+name = "static string length macro"
+keys = ["string", "length", "literal", "sizeof", "strlen", "macro", "compile"]
+doc = "Length of a string literal at compile time."
+snippet = """
+#define ${1:STRLEN}(s) (sizeof(s) - 1)$0"""
+
+[[entries]]
+name = "push_macro / pop_macro"
+keys = ["push_macro", "pop_macro", "pragma", "save", "restore", "macro"]
+doc = "Temporarily replace a macro and restore it."
+snippet = """
+#pragma push_macro("${1:NAME}")
+#undef ${1:NAME}
+$0
+#pragma pop_macro("${1:NAME}")"""

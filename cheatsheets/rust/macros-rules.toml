@@ -1,0 +1,136 @@
+title = "macro_rules! fragments"
+contexts = ["item", "statement"]
+
+[[entries]]
+name = "macro expr fragment"
+keys = ["macro", "rules", "expr", "fragment", "expression", "argument"]
+doc = "Match a single expression argument."
+snippet = '''
+macro_rules! ${1:name} {
+    ($e:expr) => {
+        ${2:println!("{\}", $e)}$0
+    };
+}'''
+
+[[entries]]
+name = "macro ident fragment"
+keys = ["macro", "rules", "ident", "fragment", "name", "generate", "fn"]
+doc = "Match an identifier and use it to name a generated item."
+snippet = '''
+macro_rules! ${1:make_fn} {
+    ($name:ident) => {
+        fn $name() {
+            $0
+        }
+    };
+}'''
+
+[[entries]]
+name = "macro ty fragment"
+keys = ["macro", "rules", "ty", "fragment", "type", "impl", "generate"]
+doc = "Match a type and implement a trait for it."
+snippet = '''
+macro_rules! ${1:impl_trait} {
+    ($t:ty) => {
+        impl ${2:Trait} for $t {
+            $0
+        }
+    };
+}'''
+
+[[entries]]
+name = "macro impl for many types"
+keys = ["macro", "rules", "impl", "many", "types", "repeat", "numeric", "generate"]
+doc = "Implement a trait for a list of types with one repetition."
+snippet = '''
+macro_rules! ${1:impl_for} {
+    ($($t:ty),* $(,)?) => {
+        $(
+            impl ${2:Trait} for $t {
+                $0
+            }
+        )*
+    };
+}
+${1:impl_for}!(${3:u8, u16, u32, u64});'''
+
+[[entries]]
+name = "macro pat fragment"
+keys = ["macro", "rules", "pat", "fragment", "pattern", "matches"]
+doc = "Match a pattern argument, as matches! does."
+snippet = '''
+macro_rules! ${1:is_variant} {
+    ($value:expr, $p:pat) => {
+        matches!($value, $p)$0
+    };
+}'''
+
+[[entries]]
+name = "macro block / stmt fragment"
+keys = ["macro", "rules", "block", "stmt", "fragment", "body", "statement"]
+doc = "Match a block or a single statement to wrap it in generated code."
+snippet = '''
+macro_rules! ${1:timed} {
+    ($body:block) => {{
+        let start = std::time::Instant::now();
+        let result = $body;
+        println!("{:?}", start.elapsed());
+        result$0
+    }};
+}'''
+
+[[entries]]
+name = "macro item fragment"
+keys = ["macro", "rules", "item", "fragment", "fn", "struct", "wrap", "attribute"]
+doc = "Match a whole item such as a function or struct and re-emit it with additions."
+snippet = '''
+macro_rules! ${1:exported} {
+    ($i:item) => {
+        #[${2:inline}]
+        $i$0
+    };
+}'''
+
+[[entries]]
+name = "macro path fragment"
+keys = ["macro", "rules", "path", "fragment", "module", "type", "qualified"]
+doc = "Match a path such as a type or function name with modules."
+snippet = '''
+macro_rules! ${1:call} {
+    ($p:path) => {
+        $p(${2:})$0
+    };
+}'''
+
+[[entries]]
+name = "macro literal fragment"
+keys = ["macro", "rules", "literal", "fragment", "string", "number", "const"]
+doc = "Match a literal such as a string or number."
+snippet = '''
+macro_rules! ${1:named_const} {
+    ($name:ident, $value:literal) => {
+        const $name: ${2:&str} = $value;$0
+    };
+}'''
+
+[[entries]]
+name = "macro tt fragment"
+keys = ["macro", "rules", "tt", "fragment", "token", "tree", "forward", "any"]
+doc = "Match any token trees and forward them unchanged to another macro."
+snippet = '''
+macro_rules! ${1:log} {
+    ($($arg:tt)*) => {
+        eprintln!($($arg)*)$0
+    };
+}'''
+
+[[entries]]
+name = "macro vis / lifetime / meta fragments"
+keys = ["macro", "rules", "vis", "lifetime", "meta", "fragment", "pub", "attribute"]
+doc = "Match a visibility, a lifetime or an attribute body."
+snippet = '''
+macro_rules! ${1:newtype} {
+    ($vis:vis $name:ident, $inner:ty) => {
+        $vis struct $name($inner);$0
+    };
+}'''

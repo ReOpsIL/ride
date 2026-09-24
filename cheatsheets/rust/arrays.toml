@@ -1,0 +1,217 @@
+title = "Arrays"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "array literal"
+keys = ["array", "literal", "fixed", "brackets", "declare", "init", "list"]
+doc = "Create a fixed-size array from listed elements, the type is inferred."
+snippet = '''
+let ${1:arr} = [${2:1, 2, 3}];$0'''
+
+[[entries]]
+name = "typed array binding"
+keys = ["array", "typed", "type", "size", "length", "declare", "annotation", "stack"]
+doc = "Declare an array with an explicit element type and length."
+snippet = '''
+let ${1:arr}: [${2:i32}; ${3:4}] = [${4:10, 20, 30, 40}];$0'''
+
+[[entries]]
+name = "mutable array"
+keys = ["array", "mut", "mutable", "modify", "assign", "write"]
+doc = "Declare an array whose elements can be reassigned by index."
+snippet = '''
+let mut ${1:arr}: [${2:i32}; ${3:3}] = [${4:0, 0, 0}];
+${1:arr}[${5:0}] = ${6:42};$0'''
+
+[[entries]]
+name = "array repeat"
+keys = ["array", "repeat", "zeros", "n", "fixed", "filled", "default", "init"]
+doc = "Create a fixed-size array filled with one value."
+snippet = '''
+let ${1:arr} = [${2:0u8}; ${3:N}];$0'''
+
+[[entries]]
+name = "typed array repeat"
+keys = ["array", "repeat", "typed", "zeros", "buffer", "size", "init"]
+doc = "Create a typed array of n copies of a value, useful for zeroed buffers."
+snippet = '''
+let ${1:buf}: [${2:u8}; ${3:1024}] = [${4:0}; ${3:1024}];$0'''
+
+[[entries]]
+name = "2D array"
+keys = ["array", "2d", "nested", "matrix", "grid", "rows", "columns", "table"]
+doc = "Declare an array of arrays, indexed as grid[row][col]."
+snippet = '''
+let ${1:grid}: [[${2:i32}; ${3:3}]; ${4:2}] = [[${5:1, 2, 3}], [${6:4, 5, 6}]];$0'''
+
+[[entries]]
+name = "2D array zeroed"
+keys = ["array", "2d", "matrix", "grid", "zeros", "repeat", "nested", "board"]
+doc = "Create a grid of rows by cols filled with one value."
+snippet = '''
+let mut ${1:grid} = [[${2:0}; ${3:COLS}]; ${4:ROWS}];$0'''
+
+[[entries]]
+name = "2D index"
+keys = ["array", "2d", "index", "grid", "matrix", "row", "col", "cell"]
+doc = "Read or write a cell of a nested array."
+snippet = '''
+${1:grid}[${2:row}][${3:col}]$0'''
+
+[[entries]]
+name = "const array"
+keys = ["const", "array", "constant", "static", "table", "lookup", "global"]
+doc = "Declare a compile-time constant array, also valid at file level."
+snippet = '''
+const ${1:PRIMES}: [${2:u32}; ${3:5}] = [${4:2, 3, 5, 7, 11}];$0'''
+
+[[entries]]
+name = "static array"
+keys = ["static", "array", "global", "table", "lifetime", "constant"]
+doc = "Declare a global array with a fixed address, borrowable as &'static."
+snippet = '''
+static ${1:NAMES}: [&str; ${2:3}] = [${3:"a", "b", "c"}];$0'''
+
+[[entries]]
+name = "array of strings"
+keys = ["array", "strings", "str", "words", "names", "literal", "list"]
+doc = "Declare an array of string slices."
+snippet = '''
+let ${1:words}: [&str; ${2:3}] = [${3:"one", "two", "three"}];$0'''
+
+[[entries]]
+name = "array of structs"
+keys = ["array", "structs", "objects", "records", "list", "literal"]
+doc = "Declare an array of struct values."
+snippet = '''
+let ${1:points} = [
+    ${2:Point} { ${3:x: 0, y: 0} },
+    ${2:Point} { ${4:x: 1, y: 1} },
+];$0'''
+
+[[entries]]
+name = "array of tuples"
+keys = ["array", "tuples", "pairs", "table", "lookup", "list"]
+doc = "Declare an array of tuples, handy as a small lookup table."
+snippet = '''
+let ${1:pairs}: [(${2:&str}, ${3:i32}); ${4:2}] = [(${5:"a"}, ${6:1}), (${7:"b"}, ${8:2})];$0'''
+
+[[entries]]
+name = "array::from_fn"
+keys = ["array", "from_fn", "generate", "init", "index", "closure", "build"]
+doc = "Build an array by calling a closure with each index."
+snippet = '''
+let ${1:arr}: [${2:usize}; ${3:N}] = std::array::from_fn(|${4:i}| ${5:i * 2});$0'''
+
+[[entries]]
+name = "array map"
+keys = ["array", "map", "transform", "each", "convert", "elementwise"]
+doc = "Apply a function to each element, giving a new array of the same length."
+snippet = '''
+${1:arr}.map(|${2:x}| ${3:x * 2})$0'''
+
+[[entries]]
+name = "for over array"
+keys = ["for", "array", "iterate", "loop", "each", "value", "copy"]
+doc = "Iterate over the elements by value, copying each one."
+snippet = '''
+for ${1:x} in ${2:arr} {
+    $0
+}'''
+
+[[entries]]
+name = "for over array by reference"
+keys = ["for", "array", "iterate", "ref", "borrow", "loop", "iter"]
+doc = "Iterate over shared references without moving the array."
+snippet = '''
+for ${1:x} in &${2:arr} {
+    $0
+}'''
+
+[[entries]]
+name = "for over array mutably"
+keys = ["for", "array", "iterate", "mut", "modify", "loop", "iter_mut", "change"]
+doc = "Iterate over mutable references to change each element in place."
+snippet = '''
+for ${1:x} in ${2:arr}.iter_mut() {
+    *${1:x} ${3:+= 1};$0
+}'''
+
+[[entries]]
+name = "for enumerate array"
+keys = ["for", "array", "enumerate", "index", "loop", "position", "counter"]
+doc = "Iterate with the index of each element."
+snippet = '''
+for (${1:i}, ${2:x}) in ${3:arr}.iter().enumerate() {
+    $0
+}'''
+
+[[entries]]
+name = "index read"
+keys = ["array", "index", "read", "element", "brackets", "subscript", "at"]
+doc = "Read an element by zero-based index, panicking when out of bounds."
+snippet = '''
+let ${1:x} = ${2:arr}[${3:0}];$0'''
+
+[[entries]]
+name = "index write"
+keys = ["array", "index", "write", "assign", "set", "element", "update"]
+doc = "Assign to an element of a mutable array."
+snippet = '''
+${1:arr}[${2:i}] = ${3:value};$0'''
+
+[[entries]]
+name = "array len"
+keys = ["array", "len", "length", "size", "count", "elements"]
+doc = "Number of elements, known at compile time."
+snippet = '''
+${1:arr}.len()$0'''
+
+[[entries]]
+name = "slice from array"
+keys = ["array", "slice", "borrow", "view", "range", "part", "subarray"]
+doc = "Borrow the whole array or a range of it as a slice."
+snippet = '''
+let ${1:part}: &[${2:i32}] = &${3:arr}[${4:1..3}];$0'''
+
+[[entries]]
+name = "array to Vec"
+keys = ["array", "vec", "to_vec", "convert", "owned", "grow", "into"]
+doc = "Copy an array into a growable vector."
+snippet = '''
+let ${1:v}: Vec<${2:i32}> = ${3:arr}.to_vec();$0'''
+
+[[entries]]
+name = "Vec to array"
+keys = ["vec", "array", "try_into", "convert", "fixed", "slice", "length"]
+doc = "Convert a vector or slice into a fixed-size array, failing if the length differs."
+snippet = '''
+let ${1:arr}: [${2:i32}; ${3:3}] = ${4:v}.try_into().${5:expect("wrong length")};$0'''
+
+[[entries]]
+name = "pass array as slice"
+keys = ["array", "slice", "parameter", "function", "argument", "pass", "borrow"]
+doc = "Accept any array or vector by declaring a slice parameter and passing a reference."
+snippet = '''
+fn ${1:total}(${2:items}: &[${3:i32}]) -> ${3:i32} {
+    ${2:items}.iter().sum()$0
+}'''
+
+[[entries]]
+name = "return array"
+keys = ["array", "return", "function", "fixed", "result", "build"]
+doc = "Return a fixed-size array by value from a function."
+snippet = '''
+fn ${1:make}() -> [${2:i32}; ${3:3}] {
+    [${4:1, 2, 3}]$0
+}'''
+
+[[entries]]
+name = "const length generic"
+keys = ["array", "const", "generic", "n", "length", "any", "size", "param"]
+doc = "Write a function over arrays of any length with a const generic parameter."
+snippet = '''
+fn ${1:first}<const N: usize>(${2:arr}: [${3:i32}; N]) -> ${3:i32} {
+    ${2:arr}[0]$0
+}'''
+

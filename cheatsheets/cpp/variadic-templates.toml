@@ -1,0 +1,191 @@
+title = "Variadic templates and folds"
+contexts = ["item"]
+
+[[entries]]
+name = "variadic template"
+keys = ["template", "variadic", "pack", "args", "any number", "dots", "..."]
+doc = "Function taking any number of arguments through a parameter pack."
+snippet = """
+template <typename... ${1:Args}>
+${2:void} ${3:name}(${1:Args} &&...${4:args}) {
+    $0
+}"""
+
+[[entries]]
+name = "variadic template by value"
+keys = ["template", "variadic", "pack", "args", "value", "copy"]
+doc = "Parameter pack taken by value, the simplest variadic form."
+snippet = """
+template <typename... ${1:Args}>
+${2:void} ${3:name}(${1:Args}... ${4:args}) {
+    $0
+}"""
+
+[[entries]]
+name = "sizeof... pack size"
+keys = ["sizeof", "pack", "count", "size", "length", "number", "variadic"]
+doc = "Number of elements in a parameter pack."
+snippet = """
+template <typename... ${1:Args}>
+constexpr std::size_t ${2:count}(${1:Args}... ) {
+    return sizeof...(${1:Args});
+}$0"""
+
+[[entries]]
+name = "fold expression"
+keys = ["fold", "pack", "variadic", "...", "sum", "right"]
+doc = "Unary right fold: apply a binary operator across a parameter pack."
+snippet = """
+template <typename... ${1:Args}>
+auto ${2:sum}(${1:Args}... ${3:args}) {
+    return (${3:args} ${4:+} ...);
+}$0"""
+
+[[entries]]
+name = "fold expression left"
+keys = ["fold", "pack", "variadic", "left", "...", "order"]
+doc = "Unary left fold, evaluated from the first argument."
+snippet = """
+template <typename... ${1:Args}>
+auto ${2:sum}(${1:Args}... ${3:args}) {
+    return (... ${4:+} ${3:args});
+}$0"""
+
+[[entries]]
+name = "fold with init"
+keys = ["fold", "pack", "variadic", "init", "binary", "print", "cout"]
+doc = "Binary fold with an initial value, e.g. printing every argument."
+snippet = """
+template <typename... ${1:Args}>
+void ${2:print}(${1:Args} &&...${3:args}) {
+    (${4:std::cout} << ... << ${3:args});$0
+}"""
+
+[[entries]]
+name = "fold with initial value"
+keys = ["fold", "pack", "variadic", "init", "start", "binary", "sum"]
+doc = "Binary fold that starts from a given value so an empty pack is valid."
+snippet = """
+template <typename... ${1:Args}>
+auto ${2:sum}(${1:Args}... ${3:args}) {
+    return (${4:0} + ... + ${3:args});
+}$0"""
+
+[[entries]]
+name = "fold over comma"
+keys = ["fold", "comma", "each", "call", "for", "apply", "variadic"]
+doc = "Call a function for every element of a pack using the comma operator."
+snippet = """
+template <typename... ${1:Args}>
+void ${2:for_each_arg}(${1:Args} &&...${3:args}) {
+    (${4:handle}(${3:args}), ...);$0
+}"""
+
+[[entries]]
+name = "fold all / any"
+keys = ["fold", "and", "or", "all", "any", "&&", "||", "predicate"]
+doc = "Logical fold over a pack, true for an empty pack with &&."
+snippet = """
+template <typename... ${1:Args}>
+bool ${2:all}(${1:Args}... ${3:args}) {
+    return (... && static_cast<bool>(${3:args}));
+}$0"""
+
+[[entries]]
+name = "recursive variadic"
+keys = ["variadic", "recursive", "recursion", "head", "tail", "base", "case"]
+doc = "Pre-C++17 recursion over a pack: base case plus head and tail overload."
+snippet = """
+${1:void} ${2:print}() {}
+
+template <typename ${3:Head}, typename... ${4:Tail}>
+${1:void} ${2:print}(const ${3:Head} &${5:head}, const ${4:Tail} &...${6:tail}) {
+    ${7:std::cout << head << ' ';}
+    ${2:print}(${6:tail}...);
+}$0"""
+
+[[entries]]
+name = "pack expansion forward"
+keys = ["pack", "expansion", "forward", "perfect", "emplace", "args", "construct"]
+doc = "Forward every argument of a pack to another call."
+snippet = """
+template <typename ${1:T}, typename... ${2:Args}>
+${1:T} ${3:make}(${2:Args} &&...${4:args}) {
+    return ${1:T}(std::forward<${2:Args}>(${4:args})...);
+}$0"""
+
+[[entries]]
+name = "pack expansion into array"
+keys = ["pack", "expansion", "array", "braces", "initializer", "list"]
+doc = "Expand a pack inside a brace list."
+snippet = """
+template <typename... ${1:Args}>
+auto ${2:to_array}(${1:Args}... ${3:args}) {
+    return std::array{${3:args}...};
+}$0"""
+
+[[entries]]
+name = "non-type parameter pack"
+keys = ["pack", "non-type", "nttp", "int", "values", "constants", "variadic"]
+doc = "Pack of compile-time values."
+snippet = """
+template <${1:int}... ${2:Ns}>
+constexpr ${1:int} ${3:sum} = (${2:Ns} + ... + 0);$0"""
+
+[[entries]]
+name = "variadic class template"
+keys = ["template", "class", "variadic", "pack", "tuple", "typelist", "types"]
+doc = "Class template over a pack of types."
+snippet = """
+template <typename... ${1:Ts}>
+struct ${2:TypeList} {
+    static constexpr std::size_t size = sizeof...(${1:Ts});
+    $0
+};"""
+
+[[entries]]
+name = "variadic inheritance"
+keys = ["variadic", "inherit", "base", "pack", "mixin", "using"]
+doc = "Inherit from every type of a pack and pull in their call operators."
+snippet = """
+template <typename... ${1:Bases}>
+struct ${2:Name} : ${1:Bases}... {
+    using ${1:Bases}::operator()...;
+};$0"""
+
+[[entries]]
+name = "overloaded visitor"
+keys = ["overloaded", "visit", "variant", "lambda", "overload set", "visitor"]
+doc = "Combine lambdas into one overloaded callable for std::visit."
+snippet = """
+template <typename... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <typename... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;$0"""
+
+[[entries]]
+name = "index_sequence expansion"
+keys = ["index_sequence", "make_index_sequence", "tuple", "unpack", "indices", "get"]
+doc = "Expand a tuple element-wise through an index pack."
+snippet = """
+template <typename ${1:Tuple}, std::size_t... ${2:Is}>
+void ${3:for_each_impl}(${1:Tuple} &${4:t}, std::index_sequence<${2:Is}...>) {
+    (${5:handle}(std::get<${2:Is}>(${4:t})), ...);
+}
+
+template <typename ${1:Tuple}>
+void ${6:for_each}(${1:Tuple} &${4:t}) {
+    ${3:for_each_impl}(${4:t}, std::make_index_sequence<std::tuple_size_v<${1:Tuple}>>{});
+}$0"""
+
+[[entries]]
+name = "variadic head and tail"
+keys = ["variadic", "head", "tail", "first", "rest", "split", "pack"]
+doc = "Separate the first argument from the rest of a pack."
+snippet = """
+template <typename ${1:First}, typename... ${2:Rest}>
+${3:auto} ${4:name}(${1:First} &&${5:first}, ${2:Rest} &&...${6:rest}) {
+    $0
+}"""

@@ -3,137 +3,167 @@ contexts = ["statement"]
 
 [[entries]]
 name = "vector"
-keys = ["vector", "vec", "std::"]
-doc = "Dynamic array with contiguous storage."
-snippet = """
-std::vector<${1:int}> ${2:v}${3:};$0"""
+keys = ["vector", "vec", "std::", "list", "dynamic", "array", "declare"]
+doc = "Empty dynamic array with contiguous storage."
+snippet = '''
+std::vector<${1:int}> ${2:v};$0'''
+
+[[entries]]
+name = "vector with values"
+keys = ["vector", "vec", "init", "braces", "literal", "values", "list"]
+doc = "Vector initialized from a braced list of elements."
+snippet = '''
+std::vector<${1:int}> ${2:v} = {${3:1, 2, 3}};$0'''
 
 [[entries]]
 name = "vector with size"
-keys = ["vector", "vec", "size", "fill"]
+keys = ["vector", "vec", "size", "fill", "count", "zeros", "init"]
 doc = "Vector of n copies of a value."
-snippet = """
-std::vector<${1:int}> ${2:v}(${3:n}, ${4:0});$0"""
+snippet = '''
+std::vector<${1:int}> ${2:v}(${3:n}, ${4:0});$0'''
 
 [[entries]]
 name = "vector with reserve"
-keys = ["vector", "vec", "reserve", "capacity"]
+keys = ["vector", "vec", "reserve", "capacity", "preallocate"]
 doc = "Vector with capacity reserved up front."
-snippet = """
+snippet = '''
 std::vector<${1:int}> ${2:v};
-${2:v}.reserve(${3:n});$0"""
+${2:v}.reserve(${3:n});$0'''
 
 [[entries]]
-name = "array"
-keys = ["array", "std::", "fixed"]
-doc = "Fixed-size array."
-snippet = """
-std::array<${1:int}, ${2:N}> ${3:a} = {${4:}};$0"""
+name = "vector from range"
+keys = ["vector", "vec", "range", "iterator", "copy", "begin", "end", "convert"]
+doc = "Vector copied from an iterator pair of any container."
+snippet = '''
+std::vector<${1:int}> ${2:v}(${3:src}.begin(), ${3:src}.end());$0'''
 
 [[entries]]
-name = "deque"
-keys = ["deque", "double", "ended"]
-doc = "Double-ended queue with fast push at both ends."
-snippet = """
-std::deque<${1:int}> ${2:d};$0"""
+name = "vector copy"
+keys = ["vector", "vec", "copy", "clone", "duplicate", "assign"]
+doc = "Deep copy of another vector."
+snippet = '''
+std::vector<${1:int}> ${2:copy} = ${3:v};$0'''
 
 [[entries]]
-name = "list"
-keys = ["list", "linked"]
-doc = "Doubly linked list."
-snippet = """
-std::list<${1:int}> ${2:l};$0"""
+name = "vector of structs"
+keys = ["vector", "vec", "struct", "object", "record", "braces"]
+doc = "Vector of aggregate values built with braces."
+snippet = '''
+std::vector<${1:Point}> ${2:points} = {
+    {${3:1, 2}},
+    {${4:3, 4}},
+};$0'''
 
 [[entries]]
-name = "forward_list"
-keys = ["forward_list", "list", "singly"]
-doc = "Singly linked list."
-snippet = """
-std::forward_list<${1:int}> ${2:l};$0"""
+name = "vector of strings"
+keys = ["vector", "vec", "string", "strings", "words", "names"]
+doc = "Vector of std::string values."
+snippet = '''
+std::vector<std::string> ${1:names} = {${2:"a", "b"}};$0'''
 
 [[entries]]
-name = "map"
-keys = ["map", "ordered", "tree"]
-doc = "Ordered key/value container."
-snippet = """
-std::map<${1:std::string}, ${2:int}> ${3:m};$0"""
+name = "vector of pairs"
+keys = ["vector", "vec", "pair", "pairs", "tuple", "key", "value"]
+doc = "Vector of key/value pairs kept in insertion order."
+snippet = '''
+std::vector<std::pair<${1:std::string}, ${2:int}>> ${3:items} = {{${4:"a"}, ${5:1}}};$0'''
 
 [[entries]]
-name = "unordered_map"
-keys = ["unordered_map", "hash", "map", "dict"]
-doc = "Hash-based key/value container."
-snippet = """
-std::unordered_map<${1:std::string}, ${2:int}> ${3:m};$0"""
+name = "vector of pointers"
+keys = ["vector", "vec", "pointer", "pointers", "raw", "non-owning"]
+doc = "Vector of raw non-owning pointers to elements owned elsewhere."
+snippet = '''
+std::vector<${1:Type} *> ${2:ptrs};
+${2:ptrs}.push_back(&${3:obj});$0'''
 
 [[entries]]
-name = "set"
-keys = ["set", "ordered", "unique"]
-doc = "Ordered set of unique keys."
-snippet = """
-std::set<${1:int}> ${2:s};$0"""
+name = "vector of unique_ptr"
+keys = ["vector", "vec", "unique_ptr", "owning", "polymorphic", "smart"]
+doc = "Vector owning heap objects, filled with make_unique."
+snippet = '''
+std::vector<std::unique_ptr<${1:Base}>> ${2:items};
+${2:items}.push_back(std::make_unique<${3:Derived}>(${4:}));$0'''
 
 [[entries]]
-name = "unordered_set"
-keys = ["unordered_set", "hash", "set"]
-doc = "Hash-based set of unique keys."
-snippet = """
-std::unordered_set<${1:int}> ${2:s};$0"""
-
-[[entries]]
-name = "multimap"
-keys = ["multimap", "map", "duplicate"]
-doc = "Ordered map that allows duplicate keys."
-snippet = """
-std::multimap<${1:std::string}, ${2:int}> ${3:m};$0"""
-
-[[entries]]
-name = "multiset"
-keys = ["multiset", "set", "duplicate"]
-doc = "Ordered set that allows duplicate keys."
-snippet = """
-std::multiset<${1:int}> ${2:s};$0"""
-
-[[entries]]
-name = "stack"
-keys = ["stack", "lifo", "adapter"]
-doc = "LIFO adapter with push, pop and top."
-snippet = """
-std::stack<${1:int}> ${2:st};$0"""
-
-[[entries]]
-name = "queue"
-keys = ["queue", "fifo", "adapter"]
-doc = "FIFO adapter with push, pop and front."
-snippet = """
-std::queue<${1:int}> ${2:q};$0"""
-
-[[entries]]
-name = "priority_queue"
-keys = ["priority_queue", "heap", "queue"]
-doc = "Max-heap adapter; use std::greater for a min-heap."
-snippet = """
-std::priority_queue<${1:int}${2:, std::vector<int>, std::greater<int>}> ${3:pq};$0"""
+name = "vector<bool> caveat"
+keys = ["vector", "bool", "bits", "flags", "caveat", "deque", "char"]
+doc = "vector<bool> packs bits and has no bool references, so use vector<char> or deque<bool> when you need real elements."
+snippet = '''
+std::vector<${1:char}> ${2:flags}(${3:n}, ${4:0});$0'''
 
 [[entries]]
 name = "vector of vectors"
-keys = ["vector", "matrix", "grid", "2d"]
+keys = ["vector", "matrix", "grid", "2d", "nested", "rows", "cols", "table"]
 doc = "Two-dimensional grid initialized to a value."
-snippet = """
-std::vector<std::vector<${1:int}>> ${2:grid}(${3:rows}, std::vector<${1:int}>(${4:cols}, ${5:0}));$0"""
+snippet = '''
+std::vector<std::vector<${1:int}>> ${2:grid}(${3:rows}, std::vector<${1:int}>(${4:cols}, ${5:0}));$0'''
 
 [[entries]]
-name = "map with initializer"
-keys = ["map", "init", "braces"]
-doc = "Map initialized with key/value pairs."
-snippet = """
-std::map<${1:std::string}, ${2:int}> ${3:m} = {
-    {${4:"key"}, ${5:0}},
-    $0
-};"""
+name = "array"
+keys = ["array", "std::", "fixed", "static", "size", "braces"]
+doc = "Fixed-size array with a container interface."
+snippet = '''
+std::array<${1:int}, ${2:N}> ${3:a} = {${4:}};$0'''
+
+[[entries]]
+name = "2D array"
+keys = ["array", "2d", "matrix", "grid", "nested", "fixed"]
+doc = "Fixed-size two-dimensional std::array."
+snippet = '''
+std::array<std::array<${1:int}, ${2:COLS}>, ${3:ROWS}> ${4:grid}{};$0'''
+
+[[entries]]
+name = "std::to_array"
+keys = ["to_array", "array", "deduce", "literal", "fixed"]
+doc = "C++20 std::array with size and type deduced from the list."
+snippet = '''
+auto ${1:a} = std::to_array({${2:1, 2, 3}});$0'''
+
+[[entries]]
+name = "C array"
+keys = ["array", "c", "raw", "fixed", "brackets", "builtin", "int[]"]
+doc = "Built-in fixed-size array; prefer std::array in new code."
+snippet = '''
+${1:int} ${2:arr}[${3:N}] = {${4:}};$0'''
+
+[[entries]]
+name = "C array to vector"
+keys = ["array", "vector", "convert", "c", "raw", "begin", "end"]
+doc = "Copy a built-in array into a vector using std::begin/std::end."
+snippet = '''
+std::vector<${1:int}> ${2:v}(std::begin(${3:arr}), std::end(${3:arr}));$0'''
+
+[[entries]]
+name = "deque"
+keys = ["deque", "double", "ended", "queue", "push_front", "front"]
+doc = "Double-ended queue with fast push at both ends and indexing."
+snippet = '''
+std::deque<${1:int}> ${2:d};$0'''
+
+[[entries]]
+name = "list"
+keys = ["list", "linked", "doubly", "splice", "node"]
+doc = "Doubly linked list with stable iterators and O(1) insert anywhere."
+snippet = '''
+std::list<${1:int}> ${2:l};$0'''
+
+[[entries]]
+name = "forward_list"
+keys = ["forward_list", "list", "singly", "linked", "node"]
+doc = "Singly linked list with insert_after and erase_after."
+snippet = '''
+std::forward_list<${1:int}> ${2:l};$0'''
 
 [[entries]]
 name = "std::initializer_list parameter"
-keys = ["initializer_list", "braces", "list"]
-doc = "Accept a braced list of values."
-snippet = """
-std::initializer_list<${1:int}> ${2:items}$0"""
+keys = ["initializer_list", "braces", "list", "parameter", "variadic"]
+doc = "Accept a braced list of values as a function parameter."
+snippet = '''
+std::initializer_list<${1:int}> ${2:items}$0'''
+
+[[entries]]
+name = "const vector"
+keys = ["const", "vector", "vec", "immutable", "readonly", "static"]
+doc = "Read-only vector of constants."
+snippet = '''
+const std::vector<${1:int}> ${2:v} = {${3:1, 2, 3}};$0'''

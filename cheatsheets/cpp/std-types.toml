@@ -1,0 +1,128 @@
+title = "Standard containers"
+contexts = ["type"]
+
+[[entries]]
+name = "std::string"
+keys = ["string", "text", "std::"]
+doc = "Owning character string."
+snippet = """
+std::string$0"""
+
+[[entries]]
+name = "std::string_view"
+keys = ["string_view", "view", "sv", "std::", "text"]
+doc = "Non-owning read-only string reference."
+snippet = """
+std::string_view$0"""
+
+[[entries]]
+name = "std::vector"
+keys = ["vector", "list", "dynamic", "array", "std::"]
+doc = "Dynamic array."
+snippet = """
+std::vector<${1:int}>$0"""
+
+[[entries]]
+name = "std::vector of vectors"
+keys = ["vector", "2d", "matrix", "grid", "nested", "std::"]
+doc = "Two-dimensional dynamic array."
+snippet = """
+std::vector<std::vector<${1:int}>>$0"""
+
+[[entries]]
+name = "std::array"
+keys = ["array", "fixed", "std::"]
+doc = "Fixed-size array."
+snippet = """
+std::array<${1:int}, ${2:N}>$0"""
+
+[[entries]]
+name = "std::deque"
+keys = ["deque", "double", "ended", "queue", "std::"]
+doc = "Double-ended queue with fast push at both ends."
+snippet = """
+std::deque<${1:int}>$0"""
+
+[[entries]]
+name = "std::list"
+keys = ["list", "linked", "std::"]
+doc = "Doubly linked list."
+snippet = """
+std::list<${1:int}>$0"""
+
+[[entries]]
+name = "std::map"
+keys = ["map", "dictionary", "ordered", "tree", "std::"]
+doc = "Ordered associative container."
+snippet = """
+std::map<${1:std::string}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::unordered_map"
+keys = ["unordered_map", "hash", "map", "dictionary", "std::"]
+doc = "Hash map."
+snippet = """
+std::unordered_map<${1:std::string}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::map of vectors"
+keys = ["map", "vector", "multi", "group", "nested", "std::"]
+doc = "Map from a key to a list of values."
+snippet = """
+std::map<${1:std::string}, std::vector<${2:int}>>$0"""
+
+[[entries]]
+name = "std::set"
+keys = ["set", "unique", "ordered", "std::"]
+doc = "Ordered set of unique keys."
+snippet = """
+std::set<${1:int}>$0"""
+
+[[entries]]
+name = "std::unordered_set"
+keys = ["unordered_set", "hash", "set", "unique", "std::"]
+doc = "Hash set of unique keys."
+snippet = """
+std::unordered_set<${1:int}>$0"""
+
+[[entries]]
+name = "std::stack"
+keys = ["stack", "lifo", "push", "pop", "std::"]
+doc = "LIFO adaptor."
+snippet = """
+std::stack<${1:int}>$0"""
+
+[[entries]]
+name = "std::queue"
+keys = ["queue", "fifo", "push", "pop", "std::"]
+doc = "FIFO adaptor."
+snippet = """
+std::queue<${1:int}>$0"""
+
+[[entries]]
+name = "std::priority_queue"
+keys = ["priority_queue", "heap", "priority", "std::"]
+doc = "Max-heap adaptor."
+snippet = """
+std::priority_queue<${1:int}>$0"""
+
+[[entries]]
+name = "std::span"
+keys = ["span", "view", "slice", "std::"]
+doc = "Non-owning contiguous view."
+snippet = """
+std::span<${1:const int}>$0"""
+
+[[entries]]
+name = "std::initializer_list"
+keys = ["initializer_list", "braces", "list", "std::"]
+doc = "Braced list parameter type."
+snippet = """
+std::initializer_list<${1:int}>$0"""
+
+[[entries]]
+name = "std::bitset"
+keys = ["bitset", "bits", "flags", "std::"]
+doc = "Fixed-size bit sequence."
+snippet = """
+std::bitset<${1:8}>$0"""

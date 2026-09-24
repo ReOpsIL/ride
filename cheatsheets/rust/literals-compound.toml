@@ -1,0 +1,132 @@
+title = "Compound literals"
+contexts = []
+
+[[entries]]
+name = "2d array literal"
+keys = ["array", "2d", "grid", "matrix", "nested", "zeros", "rows", "literal"]
+doc = "Fixed-size array of arrays, filled with one value."
+snippet = '''
+[[${1:0}; ${2:COLS}]; ${3:ROWS}]$0'''
+
+[[entries]]
+name = "array of strings"
+keys = ["array", "strings", "str", "names", "list", "literal", "words"]
+doc = "Fixed-size array of string slices."
+snippet = '''
+[${1:"a", "b", "c"}]$0'''
+
+[[entries]]
+name = "array of tuples"
+keys = ["array", "tuples", "pairs", "table", "list", "literal", "mapping"]
+doc = "Fixed-size array of tuples, handy as a small lookup table."
+snippet = '''
+[(${1:"one"}, ${2:1}), (${3:"two"}, ${4:2})]$0'''
+
+[[entries]]
+name = "slice literal"
+keys = ["slice", "borrowed", "array", "reference", "ampersand", "literal", "list"]
+doc = "Borrowed slice of listed elements, usable wherever a slice is expected."
+snippet = '''
+&[${1:1, 2, 3}]$0'''
+
+[[entries]]
+name = "byte array"
+keys = ["byte", "array", "u8", "bytes", "fixed", "literal", "deref"]
+doc = "Fixed-size byte array by dereferencing a byte string literal."
+snippet = '''
+*b"${1:abcd}"$0'''
+
+[[entries]]
+name = "nested tuple"
+keys = ["tuple", "nested", "pair", "inner", "literal"]
+doc = "Tuple whose elements are themselves tuples."
+snippet = '''
+((${1:a}, ${2:b}), ${3:c})$0'''
+
+[[entries]]
+name = "enum tuple variant literal"
+keys = ["enum", "variant", "tuple", "construct", "payload", "literal"]
+doc = "Construct a variant that carries positional data."
+snippet = '''
+${1:Shape}::${2:Circle}(${3:1.0})$0'''
+
+[[entries]]
+name = "enum struct variant literal"
+keys = ["enum", "variant", "struct", "fields", "construct", "literal"]
+doc = "Construct a variant that carries named fields."
+snippet = '''
+${1:Shape}::${2:Rect} { ${3:width}: ${4:1.0}, ${5:height}: ${6:2.0} }$0'''
+
+[[entries]]
+name = "Ok / Err"
+keys = ["ok", "err", "result", "construct", "wrap", "return"]
+doc = "Wrap a value in the success or error variant of Result."
+snippet = '''
+${1:Ok}(${2:value})$0'''
+
+[[entries]]
+name = "unit struct value"
+keys = ["unit", "struct", "marker", "value", "construct", "literal"]
+doc = "The single value of a unit struct is its name."
+snippet = '''
+${1:Marker}$0'''
+
+[[entries]]
+name = "nested struct literal"
+keys = ["struct", "nested", "inner", "construct", "fields", "literal"]
+doc = "Construct a struct whose field is another struct built inline."
+snippet = '''
+${1:Line} {
+    ${2:start}: ${3:Point} { ${4:x}: ${5:0}, ${6:y}: ${7:0} },
+    ${8:end}: ${3:Point} { ${4:x}: ${9:1}, ${6:y}: ${10:1} },$0
+}'''
+
+[[entries]]
+name = "struct with vec field literal"
+keys = ["struct", "vec", "field", "construct", "collection", "literal", "init"]
+doc = "Construct a struct filling a collection field with a vec literal."
+snippet = '''
+${1:Team} { ${2:name}: ${3:"a".to_string()}, ${4:members}: vec![${5:}] }$0'''
+
+[[entries]]
+name = "raw string many hashes"
+keys = ["raw", "string", "hashes", "r##", "quote", "literal", "json"]
+doc = "Raw string using extra hashes so the text may contain a quote followed by a hash."
+snippet = '''
+r##"${1:text with "# inside}"##$0'''
+
+[[entries]]
+name = "multi-line string literal"
+keys = ["string", "multiline", "newline", "lines", "paragraph", "literal"]
+doc = "String literal spanning lines, keeping the newlines and indentation."
+snippet = '''
+"${1:first line}
+${2:second line}"$0'''
+
+[[entries]]
+name = "empty string literal"
+keys = ["empty", "string", "str", "blank", "literal", "default"]
+doc = "Empty string slice."
+snippet = '''
+""$0'''
+
+[[entries]]
+name = "vec literal"
+keys = ["vec", "vector", "list", "macro", "literal", "dynamic"]
+doc = "Growable vector from listed elements."
+snippet = '''
+vec![${1:1, 2, 3}]$0'''
+
+[[entries]]
+name = "range literal"
+keys = ["range", "literal", "dotdot", "inclusive", "iterate", "slice"]
+doc = "Range value used for iteration and slicing."
+snippet = '''
+${1:0}..${2:=}${3:10}$0'''
+
+[[entries]]
+name = "closure literal"
+keys = ["closure", "lambda", "anonymous", "function", "literal", "pipes"]
+doc = "Anonymous function value capturing its environment."
+snippet = '''
+|${1:x}| ${2:x + 1}$0'''

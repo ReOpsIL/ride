@@ -1,0 +1,58 @@
+title = "Typed variables"
+contexts = ["statement"]
+
+[[entries]]
+name = "bool variable"
+keys = ["bool", "boolean", "flag", "true", "false", "var"]
+doc = "Boolean flag."
+snippet = """
+bool ${1:flag} = ${2:false};$0"""
+
+[[entries]]
+name = "char variable"
+keys = ["char", "character", "letter", "var", "'"]
+doc = "Single character."
+snippet = """
+char ${1:c} = '${2:a}';$0"""
+
+[[entries]]
+name = "double variable"
+keys = ["double", "float", "decimal", "real", "var", "number"]
+doc = "Floating-point number; double is the default choice over float."
+snippet = """
+double ${1:x} = ${2:0.0};$0"""
+
+[[entries]]
+name = "unsigned variable"
+keys = ["unsigned", "uint", "positive", "var", "int"]
+doc = "Unsigned integer; beware that it never goes below zero."
+snippet = """
+unsigned ${1:int} ${2:n} = ${3:0u};$0"""
+
+[[entries]]
+name = "long long variable"
+keys = ["long", "int64", "big", "large", "var", "int"]
+doc = "64-bit integer for large values."
+snippet = """
+long long ${1:n} = ${2:0LL};$0"""
+
+[[entries]]
+name = "size_t variable"
+keys = ["size_t", "size", "index", "count", "length", "var"]
+doc = "Unsigned size or index that matches container sizes."
+snippet = """
+std::size_t ${1:n} = ${2:0};$0"""
+
+[[entries]]
+name = "fixed-width integer variable"
+keys = ["int32_t", "uint8_t", "int64_t", "cstdint", "byte", "width", "var"]
+doc = "Integer of exact width from <cstdint>."
+snippet = """
+std::${1:int32_t} ${2:n} = ${3:0};$0"""
+
+[[entries]]
+name = "string variable"
+keys = ["string", "text", "str", "var", "std::string", "\""]
+doc = "Owning string initialized from a literal."
+snippet = """
+std::string ${1:name} = "${2:text}";$0"""

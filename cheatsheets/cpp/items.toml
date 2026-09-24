@@ -1,40 +1,9 @@
-title = "Items"
+title = "Namespaces, aliases and declarations"
 contexts = ["item"]
 
 [[entries]]
-name = "enum class"
-keys = ["enum", "class", "scoped"]
-doc = "Scoped enumeration with no implicit conversion to int."
-snippet = """
-enum class ${1:Color} {
-    ${2:Red},
-    ${3:Green},
-    $0
-};"""
-
-[[entries]]
-name = "enum class with underlying type"
-keys = ["enum", "class", "underlying", "uint8"]
-doc = "Scoped enumeration stored in an explicit integer type."
-snippet = """
-enum class ${1:Flag} : ${2:std::uint8_t} {
-    ${3:None} = 0,
-    $0
-};"""
-
-[[entries]]
-name = "enum"
-keys = ["enum", "unscoped"]
-doc = "Unscoped C-style enumeration."
-snippet = """
-enum ${1:Name} {
-    ${2:First},
-    $0
-};"""
-
-[[entries]]
 name = "namespace"
-keys = ["namespace", "ns"]
+keys = ["namespace", "ns", "scope", "group", "module"]
 doc = "Group declarations under a name."
 snippet = """
 namespace ${1:name} {
@@ -43,7 +12,7 @@ namespace ${1:name} {
 
 [[entries]]
 name = "nested namespace"
-keys = ["namespace", "nested", "ns"]
+keys = ["namespace", "nested", "ns", "::"]
 doc = "C++17 shorthand for nested namespaces."
 snippet = """
 namespace ${1:outer}::${2:inner} {
@@ -52,7 +21,7 @@ namespace ${1:outer}::${2:inner} {
 
 [[entries]]
 name = "anonymous namespace"
-keys = ["namespace", "anonymous", "unnamed", "static"]
+keys = ["namespace", "anonymous", "unnamed", "static", "internal", "private"]
 doc = "Give everything inside internal linkage."
 snippet = """
 namespace {
@@ -61,7 +30,7 @@ namespace {
 
 [[entries]]
 name = "inline namespace"
-keys = ["namespace", "inline", "version"]
+keys = ["namespace", "inline", "version", "abi"]
 doc = "Namespace whose members are also visible in the enclosing namespace."
 snippet = """
 inline namespace ${1:v1} {
@@ -70,77 +39,80 @@ inline namespace ${1:v1} {
 
 [[entries]]
 name = "using alias"
-keys = ["using", "alias", "type"]
+keys = ["using", "alias", "type", "typedef", "rename", "name"]
 doc = "Introduce a type alias."
 snippet = """
 using ${1:Alias} = ${2:std::vector<int>};$0"""
 
 [[entries]]
+name = "using alias for function pointer"
+keys = ["using", "alias", "function", "pointer", "callback", "typedef"]
+doc = "Readable alias for a function pointer type."
+snippet = """
+using ${1:Callback} = ${2:void} (*)(${3:int});$0"""
+
+[[entries]]
+name = "using alias for std::function"
+keys = ["using", "alias", "function", "callback", "handler", "callable"]
+doc = "Alias for a callable type stored in std::function."
+snippet = """
+using ${1:Handler} = std::function<${2:void(int)}>;$0"""
+
+[[entries]]
+name = "typedef"
+keys = ["typedef", "alias", "type", "c", "rename"]
+doc = "C-style type alias (prefer using)."
+snippet = """
+typedef ${1:unsigned int} ${2:uint};$0"""
+
+[[entries]]
+name = "typedef function pointer"
+keys = ["typedef", "function", "pointer", "callback", "alias"]
+doc = "C-style alias for a function pointer type."
+snippet = """
+typedef ${1:void} (*${2:Callback})(${3:int});$0"""
+
+[[entries]]
+name = "typedef struct"
+keys = ["typedef", "struct", "alias", "c"]
+doc = "C-style struct alias, unnecessary in C++ but common in shared headers."
+snippet = """
+typedef struct {
+    ${1:int} ${2:x};
+    $0
+} ${3:Name};"""
+
+[[entries]]
 name = "using namespace"
-keys = ["using", "namespace"]
+keys = ["using", "namespace", "std", "import"]
 doc = "Bring every name of a namespace into scope."
 snippet = """
 using namespace ${1:std};$0"""
 
 [[entries]]
 name = "using declaration"
-keys = ["using", "name"]
+keys = ["using", "name", "import", "one", "std"]
 doc = "Bring one name from a namespace into scope."
 snippet = """
 using ${1:std::string};$0"""
 
 [[entries]]
+name = "using literals"
+keys = ["using", "literals", "chrono", "string", "operator", "suffix"]
+doc = "Enable literal suffixes such as 10ms or \"text\"s."
+snippet = """
+using namespace std::${1:chrono_literals};$0"""
+
+[[entries]]
 name = "namespace alias"
-keys = ["namespace", "alias"]
+keys = ["namespace", "alias", "short", "rename", "fs"]
 doc = "Short name for a long namespace."
 snippet = """
 namespace ${1:fs} = ${2:std::filesystem};$0"""
 
 [[entries]]
-name = "typedef"
-keys = ["typedef", "alias"]
-doc = "C-style type alias."
-snippet = """
-typedef ${1:unsigned int} ${2:uint};$0"""
-
-[[entries]]
-name = "global variable"
-keys = ["global", "var", "variable"]
-doc = "Variable with external linkage at namespace scope."
-snippet = """
-${1:int} ${2:name} = ${3:0};$0"""
-
-[[entries]]
-name = "static variable"
-keys = ["static", "var", "internal"]
-doc = "Namespace-scope variable with internal linkage."
-snippet = """
-static ${1:int} ${2:name} = ${3:0};$0"""
-
-[[entries]]
-name = "extern variable"
-keys = ["extern", "var", "declare"]
-doc = "Declare a variable defined in another translation unit."
-snippet = """
-extern ${1:int} ${2:name};$0"""
-
-[[entries]]
-name = "inline variable"
-keys = ["inline", "var", "header"]
-doc = "C++17 variable that can be defined in a header."
-snippet = """
-inline ${1:constexpr int} ${2:name} = ${3:0};$0"""
-
-[[entries]]
-name = "constexpr variable"
-keys = ["constexpr", "const", "constant"]
-doc = "Compile-time constant."
-snippet = """
-constexpr ${1:int} ${2:kName} = ${3:0};$0"""
-
-[[entries]]
 name = "extern \"C\""
-keys = ["extern", "c", "linkage"]
+keys = ["extern", "c", "linkage", "ffi", "block"]
 doc = "Give declarations C linkage for use from C code."
 snippet = """
 extern "C" {
@@ -149,14 +121,28 @@ extern "C" {
 
 [[entries]]
 name = "forward declaration"
-keys = ["forward", "declare", "class", "struct"]
+keys = ["forward", "declare", "class", "struct", "incomplete", "predeclare"]
 doc = "Declare a class name before its definition."
 snippet = """
 class ${1:Name};$0"""
 
 [[entries]]
 name = "static_assert"
-keys = ["static_assert", "assert", "compile"]
+keys = ["static_assert", "assert", "compile", "check", "constant"]
 doc = "Compile-time assertion with a message."
 snippet = """
 static_assert(${1:condition}, "${2:message}");$0"""
+
+[[entries]]
+name = "static_assert without message"
+keys = ["static_assert", "assert", "compile", "check"]
+doc = "C++17 compile-time assertion with no message."
+snippet = """
+static_assert(${1:sizeof(int) == 4});$0"""
+
+[[entries]]
+name = "attribute on declaration"
+keys = ["attribute", "[[", "nodiscard", "deprecated", "maybe_unused"]
+doc = "Standard attribute syntax placed before a declaration."
+snippet = """
+[[${1:maybe_unused}]] $0"""

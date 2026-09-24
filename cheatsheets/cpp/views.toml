@@ -1,0 +1,212 @@
+title = "Range views"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "views::filter"
+keys = ["filter", "views", "std::views", "where", "select", "predicate", "lazy"]
+doc = "Lazy view of elements matching a predicate."
+snippet = '''
+${1:v} | std::views::filter([](${2:const auto &x}) { return ${3:cond}; })$0'''
+
+[[entries]]
+name = "views::transform"
+keys = ["transform", "views", "std::views", "map", "apply", "convert", "lazy"]
+doc = "Lazy view applying a function to each element."
+snippet = '''
+${1:v} | std::views::transform([](${2:const auto &x}) { return ${3:x}; })$0'''
+
+[[entries]]
+name = "views::take"
+keys = ["take", "views", "std::views", "first", "limit", "head", "n"]
+doc = "View of the first n elements."
+snippet = '''
+${1:v} | std::views::take(${2:n})$0'''
+
+[[entries]]
+name = "views::drop"
+keys = ["drop", "views", "std::views", "skip", "offset", "tail"]
+doc = "View skipping the first n elements."
+snippet = '''
+${1:v} | std::views::drop(${2:n})$0'''
+
+[[entries]]
+name = "views::take_while / drop_while"
+keys = ["take_while", "drop_while", "views", "std::views", "prefix", "until", "predicate"]
+doc = "Take or skip the leading elements while a predicate holds."
+snippet = '''
+${1:v} | std::views::${2:take_while}([](${3:const auto &x}) { return ${4:cond}; })$0'''
+
+[[entries]]
+name = "views::reverse"
+keys = ["reverse", "views", "std::views", "backwards", "reversed"]
+doc = "View iterating a range backwards."
+snippet = '''
+${1:v} | std::views::reverse$0'''
+
+[[entries]]
+name = "views::iota"
+keys = ["iota", "views", "std::views", "range", "sequence", "numbers", "count"]
+doc = "Lazy sequence of integers in [first, last)."
+snippet = '''
+std::views::iota(${1:0}, ${2:n})$0'''
+
+[[entries]]
+name = "views::iota unbounded"
+keys = ["iota", "views", "infinite", "unbounded", "take", "counter", "sequence"]
+doc = "Infinite integer sequence cut with take."
+snippet = '''
+std::views::iota(${1:1}) | std::views::take(${2:n})$0'''
+
+[[entries]]
+name = "views::keys / values"
+keys = ["keys", "values", "views", "std::views", "map", "first", "second"]
+doc = "View of the keys or values of a map or range of pairs."
+snippet = '''
+${1:m} | std::views::${2:keys}$0'''
+
+[[entries]]
+name = "views::elements"
+keys = ["elements", "views", "std::views", "tuple", "get", "column", "nth"]
+doc = "View of the nth element of each tuple-like item."
+snippet = '''
+${1:v} | std::views::elements<${2:0}>$0'''
+
+[[entries]]
+name = "views::enumerate"
+keys = ["enumerate", "views", "std::views", "index", "counter", "c++23", "loop"]
+doc = "C++23 view of (index, element) pairs."
+snippet = '''
+for (auto [${1:i}, ${2:x}] : std::views::enumerate(${3:v})) {
+    $0
+}'''
+
+[[entries]]
+name = "views::zip"
+keys = ["zip", "views", "std::views", "pair", "parallel", "two", "c++23", "loop"]
+doc = "C++23 view pairing elements of several ranges."
+snippet = '''
+for (auto [${1:a}, ${2:b}] : std::views::zip(${3:xs}, ${4:ys})) {
+    $0
+}'''
+
+[[entries]]
+name = "views::zip_transform"
+keys = ["zip_transform", "views", "zip", "combine", "pairwise", "c++23"]
+doc = "C++23 view combining several ranges element-wise through a function."
+snippet = '''
+std::views::zip_transform([](${1:const auto &a}, ${2:const auto &b}) { return ${3:a + b}; }, ${4:xs}, ${5:ys})$0'''
+
+[[entries]]
+name = "views::split"
+keys = ["split", "views", "std::views", "tokenize", "delimiter", "string", "words"]
+doc = "View splitting a range on a delimiter into subranges."
+snippet = '''
+for (auto ${1:part} : ${2:str} | std::views::split(${3:' '})) {
+    std::string_view ${4:token}(${1:part}.begin(), ${1:part}.end());
+    $0
+}'''
+
+[[entries]]
+name = "views::join"
+keys = ["join", "views", "std::views", "flatten", "nested", "concat"]
+doc = "Flatten a range of ranges."
+snippet = '''
+${1:nested} | std::views::join$0'''
+
+[[entries]]
+name = "views::join_with"
+keys = ["join_with", "views", "join", "separator", "delimiter", "c++23", "string"]
+doc = "C++23 flatten with a separator between inner ranges."
+snippet = '''
+${1:words} | std::views::join_with(${2:", "})$0'''
+
+[[entries]]
+name = "views::chunk"
+keys = ["chunk", "views", "std::views", "batch", "groups", "blocks", "c++23"]
+doc = "C++23 view of consecutive groups of n elements."
+snippet = '''
+${1:v} | std::views::chunk(${2:n})$0'''
+
+[[entries]]
+name = "views::slide"
+keys = ["slide", "views", "std::views", "window", "sliding", "c++23"]
+doc = "C++23 view of overlapping windows of n elements."
+snippet = '''
+${1:v} | std::views::slide(${2:n})$0'''
+
+[[entries]]
+name = "views::stride"
+keys = ["stride", "views", "std::views", "every", "step", "nth", "c++23"]
+doc = "C++23 view of every nth element."
+snippet = '''
+${1:v} | std::views::stride(${2:n})$0'''
+
+[[entries]]
+name = "views::adjacent / pairwise"
+keys = ["adjacent", "pairwise", "views", "std::views", "neighbours", "tuples", "c++23"]
+doc = "C++23 view of tuples of n consecutive elements."
+snippet = '''
+${1:v} | std::views::${2:pairwise}$0'''
+
+[[entries]]
+name = "views::cartesian_product"
+keys = ["cartesian_product", "views", "product", "combinations", "nested", "loop", "c++23"]
+doc = "C++23 view of every combination of elements from several ranges."
+snippet = '''
+for (auto [${1:a}, ${2:b}] : std::views::cartesian_product(${3:xs}, ${4:ys})) {
+    $0
+}'''
+
+[[entries]]
+name = "views::common"
+keys = ["common", "views", "std::views", "begin", "end", "legacy", "iterator"]
+doc = "Adapt a view so begin and end have the same type for classic algorithms."
+snippet = '''
+${1:view} | std::views::common$0'''
+
+[[entries]]
+name = "views::all"
+keys = ["all", "views", "std::views", "ref_view", "view", "wrap"]
+doc = "View referring to a whole container without copying it."
+snippet = '''
+std::views::all(${1:v})$0'''
+
+[[entries]]
+name = "views::counted"
+keys = ["counted", "views", "std::views", "iterator", "n", "slice"]
+doc = "View of n elements starting at an iterator."
+snippet = '''
+std::views::counted(${1:it}, ${2:n})$0'''
+
+[[entries]]
+name = "views::as_const"
+keys = ["as_const", "views", "const", "readonly", "c++23"]
+doc = "C++23 view whose elements cannot be modified."
+snippet = '''
+${1:v} | std::views::as_const$0'''
+
+[[entries]]
+name = "ranges pipeline"
+keys = ["pipeline", "views", "ranges", "|", "chain", "compose", "filter", "transform"]
+doc = "Compose views with the pipe operator and iterate lazily."
+snippet = '''
+for (auto ${1:x} : ${2:v} | std::views::filter([](${3:const auto &x}) { return ${4:cond}; })
+                          | std::views::transform([](${3:const auto &x}) { return ${5:x}; })) {
+    $0
+}'''
+
+[[entries]]
+name = "stored view"
+keys = ["view", "auto", "variable", "store", "lazy", "pipeline", "reuse"]
+doc = "Keep a lazy view in a variable; it re-evaluates each time it is iterated."
+snippet = '''
+auto ${1:evens} = ${2:v} | std::views::filter([](${3:const auto &x}) { return ${4:x % 2 == 0}; });$0'''
+
+[[entries]]
+name = "range for over view"
+keys = ["for", "loop", "view", "range", "iterate", "each"]
+doc = "Loop directly over any view."
+snippet = '''
+for (const auto &${1:x} : ${2:view}) {
+    $0
+}'''

@@ -1,0 +1,169 @@
+title = "Standard concepts and constrained auto"
+contexts = ["item", "type"]
+
+[[entries]]
+name = "abbreviated function template"
+keys = ["auto", "template", "abbreviated", "generic", "parameter", "short"]
+doc = "C++20 function template written with auto parameters."
+snippet = """
+${1:auto} ${2:name}(${3:const auto &}${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "constrained auto parameter"
+keys = ["auto", "concept", "constrained", "parameter", "argument", "function"]
+doc = "Function parameter constrained by a concept, a short constrained template."
+snippet = """
+${1:auto} ${2:name}(${3:std::integral} auto ${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "constrained auto"
+keys = ["auto", "concept", "constrained", "variable", "declare"]
+doc = "auto parameter or variable constrained by a concept."
+snippet = """
+${1:std::integral} auto ${2:value}$0"""
+
+[[entries]]
+name = "constrained auto variable"
+keys = ["auto", "concept", "constrained", "variable", "local", "init"]
+doc = "Local variable whose deduced type must satisfy a concept."
+snippet = """
+${1:std::integral} auto ${2:value} = ${3:compute()};$0"""
+
+[[entries]]
+name = "constrained auto return"
+keys = ["auto", "concept", "constrained", "return", "type", "function"]
+doc = "Deduced return type checked against a concept."
+snippet = """
+${1:std::integral} auto ${2:name}(${3:}) {
+    $0
+}"""
+
+[[entries]]
+name = "constrained lambda"
+keys = ["lambda", "concept", "auto", "constrained", "parameter", "generic"]
+doc = "Generic lambda whose auto parameter is constrained."
+snippet = """
+[](${1:std::integral} auto ${2:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "core concepts"
+keys = ["same_as", "derived_from", "convertible_to", "common_with", "integral", "floating_point", "signed_integral", "unsigned_integral"]
+doc = "Core language concepts: same_as, derived_from, convertible_to, common_with, integral, signed_integral, unsigned_integral, floating_point."
+snippet = """
+std::${1:same_as}<${2:T}${3:, U}>$0"""
+
+[[entries]]
+name = "std::integral"
+keys = ["integral", "integer", "int", "concept", "number", "whole"]
+doc = "Type is an integer type including bool and char."
+snippet = """
+std::integral<${1:T}>$0"""
+
+[[entries]]
+name = "std::floating_point"
+keys = ["floating_point", "float", "double", "concept", "real", "number"]
+doc = "Type is float, double or long double."
+snippet = """
+std::floating_point<${1:T}>$0"""
+
+[[entries]]
+name = "std::same_as"
+keys = ["same_as", "same", "exactly", "equal", "concept", "type"]
+doc = "Types are identical, in both directions."
+snippet = """
+std::same_as<${1:T}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::convertible_to"
+keys = ["convertible_to", "convert", "implicit", "concept", "cast"]
+doc = "From converts implicitly and explicitly to To."
+snippet = """
+std::convertible_to<${1:From}, ${2:To}>$0"""
+
+[[entries]]
+name = "std::derived_from"
+keys = ["derived_from", "base", "inherit", "concept", "subclass"]
+doc = "Derived publicly inherits from Base."
+snippet = """
+std::derived_from<${1:Derived}, ${2:Base}>$0"""
+
+[[entries]]
+name = "object concepts"
+keys = ["movable", "copyable", "semiregular", "regular", "destructible", "default_initializable", "constructible_from"]
+doc = "Object concepts: destructible, constructible_from, default_initializable, move_constructible, copy_constructible, movable, copyable, semiregular, regular."
+snippet = """
+std::${1:regular}<${2:T}>$0"""
+
+[[entries]]
+name = "comparison concepts"
+keys = ["equality_comparable", "totally_ordered", "three_way_comparable", "compare", "==", "<", "concept"]
+doc = "Comparison concepts: equality_comparable, equality_comparable_with, totally_ordered, totally_ordered_with, three_way_comparable."
+snippet = """
+std::${1:equality_comparable}<${2:T}>$0"""
+
+[[entries]]
+name = "callable concepts"
+keys = ["invocable", "regular_invocable", "predicate", "relation", "callable", "function", "concept"]
+doc = "Callable concepts: invocable, regular_invocable, predicate, relation, equivalence_relation, strict_weak_order."
+snippet = """
+std::${1:invocable}<${2:F}, ${3:Args...}>$0"""
+
+[[entries]]
+name = "std::invocable"
+keys = ["invocable", "callable", "call", "function", "concept", "callback"]
+doc = "F can be called with the listed argument types."
+snippet = """
+std::invocable<${1:F}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::predicate"
+keys = ["predicate", "bool", "callable", "filter", "concept", "test"]
+doc = "F called with the arguments yields something usable as bool."
+snippet = """
+std::predicate<${1:F}, ${2:const T &}>$0"""
+
+[[entries]]
+name = "range concepts"
+keys = ["range", "input_range", "forward_range", "bidirectional_range", "random_access_range", "contiguous_range", "sized_range", "view"]
+doc = "Range concepts: ranges::range, input_range, forward_range, bidirectional_range, random_access_range, contiguous_range, sized_range, view, borrowed_range."
+snippet = """
+std::ranges::${1:range}<${2:R}>$0"""
+
+[[entries]]
+name = "std::ranges::range"
+keys = ["range", "ranges", "iterable", "begin", "end", "container", "concept"]
+doc = "Type usable with ranges::begin and ranges::end."
+snippet = """
+std::ranges::range<${1:R}>$0"""
+
+[[entries]]
+name = "iterator concepts"
+keys = ["input_iterator", "forward_iterator", "bidirectional_iterator", "random_access_iterator", "contiguous_iterator", "sentinel_for", "iterator"]
+doc = "Iterator concepts: input_iterator, output_iterator, forward_iterator, bidirectional_iterator, random_access_iterator, contiguous_iterator, sentinel_for."
+snippet = """
+std::${1:forward_iterator}<${2:It}>$0"""
+
+[[entries]]
+name = "std::ranges::range_value_t"
+keys = ["range_value_t", "range_reference_t", "iterator_t", "value_type", "element", "range"]
+doc = "Element type of a range, also range_reference_t and iterator_t."
+snippet = """
+std::ranges::${1:range_value_t}<${2:R}>$0"""
+
+[[entries]]
+name = "std::ranges::range function"
+keys = ["range", "function", "template", "generic", "container", "concept", "any"]
+doc = "Function accepting any range through a constrained template parameter."
+snippet = """
+template <std::ranges::${1:input_range} ${2:R}>
+${3:void} ${4:name}(${2:R} &&${5:range}) {
+    for (auto &&${6:item} : ${5:range}) {
+        $0
+    }
+}"""

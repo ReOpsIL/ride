@@ -3,21 +3,38 @@ contexts = ["preprocessor", "item"]
 
 [[entries]]
 name = "#include system"
-keys = ["include", "header", "<>"]
+keys = ["include", "header", "<>", "std", "library", "angle"]
 doc = "Include a standard or system header."
 snippet = """
 #include <${1:iostream}>$0"""
 
 [[entries]]
 name = "#include local"
-keys = ["include", "header", "quote"]
-doc = "Include a header from the project."
+keys = ["include", "header", "quote", "project", "own", "hpp"]
+doc = "Include a header from the project, searched relative to this file first."
 snippet = """
 #include "${1:header.hpp}"$0"""
 
 [[entries]]
+name = "#include C header"
+keys = ["include", "c", "cstdio", "cstring", "cmath", "cstdlib", "header"]
+doc = "C library header in its C++ spelling: cstdio, cstdlib, cstring, cmath, cstdint."
+snippet = """
+#include <${1:cstdio}>$0"""
+
+[[entries]]
+name = "common includes"
+keys = ["include", "common", "starter", "iostream", "string", "vector", "boilerplate"]
+doc = "Typical set of includes for a small program."
+snippet = """
+#include <iostream>
+#include <string>
+#include <vector>
+$0"""
+
+[[entries]]
 name = "#pragma once"
-keys = ["pragma", "once", "guard", "header"]
+keys = ["pragma", "once", "guard", "header", "include once"]
 doc = "Include the header at most once per translation unit."
 snippet = """
 #pragma once
@@ -25,7 +42,7 @@ $0"""
 
 [[entries]]
 name = "include guard"
-keys = ["ifndef", "define", "guard", "header"]
+keys = ["ifndef", "define", "guard", "header", "include guard", "endif"]
 doc = "Traditional include guard."
 snippet = """
 #ifndef ${1:HEADER_HPP}
@@ -33,12 +50,23 @@ snippet = """
 
 $0
 
-#endif // ${1:HEADER_HPP}"""
+#endif"""
+
+[[entries]]
+name = "header and source split"
+keys = ["header", "source", "split", "declare", "define", "hpp", "cpp"]
+doc = "Declare in the header, define in the .cpp that includes it."
+snippet = """
+#include "${1:name}.hpp"
+
+${2:int} ${3:name}(${4:}) {
+    $0
+}"""
 
 [[entries]]
 name = "#if"
-keys = ["if", "endif", "conditional"]
-doc = "Conditional compilation on an expression."
+keys = ["if", "endif", "conditional", "compile", "expression"]
+doc = "Conditional compilation on a constant expression."
 snippet = """
 #if ${1:condition}
 $0
@@ -46,7 +74,7 @@ $0
 
 [[entries]]
 name = "#if else"
-keys = ["if", "else", "endif"]
+keys = ["if", "else", "endif", "two-way", "conditional"]
 doc = "Two-way conditional compilation."
 snippet = """
 #if ${1:condition}
@@ -56,7 +84,7 @@ $0
 
 [[entries]]
 name = "#elif"
-keys = ["elif", "if", "endif"]
+keys = ["elif", "if", "endif", "else if", "branch"]
 doc = "Additional preprocessor branch."
 snippet = """
 #elif ${1:condition}
@@ -64,7 +92,7 @@ $0"""
 
 [[entries]]
 name = "#ifdef"
-keys = ["ifdef", "defined", "endif"]
+keys = ["ifdef", "defined", "endif", "if defined", "macro"]
 doc = "Compile only when a macro is defined."
 snippet = """
 #ifdef ${1:NAME}
@@ -73,7 +101,7 @@ $0
 
 [[entries]]
 name = "#ifndef"
-keys = ["ifndef", "defined", "endif"]
+keys = ["ifndef", "defined", "endif", "not defined", "macro"]
 doc = "Compile only when a macro is not defined."
 snippet = """
 #ifndef ${1:NAME}
@@ -81,8 +109,18 @@ $0
 #endif"""
 
 [[entries]]
+name = "#ifdef else"
+keys = ["ifdef", "else", "endif", "fallback", "macro"]
+doc = "Conditional on a macro with a fallback branch."
+snippet = """
+#ifdef ${1:NAME}
+$0
+#else
+#endif"""
+
+[[entries]]
 name = "#if defined"
-keys = ["if", "defined", "&&"]
+keys = ["if", "defined", "&&", "||", "combine", "macro"]
 doc = "Combine macro tests in one condition."
 snippet = """
 #if defined(${1:A}) && !defined(${2:B})
@@ -90,78 +128,62 @@ $0
 #endif"""
 
 [[entries]]
+name = "#elifdef"
+keys = ["elifdef", "elifndef", "elif", "defined", "c++23"]
+doc = "C++23 shorthand for #elif defined and #elif !defined."
+snippet = """
+#elifdef ${1:NAME}
+$0"""
+
+[[entries]]
 name = "#else / #endif"
-keys = ["else", "endif"]
+keys = ["else", "endif", "close", "end"]
 doc = "Close or alternate a preprocessor conditional."
 snippet = """
 #${1:endif}$0"""
 
 [[entries]]
-name = "__cplusplus check"
-keys = ["cplusplus", "version", "standard", "if"]
-doc = "Test the C++ standard version."
+name = "#if 0 disable code"
+keys = ["if 0", "disable", "comment out", "block", "skip", "dead"]
+doc = "Disable a block of code without commenting it."
 snippet = """
-#if __cplusplus >= ${1:202002L}
+#if 0
 $0
 #endif"""
 
 [[entries]]
-name = "__has_include"
-keys = ["has_include", "include", "optional"]
-doc = "Test whether a header is available."
+name = "#line"
+keys = ["line", "file", "diagnostic", "generated", "override"]
+doc = "Override the reported line number and file name."
 snippet = """
-#if __has_include(<${1:format}>)
-#include <${1:format}>
-#endif$0"""
+#line ${1:100} "${2:file.cpp}"$0"""
 
 [[entries]]
 name = "#error"
-keys = ["error", "abort", "diagnostic"]
+keys = ["error", "abort", "diagnostic", "fail", "unsupported"]
 doc = "Fail compilation with a message."
 snippet = """
 #error "${1:message}"$0"""
 
 [[entries]]
 name = "#warning"
-keys = ["warning", "diagnostic"]
-doc = "Emit a compiler warning (C++23)."
+keys = ["warning", "diagnostic", "message", "c++23"]
+doc = "Emit a compiler warning (standard since C++23, widely supported before)."
 snippet = """
 #warning "${1:message}"$0"""
 
 [[entries]]
-name = "#line"
-keys = ["line", "file", "diagnostic"]
-doc = "Override the reported line number and file name."
+name = "#pragma message"
+keys = ["pragma", "message", "print", "build", "note"]
+doc = "Print a note during compilation."
 snippet = """
-#line ${1:100} "${2:file.cpp}"$0"""
+#pragma message("${1:message}")$0"""
 
 [[entries]]
-name = "platform conditional"
-keys = ["platform", "windows", "linux", "apple", "ifdef"]
-doc = "Choose code per operating system."
+name = "#embed"
+keys = ["embed", "binary", "resource", "file", "bytes", "c++26"]
+doc = "C++26 embed a file's bytes as an initializer list."
 snippet = """
-#if defined(_WIN32)
-$0
-#elif defined(__APPLE__)
-#elif defined(__linux__)
-#endif"""
-
-[[entries]]
-name = "compiler conditional"
-keys = ["compiler", "msvc", "gcc", "clang", "ifdef"]
-doc = "Choose code per compiler."
-snippet = """
-#if defined(_MSC_VER)
-$0
-#elif defined(__clang__)
-#elif defined(__GNUC__)
-#endif"""
-
-[[entries]]
-name = "debug conditional"
-keys = ["debug", "ndebug", "ifdef"]
-doc = "Compile only in debug builds."
-snippet = """
-#ifndef NDEBUG
-$0
-#endif"""
+static const unsigned char ${1:data}[] = {
+#embed "${2:file.bin}"
+};$0"""

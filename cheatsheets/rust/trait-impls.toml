@@ -148,3 +148,71 @@ keys = ["impl", "error", "std", "source"]
 doc = "Mark a type as an error, given it already implements Debug and Display."
 snippet = '''
 impl std::error::Error for ${1:Type} {}$0'''
+
+[[entries]]
+name = "impl Eq marker"
+keys = ["impl", "eq", "marker", "equality", "reflexive", "hash", "key"]
+doc = "Promise that PartialEq is a full equivalence, required for HashMap keys."
+snippet = '''
+impl Eq for ${1:Type} {}$0'''
+
+[[entries]]
+name = "impl Copy + Clone"
+keys = ["impl", "copy", "clone", "marker", "bitwise", "manual"]
+doc = "Mark a type as bitwise copyable; Copy requires a Clone impl."
+snippet = '''
+impl Copy for ${1:Type} {}
+
+impl Clone for ${1:Type} {
+    fn clone(&self) -> Self {
+        *self
+    }
+}$0'''
+
+[[entries]]
+name = "impl Display for enum"
+keys = ["impl", "display", "enum", "match", "variant", "name", "tostring"]
+doc = "Print an enum by matching each variant to a label."
+snippet = '''
+impl std::fmt::Display for ${1:Enum} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            ${1:Enum}::${2:A} => "${3:a}",
+            ${1:Enum}::${4:B} => "${5:b}",$0
+        };
+        f.write_str(s)
+    }
+}'''
+
+[[entries]]
+name = "impl Debug tuple / list"
+keys = ["impl", "debug", "tuple", "list", "map", "helper", "fmt"]
+doc = "Implement Debug for a tuple struct or collection with the formatter helpers."
+snippet = '''
+impl std::fmt::Debug for ${1:Type} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.${2:debug_tuple}("${1:Type}").field(&self.${3:0}).finish()$0
+    }
+}'''
+
+[[entries]]
+name = "impl Error with source"
+keys = ["impl", "error", "source", "cause", "chain", "wrap", "inner"]
+doc = "Expose the underlying error so callers can walk the cause chain."
+snippet = '''
+impl std::error::Error for ${1:Type} {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(&self.${2:inner})$0
+    }
+}'''
+
+[[entries]]
+name = "impl PartialEq<Other>"
+keys = ["impl", "partialeq", "cross", "other", "type", "str", "compare", "mixed"]
+doc = "Allow comparing the type directly against another type such as str."
+snippet = '''
+impl PartialEq<${1:str}> for ${2:Type} {
+    fn eq(&self, other: &${1:str}) -> bool {
+        self.${3:0} == other$0
+    }
+}'''

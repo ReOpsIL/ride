@@ -1,0 +1,127 @@
+title = "Enums and unions"
+contexts = ["item"]
+
+[[entries]]
+name = "enum"
+keys = ["enum", "variant", "sum", "choice", "tag", "define"]
+doc = "Define an enum with unit variants."
+snippet = '''
+enum ${1:Name} {
+    ${2:First},
+    ${3:Second},$0
+}'''
+
+[[entries]]
+name = "derive enum"
+keys = ["enum", "derive", "copy", "debug", "eq", "compare"]
+doc = "Define a copyable, comparable, printable enum of unit variants."
+snippet = '''
+#[derive(Debug, Clone, Copy, PartialEq, Eq${2:, Hash})]
+enum ${1:Name} {
+    ${3:First},
+    ${4:Second},$0
+}'''
+
+[[entries]]
+name = "enum with data"
+keys = ["enum", "variant", "data", "payload", "tagged", "union", "algebraic"]
+doc = "Define an enum whose variants carry tuple or struct payloads."
+snippet = '''
+enum ${1:Name} {
+    ${2:Unit},
+    ${3:Tuple}(${4:i32}),
+    ${5:Struct} { ${6:field}: ${7:String} },$0
+}'''
+
+[[entries]]
+name = "enum struct variants"
+keys = ["enum", "struct", "variant", "named", "fields", "shape"]
+doc = "Define an enum whose variants all carry named fields."
+snippet = '''
+enum ${1:Shape} {
+    ${2:Circle} { ${3:radius}: ${4:f64} },
+    ${5:Rect} { ${6:width}: ${4:f64}, ${7:height}: ${4:f64} },$0
+}'''
+
+[[entries]]
+name = "enum with discriminants"
+keys = ["enum", "repr", "discriminant", "c", "value", "integer", "number"]
+doc = "Define a C-like enum with explicit integer values."
+snippet = '''
+#[repr(${1:u8})]
+enum ${2:Name} {
+    ${3:A} = ${4:0},
+    ${5:B} = ${6:1},$0
+}'''
+
+[[entries]]
+name = "generic enum"
+keys = ["enum", "generic", "t", "option", "parameter"]
+doc = "Define an enum parameterized over a type."
+snippet = '''
+enum ${1:Name}<T> {
+    ${2:Some}(T),
+    ${3:None},$0
+}'''
+
+[[entries]]
+name = "enum two type parameters"
+keys = ["enum", "generic", "either", "result", "left", "right", "two"]
+doc = "Define an enum whose variants carry different generic types."
+snippet = '''
+enum ${1:Either}<${2:L}, ${3:R}> {
+    ${4:Left}(${2:L}),
+    ${5:Right}(${3:R}),$0
+}'''
+
+[[entries]]
+name = "recursive enum"
+keys = ["enum", "recursive", "box", "tree", "expr", "ast", "linked", "list"]
+doc = "Define an enum that contains itself through a Box so its size is known."
+snippet = '''
+enum ${1:Expr} {
+    ${2:Num}(${3:i64}),
+    ${4:Add}(Box<${1:Expr}>, Box<${1:Expr}>),$0
+}'''
+
+[[entries]]
+name = "enum with impl"
+keys = ["enum", "impl", "method", "match", "self", "behavior"]
+doc = "Define an enum and give it a method that matches on self."
+snippet = '''
+enum ${1:Name} {
+    ${2:First},
+    ${3:Second},
+}
+
+impl ${1:Name} {
+    fn ${4:describe}(&self) -> ${5:&str} {
+        match self {
+            Self::${2:First} => ${6:"first"},
+            Self::${3:Second} => ${7:"second"},$0
+        }
+    }
+}'''
+
+[[entries]]
+name = "enum with default variant"
+keys = ["enum", "default", "derive", "variant", "initial"]
+doc = "Derive Default for an enum by marking one unit variant."
+snippet = '''
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+enum ${1:Name} {
+    #[default]
+    ${2:First},
+    ${3:Second},$0
+}'''
+
+[[entries]]
+name = "union"
+keys = ["union", "unsafe", "ffi", "overlap", "c"]
+doc = "Define a C-style union whose fields share storage and are read in unsafe code."
+snippet = '''
+#[repr(C)]
+union ${1:Name} {
+    ${2:int}: ${3:u32},
+    ${4:float}: ${5:f32},$0
+}'''

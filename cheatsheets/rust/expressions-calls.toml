@@ -1,0 +1,190 @@
+title = "Calls, paths and assignment"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "assignment"
+keys = ["assign", "set", "equals", "store", "reassign", "mut", "update"]
+doc = "Store a new value in a mutable binding."
+snippet = '''
+${1:x} = ${2:value};$0'''
+
+[[entries]]
+name = "field assignment"
+keys = ["assign", "field", "set", "struct", "dot", "member", "update"]
+doc = "Overwrite one field of a mutable struct."
+snippet = '''
+${1:item}.${2:field} = ${3:value};$0'''
+
+[[entries]]
+name = "index assignment"
+keys = ["assign", "index", "set", "element", "brackets", "vec", "array"]
+doc = "Overwrite the element at an index of a mutable array or Vec."
+snippet = '''
+${1:items}[${2:i}] = ${3:value};$0'''
+
+[[entries]]
+name = "2d index"
+keys = ["index", "2d", "grid", "matrix", "row", "col", "nested", "brackets"]
+doc = "Read or write a cell of a nested array or Vec of Vecs."
+snippet = '''
+${1:grid}[${2:row}][${3:col}]$0'''
+
+[[entries]]
+name = "deref assignment"
+keys = ["assign", "deref", "star", "reference", "pointer", "write", "through"]
+doc = "Write through a mutable reference to change the value it points at."
+snippet = '''
+*${1:reference} = ${2:value};$0'''
+
+[[entries]]
+name = "module path call"
+keys = ["path", "call", "module", "function", "namespace", "colon", "qualified"]
+doc = "Call a function through its module path without importing it."
+snippet = '''
+${1:module}::${2:function}(${3:args})$0'''
+
+[[entries]]
+name = "crate path call"
+keys = ["crate", "path", "call", "absolute", "root", "function"]
+doc = "Call an item through an absolute path from the crate root."
+snippet = '''
+crate::${1:module}::${2:function}(${3:args})$0'''
+
+[[entries]]
+name = "Trait::method call"
+keys = ["trait", "method", "call", "path", "disambiguate", "ufcs", "qualified"]
+doc = "Call a trait method through the trait when the receiver form is ambiguous."
+snippet = '''
+${1:Trait}::${2:method}(&${3:value})$0'''
+
+[[entries]]
+name = "fully qualified call"
+keys = ["as", "trait", "qualified", "call", "disambiguate", "ufcs", "angle"]
+doc = "Pick which trait's method or associated function to call with fully qualified syntax."
+snippet = '''
+<${1:Type} as ${2:Trait}>::${3:method}(${4:args})$0'''
+
+[[entries]]
+name = "associated const access"
+keys = ["const", "associated", "path", "max", "constant", "type"]
+doc = "Read a constant defined on a type or trait."
+snippet = '''
+${1:Type}::${2:CONST}$0'''
+
+[[entries]]
+name = "generic fn turbofish"
+keys = ["turbofish", "generic", "call", "explicit", "size_of", "default", "function"]
+doc = "Pass an explicit type argument to a generic function."
+snippet = '''
+${1:std::mem::size_of}::<${2:T}>()$0'''
+
+[[entries]]
+name = "closure call"
+keys = ["closure", "call", "invoke", "lambda", "apply", "callback"]
+doc = "Call a closure stored in a variable like a function."
+snippet = '''
+${1:f}(${2:args})$0'''
+
+[[entries]]
+name = "macro call"
+keys = ["macro", "call", "bang", "invoke", "exclamation"]
+doc = "Invoke a macro, which may use parentheses, brackets or braces."
+snippet = '''
+${1:name}!(${2:args})$0'''
+
+[[entries]]
+name = "enum to integer cast"
+keys = ["as", "cast", "enum", "discriminant", "integer", "u8", "convert"]
+doc = "Read the discriminant of a fieldless enum as an integer."
+snippet = '''
+${1:Color::Red} as ${2:u8}$0'''
+
+[[entries]]
+name = "u8 to char cast"
+keys = ["as", "cast", "char", "u8", "byte", "ascii", "convert"]
+doc = "Turn a byte into a char, or a char into its code point with as u32."
+snippet = '''
+${1:byte} as char$0'''
+
+[[entries]]
+name = "bool to integer cast"
+keys = ["as", "cast", "bool", "integer", "count", "zero", "one"]
+doc = "Convert true and false to one and zero."
+snippet = '''
+${1:flag} as ${2:usize}$0'''
+
+[[entries]]
+name = "float to integer cast"
+keys = ["as", "cast", "float", "int", "truncate", "saturate", "round"]
+doc = "Truncate a float toward zero, saturating at the integer bounds."
+snippet = '''
+${1:value}${2:.round()} as ${3:i64}$0'''
+
+[[entries]]
+name = "integer to float division"
+keys = ["as", "cast", "float", "divide", "average", "ratio", "percent", "mixed"]
+doc = "Cast both operands before dividing to get a fractional result."
+snippet = '''
+${1:total} as f64 / ${2:count} as f64$0'''
+
+[[entries]]
+name = "widening conversion"
+keys = ["from", "into", "widen", "u32", "i64", "convert", "lossless", "u64"]
+doc = "Convert to a wider integer type without any risk of truncation."
+snippet = '''
+${1:u64}::from(${2:value})$0'''
+
+[[entries]]
+name = ".await"
+keys = ["await", "async", "future", "poll", "wait"]
+doc = "Suspend until a future completes, only inside async code."
+snippet = '''
+${1:future}.await$0'''
+
+[[entries]]
+name = ".await?"
+keys = ["await", "async", "question", "try", "error", "propagate"]
+doc = "Await a fallible future and propagate its error."
+snippet = '''
+${1:call()}.await?$0'''
+
+[[entries]]
+name = "grouping parentheses"
+keys = ["parentheses", "group", "precedence", "brackets", "order"]
+doc = "Group a sub-expression to override precedence or call a method on the result."
+snippet = '''
+(${1:a + b}) * ${2:c}$0'''
+
+[[entries]]
+name = "method chain multi-line"
+keys = ["method", "chain", "fluent", "builder", "multiline", "dot"]
+doc = "Chain several calls with one call per line, ending with the consumer."
+snippet = '''
+${1:items}
+    .iter()
+    .${2:filter(|x| x.is_ok())}
+    .${3:map(|x| x.len())}
+    .${4:collect::<Vec<_>>()}$0'''
+
+[[entries]]
+name = "method on literal"
+keys = ["literal", "method", "suffix", "pow", "sqrt", "typed", "number"]
+doc = "Call a method on a numeric literal by giving the literal a type suffix."
+snippet = '''
+${1:2.0_f64}.${2:sqrt()}$0'''
+
+[[entries]]
+name = "nested fn"
+keys = ["fn", "nested", "inner", "local", "helper", "function", "inside"]
+doc = "Define a helper function inside another function, which cannot capture locals."
+snippet = '''
+fn ${1:helper}(${2:x}: ${3:i32}) -> ${3:i32} {
+    $0
+}'''
+
+[[entries]]
+name = "not !"
+keys = ["not", "negate", "bang", "bool", "invert", "unary"]
+doc = "Invert a boolean, or flip every bit of an integer."
+snippet = '''
+!${1:flag}$0'''

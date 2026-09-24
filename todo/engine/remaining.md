@@ -30,7 +30,9 @@
 
 # Cheat sheet (added 2026-09-10, see plan/roadmap/cheatsheet.md)
 
-- cheatsheet: no sheets for TOML (Cargo manifest keys) and CMake yet; `Lang::Toml` / `Lang::Cmake` answer with no sections
+- context: a `where` clause between a signature and its `{`, a generic parameter list after an item name, a format string literal, and a `#[test]` body have no context of their own (see plan/roadmap/cheatsheet.md Limits); a dedicated context would let their sections stop using `contexts = []`
+- cheatsheet: an entry can list several contexts but a C++ member template belongs in both `item` and `fields`; consider letting one file be registered under two titles, or a `contexts` override per entry
+- lookup: `std::` and `[` end the word, so the prefix is empty until the user types past them; consider treating `::`-qualified names as one word for matching
 - context: detection is syntactic; `expression` after `x.` does not know the type of `x`, so iterator and string sections rely on the typed prefix
 - context: C `switch` bodies and Rust `match` arm blocks classify by the generic brace rules; a `case` label context could offer `case`/`default` templates first
 - Test markers: `src/run/tests/markers_cpp.rs` has no comment tracking, so a `TEST(...)` inside `/* */` yields a gutter marker; add the block-comment scan from `markers.rs` and a `tests/test_markers.rs` case.

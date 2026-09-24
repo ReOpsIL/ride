@@ -1,0 +1,120 @@
+title = "Operators outside the class"
+contexts = ["item"]
+
+[[entries]]
+name = "free binary operator"
+keys = ["operator", "overload", "free", "+", "binary", "outside", "symmetric"]
+doc = "Non-member binary operator so both operands may convert."
+snippet = """
+${1:Name} operator${2:+}(const ${1:Name} &${3:lhs}, const ${1:Name} &${4:rhs}) {
+    return $0;
+}"""
+
+[[entries]]
+name = "free operator=="
+keys = ["operator", "equals", "==", "free", "outside", "compare"]
+doc = "Non-member equality comparison."
+snippet = """
+bool operator==(const ${1:Name} &${2:lhs}, const ${1:Name} &${3:rhs}) {
+    return ${4:lhs.value == rhs.value};$0
+}"""
+
+[[entries]]
+name = "free operator<"
+keys = ["operator", "less", "<", "free", "outside", "sort", "ordering"]
+doc = "Non-member less-than for sorting and ordered containers."
+snippet = """
+bool operator<(const ${1:Name} &${2:lhs}, const ${1:Name} &${3:rhs}) {
+    return ${4:lhs.value < rhs.value};$0
+}"""
+
+[[entries]]
+name = "free operator<=>"
+keys = ["operator", "spaceship", "<=>", "free", "outside", "compare"]
+doc = "Non-member three-way comparison."
+snippet = """
+std::strong_ordering operator<=>(const ${1:Name} &${2:lhs}, const ${1:Name} &${3:rhs}) {
+    return ${4:lhs.value <=> rhs.value};$0
+}"""
+
+[[entries]]
+name = "free operator<<"
+keys = ["operator", "stream", "ostream", "print", "<<", "free", "outside", "cout"]
+doc = "Non-member stream insertion using public accessors."
+snippet = """
+std::ostream &operator<<(std::ostream &os, const ${1:Name} &${2:obj}) {
+    return os << ${3:obj.value()};$0
+}"""
+
+[[entries]]
+name = "free operator>>"
+keys = ["operator", "stream", "istream", "read", ">>", "free", "outside", "cin"]
+doc = "Non-member stream extraction."
+snippet = """
+std::istream &operator>>(std::istream &is, ${1:Name} &${2:obj}) {
+    ${3:int value;}
+    is >> ${4:value};
+    $0
+    return is;
+}"""
+
+[[entries]]
+name = "mixed-type operator"
+keys = ["operator", "scalar", "mixed", "*", "double", "free", "multiply"]
+doc = "Operator between the class and a built-in type such as scaling by a double."
+snippet = """
+${1:Vec} operator*(const ${1:Vec} &${2:v}, ${3:double} ${4:k}) {
+    return {${5:v.x * k, v.y * k}};$0
+}"""
+
+[[entries]]
+name = "free unary operator"
+keys = ["operator", "unary", "minus", "negate", "-", "free"]
+doc = "Non-member unary operator."
+snippet = """
+${1:Name} operator${2:-}(const ${1:Name} &${3:v}) {
+    return $0;
+}"""
+
+[[entries]]
+name = "operator template"
+keys = ["operator", "template", "generic", "free", "overload"]
+doc = "Operator template working for any instantiation of a class template."
+snippet = """
+template <typename ${1:T}>
+bool operator==(const ${2:Box}<${1:T}> &${3:lhs}, const ${2:Box}<${1:T}> &${4:rhs}) {
+    return ${5:lhs.value == rhs.value};$0
+}"""
+
+[[entries]]
+name = "user-defined literal operator"
+keys = ["operator", "literal", "udl", "suffix", "\"\"", "user"]
+doc = "Define a literal suffix operator such as 10_km."
+snippet = """
+constexpr ${1:long double} operator""_${2:km}(${3:long double} ${4:v}) {
+    return ${5:v * 1000};$0
+}"""
+
+[[entries]]
+name = "std::hash for a type"
+keys = ["hash", "specialization", "unordered_map", "key", "std::", "set"]
+doc = "Specialize std::hash so the type can key an unordered container."
+snippet = """
+template <>
+struct std::hash<${1:Name}> {
+    std::size_t operator()(const ${1:Name} &${2:v}) const noexcept {
+        return std::hash<${3:int}>{}(${2:v}.${4:id});$0
+    }
+};"""
+
+[[entries]]
+name = "std::formatter for a type"
+keys = ["formatter", "format", "print", "specialization", "std::", "c++20"]
+doc = "Specialize std::formatter so std::format and std::print accept the type."
+snippet = """
+template <>
+struct std::formatter<${1:Name}> : std::formatter<std::string> {
+    auto format(const ${1:Name} &${2:v}, auto &ctx) const {
+        return std::formatter<std::string>::format(${3:v.name()}, ctx);$0
+    }
+};"""

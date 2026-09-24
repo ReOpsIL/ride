@@ -3,203 +3,213 @@ contexts = ["expression", "statement"]
 
 [[entries]]
 name = "collect Vec"
-keys = ["collect", "vec", "gather", "iterator"]
+keys = ["collect", "vec", "gather", "iterator", "list", "into", "to"]
 doc = "Gather the iterator into a vector."
 snippet = '''
 .collect::<Vec<${1:_}>>()$0'''
 
 [[entries]]
+name = "collect with annotation"
+keys = ["collect", "let", "type", "annotation", "vec", "gather", "into"]
+doc = "Gather into a collection named by the binding's type instead of a turbofish."
+snippet = '''
+let ${1:items}: Vec<${2:_}> = ${3:iter}.collect();$0'''
+
+[[entries]]
 name = "collect HashMap"
-keys = ["collect", "hashmap", "map", "pairs", "iterator"]
+keys = ["collect", "hashmap", "map", "pairs", "iterator", "dict", "into"]
 doc = "Gather an iterator of key-value pairs into a hash map."
 snippet = '''
 .collect::<HashMap<${1:_}, ${2:_}>>()$0'''
 
 [[entries]]
+name = "collect HashSet"
+keys = ["collect", "hashset", "set", "unique", "iterator", "distinct", "into"]
+doc = "Gather into a set, dropping duplicates."
+snippet = '''
+.collect::<HashSet<${1:_}>>()$0'''
+
+[[entries]]
+name = "collect BTreeMap"
+keys = ["collect", "btreemap", "sorted", "map", "ordered", "pairs", "into"]
+doc = "Gather key-value pairs into a map that iterates in key order."
+snippet = '''
+.collect::<BTreeMap<${1:_}, ${2:_}>>()$0'''
+
+[[entries]]
+name = "collect VecDeque"
+keys = ["collect", "vecdeque", "deque", "queue", "iterator", "into"]
+doc = "Gather into a double-ended queue."
+snippet = '''
+.collect::<VecDeque<${1:_}>>()$0'''
+
+[[entries]]
 name = "collect String"
-keys = ["collect", "string", "chars", "join", "iterator"]
+keys = ["collect", "string", "chars", "join", "iterator", "concat", "into"]
 doc = "Concatenate an iterator of chars or strings into a String."
 snippet = '''
 .collect::<String>()$0'''
 
 [[entries]]
 name = "collect Result"
-keys = ["collect", "result", "error", "fallible", "iterator"]
+keys = ["collect", "result", "error", "fallible", "iterator", "first", "fail"]
 doc = "Gather results, stopping at the first error."
 snippet = '''
 .collect::<Result<Vec<${1:_}>, ${2:_}>>()?$0'''
 
 [[entries]]
 name = "collect Option"
-keys = ["collect", "option", "all", "iterator"]
+keys = ["collect", "option", "all", "iterator", "none", "some", "into"]
 doc = "Gather options into one, giving None if any element is None."
 snippet = '''
 .collect::<Option<Vec<${1:_}>>>()$0'''
 
 [[entries]]
 name = "fold"
-keys = ["fold", "reduce", "accumulate", "iterator"]
+keys = ["fold", "reduce", "accumulate", "iterator", "sum", "aggregate", "initial"]
 doc = "Reduce the elements into one value starting from an initial accumulator."
 snippet = '''
 .fold(${1:0}, |${2:acc}, ${3:x}| ${4:acc + x})$0'''
 
 [[entries]]
+name = "fold into String"
+keys = ["fold", "string", "build", "concat", "accumulate", "append", "join"]
+doc = "Build a string by folding, moving the accumulator through each step."
+snippet = '''
+.fold(String::new(), |mut ${1:acc}, ${2:x}| {
+    ${1:acc}.push_str(${3:x});
+    ${1:acc}
+})$0'''
+
+[[entries]]
 name = "reduce"
-keys = ["reduce", "fold", "combine", "iterator"]
+keys = ["reduce", "fold", "combine", "iterator", "no", "initial", "option"]
 doc = "Combine the elements pairwise with no initial value, giving None when empty."
 snippet = '''
 .reduce(|${1:a}, ${2:b}| ${3:a.max(b)})$0'''
 
 [[entries]]
+name = "try_fold"
+keys = ["try", "fold", "fallible", "checked", "overflow", "result", "option", "short"]
+doc = "Fold with a fallible step, stopping at the first error or None."
+snippet = '''
+.try_fold(${1:0i32}, |${2:acc}, ${3:x}| ${2:acc}.checked_add(${3:x}))$0'''
+
+[[entries]]
 name = "sum"
-keys = ["sum", "total", "add", "iterator"]
+keys = ["sum", "total", "add", "iterator", "aggregate", "float"]
 doc = "Add up the elements, naming the numeric type when it cannot be inferred."
 snippet = '''
 .sum::<${1:i64}>()$0'''
 
 [[entries]]
 name = "product"
-keys = ["product", "multiply", "iterator"]
+keys = ["product", "multiply", "iterator", "factorial", "times"]
 doc = "Multiply the elements together."
 snippet = '''
 .product::<${1:u64}>()$0'''
 
 [[entries]]
 name = "count"
-keys = ["count", "len", "size", "iterator"]
+keys = ["count", "len", "size", "iterator", "how", "many", "number"]
 doc = "Consume the iterator and count its elements."
 snippet = '''
 .count()$0'''
 
 [[entries]]
+name = "count matching"
+keys = ["count", "filter", "matching", "how", "many", "occurrences", "condition"]
+doc = "Count the elements satisfying a predicate."
+snippet = '''
+.filter(|${1:x}| ${2:cond}).count()$0'''
+
+[[entries]]
 name = "min / max"
-keys = ["min", "max", "smallest", "largest", "iterator"]
+keys = ["min", "max", "smallest", "largest", "iterator", "option", "extreme"]
 doc = "Find the smallest or largest element, if any."
 snippet = '''
 .${1:max}()$0'''
 
 [[entries]]
 name = "min_by_key / max_by_key"
-keys = ["min", "max", "by", "key", "iterator"]
+keys = ["min", "max", "by", "key", "iterator", "field", "longest", "shortest"]
 doc = "Find the element whose key is smallest or largest."
 snippet = '''
 .${1:max_by_key}(|${2:x}| ${3:x.len()})$0'''
 
 [[entries]]
+name = "min_by / max_by"
+keys = ["min", "max", "by", "comparator", "cmp", "closure", "custom", "order"]
+doc = "Find the extreme element with a comparison closure."
+snippet = '''
+.${1:max_by}(|${2:a}, ${3:b}| ${4:a.score.cmp(&b.score)})$0'''
+
+[[entries]]
 name = "max_by float"
-keys = ["max", "min", "by", "float", "partial", "cmp", "total"]
+keys = ["max", "min", "by", "float", "partial", "cmp", "total", "f64"]
 doc = "Find the largest float using a total ordering comparison."
 snippet = '''
 .${1:max_by}(|a, b| a.total_cmp(b))$0'''
 
 [[entries]]
 name = "any"
-keys = ["any", "some", "exists", "iterator"]
+keys = ["any", "some", "exists", "iterator", "contains", "at", "least", "one"]
 doc = "Test whether any element satisfies the predicate."
 snippet = '''
 .any(|${1:x}| ${2:cond})$0'''
 
 [[entries]]
 name = "all"
-keys = ["all", "every", "iterator"]
+keys = ["all", "every", "iterator", "each", "satisfy", "check"]
 doc = "Test whether every element satisfies the predicate."
 snippet = '''
 .all(|${1:x}| ${2:cond})$0'''
 
 [[entries]]
 name = "find"
-keys = ["find", "search", "first", "iterator"]
+keys = ["find", "search", "first", "iterator", "matching", "option", "lookup"]
 doc = "Return the first element satisfying the predicate."
 snippet = '''
 .find(|${1:x}| ${2:cond})$0'''
 
 [[entries]]
 name = "find_map"
-keys = ["find", "map", "first", "some", "iterator"]
+keys = ["find", "map", "first", "some", "iterator", "parse", "search"]
 doc = "Return the first Some produced by the closure."
 snippet = '''
 .find_map(|${1:x}| ${2:expr})$0'''
 
 [[entries]]
-name = "position"
-keys = ["position", "index", "find", "iterator"]
-doc = "Return the index of the first element satisfying the predicate."
+name = "position / rposition"
+keys = ["position", "rposition", "index", "find", "iterator", "where", "of"]
+doc = "Return the index of the first or last element satisfying the predicate."
 snippet = '''
 .position(|${1:x}| ${2:cond})$0'''
 
 [[entries]]
 name = "last / nth"
-keys = ["last", "nth", "element", "iterator"]
+keys = ["last", "nth", "element", "iterator", "at", "index", "end"]
 doc = "Take the last element or the element at a given index."
 snippet = '''
 .${1:last}()$0'''
 
 [[entries]]
 name = "for_each"
-keys = ["for", "each", "foreach", "iterator"]
+keys = ["for", "each", "foreach", "iterator", "loop", "side", "effect", "apply"]
 doc = "Call a closure on every element, an alternative to a for loop at the end of a chain."
 snippet = '''
 .for_each(|${1:x}| ${2:expr})$0'''
 
 [[entries]]
-name = "partition"
-keys = ["partition", "split", "group", "two", "iterator"]
-doc = "Split the elements into two collections by a predicate."
+name = "try_for_each"
+keys = ["try", "for", "each", "fallible", "result", "stop", "error", "write"]
+doc = "Run a fallible closure on every element, stopping at the first error."
 snippet = '''
-let (${1:yes}, ${2:no}): (Vec<_>, Vec<_>) = ${3:iter}.partition(|${4:x}| ${5:cond});$0'''
+.try_for_each(|${1:x}| ${2:writeln!(out, "{x\}")})?$0'''
 
 [[entries]]
-name = "unzip"
-keys = ["unzip", "split", "pairs", "tuples", "iterator"]
-doc = "Split an iterator of pairs into two collections."
+name = "eq / cmp iterators"
+keys = ["eq", "cmp", "compare", "iterators", "equal", "lexicographic", "sequence"]
+doc = "Compare two iterators element by element."
 snippet = '''
-let (${1:keys}, ${2:values}): (Vec<_>, Vec<_>) = ${3:iter}.unzip();$0'''
-
-[[entries]]
-name = "sort"
-keys = ["sort", "order", "vec", "slice"]
-doc = "Sort a slice in place using the natural ordering."
-snippet = '''
-${1:items}.sort();$0'''
-
-[[entries]]
-name = "sort_by_key"
-keys = ["sort", "by", "key", "order", "vec"]
-doc = "Sort a slice in place by a key extracted from each element."
-snippet = '''
-${1:items}.sort_by_key(|${2:x}| ${3:x.len()});$0'''
-
-[[entries]]
-name = "sort_by"
-keys = ["sort", "by", "comparator", "cmp", "order"]
-doc = "Sort a slice in place with a comparison closure, reversing via swapped arguments."
-snippet = '''
-${1:items}.sort_by(|a, b| ${2:b.score.cmp(&a.score)});$0'''
-
-[[entries]]
-name = "sort_unstable"
-keys = ["sort", "unstable", "fast", "order"]
-doc = "Sort in place without preserving the order of equal elements, which is faster."
-snippet = '''
-${1:items}.sort_unstable${2:_by_key(|x| x.key)};$0'''
-
-[[entries]]
-name = "dedup"
-keys = ["dedup", "unique", "duplicates", "vec"]
-doc = "Remove consecutive duplicate elements from a vector, usually after sorting."
-snippet = '''
-${1:items}.dedup();$0'''
-
-[[entries]]
-name = "group consecutive (chunk_by)"
-keys = ["chunk", "by", "group", "consecutive", "runs", "slice"]
-doc = "Split a slice into runs of elements where the predicate holds for each adjacent pair."
-snippet = '''
-${1:items}.chunk_by(|a, b| ${2:a.key == b.key})$0'''
-
-[[entries]]
-name = "iterator generic bound"
-keys = ["iterator", "generic", "impl", "intoiterator", "bound", "param"]
-doc = "Accept any iterable as a function parameter."
-snippet = '''
-${1:items}: impl IntoIterator<Item = ${2:T}>$0'''
+${1:a}.iter().${2:eq}(${3:b}.iter())$0'''

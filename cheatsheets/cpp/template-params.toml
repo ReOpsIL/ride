@@ -1,0 +1,58 @@
+title = "Template parameters"
+contexts = ["type"]
+
+[[entries]]
+name = "template type parameter"
+keys = ["typename", "class", "template", "parameter", "generic", "t"]
+doc = "Type parameter in a template parameter list."
+snippet = """
+typename ${1:T}$0"""
+
+[[entries]]
+name = "parameter pack"
+keys = ["typename", "pack", "variadic", "...", "args", "template"]
+doc = "Variadic type parameter pack."
+snippet = """
+typename... ${1:Args}$0"""
+
+[[entries]]
+name = "non-type template parameter"
+keys = ["template", "parameter", "int", "size", "value", "n", "auto"]
+doc = "Value parameter in a template parameter list."
+snippet = """
+${1:std::size_t} ${2:N}$0"""
+
+[[entries]]
+name = "enum underlying type"
+keys = ["enum", "underlying", "uint8_t", "int", ":"]
+doc = "Storage type written after the enum name."
+snippet = """
+std::${1:uint8_t}$0"""
+
+[[entries]]
+name = "type parameter with default"
+keys = ["typename", "default", "template", "parameter", "="]
+doc = "Type parameter that falls back to a default type."
+snippet = """
+typename ${1:T} = ${2:int}$0"""
+
+[[entries]]
+name = "auto non-type parameter"
+keys = ["auto", "template", "parameter", "value", "non-type", "c++17"]
+doc = "C++17 value parameter whose type is deduced."
+snippet = """
+auto ${1:V}$0"""
+
+[[entries]]
+name = "template template parameter"
+keys = ["template", "template", "parameter", "container", "class"]
+doc = "Parameter that is itself a class template."
+snippet = """
+template <typename> class ${1:Container}$0"""
+
+[[entries]]
+name = "constrained type parameter"
+keys = ["concept", "constrained", "template", "parameter", "integral", "requires"]
+doc = "Type parameter restricted by a concept."
+snippet = """
+${1:std::integral} ${2:T}$0"""

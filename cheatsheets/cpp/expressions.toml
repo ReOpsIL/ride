@@ -3,189 +3,182 @@ contexts = ["expression", "statement"]
 
 [[entries]]
 name = "brace initialization"
-keys = ["init", "brace", "uniform", "{}"]
+keys = ["init", "brace", "uniform", "{}", "narrowing"]
 doc = "Uniform initialization that forbids narrowing."
 snippet = """
 ${1:int} ${2:x}{${3:0}};$0"""
 
 [[entries]]
+name = "copy initialization"
+keys = ["init", "=", "equals", "copy", "assign"]
+doc = "Initialize with = as in C."
+snippet = """
+${1:int} ${2:x} = ${3:0};$0"""
+
+[[entries]]
+name = "direct initialization"
+keys = ["init", "direct", "parentheses", "()", "constructor"]
+doc = "Initialize by calling a constructor with parentheses."
+snippet = """
+${1:std::string} ${2:s}(${3:5, 'x'});$0"""
+
+[[entries]]
 name = "value initialization"
-keys = ["init", "zero", "value", "{}"]
+keys = ["init", "zero", "value", "{}", "default", "empty"]
 doc = "Zero or default initialize with empty braces."
 snippet = """
 ${1:T} ${2:x}{};$0"""
 
 [[entries]]
 name = "aggregate initialization"
-keys = ["init", "aggregate", "struct", "braces"]
+keys = ["init", "aggregate", "struct", "braces", "fields"]
 doc = "Initialize struct members in declaration order."
 snippet = """
 ${1:Point} ${2:p}{${3:1}, ${4:2}};$0"""
 
 [[entries]]
 name = "designated initializers"
-keys = ["init", "designated", "struct", ".x"]
+keys = ["init", "designated", "struct", ".x", "named", "fields"]
 doc = "C++20 initialize aggregate members by name."
 snippet = """
 ${1:Config} ${2:cfg}{.${3:name} = ${4:value}, .${5:other} = ${6:value}};$0"""
 
 [[entries]]
+name = "nested aggregate initialization"
+keys = ["init", "aggregate", "nested", "struct", "braces", "inner"]
+doc = "Initialize a struct that contains another struct or array."
+snippet = """
+${1:Line} ${2:l}{{${3:0, 0}}, {${4:1, 1}}};$0"""
+
+[[entries]]
 name = "initializer list"
-keys = ["init", "list", "braces", "vector"]
+keys = ["init", "list", "braces", "vector", "elements"]
 doc = "Initialize a container from a braced list."
 snippet = """
 std::vector<${1:int}> ${2:v} = {${3:1, 2, 3}};$0"""
 
 [[entries]]
+name = "braced return / argument"
+keys = ["braces", "return", "argument", "temporary", "{}", "construct"]
+doc = "Build a value of the expected type from braces without naming it."
+snippet = """
+{${1:a}, ${2:b}}$0"""
+
+[[entries]]
 name = "CTAD"
-keys = ["ctad", "deduction", "template", "auto"]
+keys = ["ctad", "deduction", "template", "auto", "guide"]
 doc = "Class template argument deduction from the initializer."
 snippet = """
 std::${1:pair} ${2:p}{${3:1, 2.0}};$0"""
 
 [[entries]]
+name = "temporary of type"
+keys = ["temporary", "construct", "inline", "anonymous", "()"]
+doc = "Construct an unnamed temporary."
+snippet = """
+${1:Type}(${2:})$0"""
+
+[[entries]]
 name = "spaceship comparison"
-keys = ["spaceship", "<=>", "compare", "three-way"]
+keys = ["spaceship", "<=>", "compare", "three-way", "ordering"]
 doc = "Three-way compare yielding an ordering value."
 snippet = """
 (${1:a} <=> ${2:b})$0"""
 
 [[entries]]
 name = "std::strong_ordering"
-keys = ["strong_ordering", "weak_ordering", "partial_ordering", "less", "greater"]
+keys = ["strong_ordering", "weak_ordering", "partial_ordering", "less", "greater", "equal"]
 doc = "Result of a three-way comparison."
 snippet = """
 std::${1:strong_ordering}::${2:less}$0"""
 
 [[entries]]
 name = "sizeof"
-keys = ["sizeof", "size", "bytes"]
+keys = ["sizeof", "size", "bytes", "type", "object"]
 doc = "Size of a type or object in bytes."
 snippet = """
 sizeof(${1:T})$0"""
 
 [[entries]]
+name = "sizeof expression"
+keys = ["sizeof", "size", "bytes", "variable", "expression"]
+doc = "Size in bytes of a variable without naming its type."
+snippet = """
+sizeof ${1:value}$0"""
+
+[[entries]]
 name = "sizeof..."
-keys = ["sizeof", "pack", "variadic", "count"]
+keys = ["sizeof", "pack", "variadic", "count", "..."]
 doc = "Number of elements in a parameter pack."
 snippet = """
 sizeof...(${1:Args})$0"""
 
 [[entries]]
 name = "alignof"
-keys = ["alignof", "alignment"]
+keys = ["alignof", "alignment", "bytes"]
 doc = "Alignment requirement of a type."
 snippet = """
 alignof(${1:T})$0"""
 
 [[entries]]
 name = "alignas"
-keys = ["alignas", "alignment", "cache"]
+keys = ["alignas", "alignment", "cache", "line", "aligned"]
 doc = "Request a stronger alignment for a declaration."
 snippet = """
 alignas(${1:64}) ${2:char} ${3:buf}[${4:64}];$0"""
 
 [[entries]]
 name = "typeid"
-keys = ["typeid", "rtti", "type_info", "name"]
+keys = ["typeid", "rtti", "type_info", "name", "runtime"]
 doc = "Runtime type information for a type or expression."
 snippet = """
 typeid(${1:expr}).name()$0"""
 
 [[entries]]
+name = "typeid comparison"
+keys = ["typeid", "rtti", "compare", "same", "type", "=="]
+doc = "Test whether two expressions have the same dynamic type."
+snippet = """
+typeid(${1:a}) == typeid(${2:b})$0"""
+
+[[entries]]
+name = "decltype expression"
+keys = ["decltype", "type", "expression", "same"]
+doc = "Type of an expression usable wherever a type is."
+snippet = """
+decltype(${1:expr})$0"""
+
+[[entries]]
 name = "comma operator"
-keys = ["comma", ",", "sequence"]
+keys = ["comma", ",", "sequence", "both"]
 doc = "Evaluate left then right, yielding the right value."
 snippet = """
 (${1:a}, ${2:b})$0"""
 
 [[entries]]
 name = "ternary"
-keys = ["ternary", "conditional", "?:"]
+keys = ["ternary", "conditional", "?:", "if", "choose", "inline"]
 doc = "Choose between two values by a condition."
 snippet = """
 ${1:condition} ? ${2:a} : ${3:b}$0"""
 
 [[entries]]
-name = "bitwise and / or / xor"
-keys = ["bit", "and", "or", "xor", "&", "|", "^"]
-doc = "Bitwise operators: & | ^ ~ << >>."
+name = "nested ternary"
+keys = ["ternary", "conditional", "?:", "nested", "chain", "sign"]
+doc = "Chained conditional picking among three outcomes."
 snippet = """
-${1:a} ${2:&} ${3:b}$0"""
-
-[[entries]]
-name = "set bit"
-keys = ["bit", "set", "mask", "flag"]
-doc = "Set bit n."
-snippet = """
-${1:x} |= (1u << ${2:n});$0"""
-
-[[entries]]
-name = "clear bit"
-keys = ["bit", "clear", "mask", "unset"]
-doc = "Clear bit n."
-snippet = """
-${1:x} &= ~(1u << ${2:n});$0"""
-
-[[entries]]
-name = "toggle bit"
-keys = ["bit", "toggle", "flip", "xor"]
-doc = "Flip bit n."
-snippet = """
-${1:x} ^= (1u << ${2:n});$0"""
-
-[[entries]]
-name = "test bit"
-keys = ["bit", "test", "check", "mask"]
-doc = "True when bit n is set."
-snippet = """
-((${1:x} >> ${2:n}) & 1u)$0"""
-
-[[entries]]
-name = "std::bitset"
-keys = ["bitset", "bits", "flags"]
-doc = "Fixed-size bit sequence with set, reset, test and count."
-snippet = """
-std::bitset<${1:8}> ${2:bits}(${3:value});$0"""
-
-[[entries]]
-name = "<bit> functions"
-keys = ["popcount", "countl_zero", "countr_zero", "has_single_bit", "bit_width", "rotl"]
-doc = "C++20 bit utilities: popcount, countl_zero, countr_zero, bit_width, rotl, has_single_bit."
-snippet = """
-std::${1:popcount}(${2:value})$0"""
-
-[[entries]]
-name = "std::byteswap"
-keys = ["byteswap", "endian", "bit"]
-doc = "C++23 reverse the byte order of an integer."
-snippet = """
-std::byteswap(${1:value})$0"""
-
-[[entries]]
-name = "std::endian"
-keys = ["endian", "native", "little", "big"]
-doc = "Compile-time query of the platform byte order."
-snippet = """
-std::endian::native == std::endian::${1:little}$0"""
-
-[[entries]]
-name = "enum to underlying"
-keys = ["to_underlying", "enum", "underlying_type", "cast"]
-doc = "C++23 convert an enum to its underlying integer."
-snippet = """
-std::to_underlying(${1:value})$0"""
+${1:x} < 0 ? ${2:-1} : ${1:x} > 0 ? ${3:1} : ${4:0}$0"""
 
 [[entries]]
 name = "constexpr evaluation"
-keys = ["constexpr", "compile", "evaluate", "constant"]
+keys = ["constexpr", "compile", "evaluate", "constant", "force"]
 doc = "Force evaluation at compile time."
 snippet = """
 constexpr auto ${1:result} = ${2:compute()};$0"""
 
 [[entries]]
 name = "std::is_constant_evaluated"
-keys = ["is_constant_evaluated", "constexpr", "runtime"]
+keys = ["is_constant_evaluated", "constexpr", "runtime", "compile"]
 doc = "Test whether the current evaluation is at compile time."
 snippet = """
 if (std::is_constant_evaluated()) {
@@ -193,22 +186,36 @@ if (std::is_constant_evaluated()) {
 }"""
 
 [[entries]]
-name = "pre-increment"
-keys = ["increment", "++", "decrement", "--"]
-doc = "Increment in place (prefer prefix for iterators)."
+name = "scope resolution"
+keys = ["scope", "::", "global", "qualified", "namespace"]
+doc = "Refer to a global name shadowed by a local one."
 snippet = """
-++${1:i}$0"""
+::${1:name}$0"""
 
 [[entries]]
 name = "pointer to member"
-keys = ["member", "pointer", ".*", "->*"]
+keys = ["member", "pointer", ".*", "->*", "access"]
 doc = "Access a member through a pointer-to-member."
 snippet = """
 (${1:obj}.*${2:member_ptr})$0"""
 
 [[entries]]
-name = "scope resolution"
-keys = ["scope", "::", "global"]
-doc = "Refer to a global name shadowed by a local one."
+name = "noexcept operator"
+keys = ["noexcept", "operator", "check", "throw", "expression"]
+doc = "True when an expression cannot throw."
 snippet = """
-::${1:name}$0"""
+noexcept(${1:expr})$0"""
+
+[[entries]]
+name = "std::declval"
+keys = ["declval", "decltype", "unevaluated", "template", "type"]
+doc = "Fake a value of a type inside decltype."
+snippet = """
+decltype(std::declval<${1:T}>().${2:method}())$0"""
+
+[[entries]]
+name = "std::as_const"
+keys = ["as_const", "const", "view", "overload", "cast"]
+doc = "Get a const reference to force the const overload."
+snippet = """
+std::as_const(${1:value})$0"""

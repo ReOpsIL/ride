@@ -1,0 +1,175 @@
+title = "Closures: returning, storing and passing functions"
+contexts = ["item", "body", "fields"]
+
+[[entries]]
+name = "fn returning impl Fn"
+keys = ["fn", "return", "impl", "closure", "factory", "adder", "capture"]
+doc = "Return a closure that captures an argument by move."
+snippet = '''
+fn ${1:make_adder}(${2:n}: i32) -> impl Fn(i32) -> i32 {
+    move |${3:x}| ${3:x} + ${2:n}$0
+}'''
+
+[[entries]]
+name = "fn returning impl FnMut counter"
+keys = ["fn", "return", "fnmut", "counter", "state", "generator", "closure"]
+doc = "Return a closure that owns mutable state and updates it on each call."
+snippet = '''
+fn ${1:counter}() -> impl FnMut() -> u32 {
+    let mut ${2:count} = 0;
+    move || {
+        ${2:count} += 1;
+        ${2:count}$0
+    }
+}'''
+
+[[entries]]
+name = "fn returning Box<dyn Fn>"
+keys = ["fn", "return", "box", "dyn", "closure", "branch", "either", "runtime"]
+doc = "Return one of several closures chosen at runtime, boxed to unify their types."
+snippet = '''
+fn ${1:pick}(${2:double}: bool) -> Box<dyn Fn(i32) -> i32> {
+    if ${2:double} {
+        Box::new(|x| x * 2)
+    } else {
+        Box::new(|x| x)$0
+    }
+}'''
+
+[[entries]]
+name = "fn taking generic F: Fn"
+keys = ["fn", "generic", "closure", "parameter", "callback", "f", "apply"]
+doc = "Accept any closure through a generic parameter with an Fn bound."
+snippet = '''
+fn ${1:apply}<F: Fn(${2:i32}) -> ${3:i32}>(${4:f}: F, ${5:x}: ${2:i32}) -> ${3:i32} {
+    ${4:f}(${5:x})$0
+}'''
+
+[[entries]]
+name = "fn taking impl FnMut"
+keys = ["fn", "fnmut", "closure", "parameter", "callback", "mutable", "each"]
+doc = "Accept a closure that may mutate its captures, calling it repeatedly."
+snippet = '''
+fn ${1:for_each_line}(${2:text}: &str, mut ${3:f}: impl FnMut(&str)) {
+    for ${4:line} in ${2:text}.lines() {
+        ${3:f}(${4:line});$0
+    }
+}'''
+
+[[entries]]
+name = "fn taking impl FnOnce"
+keys = ["fn", "fnonce", "closure", "parameter", "lazy", "once", "default"]
+doc = "Accept a closure called at most once, such as a lazy fallback."
+snippet = '''
+fn ${1:or_else}<T>(${2:value}: Option<T>, ${3:fallback}: impl FnOnce() -> T) -> T {
+    ${2:value}.unwrap_or_else(${3:fallback})$0
+}'''
+
+[[entries]]
+name = "fn taking &dyn Fn"
+keys = ["fn", "dyn", "closure", "parameter", "borrowed", "callback", "nogeneric"]
+doc = "Accept a borrowed closure with dynamic dispatch, keeping the function non-generic."
+snippet = '''
+fn ${1:visit}(${2:items}: &[${3:i32}], ${4:f}: &dyn Fn(${3:i32})) {
+    for ${5:item} in ${2:items} {
+        ${4:f}(*${5:item});$0
+    }
+}'''
+
+[[entries]]
+name = "fn taking fn pointer"
+keys = ["fn", "pointer", "parameter", "function", "callback", "named", "plain"]
+doc = "Accept a plain function or non-capturing closure by function pointer."
+snippet = '''
+fn ${1:apply}(${2:f}: fn(${3:i32}) -> ${4:i32}, ${5:x}: ${3:i32}) -> ${4:i32} {
+    ${2:f}(${5:x})$0
+}'''
+
+[[entries]]
+name = "fn compose two closures"
+keys = ["fn", "compose", "chain", "closures", "generic", "combine", "pipeline"]
+doc = "Combine two closures into one that applies them in sequence."
+snippet = '''
+fn ${1:compose}<A, B, C>(${2:f}: impl Fn(A) -> B, ${3:g}: impl Fn(B) -> C) -> impl Fn(A) -> C {
+    move |x| ${3:g}(${2:f}(x))$0
+}'''
+
+[[entries]]
+name = "recursion via nested fn"
+keys = ["recursion", "recursive", "nested", "fn", "closure", "inner", "helper"]
+doc = "Closures cannot call themselves; define a nested fn for recursion instead."
+snippet = '''
+fn ${1:factorial}(${2:n}: u64) -> u64 {
+    if ${2:n} == 0 { 1 } else { ${2:n} * ${1:factorial}(${2:n} - 1) }$0
+}'''
+
+[[entries]]
+name = "struct generic over closure"
+keys = ["struct", "generic", "closure", "field", "f", "callback", "store", "static"]
+doc = "Store a closure in a struct without boxing by making the struct generic."
+snippet = '''
+struct ${1:Button}<F: Fn()> {
+    ${2:on_click}: F,$0
+}'''
+
+[[entries]]
+name = "impl for struct generic over closure"
+keys = ["impl", "generic", "closure", "struct", "call", "field", "f"]
+doc = "Implement methods on a closure-holding struct and call the stored closure."
+snippet = '''
+impl<F: Fn()> ${1:Button}<F> {
+    fn ${2:click}(&self) {
+        (self.${3:on_click})()$0
+    }
+}'''
+
+[[entries]]
+name = "Box<dyn Fn> field"
+keys = ["field", "box", "dyn", "closure", "callback", "handler", "store"]
+doc = "Struct field holding any closure behind a box."
+snippet = '''
+${1:handler}: Box<dyn Fn(${2:&str})${3: + Send + Sync}>,$0'''
+
+[[entries]]
+name = "Option<Box<dyn FnMut>> field"
+keys = ["field", "option", "box", "dyn", "fnmut", "callback", "optional", "hook"]
+doc = "Optional mutable callback that may be set later."
+snippet = '''
+${1:on_change}: Option<Box<dyn FnMut(${2:&str})>>,$0'''
+
+[[entries]]
+name = "Rc<dyn Fn> field"
+keys = ["field", "rc", "arc", "dyn", "closure", "shared", "clone", "callback"]
+doc = "Shared closure that several owners can hold and clone cheaply."
+snippet = '''
+${1:callback}: ${2:Rc}<dyn Fn(${3:i32})>,$0'''
+
+[[entries]]
+name = "fn pointer field"
+keys = ["field", "fn", "pointer", "table", "dispatch", "callback", "plain"]
+doc = "Struct field holding a plain function pointer."
+snippet = '''
+${1:handler}: fn(${2:&str}) -> ${3:bool},$0'''
+
+[[entries]]
+name = "method taking closure with where"
+keys = ["method", "closure", "where", "bound", "generic", "f", "self"]
+doc = "Method accepting a closure with its bound listed in a where clause."
+snippet = '''
+fn ${1:each}<F>(&self, mut ${2:f}: F)
+where
+    F: FnMut(&${3:Item}),
+{
+    for ${4:item} in &self.${5:items} {
+        ${2:f}(${4:item});$0
+    }
+}'''
+
+[[entries]]
+name = "fn returning closure borrowing arg"
+keys = ["fn", "return", "closure", "borrow", "lifetime", "reference", "capture"]
+doc = "Return a closure that borrows from an argument, tying the lifetimes together."
+snippet = '''
+fn ${1:starts_with}<'a>(${2:prefix}: &'a str) -> impl Fn(&str) -> bool + 'a {
+    move |${3:s}| ${3:s}.starts_with(${2:prefix})$0
+}'''

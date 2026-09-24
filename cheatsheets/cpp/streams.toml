@@ -1,202 +1,157 @@
-title = "Streams and files"
+title = "Console I/O and formatting"
 contexts = ["statement", "expression"]
 
 [[entries]]
 name = "cout"
-keys = ["cout", "print", "output", "<<"]
+keys = ["cout", "print", "output", "<<", "write", "display", "show"]
 doc = "Write to standard output with a newline."
-snippet = """
-std::cout << ${1:value} << '\\n';$0"""
+snippet = '''
+std::cout << ${1:value} << '\n';$0'''
+
+[[entries]]
+name = "cout several values"
+keys = ["cout", "print", "multiple", "several", "chain", "<<", "label"]
+doc = "Chain several values and labels in one statement."
+snippet = '''
+std::cout << "${1:x = }" << ${2:x} << ", ${3:y = }" << ${4:y} << '\n';$0'''
 
 [[entries]]
 name = "cerr"
-keys = ["cerr", "error", "stderr"]
-doc = "Write to standard error."
-snippet = """
-std::cerr << ${1:"error: "} << ${2:msg} << '\\n';$0"""
+keys = ["cerr", "error", "stderr", "print", "warning"]
+doc = "Write to unbuffered standard error."
+snippet = '''
+std::cerr << ${1:"error: "} << ${2:msg} << '\n';$0'''
 
 [[entries]]
-name = "cin"
-keys = ["cin", "read", "input", ">>"]
-doc = "Read a whitespace-separated value from standard input."
-snippet = """
-std::cin >> ${1:value};$0"""
-
-[[entries]]
-name = "getline"
-keys = ["getline", "read", "line", "input"]
-doc = "Read a whole line into a string."
-snippet = """
-std::string ${1:line};
-std::getline(${2:std::cin}, ${1:line});$0"""
-
-[[entries]]
-name = "read all lines"
-keys = ["getline", "while", "lines", "loop"]
-doc = "Loop over every line of a stream."
-snippet = """
-for (std::string ${1:line}; std::getline(${2:in}, ${1:line});) {
-    $0
-}"""
-
-[[entries]]
-name = "std::print"
-keys = ["print", "println", "format", "output"]
-doc = "C++23 formatted print to stdout."
-snippet = """
-std::println("{${1:}}", ${2:value});$0"""
+name = "clog"
+keys = ["clog", "log", "stderr", "buffered", "diagnostic"]
+doc = "Buffered logging to standard error."
+snippet = '''
+std::clog << ${1:msg} << '\n';$0'''
 
 [[entries]]
 name = "std::endl"
-keys = ["endl", "newline", "flush"]
-doc = "Newline plus flush (prefer '\\n' when flushing is not needed)."
-snippet = """
-std::endl$0"""
+keys = ["endl", "newline", "flush", "line", "end"]
+doc = "Newline plus flush; prefer '\\n' when flushing is not needed."
+snippet = '''
+std::endl$0'''
 
 [[entries]]
-name = "stringstream"
-keys = ["stringstream", "sstream", "ostringstream", "build"]
-doc = "Build a string with stream insertion."
-snippet = """
-std::ostringstream ${1:oss};
-${1:oss} << ${2:value};
-std::string ${3:s} = ${1:oss}.str();$0"""
+name = "flush"
+keys = ["flush", "cout", "buffer", "force", "output", "prompt"]
+doc = "Force buffered output to appear, e.g. before reading input."
+snippet = '''
+std::cout << std::flush;$0'''
 
 [[entries]]
-name = "istringstream parse"
-keys = ["istringstream", "stringstream", "parse", "extract"]
-doc = "Parse values out of a string."
-snippet = """
-std::istringstream ${1:iss}(${2:s});
-${1:iss} >> ${3:value};$0"""
+name = "std::print / println"
+keys = ["print", "println", "format", "output", "c++23", "fmt"]
+doc = "C++23 formatted print to stdout, println adds a newline."
+snippet = '''
+std::println("{}", ${1:value});$0'''
 
 [[entries]]
-name = "ifstream read"
-keys = ["ifstream", "file", "read", "open"]
-doc = "Open a file for reading and check it succeeded."
-snippet = """
-std::ifstream ${1:in}(${2:path});
-if (!${1:in}) {
-    ${3:return;}
-}
-$0"""
+name = "print to stream"
+keys = ["print", "println", "stream", "cerr", "file", "format", "c++23"]
+doc = "C++23 formatted print to any ostream."
+snippet = '''
+std::println(${1:std::cerr}, "{}", ${2:value});$0'''
 
 [[entries]]
-name = "read whole file"
-keys = ["ifstream", "file", "read", "slurp", "contents"]
-doc = "Read an entire file into a string."
-snippet = """
-std::ifstream ${1:in}(${2:path}, std::ios::binary);
-std::string ${3:contents}((std::istreambuf_iterator<char>(${1:in})), std::istreambuf_iterator<char>());$0"""
+name = "cin"
+keys = ["cin", "read", "input", ">>", "scan", "enter"]
+doc = "Read a whitespace-separated value from standard input."
+snippet = '''
+std::cin >> ${1:value};$0'''
 
 [[entries]]
-name = "ofstream write"
-keys = ["ofstream", "file", "write", "save"]
-doc = "Open a file for writing and write to it."
-snippet = """
-std::ofstream ${1:out}(${2:path});
-${1:out} << ${3:contents};$0"""
+name = "cin several values"
+keys = ["cin", "read", "multiple", "several", "two", "chain", ">>"]
+doc = "Read several values in one statement."
+snippet = '''
+std::cin >> ${1:a} >> ${2:b};$0'''
 
 [[entries]]
-name = "ofstream append"
-keys = ["ofstream", "file", "append", "ios::app"]
-doc = "Open a file in append mode."
-snippet = """
-std::ofstream ${1:out}(${2:path}, std::ios::app);$0"""
+name = "prompt and read"
+keys = ["prompt", "cin", "cout", "ask", "input", "read", "enter"]
+doc = "Print a prompt then read the answer."
+snippet = '''
+std::cout << "${1:Enter a number: }";
+${2:int} ${3:value};
+std::cin >> ${3:value};$0'''
 
 [[entries]]
-name = "binary read"
-keys = ["read", "binary", "ifstream", "bytes"]
-doc = "Read raw bytes from a binary stream."
-snippet = """
-${1:in}.read(reinterpret_cast<char *>(${2:&data}), ${3:sizeof data});$0"""
+name = "getline"
+keys = ["getline", "read", "line", "input", "whole", "spaces", "string"]
+doc = "Read a whole line, including spaces, into a string."
+snippet = '''
+std::string ${1:line};
+std::getline(${2:std::cin}, ${1:line});$0'''
 
 [[entries]]
-name = "binary write"
-keys = ["write", "binary", "ofstream", "bytes"]
-doc = "Write raw bytes to a binary stream."
-snippet = """
-${1:out}.write(reinterpret_cast<const char *>(${2:&data}), ${3:sizeof data});$0"""
-
-[[entries]]
-name = "iomanip precision"
-keys = ["setprecision", "fixed", "iomanip", "decimal"]
-doc = "Print a floating value with fixed decimals."
-snippet = """
-std::cout << std::fixed << std::setprecision(${1:2}) << ${2:value};$0"""
-
-[[entries]]
-name = "iomanip width"
-keys = ["setw", "setfill", "iomanip", "pad", "align"]
-doc = "Pad output to a field width."
-snippet = """
-std::cout << std::setw(${1:8}) << std::setfill(${2:' '}) << ${3:value};$0"""
-
-[[entries]]
-name = "hex output"
-keys = ["hex", "dec", "oct", "iomanip", "base"]
-doc = "Print an integer in hexadecimal."
-snippet = """
-std::cout << std::hex << ${1:value} << std::dec;$0"""
-
-[[entries]]
-name = "boolalpha"
-keys = ["boolalpha", "bool", "iomanip"]
-doc = "Print booleans as true/false."
-snippet = """
-std::cout << std::boolalpha << ${1:flag};$0"""
-
-[[entries]]
-name = "filesystem path"
-keys = ["path", "filesystem", "fs"]
-doc = "Construct and join a filesystem path."
-snippet = """
-std::filesystem::path ${1:p} = ${2:dir} / ${3:"file.txt"};$0"""
-
-[[entries]]
-name = "filesystem exists"
-keys = ["exists", "filesystem", "fs", "file"]
-doc = "Test whether a path exists."
-snippet = """
-std::filesystem::exists(${1:path})$0"""
-
-[[entries]]
-name = "filesystem create_directories"
-keys = ["create_directories", "mkdir", "filesystem", "fs"]
-doc = "Create a directory and all missing parents."
-snippet = """
-std::filesystem::create_directories(${1:path});$0"""
-
-[[entries]]
-name = "filesystem directory_iterator"
-keys = ["directory_iterator", "listdir", "filesystem", "fs", "walk"]
-doc = "Iterate over the entries of a directory."
-snippet = """
-for (const auto &${1:entry} : std::filesystem::${2:directory_iterator}(${3:dir})) {
+name = "read all lines"
+keys = ["getline", "while", "lines", "loop", "each", "read", "until eof"]
+doc = "Loop over every line of a stream until EOF."
+snippet = '''
+for (std::string ${1:line}; std::getline(${2:in}, ${1:line});) {
     $0
-}"""
+}'''
 
 [[entries]]
-name = "filesystem path parts"
-keys = ["filename", "extension", "stem", "parent_path", "filesystem"]
-doc = "Extract a component of a path."
-snippet = """
-${1:p}.${2:filename}()$0"""
-
-[[entries]]
-name = "filesystem file_size / remove"
-keys = ["file_size", "remove", "rename", "copy", "filesystem"]
-doc = "Common filesystem operations."
-snippet = """
-std::filesystem::${1:file_size}(${2:path})$0"""
-
-[[entries]]
-name = "filesystem error_code"
-keys = ["error_code", "filesystem", "noexcept"]
-doc = "Filesystem call that reports errors without throwing."
-snippet = """
-std::error_code ${1:ec};
-std::filesystem::${2:remove}(${3:path}, ${1:ec});
-if (${1:ec}) {
+name = "read values until EOF"
+keys = ["cin", "while", "loop", "eof", "read", "all", "numbers", "until"]
+doc = "Read values until input ends or fails, without testing eof() first."
+snippet = '''
+for (${1:int} ${2:x}; ${3:std::cin} >> ${2:x};) {
     $0
-}"""
+}'''
+
+[[entries]]
+name = "read n values into vector"
+keys = ["cin", "vector", "read", "n", "loop", "input", "numbers"]
+doc = "Read a count then that many values."
+snippet = '''
+${1:int} ${2:n};
+std::cin >> ${2:n};
+std::vector<${3:int}> ${4:v}(${2:n});
+for (auto &${5:x} : ${4:v}) {
+    std::cin >> ${5:x};
+}$0'''
+
+[[entries]]
+name = "cin fail handling"
+keys = ["cin", "fail", "clear", "ignore", "invalid", "input", "retry", "validate"]
+doc = "Recover from bad input by clearing the error state and discarding the line."
+snippet = '''
+if (!(std::cin >> ${1:value})) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    $0
+}'''
+
+[[entries]]
+name = "cin ignore rest of line"
+keys = ["ignore", "cin", "newline", "getline", "after", "mixing", "discard"]
+doc = "Discard the newline left after >> before calling getline."
+snippet = '''
+std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');$0'''
+
+[[entries]]
+name = "read loop with validation"
+keys = ["while", "input", "validate", "loop", "retry", "until", "valid", "cin"]
+doc = "Keep asking until a valid value is entered."
+snippet = '''
+${1:int} ${2:value};
+while (!(std::cin >> ${2:value})) {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "${3:Try again: }";
+}$0'''
+
+[[entries]]
+name = "sync_with_stdio"
+keys = ["sync_with_stdio", "tie", "fast", "io", "speed", "competitive", "performance"]
+doc = "Speed up iostreams by unsyncing from C stdio and untying cin from cout."
+snippet = '''
+std::ios::sync_with_stdio(false);
+std::cin.tie(nullptr);$0'''

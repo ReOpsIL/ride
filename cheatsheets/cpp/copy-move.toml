@@ -1,0 +1,162 @@
+title = "Copy, move and destruction"
+contexts = ["fields"]
+
+[[entries]]
+name = "destructor"
+keys = ["destructor", "dtor", "cleanup", "release", "~", "free"]
+doc = "Run cleanup when the object is destroyed."
+snippet = """
+~${1:Name}() {
+    $0
+}"""
+
+[[entries]]
+name = "defaulted destructor"
+keys = ["destructor", "dtor", "default", "= default", "~"]
+doc = "Compiler-generated destructor written out explicitly."
+snippet = """
+~${1:Name}() = default;$0"""
+
+[[entries]]
+name = "copy constructor"
+keys = ["constructor", "ctor", "copy", "clone", "duplicate"]
+doc = "Construct from another instance of the same type."
+snippet = """
+${1:Name}(const ${1:Name} &${2:other}) : ${3:value_}(${2:other}.${3:value_}) {
+    $0
+}"""
+
+[[entries]]
+name = "move constructor"
+keys = ["constructor", "ctor", "move", "steal", "&&", "transfer"]
+doc = "Steal resources from an rvalue of the same type."
+snippet = """
+${1:Name}(${1:Name} &&${2:other}) noexcept : ${3:value_}(std::move(${2:other}.${3:value_})) {
+    $0
+}"""
+
+[[entries]]
+name = "move constructor with exchange"
+keys = ["constructor", "ctor", "move", "exchange", "pointer", "raw"]
+doc = "Move constructor that takes a raw pointer and nulls the source."
+snippet = """
+${1:Name}(${1:Name} &&${2:other}) noexcept : ${3:ptr_}(std::exchange(${2:other}.${3:ptr_}, nullptr)) {}$0"""
+
+[[entries]]
+name = "copy assignment"
+keys = ["assignment", "operator=", "copy", "assign", "="]
+doc = "Assign from another instance and return *this."
+snippet = """
+${1:Name} &operator=(const ${1:Name} &${2:other}) {
+    if (this != &${2:other}) {
+        $0
+    }
+    return *this;
+}"""
+
+[[entries]]
+name = "move assignment"
+keys = ["assignment", "operator=", "move", "assign", "&&"]
+doc = "Move-assign from an rvalue and return *this."
+snippet = """
+${1:Name} &operator=(${1:Name} &&${2:other}) noexcept {
+    if (this != &${2:other}) {
+        $0
+    }
+    return *this;
+}"""
+
+[[entries]]
+name = "copy-and-swap assignment"
+keys = ["assignment", "operator=", "swap", "copy", "idiom", "unified"]
+doc = "Assignment that takes by value and swaps, covering copy and move at once."
+snippet = """
+${1:Name} &operator=(${1:Name} ${2:other}) noexcept {
+    swap(*this, ${2:other});
+    return *this;$0
+}"""
+
+[[entries]]
+name = "= default"
+keys = ["default", "defaulted", "generate", "special", "compiler"]
+doc = "Ask the compiler to generate a special member."
+snippet = """
+${1:Name}(${2:const Name &}) = default;$0"""
+
+[[entries]]
+name = "= delete"
+keys = ["delete", "deleted", "noncopyable", "forbid", "special"]
+doc = "Forbid a special member function."
+snippet = """
+${1:Name}(${2:const Name &}) = delete;$0"""
+
+[[entries]]
+name = "non-copyable"
+keys = ["delete", "noncopyable", "copy", "forbid", "unique"]
+doc = "Delete copy construction and copy assignment."
+snippet = """
+${1:Name}(const ${1:Name} &) = delete;
+${1:Name} &operator=(const ${1:Name} &) = delete;$0"""
+
+[[entries]]
+name = "move-only"
+keys = ["move", "only", "default", "delete", "unique", "resource"]
+doc = "Delete copying but default moving."
+snippet = """
+${1:Name}(const ${1:Name} &) = delete;
+${1:Name} &operator=(const ${1:Name} &) = delete;
+${1:Name}(${1:Name} &&) noexcept = default;
+${1:Name} &operator=(${1:Name} &&) noexcept = default;$0"""
+
+[[entries]]
+name = "rule of three"
+keys = ["rule", "three", "copy", "destructor", "special", "owning"]
+doc = "Declare destructor, copy constructor and copy assignment together."
+snippet = """
+~${1:Name}();
+${1:Name}(const ${1:Name} &${2:other});
+${1:Name} &operator=(const ${1:Name} &${2:other});$0"""
+
+[[entries]]
+name = "rule of five"
+keys = ["rule", "five", "special", "default", "copy", "move"]
+doc = "Declare all five special members as defaulted."
+snippet = """
+~${1:Name}() = default;
+${1:Name}(const ${1:Name} &) = default;
+${1:Name} &operator=(const ${1:Name} &) = default;
+${1:Name}(${1:Name} &&) noexcept = default;
+${1:Name} &operator=(${1:Name} &&) noexcept = default;$0"""
+
+[[entries]]
+name = "rule of zero"
+keys = ["rule", "zero", "special", "none", "raii", "members"]
+doc = "Declare no special members; let std members such as string and vector manage resources."
+snippet = """
+${1:std::vector<int>} ${2:items_};$0"""
+
+[[entries]]
+name = "virtual destructor"
+keys = ["virtual", "destructor", "dtor", "base", "polymorphic"]
+doc = "Destructor that lets a derived object be deleted through a base pointer."
+snippet = """
+virtual ~${1:Name}() = default;$0"""
+
+[[entries]]
+name = "protected destructor"
+keys = ["protected", "destructor", "dtor", "base", "interface", "non-virtual"]
+doc = "Non-virtual destructor made protected so a base cannot be deleted polymorphically."
+snippet = """
+protected:
+    ~${1:Name}() = default;$0"""
+
+[[entries]]
+name = "member swap"
+keys = ["swap", "member", "exchange", "noexcept", "friend"]
+doc = "Friend swap that exchanges every member, found by ADL."
+snippet = """
+friend void swap(${1:Name} &a, ${1:Name} &b) noexcept {
+    using std::swap;
+    swap(a.${2:value_}, b.${2:value_});
+    $0
+}"""

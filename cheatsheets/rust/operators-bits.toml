@@ -1,0 +1,114 @@
+title = "Bits and integer math"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "test bit"
+keys = ["bit", "test", "mask", "flag", "set", "check", "and", "nth"]
+doc = "Check whether a specific bit or flag is set."
+snippet = '''
+${1:flags} & (1 << ${2:n}) != 0$0'''
+
+[[entries]]
+name = "set / clear / toggle bit"
+keys = ["bit", "set", "clear", "toggle", "flip", "mask", "or", "xor"]
+doc = "Set a bit with or, clear it with and-not, toggle it with xor."
+snippet = '''
+${1:flags} ${2:|=} 1 << ${3:n};$0'''
+
+[[entries]]
+name = "mask low bits"
+keys = ["mask", "low", "bits", "extract", "nibble", "byte", "and", "hex"]
+doc = "Keep only the low bits of a value with an and-mask."
+snippet = '''
+${1:value} & ${2:0xFF}$0'''
+
+[[entries]]
+name = "extract bit field"
+keys = ["bits", "field", "extract", "shift", "mask", "pack", "unpack"]
+doc = "Shift a value right then mask to read a packed bit field."
+snippet = '''
+(${1:value} >> ${2:shift}) & ${3:0xF}$0'''
+
+[[entries]]
+name = "count_ones / leading_zeros"
+keys = ["count_ones", "leading_zeros", "trailing_zeros", "popcount", "bits", "clz", "ctz"]
+doc = "Count set bits or leading and trailing zero bits of an integer."
+snippet = '''
+${1:x}.${2:count_ones}()$0'''
+
+[[entries]]
+name = "rotate_left / swap_bytes"
+keys = ["rotate", "rotate_left", "rotate_right", "swap_bytes", "endian", "bits", "reverse_bits"]
+doc = "Rotate bits or reorder the bytes of an integer."
+snippet = '''
+${1:x}.${2:rotate_left}(${3:8})$0'''
+
+[[entries]]
+name = "to_be_bytes / from_le_bytes"
+keys = ["bytes", "endian", "big", "little", "serialize", "to_be_bytes", "from_le_bytes"]
+doc = "Convert an integer to or from its byte representation in a chosen endianness."
+snippet = '''
+${1:u32}::from_le_bytes(${2:bytes})$0'''
+
+[[entries]]
+name = "is_power_of_two / next_power_of_two"
+keys = ["power", "two", "is_power_of_two", "next_power_of_two", "align", "round"]
+doc = "Test for or round up to a power of two."
+snippet = '''
+${1:n}.${2:next_power_of_two}()$0'''
+
+[[entries]]
+name = "abs_diff / signum"
+keys = ["abs_diff", "signum", "difference", "sign", "distance", "unsigned"]
+doc = "Absolute difference of two integers without overflow, or the sign of a number."
+snippet = '''
+${1:a}.abs_diff(${2:b})$0'''
+
+[[entries]]
+name = "div_euclid / rem_euclid"
+keys = ["div_euclid", "rem_euclid", "floor", "divide", "modulo", "negative", "wrap"]
+doc = "Division and remainder that behave like floor division for negative values."
+snippet = '''
+${1:a}.${2:rem_euclid}(${3:b})$0'''
+
+[[entries]]
+name = "div_ceil / isqrt"
+keys = ["div_ceil", "isqrt", "ceiling", "round", "up", "sqrt", "integer", "pages"]
+doc = "Divide rounding up, or take an integer square root."
+snippet = '''
+${1:total}.div_ceil(${2:per_page})$0'''
+
+[[entries]]
+name = "ilog2 / ilog10"
+keys = ["ilog", "log", "log2", "log10", "digits", "bits", "integer"]
+doc = "Integer logarithm, useful for digit or bit counts."
+snippet = '''
+${1:n}.${2:ilog10}()$0'''
+
+[[entries]]
+name = "f64 max / min"
+keys = ["float", "max", "min", "largest", "smallest", "f64", "nan"]
+doc = "Pick the larger or smaller of two floats, ignoring NaN."
+snippet = '''
+${1:a}.max(${2:b})$0'''
+
+[[entries]]
+name = "float compare with epsilon"
+keys = ["float", "equal", "epsilon", "approx", "compare", "tolerance", "abs"]
+doc = "Compare floats for near-equality instead of exact equality."
+snippet = '''
+(${1:a} - ${2:b}).abs() < ${3:f64::EPSILON}$0'''
+
+[[entries]]
+name = "integer to float exact"
+keys = ["float", "int", "convert", "from", "f64", "i32", "lossless"]
+doc = "Convert an integer to f64 losslessly with From, where the width allows it."
+snippet = '''
+f64::from(${1:value})$0'''
+
+[[entries]]
+name = "hex formatting"
+keys = ["hex", "format", "binary", "octal", "print", "bits", "pad"]
+doc = "Print an integer in hex, binary or octal with a width and leading zeros."
+snippet = '''
+format!("{:#0${1:10}${2:x}}", ${3:value})$0'''

@@ -56,8 +56,12 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
         | "struct_item"
         | "enum_item"
         | "type_item"
-        | "union_item" => Context::Type,
-        "const_item" | "static_item" => {
+        | "union_item"
+            if past_keyword(node, start) =>
+        {
+            Context::Type
+        }
+        "const_item" | "static_item" if past_keyword(node, start) => {
             if head.contains('=') {
                 Context::Expression
             } else {
@@ -68,6 +72,17 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
         _ => return None,
     };
     Some(ctx)
+}
+
+const ITEM_KEYWORDS: &[&str] = &[
+    "fn", "impl", "trait", "struct", "enum", "type", "union", "const", "static",
+];
+
+fn past_keyword(node: Node<'_>, start: usize) -> bool {
+    let mut cursor = node.walk();
+    node.children(&mut cursor)
+        .find(|child| ITEM_KEYWORDS.contains(&child.kind()))
+        .is_some_and(|keyword| start > keyword.end_byte())
 }
 
 fn statement_head(text: &str, start: usize) -> &str {

@@ -54,11 +54,11 @@ snippet = '''
 install(EXPORT ${1:name}Targets
     FILE ${1:name}Targets.cmake
     NAMESPACE ${1:name}::
-    DESTINATION ${2:lib/cmake/${1:name}})$0'''
+    DESTINATION ${2:lib/cmake/${1:name\}})$0'''
 
 [[entries]]
 name = "add_test WORKING_DIRECTORY"
 keys = ["add_test", "working", "directory", "cwd"]
 doc = "Register a test that runs in a chosen working directory."
 snippet = '''
-add_test(NAME ${1:name} COMMAND ${2:target} WORKING_DIRECTORY ${3:${CMAKE_CURRENT_SOURCE_DIR}})$0'''
+add_test(NAME ${1:name} COMMAND ${2:target} WORKING_DIRECTORY ${3:${CMAKE_CURRENT_SOURCE_DIR\}})$0'''

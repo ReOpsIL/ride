@@ -1,0 +1,144 @@
+title = "Queues, heaps and lists"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "VecDeque::new"
+keys = ["vecdeque", "deque", "queue", "new", "fifo", "ring", "buffer"]
+doc = "Create an empty double-ended queue."
+snippet = '''
+let mut ${1:queue}: VecDeque<${2:T}> = VecDeque::new();$0'''
+
+[[entries]]
+name = "VecDeque::from"
+keys = ["vecdeque", "deque", "queue", "from", "vec", "init", "literal"]
+doc = "Create a queue from an array or vector."
+snippet = '''
+VecDeque::from(${1:vec![1, 2, 3]})$0'''
+
+[[entries]]
+name = "push_back / pop_front"
+keys = ["push", "pop", "back", "front", "deque", "queue", "enqueue", "dequeue"]
+doc = "Enqueue at the back and dequeue from the front."
+snippet = '''
+${1:queue}.push_back(${2:value});$0'''
+
+[[entries]]
+name = "push_front / pop_back"
+keys = ["push", "pop", "front", "back", "deque", "prepend", "insert"]
+doc = "Add at the front or remove from the back."
+snippet = '''
+${1:queue}.push_front(${2:value});$0'''
+
+[[entries]]
+name = "front / back"
+keys = ["front", "back", "peek", "first", "last", "deque", "queue"]
+doc = "Borrow the first or last element without removing it."
+snippet = '''
+${1:queue}.${2:front}()$0'''
+
+[[entries]]
+name = "deque index"
+keys = ["deque", "index", "get", "brackets", "element", "queue"]
+doc = "Index a VecDeque from the front like a vector."
+snippet = '''
+${1:queue}[${2:i}]$0'''
+
+[[entries]]
+name = "BFS queue loop"
+keys = ["bfs", "queue", "while", "pop", "deque", "visit", "breadth", "search"]
+doc = "Process a queue until empty, pushing new work as it is discovered."
+snippet = '''
+let mut ${1:queue} = VecDeque::from([${2:start}]);
+while let Some(${3:node}) = ${1:queue}.pop_front() {
+    $0
+}'''
+
+[[entries]]
+name = "sliding window deque"
+keys = ["deque", "window", "ring", "buffer", "last", "n", "recent", "bounded"]
+doc = "Keep only the most recent n items in a bounded queue."
+snippet = '''
+${1:recent}.push_back(${2:value});
+if ${1:recent}.len() > ${3:n} {
+    ${1:recent}.pop_front();
+}$0'''
+
+[[entries]]
+name = "make_contiguous"
+keys = ["deque", "slice", "contiguous", "sort", "as_slices", "vec"]
+doc = "Rearrange a deque into one contiguous slice, for sorting or slicing."
+snippet = '''
+${1:queue}.make_contiguous()$0'''
+
+[[entries]]
+name = "BinaryHeap"
+keys = ["binaryheap", "heap", "priority", "queue", "max", "new", "largest"]
+doc = "Max-heap priority queue that pops the largest element first."
+snippet = '''
+let mut ${1:heap} = BinaryHeap::new();
+${1:heap}.push(${2:value});$0'''
+
+[[entries]]
+name = "min-heap with Reverse"
+keys = ["heap", "min", "reverse", "priority", "smallest", "queue", "binaryheap"]
+doc = "Wrap items in Reverse so the smallest element pops first."
+snippet = '''
+let mut ${1:heap} = BinaryHeap::new();
+${1:heap}.push(std::cmp::Reverse(${2:value}));$0'''
+
+[[entries]]
+name = "heap pop / peek"
+keys = ["heap", "pop", "peek", "top", "max", "priority", "next"]
+doc = "Remove or borrow the largest element."
+snippet = '''
+${1:heap}.${2:pop}()$0'''
+
+[[entries]]
+name = "heap from Vec"
+keys = ["heap", "from", "vec", "heapify", "build", "binaryheap", "collect"]
+doc = "Build a heap from a vector or iterator in linear time."
+snippet = '''
+BinaryHeap::from(${1:items})$0'''
+
+[[entries]]
+name = "into_sorted_vec"
+keys = ["heap", "sorted", "vec", "into", "ascending", "heapsort"]
+doc = "Consume a heap into a vector in ascending order."
+snippet = '''
+${1:heap}.into_sorted_vec()$0'''
+
+[[entries]]
+name = "Dijkstra heap loop"
+keys = ["dijkstra", "heap", "shortest", "path", "priority", "reverse", "graph"]
+doc = "Pop the cheapest (cost, node) pair first with a min-heap of tuples."
+snippet = '''
+let mut ${1:heap} = BinaryHeap::new();
+${1:heap}.push(std::cmp::Reverse((${2:0}, ${3:start})));
+while let Some(std::cmp::Reverse((${4:cost}, ${5:node}))) = ${1:heap}.pop() {
+    $0
+}'''
+
+[[entries]]
+name = "LinkedList"
+keys = ["linkedlist", "list", "linked", "new", "push", "front", "back"]
+doc = "Doubly linked list, rarely better than VecDeque."
+snippet = '''
+let mut ${1:list}: LinkedList<${2:T}> = LinkedList::new();
+${1:list}.push_back(${3:value});$0'''
+
+[[entries]]
+name = "iterate queue"
+keys = ["for", "deque", "queue", "heap", "iter", "loop", "each"]
+doc = "Iterate over a queue or heap by reference, heaps in arbitrary order."
+snippet = '''
+for ${1:item} in &${2:queue} {
+    $0
+}'''
+
+[[entries]]
+name = "use queues"
+keys = ["use", "std", "collections", "vecdeque", "binaryheap", "import", "reverse"]
+doc = "Import the queue types and Reverse."
+snippet = '''
+use std::cmp::Reverse;
+use std::collections::{BinaryHeap, VecDeque};$0'''

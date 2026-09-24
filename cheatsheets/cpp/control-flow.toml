@@ -3,7 +3,7 @@ contexts = ["statement", "case", "default"]
 
 [[entries]]
 name = "if"
-keys = ["if", "cond"]
+keys = ["if", "cond", "condition", "branch", "when"]
 doc = "Branch on a boolean condition."
 snippet = """
 if (${1:condition}) {
@@ -12,7 +12,7 @@ if (${1:condition}) {
 
 [[entries]]
 name = "if else"
-keys = ["if", "else"]
+keys = ["if", "else", "otherwise", "branch"]
 doc = "Two-way branch."
 snippet = """
 if (${1:condition}) {
@@ -22,8 +22,21 @@ if (${1:condition}) {
 }"""
 
 [[entries]]
+name = "if else if else"
+keys = ["if", "else", "elif", "chain", "ladder", "three"]
+doc = "Chain of conditions tested in order."
+snippet = """
+if (${1:a}) {
+    $2
+} else if (${3:b}) {
+    $4
+} else {
+    $0
+}"""
+
+[[entries]]
 name = "else if"
-keys = ["else", "if", "elif"]
+keys = ["else", "if", "elif", "another"]
 doc = "Additional branch after an if."
 snippet = """
 else if (${1:condition}) {
@@ -31,8 +44,62 @@ else if (${1:condition}) {
 }"""
 
 [[entries]]
+name = "if not"
+keys = ["if", "not", "!", "negate", "unless"]
+doc = "Branch when a condition is false."
+snippet = """
+if (!${1:condition}) {
+    $0
+}"""
+
+[[entries]]
+name = "if equal"
+keys = ["if", "equal", "==", "compare", "same"]
+doc = "Branch on equality; == compares, = assigns."
+snippet = """
+if (${1:a} == ${2:b}) {
+    $0
+}"""
+
+[[entries]]
+name = "if and / or"
+keys = ["if", "and", "or", "&&", "||", "logical", "both", "either"]
+doc = "Combine conditions with && and ||, which short-circuit."
+snippet = """
+if (${1:a} ${2:&&} ${3:b}) {
+    $0
+}"""
+
+[[entries]]
+name = "if in range"
+keys = ["if", "range", "between", "bounds", "<=", "check"]
+doc = "Test that a value lies inside a half-open range."
+snippet = """
+if (${1:0} <= ${2:x} && ${2:x} < ${3:n}) {
+    $0
+}"""
+
+[[entries]]
+name = "if null check"
+keys = ["if", "null", "nullptr", "pointer", "check", "valid"]
+doc = "Branch when a pointer is non-null."
+snippet = """
+if (${1:ptr} != nullptr) {
+    $0
+}"""
+
+[[entries]]
+name = "if not empty"
+keys = ["if", "empty", "container", "size", "check", "vector"]
+doc = "Branch when a container or string has elements."
+snippet = """
+if (!${1:items}.empty()) {
+    $0
+}"""
+
+[[entries]]
 name = "if with initializer"
-keys = ["if", "init"]
+keys = ["if", "init", "scoped", "declare", ";", "find"]
 doc = "C++17 if with a scoped initializer before the condition."
 snippet = """
 if (${1:auto it = m.find(key)}; ${2:it != m.end()}) {
@@ -40,8 +107,27 @@ if (${1:auto it = m.find(key)}; ${2:it != m.end()}) {
 }"""
 
 [[entries]]
+name = "if with declaration"
+keys = ["if", "declare", "auto", "pointer", "optional", "truthy"]
+doc = "Declare a variable in the condition and branch on its truth."
+snippet = """
+if (auto ${1:value} = ${2:lookup()}) {
+    $0
+}"""
+
+[[entries]]
+name = "if optional has value"
+keys = ["if", "optional", "has_value", "nullopt", "value", "check"]
+doc = "Branch when an optional holds a value."
+snippet = """
+if (${1:opt}.has_value()) {
+    auto &${2:v} = *${1:opt};
+    $0
+}"""
+
+[[entries]]
 name = "if constexpr"
-keys = ["if", "constexpr", "compile"]
+keys = ["if", "constexpr", "compile", "template", "static"]
 doc = "Compile-time branch that discards the untaken side."
 snippet = """
 if constexpr (${1:std::is_integral_v<T>}) {
@@ -49,8 +135,19 @@ if constexpr (${1:std::is_integral_v<T>}) {
 }"""
 
 [[entries]]
+name = "if constexpr else"
+keys = ["if", "constexpr", "else", "compile", "template"]
+doc = "Compile-time two-way branch."
+snippet = """
+if constexpr (${1:std::is_integral_v<T>}) {
+    $2
+} else {
+    $0
+}"""
+
+[[entries]]
 name = "if consteval"
-keys = ["if", "consteval", "constant"]
+keys = ["if", "consteval", "constant", "compile", "c++23"]
 doc = "C++23 branch taken only during constant evaluation."
 snippet = """
 if consteval {
@@ -58,61 +155,17 @@ if consteval {
 }"""
 
 [[entries]]
-name = "switch"
-keys = ["switch", "case"]
-doc = "Multi-way branch on an integral or enum value."
+name = "[[likely]] branch"
+keys = ["likely", "unlikely", "attribute", "if", "hint", "branch"]
+doc = "C++20 hint that a branch is usually taken."
 snippet = """
-switch (${1:value}) {
-    case ${2:0}:
-        $0
-        break;
-    default:
-        break;
+if (${1:condition}) [[${2:likely}]] {
+    $0
 }"""
-
-[[entries]]
-name = "switch with initializer"
-keys = ["switch", "init"]
-doc = "C++17 switch with a scoped initializer."
-snippet = """
-switch (${1:auto v = get()}; ${2:v}) {
-    case ${3:0}:
-        $0
-        break;
-    default:
-        break;
-}"""
-
-[[entries]]
-name = "case"
-keys = ["case", "switch"]
-doc = "One label inside a switch."
-snippet = """
-case ${1:value}:
-    $0
-    break;"""
-
-[[entries]]
-name = "case fallthrough"
-keys = ["case", "fallthrough", "switch"]
-doc = "Case that intentionally falls into the next label."
-snippet = """
-case ${1:value}:
-    $0
-    [[fallthrough]];"""
-
-[[entries]]
-name = "default case"
-keys = ["default", "case", "switch"]
-doc = "Label taken when no case matches."
-snippet = """
-default:
-    $0
-    break;"""
 
 [[entries]]
 name = "block"
-keys = ["block", "scope", "braces"]
+keys = ["block", "scope", "braces", "nested", "{}"]
 doc = "Nested scope that ends the lifetime of its locals."
 snippet = """
 {
@@ -121,10 +174,27 @@ snippet = """
 
 [[entries]]
 name = "early return guard"
-keys = ["if", "return", "guard", "early"]
+keys = ["if", "return", "guard", "early", "precondition", "bail"]
 doc = "Return early when a precondition fails."
 snippet = """
 if (${1:!ok}) {
     return ${2:};
+}
+$0"""
+
+[[entries]]
+name = "ternary assignment"
+keys = ["ternary", "conditional", "?:", "choose", "if", "expression"]
+doc = "Pick one of two values with the conditional operator."
+snippet = """
+${1:auto} ${2:result} = ${3:condition} ? ${4:a} : ${5:b};$0"""
+
+[[entries]]
+name = "if throw"
+keys = ["if", "throw", "error", "validate", "exception", "check"]
+doc = "Validate an argument and throw when it is bad."
+snippet = """
+if (${1:!valid}) {
+    throw ${2:std::invalid_argument}("${3:message}");
 }
 $0"""

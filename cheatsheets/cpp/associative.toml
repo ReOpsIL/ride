@@ -1,0 +1,174 @@
+title = "Maps and sets"
+contexts = ["statement"]
+
+[[entries]]
+name = "map"
+keys = ["map", "ordered", "tree", "dict", "dictionary", "key", "value", "sorted"]
+doc = "Ordered key/value container backed by a balanced tree."
+snippet = '''
+std::map<${1:std::string}, ${2:int}> ${3:m};$0'''
+
+[[entries]]
+name = "unordered_map"
+keys = ["unordered_map", "hash", "map", "dict", "dictionary", "hashmap", "key"]
+doc = "Hash-based key/value container with average O(1) lookup."
+snippet = '''
+std::unordered_map<${1:std::string}, ${2:int}> ${3:m};$0'''
+
+[[entries]]
+name = "set"
+keys = ["set", "ordered", "unique", "sorted", "tree", "distinct"]
+doc = "Ordered set of unique keys."
+snippet = '''
+std::set<${1:int}> ${2:s};$0'''
+
+[[entries]]
+name = "unordered_set"
+keys = ["unordered_set", "hash", "set", "hashset", "unique", "distinct"]
+doc = "Hash-based set of unique keys."
+snippet = '''
+std::unordered_set<${1:int}> ${2:s};$0'''
+
+[[entries]]
+name = "multimap"
+keys = ["multimap", "map", "duplicate", "multi", "many"]
+doc = "Ordered map that allows duplicate keys."
+snippet = '''
+std::multimap<${1:std::string}, ${2:int}> ${3:m};$0'''
+
+[[entries]]
+name = "multiset"
+keys = ["multiset", "set", "duplicate", "multi", "bag", "counts"]
+doc = "Ordered set that allows duplicate keys."
+snippet = '''
+std::multiset<${1:int}> ${2:s};$0'''
+
+[[entries]]
+name = "map with initializer"
+keys = ["map", "init", "braces", "literal", "pairs", "values"]
+doc = "Map initialized with key/value pairs."
+snippet = '''
+std::map<${1:std::string}, ${2:int}> ${3:m} = {
+    {${4:"key"}, ${5:0}},
+    $0
+};'''
+
+[[entries]]
+name = "unordered_map with initializer"
+keys = ["unordered_map", "init", "braces", "literal", "pairs", "hash"]
+doc = "Hash map initialized with key/value pairs."
+snippet = '''
+std::unordered_map<${1:std::string}, ${2:int}> ${3:m} = {
+    {${4:"key"}, ${5:0}},
+    $0
+};'''
+
+[[entries]]
+name = "set with initializer"
+keys = ["set", "init", "braces", "literal", "values", "unique"]
+doc = "Set initialized from a braced list, duplicates dropped."
+snippet = '''
+std::set<${1:int}> ${2:s} = {${3:1, 2, 3}};$0'''
+
+[[entries]]
+name = "map descending"
+keys = ["map", "greater", "descending", "reverse", "comparator", "order"]
+doc = "Map iterated from largest key to smallest."
+snippet = '''
+std::map<${1:int}, ${2:std::string}, std::greater<${1:int}>> ${3:m};$0'''
+
+[[entries]]
+name = "set with custom comparator"
+keys = ["set", "comparator", "compare", "lambda", "custom", "order", "sort"]
+doc = "Set ordered by a comparator functor or lambda."
+snippet = '''
+auto ${1:cmp} = [](${2:const auto &a}, ${3:const auto &b}) { return ${4:a < b}; };
+std::set<${5:Type}, decltype(${1:cmp})> ${6:s}(${1:cmp});$0'''
+
+[[entries]]
+name = "map with comparator struct"
+keys = ["map", "comparator", "struct", "functor", "custom", "order", "less"]
+doc = "Map keyed by a user type through a comparison functor."
+snippet = '''
+struct ${1:ByName} {
+    bool operator()(const ${2:Type} &a, const ${2:Type} &b) const { return ${3:a.name < b.name}; }
+};
+std::map<${2:Type}, ${4:int}, ${1:ByName}> ${5:m};$0'''
+
+[[entries]]
+name = "unordered_map custom hash"
+keys = ["unordered_map", "hash", "custom", "struct", "key", "std::hash", "functor"]
+doc = "Hash map keyed by a user type via a hash functor and operator==."
+snippet = '''
+struct ${1:KeyHash} {
+    std::size_t operator()(const ${2:Key} &k) const {
+        return std::hash<${3:int}>{}(${4:k.id});
+    }
+};
+std::unordered_map<${2:Key}, ${5:int}, ${1:KeyHash}> ${6:m};$0'''
+
+[[entries]]
+name = "std::hash specialization"
+keys = ["hash", "std::hash", "specialize", "specialization", "custom", "key", "unordered"]
+doc = "Make a user type hashable everywhere by specializing std::hash."
+snippet = '''
+template <>
+struct std::hash<${1:Key}> {
+    std::size_t operator()(const ${1:Key} &k) const noexcept {
+        return std::hash<${2:int}>{}(${3:k.id}) ^ (std::hash<${4:int}>{}(${5:k.other}) << 1);
+    }
+};$0'''
+
+[[entries]]
+name = "unordered_map with reserve"
+keys = ["unordered_map", "reserve", "buckets", "capacity", "rehash", "hash"]
+doc = "Hash map with bucket count reserved to avoid rehashing."
+snippet = '''
+std::unordered_map<${1:std::string}, ${2:int}> ${3:m};
+${3:m}.reserve(${4:n});$0'''
+
+[[entries]]
+name = "map of vectors"
+keys = ["map", "vector", "group", "groups", "multi", "list", "nested"]
+doc = "Group values under a key; operator[] creates the vector on first use."
+snippet = '''
+std::map<${1:std::string}, std::vector<${2:int}>> ${3:groups};
+${3:groups}[${4:key}].push_back(${5:value});$0'''
+
+[[entries]]
+name = "nested map"
+keys = ["map", "nested", "2d", "matrix", "sparse", "two", "keys"]
+doc = "Map of maps addressed with two keys."
+snippet = '''
+std::map<${1:std::string}, std::map<${2:std::string}, ${3:int}>> ${4:table};
+${4:table}[${5:outer}][${6:inner}] = ${7:value};$0'''
+
+[[entries]]
+name = "map of structs"
+keys = ["map", "struct", "object", "record", "value", "emplace"]
+doc = "Map whose values are aggregates built in place."
+snippet = '''
+std::map<${1:int}, ${2:Record}> ${3:m};
+${3:m}.emplace(${4:key}, ${2:Record}{${5:}});$0'''
+
+[[entries]]
+name = "set of pairs"
+keys = ["set", "pair", "pairs", "tuple", "coordinates", "unique"]
+doc = "Set of pairs ordered lexicographically."
+snippet = '''
+std::set<std::pair<${1:int}, ${2:int}>> ${3:seen};
+${3:seen}.insert({${4:x}, ${5:y}});$0'''
+
+[[entries]]
+name = "unordered_set of strings"
+keys = ["unordered_set", "string", "strings", "words", "set", "hash", "unique"]
+doc = "Hash set of strings for fast membership tests."
+snippet = '''
+std::unordered_set<std::string> ${1:words} = {${2:"a", "b"}};$0'''
+
+[[entries]]
+name = "map with string_view keys"
+keys = ["map", "string_view", "heterogeneous", "transparent", "less<>", "lookup"]
+doc = "Ordered map with transparent comparator so find accepts string_view without allocating."
+snippet = '''
+std::map<std::string, ${1:int}, std::less<>> ${2:m};$0'''

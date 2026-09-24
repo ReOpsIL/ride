@@ -1,0 +1,219 @@
+title = "Time and durations"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "use std::time"
+keys = ["use", "time", "duration", "instant", "import"]
+doc = "Import the time types."
+snippet = '''
+use std::time::{Duration, Instant${1:, SystemTime, UNIX_EPOCH}};$0'''
+
+[[entries]]
+name = "Duration::from_secs"
+keys = ["duration", "from_secs", "seconds", "time", "span", "create", "new"]
+doc = "Create a duration from whole seconds."
+snippet = '''
+std::time::Duration::from_secs(${1:5})$0'''
+
+[[entries]]
+name = "Duration::from_millis"
+keys = ["duration", "from_millis", "milliseconds", "ms", "time", "span", "create"]
+doc = "Create a duration from milliseconds."
+snippet = '''
+std::time::Duration::from_millis(${1:100})$0'''
+
+[[entries]]
+name = "Duration::from_micros / nanos"
+keys = ["duration", "from_micros", "from_nanos", "microseconds", "nanoseconds", "us", "ns"]
+doc = "Create a duration from microseconds or nanoseconds."
+snippet = '''
+std::time::Duration::from_${1:micros}(${2:250})$0'''
+
+[[entries]]
+name = "Duration::from_secs_f64"
+keys = ["duration", "from_secs_f64", "float", "fractional", "seconds", "f32"]
+doc = "Create a duration from fractional seconds."
+snippet = '''
+std::time::Duration::from_secs_f64(${1:1.5})$0'''
+
+[[entries]]
+name = "Duration::ZERO / MAX"
+keys = ["duration", "zero", "max", "constant", "none", "infinite", "default"]
+doc = "The zero duration or the largest representable one."
+snippet = '''
+std::time::Duration::${1:ZERO}$0'''
+
+[[entries]]
+name = "Duration as_secs / as_millis"
+keys = ["duration", "as_secs", "as_millis", "as_micros", "as_nanos", "convert", "integer"]
+doc = "Convert a duration into a whole number of units."
+snippet = '''
+${1:duration}.as_${2:millis}()$0'''
+
+[[entries]]
+name = "Duration as_secs_f64"
+keys = ["duration", "as_secs_f64", "float", "seconds", "fractional", "convert", "f32"]
+doc = "Convert a duration into fractional seconds."
+snippet = '''
+${1:duration}.as_secs_f64()$0'''
+
+[[entries]]
+name = "Duration subsec_millis"
+keys = ["duration", "subsec", "millis", "nanos", "remainder", "fraction", "format"]
+doc = "Fractional part of a duration below one second."
+snippet = '''
+${1:duration}.subsec_${2:millis}()$0'''
+
+[[entries]]
+name = "Duration arithmetic"
+keys = ["duration", "add", "subtract", "multiply", "divide", "arithmetic", "plus", "times"]
+doc = "Add, subtract, multiply or divide durations."
+snippet = '''
+${1:a} ${2:+} ${3:b}$0'''
+
+[[entries]]
+name = "Duration checked_sub / saturating_sub"
+keys = ["duration", "checked_sub", "saturating_sub", "underflow", "safe", "subtract", "remaining"]
+doc = "Subtract durations without panicking on underflow."
+snippet = '''
+${1:a}.${2:saturating_sub}(${3:b})$0'''
+
+[[entries]]
+name = "Duration mul_f64"
+keys = ["duration", "mul_f64", "scale", "multiply", "float", "factor", "backoff"]
+doc = "Scale a duration by a float, as for exponential backoff."
+snippet = '''
+${1:duration}.mul_f64(${2:1.5})$0'''
+
+[[entries]]
+name = "Duration comparison"
+keys = ["duration", "compare", "greater", "less", "max", "min", "clamp", "if"]
+doc = "Compare durations directly with operators or min and max."
+snippet = '''
+if ${1:elapsed} > std::time::Duration::from_${2:secs}(${3:1}) {
+    $0
+}'''
+
+[[entries]]
+name = "Duration debug print"
+keys = ["duration", "print", "format", "debug", "display", "human", "readable"]
+doc = "Print a duration in a human-readable form with the Debug formatter."
+snippet = '''
+println!("${1:took} {:?}", ${2:elapsed});$0'''
+
+[[entries]]
+name = "Instant::now"
+keys = ["instant", "now", "clock", "monotonic", "start", "time"]
+doc = "Capture the current monotonic time."
+snippet = '''
+let ${1:start} = std::time::Instant::now();$0'''
+
+[[entries]]
+name = "Instant elapsed"
+keys = ["instant", "elapsed", "timer", "stopwatch", "now", "benchmark", "measure", "took"]
+doc = "Measure how long a section of code takes."
+snippet = '''
+let ${1:start} = std::time::Instant::now();
+$0
+let ${2:elapsed} = ${1:start}.elapsed();'''
+
+[[entries]]
+name = "Instant duration_since"
+keys = ["instant", "duration_since", "between", "difference", "two", "times", "subtract"]
+doc = "Duration between two instants, saturating at zero."
+snippet = '''
+${1:later}.saturating_duration_since(${2:earlier})$0'''
+
+[[entries]]
+name = "Instant deadline"
+keys = ["instant", "deadline", "timeout", "duration", "since", "until", "loop", "expire"]
+doc = "Check whether a deadline computed from an Instant has passed."
+snippet = '''
+let ${1:deadline} = std::time::Instant::now() + std::time::Duration::from_secs(${2:5});
+while std::time::Instant::now() < ${1:deadline} {
+    $0
+}'''
+
+[[entries]]
+name = "remaining until deadline"
+keys = ["remaining", "deadline", "timeout", "left", "checked_duration_since", "saturating", "wait"]
+doc = "Compute the time left before a deadline, zero once it has passed."
+snippet = '''
+let ${1:remaining} = ${2:deadline}.saturating_duration_since(std::time::Instant::now());$0'''
+
+[[entries]]
+name = "retry with timeout"
+keys = ["retry", "timeout", "loop", "poll", "until", "sleep", "attempt", "wait"]
+doc = "Poll a condition with sleeps until it holds or a timeout expires."
+snippet = '''
+let ${1:start} = std::time::Instant::now();
+while !${2:condition} {
+    if ${1:start}.elapsed() > std::time::Duration::from_secs(${3:5}) {
+        return Err("${4:timed out}".into());
+    }
+    std::thread::sleep(std::time::Duration::from_millis(${5:50}));
+}$0'''
+
+[[entries]]
+name = "simple ticker loop"
+keys = ["ticker", "timer", "interval", "periodic", "every", "loop", "sleep", "repeat"]
+doc = "Run code on a fixed period with sleep correcting for the work time."
+snippet = '''
+let ${1:period} = std::time::Duration::from_${2:millis}(${3:100});
+let mut ${4:next} = std::time::Instant::now();
+loop {
+    $0
+    ${4:next} += ${1:period};
+    std::thread::sleep(${4:next}.saturating_duration_since(std::time::Instant::now()));
+}'''
+
+[[entries]]
+name = "exponential backoff"
+keys = ["backoff", "exponential", "retry", "sleep", "double", "delay", "attempts"]
+doc = "Retry with a delay that doubles after each failure."
+snippet = '''
+let mut ${1:delay} = std::time::Duration::from_millis(${2:100});
+for ${3:attempt} in 0..${4:5} {
+    if let Ok(${5:v}) = ${6:try_it()} {
+        break;
+    }
+    std::thread::sleep(${1:delay});
+    ${1:delay} *= 2;$0
+}'''
+
+[[entries]]
+name = "SystemTime now"
+keys = ["systemtime", "now", "unix", "epoch", "timestamp", "clock", "wall", "seconds"]
+doc = "Get the current wall-clock time as seconds since the Unix epoch."
+snippet = '''
+let ${1:secs} = std::time::SystemTime::now()
+    .duration_since(std::time::UNIX_EPOCH)?
+    .as_secs();$0'''
+
+[[entries]]
+name = "timestamp millis"
+keys = ["timestamp", "millis", "epoch", "unix", "ms", "now", "u128", "systemtime"]
+doc = "Current time in milliseconds since the Unix epoch."
+snippet = '''
+let ${1:ms} = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_millis();$0'''
+
+[[entries]]
+name = "SystemTime from timestamp"
+keys = ["systemtime", "from", "epoch", "timestamp", "seconds", "convert", "unix_epoch", "add"]
+doc = "Convert Unix seconds back into a SystemTime."
+snippet = '''
+std::time::UNIX_EPOCH + std::time::Duration::from_secs(${1:secs})$0'''
+
+[[entries]]
+name = "SystemTime elapsed / age"
+keys = ["systemtime", "elapsed", "age", "since", "how", "old", "file", "modified"]
+doc = "How long ago a wall-clock time was, such as a file's modified time."
+snippet = '''
+let ${1:age} = ${2:modified}.elapsed()?;$0'''
+
+[[entries]]
+name = "chrono now formatted"
+keys = ["chrono", "now", "format", "date", "local", "utc", "strftime", "rfc3339"]
+doc = "Format the current date and time with the chrono crate."
+snippet = '''
+chrono::${1:Local}::now().format("${2:%Y-%m-%d %H:%M:%S}").to_string()$0'''

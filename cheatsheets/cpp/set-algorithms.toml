@@ -1,0 +1,120 @@
+title = "Merging, set and heap algorithms"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "merge"
+keys = ["merge", "sorted", "combine", "two", "ranges", "join"]
+doc = "Merge two sorted ranges into a sorted output."
+snippet = '''
+std::merge(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end(), std::back_inserter(${3:out}));$0'''
+
+[[entries]]
+name = "inplace_merge"
+keys = ["inplace_merge", "merge", "halves", "sorted", "in place", "mergesort"]
+doc = "Merge two consecutive sorted halves of one range in place."
+snippet = '''
+std::inplace_merge(${1:v}.begin(), ${1:v}.begin() + ${2:mid}, ${1:v}.end());$0'''
+
+[[entries]]
+name = "set_union"
+keys = ["set_union", "union", "sorted", "either", "combine", "or"]
+doc = "Elements in either sorted range, each once."
+snippet = '''
+std::set_union(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end(), std::back_inserter(${3:out}));$0'''
+
+[[entries]]
+name = "set_intersection"
+keys = ["set_intersection", "intersection", "sorted", "both", "common", "and"]
+doc = "Elements present in both sorted ranges."
+snippet = '''
+std::set_intersection(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end(), std::back_inserter(${3:out}));$0'''
+
+[[entries]]
+name = "set_difference"
+keys = ["set_difference", "difference", "sorted", "minus", "except", "only"]
+doc = "Elements of the first sorted range not in the second."
+snippet = '''
+std::set_difference(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end(), std::back_inserter(${3:out}));$0'''
+
+[[entries]]
+name = "set_symmetric_difference"
+keys = ["set_symmetric_difference", "symmetric", "xor", "either", "not both", "sorted"]
+doc = "Elements in exactly one of two sorted ranges."
+snippet = '''
+std::set_symmetric_difference(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end(), std::back_inserter(${3:out}));$0'''
+
+[[entries]]
+name = "includes"
+keys = ["includes", "subset", "sorted", "contains", "all", "superset"]
+doc = "True when the first sorted range contains every element of the second."
+snippet = '''
+std::includes(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end())$0'''
+
+[[entries]]
+name = "make_heap"
+keys = ["make_heap", "heap", "heapify", "priority", "build"]
+doc = "Turn a range into a max-heap."
+snippet = '''
+std::make_heap(${1:v}.begin(), ${1:v}.end());$0'''
+
+[[entries]]
+name = "push_heap"
+keys = ["push_heap", "heap", "push", "insert", "add"]
+doc = "Push a value onto a heap: push_back then push_heap."
+snippet = '''
+${1:v}.push_back(${2:value});
+std::push_heap(${1:v}.begin(), ${1:v}.end());$0'''
+
+[[entries]]
+name = "pop_heap"
+keys = ["pop_heap", "heap", "pop", "top", "remove", "max"]
+doc = "Move the heap top to the back, then pop_back to take it."
+snippet = '''
+std::pop_heap(${1:v}.begin(), ${1:v}.end());
+auto ${2:top} = ${1:v}.back();
+${1:v}.pop_back();$0'''
+
+[[entries]]
+name = "sort_heap"
+keys = ["sort_heap", "heap", "sort", "heapsort", "ascending"]
+doc = "Sort a heap into ascending order."
+snippet = '''
+std::sort_heap(${1:v}.begin(), ${1:v}.end());$0'''
+
+[[entries]]
+name = "is_heap"
+keys = ["is_heap", "heap", "check", "test", "valid"]
+doc = "Test whether a range is a valid max-heap."
+snippet = '''
+std::is_heap(${1:v}.begin(), ${1:v}.end())$0'''
+
+[[entries]]
+name = "next_permutation"
+keys = ["next_permutation", "permutation", "permute", "combinations", "all", "loop"]
+doc = "Loop over every permutation of a sorted range."
+snippet = '''
+std::sort(${1:v}.begin(), ${1:v}.end());
+do {
+    $0
+} while (std::next_permutation(${1:v}.begin(), ${1:v}.end()));'''
+
+[[entries]]
+name = "prev_permutation"
+keys = ["prev_permutation", "permutation", "previous", "descending", "permute"]
+doc = "Step to the lexicographically previous permutation."
+snippet = '''
+std::prev_permutation(${1:v}.begin(), ${1:v}.end());$0'''
+
+[[entries]]
+name = "is_permutation"
+keys = ["is_permutation", "permutation", "anagram", "same", "elements", "compare"]
+doc = "True when two ranges hold the same elements in any order."
+snippet = '''
+std::is_permutation(${1:a}.begin(), ${1:a}.end(), ${2:b}.begin(), ${2:b}.end())$0'''
+
+[[entries]]
+name = "partition_point"
+keys = ["partition_point", "partition", "binary", "search", "first", "predicate"]
+doc = "First element of a partitioned range failing the predicate, by binary search."
+snippet = '''
+auto ${1:it} = std::partition_point(${2:v}.begin(), ${2:v}.end(), [](${3:const auto &x}) { return ${4:cond}; });$0'''

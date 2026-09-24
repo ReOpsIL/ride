@@ -1,0 +1,143 @@
+title = "Unsafe memory, layout and asm"
+contexts = ["statement", "expression", "item"]
+
+[[entries]]
+name = "transmute"
+keys = ["transmute", "cast", "reinterpret", "bits", "convert", "same", "size"]
+doc = "Reinterpret the bits of a value as another type of the same size."
+snippet = '''
+unsafe { std::mem::transmute::<${1:From}, ${2:To}>(${3:value}) }$0'''
+
+[[entries]]
+name = "static mut"
+keys = ["static", "mut", "global", "mutable", "unsafe", "variable"]
+doc = "Declare a mutable global, accessed only through raw pointers in edition 2024."
+snippet = '''
+static mut ${1:NAME}: ${2:u32} = ${3:0};
+unsafe { *(&raw mut ${1:NAME}) = ${4:value}; }$0'''
+
+[[entries]]
+name = "read static mut"
+keys = ["static", "mut", "read", "global", "unsafe", "raw", "load"]
+doc = "Read a mutable static through a raw pointer."
+snippet = '''
+let ${1:v} = unsafe { *(&raw const ${2:NAME}) };$0'''
+
+[[entries]]
+name = "union access"
+keys = ["union", "field", "read", "unsafe", "variant", "overlap"]
+doc = "Read a union field, which requires unsafe."
+snippet = '''
+unsafe { ${1:value}.${2:field} }$0'''
+
+[[entries]]
+name = "MaybeUninit"
+keys = ["maybeuninit", "uninit", "uninitialized", "buffer", "assume_init", "out", "param"]
+doc = "Reserve storage without initializing it, then assume it is initialized."
+snippet = '''
+let mut ${1:slot} = std::mem::MaybeUninit::<${2:T}>::uninit();
+${3:init}(${1:slot}.as_mut_ptr());
+let ${4:value} = unsafe { ${1:slot}.assume_init() };$0'''
+
+[[entries]]
+name = "MaybeUninit array"
+keys = ["maybeuninit", "array", "uninit", "buffer", "transmute", "fixed"]
+doc = "Fill an uninitialized fixed array element by element."
+snippet = '''
+let mut ${1:arr}: [std::mem::MaybeUninit<${2:T}>; ${3:N}] = [const { std::mem::MaybeUninit::uninit() }; ${3:N}];
+for ${4:slot} in &mut ${1:arr} {
+    ${4:slot}.write($0);
+}'''
+
+[[entries]]
+name = "mem::zeroed"
+keys = ["zeroed", "zero", "struct", "ffi", "init", "mem", "c"]
+doc = "Create an all-zero value, valid for plain C structs."
+snippet = '''
+let mut ${1:value}: ${2:Type} = unsafe { std::mem::zeroed() };$0'''
+
+[[entries]]
+name = "ManuallyDrop"
+keys = ["manuallydrop", "drop", "skip", "destructor", "leak", "forget", "into_inner"]
+doc = "Wrap a value so its destructor does not run automatically."
+snippet = '''
+let ${1:v} = std::mem::ManuallyDrop::new(${2:value});
+let ${3:inner} = std::mem::ManuallyDrop::into_inner(${1:v});$0'''
+
+[[entries]]
+name = "mem::forget"
+keys = ["forget", "leak", "no", "drop", "destructor", "skip", "mem"]
+doc = "Leak a value so its destructor never runs."
+snippet = '''
+std::mem::forget(${1:value});$0'''
+
+[[entries]]
+name = "size_of / align_of"
+keys = ["size_of", "align_of", "size", "bytes", "mem", "layout", "alignment"]
+doc = "Size or alignment of a type in bytes."
+snippet = '''
+std::mem::${1:size_of}::<${2:T}>()$0'''
+
+[[entries]]
+name = "inline asm!"
+keys = ["asm", "assembly", "inline", "register", "instruction", "arch"]
+doc = "Emit inline assembly with input and output registers."
+snippet = '''
+unsafe {
+    std::arch::asm!(
+        "${1:mov {0\}, {1\}}",
+        out(reg) ${2:result},
+        in(reg) ${3:input},
+    );
+}$0'''
+
+[[entries]]
+name = "size_of_val"
+keys = ["size_of_val", "size", "value", "bytes", "slice", "dynamic", "mem"]
+doc = "Size in bytes of a value, including unsized slices."
+snippet = '''
+std::mem::size_of_val(&${1:value})$0'''
+
+[[entries]]
+name = "alloc / dealloc"
+keys = ["alloc", "dealloc", "layout", "malloc", "free", "heap", "raw", "allocate"]
+doc = "Allocate and free raw heap memory with an explicit layout."
+snippet = '''
+let ${1:layout} = std::alloc::Layout::array::<${2:T}>(${3:n})?;
+let ${4:ptr} = unsafe { std::alloc::alloc(${1:layout}) } as *mut ${2:T};
+if ${4:ptr}.is_null() {
+    std::alloc::handle_alloc_error(${1:layout});
+}
+$0
+unsafe { std::alloc::dealloc(${4:ptr} as *mut u8, ${1:layout}) };'''
+
+[[entries]]
+name = "#[repr(packed)] / align"
+keys = ["repr", "packed", "align", "padding", "layout", "struct", "alignment"]
+doc = "Remove padding or force an alignment on a struct layout."
+snippet = '''
+#[repr(C, ${1:packed})]
+struct ${2:Name} {
+    ${3:field}: ${4:u8},$0
+}'''
+
+[[entries]]
+name = "float to_bits / from_bits"
+keys = ["to_bits", "from_bits", "float", "bits", "reinterpret", "u32", "f32", "safe"]
+doc = "Reinterpret a float as its integer bits without unsafe."
+snippet = '''
+${1:value}.to_bits()$0'''
+
+[[entries]]
+name = "slice align_to"
+keys = ["align_to", "slice", "reinterpret", "bytes", "cast", "u8", "u32"]
+doc = "View a byte slice as a slice of a wider type where alignment allows."
+snippet = '''
+let (${1:prefix}, ${2:body}, ${3:suffix}) = unsafe { ${4:bytes}.align_to::<${5:u32}>() };$0'''
+
+[[entries]]
+name = "mem::needs_drop / discriminant"
+keys = ["needs_drop", "discriminant", "mem", "enum", "variant", "compare", "drop"]
+doc = "Ask whether a type has a destructor, or compare enum variants ignoring data."
+snippet = '''
+std::mem::${1:discriminant}(&${2:value})$0'''

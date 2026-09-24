@@ -1,0 +1,191 @@
+title = "Types: Option, Result and nested containers"
+contexts = ["type"]
+
+[[entries]]
+name = "Option<String>"
+keys = ["option", "string", "optional", "maybe", "nullable", "text"]
+doc = "Optional owned string."
+snippet = '''
+Option<String>$0'''
+
+[[entries]]
+name = "Option<&str>"
+keys = ["option", "str", "optional", "borrowed", "maybe", "text"]
+doc = "Optional borrowed string slice, as returned by strip_prefix or a lookup."
+snippet = '''
+Option<&str>$0'''
+
+[[entries]]
+name = "Option<&mut T>"
+keys = ["option", "mut", "mutable", "borrowed", "get_mut", "lookup"]
+doc = "Optional exclusive reference, as returned by get_mut or iter_mut().next()."
+snippet = '''
+Option<&mut ${1:T}>$0'''
+
+[[entries]]
+name = "Option<Vec<T>>"
+keys = ["option", "vec", "optional", "list", "maybe"]
+doc = "Optional list, distinguishing absent from empty."
+snippet = '''
+Option<Vec<${1:T}>>$0'''
+
+[[entries]]
+name = "Option<Result<T, E>>"
+keys = ["option", "result", "nested", "maybe", "fallible", "next"]
+doc = "Maybe-present fallible value, the item type of an iterator over results."
+snippet = '''
+Option<Result<${1:T}, ${2:E}>>$0'''
+
+[[entries]]
+name = "Result<Option<T>, E>"
+keys = ["result", "option", "nested", "fallible", "lookup", "maybe"]
+doc = "Fallible lookup that may find nothing, the shape of a database read."
+snippet = '''
+Result<Option<${1:T}>, ${2:E}>$0'''
+
+[[entries]]
+name = "Result<(), E>"
+keys = ["result", "unit", "empty", "fallible", "nothing", "side", "effect"]
+doc = "Fallible operation with no success value."
+snippet = '''
+Result<(), ${1:E}>$0'''
+
+[[entries]]
+name = "Result<Vec<T>, E>"
+keys = ["result", "vec", "fallible", "list", "collect"]
+doc = "Fallible list, what collect produces from an iterator of results."
+snippet = '''
+Result<Vec<${1:T}>, ${2:E}>$0'''
+
+[[entries]]
+name = "Result<T, String>"
+keys = ["result", "string", "error", "message", "simple", "fallible"]
+doc = "Fallible value whose error is a plain message, fine for small programs."
+snippet = '''
+Result<${1:T}, String>$0'''
+
+[[entries]]
+name = "Result<T, Box<dyn Error>>"
+keys = ["result", "box", "dyn", "error", "any", "main", "fallible"]
+doc = "Fallible value accepting any std error via the question mark operator."
+snippet = '''
+Result<${1:T}, Box<dyn std::error::Error>>$0'''
+
+[[entries]]
+name = "Result<T, MyError> alias"
+keys = ["result", "alias", "type", "crate", "error", "shorthand"]
+doc = "Crate-wide Result alias with the error type fixed once."
+snippet = '''
+type Result<T> = std::result::Result<T, ${1:MyError}>;$0'''
+
+[[entries]]
+name = "Vec<Option<T>>"
+keys = ["vec", "option", "list", "holes", "sparse", "nullable"]
+doc = "List with possibly absent slots."
+snippet = '''
+Vec<Option<${1:T}>>$0'''
+
+[[entries]]
+name = "Vec<Result<T, E>>"
+keys = ["vec", "result", "list", "fallible", "outcomes"]
+doc = "List of individual outcomes, kept instead of failing at the first error."
+snippet = '''
+Vec<Result<${1:T}, ${2:E}>>$0'''
+
+[[entries]]
+name = "Vec<Box<dyn Trait>>"
+keys = ["vec", "box", "dyn", "trait", "object", "heterogeneous", "list", "polymorphic"]
+doc = "List of differently typed values sharing one trait, dispatched dynamically."
+snippet = '''
+Vec<Box<dyn ${1:Trait}>>$0'''
+
+[[entries]]
+name = "HashMap<String, Vec<T>>"
+keys = ["hashmap", "map", "vec", "group", "multimap", "index", "buckets"]
+doc = "Map from keys to lists, the result of grouping."
+snippet = '''
+HashMap<String, Vec<${1:T}>>$0'''
+
+[[entries]]
+name = "HashMap<&str, T> borrowed keys"
+keys = ["hashmap", "map", "str", "borrowed", "keys", "lifetime"]
+doc = "Map keyed by borrowed strings, tied to the lifetime of the source text."
+snippet = '''
+HashMap<&${1:'a }str, ${2:T}>$0'''
+
+[[entries]]
+name = "HashMap<K, Box<dyn Trait>>"
+keys = ["hashmap", "map", "box", "dyn", "registry", "handlers", "plugins"]
+doc = "Registry of named trait objects."
+snippet = '''
+HashMap<${1:String}, Box<dyn ${2:Trait}>>$0'''
+
+[[entries]]
+name = "BTreeMap<K, Vec<V>>"
+keys = ["btreemap", "map", "sorted", "vec", "group", "ordered"]
+doc = "Sorted map from keys to lists."
+snippet = '''
+BTreeMap<${1:String}, Vec<${2:V}>>$0'''
+
+[[entries]]
+name = "Option<Box<dyn Fn>>"
+keys = ["option", "box", "dyn", "fn", "callback", "optional", "hook"]
+doc = "Optional stored callback."
+snippet = '''
+Option<Box<dyn Fn(${1:&str})${2: + Send}>>$0'''
+
+[[entries]]
+name = "Option<Rc<RefCell<T>>>"
+keys = ["option", "rc", "refcell", "node", "next", "linked", "tree", "graph"]
+doc = "Nullable shared mutable link, the shape of a doubly linked list or tree child."
+snippet = '''
+Option<Rc<RefCell<${1:Node}>>>$0'''
+
+[[entries]]
+name = "Weak<RefCell<T>>"
+keys = ["weak", "refcell", "parent", "back", "pointer", "cycle", "tree"]
+doc = "Non-owning link to shared mutable state, used for parent pointers."
+snippet = '''
+Weak<RefCell<${1:Node}>>$0'''
+
+[[entries]]
+name = "Arc<RwLock<T>>"
+keys = ["arc", "rwlock", "shared", "thread", "read", "write", "lock"]
+doc = "Shared thread-safe state with many readers or one writer."
+snippet = '''
+Arc<RwLock<${1:T}>>$0'''
+
+[[entries]]
+name = "Arc<Mutex<Vec<T>>>"
+keys = ["arc", "mutex", "vec", "shared", "thread", "list", "lock"]
+doc = "Shared list appended to from several threads."
+snippet = '''
+Arc<Mutex<Vec<${1:T}>>>$0'''
+
+[[entries]]
+name = "Arc<Mutex<HashMap<K, V>>>"
+keys = ["arc", "mutex", "hashmap", "map", "shared", "thread", "cache", "lock"]
+doc = "Shared map updated from several threads, a simple concurrent cache."
+snippet = '''
+Arc<Mutex<HashMap<${1:K}, ${2:V}>>>$0'''
+
+[[entries]]
+name = "Arc<dyn Trait + Send + Sync>"
+keys = ["arc", "dyn", "trait", "send", "sync", "shared", "thread", "object"]
+doc = "Shared trait object usable across threads."
+snippet = '''
+Arc<dyn ${1:Trait} + Send + Sync>$0'''
+
+[[entries]]
+name = "Rc<dyn Trait>"
+keys = ["rc", "dyn", "trait", "shared", "object", "single"]
+doc = "Shared single-threaded trait object."
+snippet = '''
+Rc<dyn ${1:Trait}>$0'''
+
+[[entries]]
+name = "Box<Option<T>> vs Option<Box<T>>"
+keys = ["option", "box", "niche", "null", "pointer", "free"]
+doc = "Prefer Option<Box<T>>, which uses the null pointer niche and costs no extra space."
+snippet = '''
+Option<Box<${1:T}>>$0'''

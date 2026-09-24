@@ -1,0 +1,206 @@
+title = "Pairs, tuples and optionals"
+contexts = ["statement"]
+
+[[entries]]
+name = "std::pair"
+keys = ["pair", "tuple", "two", "first", "second", "declare"]
+doc = "Two values of possibly different types."
+snippet = """
+std::pair<${1:int}, ${2:std::string}> ${3:p} = {${4:0}, ${5:""}};$0"""
+
+[[entries]]
+name = "std::make_pair"
+keys = ["pair", "make_pair", "two", "create", "auto"]
+doc = "Build a pair with deduced types."
+snippet = """
+auto ${1:p} = std::make_pair(${2:0}, ${3:"text"});$0"""
+
+[[entries]]
+name = "pair access"
+keys = ["pair", "first", "second", "access", "get", "member"]
+doc = "Read the two members of a pair."
+snippet = """
+auto ${1:a} = ${2:p}.first;
+auto ${3:b} = ${2:p}.second;$0"""
+
+[[entries]]
+name = "std::tuple"
+keys = ["tuple", "pair", "three", "several", "declare"]
+doc = "Fixed collection of heterogeneous values."
+snippet = """
+std::tuple<${1:int}, ${2:double}, ${3:std::string}> ${4:t} = {${5:1, 2.0, "three"}};$0"""
+
+[[entries]]
+name = "std::make_tuple"
+keys = ["tuple", "make_tuple", "create", "auto"]
+doc = "Build a tuple with deduced types."
+snippet = """
+auto ${1:t} = std::make_tuple(${2:1, 2.0, "three"});$0"""
+
+[[entries]]
+name = "std::get"
+keys = ["tuple", "get", "index", "element", "access", "pair"]
+doc = "Read a tuple element by index or type."
+snippet = """
+auto ${1:x} = std::get<${2:0}>(${3:t});$0"""
+
+[[entries]]
+name = "std::tie"
+keys = ["tie", "tuple", "unpack", "assign", "existing"]
+doc = "Assign a tuple to existing variables."
+snippet = """
+std::tie(${1:a}, ${2:b}) = ${3:expr};$0"""
+
+[[entries]]
+name = "std::tie ignore"
+keys = ["tie", "ignore", "tuple", "unpack", "skip"]
+doc = "Unpack a tuple while skipping some elements."
+snippet = """
+std::tie(${1:a}, std::ignore) = ${2:expr};$0"""
+
+[[entries]]
+name = "structured binding"
+keys = ["auto", "binding", "destructure", "unpack", "[]", "pair", "tuple"]
+doc = "Unpack a pair, tuple, array or struct into names."
+snippet = """
+auto [${1:a}, ${2:b}] = ${3:expr};$0"""
+
+[[entries]]
+name = "structured binding by reference"
+keys = ["auto", "binding", "destructure", "ref", "&", "modify"]
+doc = "Bind names to the members of an lvalue without copying."
+snippet = """
+auto &[${1:a}, ${2:b}] = ${3:obj};$0"""
+
+[[entries]]
+name = "structured binding const reference"
+keys = ["auto", "binding", "destructure", "const", "ref", "readonly"]
+doc = "Read-only bindings to the members of an object."
+snippet = """
+const auto &[${1:a}, ${2:b}] = ${3:obj};$0"""
+
+[[entries]]
+name = "structured binding from struct"
+keys = ["auto", "binding", "destructure", "struct", "fields", "members"]
+doc = "Unpack the public fields of a struct in declaration order."
+snippet = """
+auto [${1:x}, ${2:y}] = ${3:point};$0"""
+
+[[entries]]
+name = "structured binding from array"
+keys = ["auto", "binding", "destructure", "array", "elements"]
+doc = "Unpack every element of a fixed-size array."
+snippet = """
+auto [${1:a}, ${2:b}, ${3:c}] = ${4:arr};$0"""
+
+[[entries]]
+name = "structured binding from map insert"
+keys = ["auto", "binding", "insert", "map", "inserted", "iterator"]
+doc = "Unpack the iterator and inserted flag returned by insert or emplace."
+snippet = """
+auto [${1:it}, ${2:inserted}] = ${3:map}.${4:emplace}(${5:key}, ${6:value});$0"""
+
+[[entries]]
+name = "std::optional"
+keys = ["optional", "maybe", "nullopt", "absent", "declare"]
+doc = "Value that may be absent."
+snippet = """
+std::optional<${1:int}> ${2:opt} = ${3:std::nullopt};$0"""
+
+[[entries]]
+name = "optional with value"
+keys = ["optional", "value", "present", "set", "assign"]
+doc = "Optional holding a value."
+snippet = """
+std::optional<${1:int}> ${2:opt} = ${3:42};$0"""
+
+[[entries]]
+name = "optional value_or"
+keys = ["optional", "value_or", "default", "fallback", "get"]
+doc = "Read the value or a fallback when empty."
+snippet = """
+auto ${1:x} = ${2:opt}.value_or(${3:default});$0"""
+
+[[entries]]
+name = "optional value"
+keys = ["optional", "value", "get", "*", "unwrap", "throw"]
+doc = "Read the value; value() throws bad_optional_access when empty, * does not check."
+snippet = """
+auto ${1:x} = ${2:opt}.value();$0"""
+
+[[entries]]
+name = "optional reset"
+keys = ["optional", "reset", "clear", "nullopt", "empty"]
+doc = "Make an optional empty again."
+snippet = """
+${1:opt}.reset();$0"""
+
+[[entries]]
+name = "optional and_then"
+keys = ["optional", "and_then", "transform", "chain", "monadic", "c++23"]
+doc = "C++23 chain operations that run only when the optional has a value."
+snippet = """
+auto ${1:r} = ${2:opt}.${3:transform}([](${4:int} v) { return ${5:v * 2}; });$0"""
+
+[[entries]]
+name = "std::variant"
+keys = ["variant", "union", "sum", "either", "one", "of"]
+doc = "Type-safe union holding one of several types."
+snippet = """
+std::variant<${1:int}, ${2:std::string}> ${3:v} = ${4:0};$0"""
+
+[[entries]]
+name = "variant holds_alternative"
+keys = ["variant", "holds_alternative", "check", "type", "which", "is"]
+doc = "Test which type a variant currently holds."
+snippet = """
+if (std::holds_alternative<${1:int}>(${2:v})) {
+    $0
+}"""
+
+[[entries]]
+name = "variant get"
+keys = ["variant", "get", "get_if", "extract", "value", "type"]
+doc = "Read the active alternative; get_if returns nullptr instead of throwing."
+snippet = """
+if (auto *${1:p} = std::get_if<${2:int}>(&${3:v})) {
+    $0
+}"""
+
+[[entries]]
+name = "variant index"
+keys = ["variant", "index", "which", "active", "alternative"]
+doc = "Zero-based index of the active alternative."
+snippet = """
+std::size_t ${1:which} = ${2:v}.index();$0"""
+
+[[entries]]
+name = "std::visit"
+keys = ["visit", "variant", "overloaded", "dispatch", "match"]
+doc = "Dispatch on the active alternative of a variant."
+snippet = """
+std::visit([](${1:const auto &}${2:value}) {
+    $0
+}, ${3:v});"""
+
+[[entries]]
+name = "std::any"
+keys = ["any", "erased", "any_cast", "dynamic", "holder"]
+doc = "Holder for a value of any copyable type."
+snippet = """
+std::any ${1:a} = ${2:value};
+auto ${3:x} = std::any_cast<${4:int}>(${1:a});$0"""
+
+[[entries]]
+name = "std::string_view"
+keys = ["string_view", "view", "sv", "string", "readonly", "slice"]
+doc = "Non-owning view of a character sequence."
+snippet = """
+std::string_view ${1:sv} = ${2:str};$0"""
+
+[[entries]]
+name = "std::span"
+keys = ["span", "view", "slice", "array", "vector", "contiguous"]
+doc = "C++20 non-owning view over contiguous elements."
+snippet = """
+std::span<${1:const int}> ${2:s} = ${3:v};$0"""

@@ -1,0 +1,175 @@
+title = "Arrays"
+contexts = ["statement"]
+
+[[entries]]
+name = "C array"
+keys = ["array", "c", "raw", "fixed", "brackets", "[]", "declare", "size"]
+doc = "Fixed-size built-in array with listed elements."
+snippet = """
+${1:int} ${2:arr}[${3:4}] = {${4:1, 2, 3, 4}};$0"""
+
+[[entries]]
+name = "C array with deduced size"
+keys = ["array", "c", "raw", "deduced", "[]", "list", "init"]
+doc = "Built-in array whose size comes from the initializer."
+snippet = """
+${1:int} ${2:arr}[] = {${3:1, 2, 3}};$0"""
+
+[[entries]]
+name = "zeroed C array"
+keys = ["array", "c", "zero", "empty", "{}", "buffer", "init"]
+doc = "Built-in array with every element zero-initialized."
+snippet = """
+${1:int} ${2:arr}[${3:N}] = {};$0"""
+
+[[entries]]
+name = "uninitialized C array"
+keys = ["array", "c", "buffer", "uninitialized", "raw", "char"]
+doc = "Built-in array with indeterminate contents, usually a buffer to fill."
+snippet = """
+${1:char} ${2:buffer}[${3:256}];$0"""
+
+[[entries]]
+name = "2D C array"
+keys = ["array", "2d", "matrix", "grid", "rows", "columns", "nested"]
+doc = "Two-dimensional built-in array."
+snippet = """
+${1:int} ${2:grid}[${3:2}][${4:3}] = {
+    {${5:1, 2, 3}},
+    {${6:4, 5, 6}},
+};$0"""
+
+[[entries]]
+name = "char array from literal"
+keys = ["array", "char", "string", "c", "literal", "\"", "buffer"]
+doc = "Character array initialized from a string literal including the terminator."
+snippet = """
+char ${1:s}[] = "${2:text}";$0"""
+
+[[entries]]
+name = "const char pointer"
+keys = ["char", "string", "c", "literal", "pointer", "const", "\""]
+doc = "Pointer to a string literal."
+snippet = """
+const char *${1:s} = "${2:text}";$0"""
+
+[[entries]]
+name = "std::array"
+keys = ["array", "std", "fixed", "std::array", "declare", "size"]
+doc = "Fixed-size array with a container interface."
+snippet = """
+std::array<${1:int}, ${2:4}> ${3:arr} = {${4:1, 2, 3, 4}};$0"""
+
+[[entries]]
+name = "std::array with braces"
+keys = ["array", "std", "brace", "{}", "std::array", "init"]
+doc = "std::array initialized with braces only."
+snippet = """
+std::array<${1:int}, ${2:4}> ${3:arr}{${4:1, 2, 3, 4}};$0"""
+
+[[entries]]
+name = "std::array deduced"
+keys = ["array", "std", "ctad", "deduce", "std::array", "auto"]
+doc = "C++17 deduces element type and size from the initializer."
+snippet = """
+std::array ${1:arr} = {${2:1, 2, 3}};$0"""
+
+[[entries]]
+name = "std::array zeroed"
+keys = ["array", "std", "zero", "empty", "{}", "std::array"]
+doc = "std::array with every element value-initialized."
+snippet = """
+std::array<${1:int}, ${2:N}> ${3:arr}{};$0"""
+
+[[entries]]
+name = "std::array filled"
+keys = ["array", "std", "fill", "same", "value", "std::array"]
+doc = "Fill every element with one value."
+snippet = """
+std::array<${1:int}, ${2:N}> ${3:arr};
+${3:arr}.fill(${4:0});$0"""
+
+[[entries]]
+name = "2D std::array"
+keys = ["array", "2d", "matrix", "grid", "std::array", "nested"]
+doc = "Fixed-size two-dimensional std::array."
+snippet = """
+std::array<std::array<${1:int}, ${2:cols}>, ${3:rows}> ${4:grid}{};$0"""
+
+[[entries]]
+name = "array element"
+keys = ["array", "index", "element", "[]", "subscript", "access", "get"]
+doc = "Read an element by zero-based index."
+snippet = """
+${1:auto} ${2:x} = ${3:arr}[${4:i}];$0"""
+
+[[entries]]
+name = "array element assignment"
+keys = ["array", "index", "set", "[]", "assign", "write", "element"]
+doc = "Write an element by index."
+snippet = """
+${1:arr}[${2:i}] = ${3:value};$0"""
+
+[[entries]]
+name = "array bounds-checked access"
+keys = ["array", "at", "bounds", "check", "index", "throw", "safe"]
+doc = "Element access that throws std::out_of_range on a bad index."
+snippet = """
+${1:auto} ${2:x} = ${3:arr}.at(${4:i});$0"""
+
+[[entries]]
+name = "array length"
+keys = ["array", "length", "size", "count", "std::size", "sizeof", "elements"]
+doc = "Number of elements of an array."
+snippet = """
+${1:std::size_t} ${2:n} = std::size(${3:arr});$0"""
+
+[[entries]]
+name = "array length via sizeof"
+keys = ["array", "length", "size", "sizeof", "count", "c"]
+doc = "C-style element count of a built-in array."
+snippet = """
+${1:std::size_t} ${2:n} = sizeof(${3:arr}) / sizeof(${3:arr}[0]);$0"""
+
+[[entries]]
+name = "first and last element"
+keys = ["array", "front", "back", "first", "last", "element"]
+doc = "Access the first and last elements of a container."
+snippet = """
+auto ${1:first} = ${2:arr}.front();
+auto ${3:last} = ${2:arr}.back();$0"""
+
+[[entries]]
+name = "array to span"
+keys = ["array", "span", "view", "slice", "pass", "std::span"]
+doc = "View an array without copying."
+snippet = """
+std::span<${1:const int}> ${2:s} = ${3:arr};$0"""
+
+[[entries]]
+name = "span subrange"
+keys = ["span", "subspan", "slice", "first", "last", "view"]
+doc = "Take part of a span."
+snippet = """
+auto ${1:part} = ${2:s}.subspan(${3:offset}, ${4:count});$0"""
+
+[[entries]]
+name = "copy array"
+keys = ["array", "copy", "std::copy", "duplicate", "clone"]
+doc = "Copy elements between arrays; std::array copies by assignment."
+snippet = """
+std::copy(std::begin(${1:src}), std::end(${1:src}), std::begin(${2:dst}));$0"""
+
+[[entries]]
+name = "fill C array"
+keys = ["array", "fill", "std::fill", "set", "all", "value"]
+doc = "Set every element of a built-in array."
+snippet = """
+std::fill(std::begin(${1:arr}), std::end(${1:arr}), ${2:0});$0"""
+
+[[entries]]
+name = "std::vector from array"
+keys = ["array", "vector", "convert", "copy", "dynamic"]
+doc = "Copy an array into a vector."
+snippet = """
+std::vector<${1:int}> ${2:v}(std::begin(${3:arr}), std::end(${3:arr}));$0"""

@@ -1,0 +1,114 @@
+title = "Enums"
+contexts = ["item"]
+
+[[entries]]
+name = "enum class"
+keys = ["enum", "class", "scoped", "enumeration", "choice", "variant"]
+doc = "Scoped enumeration with no implicit conversion to int."
+snippet = """
+enum class ${1:Color} {
+    ${2:Red},
+    ${3:Green},
+    $0
+};"""
+
+[[entries]]
+name = "enum class with underlying type"
+keys = ["enum", "class", "underlying", "uint8", "type", "size"]
+doc = "Scoped enumeration stored in an explicit integer type."
+snippet = """
+enum class ${1:Flag} : ${2:std::uint8_t} {
+    ${3:None} = 0,
+    $0
+};"""
+
+[[entries]]
+name = "enum class with values"
+keys = ["enum", "class", "values", "explicit", "number", "="]
+doc = "Scoped enumeration with explicit values for each enumerator."
+snippet = """
+enum class ${1:Status} {
+    ${2:Ok} = ${3:0},
+    ${4:Error} = ${5:1},
+    $0
+};"""
+
+[[entries]]
+name = "enum class flags"
+keys = ["enum", "flags", "bit", "mask", "bitwise", "or"]
+doc = "Bit-flag enumeration with one bit per enumerator."
+snippet = """
+enum class ${1:Flags} : unsigned {
+    ${2:None} = 0,
+    ${3:Read} = 1 << 0,
+    ${4:Write} = 1 << 1,
+    $0
+};"""
+
+[[entries]]
+name = "enum"
+keys = ["enum", "unscoped", "c", "plain", "enumeration"]
+doc = "Unscoped C-style enumeration whose names leak into the enclosing scope."
+snippet = """
+enum ${1:Name} {
+    ${2:First},
+    $0
+};"""
+
+[[entries]]
+name = "enum with values"
+keys = ["enum", "unscoped", "values", "explicit", "="]
+doc = "Unscoped enumeration with explicit values."
+snippet = """
+enum ${1:Name} {
+    ${2:First} = ${3:1},
+    ${4:Second} = ${5:2},
+    $0
+};"""
+
+[[entries]]
+name = "anonymous enum"
+keys = ["enum", "anonymous", "constants", "unnamed"]
+doc = "Unnamed enumeration used as a set of integer constants."
+snippet = """
+enum {
+    ${1:kMax} = ${2:100},
+    $0
+};"""
+
+[[entries]]
+name = "opaque enum declaration"
+keys = ["enum", "forward", "declare", "opaque", "class"]
+doc = "Forward-declare a scoped enum with its underlying type."
+snippet = """
+enum class ${1:Color} : ${2:int};$0"""
+
+[[entries]]
+name = "using enum"
+keys = ["using", "enum", "scoped", "names", "import"]
+doc = "C++20 bring all enumerators of a scoped enum into scope."
+snippet = """
+using enum ${1:Color};$0"""
+
+[[entries]]
+name = "enum to string function"
+keys = ["enum", "string", "name", "to_string", "switch", "print"]
+doc = "Map each enumerator to its name with a switch."
+snippet = """
+constexpr std::string_view ${1:to_string}(${2:Color} ${3:c}) {
+    switch (${3:c}) {
+    case ${2:Color}::${4:Red}:
+        return "${4:Red}";
+    $0
+    }
+    return "unknown";
+}"""
+
+[[entries]]
+name = "enum bitwise operator"
+keys = ["enum", "flags", "operator", "|", "bitwise", "overload"]
+doc = "Overload | so flag enumerators can be combined."
+snippet = """
+constexpr ${1:Flags} operator|(${1:Flags} a, ${1:Flags} b) {
+    return static_cast<${1:Flags}>(std::to_underlying(a) | std::to_underlying(b));$0
+}"""

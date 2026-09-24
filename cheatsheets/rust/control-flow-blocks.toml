@@ -1,0 +1,68 @@
+title = "Blocks and early exits"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "if let else if let"
+keys = ["if", "let", "else", "chain", "pattern", "elseif", "several"]
+doc = "Try several patterns in sequence with an if-let chain."
+snippet = '''
+if let ${1:Some(x)} = ${2:a} {
+    $0
+} else if let ${3:Some(y)} = ${4:b} {
+    ${5:}
+} else {
+    ${6:}
+}'''
+
+[[entries]]
+name = "guard clause"
+keys = ["if", "return", "early", "guard", "validate", "check", "bail"]
+doc = "Return early on an invalid case so the main path stays unindented."
+snippet = '''
+if ${1:condition} {
+    return ${2:Err(Error::Invalid)};
+}
+$0'''
+
+[[entries]]
+name = "tail expression return"
+keys = ["return", "implicit", "tail", "expression", "last", "value", "semicolon"]
+doc = "Return the last expression of a function body by leaving off its semicolon."
+snippet = '''
+${1:value}$0'''
+
+[[entries]]
+name = "unsafe block"
+keys = ["unsafe", "block", "raw", "pointer", "ffi", "invariant"]
+doc = "Run code that needs unsafe operations, with a comment stating why it is sound."
+snippet = '''
+unsafe {
+    $0
+}'''
+
+[[entries]]
+name = "const block"
+keys = ["const", "block", "compile", "time", "evaluate", "inline"]
+doc = "Evaluate an expression at compile time in place."
+snippet = '''
+const { ${1:expr} }$0'''
+
+[[entries]]
+name = "if let else return"
+keys = ["if", "let", "else", "return", "early", "none", "bail", "option"]
+doc = "Handle the matching case and leave the function otherwise."
+snippet = '''
+if let ${1:Some(value)} = ${2:expr} {
+    $0
+} else {
+    return ${3:None};
+}'''
+
+[[entries]]
+name = "scope block"
+keys = ["block", "scope", "braces", "drop", "lifetime", "borrow", "end"]
+doc = "Open a plain block so values and borrows inside it are dropped at its end."
+snippet = '''
+{
+    $0
+}'''

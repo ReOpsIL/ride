@@ -1,0 +1,213 @@
+title = "FFI and C interop"
+contexts = ["statement", "expression", "item"]
+
+[[entries]]
+name = "extern block"
+keys = ["extern", "c", "ffi", "block", "declare", "foreign", "import", "bindgen"]
+doc = "Declare foreign C functions and statics."
+snippet = '''
+unsafe extern "C" {
+    fn ${1:name}(${2:arg}: ${3:c_int}) -> ${4:c_int};$0
+}'''
+
+[[entries]]
+name = "safe extern item"
+keys = ["extern", "safe", "ffi", "c", "declare", "sound"]
+doc = "Declare a foreign function that is sound to call from safe code."
+snippet = '''
+unsafe extern "C" {
+    safe fn ${1:name}(${2:arg}: ${3:c_int}) -> ${4:c_int};$0
+}'''
+
+[[entries]]
+name = "extern static"
+keys = ["extern", "static", "global", "c", "variable", "foreign", "errno"]
+doc = "Declare a global variable defined in C."
+snippet = '''
+unsafe extern "C" {
+    static ${1:NAME}: ${2:c_int};$0
+}'''
+
+[[entries]]
+name = "extern variadic fn"
+keys = ["extern", "variadic", "printf", "dots", "c", "args", "foreign"]
+doc = "Declare a C function with variable arguments like printf."
+snippet = '''
+unsafe extern "C" {
+    fn ${1:printf}(fmt: *const std::ffi::c_char, ...) -> std::ffi::c_int;$0
+}'''
+
+[[entries]]
+name = "#[link] library"
+keys = ["link", "library", "name", "kind", "static", "dylib", "attribute", "so"]
+doc = "Tell the linker which native library provides the extern block."
+snippet = '''
+#[link(name = "${1:m}"${2:, kind = "dylib"})]
+unsafe extern "C" {
+    fn ${3:name}(${4:args}) -> ${5:c_int};$0
+}'''
+
+[[entries]]
+name = "call extern fn"
+keys = ["call", "extern", "unsafe", "ffi", "invoke", "c", "function"]
+doc = "Call a foreign function inside an unsafe block."
+snippet = '''
+let ${1:result} = unsafe { ${2:c_function}(${3:args}) };$0'''
+
+[[entries]]
+name = "extern \"C\" fn export"
+keys = ["extern", "no_mangle", "export", "c", "fn", "ffi", "expose", "public"]
+doc = "Export a Rust function with the C ABI under its plain symbol name."
+snippet = '''
+#[unsafe(no_mangle)]
+pub extern "C" fn ${1:name}(${2:arg}: ${3:std::ffi::c_int}) -> ${4:std::ffi::c_int} {
+    $0
+}'''
+
+[[entries]]
+name = "extern \"C\" callback"
+keys = ["extern", "callback", "c", "fn", "pointer", "ffi", "handler"]
+doc = "Define a Rust function that C can call back through a pointer."
+snippet = '''
+extern "C" fn ${1:callback}(${2:data}: *mut std::ffi::c_void) {
+    $0
+}'''
+
+[[entries]]
+name = "callback with user data"
+keys = ["callback", "user", "data", "void", "cast", "closure", "context", "trampoline"]
+doc = "Recover a Rust object from the void pointer C passes back."
+snippet = '''
+extern "C" fn ${1:trampoline}(${2:user_data}: *mut std::ffi::c_void) {
+    let ${3:state} = unsafe { &mut *(${2:user_data} as *mut ${4:State}) };
+    $0
+}
+${5:register}(${1:trampoline}, &mut ${6:state} as *mut ${4:State} as *mut std::ffi::c_void);'''
+
+[[entries]]
+name = "extern fn pointer type"
+keys = ["extern", "fn", "pointer", "type", "callback", "option", "nullable", "typedef"]
+doc = "Type of a C function pointer, wrapped in Option when it may be null."
+snippet = '''
+Option<unsafe extern "C" fn(${1:*mut std::ffi::c_void}) -> ${2:std::ffi::c_int}>$0'''
+
+[[entries]]
+name = "#[repr(C)] struct"
+keys = ["repr", "c", "struct", "layout", "ffi", "compatible"]
+doc = "Define a struct with C-compatible layout for FFI."
+snippet = '''
+#[repr(C)]
+pub struct ${1:Name} {
+    pub ${2:field}: ${3:std::ffi::c_int},$0
+}'''
+
+[[entries]]
+name = "#[repr(C)] enum"
+keys = ["repr", "c", "enum", "int", "u8", "ffi", "discriminant", "layout"]
+doc = "Define an enum with a fixed integer representation for C."
+snippet = '''
+#[repr(${1:C})]
+pub enum ${2:Name} {
+    ${3:First} = ${4:0},$0
+}'''
+
+[[entries]]
+name = "#[repr(transparent)]"
+keys = ["repr", "transparent", "newtype", "wrapper", "handle", "ffi"]
+doc = "Give a single-field wrapper the same ABI as its field."
+snippet = '''
+#[repr(transparent)]
+pub struct ${1:Handle}(${2:*mut std::ffi::c_void});$0'''
+
+[[entries]]
+name = "opaque C type"
+keys = ["opaque", "type", "struct", "handle", "incomplete", "forward", "ffi"]
+doc = "Declare an opaque C type that is only ever used behind a pointer."
+snippet = '''
+#[repr(C)]
+pub struct ${1:Name} {
+    _private: [u8; 0],
+}$0'''
+
+[[entries]]
+name = "C type aliases"
+keys = ["c_int", "c_char", "c_void", "c_long", "c_double", "types", "ffi", "libc"]
+doc = "Import the C primitive type aliases from std::ffi."
+snippet = '''
+use std::ffi::{c_char, c_int, c_void${1:, c_double}};$0'''
+
+[[entries]]
+name = "libc crate types"
+keys = ["libc", "size_t", "types", "crate", "posix", "ffi", "ssize_t"]
+doc = "Use libc's type aliases and functions for POSIX calls."
+snippet = '''
+let ${1:n} = unsafe { libc::${2:write}(${3:fd}, ${4:buf}.as_ptr() as *const libc::c_void, ${4:buf}.len() as libc::size_t) };$0'''
+
+[[entries]]
+name = "CString::new"
+keys = ["cstring", "new", "c", "string", "ffi", "nul", "convert", "to"]
+doc = "Build a nul-terminated C string to pass to foreign code."
+snippet = '''
+let ${1:c_str} = std::ffi::CString::new(${2:text})?;
+${3:c_function}(${1:c_str}.as_ptr());$0'''
+
+[[entries]]
+name = "CString into_raw / from_raw"
+keys = ["cstring", "into_raw", "from_raw", "ownership", "free", "return", "c"]
+doc = "Give a C string to C and take it back to free it on the Rust side."
+snippet = '''
+let ${1:ptr} = std::ffi::CString::new(${2:text})?.into_raw();
+let ${3:owned} = unsafe { std::ffi::CString::from_raw(${1:ptr}) };$0'''
+
+[[entries]]
+name = "CStr from_ptr"
+keys = ["cstr", "from_ptr", "c", "string", "ffi", "char", "convert", "from"]
+doc = "Borrow a C string returned by foreign code and convert it to str."
+snippet = '''
+let ${1:s} = unsafe { std::ffi::CStr::from_ptr(${2:ptr}) }.to_str()?;$0'''
+
+[[entries]]
+name = "CStr to_string_lossy"
+keys = ["cstr", "to_string_lossy", "utf8", "invalid", "string", "convert"]
+doc = "Convert a C string to an owned String, replacing invalid UTF-8."
+snippet = '''
+let ${1:s} = unsafe { std::ffi::CStr::from_ptr(${2:ptr}) }.to_string_lossy().into_owned();$0'''
+
+[[entries]]
+name = "CStr from bytes"
+keys = ["cstr", "bytes", "from_bytes_with_nul", "buffer", "until", "nul", "slice"]
+doc = "Parse a C string out of a byte buffer."
+snippet = '''
+let ${1:s} = std::ffi::CStr::from_bytes_${2:until_nul}(&${3:buf})?;$0'''
+
+[[entries]]
+name = "c\"literal\""
+keys = ["c", "literal", "cstr", "string", "nul", "static"]
+doc = "C string literal with a trailing nul, typed as &CStr."
+snippet = '''
+c"${1:text}"$0'''
+
+[[entries]]
+name = "OsStr / OsString"
+keys = ["osstr", "osstring", "os", "string", "path", "platform", "bytes", "argv"]
+doc = "Platform string used for paths and arguments, converted to str when valid."
+snippet = '''
+let ${1:s} = ${2:os_str}.to_str().${3:ok_or("invalid unicode")?};$0'''
+
+[[entries]]
+name = "build.rs cc compile"
+keys = ["build", "cc", "compile", "c", "source", "script", "link", "native"]
+doc = "Compile a C file into the crate from build.rs with the cc crate."
+snippet = '''
+fn main() {
+    cc::Build::new().file("${1:src/native.c}").compile("${2:native}");
+    println!("cargo:rerun-if-changed=${1:src/native.c}");$0
+}'''
+
+[[entries]]
+name = "cargo:rustc-link-lib"
+keys = ["build", "link", "lib", "search", "cargo", "println", "native", "script"]
+doc = "Tell cargo from build.rs which native library and search path to link."
+snippet = '''
+println!("cargo:rustc-link-search=native=${1:/usr/local/lib}");
+println!("cargo:rustc-link-lib=${2:dylib}=${3:name}");$0'''

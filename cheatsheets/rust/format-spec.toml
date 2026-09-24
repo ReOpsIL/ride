@@ -3,147 +3,168 @@ contexts = []
 
 [[entries]]
 name = "{} display"
-keys = ["display", "format", "placeholder", "braces"]
+keys = ["display", "format", "placeholder", "braces", "print", "value"]
 doc = "Format a value using its Display impl."
 snippet = '''
 {${1:value}}$0'''
 
 [[entries]]
 name = "{:?} debug"
-keys = ["debug", "format", "question"]
-doc = "Format a value using its Debug impl."
+keys = ["debug", "format", "question", "vec", "option", "struct", "print"]
+doc = "Format a value using its Debug impl, which every derive(Debug) type has."
 snippet = '''
 {${1:value}:?}$0'''
 
 [[entries]]
 name = "{:#?} pretty debug"
-keys = ["pretty", "debug", "format", "multiline"]
+keys = ["pretty", "debug", "format", "multiline", "indent", "struct"]
 doc = "Format a value with multi-line indented Debug output."
 snippet = '''
 {${1:value}:#?}$0'''
 
 [[entries]]
-name = "positional {0}"
-keys = ["positional", "index", "format", "argument"]
-doc = "Refer to an argument by position, reusable in the template."
-snippet = '''
-{${1:0}}$0'''
-
-[[entries]]
-name = "named {name}"
-keys = ["named", "inline", "capture", "format"]
-doc = "Capture a variable from scope or a named argument."
-snippet = '''
-{${1:name}}$0'''
-
-[[entries]]
 name = "width {:8}"
-keys = ["width", "pad", "align", "format", "columns"]
+keys = ["width", "pad", "align", "format", "columns", "min", "space"]
 doc = "Pad to a minimum width, right-aligned for numbers and left for strings."
 snippet = '''
 {${1:value}:${2:8}}$0'''
 
 [[entries]]
-name = "align {:<8} {:^8} {:>8}"
-keys = ["align", "left", "center", "right", "pad", "format"]
-doc = "Align within a width using <, ^ or >."
+name = "right align {:>10}"
+keys = ["right", "align", "pad", "width", "format", "column", "justify"]
+doc = "Right-align within a width."
 snippet = '''
-{${1:value}:${2:<}${3:8}}$0'''
+{${1:value}:>${2:10}}$0'''
+
+[[entries]]
+name = "left align {:<10}"
+keys = ["left", "align", "pad", "width", "format", "column", "justify"]
+doc = "Left-align within a width."
+snippet = '''
+{${1:value}:<${2:10}}$0'''
+
+[[entries]]
+name = "center {:^10}"
+keys = ["center", "align", "pad", "width", "format", "middle", "justify"]
+doc = "Center within a width."
+snippet = '''
+{${1:value}:^${2:10}}$0'''
 
 [[entries]]
 name = "fill {:*^8}"
-keys = ["fill", "pad", "char", "align", "format"]
+keys = ["fill", "pad", "char", "align", "format", "dashes", "custom"]
 doc = "Pad with a chosen character instead of spaces."
 snippet = '''
 {${1:value}:${2:*}${3:^}${4:8}}$0'''
 
 [[entries]]
 name = "zero pad {:08}"
-keys = ["zero", "pad", "leading", "format", "number"]
+keys = ["zero", "pad", "leading", "format", "number", "digits", "width"]
 doc = "Pad a number with leading zeros."
 snippet = '''
 {${1:value}:0${2:8}}$0'''
 
 [[entries]]
 name = "precision {:.2}"
-keys = ["precision", "decimal", "float", "digits", "format"]
+keys = ["precision", "decimal", "float", "digits", "format", "round", "places"]
 doc = "Limit a float to a number of decimal places or a string to a max length."
 snippet = '''
 {${1:value}:.${2:2}}$0'''
 
 [[entries]]
+name = "round {:.0}"
+keys = ["round", "integer", "float", "no", "decimals", "format", "precision"]
+doc = "Print a float with no decimal places, rounding it."
+snippet = '''
+{${1:value}:.0}$0'''
+
+[[entries]]
 name = "width and precision {:8.2}"
-keys = ["width", "precision", "float", "table", "format"]
+keys = ["width", "precision", "float", "table", "format", "column", "decimal"]
 doc = "Combine minimum width with decimal precision."
 snippet = '''
 {${1:value}:${2:8}.${3:2}}$0'''
 
 [[entries]]
-name = "dynamic width {:>width$}"
-keys = ["dynamic", "width", "variable", "runtime", "format"]
-doc = "Take the width or precision from a named argument."
+name = "zero pad float {:08.3}"
+keys = ["zero", "pad", "float", "precision", "width", "format", "leading"]
+doc = "Pad a float with leading zeros to a width and fix its decimal places."
 snippet = '''
-{${1:value}:>${2:width}$}$0'''
+{${1:value}:0${2:8}.${3:3}}$0'''
 
 [[entries]]
 name = "sign {:+}"
-keys = ["sign", "plus", "positive", "format"]
-doc = "Always show the sign of a number."
+keys = ["sign", "plus", "positive", "format", "explicit", "number"]
+doc = "Always show the sign of a number, combinable as {:+.2} or {:+05}."
 snippet = '''
 {${1:value}:+}$0'''
 
 [[entries]]
 name = "hex {:x} {:X}"
-keys = ["hex", "hexadecimal", "format", "lowercase", "uppercase"]
+keys = ["hex", "hexadecimal", "format", "lowercase", "uppercase", "base", "16"]
 doc = "Format an integer in hexadecimal."
 snippet = '''
 {${1:value}:${2:x}}$0'''
 
 [[entries]]
 name = "hex with prefix {:#x}"
-keys = ["hex", "prefix", "0x", "alternate", "format"]
+keys = ["hex", "prefix", "0x", "alternate", "format", "pad"]
 doc = "Format in hexadecimal with a 0x prefix, padding with {:#010x}."
 snippet = '''
 {${1:value}:#${2:010}x}$0'''
 
 [[entries]]
 name = "binary {:b}"
-keys = ["binary", "bits", "format"]
-doc = "Format an integer in binary, with # for a 0b prefix."
+keys = ["binary", "bits", "format", "base", "2", "bitmask"]
+doc = "Format an integer in binary."
 snippet = '''
-{${1:value}:${2:#}b}$0'''
+{${1:value}:b}$0'''
+
+[[entries]]
+name = "binary with prefix {:#b}"
+keys = ["binary", "prefix", "0b", "alternate", "bits", "pad", "format"]
+doc = "Format in binary with a 0b prefix, padding with {:#010b}."
+snippet = '''
+{${1:value}:#${2:010}b}$0'''
 
 [[entries]]
 name = "octal {:o}"
-keys = ["octal", "format"]
-doc = "Format an integer in octal."
+keys = ["octal", "format", "base", "8", "permissions", "prefix"]
+doc = "Format an integer in octal, with # for a 0o prefix."
 snippet = '''
-{${1:value}:o}$0'''
+{${1:value}:${2:#}o}$0'''
 
 [[entries]]
 name = "scientific {:e}"
-keys = ["scientific", "exponent", "float", "format"]
-doc = "Format a number in scientific notation."
+keys = ["scientific", "exponent", "float", "format", "notation", "uppercase"]
+doc = "Format a number in scientific notation, {:E} for an uppercase E."
 snippet = '''
 {${1:value}:${2:e}}$0'''
 
 [[entries]]
-name = "escaped braces {{ }}"
-keys = ["escape", "braces", "literal", "format"]
-doc = "Write literal braces inside a format string."
+name = "scientific precision {:.3e}"
+keys = ["scientific", "precision", "exponent", "float", "digits", "format"]
+doc = "Scientific notation with a fixed number of digits after the point."
 snippet = '''
-{{${1:text}}}$0'''
+{${1:value}:.${2:3}e}$0'''
+
+[[entries]]
+name = "debug hex {:x?}"
+keys = ["debug", "hex", "bytes", "vec", "format", "slice", "dump"]
+doc = "Debug-format a collection with its integers in hexadecimal."
+snippet = '''
+{${1:bytes}:${2:02}x?}$0'''
 
 [[entries]]
 name = "pointer {:p}"
-keys = ["pointer", "address", "format"]
+keys = ["pointer", "address", "format", "reference", "memory"]
 doc = "Format a reference or pointer as its address."
 snippet = '''
 {${1:reference}:p}$0'''
 
 [[entries]]
-name = "format_args!"
-keys = ["format_args", "arguments", "fmt", "zero", "copy"]
-doc = "Build formatting Arguments without allocating, to pass to a writer."
+name = "escaped braces {{ }}"
+keys = ["escape", "braces", "literal", "format", "curly", "json"]
+doc = "Write literal braces inside a format string."
 snippet = '''
-format_args!("${1:{value\}}")$0'''
+{{${1:text}}}$0'''

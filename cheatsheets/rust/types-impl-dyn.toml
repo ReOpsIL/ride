@@ -1,0 +1,163 @@
+title = "Types: impl Trait and dyn Trait forms"
+contexts = ["type"]
+
+[[entries]]
+name = "impl Trait + 'a"
+keys = ["impl", "trait", "lifetime", "borrow", "return", "captures"]
+doc = "Opaque return type that borrows from an argument for the given lifetime."
+snippet = '''
+impl ${1:Trait} + '${2:_}$0'''
+
+[[entries]]
+name = "impl Trait + Send"
+keys = ["impl", "trait", "send", "thread", "opaque", "bound"]
+doc = "Opaque type that must also be sendable across threads."
+snippet = '''
+impl ${1:Trait} + Send$0'''
+
+[[entries]]
+name = "impl Into<String> parameter"
+keys = ["impl", "into", "string", "parameter", "accept", "str", "flexible"]
+doc = "Parameter accepting &str, String or anything convertible to String."
+snippet = '''
+impl Into<String>$0'''
+
+[[entries]]
+name = "impl AsRef<str> parameter"
+keys = ["impl", "asref", "str", "parameter", "borrow", "accept", "flexible"]
+doc = "Parameter accepting anything viewable as a str by reference."
+snippet = '''
+impl AsRef<str>$0'''
+
+[[entries]]
+name = "impl IntoIterator<Item = T>"
+keys = ["impl", "intoiterator", "item", "parameter", "collection", "any", "loop"]
+doc = "Parameter accepting a Vec, array, slice or iterator of the element type."
+snippet = '''
+impl IntoIterator<Item = ${1:T}>$0'''
+
+[[entries]]
+name = "impl Display parameter"
+keys = ["impl", "display", "parameter", "print", "tostring", "any"]
+doc = "Parameter accepting anything printable with {}."
+snippet = '''
+impl std::fmt::Display$0'''
+
+[[entries]]
+name = "impl Future<Output = T>"
+keys = ["impl", "future", "output", "async", "return", "await"]
+doc = "Opaque future type, what an async fn returns."
+snippet = '''
+impl std::future::Future<Output = ${1:T}>${2: + Send}$0'''
+
+[[entries]]
+name = "impl Fn + 'static"
+keys = ["impl", "fn", "closure", "static", "owned", "callback", "return"]
+doc = "Closure type that owns all its captures, safe to store or move anywhere."
+snippet = '''
+impl Fn(${1:i32}) -> ${2:i32} + 'static$0'''
+
+[[entries]]
+name = "impl FnMut return"
+keys = ["impl", "fnmut", "closure", "return", "counter", "state", "generator"]
+doc = "Opaque return type for a closure carrying mutable state."
+snippet = '''
+impl FnMut() -> ${1:u32}$0'''
+
+[[entries]]
+name = "impl FnOnce parameter"
+keys = ["impl", "fnonce", "closure", "parameter", "once", "consume", "lazy"]
+doc = "Parameter accepting a closure that is called at most once."
+snippet = '''
+impl FnOnce() -> ${1:T}$0'''
+
+[[entries]]
+name = "dyn Trait + Send + Sync + 'static"
+keys = ["dyn", "trait", "send", "sync", "static", "thread", "object", "bounds"]
+doc = "Trait object usable from any thread and free of borrows."
+snippet = '''
+dyn ${1:Trait} + Send + Sync + 'static$0'''
+
+[[entries]]
+name = "dyn Trait + 'a"
+keys = ["dyn", "trait", "lifetime", "object", "borrow", "bound"]
+doc = "Trait object that may borrow data living for 'a."
+snippet = '''
+dyn ${1:Trait} + '${2:a}$0'''
+
+[[entries]]
+name = "&mut dyn Trait"
+keys = ["dyn", "mut", "mutable", "trait", "object", "borrowed", "reference"]
+doc = "Exclusive borrowed trait object, for calling &mut self trait methods."
+snippet = '''
+&mut dyn ${1:Trait}$0'''
+
+[[entries]]
+name = "&'a dyn Trait"
+keys = ["dyn", "lifetime", "trait", "object", "borrowed", "reference", "struct"]
+doc = "Borrowed trait object with an explicit lifetime, for struct fields."
+snippet = '''
+&'${1:a} dyn ${2:Trait}$0'''
+
+[[entries]]
+name = "Box<dyn Trait + 'a>"
+keys = ["box", "dyn", "trait", "lifetime", "object", "borrow", "owned"]
+doc = "Owned trait object allowed to hold borrows of lifetime 'a."
+snippet = '''
+Box<dyn ${1:Trait} + '${2:a}>$0'''
+
+[[entries]]
+name = "Box<dyn Trait + Send>"
+keys = ["box", "dyn", "trait", "send", "thread", "object", "owned"]
+doc = "Owned trait object that can be moved to another thread."
+snippet = '''
+Box<dyn ${1:Trait} + Send>$0'''
+
+[[entries]]
+name = "dyn Fn(&str) -> bool"
+keys = ["dyn", "fn", "closure", "predicate", "callback", "bool", "filter"]
+doc = "Trait object for a predicate closure over string slices."
+snippet = '''
+dyn Fn(&${1:str}) -> ${2:bool}$0'''
+
+[[entries]]
+name = "&dyn Fn parameter"
+keys = ["dyn", "fn", "ref", "borrowed", "closure", "parameter", "callback", "nogeneric"]
+doc = "Borrowed closure parameter with dynamic dispatch, avoiding a generic."
+snippet = '''
+&dyn Fn(${1:i32}) -> ${2:i32}$0'''
+
+[[entries]]
+name = "&mut dyn FnMut parameter"
+keys = ["dyn", "fnmut", "mut", "borrowed", "closure", "parameter", "callback"]
+doc = "Borrowed mutable closure parameter with dynamic dispatch."
+snippet = '''
+&mut dyn FnMut(${1:i32})$0'''
+
+[[entries]]
+name = "dyn Any downcast target"
+keys = ["dyn", "any", "downcast", "typeid", "erased", "runtime"]
+doc = "Trait object that downcast_ref can turn back into a concrete type."
+snippet = '''
+&dyn std::any::Any$0'''
+
+[[entries]]
+name = "dyn Error + Send + Sync"
+keys = ["dyn", "error", "send", "sync", "thread", "box", "anyhow"]
+doc = "Type-erased error that can cross threads, the usual Box<dyn Error> form."
+snippet = '''
+dyn std::error::Error + Send + Sync$0'''
+
+[[entries]]
+name = "impl Trait in argument vs generic"
+keys = ["impl", "generic", "argument", "parameter", "static", "dispatch", "compare"]
+doc = "impl Trait in argument position is sugar for a generic parameter with that bound."
+snippet = '''
+&impl ${1:Trait}$0'''
+
+[[entries]]
+name = "dyn vs impl dispatch"
+keys = ["dyn", "impl", "dispatch", "static", "dynamic", "vtable", "choose"]
+doc = "Use impl or generics for monomorphized static dispatch, dyn behind a pointer for runtime dispatch."
+snippet = '''
+&dyn ${1:Trait}$0'''

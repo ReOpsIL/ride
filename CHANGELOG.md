@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Cheat sheet.** The Rust sheet grows from 710 to 2034 entries and the C++ sheet from 590 to 1711, so every construct is listed in each form a beginner would type (typed array bindings, nested arrays, const and static items, every `let` and `match` shape, full std collection, string, iterator, I/O, thread and async APIs, C++ classes, templates, STL containers, algorithms, ranges and streams). Item keywords typed before an existing item, and an identifier typed alone in a C++ body, now get the right context. Snippet placeholders are validated the way the app parses them, which fixed 62 templates that were cut short at a brace.
+
 ## 1.0.0 — 2026-09-20
 
 First public release of Ride, a native macOS IDE for Rust, C and C++.

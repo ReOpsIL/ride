@@ -1,0 +1,160 @@
+title = "Arithmetic and math"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "integer division"
+keys = ["divide", "division", "/", "int", "truncate", "quotient"]
+doc = "Integer / truncates toward zero."
+snippet = """
+${1:a} / ${2:b}$0"""
+
+[[entries]]
+name = "modulo"
+keys = ["modulo", "remainder", "%", "mod", "divisible"]
+doc = "Remainder of integer division; sign follows the dividend."
+snippet = """
+${1:a} % ${2:b}$0"""
+
+[[entries]]
+name = "float division"
+keys = ["divide", "division", "double", "float", "cast", "average", "ratio"]
+doc = "Divide as floating point by converting one operand first."
+snippet = """
+static_cast<double>(${1:a}) / ${2:b}$0"""
+
+[[entries]]
+name = "even / odd check"
+keys = ["even", "odd", "%", "modulo", "parity", "divisible"]
+doc = "Test divisibility with modulo."
+snippet = """
+${1:n} % ${2:2} == 0$0"""
+
+[[entries]]
+name = "std::abs"
+keys = ["abs", "absolute", "magnitude", "fabs", "cmath"]
+doc = "Absolute value for integers and floating point."
+snippet = """
+std::abs(${1:x})$0"""
+
+[[entries]]
+name = "std::pow"
+keys = ["pow", "power", "exponent", "square", "cmath", "^"]
+doc = "Raise to a power (returns double)."
+snippet = """
+std::pow(${1:base}, ${2:exponent})$0"""
+
+[[entries]]
+name = "std::sqrt"
+keys = ["sqrt", "root", "square", "cmath", "cbrt"]
+doc = "Square root (see also std::cbrt and std::hypot)."
+snippet = """
+std::sqrt(${1:x})$0"""
+
+[[entries]]
+name = "std::hypot"
+keys = ["hypot", "distance", "pythagoras", "length", "cmath"]
+doc = "sqrt(x*x + y*y) without overflow."
+snippet = """
+std::hypot(${1:x}, ${2:y})$0"""
+
+[[entries]]
+name = "std::round"
+keys = ["round", "floor", "ceil", "trunc", "cmath", "nearest"]
+doc = "Round to nearest; floor, ceil and trunc are the other directions."
+snippet = """
+std::${1:round}(${2:x})$0"""
+
+[[entries]]
+name = "std::lround"
+keys = ["lround", "round", "int", "long", "convert", "nearest"]
+doc = "Round to the nearest integer and return it as long."
+snippet = """
+std::lround(${1:x})$0"""
+
+[[entries]]
+name = "std::fmod"
+keys = ["fmod", "modulo", "remainder", "double", "float", "cmath"]
+doc = "Floating-point remainder."
+snippet = """
+std::fmod(${1:a}, ${2:b})$0"""
+
+[[entries]]
+name = "std::exp / std::log"
+keys = ["exp", "log", "log10", "log2", "exponential", "logarithm", "cmath"]
+doc = "Exponential and logarithms: exp, log, log2, log10."
+snippet = """
+std::${1:log}(${2:x})$0"""
+
+[[entries]]
+name = "trigonometry"
+keys = ["sin", "cos", "tan", "atan2", "trig", "radians", "cmath"]
+doc = "Trigonometric functions in radians: sin, cos, tan, asin, acos, atan, atan2."
+snippet = """
+std::${1:sin}(${2:x})$0"""
+
+[[entries]]
+name = "std::midpoint"
+keys = ["midpoint", "average", "middle", "overflow", "safe", "half"]
+doc = "C++20 midpoint of two values without overflow."
+snippet = """
+std::midpoint(${1:a}, ${2:b})$0"""
+
+[[entries]]
+name = "overflow-safe midpoint"
+keys = ["midpoint", "middle", "overflow", "binary", "search", "safe"]
+doc = "Middle index that cannot overflow."
+snippet = """
+${1:lo} + (${2:hi} - ${1:lo}) / 2$0"""
+
+[[entries]]
+name = "overflow check before add"
+keys = ["overflow", "check", "add", "safe", "numeric_limits", "max"]
+doc = "Test whether a + b would overflow before computing it."
+snippet = """
+if (${1:a} > std::numeric_limits<${2:int}>::max() - ${3:b}) {
+    $0
+}"""
+
+[[entries]]
+name = "saturating add"
+keys = ["add_sat", "saturating", "overflow", "clamp", "c++26"]
+doc = "C++26 addition that clamps instead of overflowing."
+snippet = """
+std::add_sat(${1:a}, ${2:b})$0"""
+
+[[entries]]
+name = "checked multiply with wider type"
+keys = ["overflow", "multiply", "wide", "long", "safe", "check"]
+doc = "Multiply in a wider type and check the result fits."
+snippet = """
+long long ${1:product} = static_cast<long long>(${2:a}) * ${3:b};$0"""
+
+[[entries]]
+name = "float comparison with epsilon"
+keys = ["float", "compare", "epsilon", "equal", "double", "approx", "tolerance"]
+doc = "Compare floating values with a tolerance instead of ==."
+snippet = """
+std::abs(${1:a} - ${2:b}) < ${3:1e-9}$0"""
+
+[[entries]]
+name = "std::isnan / std::isinf"
+keys = ["isnan", "isinf", "nan", "infinity", "finite", "cmath"]
+doc = "Test a floating value for NaN or infinity."
+snippet = """
+std::${1:isnan}(${2:x})$0"""
+
+[[entries]]
+name = "std::gcd / std::lcm"
+keys = ["gcd", "lcm", "divisor", "multiple", "numeric"]
+doc = "Greatest common divisor and least common multiple."
+snippet = """
+std::${1:gcd}(${2:a}, ${3:b})$0"""
+
+[[entries]]
+name = "random number"
+keys = ["random", "rand", "mt19937", "uniform", "dice", "distribution"]
+doc = "Random integer in a range with the <random> engine."
+snippet = """
+std::mt19937 ${1:rng}{std::random_device{}()};
+std::uniform_int_distribution<${2:int}> ${3:dist}(${4:1}, ${5:6});
+auto ${6:value} = ${3:dist}(${1:rng});$0"""

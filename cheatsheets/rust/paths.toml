@@ -1,0 +1,174 @@
+title = "Paths"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "use std::path"
+keys = ["use", "path", "pathbuf", "import"]
+doc = "Import the path types."
+snippet = '''
+use std::path::{Path, PathBuf};$0'''
+
+[[entries]]
+name = "Path::new"
+keys = ["path", "new", "file", "borrow", "str", "from"]
+doc = "Borrow a str as a filesystem path."
+snippet = '''
+std::path::Path::new(${1:"dir/file.txt"})$0'''
+
+[[entries]]
+name = "PathBuf::from"
+keys = ["pathbuf", "from", "owned", "path", "string", "new", "create"]
+doc = "Create an owned path from a string."
+snippet = '''
+let ${1:path} = std::path::PathBuf::from(${2:"dir/file.txt"});$0'''
+
+[[entries]]
+name = "PathBuf join"
+keys = ["pathbuf", "join", "path", "build", "concat", "child", "under"]
+doc = "Build a new path by joining a component onto a directory."
+snippet = '''
+${1:dir}.join(${2:"file.txt"})$0'''
+
+[[entries]]
+name = "PathBuf push"
+keys = ["pathbuf", "push", "mutate", "append", "component", "build"]
+doc = "Append a component to an owned path in place."
+snippet = '''
+let mut ${1:path} = std::path::PathBuf::from(${2:base});
+${1:path}.push(${3:"sub"});
+${1:path}.push(${4:"file.txt"});$0'''
+
+[[entries]]
+name = "with_extension / set_extension"
+keys = ["extension", "with_extension", "set_extension", "suffix", "rename", "change", "ext"]
+doc = "Produce a path with a different extension."
+snippet = '''
+${1:path}.with_extension("${2:rs}")$0'''
+
+[[entries]]
+name = "with_file_name"
+keys = ["with_file_name", "file_name", "sibling", "replace", "rename", "same", "dir"]
+doc = "Produce a sibling path with another file name."
+snippet = '''
+${1:path}.with_file_name("${2:other.txt}")$0'''
+
+[[entries]]
+name = "path parts"
+keys = ["path", "file_name", "extension", "parent", "stem", "parts", "basename", "dirname"]
+doc = "Extract the file name, stem, extension or parent of a path."
+snippet = '''
+${1:path}.${2:extension}().and_then(|s| s.to_str())$0'''
+
+[[entries]]
+name = "file_name as str"
+keys = ["file_name", "str", "to_str", "unwrap_or", "basename", "name", "string"]
+doc = "Get the file name as a str with a fallback."
+snippet = '''
+${1:path}.file_name().and_then(|n| n.to_str()).unwrap_or("${2:}")$0'''
+
+[[entries]]
+name = "parent directory"
+keys = ["parent", "directory", "dirname", "path", "up", "folder"]
+doc = "Get the directory containing a path."
+snippet = '''
+let ${1:dir} = ${2:path}.parent().ok_or("${3:no parent}")?;$0'''
+
+[[entries]]
+name = "path display"
+keys = ["display", "path", "print", "format", "string", "show"]
+doc = "Format a path for printing."
+snippet = '''
+println!("{}", ${1:path}.display());$0'''
+
+[[entries]]
+name = "path to str / to_string_lossy"
+keys = ["to_str", "to_string_lossy", "path", "string", "convert", "utf8", "str"]
+doc = "Convert a path to a string, lossily or checking validity."
+snippet = '''
+${1:path}.to_string_lossy().${2:into_owned()}$0'''
+
+[[entries]]
+name = "path components"
+keys = ["components", "path", "iterate", "parts", "segments", "split", "walk"]
+doc = "Iterate over the segments of a path."
+snippet = '''
+for ${1:part} in ${2:path}.components() {
+    $0
+}'''
+
+[[entries]]
+name = "strip_prefix relative"
+keys = ["strip_prefix", "relative", "path", "base", "root", "remove", "prefix"]
+doc = "Make a path relative to a base directory."
+snippet = '''
+let ${1:rel} = ${2:path}.strip_prefix(${3:base})?;$0'''
+
+[[entries]]
+name = "is_absolute / canonicalize"
+keys = ["absolute", "canonicalize", "resolve", "symlink", "full", "path", "normalize"]
+doc = "Check for an absolute path or resolve it to a canonical absolute one."
+snippet = '''
+let ${1:full} = std::fs::canonicalize(${2:path})?;$0'''
+
+[[entries]]
+name = "path exists / is_file"
+keys = ["path", "exists", "is_file", "is_dir", "check", "test", "present"]
+doc = "Query the filesystem about a path."
+snippet = '''
+${1:path}.${2:exists}()$0'''
+
+[[entries]]
+name = "fn taking impl AsRef<Path>"
+keys = ["asref", "path", "parameter", "generic", "fn", "accept", "str", "pathbuf"]
+doc = "Accept a str, String, Path or PathBuf as a path argument."
+snippet = '''
+fn ${1:load}(${2:path}: impl AsRef<std::path::Path>) -> std::io::Result<${3:String}> {
+    let ${2:path} = ${2:path}.as_ref();
+    $0
+}'''
+
+[[entries]]
+name = "file_stem"
+keys = ["file_stem", "stem", "name", "without", "extension", "basename"]
+doc = "File name without its extension."
+snippet = '''
+${1:path}.file_stem().and_then(|s| s.to_str()).unwrap_or_default()$0'''
+
+[[entries]]
+name = "extension equals"
+keys = ["extension", "equals", "check", "is", "ext", "rs", "filter", "is_some_and"]
+doc = "Check whether a path has a given extension."
+snippet = '''
+${1:path}.extension().is_some_and(|e| e == "${2:rs}")$0'''
+
+[[entries]]
+name = "starts_with / ends_with"
+keys = ["starts_with", "ends_with", "path", "prefix", "suffix", "inside", "under"]
+doc = "Test whether a path begins or ends with another path's components."
+snippet = '''
+${1:path}.starts_with(${2:base})$0'''
+
+[[entries]]
+name = "PathBuf return type"
+keys = ["pathbuf", "return", "fn", "type", "owned", "build", "compute"]
+doc = "Return an owned path from a function."
+snippet = '''
+fn ${1:config_path}(${2:args}) -> std::path::PathBuf {
+    $0
+}'''
+
+[[entries]]
+name = "&Path parameter"
+keys = ["path", "parameter", "borrow", "fn", "arg", "reference", "slice"]
+doc = "Borrow a path in a function signature, like &str for strings."
+snippet = '''
+fn ${1:load}(${2:path}: &std::path::Path) -> std::io::Result<${3:String}> {
+    $0
+}'''
+
+[[entries]]
+name = "path from argument"
+keys = ["path", "args", "argument", "cli", "pathbuf", "input", "file"]
+doc = "Take a path from the command line."
+snippet = '''
+let ${1:path} = std::path::PathBuf::from(std::env::args().nth(${2:1}).ok_or("${3:usage: prog <file>}")?);$0'''

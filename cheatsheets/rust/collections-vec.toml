@@ -1,191 +1,202 @@
-title = "Vec, arrays and slices"
+title = "Vec: create and modify"
 contexts = ["statement", "expression"]
 
 [[entries]]
 name = "Vec::new"
-keys = ["vec", "new", "empty", "vector"]
+keys = ["vec", "new", "empty", "vector", "list", "declare", "create"]
 doc = "Create an empty vector."
 snippet = '''
 let mut ${1:items}: Vec<${2:T}> = Vec::new();$0'''
 
 [[entries]]
 name = "vec!"
-keys = ["vec", "macro", "literal", "vector"]
+keys = ["vec", "macro", "literal", "vector", "list", "init", "elements"]
 doc = "Create a vector from listed elements."
 snippet = '''
 vec![${1:1, 2, 3}]$0'''
 
 [[entries]]
 name = "vec! repeat"
-keys = ["vec", "repeat", "zeros", "filled", "n"]
+keys = ["vec", "repeat", "zeros", "filled", "n", "size", "default"]
 doc = "Create a vector with n copies of a value."
 snippet = '''
 vec![${1:0}; ${2:n}]$0'''
 
 [[entries]]
 name = "Vec::with_capacity"
-keys = ["vec", "capacity", "reserve", "preallocate"]
+keys = ["vec", "capacity", "reserve", "preallocate", "size", "hint"]
 doc = "Create an empty vector with room for n elements."
 snippet = '''
 Vec::with_capacity(${1:n})$0'''
 
 [[entries]]
+name = "Vec::from"
+keys = ["vec", "from", "array", "slice", "convert", "into"]
+doc = "Create a vector from an array, slice or string."
+snippet = '''
+Vec::from(${1:[1, 2, 3]})$0'''
+
+[[entries]]
+name = "Vec of Strings"
+keys = ["vec", "strings", "string", "list", "owned", "names", "literal"]
+doc = "Create a vector of owned strings from literals."
+snippet = '''
+let ${1:names}: Vec<String> = vec![${2:"a".to_string(), "b".to_string()}];$0'''
+
+[[entries]]
+name = "Vec 2D"
+keys = ["vec", "2d", "nested", "matrix", "grid", "rows", "columns", "vec of vec"]
+doc = "Create a grid as a vector of row vectors, indexed as grid[row][col]."
+snippet = '''
+let mut ${1:grid} = vec![vec![${2:0}; ${3:cols}]; ${4:rows}];$0'''
+
+[[entries]]
+name = "collect into Vec"
+keys = ["vec", "collect", "iterator", "range", "gather", "from", "list"]
+doc = "Build a vector from any iterator."
+snippet = '''
+let ${1:items}: Vec<${2:_}> = ${3:(0..10)}.collect();$0'''
+
+[[entries]]
 name = "push / pop"
-keys = ["push", "pop", "append", "stack", "vec"]
+keys = ["push", "pop", "append", "stack", "vec", "add", "end", "last"]
 doc = "Add an element at the end or remove the last one as an Option."
 snippet = '''
 ${1:items}.push(${2:value});$0'''
 
 [[entries]]
+name = "while pop"
+keys = ["pop", "while", "stack", "drain", "loop", "vec", "lifo"]
+doc = "Process a vector as a stack until it is empty."
+snippet = '''
+while let Some(${1:item}) = ${2:stack}.pop() {
+    $0
+}'''
+
+[[entries]]
 name = "insert / remove"
-keys = ["insert", "remove", "index", "vec", "shift"]
+keys = ["insert", "remove", "index", "vec", "shift", "at", "delete"]
 doc = "Insert or remove at an index, shifting later elements."
 snippet = '''
 ${1:items}.${2:insert}(${3:index}${4:, value});$0'''
 
 [[entries]]
 name = "swap_remove"
-keys = ["swap", "remove", "fast", "unordered", "vec"]
+keys = ["swap", "remove", "fast", "unordered", "vec", "delete"]
 doc = "Remove an element in constant time by swapping in the last one."
 snippet = '''
 ${1:items}.swap_remove(${2:index})$0'''
 
 [[entries]]
 name = "extend"
-keys = ["extend", "append", "concat", "vec", "iterator"]
+keys = ["extend", "append", "concat", "vec", "iterator", "add", "all"]
 doc = "Append all elements of an iterator."
 snippet = '''
 ${1:items}.extend(${2:other});$0'''
 
 [[entries]]
+name = "extend_from_slice"
+keys = ["extend", "slice", "append", "copy", "vec", "clone", "add"]
+doc = "Append clones of every element of a slice."
+snippet = '''
+${1:items}.extend_from_slice(&${2:other});$0'''
+
+[[entries]]
+name = "append"
+keys = ["append", "move", "vec", "merge", "concat", "empty"]
+doc = "Move all elements of another vector to the end, leaving it empty."
+snippet = '''
+${1:items}.append(&mut ${2:other});$0'''
+
+[[entries]]
 name = "retain"
-keys = ["retain", "filter", "remove", "in", "place", "vec"]
+keys = ["retain", "filter", "remove", "in", "place", "vec", "keep", "delete"]
 doc = "Keep only elements matching a predicate, in place."
 snippet = '''
 ${1:items}.retain(|${2:x}| ${3:cond});$0'''
 
 [[entries]]
 name = "drain"
-keys = ["drain", "remove", "range", "move", "out", "vec"]
+keys = ["drain", "remove", "range", "move", "out", "vec", "take"]
 doc = "Remove a range of elements, yielding them by value."
 snippet = '''
 ${1:items}.drain(${2:..})$0'''
 
 [[entries]]
 name = "truncate / clear"
-keys = ["truncate", "clear", "shrink", "empty", "vec"]
+keys = ["truncate", "clear", "shrink", "empty", "vec", "reset", "cut"]
 doc = "Drop elements past a length, or all of them."
 snippet = '''
 ${1:items}.${2:truncate}(${3:len});$0'''
 
 [[entries]]
-name = "get"
-keys = ["get", "index", "option", "safe", "bounds"]
-doc = "Index without panicking, giving None when out of bounds."
+name = "resize"
+keys = ["resize", "grow", "shrink", "length", "fill", "vec", "pad"]
+doc = "Grow with copies of a value or shrink to a new length."
 snippet = '''
-${1:items}.get(${2:index})$0'''
+${1:items}.resize(${2:new_len}, ${3:0});$0'''
 
 [[entries]]
-name = "index"
-keys = ["index", "subscript", "brackets", "element"]
-doc = "Access an element by index, panicking when out of bounds."
+name = "split_off"
+keys = ["split", "off", "tail", "vec", "divide", "at", "move"]
+doc = "Move the elements from an index onward into a new vector."
 snippet = '''
-${1:items}[${2:index}]$0'''
+let ${1:tail} = ${2:items}.split_off(${3:at});$0'''
 
 [[entries]]
-name = "first / last"
-keys = ["first", "last", "head", "tail", "option"]
-doc = "Borrow the first or last element as an Option."
+name = "dedup_by_key"
+keys = ["dedup", "by", "key", "unique", "duplicates", "consecutive", "vec"]
+doc = "Remove consecutive elements with an equal key."
 snippet = '''
-${1:items}.${2:first}()$0'''
+${1:items}.dedup_by_key(|${2:x}| ${3:x.id});$0'''
 
 [[entries]]
-name = "len / is_empty"
-keys = ["len", "length", "empty", "size", "count"]
-doc = "Number of elements, or whether there are none."
+name = "reserve / shrink_to_fit"
+keys = ["reserve", "shrink", "capacity", "memory", "vec", "fit", "allocate"]
+doc = "Grow the capacity ahead of pushes, or release unused capacity."
 snippet = '''
-${1:items}.${2:len}()$0'''
+${1:items}.${2:reserve}(${3:n});$0'''
 
 [[entries]]
-name = "contains"
-keys = ["contains", "includes", "has", "search", "slice"]
-doc = "Test whether a slice holds a value equal to the given one."
+name = "capacity"
+keys = ["capacity", "allocated", "size", "vec", "memory"]
+doc = "Number of elements the vector can hold without reallocating."
 snippet = '''
-${1:items}.contains(&${2:value})$0'''
+${1:items}.capacity()$0'''
 
 [[entries]]
-name = "binary_search"
-keys = ["binary", "search", "sorted", "find", "slice"]
-doc = "Search a sorted slice, giving the index or the insertion point."
+name = "last_mut"
+keys = ["last", "mut", "first", "modify", "vec", "top", "end"]
+doc = "Borrow the last or first element mutably as an Option."
 snippet = '''
-${1:items}.binary_search(&${2:value})$0'''
+if let Some(${1:last}) = ${2:items}.${3:last_mut}() {
+    $0
+}'''
 
 [[entries]]
-name = "slice range"
-keys = ["slice", "range", "subslice", "view", "brackets"]
-doc = "Borrow part of a vector or array as a slice."
+name = "as_slice"
+keys = ["as_slice", "slice", "borrow", "vec", "view", "deref"]
+doc = "Borrow the vector as a slice, the same as &items[..]."
 snippet = '''
-&${1:items}[${2:start}..${3:end}]$0'''
+${1:items}.as_slice()$0'''
 
 [[entries]]
-name = "split_at"
-keys = ["split", "at", "halves", "slice"]
-doc = "Split a slice into two at an index."
+name = "into_boxed_slice"
+keys = ["box", "slice", "boxed", "vec", "convert", "fixed", "shrink"]
+doc = "Convert a vector into a Box<[T]> with no spare capacity."
 snippet = '''
-let (${1:left}, ${2:right}) = ${3:items}.split_at(${4:mid});$0'''
+${1:items}.into_boxed_slice()$0'''
 
 [[entries]]
-name = "array literal"
-keys = ["array", "literal", "fixed", "brackets"]
-doc = "Create a fixed-size array from listed elements."
+name = "swap elements"
+keys = ["swap", "exchange", "elements", "index", "vec", "slice"]
+doc = "Swap the elements at two indices in place."
 snippet = '''
-let ${1:arr} = [${2:1, 2, 3}];$0'''
+${1:items}.swap(${2:i}, ${3:j});$0'''
 
 [[entries]]
-name = "array repeat"
-keys = ["array", "repeat", "zeros", "n", "fixed"]
-doc = "Create a fixed-size array filled with one value."
+name = "Vec from slice of vecs"
+keys = ["vec", "concat", "flatten", "merge", "join", "nested", "combine"]
+doc = "Merge several vectors into one."
 snippet = '''
-let ${1:arr} = [${2:0u8}; ${3:N}];$0'''
-
-[[entries]]
-name = "reverse / swap"
-keys = ["reverse", "swap", "in", "place", "slice"]
-doc = "Reverse a slice in place, or swap two elements."
-snippet = '''
-${1:items}.reverse();$0'''
-
-[[entries]]
-name = "concat / join"
-keys = ["concat", "join", "flatten", "nested", "vec"]
-doc = "Flatten a slice of slices into one vector, optionally with a separator."
-snippet = '''
-${1:parts}.concat()$0'''
-
-[[entries]]
-name = "to_vec"
-keys = ["to_vec", "owned", "copy", "slice", "vec"]
-doc = "Copy a slice into a new vector."
-snippet = '''
-${1:slice}.to_vec()$0'''
-
-[[entries]]
-name = "iter().sum / max"
-keys = ["sum", "max", "min", "aggregate", "vec"]
-doc = "Aggregate a vector's elements through its iterator."
-snippet = '''
-${1:items}.iter().${2:sum::<i64>}()$0'''
-
-[[entries]]
-name = "split / rsplit slice"
-keys = ["split", "slice", "separator", "delimiter", "groups"]
-doc = "Split a slice into subslices at elements matching a predicate."
-snippet = '''
-${1:items}.split(|${2:x}| ${3:*x == 0})$0'''
-
-[[entries]]
-name = "fill / copy_from_slice"
-keys = ["fill", "copy", "from", "slice", "memset", "memcpy"]
-doc = "Overwrite every element with a value, or copy another slice of equal length."
-snippet = '''
-${1:buf}.${2:fill}(${3:0});$0'''
+[${1:a}, ${2:b}].concat()$0'''

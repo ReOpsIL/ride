@@ -1,0 +1,184 @@
+title = "Types: arrays, slices, strings and tuples"
+contexts = ["type"]
+
+[[entries]]
+name = "[[T; N]; M] nested array"
+keys = ["array", "nested", "matrix", "grid", "2d", "fixed", "rows"]
+doc = "Fixed-size array of fixed-size arrays, a stack-allocated matrix."
+snippet = '''
+[[${1:i32}; ${2:COLS}]; ${3:ROWS}]$0'''
+
+[[entries]]
+name = "&[T; N] array reference"
+keys = ["array", "ref", "reference", "borrow", "fixed", "length"]
+doc = "Borrowed fixed-size array whose length is still known at compile time."
+snippet = '''
+&[${1:T}; ${2:N}]$0'''
+
+[[entries]]
+name = "&mut [T] mutable slice"
+keys = ["slice", "mut", "mutable", "view", "array", "inplace"]
+doc = "Exclusive view into a contiguous sequence whose elements can be changed."
+snippet = '''
+&mut [${1:T}]$0'''
+
+[[entries]]
+name = "&[u8] byte slice"
+keys = ["bytes", "u8", "slice", "binary", "buffer", "raw"]
+doc = "Borrowed view of raw bytes, the common input type for I/O and parsing."
+snippet = '''
+&[u8]$0'''
+
+[[entries]]
+name = "Vec<u8> byte buffer"
+keys = ["bytes", "u8", "vec", "buffer", "binary", "owned"]
+doc = "Owned growable byte buffer."
+snippet = '''
+Vec<u8>$0'''
+
+[[entries]]
+name = "[u8; N] fixed buffer"
+keys = ["bytes", "u8", "array", "buffer", "fixed", "stack"]
+doc = "Fixed-size stack buffer of bytes."
+snippet = '''
+[u8; ${1:1024}]$0'''
+
+[[entries]]
+name = "Vec<Vec<T>> nested"
+keys = ["vec", "nested", "matrix", "grid", "2d", "list", "rows"]
+doc = "Growable list of growable lists, a heap-allocated matrix with ragged rows."
+snippet = '''
+Vec<Vec<${1:T}>>$0'''
+
+[[entries]]
+name = "Vec<String>"
+keys = ["vec", "string", "list", "strings", "words", "lines"]
+doc = "Owned list of owned strings."
+snippet = '''
+Vec<String>$0'''
+
+[[entries]]
+name = "&[&str]"
+keys = ["slice", "str", "strings", "borrowed", "list", "words"]
+doc = "Borrowed list of borrowed string slices, the cheapest string list parameter."
+snippet = '''
+&[&str]$0'''
+
+[[entries]]
+name = "&[String]"
+keys = ["slice", "string", "strings", "borrowed", "list"]
+doc = "Borrowed view of a Vec of owned strings, accepted from &Vec<String>."
+snippet = '''
+&[String]$0'''
+
+[[entries]]
+name = "&mut Vec<T>"
+keys = ["vec", "mut", "mutable", "reference", "borrow", "push", "grow"]
+doc = "Exclusive reference to a Vec, needed when the callee must push or pop."
+snippet = '''
+&mut Vec<${1:T}>$0'''
+
+[[entries]]
+name = "&'static str"
+keys = ["static", "str", "string", "literal", "constant", "lifetime"]
+doc = "String slice that lives for the whole program, the type of string literals."
+snippet = '''
+&'static str$0'''
+
+[[entries]]
+name = "&mut str"
+keys = ["str", "mut", "mutable", "string", "inplace"]
+doc = "Exclusive string slice, rarely needed since UTF-8 makes in-place edits limited."
+snippet = '''
+&mut str$0'''
+
+[[entries]]
+name = "&mut String"
+keys = ["string", "mut", "mutable", "reference", "borrow", "append"]
+doc = "Exclusive reference to an owned string, needed to push or clear it."
+snippet = '''
+&mut String$0'''
+
+[[entries]]
+name = "Box<str>"
+keys = ["box", "str", "string", "owned", "immutable", "compact"]
+doc = "Owned immutable string without spare capacity, smaller than String."
+snippet = '''
+Box<str>$0'''
+
+[[entries]]
+name = "Box<[T]> boxed slice"
+keys = ["box", "slice", "owned", "fixed", "immutable", "compact"]
+doc = "Owned fixed-length slice on the heap, a Vec without growth."
+snippet = '''
+Box<[${1:T}]>$0'''
+
+[[entries]]
+name = "Rc<str> / Arc<str>"
+keys = ["rc", "arc", "str", "shared", "string", "immutable", "cheap", "clone"]
+doc = "Shared immutable string that clones by bumping a count instead of copying bytes."
+snippet = '''
+${1:Arc}<str>$0'''
+
+[[entries]]
+name = "Arc<[T]> shared slice"
+keys = ["arc", "rc", "slice", "shared", "immutable", "cheap"]
+doc = "Shared immutable slice with reference-counted cloning."
+snippet = '''
+${1:Arc}<[${2:T}]>$0'''
+
+[[entries]]
+name = "char"
+keys = ["char", "character", "unicode", "scalar", "letter", "primitive"]
+doc = "One Unicode scalar value, four bytes wide."
+snippet = '''
+char$0'''
+
+[[entries]]
+name = "() unit"
+keys = ["unit", "empty", "void", "nothing", "tuple", "primitive"]
+doc = "The empty tuple, the type of statements and functions with no return value."
+snippet = '''
+()$0'''
+
+[[entries]]
+name = "tuple of three"
+keys = ["tuple", "triple", "three", "product", "pack"]
+doc = "Anonymous product of three values, indexed with .0, .1 and .2."
+snippet = '''
+(${1:A}, ${2:B}, ${3:C})$0'''
+
+[[entries]]
+name = "tuple with references"
+keys = ["tuple", "pair", "ref", "borrowed", "str", "key", "value"]
+doc = "Pair holding borrowed data, the shape of map iteration items."
+snippet = '''
+(&${1:str}, ${2:i32})$0'''
+
+[[entries]]
+name = "nested tuple"
+keys = ["tuple", "nested", "pair", "inner", "grouped"]
+doc = "Tuple containing another tuple, as produced by chained zip calls."
+snippet = '''
+((${1:A}, ${2:B}), ${3:C})$0'''
+
+[[entries]]
+name = "Vec<(K, V)> pairs"
+keys = ["vec", "tuple", "pairs", "list", "key", "value", "entries"]
+doc = "Ordered list of key-value pairs, a map without hashing."
+snippet = '''
+Vec<(${1:String}, ${2:i32})>$0'''
+
+[[entries]]
+name = "[(K, V); N] pair table"
+keys = ["array", "tuple", "pairs", "table", "const", "static", "lookup"]
+doc = "Fixed lookup table of pairs, often bound to a const or static."
+snippet = '''
+[(&str, ${1:i32}); ${2:N}]$0'''
+
+[[entries]]
+name = "String vs &str parameter"
+keys = ["string", "str", "parameter", "argument", "borrow", "choose", "accept"]
+doc = "Accept &str in parameters so both String and literals can be passed by reference."
+snippet = '''
+&str$0'''

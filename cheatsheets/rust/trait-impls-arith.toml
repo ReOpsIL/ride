@@ -1,0 +1,201 @@
+title = "Standard trait impls: arithmetic operators"
+contexts = ["item"]
+
+[[entries]]
+name = "impl Add"
+keys = ["impl", "add", "plus", "operator", "overload", "sum", "vector"]
+doc = "Overload + for two values of the type."
+snippet = '''
+impl std::ops::Add for ${1:Vec2} {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self {
+        Self { ${2:x}: self.${2:x} + rhs.${2:x}, ${3:y}: self.${3:y} + rhs.${3:y} }$0
+    }
+}'''
+
+[[entries]]
+name = "impl Sub"
+keys = ["impl", "sub", "minus", "subtract", "operator", "overload", "difference"]
+doc = "Overload - for two values of the type."
+snippet = '''
+impl std::ops::Sub for ${1:Vec2} {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self {
+        Self { ${2:x}: self.${2:x} - rhs.${2:x}, ${3:y}: self.${3:y} - rhs.${3:y} }$0
+    }
+}'''
+
+[[entries]]
+name = "impl Mul"
+keys = ["impl", "mul", "multiply", "times", "star", "operator", "overload"]
+doc = "Overload * for two values of the type."
+snippet = '''
+impl std::ops::Mul for ${1:Type} {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Mul<f64> scalar"
+keys = ["impl", "mul", "scalar", "f64", "scale", "operator", "mixed", "rhs"]
+doc = "Overload * with a different right-hand type, such as scaling by a number."
+snippet = '''
+impl std::ops::Mul<${1:f64}> for ${2:Vec2} {
+    type Output = Self;
+
+    fn mul(self, rhs: ${1:f64}) -> Self {
+        Self { ${3:x}: self.${3:x} * rhs, ${4:y}: self.${4:y} * rhs }$0
+    }
+}'''
+
+[[entries]]
+name = "impl Div"
+keys = ["impl", "div", "divide", "slash", "operator", "overload", "quotient"]
+doc = "Overload / for the type."
+snippet = '''
+impl std::ops::Div for ${1:Type} {
+    type Output = Self;
+
+    fn div(self, rhs: Self) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Rem"
+keys = ["impl", "rem", "remainder", "modulo", "percent", "operator", "overload"]
+doc = "Overload % for the type."
+snippet = '''
+impl std::ops::Rem for ${1:Type} {
+    type Output = Self;
+
+    fn rem(self, rhs: Self) -> Self {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Neg"
+keys = ["impl", "neg", "negate", "minus", "unary", "operator", "overload"]
+doc = "Overload unary minus."
+snippet = '''
+impl std::ops::Neg for ${1:Vec2} {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self { ${2:x}: -self.${2:x}, ${3:y}: -self.${3:y} }$0
+    }
+}'''
+
+[[entries]]
+name = "impl Add for references"
+keys = ["impl", "add", "reference", "ref", "borrow", "operator", "noclone", "lifetime"]
+doc = "Overload + on borrowed operands so large values need not be moved or cloned."
+snippet = '''
+impl<'a> std::ops::Add<&'a ${1:Matrix}> for &'a ${1:Matrix} {
+    type Output = ${1:Matrix};
+
+    fn add(self, rhs: &'a ${1:Matrix}) -> ${1:Matrix} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Add with different Output"
+keys = ["impl", "add", "output", "different", "type", "operator", "point", "vector"]
+doc = "Overload + where the result is a third type, such as Point + Vector."
+snippet = '''
+impl std::ops::Add<${1:Vector}> for ${2:Point} {
+    type Output = ${2:Point};
+
+    fn add(self, rhs: ${1:Vector}) -> ${2:Point} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl AddAssign"
+keys = ["impl", "addassign", "plus", "equals", "compound", "operator", "inplace"]
+doc = "Overload += to update in place."
+snippet = '''
+impl std::ops::AddAssign for ${1:Vec2} {
+    fn add_assign(&mut self, rhs: Self) {
+        self.${2:x} += rhs.${2:x};
+        self.${3:y} += rhs.${3:y};$0
+    }
+}'''
+
+[[entries]]
+name = "impl SubAssign"
+keys = ["impl", "subassign", "minus", "equals", "compound", "operator", "inplace"]
+doc = "Overload -= to update in place."
+snippet = '''
+impl std::ops::SubAssign for ${1:Type} {
+    fn sub_assign(&mut self, rhs: Self) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl MulAssign"
+keys = ["impl", "mulassign", "times", "equals", "compound", "operator", "scale", "inplace"]
+doc = "Overload *= to update in place, optionally with a scalar right-hand side."
+snippet = '''
+impl std::ops::MulAssign<${1:f64}> for ${2:Type} {
+    fn mul_assign(&mut self, rhs: ${1:f64}) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl DivAssign / RemAssign"
+keys = ["impl", "divassign", "remassign", "compound", "operator", "inplace", "divide"]
+doc = "Overload /= or %= to update in place."
+snippet = '''
+impl std::ops::${1:DivAssign} for ${2:Type} {
+    fn ${3:div_assign}(&mut self, rhs: Self) {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "impl Index<Range>"
+keys = ["impl", "index", "range", "slice", "brackets", "subrange", "operator"]
+doc = "Support slicing syntax on the type by indexing with a range."
+snippet = '''
+impl std::ops::Index<std::ops::Range<usize>> for ${1:Type} {
+    type Output = [${2:T}];
+
+    fn index(&self, range: std::ops::Range<usize>) -> &[${2:T}] {
+        &self.${3:items}[range]$0
+    }
+}'''
+
+[[entries]]
+name = "impl IndexMut"
+keys = ["impl", "indexmut", "index", "mutable", "brackets", "assign", "operator"]
+doc = "Allow assignment through the indexing operator; requires an Index impl."
+snippet = '''
+impl std::ops::IndexMut<${1:usize}> for ${2:Type} {
+    fn index_mut(&mut self, ${3:i}: ${1:usize}) -> &mut Self::Output {
+        &mut self.${4:items}[${3:i}]$0
+    }
+}'''
+
+[[entries]]
+name = "impl Index with 2D key"
+keys = ["impl", "index", "tuple", "grid", "matrix", "row", "col", "2d"]
+doc = "Index a grid type with a (row, col) tuple."
+snippet = '''
+impl std::ops::Index<(usize, usize)> for ${1:Grid} {
+    type Output = ${2:f64};
+
+    fn index(&self, (${3:row}, ${4:col}): (usize, usize)) -> &${2:f64} {
+        &self.${5:cells}[${3:row} * self.${6:width} + ${4:col}]$0
+    }
+}'''

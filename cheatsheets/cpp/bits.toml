@@ -1,0 +1,150 @@
+title = "Bit manipulation"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "bitwise and / or / xor"
+keys = ["bit", "and", "or", "xor", "&", "|", "^", "bitwise"]
+doc = "Bitwise operators: & | ^ ~ << >>."
+snippet = """
+${1:a} ${2:&} ${3:b}$0"""
+
+[[entries]]
+name = "bitwise not"
+keys = ["bit", "not", "~", "complement", "invert", "bitwise"]
+doc = "Flip every bit."
+snippet = """
+~${1:x}$0"""
+
+[[entries]]
+name = "shift left"
+keys = ["shift", "<<", "left", "multiply", "power", "bit"]
+doc = "Shift left by n bits (multiply by 2^n)."
+snippet = """
+${1:x} << ${2:n}$0"""
+
+[[entries]]
+name = "shift right"
+keys = ["shift", ">>", "right", "divide", "bit"]
+doc = "Shift right by n bits (divide by 2^n; use unsigned for logical shift)."
+snippet = """
+${1:x} >> ${2:n}$0"""
+
+[[entries]]
+name = "bit mask"
+keys = ["mask", "bit", "flag", "1u", "<<", "single"]
+doc = "Mask with only bit n set."
+snippet = """
+(1u << ${1:n})$0"""
+
+[[entries]]
+name = "set bit"
+keys = ["bit", "set", "mask", "flag", "|="]
+doc = "Set bit n."
+snippet = """
+${1:x} |= (1u << ${2:n});$0"""
+
+[[entries]]
+name = "clear bit"
+keys = ["bit", "clear", "mask", "unset", "&=", "~"]
+doc = "Clear bit n."
+snippet = """
+${1:x} &= ~(1u << ${2:n});$0"""
+
+[[entries]]
+name = "toggle bit"
+keys = ["bit", "toggle", "flip", "xor", "^="]
+doc = "Flip bit n."
+snippet = """
+${1:x} ^= (1u << ${2:n});$0"""
+
+[[entries]]
+name = "test bit"
+keys = ["bit", "test", "check", "mask", "is", "set"]
+doc = "True when bit n is set."
+snippet = """
+((${1:x} >> ${2:n}) & 1u)$0"""
+
+[[entries]]
+name = "test flag"
+keys = ["flag", "mask", "test", "has", "&", "check"]
+doc = "True when all bits of a mask are set."
+snippet = """
+(${1:flags} & ${2:mask}) == ${2:mask}$0"""
+
+[[entries]]
+name = "extract bit field"
+keys = ["bits", "extract", "field", "mask", "shift", "range"]
+doc = "Read width bits starting at bit offset."
+snippet = """
+(${1:x} >> ${2:offset}) & ((1u << ${3:width}) - 1)$0"""
+
+[[entries]]
+name = "low byte / high byte"
+keys = ["byte", "low", "high", "0xff", "split", "mask"]
+doc = "Split a value into its low and high bytes."
+snippet = """
+${1:std::uint8_t} ${2:lo} = ${3:value} & 0xFF;
+${1:std::uint8_t} ${4:hi} = (${3:value} >> 8) & 0xFF;$0"""
+
+[[entries]]
+name = "std::bitset"
+keys = ["bitset", "bits", "flags", "set", "count", "binary"]
+doc = "Fixed-size bit sequence with set, reset, test and count."
+snippet = """
+std::bitset<${1:8}> ${2:bits}(${3:value});$0"""
+
+[[entries]]
+name = "print binary"
+keys = ["binary", "print", "bitset", "to_string", "format", "0b"]
+doc = "Render a value as binary digits."
+snippet = """
+std::bitset<${1:8}>(${2:value}).to_string()$0"""
+
+[[entries]]
+name = "<bit> functions"
+keys = ["popcount", "countl_zero", "countr_zero", "has_single_bit", "bit_width", "rotl"]
+doc = "C++20 bit utilities: popcount, countl_zero, countr_zero, bit_width, rotl, has_single_bit."
+snippet = """
+std::${1:popcount}(${2:value})$0"""
+
+[[entries]]
+name = "is power of two"
+keys = ["power", "two", "has_single_bit", "bit", "check"]
+doc = "True when exactly one bit is set."
+snippet = """
+std::has_single_bit(${1:value})$0"""
+
+[[entries]]
+name = "next power of two"
+keys = ["power", "two", "bit_ceil", "round", "up", "capacity"]
+doc = "Smallest power of two not less than the value."
+snippet = """
+std::bit_ceil(${1:value})$0"""
+
+[[entries]]
+name = "std::byteswap"
+keys = ["byteswap", "endian", "bit", "swap", "bytes", "c++23"]
+doc = "C++23 reverse the byte order of an integer."
+snippet = """
+std::byteswap(${1:value})$0"""
+
+[[entries]]
+name = "std::endian"
+keys = ["endian", "native", "little", "big", "byte", "order"]
+doc = "Compile-time query of the platform byte order."
+snippet = """
+std::endian::native == std::endian::${1:little}$0"""
+
+[[entries]]
+name = "enum flags combine"
+keys = ["enum", "flags", "combine", "|", "to_underlying", "mask"]
+doc = "Combine scoped enum flags through their underlying values."
+snippet = """
+static_cast<${1:Flags}>(std::to_underlying(${2:a}) | std::to_underlying(${3:b}))$0"""
+
+[[entries]]
+name = "std::byte operations"
+keys = ["byte", "std::byte", "to_integer", "raw", "binary"]
+doc = "std::byte supports bitwise operators and to_integer."
+snippet = """
+std::to_integer<${1:int}>(${2:b})$0"""

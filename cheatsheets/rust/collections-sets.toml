@@ -1,0 +1,185 @@
+title = "Sets and ordered maps"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "HashSet::new"
+keys = ["hashset", "set", "new", "unique", "empty", "declare"]
+doc = "Create an empty hash set."
+snippet = '''
+let mut ${1:set}: HashSet<${2:T}> = HashSet::new();$0'''
+
+[[entries]]
+name = "HashSet::from"
+keys = ["hashset", "set", "from", "literal", "init", "array"]
+doc = "Create a set from an array of values."
+snippet = '''
+HashSet::from([${1:1, 2, 3}])$0'''
+
+[[entries]]
+name = "set insert / contains"
+keys = ["set", "insert", "contains", "hashset", "seen", "visited", "add"]
+doc = "Insert into a set, which returns false if the value was already there."
+snippet = '''
+if !${1:seen}.insert(${2:value}) {
+    $0
+}'''
+
+[[entries]]
+name = "set contains"
+keys = ["set", "contains", "has", "in", "member", "check", "hashset"]
+doc = "Test whether a value is in the set."
+snippet = '''
+${1:set}.contains(&${2:value})$0'''
+
+[[entries]]
+name = "set remove"
+keys = ["set", "remove", "delete", "erase", "hashset", "take"]
+doc = "Remove a value, returning whether it was present."
+snippet = '''
+${1:set}.remove(&${2:value})$0'''
+
+[[entries]]
+name = "set operations"
+keys = ["set", "union", "intersection", "difference", "symmetric", "hashset", "common"]
+doc = "Iterate over the union, intersection, difference or symmetric_difference of two sets."
+snippet = '''
+${1:a}.${2:intersection}(&${3:b})$0'''
+
+[[entries]]
+name = "set operation collected"
+keys = ["set", "union", "intersection", "collect", "new", "combine", "hashset"]
+doc = "Build a new set from a set operation."
+snippet = '''
+let ${1:common}: HashSet<_> = ${2:a}.intersection(&${3:b}).cloned().collect();$0'''
+
+[[entries]]
+name = "is_subset / is_superset"
+keys = ["set", "subset", "superset", "disjoint", "contains", "all", "compare"]
+doc = "Test whether one set is contained in another or shares no elements."
+snippet = '''
+${1:a}.${2:is_subset}(&${3:b})$0'''
+
+[[entries]]
+name = "collect into HashSet"
+keys = ["collect", "hashset", "set", "unique", "dedup", "distinct", "from"]
+doc = "Deduplicate an iterator by collecting into a set."
+snippet = '''
+${1:items}.iter().cloned().collect::<HashSet<_>>()$0'''
+
+[[entries]]
+name = "set to sorted Vec"
+keys = ["set", "sorted", "vec", "collect", "order", "list", "convert"]
+doc = "Turn a set into a sorted vector."
+snippet = '''
+let mut ${1:sorted}: Vec<_> = ${2:set}.into_iter().collect();
+${1:sorted}.sort();$0'''
+
+[[entries]]
+name = "iterate set"
+keys = ["for", "set", "iter", "loop", "each", "hashset", "values"]
+doc = "Iterate over the elements by reference."
+snippet = '''
+for ${1:value} in &${2:set} {
+    $0
+}'''
+
+[[entries]]
+name = "BTreeSet::new"
+keys = ["btreeset", "set", "sorted", "ordered", "new", "unique"]
+doc = "Create an empty set that iterates in sorted order."
+snippet = '''
+let mut ${1:set}: BTreeSet<${2:T}> = BTreeSet::new();$0'''
+
+[[entries]]
+name = "BTreeSet first / last"
+keys = ["btreeset", "first", "last", "min", "max", "smallest", "largest"]
+doc = "Get the smallest or largest element of an ordered set."
+snippet = '''
+${1:set}.${2:first}()$0'''
+
+[[entries]]
+name = "BTreeMap::new"
+keys = ["btreemap", "map", "sorted", "ordered", "new", "dict"]
+doc = "Create an empty map that iterates in key order."
+snippet = '''
+let mut ${1:map}: BTreeMap<${2:K}, ${3:V}> = BTreeMap::new();$0'''
+
+[[entries]]
+name = "BTreeMap::from"
+keys = ["btreemap", "map", "from", "literal", "pairs", "sorted", "init"]
+doc = "Create an ordered map from an array of key-value pairs."
+snippet = '''
+BTreeMap::from([(${1:1}, ${2:"a"})${3:, (2, "b")}])$0'''
+
+[[entries]]
+name = "BTreeMap insert / get"
+keys = ["btreemap", "insert", "get", "entry", "lookup", "sorted", "map"]
+doc = "Insert and look up entries, with the same API as HashMap."
+snippet = '''
+${1:map}.${2:insert}(${3:key}${4:, value});$0'''
+
+[[entries]]
+name = "BTreeMap iterate sorted"
+keys = ["btreemap", "for", "iter", "sorted", "order", "loop", "ascending"]
+doc = "Iterate over pairs in ascending key order."
+snippet = '''
+for (${1:key}, ${2:value}) in &${3:map} {
+    $0
+}'''
+
+[[entries]]
+name = "BTreeMap range"
+keys = ["btreemap", "range", "sorted", "between", "bounds", "from", "to"]
+doc = "Iterate over the entries whose keys fall in a range."
+snippet = '''
+${1:map}.range(${2:lo}..=${3:hi})$0'''
+
+[[entries]]
+name = "first / last entry"
+keys = ["btreemap", "first", "last", "min", "max", "key", "smallest", "largest"]
+doc = "Get the smallest or largest key-value pair in a BTreeMap."
+snippet = '''
+${1:map}.${2:first_key_value}()$0'''
+
+[[entries]]
+name = "pop_first / pop_last"
+keys = ["btreemap", "pop", "first", "last", "remove", "min", "max", "priority"]
+doc = "Remove and return the smallest or largest entry."
+snippet = '''
+${1:map}.${2:pop_first}()$0'''
+
+[[entries]]
+name = "BTreeMap rev"
+keys = ["btreemap", "rev", "reverse", "descending", "order", "largest", "iter"]
+doc = "Iterate over an ordered map from the largest key downward."
+snippet = '''
+${1:map}.iter().rev()$0'''
+
+[[entries]]
+name = "custom key type"
+keys = ["key", "struct", "derive", "hash", "eq", "custom", "map", "hashable"]
+doc = "Derive the traits a type needs to be a HashMap key or HashSet element."
+snippet = '''
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct ${1:Key} {
+    ${2:x: i32},
+    ${3:y: i32},
+}$0'''
+
+[[entries]]
+name = "ordered key type"
+keys = ["key", "struct", "derive", "ord", "btreemap", "sorted", "custom", "compare"]
+doc = "Derive the traits a type needs to be a BTreeMap key or BTreeSet element."
+snippet = '''
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct ${1:Key} {
+    ${2:priority: u32},
+    ${3:name: String},
+}$0'''
+
+[[entries]]
+name = "use collections"
+keys = ["use", "std", "collections", "hashmap", "import", "include"]
+doc = "Import the common collection types."
+snippet = '''
+use std::collections::{${1:HashMap, HashSet, BTreeMap, VecDeque}};$0'''

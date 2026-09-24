@@ -3,209 +3,201 @@ contexts = ["statement", "expression"]
 
 [[entries]]
 name = "string"
-keys = ["string", "str", "std::string"]
+keys = ["string", "str", "std::string", "text", "declare", "literal"]
 doc = "Owning string initialized from a literal."
-snippet = """
-std::string ${1:s} = "${2:}";$0"""
+snippet = '''
+std::string ${1:s} = "${2:}";$0'''
 
 [[entries]]
-name = "substr"
-keys = ["substr", "substring", "slice"]
-doc = "Copy of a substring starting at pos with len characters."
-snippet = """
-${1:s}.substr(${2:pos}, ${3:len})$0"""
+name = "empty string"
+keys = ["string", "empty", "declare", "blank", "default"]
+doc = "Empty string to be filled later."
+snippet = '''
+std::string ${1:s};$0'''
 
 [[entries]]
-name = "find"
-keys = ["find", "search", "index", "npos"]
-doc = "Position of a substring, or std::string::npos."
-snippet = """
-if (auto ${1:pos} = ${2:s}.find(${3:"needle"}); ${1:pos} != std::string::npos) {
-    $0
-}"""
+name = "string of n chars"
+keys = ["string", "repeat", "fill", "count", "n", "chars", "constructor"]
+doc = "String made of n copies of one character."
+snippet = '''
+std::string ${1:s}(${2:n}, ${3:'-'});$0'''
 
 [[entries]]
-name = "rfind"
-keys = ["rfind", "find", "last"]
-doc = "Position of the last occurrence of a substring."
-snippet = """
-${1:s}.rfind(${2:"needle"})$0"""
+name = "string from substring"
+keys = ["string", "substring", "constructor", "pos", "len", "copy", "part"]
+doc = "String copied from part of another string."
+snippet = '''
+std::string ${1:s}(${2:other}, ${3:pos}, ${4:len});$0'''
 
 [[entries]]
-name = "replace"
-keys = ["replace", "substitute"]
-doc = "Replace len characters at pos with another string."
-snippet = """
-${1:s}.replace(${2:pos}, ${3:len}, ${4:"new"});$0"""
+name = "string from char pointer"
+keys = ["string", "char*", "c string", "convert", "constructor", "cstr", "buffer"]
+doc = "String copied from a null-terminated char array or the first n bytes of a buffer."
+snippet = '''
+std::string ${1:s}(${2:cstr}${3:, len});$0'''
+
+[[entries]]
+name = "string from iterator range"
+keys = ["string", "range", "iterator", "constructor", "begin", "end", "chars", "vector"]
+doc = "String built from a range of characters."
+snippet = '''
+std::string ${1:s}(${2:first}, ${3:last});$0'''
+
+[[entries]]
+name = "string from string_view"
+keys = ["string", "string_view", "convert", "copy", "own", "sv"]
+doc = "Owning copy of a string_view."
+snippet = '''
+std::string ${1:s}(${2:sv});$0'''
+
+[[entries]]
+name = "raw string"
+keys = ["raw", "string", "literal", "R\"", "regex", "path", "backslash", "multiline"]
+doc = "Raw string literal in which backslashes and quotes are literal."
+snippet = '''
+R"(${1:text})"$0'''
+
+[[entries]]
+name = "assign"
+keys = ["assign", "string", "set", "overwrite", "replace", "="]
+doc = "Replace the contents of a string."
+snippet = '''
+${1:s}.assign(${2:"text"});$0'''
 
 [[entries]]
 name = "append"
-keys = ["append", "concat", "+="]
-doc = "Append to the end of a string."
-snippet = """
-${1:s} += ${2:"more"};$0"""
+keys = ["append", "concat", "+=", "add", "string", "push"]
+doc = "Append to the end of a string with +=."
+snippet = '''
+${1:s} += ${2:"more"};$0'''
+
+[[entries]]
+name = "append method"
+keys = ["append", "concat", "add", "string", "n", "substring", "chars"]
+doc = "Append a string, n copies of a char, or part of another string."
+snippet = '''
+${1:s}.append(${2:"more"});$0'''
+
+[[entries]]
+name = "concatenate with +"
+keys = ["+", "concat", "concatenate", "join", "string", "combine", "plus"]
+doc = "Build a new string from pieces; at least one operand must be std::string."
+snippet = '''
+std::string ${1:result} = ${2:a} + ${3:" "} + ${4:b};$0'''
+
+[[entries]]
+name = "push_back / pop_back"
+keys = ["push_back", "pop_back", "char", "append", "remove", "last", "string"]
+doc = "Append or remove a single character at the end."
+snippet = '''
+${1:s}.${2:push_back}(${3:c});$0'''
 
 [[entries]]
 name = "insert"
-keys = ["insert", "string"]
+keys = ["insert", "string", "position", "middle", "add"]
 doc = "Insert a string at a position."
-snippet = """
-${1:s}.insert(${2:pos}, ${3:"text"});$0"""
+snippet = '''
+${1:s}.insert(${2:pos}, ${3:"text"});$0'''
 
 [[entries]]
 name = "erase"
-keys = ["erase", "remove", "string"]
-doc = "Erase len characters starting at pos."
-snippet = """
-${1:s}.erase(${2:pos}, ${3:len});$0"""
+keys = ["erase", "remove", "string", "delete", "cut", "pos", "len"]
+doc = "Erase len characters starting at pos (omit len to erase to the end)."
+snippet = '''
+${1:s}.erase(${2:pos}, ${3:len});$0'''
 
 [[entries]]
-name = "compare"
-keys = ["compare", "strcmp"]
-doc = "Three-way compare returning negative, zero or positive."
-snippet = """
-${1:a}.compare(${2:b})$0"""
+name = "erase char at"
+keys = ["erase", "char", "one", "remove", "index", "string", "iterator"]
+doc = "Erase a single character by iterator position."
+snippet = '''
+${1:s}.erase(${1:s}.begin() + ${2:i});$0'''
 
 [[entries]]
-name = "starts_with / ends_with"
-keys = ["starts_with", "ends_with", "prefix", "suffix"]
-doc = "C++20 prefix or suffix test."
-snippet = """
-${1:s}.${2:starts_with}(${3:"pre"})$0"""
+name = "replace"
+keys = ["replace", "substitute", "string", "pos", "len", "overwrite"]
+doc = "Replace len characters at pos with another string."
+snippet = '''
+${1:s}.replace(${2:pos}, ${3:len}, ${4:"new"});$0'''
 
 [[entries]]
-name = "contains"
-keys = ["contains", "has", "includes"]
-doc = "C++23 substring presence test."
-snippet = """
-${1:s}.contains(${2:"needle"})$0"""
+name = "substr"
+keys = ["substr", "substring", "slice", "part", "cut", "string"]
+doc = "Copy of a substring starting at pos with len characters."
+snippet = '''
+${1:s}.substr(${2:pos}, ${3:len})$0'''
 
 [[entries]]
-name = "c_str"
-keys = ["c_str", "cstring", "char*"]
-doc = "Null-terminated const char pointer."
-snippet = """
-${1:s}.c_str()$0"""
+name = "substr to end"
+keys = ["substr", "substring", "rest", "tail", "from", "end", "suffix"]
+doc = "Copy of everything from pos to the end."
+snippet = '''
+${1:s}.substr(${2:pos})$0'''
+
+[[entries]]
+name = "at / operator[]"
+keys = ["at", "[]", "index", "char", "character", "access", "nth", "string"]
+doc = "Character at an index; at() is bounds-checked, [] is not."
+snippet = '''
+${1:s}[${2:i}]$0'''
+
+[[entries]]
+name = "front / back"
+keys = ["front", "back", "first", "last", "char", "character", "string"]
+doc = "First or last character."
+snippet = '''
+${1:s}.${2:back}()$0'''
 
 [[entries]]
 name = "length / empty"
-keys = ["length", "size", "empty"]
-doc = "Number of characters, or whether there are none."
-snippet = """
-${1:s}.${2:size}()$0"""
+keys = ["length", "size", "empty", "count", "len", "string"]
+doc = "Number of characters (size and length are identical), or whether there are none."
+snippet = '''
+${1:s}.${2:size}()$0'''
 
 [[entries]]
-name = "std::to_string"
-keys = ["to_string", "convert", "itoa", "stringify"]
-doc = "Convert a number to a string."
-snippet = """
-std::to_string(${1:value})$0"""
+name = "clear"
+keys = ["clear", "string", "empty", "reset", "erase"]
+doc = "Make the string empty."
+snippet = '''
+${1:s}.clear();$0'''
 
 [[entries]]
-name = "std::stoi / std::stod"
-keys = ["stoi", "stod", "stol", "stoul", "parse", "atoi"]
-doc = "Parse a number from a string, throwing on failure."
-snippet = """
-std::${1:stoi}(${2:s})$0"""
+name = "resize / reserve"
+keys = ["resize", "reserve", "capacity", "string", "grow", "truncate", "shrink"]
+doc = "Change the length (padding with a char) or reserve capacity."
+snippet = '''
+${1:s}.${2:reserve}(${3:n});$0'''
 
 [[entries]]
-name = "std::from_chars"
-keys = ["from_chars", "parse", "charconv"]
-doc = "Fast non-throwing parse from a character range."
-snippet = """
-${1:int} ${2:value}{};
-auto [${3:ptr}, ${4:ec}] = std::from_chars(${5:s}.data(), ${5:s}.data() + ${5:s}.size(), ${2:value});$0"""
+name = "c_str / data"
+keys = ["c_str", "data", "cstring", "char*", "pointer", "c", "api"]
+doc = "Null-terminated const char pointer for C APIs."
+snippet = '''
+${1:s}.c_str()$0'''
 
 [[entries]]
-name = "std::to_chars"
-keys = ["to_chars", "format", "charconv"]
-doc = "Fast non-allocating number to characters."
-snippet = """
-char ${1:buf}[${2:32}];
-auto [${3:end}, ${4:ec}] = std::to_chars(${1:buf}, ${1:buf} + sizeof ${1:buf}, ${5:value});$0"""
+name = "iterate chars"
+keys = ["loop", "chars", "each", "character", "for", "iterate", "string"]
+doc = "Loop over every character by reference."
+snippet = '''
+for (char ${1:c} : ${2:s}) {
+    $0
+}'''
 
 [[entries]]
-name = "std::format"
-keys = ["format", "fmt", "printf", "interpolate"]
-doc = "C++20 type-safe formatting into a string."
-snippet = """
-std::format("{${1:}}", ${2:value})$0"""
+name = "iterate chars by index"
+keys = ["loop", "index", "chars", "for", "i", "size", "string", "beginner"]
+doc = "Index loop over a string using size_t."
+snippet = '''
+for (std::size_t ${1:i} = 0; ${1:i} < ${2:s}.size(); ++${1:i}) {
+    ${3:char c = s[i];}
+    $0
+}'''
 
 [[entries]]
-name = "std::format_to"
-keys = ["format_to", "format", "back_inserter"]
-doc = "Format into an output iterator."
-snippet = """
-std::format_to(std::back_inserter(${1:out}), "{${2:}}", ${3:value});$0"""
-
-[[entries]]
-name = "string_view remove_prefix"
-keys = ["remove_prefix", "remove_suffix", "string_view", "trim"]
-doc = "Shrink a view from the front or back."
-snippet = """
-${1:sv}.${2:remove_prefix}(${3:n});$0"""
-
-[[entries]]
-name = "char classification"
-keys = ["isdigit", "isalpha", "isspace", "isalnum", "cctype", "char"]
-doc = "Character class tests from <cctype>."
-snippet = """
-std::${1:isdigit}(static_cast<unsigned char>(${2:c}))$0"""
-
-[[entries]]
-name = "toupper / tolower"
-keys = ["toupper", "tolower", "case", "char"]
-doc = "Change the case of a character."
-snippet = """
-static_cast<char>(std::${1:toupper}(static_cast<unsigned char>(${2:c})))$0"""
-
-[[entries]]
-name = "string to uppercase"
-keys = ["toupper", "upper", "transform", "case"]
-doc = "Uppercase every character in place."
-snippet = """
-std::transform(${1:s}.begin(), ${1:s}.end(), ${1:s}.begin(), [](unsigned char c) { return std::toupper(c); });$0"""
-
-[[entries]]
-name = "split string"
-keys = ["split", "tokenize", "delimiter", "getline"]
-doc = "Split a string on a delimiter into tokens."
-snippet = """
-std::vector<std::string> ${1:parts};
-std::stringstream ${2:ss}(${3:s});
-for (std::string ${4:tok}; std::getline(${2:ss}, ${4:tok}, ${5:','});) {
-    ${1:parts}.push_back(${4:tok});
-}$0"""
-
-[[entries]]
-name = "join strings"
-keys = ["join", "concat", "delimiter"]
-doc = "Join strings with a separator."
-snippet = """
-std::string ${1:out};
-for (const auto &${2:part} : ${3:parts}) {
-    if (!${1:out}.empty()) ${1:out} += ${4:", "};
-    ${1:out} += ${2:part};
-}$0"""
-
-[[entries]]
-name = "trim whitespace"
-keys = ["trim", "strip", "whitespace"]
-doc = "Remove leading and trailing whitespace from a view."
-snippet = """
-${1:sv}.remove_prefix(std::min(${1:sv}.find_first_not_of(" \\t\\n"), ${1:sv}.size()));
-${1:sv}.remove_suffix(${1:sv}.size() - ${1:sv}.find_last_not_of(" \\t\\n") - 1);$0"""
-
-[[entries]]
-name = "string literal operator sv"
-keys = ["sv", "literal", "string_view", "operator"]
-doc = "string_view literal from std::literals."
-snippet = """
-"${1:text}"sv$0"""
-
-[[entries]]
-name = "string literal operator s"
-keys = ["s", "literal", "string", "operator"]
-doc = "std::string literal from std::literals."
-snippet = """
-"${1:text}"s$0"""
+name = "swap strings"
+keys = ["swap", "string", "exchange", "std::swap"]
+doc = "Swap two strings in O(1)."
+snippet = '''
+${1:a}.swap(${2:b});$0'''

@@ -1,0 +1,149 @@
+title = "Test assertions and fixtures"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "assert!"
+keys = ["assert", "true", "check", "condition", "verify", "bool"]
+doc = "Fail the test unless a condition holds."
+snippet = '''
+assert!(${1:condition});$0'''
+
+[[entries]]
+name = "assert! with message"
+keys = ["assert", "message", "format", "custom", "explain", "condition"]
+doc = "Assert a condition and print a formatted message on failure."
+snippet = '''
+assert!(${1:condition}, "${2:expected {\} to hold}", ${3:value});$0'''
+
+[[entries]]
+name = "assert_eq!"
+keys = ["assert_eq", "equal", "equals", "compare", "expected", "actual"]
+doc = "Fail unless two values are equal, printing both."
+snippet = '''
+assert_eq!(${1:actual}, ${2:expected});$0'''
+
+[[entries]]
+name = "assert_eq! with message"
+keys = ["assert_eq", "message", "equal", "format", "context", "case"]
+doc = "Compare two values and add context to the failure output."
+snippet = '''
+assert_eq!(${1:actual}, ${2:expected}, "${3:case {\}}", ${4:name});$0'''
+
+[[entries]]
+name = "assert_ne!"
+keys = ["assert_ne", "not", "equal", "different", "compare"]
+doc = "Fail if two values are equal."
+snippet = '''
+assert_ne!(${1:a}, ${2:b});$0'''
+
+[[entries]]
+name = "assert matches!"
+keys = ["assert", "matches", "pattern", "variant", "enum", "shape"]
+doc = "Assert that a value matches a pattern."
+snippet = '''
+assert!(matches!(${1:value}, ${2:Pattern}));$0'''
+
+[[entries]]
+name = "assert error variant"
+keys = ["assert", "err", "matches", "error", "variant", "fails"]
+doc = "Assert that a call fails with a specific error variant."
+snippet = '''
+assert!(matches!(${1:call}, Err(${2:Error::NotFound})));$0'''
+
+[[entries]]
+name = "assert is_err / is_ok"
+keys = ["assert", "is_err", "is_ok", "is_some", "is_none", "result", "option"]
+doc = "Assert only the success or failure of a Result or Option."
+snippet = '''
+assert!(${1:result}.is_${2:err}());$0'''
+
+[[entries]]
+name = "unwrap in test"
+keys = ["unwrap", "expect", "test", "result", "panic", "fail"]
+doc = "Unwrap a Result in a test so an error fails the test with its message."
+snippet = '''
+let ${1:value} = ${2:call}.expect("${3:should succeed}");$0'''
+
+[[entries]]
+name = "assert float approx"
+keys = ["assert", "float", "approx", "epsilon", "abs", "close", "tolerance"]
+doc = "Assert two floats are equal within a tolerance."
+snippet = '''
+assert!((${1:actual} - ${2:expected}).abs() < ${3:1e-9}, "got {}", ${1:actual});$0'''
+
+[[entries]]
+name = "assert slice / vec equal"
+keys = ["assert", "vec", "slice", "list", "equal", "elements", "array"]
+doc = "Compare a collection against an expected list literal."
+snippet = '''
+assert_eq!(${1:actual}, ${2:vec![1, 2, 3]});$0'''
+
+[[entries]]
+name = "assert string contains"
+keys = ["assert", "contains", "string", "substring", "text", "output"]
+doc = "Assert that text contains a fragment, printing the text on failure."
+snippet = '''
+assert!(${1:text}.contains("${2:fragment}"), "text was {${1:text}:?}");$0'''
+
+[[entries]]
+name = "assert panic message"
+keys = ["panic", "message", "catch_unwind", "assert", "downcast", "text"]
+doc = "Catch a panic and assert on its message without should_panic."
+snippet = '''
+let ${1:err} = std::panic::catch_unwind(|| ${2:call}).unwrap_err();
+let ${3:msg} = ${1:err}.downcast_ref::<${4:&str}>().copied().unwrap_or_default();
+assert!(${3:msg}.contains("${5:expected}"));$0'''
+
+[[entries]]
+name = "debug_assert!"
+keys = ["debug_assert", "debug", "assert", "invariant", "release", "cheap"]
+doc = "Check an invariant only in debug builds."
+snippet = '''
+debug_assert!(${1:condition}, "${2:message}");$0'''
+
+[[entries]]
+name = "unreachable! in test"
+keys = ["unreachable", "panic", "branch", "never", "else"]
+doc = "Fail loudly when a branch that must not happen is taken."
+snippet = '''
+unreachable!("${1:unexpected {:?\}}", ${2:value})$0'''
+
+[[entries]]
+name = "env var in test"
+keys = ["env", "var", "test", "set_var", "remove_var", "environment", "config"]
+doc = "Set an environment variable for the test, removing it afterwards."
+snippet = '''
+unsafe { std::env::set_var("${1:NAME}", "${2:value}") };
+$0
+unsafe { std::env::remove_var("${1:NAME}") };'''
+
+[[entries]]
+name = "temp file in test"
+keys = ["temp", "file", "write", "fixture", "fs", "test", "scratch", "path"]
+doc = "Write fixture content to a temp file and use its path."
+snippet = '''
+let ${1:path} = std::env::temp_dir().join("${2:fixture.txt}");
+std::fs::write(&${1:path}, "${3:content}")?;$0'''
+
+[[entries]]
+name = "capture stdout via Vec<u8>"
+keys = ["capture", "output", "vec", "u8", "write", "buffer", "test", "stdout"]
+doc = "Write into an in-memory buffer instead of stdout so the test can inspect it."
+snippet = '''
+let mut ${1:out} = Vec::new();
+${2:render}(&mut ${1:out})?;
+assert_eq!(String::from_utf8(${1:out})?, "${3:expected}");$0'''
+
+[[entries]]
+name = "test setup call"
+keys = ["setup", "fixture", "call", "init", "arrange", "given"]
+doc = "Arrange a test by calling the shared fixture builder."
+snippet = '''
+let ${1:sut} = ${2:fixture}();$0'''
+
+[[entries]]
+name = "print in test"
+keys = ["println", "nocapture", "debug", "print", "test", "output", "dbg"]
+doc = "Print debug output shown with cargo test -- --nocapture."
+snippet = '''
+println!("${1:{:?\}}", ${2:value});$0'''

@@ -1,0 +1,204 @@
+title = "Async channels, sync and streams"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "tokio mpsc channel"
+keys = ["tokio", "mpsc", "channel", "async", "sender", "receiver", "bounded", "queue"]
+doc = "Create a bounded async channel between tasks."
+snippet = '''
+let (${1:tx}, mut ${2:rx}) = tokio::sync::mpsc::channel::<${3:T}>(${4:32});$0'''
+
+[[entries]]
+name = "tokio unbounded channel"
+keys = ["tokio", "mpsc", "unbounded", "channel", "async", "sender", "queue"]
+doc = "Create an async channel that never blocks the sender."
+snippet = '''
+let (${1:tx}, mut ${2:rx}) = tokio::sync::mpsc::unbounded_channel::<${3:T}>();$0'''
+
+[[entries]]
+name = "async send"
+keys = ["send", "await", "channel", "tx", "async", "message"]
+doc = "Send on a bounded async channel, waiting for capacity."
+snippet = '''
+${1:tx}.send(${2:value}).await?;$0'''
+
+[[entries]]
+name = "async receive loop"
+keys = ["recv", "while", "let", "async", "channel", "loop", "consume"]
+doc = "Process messages from an async channel until it closes."
+snippet = '''
+while let Some(${1:msg}) = ${2:rx}.recv().await {
+    $0
+}'''
+
+[[entries]]
+name = "clone async sender"
+keys = ["clone", "sender", "tx", "tasks", "producers", "many", "spawn"]
+doc = "Give each spawned task its own sender."
+snippet = '''
+let ${1:tx} = ${1:tx}.clone();
+tokio::spawn(async move {
+    ${1:tx}.send($0).await.unwrap();
+});'''
+
+[[entries]]
+name = "oneshot channel"
+keys = ["oneshot", "channel", "reply", "single", "response", "answer", "once"]
+doc = "Create a channel that delivers exactly one value."
+snippet = '''
+let (${1:tx}, ${2:rx}) = tokio::sync::oneshot::channel::<${3:T}>();
+${1:tx}.send(${4:value}).${5:ok()};
+let ${6:value} = ${2:rx}.await?;$0'''
+
+[[entries]]
+name = "request with oneshot reply"
+keys = ["oneshot", "reply", "request", "response", "actor", "message", "pattern"]
+doc = "Send a message carrying a oneshot sender and await the reply."
+snippet = '''
+let (${1:reply_tx}, ${2:reply_rx}) = tokio::sync::oneshot::channel();
+${3:tx}.send(${4:Message}::${5:Get} { reply: ${1:reply_tx} }).await?;
+let ${6:reply} = ${2:reply_rx}.await?;$0'''
+
+[[entries]]
+name = "broadcast channel"
+keys = ["broadcast", "channel", "subscribe", "fanout", "all", "receivers", "events"]
+doc = "Send every value to every subscriber."
+snippet = '''
+let (${1:tx}, mut ${2:rx}) = tokio::sync::broadcast::channel::<${3:T}>(${4:16});
+let mut ${5:rx2} = ${1:tx}.subscribe();$0'''
+
+[[entries]]
+name = "watch channel"
+keys = ["watch", "channel", "latest", "config", "state", "changed", "borrow"]
+doc = "Share a single latest value and await changes to it."
+snippet = '''
+let (${1:tx}, mut ${2:rx}) = tokio::sync::watch::channel(${3:initial});
+${1:tx}.send(${4:value})?;
+${2:rx}.changed().await?;
+let ${5:current} = ${2:rx}.borrow().clone();$0'''
+
+[[entries]]
+name = "tokio Mutex"
+keys = ["tokio", "mutex", "async", "lock", "await", "shared"]
+doc = "Lock an async-aware mutex that can be held across await points."
+snippet = '''
+let mut ${1:guard} = ${2:state}.lock().await;$0'''
+
+[[entries]]
+name = "tokio RwLock"
+keys = ["tokio", "rwlock", "read", "write", "await", "async", "lock"]
+doc = "Take an async read or write lock."
+snippet = '''
+let ${1:guard} = ${2:lock}.${3:read}().await;$0'''
+
+[[entries]]
+name = "Semaphore limit concurrency"
+keys = ["semaphore", "permit", "limit", "concurrency", "acquire", "rate", "max"]
+doc = "Limit how many tasks run a section at once."
+snippet = '''
+let ${1:sem} = Arc::new(tokio::sync::Semaphore::new(${2:10}));
+let ${3:permit} = ${1:sem}.clone().acquire_owned().await?;
+$0
+drop(${3:permit});'''
+
+[[entries]]
+name = "Notify"
+keys = ["notify", "wake", "signal", "notified", "one", "event", "async"]
+doc = "Wake one waiting task without passing a value."
+snippet = '''
+let ${1:notify} = Arc::new(tokio::sync::Notify::new());
+${1:notify}.notified().await;
+${1:notify}.notify_one();$0'''
+
+[[entries]]
+name = "stream next loop"
+keys = ["stream", "next", "while", "let", "streamext", "iterate", "async", "iterator"]
+doc = "Consume an async stream item by item."
+snippet = '''
+use futures::StreamExt;
+while let Some(${1:item}) = ${2:stream}.next().await {
+    $0
+}'''
+
+[[entries]]
+name = "stream::iter"
+keys = ["stream", "iter", "from", "vec", "iterator", "convert", "async"]
+doc = "Turn an iterator into a stream."
+snippet = '''
+let ${1:stream} = futures::stream::iter(${2:items});$0'''
+
+[[entries]]
+name = "stream map / filter / collect"
+keys = ["stream", "map", "filter", "collect", "adapter", "chain", "streamext"]
+doc = "Transform a stream with adapters and collect it."
+snippet = '''
+let ${1:out}: Vec<${2:T}> = ${3:stream}
+    .map(|${4:x}| $0)
+    .collect()
+    .await;'''
+
+[[entries]]
+name = "buffer_unordered concurrency"
+keys = ["buffer_unordered", "stream", "concurrent", "limit", "parallel", "requests", "futures"]
+doc = "Run up to n futures from a stream at once and yield results as they finish."
+snippet = '''
+let mut ${1:results} = futures::stream::iter(${2:items})
+    .map(|${3:item}| async move { $0 })
+    .buffer_unordered(${4:8});
+while let Some(${5:res}) = ${1:results}.next().await {}'''
+
+[[entries]]
+name = "ReceiverStream"
+keys = ["receiverstream", "channel", "stream", "wrap", "tokio_stream", "receiver"]
+doc = "Turn a tokio channel receiver into a stream."
+snippet = '''
+let ${1:stream} = tokio_stream::wrappers::ReceiverStream::new(${2:rx});$0'''
+
+[[entries]]
+name = "async_stream::stream!"
+keys = ["stream", "macro", "yield", "generator", "async_stream", "produce"]
+doc = "Build a stream with yield statements."
+snippet = '''
+let ${1:s} = async_stream::stream! {
+    for ${2:i} in 0..${3:n} {
+        yield $0;
+    }
+};'''
+
+[[entries]]
+name = "impl Stream item"
+keys = ["stream", "impl", "poll_next", "trait", "manual", "pin"]
+doc = "Implement Stream by hand with poll_next."
+snippet = '''
+impl futures::Stream for ${1:Type} {
+    type Item = ${2:T};
+
+    fn poll_next(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Option<Self::Item>> {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "drop future to cancel"
+keys = ["cancel", "drop", "future", "stop", "abandon", "cancellation"]
+doc = "A future stops running when it is dropped, so dropping cancels it."
+snippet = '''
+drop(${1:future});$0'''
+
+[[entries]]
+name = "tokio::io read line"
+keys = ["tokio", "io", "read_line", "bufreader", "async", "stdin", "lines"]
+doc = "Read a line asynchronously with tokio's BufReader."
+snippet = '''
+use tokio::io::AsyncBufReadExt;
+let mut ${1:lines} = tokio::io::BufReader::new(${2:reader}).lines();
+while let Some(${3:line}) = ${1:lines}.next_line().await? {
+    $0
+}'''
+
+[[entries]]
+name = "tokio::fs read / write"
+keys = ["tokio", "fs", "read_to_string", "write", "file", "async", "await"]
+doc = "Read or write a file without blocking the runtime."
+snippet = '''
+let ${1:text} = tokio::fs::read_to_string(${2:path}).await?;$0'''

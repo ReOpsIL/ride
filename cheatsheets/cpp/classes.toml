@@ -1,9 +1,9 @@
-title = "Classes"
+title = "Classes and structs"
 contexts = ["item"]
 
 [[entries]]
 name = "class"
-keys = ["class"]
+keys = ["class", "type", "object", "private", "encapsulate"]
 doc = "Class with private members by default."
 snippet = """
 class ${1:Name} {
@@ -14,7 +14,7 @@ private:
 
 [[entries]]
 name = "struct"
-keys = ["struct", "pod", "aggregate"]
+keys = ["struct", "pod", "aggregate", "record", "data", "public"]
 doc = "Class with public members by default."
 snippet = """
 struct ${1:Name} {
@@ -22,8 +22,31 @@ struct ${1:Name} {
 };"""
 
 [[entries]]
+name = "struct with fields"
+keys = ["struct", "fields", "members", "record", "data", "point"]
+doc = "Plain data struct with a few public fields."
+snippet = """
+struct ${1:Point} {
+    ${2:int} ${3:x} = ${4:0};
+    ${2:int} ${5:y} = ${6:0};
+    $0
+};"""
+
+[[entries]]
+name = "struct with constructor"
+keys = ["struct", "constructor", "ctor", "init", "fields"]
+doc = "Struct whose constructor fills its fields."
+snippet = """
+struct ${1:Name} {
+    ${2:int} ${3:value};
+
+    ${1:Name}(${2:int} ${4:v}) : ${3:value}(${4:v}) {}
+    $0
+};"""
+
+[[entries]]
 name = "class with constructor and destructor"
-keys = ["class", "ctor", "dtor", "constructor", "destructor"]
+keys = ["class", "ctor", "dtor", "constructor", "destructor", "skeleton"]
 doc = "Class skeleton with a constructor and a destructor."
 snippet = """
 class ${1:Name} {
@@ -35,18 +58,63 @@ private:
 };"""
 
 [[entries]]
-name = "derived class"
-keys = ["class", "inherit", "derived", "extends", "base"]
-doc = "Class that publicly inherits from a base."
+name = "class with private data and accessors"
+keys = ["class", "getter", "setter", "private", "encapsulation", "accessor"]
+doc = "Encapsulated class with a getter and a setter."
 snippet = """
-class ${1:Derived} : public ${2:Base} {
+class ${1:Name} {
 public:
+    explicit ${1:Name}(${2:int} ${3:value}) : ${4:value_}(${3:value}) {}
+
+    ${2:int} ${5:value}() const { return ${4:value_}; }
+    void set_${5:value}(${2:int} v) { ${4:value_} = v; }
     $0
+private:
+    ${2:int} ${4:value_};
+};"""
+
+[[entries]]
+name = "class with rule of zero"
+keys = ["class", "rule", "zero", "vector", "string", "members", "raii"]
+doc = "Class that owns resources through std types and declares no special members."
+snippet = """
+class ${1:Name} {
+public:
+    explicit ${1:Name}(${2:std::string} ${3:name}) : ${4:name_}(std::move(${3:name})) {}
+    $0
+private:
+    ${2:std::string} ${4:name_};
+    ${5:std::vector<int>} ${6:items_};
+};"""
+
+[[entries]]
+name = "class declaration for header"
+keys = ["class", "header", "declare", "prototype", "hpp", "interface"]
+doc = "Class whose member functions are declared here and defined in a .cpp file."
+snippet = """
+class ${1:Name} {
+public:
+    ${1:Name}();
+    ${2:void} ${3:method}(${4:});
+    $0
+private:
+    ${5:int} ${6:value_} = 0;
+};"""
+
+[[entries]]
+name = "aggregate struct with comparison"
+keys = ["struct", "compare", "spaceship", "==", "<=>", "default"]
+doc = "Aggregate that gets all comparison operators from a defaulted <=>."
+snippet = """
+struct ${1:Point} {
+    ${2:int} ${3:x};
+    ${2:int} ${4:y};
+    auto operator<=>(const ${1:Point} &) const = default;$0
 };"""
 
 [[entries]]
 name = "final class"
-keys = ["class", "final", "sealed"]
+keys = ["class", "final", "sealed", "no", "inherit"]
 doc = "Class that cannot be derived from."
 snippet = """
 class ${1:Name} final {
@@ -55,24 +123,89 @@ public:
 };"""
 
 [[entries]]
-name = "abstract class"
-keys = ["class", "abstract", "interface", "pure", "virtual"]
-doc = "Class with a pure virtual function and a virtual destructor."
+name = "singleton class"
+keys = ["singleton", "instance", "static", "global", "one"]
+doc = "Class with one instance reached through a static accessor."
 snippet = """
-class ${1:Interface} {
+class ${1:Name} {
 public:
-    virtual ~${1:Interface}() = default;
-    virtual ${2:void} ${3:method}(${4:}) = 0;
+    static ${1:Name} &instance() {
+        static ${1:Name} inst;
+        return inst;
+    }
+    ${1:Name}(const ${1:Name} &) = delete;
+    ${1:Name} &operator=(const ${1:Name} &) = delete;
     $0
+private:
+    ${1:Name}() = default;
 };"""
 
 [[entries]]
+name = "RAII wrapper"
+keys = ["raii", "wrapper", "resource", "handle", "close", "destructor"]
+doc = "Class that acquires a resource in its constructor and releases it in its destructor."
+snippet = """
+class ${1:File} {
+public:
+    explicit ${1:File}(${2:const char *path}) : ${3:handle_}(${4:std::fopen(path, "r")}) {}
+    ~${1:File}() { if (${3:handle_}) std::fclose(${3:handle_}); }
+    ${1:File}(const ${1:File} &) = delete;
+    ${1:File} &operator=(const ${1:File} &) = delete;
+    $0
+private:
+    ${6:std::FILE *} ${3:handle_};
+};"""
+
+[[entries]]
+name = "PIMPL class"
+keys = ["pimpl", "impl", "pointer", "hide", "header", "unique_ptr"]
+doc = "Hide the implementation behind a pointer declared in the header."
+snippet = """
+class ${1:Name} {
+public:
+    ${1:Name}();
+    ~${1:Name}();
+    ${1:Name}(${1:Name} &&) noexcept;
+    ${1:Name} &operator=(${1:Name} &&) noexcept;
+    $0
+private:
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+};"""
+
+[[entries]]
+name = "PIMPL implementation"
+keys = ["pimpl", "impl", "cpp", "definition", "struct"]
+doc = "Define the hidden Impl struct and the constructors in the .cpp file."
+snippet = """
+struct ${1:Name}::Impl {
+    $0
+};
+
+${1:Name}::${1:Name}() : impl_(std::make_unique<Impl>()) {}
+${1:Name}::~${1:Name}() = default;"""
+
+[[entries]]
 name = "union"
-keys = ["union"]
+keys = ["union", "overlap", "storage", "variant", "c"]
 doc = "Type whose members share the same storage."
 snippet = """
 union ${1:Name} {
     ${2:int} ${3:i};
     ${4:float} ${5:f};
+    $0
+};"""
+
+[[entries]]
+name = "tagged union struct"
+keys = ["union", "tagged", "kind", "enum", "variant", "c"]
+doc = "Struct with a kind tag telling which union member is active."
+snippet = """
+struct ${1:Value} {
+    enum class Kind { ${2:Int}, ${3:Float} } kind;
+    union {
+        ${4:int} ${5:i};
+        ${6:float} ${7:f};
+    };
     $0
 };"""

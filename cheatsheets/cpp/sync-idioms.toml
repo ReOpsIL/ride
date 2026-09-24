@@ -1,0 +1,124 @@
+title = "Concurrency idioms"
+contexts = ["item", "statement"]
+
+[[entries]]
+name = "producer-consumer queue"
+keys = ["producer", "consumer", "queue", "condition_variable", "mutex", "worker", "idiom", "channel"]
+doc = "Thread-safe queue: push under the lock and notify, pop waits for an item or shutdown."
+snippet = '''
+template <typename T>
+class ${1:BlockingQueue} {
+public:
+    void push(T value) {
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            items_.push(std::move(value));
+        }
+        cv_.notify_one();
+    }
+    std::optional<T> pop() {
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait(lock, [&] { return !items_.empty() || closed_; });
+        if (items_.empty()) return std::nullopt;
+        T value = std::move(items_.front());
+        items_.pop();
+        return value;
+    }
+    void close() {
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            closed_ = true;
+        }
+        cv_.notify_all();
+    }
+private:
+    std::mutex mtx_;
+    std::condition_variable cv_;
+    std::queue<T> items_;
+    bool closed_ = false;
+};$0'''
+
+[[entries]]
+name = "consumer loop"
+keys = ["consumer", "loop", "pop", "queue", "while", "worker", "process"]
+doc = "Drain a blocking queue until it is closed."
+snippet = '''
+while (auto ${1:item} = ${2:queue}.pop()) {
+    $0
+}'''
+
+[[entries]]
+name = "mutex-guarded member"
+keys = ["guarded", "member", "class", "mutex", "mutable", "thread-safe", "encapsulate"]
+doc = "Keep the mutex private next to the data and lock in every accessor."
+snippet = '''
+class ${1:Counter} {
+public:
+    void add(${2:int} n) {
+        std::lock_guard<std::mutex> lock(mtx_);
+        value_ += n;
+    }
+    ${2:int} get() const {
+        std::lock_guard<std::mutex> lock(mtx_);
+        return value_;
+    }
+private:
+    mutable std::mutex mtx_;
+    ${2:int} value_ = 0;
+};$0'''
+
+[[entries]]
+name = "thread-safe singleton"
+keys = ["singleton", "static", "local", "instance", "thread-safe", "meyers", "once"]
+doc = "Function-local static: initialization is thread-safe since C++11."
+snippet = '''
+static ${1:Type} &${2:instance}() {
+    static ${1:Type} ${3:obj};
+    return ${3:obj};
+}$0'''
+
+[[entries]]
+name = "lock ordering rule"
+keys = ["deadlock", "ordering", "order", "lock", "avoid", "two", "hierarchy", "rule"]
+doc = "Avoid deadlock by always acquiring locks in one global order or with scoped_lock."
+snippet = '''
+std::scoped_lock ${1:lock}(${2:first}.mtx, ${3:second}.mtx);$0'''
+
+[[entries]]
+name = "simple thread pool"
+keys = ["thread pool", "pool", "workers", "queue", "tasks", "condition_variable", "executor", "class"]
+doc = "Minimal thread pool: a task queue drained by jthread workers."
+snippet = '''
+class ${1:ThreadPool} {
+public:
+    explicit ${1:ThreadPool}(unsigned n) {
+        for (unsigned i = 0; i < n; ++i) {
+            workers_.emplace_back([this](std::stop_token st) { run(st); });
+        }
+    }
+    void submit(std::function<void()> task) {
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            tasks_.push(std::move(task));
+        }
+        cv_.notify_one();
+    }
+private:
+    void run(std::stop_token st) {
+        while (true) {
+            std::function<void()> task;
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                cv_.wait(lock, st, [&] { return !tasks_.empty(); });
+                if (st.stop_requested() && tasks_.empty()) return;
+                task = std::move(tasks_.front());
+                tasks_.pop();
+            }
+            task();
+        }
+    }
+    std::mutex mtx_;
+    std::condition_variable_any cv_;
+    std::queue<std::function<void()>> tasks_;
+    std::vector<std::jthread> workers_;
+};$0'''

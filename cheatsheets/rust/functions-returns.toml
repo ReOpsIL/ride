@@ -1,0 +1,174 @@
+title = "Function return types"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "fn returning tuple"
+keys = ["fn", "tuple", "return", "multiple", "pair", "two", "values"]
+doc = "Return several values at once as a tuple the caller destructures."
+snippet = '''
+fn ${1:name}(${2:args}) -> (${3:i32}, ${4:String}) {
+    (${5:0}, ${6:String::new()})$0
+}'''
+
+[[entries]]
+name = "fn returning iterator"
+keys = ["fn", "iterator", "impl", "return", "lazy", "map", "filter"]
+doc = "Return a lazy iterator without naming its adapter type."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:i32}]) -> impl Iterator<Item = ${4:i32}> + '_ {
+    ${2:items}.iter().${5:map(|x| x * 2)}$0
+}'''
+
+[[entries]]
+name = "fn returning reference"
+keys = ["fn", "reference", "return", "elision", "borrow", "first", "getter"]
+doc = "Return a reference into the single borrowed argument, with the lifetime elided."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:T}]) -> &${3:T} {
+    &${2:items}[${4:0}]$0
+}'''
+
+[[entries]]
+name = "fn returning Option<&T>"
+keys = ["fn", "option", "reference", "return", "get", "find", "lookup"]
+doc = "Return a borrowed element if present, as slice get and map get do."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:T}], ${4:i}: usize) -> Option<&${3:T}> {
+    ${2:items}.get(${4:i})$0
+}'''
+
+[[entries]]
+name = "fn returning Result<(), E>"
+keys = ["fn", "result", "unit", "ok", "error", "return", "string", "fallible"]
+doc = "Return only success or an error, ending with Ok of unit."
+snippet = '''
+fn ${1:name}(${2:args}) -> Result<(), ${3:String}> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "fn returning Box<dyn Trait>"
+keys = ["fn", "box", "dyn", "trait", "return", "object", "factory", "polymorphic"]
+doc = "Return one of several concrete types behind a boxed trait object."
+snippet = '''
+fn ${1:name}(${2:kind}: ${3:&str}) -> Box<dyn ${4:Trait}> {
+    match ${2:kind} {
+        ${5:"a"} => Box::new(${6:A}),
+        _ => Box::new(${7:B}),$0
+    }
+}'''
+
+[[entries]]
+name = "fn returning Vec"
+keys = ["fn", "vec", "return", "list", "collect", "build", "owned"]
+doc = "Build and return an owned vector, typically by collecting an iterator."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:i32}]) -> Vec<${3:i32}> {
+    ${2:items}.iter().${4:filter(|x| **x > 0)}.copied().collect()$0
+}'''
+
+[[entries]]
+name = "fn returning String"
+keys = ["fn", "string", "return", "format", "owned", "text"]
+doc = "Return an owned String built with format or to_string."
+snippet = '''
+fn ${1:name}(${2:value}: ${3:i32}) -> String {
+    format!("${4:{value\}}")$0
+}'''
+
+[[entries]]
+name = "fn returning bool"
+keys = ["fn", "bool", "predicate", "is", "check", "return"]
+doc = "Return a boolean directly from a comparison rather than through if-else."
+snippet = '''
+fn ${1:is_valid}(${2:value}: ${3:i32}) -> bool {
+    ${2:value} ${4:> 0}$0
+}'''
+
+[[entries]]
+name = "fn generic return via FromStr"
+keys = ["fn", "generic", "return", "parse", "fromstr", "infer", "t"]
+doc = "Let the caller pick the return type, which is inferred or given by turbofish."
+snippet = '''
+fn ${1:name}<T: std::str::FromStr>(${2:text}: &str) -> Option<T> {
+    ${2:text}.trim().parse().ok()$0
+}'''
+
+[[entries]]
+name = "fn returning Self"
+keys = ["fn", "self", "return", "constructor", "builder", "chain"]
+doc = "Return Self so constructors and builders read naturally inside an impl."
+snippet = '''
+fn ${1:with_name}(mut self, ${2:name}: ${3:&str}) -> Self {
+    self.${2:name} = ${2:name}.${4:to_string()};
+    self$0
+}'''
+
+[[entries]]
+name = "fn diverging"
+keys = ["fn", "never", "diverge", "bang", "exit", "panic", "return"]
+doc = "Declare a function that never returns, such as one that exits or loops forever."
+snippet = '''
+fn ${1:fail}(${2:msg}: &str) -> ! {
+    eprintln!("{${2:msg}}");
+    std::process::exit(${3:1})$0
+}'''
+
+[[entries]]
+name = "fn explicit unit return"
+keys = ["fn", "unit", "void", "return", "empty", "tuple"]
+doc = "Spell the unit return type explicitly, equivalent to omitting it."
+snippet = '''
+fn ${1:name}(${2:args}) -> () {
+    $0
+}'''
+
+[[entries]]
+name = "recursive fn"
+keys = ["fn", "recursive", "recursion", "factorial", "fibonacci", "self", "call"]
+doc = "Define a function that calls itself with a base case first."
+snippet = '''
+fn ${1:factorial}(${2:n}: ${3:u64}) -> ${3:u64} {
+    if ${2:n} <= ${4:1} {
+        return ${5:1};
+    }
+    ${2:n} * ${1:factorial}(${2:n} - 1)$0
+}'''
+
+[[entries]]
+name = "async fn returning Result"
+keys = ["async", "fn", "result", "await", "error", "fallible", "future"]
+doc = "Define an async function whose body can use both await and the question mark."
+snippet = '''
+async fn ${1:name}(${2:args}) -> Result<${3:T}, ${4:Box<dyn std::error::Error>}> {
+    $0
+    Ok(${5:value})
+}'''
+
+[[entries]]
+name = "fn returning impl Display"
+keys = ["fn", "impl", "display", "return", "opaque", "format"]
+doc = "Return any printable type without naming it."
+snippet = '''
+fn ${1:name}(${2:args}) -> impl std::fmt::Display {
+    ${3:format!("...")}$0
+}'''
+
+[[entries]]
+name = "fn returning array"
+keys = ["fn", "array", "return", "fixed", "size", "stack"]
+doc = "Return a fixed-size array by value."
+snippet = '''
+fn ${1:name}() -> [${2:u8}; ${3:4}] {
+    [${4:0}; ${3:4}]$0
+}'''
+
+[[entries]]
+name = "fn returning slice"
+keys = ["fn", "slice", "return", "borrow", "view", "range", "subslice"]
+doc = "Return a borrowed sub-range of the input slice."
+snippet = '''
+fn ${1:name}(${2:items}: &[${3:u8}]) -> &[${3:u8}] {
+    &${2:items}[${4:..}]$0
+}'''

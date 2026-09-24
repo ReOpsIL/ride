@@ -1,0 +1,193 @@
+title = "Match arm patterns"
+contexts = ["pattern", "case"]
+
+[[entries]]
+name = "literal pattern"
+keys = ["literal", "number", "int", "value", "exact", "pattern", "arm"]
+doc = "Match an exact integer value."
+snippet = '''
+${1:1} => $0,'''
+
+[[entries]]
+name = "string literal pattern"
+keys = ["string", "str", "literal", "text", "pattern", "arm", "keyword"]
+doc = "Match an exact string slice."
+snippet = '''
+"${1:yes}" => $0,'''
+
+[[entries]]
+name = "char pattern"
+keys = ["char", "character", "letter", "range", "pattern", "arm"]
+doc = "Match a character literal or an inclusive character range."
+snippet = '''
+'${1:a}'..='${2:z}' => $0,'''
+
+[[entries]]
+name = "bool pattern"
+keys = ["bool", "true", "false", "pattern", "arm"]
+doc = "Match a boolean value."
+snippet = '''
+${1:true} => $0,'''
+
+[[entries]]
+name = "negative literal pattern"
+keys = ["negative", "minus", "literal", "signed", "pattern", "arm"]
+doc = "Match a negative number or a range starting below zero."
+snippet = '''
+${1:-1} => $0,'''
+
+[[entries]]
+name = "exclusive range pattern"
+keys = ["range", "exclusive", "dotdot", "pattern", "half", "open"]
+doc = "Match any value in a half-open range, excluding the end."
+snippet = '''
+${1:0}..${2:10} => $0,'''
+
+[[entries]]
+name = "open range pattern"
+keys = ["range", "open", "from", "atleast", "greater", "pattern"]
+doc = "Match any value from a lower bound upwards."
+snippet = '''
+${1:100}.. => $0,'''
+
+[[entries]]
+name = "unit variant pattern"
+keys = ["enum", "variant", "unit", "path", "pattern", "arm", "color"]
+doc = "Match a unit variant by its full path or through Self."
+snippet = '''
+${1:Color}::${2:Red} => $0,'''
+
+[[entries]]
+name = "variant ignoring payload"
+keys = ["some", "variant", "underscore", "ignore", "payload", "pattern"]
+doc = "Match a variant without binding its contents."
+snippet = '''
+${1:Some}(_) => $0,'''
+
+[[entries]]
+name = "tuple struct pattern"
+keys = ["tuple", "struct", "newtype", "point", "pattern", "positional"]
+doc = "Match a tuple struct positionally."
+snippet = '''
+${1:Point}(${2:x}, ${3:y}) => $0,'''
+
+[[entries]]
+name = "tuple struct rest pattern"
+keys = ["tuple", "struct", "rest", "dotdot", "first", "pattern"]
+doc = "Match the leading fields of a tuple struct or variant and ignore the rest."
+snippet = '''
+${1:Point}(${2:x}, ..) => $0,'''
+
+[[entries]]
+name = "struct literal field pattern"
+keys = ["struct", "field", "literal", "exact", "value", "pattern"]
+doc = "Match a struct whose field equals a literal while binding the others."
+snippet = '''
+${1:Point} { ${2:x}: ${3:0}, ${4:y} } => $0,'''
+
+[[entries]]
+name = "ref binding pattern"
+keys = ["ref", "borrow", "some", "no", "move", "pattern", "binding"]
+doc = "Borrow the payload inside a pattern instead of moving it out."
+snippet = '''
+${1:Some}(ref ${2:value}) => $0,'''
+
+[[entries]]
+name = "ref mut binding pattern"
+keys = ["ref", "mut", "borrow", "modify", "pattern", "binding"]
+doc = "Mutably borrow the payload inside a pattern to change it in place."
+snippet = '''
+${1:Some}(ref mut ${2:value}) => $0,'''
+
+[[entries]]
+name = "&mut reference pattern"
+keys = ["mut", "reference", "deref", "ampersand", "pattern", "iter_mut"]
+doc = "Destructure through a mutable reference, as when iterating with iter_mut."
+snippet = '''
+&mut ${1:value} => $0,'''
+
+[[entries]]
+name = "nested enum pattern"
+keys = ["nested", "some", "ok", "err", "option", "result", "pattern", "deep"]
+doc = "Match a value wrapped in two enums at once."
+snippet = '''
+${1:Some}(${2:Ok}(${3:value})) => $0,'''
+
+[[entries]]
+name = "option of tuple pattern"
+keys = ["some", "tuple", "pair", "option", "pattern", "nested"]
+doc = "Bind both halves of a tuple carried inside a variant."
+snippet = '''
+${1:Some}((${2:key}, ${3:value})) => $0,'''
+
+[[entries]]
+name = "fixed length slice pattern"
+keys = ["slice", "array", "fixed", "three", "exact", "length", "pattern"]
+doc = "Match a slice of exactly this many elements."
+snippet = '''
+[${1:a}, ${2:b}, ${3:c}] => $0,'''
+
+[[entries]]
+name = "first and last slice pattern"
+keys = ["slice", "first", "last", "ends", "middle", "dotdot", "pattern"]
+doc = "Match the first and last elements of a slice, ignoring the middle."
+snippet = '''
+[${1:first}, .., ${2:last}] => $0,'''
+
+[[entries]]
+name = "last element slice pattern"
+keys = ["slice", "last", "tail", "end", "dotdot", "pattern"]
+doc = "Match only the last element of a non-empty slice."
+snippet = '''
+[.., ${1:last}] => $0,'''
+
+[[entries]]
+name = "subslice binding pattern"
+keys = ["slice", "rest", "subslice", "at", "binding", "tail", "init", "pattern"]
+doc = "Bind the leading part of a slice as a subslice before its last element."
+snippet = '''
+[${1:init} @ .., ${2:last}] => $0,'''
+
+[[entries]]
+name = "binding with or pattern"
+keys = ["at", "or", "binding", "alternatives", "pattern", "bind"]
+doc = "Bind a name to whichever of several alternatives matched."
+snippet = '''
+${1:n} @ (${2:1} | ${3:2}) => $0,'''
+
+[[entries]]
+name = "guard using bindings"
+keys = ["guard", "if", "bindings", "compare", "tuple", "pattern"]
+doc = "Compare pattern bindings against each other in a guard."
+snippet = '''
+(${1:a}, ${2:b}) if ${1:a} == ${2:b} => $0,'''
+
+[[entries]]
+name = "arm with block"
+keys = ["arm", "block", "braces", "statements", "multiline", "pattern"]
+doc = "Give a match arm a block body holding several statements."
+snippet = '''
+${1:pattern} => {
+    $0
+}'''
+
+[[entries]]
+name = "arm returning early"
+keys = ["arm", "return", "err", "early", "diverge", "pattern"]
+doc = "Return from the enclosing function inside a match arm."
+snippet = '''
+${1:Err(e)} => return ${2:Err(e.into())},$0'''
+
+[[entries]]
+name = "arm continuing loop"
+keys = ["arm", "continue", "skip", "loop", "err", "pattern"]
+doc = "Skip to the next loop iteration from inside a match arm."
+snippet = '''
+${1:Err(_)} => continue,$0'''
+
+[[entries]]
+name = "Self variant pattern"
+keys = ["self", "variant", "enum", "method", "pattern", "impl"]
+doc = "Match a variant of the enum being implemented through Self."
+snippet = '''
+Self::${1:Variant}${2:(inner)} => $0,'''

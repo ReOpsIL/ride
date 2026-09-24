@@ -3,7 +3,7 @@ contexts = ["statement", "expression"]
 
 [[entries]]
 name = "println!"
-keys = ["println", "print", "stdout", "log"]
+keys = ["println", "print", "stdout", "log", "output", "console", "display"]
 doc = "Print a formatted line to stdout, capturing variables inline."
 snippet = '''
 println!("${1:{value\}}");$0'''
@@ -24,7 +24,7 @@ eprintln!("${1:error: {e\}}");$0'''
 
 [[entries]]
 name = "format!"
-keys = ["format", "string", "interpolate"]
+keys = ["format", "string", "interpolate", "concat", "build", "sprintf"]
 doc = "Build a String from a format template."
 snippet = '''
 format!("${1:{value\}}")$0'''
@@ -200,3 +200,17 @@ macro_rules! ${1:name} {
     () => { ${2:Default::default()} };
     ($x:expr) => { $0 };
 }'''
+
+[[entries]]
+name = "eprint!"
+keys = ["eprint", "stderr", "error", "no", "newline"]
+doc = "Print to stderr without a trailing newline."
+snippet = '''
+eprint!("${1:text}");$0'''
+
+[[entries]]
+name = "module_path!"
+keys = ["module_path", "module", "path", "location", "name", "log"]
+doc = "Expand to the path of the current module as a string."
+snippet = '''
+module_path!()$0'''

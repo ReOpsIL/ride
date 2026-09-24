@@ -7,7 +7,7 @@ keys = ["features", "default", "flag"]
 doc = "Named optional functionality; default lists features on by default."
 snippet = '''
 [features]
-default = [${1:"${2:feature}"}]
+default = [${1:"${2:feature\}"}]
 ${2:feature} = [${3:]}$0'''
 
 [[entries]]

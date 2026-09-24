@@ -1,208 +1,173 @@
-title = "Declarations"
+title = "Variables"
 contexts = ["statement"]
 
 [[entries]]
 name = "variable"
-keys = ["var", "let", "int", "declare"]
+keys = ["var", "let", "int", "declare", "define", "local", "="]
 doc = "Declare and initialize a local variable."
 snippet = """
 ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
+name = "variable with braces"
+keys = ["var", "int", "declare", "brace", "{}", "uniform", "narrowing"]
+doc = "Declare with brace initialization, which rejects narrowing conversions."
+snippet = """
+${1:int} ${2:name}{${3:0}};$0"""
+
+[[entries]]
+name = "uninitialized variable"
+keys = ["var", "int", "declare", "uninitialized", "later", "assign"]
+doc = "Declare without a value; read it only after assigning (prefer initializing)."
+snippet = """
+${1:int} ${2:name};$0"""
+
+[[entries]]
+name = "several variables"
+keys = ["var", "int", "declare", "multiple", "several", "comma", "two"]
+doc = "Declare several variables of one type in a single statement."
+snippet = """
+${1:int} ${2:a} = ${3:0}, ${4:b} = ${5:0};$0"""
+
+[[entries]]
 name = "auto"
-keys = ["auto", "var", "let"]
+keys = ["auto", "var", "let", "deduce", "infer", "type"]
 doc = "Variable whose type is deduced from its initializer."
 snippet = """
 auto ${1:name} = ${2:value};$0"""
 
 [[entries]]
+name = "auto with braces"
+keys = ["auto", "var", "brace", "{}", "deduce"]
+doc = "Deduced variable with brace initialization (auto x{1} is int, not a list)."
+snippet = """
+auto ${1:name}{${2:value}};$0"""
+
+[[entries]]
+name = "const auto"
+keys = ["auto", "const", "var", "immutable", "readonly"]
+doc = "Deduced constant."
+snippet = """
+const auto ${1:name} = ${2:value};$0"""
+
+[[entries]]
 name = "const auto&"
-keys = ["auto", "const", "ref"]
+keys = ["auto", "const", "ref", "reference", "alias", "no", "copy"]
 doc = "Reference to an existing value without copying."
 snippet = """
 const auto &${1:name} = ${2:expr};$0"""
 
 [[entries]]
+name = "auto&"
+keys = ["auto", "ref", "reference", "modify", "alias", "&"]
+doc = "Mutable reference with a deduced type."
+snippet = """
+auto &${1:name} = ${2:expr};$0"""
+
+[[entries]]
+name = "auto*"
+keys = ["auto", "pointer", "ptr", "*", "deduce"]
+doc = "Deduced pointer that makes the pointer-ness explicit."
+snippet = """
+auto *${1:ptr} = ${2:&value};$0"""
+
+[[entries]]
+name = "auto&&"
+keys = ["auto", "forwarding", "&&", "universal", "temporary", "reference"]
+doc = "Forwarding reference that binds to anything, extending temporaries."
+snippet = """
+auto &&${1:name} = ${2:expr};$0"""
+
+[[entries]]
 name = "const"
-keys = ["const", "constant"]
+keys = ["const", "constant", "immutable", "readonly", "fixed"]
 doc = "Variable that cannot be modified after initialization."
 snippet = """
 const ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
 name = "constexpr"
-keys = ["constexpr", "constant", "compile"]
+keys = ["constexpr", "constant", "compile", "time", "literal"]
 doc = "Compile-time constant."
 snippet = """
 constexpr ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
+name = "static constexpr local"
+keys = ["static", "constexpr", "local", "table", "constant", "function"]
+doc = "Function-local compile-time constant, useful for lookup tables."
+snippet = """
+static constexpr ${1:int} ${2:kName} = ${3:0};$0"""
+
+[[entries]]
 name = "constinit"
-keys = ["constinit", "static", "init"]
+keys = ["constinit", "static", "init", "compile", "c++20"]
 doc = "C++20 static variable that must be constant-initialized."
 snippet = """
 constinit static ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
 name = "static local"
-keys = ["static", "local", "once"]
+keys = ["static", "local", "once", "persist", "counter", "keep"]
 doc = "Local variable initialized once and kept across calls."
 snippet = """
 static ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
 name = "thread_local"
-keys = ["thread_local", "thread", "static"]
+keys = ["thread_local", "thread", "static", "per"]
 doc = "Variable with one instance per thread."
 snippet = """
 thread_local ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
-name = "reference"
-keys = ["ref", "reference", "&"]
-doc = "Alias for an existing object."
+name = "volatile"
+keys = ["volatile", "hardware", "register", "memory", "mapped"]
+doc = "Variable whose every access is performed as written."
 snippet = """
-${1:int} &${2:ref} = ${3:value};$0"""
+volatile ${1:int} ${2:name} = ${3:0};$0"""
 
 [[entries]]
-name = "rvalue reference"
-keys = ["rvalue", "ref", "&&", "move"]
-doc = "Reference that binds to a temporary or moved-from value."
+name = "variable from cast"
+keys = ["var", "cast", "static_cast", "convert", "auto"]
+doc = "Initialize from an explicit conversion."
 snippet = """
-${1:int} &&${2:ref} = ${3:std::move(value)};$0"""
-
-[[entries]]
-name = "pointer"
-keys = ["ptr", "pointer", "*"]
-doc = "Pointer to an object."
-snippet = """
-${1:int} *${2:ptr} = ${3:&value};$0"""
-
-[[entries]]
-name = "pointer to const"
-keys = ["ptr", "pointer", "const"]
-doc = "Pointer through which the pointee cannot be modified."
-snippet = """
-const ${1:int} *${2:ptr} = ${3:&value};$0"""
-
-[[entries]]
-name = "nullptr"
-keys = ["null", "nullptr", "ptr"]
-doc = "Pointer initialized to null."
-snippet = """
-${1:int} *${2:ptr} = nullptr;$0"""
-
-[[entries]]
-name = "C array"
-keys = ["array", "c", "raw"]
-doc = "Fixed-size built-in array."
-snippet = """
-${1:int} ${2:arr}[${3:N}] = {${4:}};$0"""
-
-[[entries]]
-name = "std::array"
-keys = ["array", "std", "fixed"]
-doc = "Fixed-size array with a container interface."
-snippet = """
-std::array<${1:int}, ${2:N}> ${3:arr} = {${4:}};$0"""
-
-[[entries]]
-name = "std::pair"
-keys = ["pair", "tuple", "two"]
-doc = "Two values of possibly different types."
-snippet = """
-std::pair<${1:int}, ${2:std::string}> ${3:p} = {${4:0}, ${5:""}};$0"""
-
-[[entries]]
-name = "std::tuple"
-keys = ["tuple", "pair"]
-doc = "Fixed collection of heterogeneous values."
-snippet = """
-std::tuple<${1:int}, ${2:double}, ${3:std::string}> ${4:t} = {${5:}};$0"""
-
-[[entries]]
-name = "std::optional"
-keys = ["optional", "maybe", "nullopt"]
-doc = "Value that may be absent."
-snippet = """
-std::optional<${1:int}> ${2:opt} = ${3:std::nullopt};$0"""
-
-[[entries]]
-name = "std::variant"
-keys = ["variant", "union", "sum"]
-doc = "Type-safe union holding one of several types."
-snippet = """
-std::variant<${1:int}, ${2:std::string}> ${3:v} = ${4:0};$0"""
-
-[[entries]]
-name = "std::visit"
-keys = ["visit", "variant", "overloaded"]
-doc = "Dispatch on the active alternative of a variant."
-snippet = """
-std::visit([](${1:const auto &}${2:value}) {
-    $0
-}, ${3:v});"""
-
-[[entries]]
-name = "std::any"
-keys = ["any", "erased", "any_cast"]
-doc = "Holder for a value of any copyable type."
-snippet = """
-std::any ${1:a} = ${2:value};
-auto ${3:x} = std::any_cast<${4:int}>(${1:a});$0"""
-
-[[entries]]
-name = "std::string_view"
-keys = ["string_view", "view", "sv"]
-doc = "Non-owning view of a character sequence."
-snippet = """
-std::string_view ${1:sv} = ${2:str};$0"""
-
-[[entries]]
-name = "std::span"
-keys = ["span", "view", "slice"]
-doc = "C++20 non-owning view over contiguous elements."
-snippet = """
-std::span<${1:const int}> ${2:s} = ${3:v};$0"""
-
-[[entries]]
-name = "structured binding"
-keys = ["auto", "binding", "destructure", "unpack"]
-doc = "Unpack a pair, tuple, array or struct into names."
-snippet = """
-auto [${1:a}, ${2:b}] = ${3:expr};$0"""
-
-[[entries]]
-name = "structured binding by reference"
-keys = ["auto", "binding", "destructure", "ref"]
-doc = "Bind names to the members of an lvalue without copying."
-snippet = """
-auto &[${1:a}, ${2:b}] = ${3:obj};$0"""
+auto ${1:n} = static_cast<${2:int}>(${3:value});$0"""
 
 [[entries]]
 name = "decltype"
-keys = ["decltype", "type"]
+keys = ["decltype", "type", "same", "as", "expression"]
 doc = "Declare a variable with the type of an expression."
 snippet = """
 decltype(${1:expr}) ${2:name} = ${3:expr};$0"""
 
 [[entries]]
-name = "std::tie"
-keys = ["tie", "tuple", "unpack"]
-doc = "Assign a tuple to existing variables."
-snippet = """
-std::tie(${1:a}, ${2:b}) = ${3:expr};$0"""
-
-[[entries]]
 name = "using alias (local)"
-keys = ["using", "alias", "type"]
+keys = ["using", "alias", "type", "typedef", "local", "shorten"]
 doc = "Local type alias."
 snippet = """
 using ${1:Alias} = ${2:type};$0"""
 
 [[entries]]
-name = "volatile"
-keys = ["volatile", "hardware"]
-doc = "Variable whose every access is performed as written."
+name = "typedef (local)"
+keys = ["typedef", "alias", "type", "local", "c"]
+doc = "C-style local type alias."
 snippet = """
-volatile ${1:int} ${2:name} = ${3:0};$0"""
+typedef ${1:unsigned long} ${2:ulong};$0"""
+
+[[entries]]
+name = "local enum"
+keys = ["enum", "local", "class", "state", "function"]
+doc = "Scoped enum declared inside a function."
+snippet = """
+enum class ${1:State} { ${2:Idle}, ${3:Running} };$0"""
+
+[[entries]]
+name = "local struct"
+keys = ["struct", "local", "function", "helper", "record"]
+doc = "Struct declared inside a function for local grouping."
+snippet = """
+struct ${1:Entry} {
+    ${2:int} ${3:value};
+    $0
+};"""

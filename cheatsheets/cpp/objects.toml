@@ -1,0 +1,127 @@
+title = "Using objects"
+contexts = ["statement"]
+
+[[entries]]
+name = "object on the stack"
+keys = ["object", "instance", "create", "new", "class", "construct", "variable"]
+doc = "Construct an object as a local variable."
+snippet = """
+${1:Name} ${2:obj}(${3:});$0"""
+
+[[entries]]
+name = "object with brace init"
+keys = ["object", "instance", "create", "brace", "construct", "{}"]
+doc = "Construct an object with braces, which forbids narrowing."
+snippet = """
+${1:Name} ${2:obj}{${3:}};$0"""
+
+[[entries]]
+name = "default constructed object"
+keys = ["object", "instance", "default", "create", "construct", "empty"]
+doc = "Construct with the default constructor; no parentheses or it declares a function."
+snippet = """
+${1:Name} ${2:obj};$0"""
+
+[[entries]]
+name = "object on the heap"
+keys = ["object", "heap", "new", "unique_ptr", "make_unique", "create", "pointer"]
+doc = "Allocate an object owned by a unique_ptr."
+snippet = """
+auto ${1:obj} = std::make_unique<${2:Name}>(${3:});$0"""
+
+[[entries]]
+name = "shared object"
+keys = ["object", "shared", "shared_ptr", "make_shared", "create", "pointer"]
+doc = "Allocate an object with shared ownership."
+snippet = """
+auto ${1:obj} = std::make_shared<${2:Name}>(${3:});$0"""
+
+[[entries]]
+name = "call member function"
+keys = ["call", "method", "member", "dot", ".", "invoke"]
+doc = "Call a member function on an object."
+snippet = """
+${1:obj}.${2:method}(${3:});$0"""
+
+[[entries]]
+name = "call through pointer"
+keys = ["call", "method", "member", "arrow", "->", "pointer"]
+doc = "Call a member function through a pointer or smart pointer."
+snippet = """
+${1:ptr}->${2:method}(${3:});$0"""
+
+[[entries]]
+name = "base pointer to derived"
+keys = ["polymorphism", "base", "pointer", "derived", "virtual", "upcast"]
+doc = "Refer to a derived object through a base pointer for virtual dispatch."
+snippet = """
+${1:Base} *${2:p} = &${3:derived};
+${2:p}->${4:method}();$0"""
+
+[[entries]]
+name = "base reference to derived"
+keys = ["polymorphism", "base", "reference", "derived", "virtual", "&"]
+doc = "Bind a base reference to a derived object."
+snippet = """
+${1:Base} &${2:ref} = ${3:derived};
+${2:ref}.${4:method}();$0"""
+
+[[entries]]
+name = "polymorphic container"
+keys = ["polymorphism", "vector", "unique_ptr", "base", "derived", "list"]
+doc = "Store different derived objects in one vector of base pointers."
+snippet = """
+std::vector<std::unique_ptr<${1:Base}>> ${2:items};
+${2:items}.push_back(std::make_unique<${3:Derived}>(${4:}));
+for (const auto &${5:item} : ${2:items}) {
+    ${5:item}->${6:method}();$0
+}"""
+
+[[entries]]
+name = "static member access"
+keys = ["static", "member", "class", "::", "scope", "access"]
+doc = "Reach a static member or function through the class name."
+snippet = """
+${1:Name}::${2:member}$0"""
+
+[[entries]]
+name = "enum class value"
+keys = ["enum", "class", "value", "::", "scoped", "enumerator"]
+doc = "Name a scoped enumerator with the enum name as qualifier."
+snippet = """
+${1:Color}::${2:Red}$0"""
+
+[[entries]]
+name = "copy object"
+keys = ["copy", "object", "clone", "duplicate", "assign"]
+doc = "Copy-construct a second object."
+snippet = """
+${1:Name} ${2:copy} = ${3:original};$0"""
+
+[[entries]]
+name = "move object"
+keys = ["move", "object", "transfer", "std::move", "ownership"]
+doc = "Move-construct from an object that is no longer needed."
+snippet = """
+${1:Name} ${2:moved} = std::move(${3:original});$0"""
+
+[[entries]]
+name = "temporary object"
+keys = ["temporary", "object", "rvalue", "construct", "inline", "anonymous"]
+doc = "Construct an unnamed object in place, for example as an argument."
+snippet = """
+${1:Name}{${2:}}$0"""
+
+[[entries]]
+name = "member function pointer call"
+keys = ["member", "pointer", "call", ".*", "->*", "method"]
+doc = "Call a member function through a pointer-to-member."
+snippet = """
+(${1:obj}.*${2:method_ptr})(${3:});$0"""
+
+[[entries]]
+name = "std::invoke member"
+keys = ["invoke", "member", "call", "pointer", "generic"]
+doc = "Call a member function pointer uniformly with std::invoke."
+snippet = """
+std::invoke(&${1:Name}::${2:method}, ${3:obj}${4:});$0"""

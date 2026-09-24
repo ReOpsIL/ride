@@ -1,0 +1,100 @@
+title = "Global variables and constants"
+contexts = ["item"]
+
+[[entries]]
+name = "global variable"
+keys = ["global", "var", "variable", "int", "declare"]
+doc = "Variable with external linkage at namespace scope."
+snippet = """
+${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "global constant"
+keys = ["global", "const", "constant", "var", "readonly"]
+doc = "Namespace-scope constant; const globals have internal linkage."
+snippet = """
+const ${1:int} ${2:kName} = ${3:0};$0"""
+
+[[entries]]
+name = "constexpr variable"
+keys = ["constexpr", "const", "constant", "compile", "global"]
+doc = "Compile-time constant."
+snippet = """
+constexpr ${1:int} ${2:kName} = ${3:0};$0"""
+
+[[entries]]
+name = "inline variable"
+keys = ["inline", "var", "header", "global", "constexpr", "odr"]
+doc = "C++17 variable that can be defined in a header shared by several files."
+snippet = """
+inline ${1:constexpr int} ${2:kName} = ${3:0};$0"""
+
+[[entries]]
+name = "static variable"
+keys = ["static", "var", "internal", "file", "private", "global"]
+doc = "Namespace-scope variable with internal linkage."
+snippet = """
+static ${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "extern variable"
+keys = ["extern", "var", "declare", "global", "header", "shared"]
+doc = "Declare a variable defined in another translation unit."
+snippet = """
+extern ${1:int} ${2:name};$0"""
+
+[[entries]]
+name = "extern constant"
+keys = ["extern", "const", "declare", "global", "header"]
+doc = "Declare a constant defined in another translation unit."
+snippet = """
+extern const ${1:int} ${2:kName};$0"""
+
+[[entries]]
+name = "constinit variable"
+keys = ["constinit", "static", "init", "global", "constant"]
+doc = "C++20 global that must be initialized at compile time but stays mutable."
+snippet = """
+constinit ${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "thread_local variable"
+keys = ["thread_local", "thread", "global", "static", "per"]
+doc = "Global with one instance per thread."
+snippet = """
+thread_local ${1:int} ${2:name} = ${3:0};$0"""
+
+[[entries]]
+name = "global array"
+keys = ["global", "array", "table", "fixed", "brackets"]
+doc = "Namespace-scope array with listed elements."
+snippet = """
+${1:int} ${2:table}[] = {${3:1, 2, 3}};$0"""
+
+[[entries]]
+name = "constexpr array"
+keys = ["constexpr", "array", "table", "lookup", "constant", "std::array"]
+doc = "Compile-time lookup table."
+snippet = """
+constexpr std::array<${1:int}, ${2:3}> ${3:kTable} = {${4:1, 2, 3}};$0"""
+
+[[entries]]
+name = "constexpr string_view"
+keys = ["constexpr", "string", "view", "constant", "name", "text"]
+doc = "Compile-time string constant without a global constructor."
+snippet = """
+constexpr std::string_view ${1:kName} = "${2:text}";$0"""
+
+[[entries]]
+name = "global const char pointer"
+keys = ["global", "const", "char", "string", "literal", "c"]
+doc = "C-style string constant."
+snippet = """
+const char *const ${1:kName} = "${2:text}";$0"""
+
+[[entries]]
+name = "global object"
+keys = ["global", "object", "instance", "class", "std::"]
+doc = "Namespace-scope object constructed before main runs."
+snippet = """
+${1:std::vector<int>} ${2:name}${3:};$0"""

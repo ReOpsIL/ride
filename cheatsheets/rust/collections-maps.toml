@@ -1,37 +1,65 @@
-title = "Maps, sets and queues"
+title = "HashMap"
 contexts = ["statement", "expression"]
 
 [[entries]]
 name = "HashMap::new"
-keys = ["hashmap", "map", "new", "dict"]
+keys = ["hashmap", "map", "new", "dict", "dictionary", "empty", "declare"]
 doc = "Create an empty hash map."
 snippet = '''
 let mut ${1:map}: HashMap<${2:K}, ${3:V}> = HashMap::new();$0'''
 
 [[entries]]
 name = "HashMap::from"
-keys = ["hashmap", "map", "from", "literal", "pairs"]
+keys = ["hashmap", "map", "from", "literal", "pairs", "init", "dict"]
 doc = "Create a hash map from an array of key-value pairs."
 snippet = '''
 HashMap::from([(${1:"a"}, ${2:1})${3:, ("b", 2)}])$0'''
 
 [[entries]]
+name = "HashMap::with_capacity"
+keys = ["hashmap", "map", "capacity", "reserve", "preallocate", "size"]
+doc = "Create an empty hash map with room for n entries."
+snippet = '''
+HashMap::with_capacity(${1:n})$0'''
+
+[[entries]]
+name = "collect HashMap"
+keys = ["hashmap", "map", "collect", "zip", "pairs", "iterator", "from"]
+doc = "Build a map from an iterator of key-value pairs, for example two zipped lists."
+snippet = '''
+let ${1:map}: HashMap<_, _> = ${2:keys}.into_iter().zip(${3:values}).collect();$0'''
+
+[[entries]]
 name = "insert"
-keys = ["insert", "put", "set", "map", "hashmap"]
+keys = ["insert", "put", "set", "map", "hashmap", "add", "store"]
 doc = "Insert a key-value pair, returning the previous value if any."
 snippet = '''
 ${1:map}.insert(${2:key}, ${3:value});$0'''
 
 [[entries]]
 name = "get"
-keys = ["get", "lookup", "map", "hashmap", "option"]
+keys = ["get", "lookup", "map", "hashmap", "option", "find", "read"]
 doc = "Look up a value by key, borrowing it as an Option."
 snippet = '''
 ${1:map}.get(&${2:key})$0'''
 
 [[entries]]
+name = "get with default"
+keys = ["get", "default", "copied", "unwrap_or", "lookup", "missing", "fallback"]
+doc = "Look up a value, giving a default when the key is absent."
+snippet = '''
+${1:map}.get(&${2:key}).copied().unwrap_or(${3:0})$0'''
+
+[[entries]]
+name = "get with str key"
+keys = ["get", "str", "string", "key", "lookup", "borrow", "literal"]
+doc = "Look up a String key with a str, which works through Borrow."
+snippet = '''
+${1:map}.get(${2:"name"})$0'''
+
+[[entries]]
 name = "get_mut"
-keys = ["get", "mut", "lookup", "modify", "map"]
+keys = ["get", "mut", "lookup", "modify", "map", "update", "change"]
 doc = "Look up a value by key for mutation."
 snippet = '''
 if let Some(${1:value}) = ${2:map}.get_mut(&${3:key}) {
@@ -39,156 +67,155 @@ if let Some(${1:value}) = ${2:map}.get_mut(&${3:key}) {
 }'''
 
 [[entries]]
+name = "index map[key]"
+keys = ["index", "brackets", "map", "key", "panic", "subscript"]
+doc = "Read a value by key with brackets, panicking when the key is absent."
+snippet = '''
+${1:map}[&${2:key}]$0'''
+
+[[entries]]
 name = "entry or_insert"
-keys = ["entry", "or_insert", "default", "upsert", "map"]
+keys = ["entry", "or_insert", "default", "upsert", "map", "insert", "missing"]
 doc = "Get the value for a key, inserting a default when absent."
 snippet = '''
 ${1:map}.entry(${2:key}).or_insert(${3:0})$0'''
 
 [[entries]]
 name = "entry counter"
-keys = ["entry", "count", "counter", "frequency", "histogram", "map"]
+keys = ["entry", "count", "counter", "frequency", "histogram", "map", "tally"]
 doc = "Count occurrences of keys with the entry API."
 snippet = '''
 *${1:counts}.entry(${2:key}).or_insert(0) += 1;$0'''
 
 [[entries]]
+name = "count words"
+keys = ["count", "words", "frequency", "histogram", "map", "text", "occurrences"]
+doc = "Count how often each word appears in a text."
+snippet = '''
+let mut ${1:counts}: HashMap<&str, usize> = HashMap::new();
+for ${2:word} in ${3:text}.split_whitespace() {
+    *${1:counts}.entry(${2:word}).or_default() += 1;
+}$0'''
+
+[[entries]]
 name = "entry or_insert_with"
-keys = ["entry", "or_insert_with", "lazy", "vec", "group", "map"]
+keys = ["entry", "or_insert_with", "lazy", "vec", "group", "map", "by"]
 doc = "Get the value for a key, building it lazily when absent."
 snippet = '''
 ${1:map}.entry(${2:key}).or_insert_with(${3:Vec::new}).push(${4:value});$0'''
 
 [[entries]]
+name = "group by"
+keys = ["group", "by", "map", "vec", "bucket", "categorize", "entry", "or_default"]
+doc = "Group items into vectors keyed by a derived value."
+snippet = '''
+let mut ${1:groups}: HashMap<${2:K}, Vec<${3:T}>> = HashMap::new();
+for ${4:item} in ${5:items} {
+    ${1:groups}.entry(${6:item.key}).or_default().push(${4:item});
+}$0'''
+
+[[entries]]
 name = "entry or_default"
-keys = ["entry", "or_default", "default", "group", "map"]
+keys = ["entry", "or_default", "default", "group", "map", "insert"]
 doc = "Get the value for a key, inserting the Default when absent."
 snippet = '''
 ${1:map}.entry(${2:key}).or_default()$0'''
 
 [[entries]]
 name = "entry and_modify"
-keys = ["entry", "and_modify", "update", "map"]
+keys = ["entry", "and_modify", "update", "map", "upsert", "existing"]
 doc = "Update an existing value or insert a new one in a single lookup."
 snippet = '''
 ${1:map}.entry(${2:key}).and_modify(|${3:v}| ${4:*v += 1}).or_insert(${5:1});$0'''
 
 [[entries]]
 name = "contains_key"
-keys = ["contains", "key", "has", "map"]
+keys = ["contains", "key", "has", "map", "exists", "in", "check"]
 doc = "Test whether a key is present."
 snippet = '''
 ${1:map}.contains_key(&${2:key})$0'''
 
 [[entries]]
 name = "remove"
-keys = ["remove", "delete", "map", "set"]
+keys = ["remove", "delete", "map", "set", "erase", "take"]
 doc = "Remove a key, returning its value if it was present."
 snippet = '''
 ${1:map}.remove(&${2:key})$0'''
 
 [[entries]]
+name = "len / is_empty"
+keys = ["len", "length", "size", "count", "empty", "map", "entries"]
+doc = "Number of entries, or whether there are none."
+snippet = '''
+${1:map}.${2:len}()$0'''
+
+[[entries]]
 name = "iterate map"
-keys = ["for", "iter", "map", "pairs", "keys", "values"]
-doc = "Iterate over key-value pairs by reference."
+keys = ["for", "iter", "map", "pairs", "keys", "values", "loop", "each"]
+doc = "Iterate over key-value pairs by reference, in no particular order."
 snippet = '''
 for (${1:key}, ${2:value}) in &${3:map} {
     $0
 }'''
 
 [[entries]]
+name = "iterate map mutably"
+keys = ["for", "iter_mut", "map", "modify", "values", "loop", "mut", "update"]
+doc = "Iterate over pairs with mutable access to each value."
+snippet = '''
+for (${1:key}, ${2:value}) in ${3:map}.iter_mut() {
+    *${2:value} ${4:+= 1};$0
+}'''
+
+[[entries]]
 name = "keys / values"
-keys = ["keys", "values", "values_mut", "map", "iter"]
+keys = ["keys", "values", "values_mut", "map", "iter", "only", "collect"]
 doc = "Iterate over only the keys or only the values."
 snippet = '''
 ${1:map}.${2:values}()$0'''
 
 [[entries]]
-name = "HashSet::new"
-keys = ["hashset", "set", "new", "unique"]
-doc = "Create an empty hash set."
+name = "values_mut"
+keys = ["values", "mut", "modify", "map", "all", "update", "each"]
+doc = "Mutate every value in place."
 snippet = '''
-let mut ${1:set}: HashSet<${2:T}> = HashSet::new();$0'''
-
-[[entries]]
-name = "set insert / contains"
-keys = ["set", "insert", "contains", "hashset", "seen"]
-doc = "Insert into a set, which returns false if the value was already there."
-snippet = '''
-if !${1:seen}.insert(${2:value}) {
-    $0
+for ${1:value} in ${2:map}.values_mut() {
+    *${1:value} ${3:*= 2};$0
 }'''
 
 [[entries]]
-name = "set operations"
-keys = ["set", "union", "intersection", "difference", "hashset"]
-doc = "Iterate over the union, intersection or difference of two sets."
+name = "sorted keys"
+keys = ["sorted", "keys", "order", "map", "collect", "vec", "sort", "iterate"]
+doc = "Iterate a hash map in key order by collecting and sorting its entries."
 snippet = '''
-${1:a}.${2:intersection}(&${3:b})$0'''
+let mut ${1:entries}: Vec<_> = ${2:map}.iter().collect();
+${1:entries}.sort();$0'''
 
 [[entries]]
-name = "collect into HashSet"
-keys = ["collect", "hashset", "set", "unique", "dedup"]
-doc = "Deduplicate an iterator by collecting into a set."
+name = "max by value"
+keys = ["max", "min", "value", "most", "common", "map", "entry", "largest"]
+doc = "Find the entry with the largest value."
 snippet = '''
-${1:items}.iter().cloned().collect::<HashSet<_>>()$0'''
+${1:map}.iter().max_by_key(|(_, ${2:v})| *${2:v})$0'''
 
 [[entries]]
-name = "BTreeMap::new"
-keys = ["btreemap", "map", "sorted", "ordered", "new"]
-doc = "Create an empty map that iterates in key order."
+name = "extend map"
+keys = ["extend", "merge", "map", "combine", "insert", "all", "pairs"]
+doc = "Insert all pairs from an iterator, overwriting existing keys."
 snippet = '''
-let mut ${1:map} = BTreeMap::new();$0'''
+${1:map}.extend(${2:other});$0'''
 
 [[entries]]
-name = "BTreeMap range"
-keys = ["btreemap", "range", "sorted", "between", "bounds"]
-doc = "Iterate over the entries whose keys fall in a range."
+name = "retain map"
+keys = ["retain", "filter", "remove", "map", "keep", "in", "place", "delete"]
+doc = "Keep only the entries matching a predicate."
 snippet = '''
-${1:map}.range(${2:lo}..=${3:hi})$0'''
+${1:map}.retain(|${2:k}, ${3:v}| ${4:cond});$0'''
 
 [[entries]]
-name = "first / last entry"
-keys = ["btreemap", "first", "last", "min", "max", "key"]
-doc = "Get the smallest or largest key-value pair in a BTreeMap."
+name = "clear / drain map"
+keys = ["clear", "drain", "empty", "reset", "map", "remove", "all"]
+doc = "Remove every entry, optionally yielding them."
 snippet = '''
-${1:map}.${2:first_key_value}()$0'''
+${1:map}.${2:clear}();$0'''
 
-[[entries]]
-name = "VecDeque::new"
-keys = ["vecdeque", "deque", "queue", "new", "fifo"]
-doc = "Create an empty double-ended queue."
-snippet = '''
-let mut ${1:queue}: VecDeque<${2:T}> = VecDeque::new();$0'''
-
-[[entries]]
-name = "push_back / pop_front"
-keys = ["push", "pop", "back", "front", "deque", "queue"]
-doc = "Enqueue at the back and dequeue from the front."
-snippet = '''
-${1:queue}.push_back(${2:value});$0'''
-
-[[entries]]
-name = "BFS queue loop"
-keys = ["bfs", "queue", "while", "pop", "deque", "visit"]
-doc = "Process a queue until empty, pushing new work as it is discovered."
-snippet = '''
-let mut ${1:queue} = VecDeque::from([${2:start}]);
-while let Some(${3:node}) = ${1:queue}.pop_front() {
-    $0
-}'''
-
-[[entries]]
-name = "BinaryHeap"
-keys = ["binaryheap", "heap", "priority", "queue", "max"]
-doc = "Max-heap priority queue, wrap items in Reverse for a min-heap."
-snippet = '''
-let mut ${1:heap} = BinaryHeap::new();
-${1:heap}.push(${2:std::cmp::Reverse(value)});$0'''
-
-[[entries]]
-name = "use collections"
-keys = ["use", "std", "collections", "hashmap", "import"]
-doc = "Import the common collection types."
-snippet = '''
-use std::collections::{${1:HashMap, HashSet, BTreeMap, VecDeque}};$0'''

@@ -1,0 +1,204 @@
+title = "String idioms and characters"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "split string"
+keys = ["split", "tokenize", "delimiter", "getline", "parts", "csv", "words"]
+doc = "Split a string on a delimiter into tokens with getline."
+snippet = '''
+std::vector<std::string> ${1:parts};
+std::stringstream ${2:ss}(${3:s});
+for (std::string ${4:tok}; std::getline(${2:ss}, ${4:tok}, ${5:','});) {
+    ${1:parts}.push_back(${4:tok});
+}$0'''
+
+[[entries]]
+name = "split on whitespace"
+keys = ["split", "words", "whitespace", "tokens", "stringstream", ">>", "spaces"]
+doc = "Split on any whitespace using stream extraction."
+snippet = '''
+std::vector<std::string> ${1:words};
+std::istringstream ${2:iss}(${3:s});
+for (std::string ${4:w}; ${2:iss} >> ${4:w};) {
+    ${1:words}.push_back(${4:w});
+}$0'''
+
+[[entries]]
+name = "split with find"
+keys = ["split", "find", "substr", "delimiter", "string", "manual", "tokens"]
+doc = "Split on a multi-character delimiter with find and substr."
+snippet = '''
+std::vector<std::string> ${1:parts};
+std::size_t ${2:start} = 0;
+for (std::size_t ${3:end}; (${3:end} = ${4:s}.find(${5:delim}, ${2:start})) != std::string::npos; ${2:start} = ${3:end} + ${5:delim}.size()) {
+    ${1:parts}.push_back(${4:s}.substr(${2:start}, ${3:end} - ${2:start}));
+}
+${1:parts}.push_back(${4:s}.substr(${2:start}));$0'''
+
+[[entries]]
+name = "join strings"
+keys = ["join", "concat", "delimiter", "separator", "combine", "implode"]
+doc = "Join strings with a separator."
+snippet = '''
+std::string ${1:out};
+for (const auto &${2:part} : ${3:parts}) {
+    if (!${1:out}.empty()) ${1:out} += ${4:", "};
+    ${1:out} += ${2:part};
+}$0'''
+
+[[entries]]
+name = "trim whitespace"
+keys = ["trim", "strip", "whitespace", "spaces", "clean", "both"]
+doc = "Copy of a string without leading and trailing whitespace."
+snippet = '''
+auto ${1:begin} = ${2:s}.find_first_not_of(" \t\r\n");
+auto ${3:end} = ${2:s}.find_last_not_of(" \t\r\n");
+std::string ${4:trimmed} = ${1:begin} == std::string::npos ? "" : ${2:s}.substr(${1:begin}, ${3:end} - ${1:begin} + 1);$0'''
+
+[[entries]]
+name = "trim string_view"
+keys = ["trim", "strip", "string_view", "whitespace", "remove_prefix", "remove_suffix"]
+doc = "Trim a view in place without allocating."
+snippet = '''
+${1:sv}.remove_prefix(std::min(${1:sv}.find_first_not_of(" \t\n"), ${1:sv}.size()));
+${1:sv}.remove_suffix(${1:sv}.size() - ${1:sv}.find_last_not_of(" \t\n") - 1);$0'''
+
+[[entries]]
+name = "string to uppercase"
+keys = ["toupper", "upper", "transform", "case", "uppercase", "capitalize"]
+doc = "Uppercase every character in place."
+snippet = '''
+std::transform(${1:s}.begin(), ${1:s}.end(), ${1:s}.begin(), [](unsigned char c) { return std::toupper(c); });$0'''
+
+[[entries]]
+name = "string to lowercase"
+keys = ["tolower", "lower", "transform", "case", "lowercase", "normalize"]
+doc = "Lowercase every character in place."
+snippet = '''
+std::transform(${1:s}.begin(), ${1:s}.end(), ${1:s}.begin(), [](unsigned char c) { return std::tolower(c); });$0'''
+
+[[entries]]
+name = "replace all occurrences"
+keys = ["replace", "all", "occurrences", "substitute", "find", "loop", "idiom"]
+doc = "Replace every occurrence of a substring."
+snippet = '''
+for (std::size_t ${1:pos} = 0; (${1:pos} = ${2:s}.find(${3:from}, ${1:pos})) != std::string::npos; ${1:pos} += ${4:to}.size()) {
+    ${2:s}.replace(${1:pos}, ${3:from}.size(), ${4:to});
+}$0'''
+
+[[entries]]
+name = "reverse string"
+keys = ["reverse", "string", "flip", "backwards", "std::reverse"]
+doc = "Reverse a string in place."
+snippet = '''
+std::reverse(${1:s}.begin(), ${1:s}.end());$0'''
+
+[[entries]]
+name = "reversed copy"
+keys = ["reverse", "copy", "rbegin", "rend", "string", "backwards", "new"]
+doc = "New string with the characters in reverse order."
+snippet = '''
+std::string ${1:rev}(${2:s}.rbegin(), ${2:s}.rend());$0'''
+
+[[entries]]
+name = "palindrome check"
+keys = ["palindrome", "equal", "reverse", "check", "symmetric", "std::equal"]
+doc = "True when a string reads the same backwards."
+snippet = '''
+std::equal(${1:s}.begin(), ${1:s}.begin() + ${1:s}.size() / 2, ${1:s}.rbegin())$0'''
+
+[[entries]]
+name = "count character"
+keys = ["count", "char", "occurrences", "character", "how many", "std::count"]
+doc = "Number of times a character appears."
+snippet = '''
+std::count(${1:s}.begin(), ${1:s}.end(), ${2:'a'})$0'''
+
+[[entries]]
+name = "remove characters"
+keys = ["remove", "char", "erase", "strip", "delete", "filter", "spaces"]
+doc = "Erase every occurrence of a character."
+snippet = '''
+std::erase(${1:s}, ${2:' '});$0'''
+
+[[entries]]
+name = "remove if character"
+keys = ["remove", "erase_if", "filter", "chars", "predicate", "punctuation", "digits"]
+doc = "Erase every character matching a predicate."
+snippet = '''
+std::erase_if(${1:s}, [](unsigned char c) { return ${2:std::ispunct(c)}; });$0'''
+
+[[entries]]
+name = "char classification"
+keys = ["isdigit", "isalpha", "isspace", "isalnum", "isupper", "islower", "ispunct", "cctype"]
+doc = "Character class tests from <cctype>, cast to unsigned char first."
+snippet = '''
+std::${1:isdigit}(static_cast<unsigned char>(${2:c}))$0'''
+
+[[entries]]
+name = "toupper / tolower"
+keys = ["toupper", "tolower", "case", "char", "character", "convert"]
+doc = "Change the case of a single character."
+snippet = '''
+static_cast<char>(std::${1:toupper}(static_cast<unsigned char>(${2:c})))$0'''
+
+[[entries]]
+name = "string literal operator s"
+keys = ["s", "literal", "string", "operator", "std::literals", "suffix"]
+doc = "std::string literal from std::literals, so auto deduces std::string."
+snippet = '''
+"${1:text}"s$0'''
+
+[[entries]]
+name = "string literal operator sv"
+keys = ["sv", "literal", "string_view", "operator", "std::literals", "suffix"]
+doc = "string_view literal from std::literals."
+snippet = '''
+"${1:text}"sv$0'''
+
+[[entries]]
+name = "using string literals"
+keys = ["using", "literals", "namespace", "s", "sv", "std::literals", "enable"]
+doc = "Bring the s and sv literal suffixes into scope."
+snippet = '''
+using namespace std::string_literals;
+using namespace std::string_view_literals;$0'''
+
+[[entries]]
+name = "wstring"
+keys = ["wstring", "wide", "wchar_t", "unicode", "L\"", "windows"]
+doc = "Wide-character string with an L-prefixed literal."
+snippet = '''
+std::wstring ${1:ws} = L"${2:text}";$0'''
+
+[[entries]]
+name = "u8string / u32string"
+keys = ["u8string", "u16string", "u32string", "utf8", "utf-8", "unicode", "char8_t", "u8\""]
+doc = "UTF-8, UTF-16 or UTF-32 string with a prefixed literal."
+snippet = '''
+std::${1:u8string} ${2:s} = ${3:u8}"${4:text}";$0'''
+
+[[entries]]
+name = "std::string to std::vector<char>"
+keys = ["vector", "char", "bytes", "buffer", "convert", "string", "copy"]
+doc = "Copy string bytes into a char vector (or back with the range constructor)."
+snippet = '''
+std::vector<char> ${1:bytes}(${2:s}.begin(), ${2:s}.end());$0'''
+
+[[entries]]
+name = "std::regex match"
+keys = ["regex", "regex_match", "regex_search", "pattern", "match", "smatch", "validate"]
+doc = "Match a string against a regular expression and read capture groups."
+snippet = '''
+std::regex ${1:re}(R"(${2:(\d+)-(\d+)})");
+if (std::smatch ${3:m}; std::regex_${4:match}(${5:s}, ${3:m}, ${1:re})) {
+    ${6:auto first = m[1].str();}
+    $0
+}'''
+
+[[entries]]
+name = "std::regex_replace"
+keys = ["regex_replace", "regex", "replace", "pattern", "substitute", "$1"]
+doc = "Replace every regex match, referring to groups with $1."
+snippet = '''
+std::string ${1:out} = std::regex_replace(${2:s}, std::regex(${3:R"(\s+)"}), ${4:" "});$0'''

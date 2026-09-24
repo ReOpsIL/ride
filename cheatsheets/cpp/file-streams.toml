@@ -1,0 +1,218 @@
+title = "String streams and files"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "stringstream build"
+keys = ["stringstream", "sstream", "ostringstream", "build", "concat", "to string", "compose"]
+doc = "Build a string with stream insertion."
+snippet = '''
+std::ostringstream ${1:oss};
+${1:oss} << ${2:value};
+std::string ${3:s} = ${1:oss}.str();$0'''
+
+[[entries]]
+name = "istringstream parse"
+keys = ["istringstream", "stringstream", "parse", "extract", "read", "from string"]
+doc = "Parse values out of a string."
+snippet = '''
+std::istringstream ${1:iss}(${2:s});
+${1:iss} >> ${3:value};$0'''
+
+[[entries]]
+name = "stringstream reuse"
+keys = ["stringstream", "clear", "str", "reset", "reuse", "empty"]
+doc = "Reset a stringstream for reuse: clear state and contents."
+snippet = '''
+${1:ss}.str("");
+${1:ss}.clear();$0'''
+
+[[entries]]
+name = "ifstream read"
+keys = ["ifstream", "file", "read", "open", "input", "load"]
+doc = "Open a file for reading and check it succeeded."
+snippet = '''
+std::ifstream ${1:in}(${2:path});
+if (!${1:in}) {
+    ${3:return;}
+}
+$0'''
+
+[[entries]]
+name = "is_open check"
+keys = ["is_open", "open", "check", "failed", "file", "ifstream", "ofstream"]
+doc = "Explicit open check with an error message."
+snippet = '''
+if (!${1:file}.is_open()) {
+    std::cerr << "cannot open " << ${2:path} << '\n';
+    ${3:return 1;}
+}$0'''
+
+[[entries]]
+name = "read whole file"
+keys = ["ifstream", "file", "read", "slurp", "contents", "string", "all"]
+doc = "Read an entire file into a string."
+snippet = '''
+std::ifstream ${1:in}(${2:path}, std::ios::binary);
+std::string ${3:contents}((std::istreambuf_iterator<char>(${1:in})), std::istreambuf_iterator<char>());$0'''
+
+[[entries]]
+name = "read file line by line"
+keys = ["ifstream", "getline", "lines", "file", "loop", "each", "read"]
+doc = "Open a file and process each line."
+snippet = '''
+std::ifstream ${1:in}(${2:path});
+for (std::string ${3:line}; std::getline(${1:in}, ${3:line});) {
+    $0
+}'''
+
+[[entries]]
+name = "read file values"
+keys = ["ifstream", "numbers", "values", "read", "file", "loop", "vector", ">>"]
+doc = "Read whitespace-separated values from a file into a vector."
+snippet = '''
+std::ifstream ${1:in}(${2:path});
+std::vector<${3:int}> ${4:values};
+for (${3:int} ${5:x}; ${1:in} >> ${5:x};) {
+    ${4:values}.push_back(${5:x});
+}$0'''
+
+[[entries]]
+name = "read lines into vector"
+keys = ["lines", "vector", "file", "read", "getline", "all", "strings"]
+doc = "Collect every line of a file into a vector of strings."
+snippet = '''
+std::vector<std::string> ${1:lines};
+std::ifstream ${2:in}(${3:path});
+for (std::string ${4:line}; std::getline(${2:in}, ${4:line});) {
+    ${1:lines}.push_back(${4:line});
+}$0'''
+
+[[entries]]
+name = "ofstream write"
+keys = ["ofstream", "file", "write", "save", "output", "create"]
+doc = "Open a file for writing (truncating) and write to it."
+snippet = '''
+std::ofstream ${1:out}(${2:path});
+${1:out} << ${3:contents} << '\n';$0'''
+
+[[entries]]
+name = "ofstream append"
+keys = ["ofstream", "file", "append", "ios::app", "log", "add"]
+doc = "Open a file in append mode."
+snippet = '''
+std::ofstream ${1:out}(${2:path}, std::ios::app);$0'''
+
+[[entries]]
+name = "fstream read and write"
+keys = ["fstream", "file", "read", "write", "both", "in", "out", "update"]
+doc = "Open a file for both reading and writing."
+snippet = '''
+std::fstream ${1:file}(${2:path}, std::ios::in | std::ios::out);$0'''
+
+[[entries]]
+name = "open modes"
+keys = ["ios::in", "ios::out", "ios::app", "ios::binary", "ios::trunc", "ios::ate", "mode", "open"]
+doc = "Combine open modes with |: in, out, app, ate, trunc, binary."
+snippet = '''
+std::ios::${1:out} | std::ios::${2:binary}$0'''
+
+[[entries]]
+name = "open later"
+keys = ["open", "close", "member", "ifstream", "later", "reopen", "file"]
+doc = "Open a stream after construction and close it explicitly."
+snippet = '''
+std::${1:ifstream} ${2:file};
+${2:file}.open(${3:path});
+$0
+${2:file}.close();'''
+
+[[entries]]
+name = "binary read"
+keys = ["read", "binary", "ifstream", "bytes", "struct", "raw"]
+doc = "Read raw bytes from a binary stream into an object."
+snippet = '''
+${1:in}.read(reinterpret_cast<char *>(&${2:data}), sizeof ${2:data});$0'''
+
+[[entries]]
+name = "binary write"
+keys = ["write", "binary", "ofstream", "bytes", "struct", "raw"]
+doc = "Write raw bytes of an object to a binary stream."
+snippet = '''
+${1:out}.write(reinterpret_cast<const char *>(&${2:data}), sizeof ${2:data});$0'''
+
+[[entries]]
+name = "read binary file to vector"
+keys = ["binary", "vector", "bytes", "file", "read", "buffer", "uint8_t"]
+doc = "Read a whole binary file into a byte vector."
+snippet = '''
+std::ifstream ${1:in}(${2:path}, std::ios::binary);
+std::vector<${3:unsigned char}> ${4:bytes}((std::istreambuf_iterator<char>(${1:in})), std::istreambuf_iterator<char>());$0'''
+
+[[entries]]
+name = "get / put char"
+keys = ["get", "put", "char", "character", "byte", "single", "stream"]
+doc = "Read or write a single character."
+snippet = '''
+${1:in}.get(${2:c})$0'''
+
+[[entries]]
+name = "peek"
+keys = ["peek", "next", "char", "lookahead", "stream", "without"]
+doc = "Look at the next character without consuming it."
+snippet = '''
+${1:in}.peek()$0'''
+
+[[entries]]
+name = "seekg / tellg"
+keys = ["seekg", "tellg", "seek", "position", "offset", "rewind", "file size"]
+doc = "Move or query the read position."
+snippet = '''
+${1:in}.seekg(${2:0}, std::ios::${3:beg});$0'''
+
+[[entries]]
+name = "file size via seek"
+keys = ["size", "file", "seekg", "tellg", "length", "bytes", "end"]
+doc = "Size of an open stream by seeking to the end."
+snippet = '''
+${1:in}.seekg(0, std::ios::end);
+auto ${2:size} = ${1:in}.tellg();
+${1:in}.seekg(0, std::ios::beg);$0'''
+
+[[entries]]
+name = "seekp / tellp"
+keys = ["seekp", "tellp", "seek", "write", "position", "offset"]
+doc = "Move or query the write position."
+snippet = '''
+${1:out}.seekp(${2:0}, std::ios::${3:end});$0'''
+
+[[entries]]
+name = "stream state checks"
+keys = ["good", "fail", "bad", "eof", "state", "check", "error", "stream"]
+doc = "Inspect stream state after an operation."
+snippet = '''
+${1:in}.${2:fail}()$0'''
+
+[[entries]]
+name = "stream exceptions"
+keys = ["exceptions", "failbit", "badbit", "throw", "stream", "ios_base::failure"]
+doc = "Make a stream throw std::ios_base::failure on errors."
+snippet = '''
+${1:file}.exceptions(std::ios::failbit | std::ios::badbit);$0'''
+
+[[entries]]
+name = "gcount"
+keys = ["gcount", "read", "bytes", "count", "last", "chunk"]
+doc = "Number of characters the last unformatted read extracted."
+snippet = '''
+${1:in}.gcount()$0'''
+
+[[entries]]
+name = "read in chunks"
+keys = ["chunk", "buffer", "read", "loop", "binary", "gcount", "stream", "copy"]
+doc = "Read a stream in fixed-size buffers until EOF."
+snippet = '''
+char ${1:buf}[${2:4096}];
+while (${3:in}.read(${1:buf}, sizeof ${1:buf}) || ${3:in}.gcount() > 0) {
+    ${4:process(buf, in.gcount());}
+    $0
+}'''

@@ -1,0 +1,191 @@
+title = "Filesystem operations"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "read_dir"
+keys = ["read_dir", "directory", "list", "entries", "fs", "for", "ls", "files"]
+doc = "Iterate over the entries of a directory."
+snippet = '''
+for entry in std::fs::read_dir(${1:dir})? {
+    let ${2:path} = entry?.path();
+    $0
+}'''
+
+[[entries]]
+name = "read_dir filter by extension"
+keys = ["read_dir", "filter", "extension", "files", "only", "glob", "list", "rs"]
+doc = "List files in a directory with a given extension."
+snippet = '''
+let ${1:files}: Vec<std::path::PathBuf> = std::fs::read_dir(${2:dir})?
+    .filter_map(Result::ok)
+    .map(|e| e.path())
+    .filter(|p| p.extension().is_some_and(|e| e == "${3:rs}"))
+    .collect();$0'''
+
+[[entries]]
+name = "recursive directory walk"
+keys = ["walk", "recursive", "directory", "tree", "visit", "read_dir", "subdirs", "find"]
+doc = "Visit every file under a directory recursively."
+snippet = '''
+fn ${1:walk}(dir: &std::path::Path, ${2:out}: &mut Vec<std::path::PathBuf>) -> std::io::Result<()> {
+    for entry in std::fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_dir() {
+            ${1:walk}(&path, ${2:out})?;
+        } else {
+            ${2:out}.push(path);$0
+        }
+    }
+    Ok(())
+}'''
+
+[[entries]]
+name = "entry file_type"
+keys = ["file_type", "entry", "is_dir", "is_symlink", "read_dir", "kind"]
+doc = "Check an entry's type without following symlinks."
+snippet = '''
+let ${1:kind} = ${2:entry}.file_type()?;
+if ${1:kind}.is_${3:dir}() {
+    $0
+}'''
+
+[[entries]]
+name = "create_dir_all"
+keys = ["create_dir", "mkdir", "directory", "fs", "all", "parents", "make"]
+doc = "Create a directory and all missing parents."
+snippet = '''
+std::fs::create_dir_all(${1:path})?;$0'''
+
+[[entries]]
+name = "remove_file / remove_dir_all"
+keys = ["remove_file", "remove_dir", "delete", "rm", "unlink", "fs", "all"]
+doc = "Delete a file, an empty directory or a whole tree."
+snippet = '''
+std::fs::remove_${1:file}(${2:path})?;$0'''
+
+[[entries]]
+name = "rename / move"
+keys = ["rename", "move", "mv", "fs", "file", "atomic"]
+doc = "Rename or move a file or directory."
+snippet = '''
+std::fs::rename(${1:from}, ${2:to})?;$0'''
+
+[[entries]]
+name = "fs::copy"
+keys = ["copy", "file", "cp", "fs", "duplicate", "bytes"]
+doc = "Copy a file, returning the number of bytes copied."
+snippet = '''
+std::fs::copy(${1:from}, ${2:to})?;$0'''
+
+[[entries]]
+name = "metadata"
+keys = ["metadata", "size", "len", "modified", "fs", "stat", "info"]
+doc = "Read a file's size, type and timestamps."
+snippet = '''
+let ${1:meta} = std::fs::metadata(${2:path})?;
+let ${3:size} = ${1:meta}.len();$0'''
+
+[[entries]]
+name = "modified time"
+keys = ["modified", "mtime", "time", "metadata", "systemtime", "newer", "changed"]
+doc = "Get a file's last modification time."
+snippet = '''
+let ${1:modified} = std::fs::metadata(${2:path})?.modified()?;$0'''
+
+[[entries]]
+name = "set_permissions / readonly"
+keys = ["permissions", "readonly", "chmod", "mode", "set_permissions", "unix", "executable"]
+doc = "Change a file's permissions."
+snippet = '''
+let mut ${1:perms} = std::fs::metadata(${2:path})?.permissions();
+${1:perms}.set_readonly(${3:true});
+std::fs::set_permissions(${2:path}, ${1:perms})?;$0'''
+
+[[entries]]
+name = "symlink"
+keys = ["symlink", "link", "unix", "soft", "read_link", "create"]
+doc = "Create a symbolic link on Unix."
+snippet = '''
+std::os::unix::fs::symlink(${1:target}, ${2:link})?;$0'''
+
+[[entries]]
+name = "temp dir path"
+keys = ["temp", "dir", "tmp", "temp_dir", "scratch", "env", "path"]
+doc = "Path to the system temporary directory."
+snippet = '''
+std::env::temp_dir().join("${1:name}")$0'''
+
+[[entries]]
+name = "home dir via env"
+keys = ["home", "dir", "env", "var", "user", "config", "path"]
+doc = "Locate the user's home directory from the environment."
+snippet = '''
+let ${1:home} = std::path::PathBuf::from(std::env::var("${2:HOME}")?);$0'''
+
+[[entries]]
+name = "fs::exists"
+keys = ["exists", "fs", "check", "path", "present", "result", "try_exists"]
+doc = "Check existence, distinguishing a missing path from a permission error."
+snippet = '''
+std::fs::exists(${1:path})?$0'''
+
+[[entries]]
+name = "read_dir sorted"
+keys = ["read_dir", "sorted", "sort", "order", "entries", "list", "deterministic"]
+doc = "List a directory in sorted order."
+snippet = '''
+let mut ${1:entries}: Vec<_> = std::fs::read_dir(${2:dir})?.map(|e| e.map(|e| e.path())).collect::<Result<_, _>>()?;
+${1:entries}.sort();$0'''
+
+[[entries]]
+name = "atomic write via rename"
+keys = ["atomic", "write", "rename", "temp", "safe", "save", "replace", "crash"]
+doc = "Write to a temp file and rename it over the target so readers never see a partial file."
+snippet = '''
+let ${1:tmp} = ${2:path}.with_extension("${3:tmp}");
+std::fs::write(&${1:tmp}, ${4:contents})?;
+std::fs::rename(&${1:tmp}, ${2:path})?;$0'''
+
+[[entries]]
+name = "create_dir single"
+keys = ["create_dir", "mkdir", "single", "directory", "exists", "error"]
+doc = "Create one directory, failing if the parent is missing or it exists."
+snippet = '''
+std::fs::create_dir(${1:path})?;$0'''
+
+[[entries]]
+name = "ignore NotFound on remove"
+keys = ["remove", "ignore", "notfound", "missing", "delete", "idempotent", "errorkind"]
+doc = "Delete a file and treat an already-missing file as success."
+snippet = '''
+match std::fs::remove_file(${1:path}) {
+    Ok(()) => {}
+    Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+    Err(e) => return Err(e.into()),
+}$0'''
+
+[[entries]]
+name = "copy directory recursively"
+keys = ["copy", "directory", "recursive", "tree", "cp", "clone", "folder"]
+doc = "Copy a directory tree by recursing over its entries."
+snippet = '''
+fn ${1:copy_dir}(from: &std::path::Path, to: &std::path::Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(to)?;
+    for entry in std::fs::read_dir(from)? {
+        let entry = entry?;
+        let target = to.join(entry.file_name());
+        if entry.file_type()?.is_dir() {
+            ${1:copy_dir}(&entry.path(), &target)?;
+        } else {
+            std::fs::copy(entry.path(), target)?;$0
+        }
+    }
+    Ok(())
+}'''
+
+[[entries]]
+name = "file is newer than"
+keys = ["newer", "modified", "compare", "stale", "rebuild", "mtime", "than"]
+doc = "Compare modification times of two files."
+snippet = '''
+let ${1:newer} = std::fs::metadata(${2:a})?.modified()? > std::fs::metadata(${3:b})?.modified()?;$0'''

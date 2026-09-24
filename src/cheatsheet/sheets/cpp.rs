@@ -5,108 +5,324 @@ pub const FILES: Files = &[
         "functions",
         include_str!("../../../cheatsheets/cpp/functions.toml"),
     ),
+    (
+        "function-params",
+        include_str!("../../../cheatsheets/cpp/function-params.toml"),
+    ),
+    (
+        "function-returns",
+        include_str!("../../../cheatsheets/cpp/function-returns.toml"),
+    ),
+    (
+        "definitions",
+        include_str!("../../../cheatsheets/cpp/definitions.toml"),
+    ),
     ("items", include_str!("../../../cheatsheets/cpp/items.toml")),
+    (
+        "globals",
+        include_str!("../../../cheatsheets/cpp/globals.toml"),
+    ),
+    ("enums", include_str!("../../../cheatsheets/cpp/enums.toml")),
     (
         "classes",
         include_str!("../../../cheatsheets/cpp/classes.toml"),
+    ),
+    (
+        "inheritance",
+        include_str!("../../../cheatsheets/cpp/inheritance.toml"),
+    ),
+    (
+        "objects",
+        include_str!("../../../cheatsheets/cpp/objects.toml"),
     ),
     (
         "members",
         include_str!("../../../cheatsheets/cpp/members.toml"),
     ),
     (
+        "methods",
+        include_str!("../../../cheatsheets/cpp/methods.toml"),
+    ),
+    (
         "special-members",
         include_str!("../../../cheatsheets/cpp/special-members.toml"),
+    ),
+    (
+        "copy-move",
+        include_str!("../../../cheatsheets/cpp/copy-move.toml"),
     ),
     (
         "operators",
         include_str!("../../../cheatsheets/cpp/operators.toml"),
     ),
     (
+        "free-operators",
+        include_str!("../../../cheatsheets/cpp/free-operators.toml"),
+    ),
+    (
         "control-flow",
         include_str!("../../../cheatsheets/cpp/control-flow.toml"),
     ),
+    (
+        "switch",
+        include_str!("../../../cheatsheets/cpp/switch.toml"),
+    ),
     ("loops", include_str!("../../../cheatsheets/cpp/loops.toml")),
+    (
+        "loops-jumps",
+        include_str!("../../../cheatsheets/cpp/loops-jumps.toml"),
+    ),
     (
         "declarations",
         include_str!("../../../cheatsheets/cpp/declarations.toml"),
     ),
+    (
+        "typed-variables",
+        include_str!("../../../cheatsheets/cpp/typed-variables.toml"),
+    ),
+    (
+        "pointers-refs",
+        include_str!("../../../cheatsheets/cpp/pointers-refs.toml"),
+    ),
+    (
+        "arrays",
+        include_str!("../../../cheatsheets/cpp/arrays.toml"),
+    ),
+    (
+        "value-types",
+        include_str!("../../../cheatsheets/cpp/value-types.toml"),
+    ),
     ("types", include_str!("../../../cheatsheets/cpp/types.toml")),
+    (
+        "std-types",
+        include_str!("../../../cheatsheets/cpp/std-types.toml"),
+    ),
+    (
+        "std-utility-types",
+        include_str!("../../../cheatsheets/cpp/std-utility-types.toml"),
+    ),
+    (
+        "template-params",
+        include_str!("../../../cheatsheets/cpp/template-params.toml"),
+    ),
+    (
+        "type-traits",
+        include_str!("../../../cheatsheets/cpp/type-traits.toml"),
+    ),
     (
         "templates",
         include_str!("../../../cheatsheets/cpp/templates.toml"),
+    ),
+    (
+        "variadic-templates",
+        include_str!("../../../cheatsheets/cpp/variadic-templates.toml"),
+    ),
+    (
+        "template-idioms",
+        include_str!("../../../cheatsheets/cpp/template-idioms.toml"),
+    ),
+    (
+        "template-utilities",
+        include_str!("../../../cheatsheets/cpp/template-utilities.toml"),
     ),
     (
         "concepts",
         include_str!("../../../cheatsheets/cpp/concepts.toml"),
     ),
     (
+        "std-concepts",
+        include_str!("../../../cheatsheets/cpp/std-concepts.toml"),
+    ),
+    (
         "containers",
         include_str!("../../../cheatsheets/cpp/containers.toml"),
+    ),
+    (
+        "associative",
+        include_str!("../../../cheatsheets/cpp/associative.toml"),
     ),
     (
         "container-ops",
         include_str!("../../../cheatsheets/cpp/container-ops.toml"),
     ),
     (
+        "sequence-ops",
+        include_str!("../../../cheatsheets/cpp/sequence-ops.toml"),
+    ),
+    (
+        "adapters",
+        include_str!("../../../cheatsheets/cpp/adapters.toml"),
+    ),
+    (
+        "iterators",
+        include_str!("../../../cheatsheets/cpp/iterators.toml"),
+    ),
+    (
         "map-ops",
         include_str!("../../../cheatsheets/cpp/map-ops.toml"),
+    ),
+    (
+        "map-idioms",
+        include_str!("../../../cheatsheets/cpp/map-idioms.toml"),
     ),
     (
         "algorithms",
         include_str!("../../../cheatsheets/cpp/algorithms.toml"),
     ),
     (
+        "numeric",
+        include_str!("../../../cheatsheets/cpp/numeric.toml"),
+    ),
+    (
         "modifying-algorithms",
         include_str!("../../../cheatsheets/cpp/modifying-algorithms.toml"),
+    ),
+    (
+        "set-algorithms",
+        include_str!("../../../cheatsheets/cpp/set-algorithms.toml"),
     ),
     (
         "ranges",
         include_str!("../../../cheatsheets/cpp/ranges.toml"),
     ),
+    ("views", include_str!("../../../cheatsheets/cpp/views.toml")),
     (
         "smart-pointers",
         include_str!("../../../cheatsheets/cpp/smart-pointers.toml"),
     ),
     (
+        "shared-ptr",
+        include_str!("../../../cheatsheets/cpp/shared-ptr.toml"),
+    ),
+    ("raii", include_str!("../../../cheatsheets/cpp/raii.toml")),
+    (
         "lambdas",
         include_str!("../../../cheatsheets/cpp/lambdas.toml"),
+    ),
+    (
+        "lambda-forms",
+        include_str!("../../../cheatsheets/cpp/lambda-forms.toml"),
+    ),
+    (
+        "functional",
+        include_str!("../../../cheatsheets/cpp/functional.toml"),
     ),
     (
         "strings",
         include_str!("../../../cheatsheets/cpp/strings.toml"),
     ),
     (
+        "string-search",
+        include_str!("../../../cheatsheets/cpp/string-search.toml"),
+    ),
+    (
+        "string-idioms",
+        include_str!("../../../cheatsheets/cpp/string-idioms.toml"),
+    ),
+    (
         "streams",
         include_str!("../../../cheatsheets/cpp/streams.toml"),
+    ),
+    (
+        "iomanip",
+        include_str!("../../../cheatsheets/cpp/iomanip.toml"),
+    ),
+    (
+        "file-streams",
+        include_str!("../../../cheatsheets/cpp/file-streams.toml"),
+    ),
+    (
+        "filesystem",
+        include_str!("../../../cheatsheets/cpp/filesystem.toml"),
+    ),
+    (
+        "stream-overloads",
+        include_str!("../../../cheatsheets/cpp/stream-overloads.toml"),
     ),
     (
         "exceptions",
         include_str!("../../../cheatsheets/cpp/exceptions.toml"),
     ),
     (
+        "exception-classes",
+        include_str!("../../../cheatsheets/cpp/exception-classes.toml"),
+    ),
+    (
+        "error-handling",
+        include_str!("../../../cheatsheets/cpp/error-handling.toml"),
+    ),
+    (
         "preprocessor",
         include_str!("../../../cheatsheets/cpp/preprocessor.toml"),
+    ),
+    (
+        "preprocessor-checks",
+        include_str!("../../../cheatsheets/cpp/preprocessor-checks.toml"),
     ),
     (
         "macros",
         include_str!("../../../cheatsheets/cpp/macros.toml"),
     ),
     (
+        "macro-idioms",
+        include_str!("../../../cheatsheets/cpp/macro-idioms.toml"),
+    ),
+    (
         "modules",
         include_str!("../../../cheatsheets/cpp/modules.toml"),
+    ),
+    (
+        "linkage-attributes",
+        include_str!("../../../cheatsheets/cpp/linkage-attributes.toml"),
     ),
     (
         "threads",
         include_str!("../../../cheatsheets/cpp/threads.toml"),
     ),
+    (
+        "futures",
+        include_str!("../../../cheatsheets/cpp/futures.toml"),
+    ),
+    (
+        "coroutines",
+        include_str!("../../../cheatsheets/cpp/coroutines.toml"),
+    ),
     ("sync", include_str!("../../../cheatsheets/cpp/sync.toml")),
+    (
+        "sync-idioms",
+        include_str!("../../../cheatsheets/cpp/sync-idioms.toml"),
+    ),
+    (
+        "atomics",
+        include_str!("../../../cheatsheets/cpp/atomics.toml"),
+    ),
+    (
+        "primitives",
+        include_str!("../../../cheatsheets/cpp/primitives.toml"),
+    ),
     (
         "casts-literals",
         include_str!("../../../cheatsheets/cpp/casts-literals.toml"),
     ),
     (
+        "literals",
+        include_str!("../../../cheatsheets/cpp/literals.toml"),
+    ),
+    (
+        "string-literals",
+        include_str!("../../../cheatsheets/cpp/string-literals.toml"),
+    ),
+    (
         "expressions",
         include_str!("../../../cheatsheets/cpp/expressions.toml"),
     ),
+    (
+        "builtin-operators",
+        include_str!("../../../cheatsheets/cpp/builtin-operators.toml"),
+    ),
+    (
+        "arithmetic",
+        include_str!("../../../cheatsheets/cpp/arithmetic.toml"),
+    ),
+    ("bits", include_str!("../../../cheatsheets/cpp/bits.toml")),
 ];

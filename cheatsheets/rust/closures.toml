@@ -141,3 +141,75 @@ keys = ["closure", "sort", "cmp", "compare", "ordering"]
 doc = "Two-argument closure returning an Ordering for sort_by."
 snippet = '''
 |a, b| a.${1:key}.cmp(&b.${1:key})$0'''
+
+[[entries]]
+name = "boxed closure let"
+keys = ["box", "dyn", "closure", "let", "store", "erased", "either"]
+doc = "Bind a closure behind Box<dyn Fn> so different closures share one type."
+snippet = '''
+let ${1:f}: Box<dyn Fn(${2:i32}) -> ${3:i32}> = Box::new(|${4:x}| ${5:x + 1});$0'''
+
+[[entries]]
+name = "closure returning closure"
+keys = ["closure", "return", "closure", "nested", "curry", "adder", "factory"]
+doc = "Closure that builds and returns another closure, capturing by move."
+snippet = '''
+let ${1:adder} = |${2:n}: i32| move |${3:x}: i32| ${3:x} + ${2:n};$0'''
+
+[[entries]]
+name = "closure with tuple pattern"
+keys = ["closure", "tuple", "pattern", "destructure", "pair", "key", "value"]
+doc = "Destructure a tuple argument directly in the closure parameter."
+snippet = '''
+|(${1:key}, ${2:value})| ${3:expr}$0'''
+
+[[entries]]
+name = "closure with reference pattern"
+keys = ["closure", "ref", "pattern", "ampersand", "copy", "deref", "filter"]
+doc = "Match through the reference so the body works with the plain value."
+snippet = '''
+|&${1:x}| ${2:x > 0}$0'''
+
+[[entries]]
+name = "closure ignoring argument"
+keys = ["closure", "ignore", "underscore", "wildcard", "unused", "argument"]
+doc = "Closure that discards its argument."
+snippet = '''
+|_| ${1:expr}$0'''
+
+[[entries]]
+name = "closure two arguments"
+keys = ["closure", "two", "arguments", "fold", "acc", "binary", "pair"]
+doc = "Closure taking two parameters, as fold and sort_by expect."
+snippet = '''
+|${1:acc}, ${2:x}| ${3:acc + x}$0'''
+
+[[entries]]
+name = "closure with mut parameter"
+keys = ["closure", "mut", "parameter", "modify", "owned", "argument"]
+doc = "Closure whose parameter binding is mutable inside the body."
+snippet = '''
+|mut ${1:s}: String| {
+    ${1:s}.push_str(${2:"!"});
+    ${1:s}$0
+}'''
+
+[[entries]]
+name = "closure capturing self field"
+keys = ["closure", "self", "field", "capture", "borrow", "copy", "before"]
+doc = "Copy a field into a local before the closure so it does not borrow all of self."
+snippet = '''
+let ${1:limit} = self.${1:limit};
+${2:items}.iter().filter(|${3:x}| **${3:x} < ${1:limit})$0'''
+
+[[entries]]
+name = "closure with early return"
+keys = ["closure", "return", "early", "block", "guard", "exit"]
+doc = "Return from a closure body early; return exits only the closure."
+snippet = '''
+|${1:x}| {
+    if ${2:x < 0} {
+        return ${3:None};
+    }
+    ${4:Some(x)}$0
+}'''

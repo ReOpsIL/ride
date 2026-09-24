@@ -3,7 +3,7 @@ contexts = ["fields"]
 
 [[entries]]
 name = "operator overload"
-keys = ["operator", "overload"]
+keys = ["operator", "overload", "binary", "plus", "+", "arithmetic"]
 doc = "Overload a binary operator as a member function."
 snippet = """
 ${1:Name} operator${2:+}(const ${1:Name} &${3:rhs}) const {
@@ -12,41 +12,58 @@ ${1:Name} operator${2:+}(const ${1:Name} &${3:rhs}) const {
 
 [[entries]]
 name = "operator=="
-keys = ["operator", "equals", "equality", "=="]
+keys = ["operator", "equals", "equality", "==", "compare", "default"]
 doc = "C++20 defaulted equality that compares members."
 snippet = """
 bool operator==(const ${1:Name} &) const = default;$0"""
 
 [[entries]]
-name = "operator<< stream"
-keys = ["operator", "stream", "ostream", "print", "<<"]
-doc = "Friend stream insertion operator for printing."
+name = "operator== hand-written"
+keys = ["operator", "equals", "equality", "==", "compare", "custom"]
+doc = "Equality comparing chosen members; != is derived automatically in C++20."
 snippet = """
-friend std::ostream &operator<<(std::ostream &os, const ${1:Name} &${2:obj}) {
-    return os << $0;
+bool operator==(const ${1:Name} &${2:rhs}) const {
+    return ${3:value_} == ${2:rhs}.${3:value_};$0
 }"""
 
 [[entries]]
-name = "operator[] subscript"
-keys = ["operator", "subscript", "index", "[]"]
-doc = "Subscript operator returning a reference."
+name = "operator!="
+keys = ["operator", "not", "equal", "!=", "compare"]
+doc = "Inequality in terms of == (needed before C++20)."
 snippet = """
-${1:int} &operator[](${2:std::size_t} ${3:i}) {
-    return $0;
+bool operator!=(const ${1:Name} &${2:rhs}) const {
+    return !(*this == ${2:rhs});$0
 }"""
 
 [[entries]]
-name = "operator() call"
-keys = ["operator", "call", "functor", "()"]
-doc = "Call operator that makes the object a functor."
+name = "operator<"
+keys = ["operator", "less", "<", "compare", "sort", "map", "ordering"]
+doc = "Less-than used by sort, set and map."
 snippet = """
-${1:int} operator()(${2:}) const {
-    return $0;
+bool operator<(const ${1:Name} &${2:rhs}) const {
+    return ${3:value_} < ${2:rhs}.${3:value_};$0
 }"""
+
+[[entries]]
+name = "three-way comparison"
+keys = ["spaceship", "compare", "operator<=>", "<=>", "default", "ordering"]
+doc = "C++20 defaulted spaceship operator generates all comparisons."
+snippet = """
+auto operator<=>(const ${1:Name} &) const = default;$0"""
+
+[[entries]]
+name = "three-way comparison hand-written"
+keys = ["spaceship", "compare", "operator<=>", "<=>", "custom", "strong_ordering"]
+doc = "Spaceship comparing a chosen key; also declare == for equality."
+snippet = """
+std::strong_ordering operator<=>(const ${1:Name} &${2:rhs}) const {
+    return ${3:value_} <=> ${2:rhs}.${3:value_};$0
+}
+bool operator==(const ${1:Name} &${2:rhs}) const { return ${3:value_} == ${2:rhs}.${3:value_}; }"""
 
 [[entries]]
 name = "compound assignment operator"
-keys = ["operator", "+=", "compound", "assign"]
+keys = ["operator", "+=", "compound", "assign", "-=", "*="]
 doc = "Compound assignment returning *this."
 snippet = """
 ${1:Name} &operator${2:+=}(const ${1:Name} &${3:rhs}) {
@@ -55,8 +72,101 @@ ${1:Name} &operator${2:+=}(const ${1:Name} &${3:rhs}) {
 }"""
 
 [[entries]]
+name = "binary operator via compound"
+keys = ["operator", "+", "friend", "compound", "+=", "idiom"]
+doc = "Friend binary operator implemented with the compound form."
+snippet = """
+friend ${1:Name} operator${2:+}(${1:Name} ${3:lhs}, const ${1:Name} &${4:rhs}) {
+    ${3:lhs} ${2:+}= ${4:rhs};
+    return ${3:lhs};$0
+}"""
+
+[[entries]]
+name = "unary minus"
+keys = ["operator", "unary", "minus", "negate", "-", "!"]
+doc = "Unary operator such as - or ! as a member."
+snippet = """
+${1:Name} operator${2:-}() const {
+    return $0;
+}"""
+
+[[entries]]
+name = "prefix increment"
+keys = ["operator", "increment", "++", "prefix", "iterator"]
+doc = "Prefix ++ that modifies and returns *this."
+snippet = """
+${1:Name} &operator++() {
+    ${2:++value_};
+    return *this;$0
+}"""
+
+[[entries]]
+name = "postfix increment"
+keys = ["operator", "increment", "++", "postfix", "iterator", "int"]
+doc = "Postfix ++ taking a dummy int and returning the old value."
+snippet = """
+${1:Name} operator++(int) {
+    ${1:Name} old = *this;
+    ++*this;
+    return old;$0
+}"""
+
+[[entries]]
+name = "operator<< stream"
+keys = ["operator", "stream", "ostream", "print", "<<", "cout", "output"]
+doc = "Friend stream insertion operator for printing."
+snippet = """
+friend std::ostream &operator<<(std::ostream &os, const ${1:Name} &${2:obj}) {
+    return os << $0;
+}"""
+
+[[entries]]
+name = "operator>> stream"
+keys = ["operator", "stream", "istream", "read", ">>", "cin", "input"]
+doc = "Friend stream extraction operator for reading."
+snippet = """
+friend std::istream &operator>>(std::istream &is, ${1:Name} &${2:obj}) {
+    return is >> $0;
+}"""
+
+[[entries]]
+name = "operator[] subscript"
+keys = ["operator", "subscript", "index", "[]", "array", "access"]
+doc = "Subscript operator returning a reference."
+snippet = """
+${1:int} &operator[](${2:std::size_t} ${3:i}) {
+    return $0;
+}"""
+
+[[entries]]
+name = "operator[] const"
+keys = ["operator", "subscript", "index", "[]", "const", "read"]
+doc = "Read-only subscript for const objects."
+snippet = """
+const ${1:int} &operator[](${2:std::size_t} ${3:i}) const {
+    return $0;
+}"""
+
+[[entries]]
+name = "operator() call"
+keys = ["operator", "call", "functor", "()", "callable", "invoke"]
+doc = "Call operator that makes the object a functor."
+snippet = """
+${1:int} operator()(${2:}) const {
+    return $0;
+}"""
+
+[[entries]]
+name = "operator* and operator->"
+keys = ["operator", "deref", "arrow", "->", "*", "pointer", "iterator", "smart"]
+doc = "Pointer-like access for wrappers and iterators."
+snippet = """
+${1:T} &operator*() const { return *${2:ptr_}; }
+${1:T} *operator->() const { return ${2:ptr_}; }$0"""
+
+[[entries]]
 name = "conversion operator"
-keys = ["operator", "conversion", "explicit", "cast"]
+keys = ["operator", "conversion", "explicit", "cast", "bool"]
 doc = "Explicit conversion to another type."
 snippet = """
 explicit operator ${1:bool}() const {
@@ -64,15 +174,17 @@ explicit operator ${1:bool}() const {
 }"""
 
 [[entries]]
-name = "three-way comparison"
-keys = ["spaceship", "compare", "operator<=>", "<=>"]
-doc = "C++20 defaulted spaceship operator generates all comparisons."
+name = "implicit conversion operator"
+keys = ["operator", "conversion", "implicit", "cast", "to"]
+doc = "Implicit conversion to another type (use sparingly)."
 snippet = """
-auto operator<=>(const ${1:Name} &) const = default;$0"""
+operator ${1:int}() const {
+    return $0;
+}"""
 
 [[entries]]
 name = "swap"
-keys = ["swap", "friend"]
+keys = ["swap", "friend", "adl", "exchange"]
 doc = "Friend swap found by ADL."
 snippet = """
 friend void swap(${1:Name} &a, ${1:Name} &b) noexcept {

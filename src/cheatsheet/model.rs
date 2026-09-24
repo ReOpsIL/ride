@@ -3,6 +3,8 @@ use thiserror::Error;
 
 use crate::highlight::Context;
 
+use super::stops;
+
 #[derive(Debug, Error)]
 pub enum SheetError {
     #[error("{file}: {message}")]
@@ -108,8 +110,8 @@ impl Entry {
         if snippet.trim().is_empty() {
             return Err(err("has an empty snippet"));
         }
-        if !balanced_stops(snippet) {
-            return Err(err("has an unbalanced tab stop"));
+        if let Err(stop) = stops::check(snippet) {
+            return Err(err(stop.message()));
         }
         Ok(Entry {
             keys: def.keys.iter().map(|k| k.to_lowercase()).collect(),
@@ -132,23 +134,4 @@ impl Entry {
                 .split(|c: char| !c.is_alphanumeric())
                 .any(|w| w.starts_with(prefix))
     }
-}
-
-fn balanced_stops(snippet: &str) -> bool {
-    let mut depth = 0i32;
-    let mut chars = snippet.chars().peekable();
-    while let Some(c) = chars.next() {
-        match c {
-            '\\' => {
-                chars.next();
-            }
-            '$' if chars.peek() == Some(&'{') => {
-                chars.next();
-                depth += 1;
-            }
-            '}' if depth > 0 => depth -= 1,
-            _ => {}
-        }
-    }
-    depth == 0
 }

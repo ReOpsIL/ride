@@ -51,6 +51,7 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
         "field_declaration_list" | "enumerator_list" => Context::Fields,
         "compound_statement" => switch_or_block(node, text, start),
         "case_statement" => case_label(node, text),
+        "initializer_list" if function_body(node) => statement_or_expression(text, start),
         "translation_unit"
         | "declaration_list"
         | "template_declaration"
@@ -81,15 +82,35 @@ fn classify(node: Node<'_>, text: &str, start: usize) -> Option<Context> {
                 Context::Type
             }
         }
-        "class_specifier" | "struct_specifier" | "union_specifier" | "enum_specifier" => {
+        "class_specifier" | "struct_specifier" | "union_specifier" | "enum_specifier"
+            if past_keyword(node, start) =>
+        {
             Context::Type
         }
-        "function_definition" | "function_declarator" | "abstract_function_declarator" => {
+        "function_definition" | "function_declarator" | "abstract_function_declarator"
+            if start > node.start_byte() =>
+        {
             Context::Type
         }
         _ => return None,
     };
     Some(ctx)
+}
+
+const SPECIFIER_KEYWORDS: &[&str] = &["class", "struct", "union", "enum"];
+
+fn past_keyword(node: Node<'_>, start: usize) -> bool {
+    let mut cursor = node.walk();
+    node.children(&mut cursor)
+        .find(|child| SPECIFIER_KEYWORDS.contains(&child.kind()))
+        .is_some_and(|keyword| start > keyword.end_byte())
+}
+
+fn function_body(node: Node<'_>) -> bool {
+    node.parent()
+        .filter(|parent| parent.kind() == "init_declarator")
+        .and_then(|parent| parent.child_by_field_name("declarator"))
+        .is_some_and(|declarator| declarator.kind() == "function_declarator")
 }
 
 fn switch_or_block(node: Node<'_>, text: &str, start: usize) -> Context {

@@ -1,0 +1,142 @@
+title = "Type traits"
+contexts = ["type"]
+
+[[entries]]
+name = "type trait"
+keys = ["is_same_v", "is_integral_v", "trait", "type_traits", "std::", "check"]
+doc = "Compile-time type query from <type_traits>."
+snippet = """
+std::${1:is_same_v}<${2:T}, ${3:U}>$0"""
+
+[[entries]]
+name = "std::is_integral_v"
+keys = ["is_integral_v", "is_floating_point_v", "is_arithmetic_v", "trait", "number", "std::"]
+doc = "True for integer types; see also is_floating_point_v and is_arithmetic_v."
+snippet = """
+std::${1:is_integral_v}<${2:T}>$0"""
+
+[[entries]]
+name = "std::is_base_of_v"
+keys = ["is_base_of_v", "derived", "inherit", "trait", "std::"]
+doc = "True when Derived inherits from Base."
+snippet = """
+std::is_base_of_v<${1:Base}, ${2:Derived}>$0"""
+
+[[entries]]
+name = "std::is_convertible_v"
+keys = ["is_convertible_v", "convert", "trait", "std::"]
+doc = "True when From converts implicitly to To."
+snippet = """
+std::is_convertible_v<${1:From}, ${2:To}>$0"""
+
+[[entries]]
+name = "std::is_pointer_v"
+keys = ["is_pointer_v", "is_reference_v", "is_const_v", "trait", "std::"]
+doc = "Category checks such as is_pointer_v, is_reference_v, is_const_v, is_enum_v."
+snippet = """
+std::${1:is_pointer_v}<${2:T}>$0"""
+
+[[entries]]
+name = "std::is_invocable_v"
+keys = ["is_invocable_v", "callable", "invoke", "trait", "std::"]
+doc = "True when F can be called with the given argument types."
+snippet = """
+std::is_invocable_v<${1:F}, ${2:Args}>$0"""
+
+[[entries]]
+name = "std::remove_cvref_t"
+keys = ["remove_cvref_t", "decay", "strip", "trait", "std::"]
+doc = "Strip references and cv-qualifiers from a type."
+snippet = """
+std::remove_cvref_t<${1:T}>$0"""
+
+[[entries]]
+name = "std::decay_t"
+keys = ["decay_t", "strip", "array", "function", "trait", "std::"]
+doc = "Type after array and function decay and cv/ref removal."
+snippet = """
+std::decay_t<${1:T}>$0"""
+
+[[entries]]
+name = "std::remove_pointer_t"
+keys = ["remove_pointer_t", "remove_reference_t", "remove_const_t", "strip", "std::"]
+doc = "Strip one qualifier or pointer layer."
+snippet = """
+std::${1:remove_pointer_t}<${2:T}>$0"""
+
+[[entries]]
+name = "std::add_const_t"
+keys = ["add_const_t", "add_pointer_t", "add_lvalue_reference_t", "trait", "std::"]
+doc = "Add a qualifier, pointer or reference to a type."
+snippet = """
+std::${1:add_const_t}<${2:T}>$0"""
+
+[[entries]]
+name = "std::conditional_t"
+keys = ["conditional_t", "trait", "select", "if", "std::"]
+doc = "Choose a type by a compile-time condition."
+snippet = """
+std::conditional_t<${1:cond}, ${2:A}, ${3:B}>$0"""
+
+[[entries]]
+name = "std::enable_if_t"
+keys = ["enable_if_t", "sfinae", "constrain", "std::"]
+doc = "SFINAE helper that removes an overload when the condition is false."
+snippet = """
+std::enable_if_t<${1:cond}, ${2:int}> = 0$0"""
+
+[[entries]]
+name = "std::underlying_type_t"
+keys = ["underlying_type_t", "enum", "integer", "trait", "std::"]
+doc = "Integer type behind an enum."
+snippet = """
+std::underlying_type_t<${1:Enum}>$0"""
+
+[[entries]]
+name = "std::common_type_t"
+keys = ["common_type_t", "common", "promote", "trait", "std::"]
+doc = "Type both arguments convert to."
+snippet = """
+std::common_type_t<${1:T}, ${2:U}>$0"""
+
+[[entries]]
+name = "std::invoke_result_t"
+keys = ["invoke_result_t", "result_of", "return", "callable", "std::"]
+doc = "Return type of calling F with the given arguments."
+snippet = """
+std::invoke_result_t<${1:F}, ${2:Args}...>$0"""
+
+[[entries]]
+name = "std::make_signed_t"
+keys = ["make_signed_t", "make_unsigned_t", "sign", "trait", "std::"]
+doc = "Signed or unsigned counterpart of an integer type."
+snippet = """
+std::${1:make_unsigned_t}<${2:T}>$0"""
+
+[[entries]]
+name = "std::iterator_traits"
+keys = ["iterator_traits", "value_type", "iterator", "trait", "std::"]
+doc = "Element type of an iterator."
+snippet = """
+typename std::iterator_traits<${1:It}>::value_type$0"""
+
+[[entries]]
+name = "std::ranges::range_value_t"
+keys = ["range_value_t", "ranges", "value_type", "element", "std::"]
+doc = "Element type of a range."
+snippet = """
+std::ranges::range_value_t<${1:R}>$0"""
+
+[[entries]]
+name = "std::type_identity_t"
+keys = ["type_identity_t", "non-deduced", "trait", "std::"]
+doc = "Block deduction of a template argument."
+snippet = """
+std::type_identity_t<${1:T}>$0"""
+
+[[entries]]
+name = "std::void_t"
+keys = ["void_t", "detection", "sfinae", "trait", "std::"]
+doc = "Maps any types to void for detection idioms."
+snippet = """
+std::void_t<${1:T}>$0"""

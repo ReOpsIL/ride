@@ -1,0 +1,221 @@
+title = "Template idioms"
+contexts = ["item"]
+
+[[entries]]
+name = "SFINAE enable_if"
+keys = ["sfinae", "enable_if", "template", "disable", "overload", "trait", "constraint"]
+doc = "Remove an overload from resolution when a trait is false (prefer requires in C++20)."
+snippet = """
+template <typename ${1:T}, std::enable_if_t<${2:std::is_integral_v<T>}, int> = 0>
+${3:void} ${4:name}(${1:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "SFINAE enable_if return type"
+keys = ["sfinae", "enable_if", "return", "template", "overload", "trait"]
+doc = "enable_if placed on the return type."
+snippet = """
+template <typename ${1:T}>
+std::enable_if_t<${2:std::is_integral_v<T>}, ${3:T}> ${4:name}(${1:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "SFINAE enable_if default parameter"
+keys = ["sfinae", "enable_if", "typename", "default", "template", "overload"]
+doc = "enable_if as an unnamed defaulted type parameter."
+snippet = """
+template <typename ${1:T}, typename = std::enable_if_t<${2:std::is_integral_v<T>}>>
+${3:void} ${4:name}(${1:T} ${5:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "expression SFINAE decltype"
+keys = ["sfinae", "decltype", "trailing", "return", "expression", "valid"]
+doc = "Overload that exists only when an expression compiles."
+snippet = """
+template <typename ${1:T}>
+auto ${2:name}(${1:T} &${3:value}) -> decltype(${4:value.size()}) {
+    return ${4:value.size()};
+}$0"""
+
+[[entries]]
+name = "detection idiom void_t"
+keys = ["void_t", "detect", "has", "member", "trait", "sfinae", "exists"]
+doc = "Trait that is true when a type has a given member or expression."
+snippet = """
+template <typename, typename = void>
+struct ${1:has_size} : std::false_type {};
+
+template <typename ${2:T}>
+struct ${1:has_size}<${2:T}, std::void_t<decltype(std::declval<${2:T}>().${3:size()})>> : std::true_type {};
+
+template <typename ${2:T}>
+inline constexpr bool ${1:has_size}_v = ${1:has_size}<${2:T}>::value;$0"""
+
+[[entries]]
+name = "custom type trait"
+keys = ["trait", "custom", "true_type", "false_type", "specialization", "is_"]
+doc = "Trait defaulting to false, true for chosen types by specialization."
+snippet = """
+template <typename ${1:T}>
+struct ${2:is_special} : std::false_type {};
+
+template <>
+struct ${2:is_special}<${3:int}> : std::true_type {};
+
+template <typename ${1:T}>
+inline constexpr bool ${2:is_special}_v = ${2:is_special}<${1:T}>::value;$0"""
+
+[[entries]]
+name = "if constexpr with traits"
+keys = ["if", "constexpr", "trait", "template", "branch", "compile-time"]
+doc = "Branch on a type trait inside a template; the dead branch is not instantiated."
+snippet = """
+template <typename ${1:T}>
+auto ${2:name}(${1:T} ${3:value}) {
+    if constexpr (${4:std::is_integral_v<T>}) {
+        $0
+    } else {
+    }
+}"""
+
+[[entries]]
+name = "if constexpr chain"
+keys = ["if", "constexpr", "else", "chain", "dispatch", "type", "switch"]
+doc = "Chain of if constexpr branches selecting per type."
+snippet = """
+if constexpr (${1:std::is_integral_v<T>}) {
+    $0
+} else if constexpr (${2:std::is_floating_point_v<T>}) {
+} else {
+    static_assert(${3:always_false<T>}, "${4:unsupported type}");
+}"""
+
+[[entries]]
+name = "dependent false"
+keys = ["always_false", "static_assert", "dependent", "false", "else", "unsupported"]
+doc = "Dependent false so a static_assert fires only in the taken branch."
+snippet = """
+template <typename>
+inline constexpr bool ${1:always_false} = false;$0"""
+
+[[entries]]
+name = "tag dispatch"
+keys = ["tag", "dispatch", "integral_constant", "true_type", "overload", "select"]
+doc = "Select an overload by passing a tag type built from a trait."
+snippet = """
+template <typename ${1:T}>
+void ${2:impl}(${1:T} ${3:value}, std::true_type) {
+    $0
+}
+
+template <typename ${1:T}>
+void ${2:impl}(${1:T} ${3:value}, std::false_type) {
+}
+
+template <typename ${1:T}>
+void ${4:name}(${1:T} ${3:value}) {
+    ${2:impl}(${3:value}, ${5:std::is_integral<T>}{});
+}"""
+
+[[entries]]
+name = "type erasure"
+keys = ["type erasure", "erase", "any", "interface", "concept", "model", "polymorphism"]
+doc = "Hold any type meeting an interface behind a virtual concept and a templated model."
+snippet = """
+class ${1:Shape} {
+    struct Concept {
+        virtual ~Concept() = default;
+        virtual ${2:double area}() const = 0;
+    };
+    template <typename ${3:T}>
+    struct Model : Concept {
+        ${3:T} value;
+        explicit Model(${3:T} v) : value(std::move(v)) {}
+        ${2:double area}() const override { return value.${4:area}(); }
+    };
+    std::unique_ptr<Concept> self_;
+public:
+    template <typename ${3:T}>
+    ${1:Shape}(${3:T} v) : self_(std::make_unique<Model<${3:T}>>(std::move(v))) {}
+    ${2:double area}() const { return self_->${2:area}(); }
+};$0"""
+
+[[entries]]
+name = "CRTP"
+keys = ["crtp", "curiously", "recurring", "static", "polymorphism", "base", "derived"]
+doc = "Base template that knows its derived type for static polymorphism."
+snippet = """
+template <typename ${1:Derived}>
+struct ${2:Base} {
+    void ${3:run}() { static_cast<${1:Derived} *>(this)->${4:impl}(); }
+};
+
+struct ${5:Impl} : ${2:Base}<${5:Impl}> {
+    void ${4:impl}() { $0 }
+};"""
+
+[[entries]]
+name = "dependent type name"
+keys = ["typename", "dependent", "template", "nested", "value_type", "iterator"]
+doc = "Refer to a nested type of a template parameter with the typename keyword."
+snippet = """
+typename ${1:T}::${2:value_type}$0"""
+
+[[entries]]
+name = "dependent template keyword"
+keys = ["template", "dependent", "keyword", "disambiguate", "member", "get"]
+doc = "Call a member template of a dependent object with the template keyword."
+snippet = """
+${1:obj}.template ${2:get}<${3:0}>()$0"""
+
+[[entries]]
+name = "static_assert in template"
+keys = ["static_assert", "template", "check", "require", "compile", "constraint"]
+doc = "Compile-time check on a template parameter with a message."
+snippet = """
+static_assert(${1:std::is_integral_v<T>}, "${2:T must be an integer}");$0"""
+
+[[entries]]
+name = "constexpr function template"
+keys = ["constexpr", "template", "fn", "function", "compile-time", "generic"]
+doc = "Function template usable in constant expressions."
+snippet = """
+template <typename ${1:T}>
+constexpr ${1:T} ${2:square}(${1:T} ${3:value}) {
+    return ${3:value} * ${3:value};
+}$0"""
+
+[[entries]]
+name = "template recursion constant"
+keys = ["template", "recursion", "factorial", "metaprogramming", "value", "compile-time"]
+doc = "Classic recursive template computing a value at compile time."
+snippet = """
+template <${1:int} ${2:N}>
+struct ${3:Factorial} {
+    static constexpr ${1:int} value = ${2:N} * ${3:Factorial}<${2:N} - 1>::value;
+};
+
+template <>
+struct ${3:Factorial}<0> {
+    static constexpr ${1:int} value = 1;
+};$0"""
+
+[[entries]]
+name = "CTAD deduction guide"
+keys = ["ctad", "deduction", "guide", "template", "deduce", "constructor"]
+doc = "User-defined deduction guide for class template argument deduction."
+snippet = """
+template <typename ${1:T}>
+${2:Name}(${1:T}) -> ${2:Name}<${1:T}>;$0"""
+
+[[entries]]
+name = "CTAD from iterators guide"
+keys = ["ctad", "deduction", "guide", "iterator", "range", "value_type"]
+doc = "Deduction guide mapping an iterator pair to the element type."
+snippet = """
+template <typename ${1:It}>
+${2:Name}(${1:It}, ${1:It}) -> ${2:Name}<typename std::iterator_traits<${1:It}>::value_type>;$0"""

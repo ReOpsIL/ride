@@ -1,0 +1,125 @@
+title = "Atomics and C++20 primitives"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "std::atomic"
+keys = ["atomic", "lockfree", "counter", "shared", "thread-safe", "declare"]
+doc = "Atomic variable safe to access from several threads without a mutex."
+snippet = '''
+std::atomic<${1:int}> ${2:counter}{${3:0}};$0'''
+
+[[entries]]
+name = "atomic<bool> flag"
+keys = ["atomic", "bool", "flag", "done", "stop", "running", "signal"]
+doc = "Atomic boolean used as a stop or ready flag."
+snippet = '''
+std::atomic<bool> ${1:done}{false};$0'''
+
+[[entries]]
+name = "atomic increment"
+keys = ["atomic", "++", "increment", "counter", "add", "operator"]
+doc = "Increment atomically with ++ or +=."
+snippet = '''
+++${1:counter};$0'''
+
+[[entries]]
+name = "atomic load / store"
+keys = ["atomic", "load", "store", "memory_order", "read", "write"]
+doc = "Read or write an atomic with an explicit memory order."
+snippet = '''
+${1:flag}.${2:store}(${3:true}, std::memory_order_${4:release});$0'''
+
+[[entries]]
+name = "atomic fetch_add"
+keys = ["atomic", "fetch_add", "fetch_sub", "increment", "counter", "previous"]
+doc = "Atomically add and return the previous value."
+snippet = '''
+${1:counter}.fetch_add(${2:1}, std::memory_order_relaxed);$0'''
+
+[[entries]]
+name = "atomic exchange"
+keys = ["atomic", "exchange", "swap", "set", "previous", "old"]
+doc = "Store a value and get the old one atomically."
+snippet = '''
+auto ${1:old} = ${2:flag}.exchange(${3:true});$0'''
+
+[[entries]]
+name = "compare_exchange loop"
+keys = ["atomic", "compare_exchange", "cas", "compare_exchange_weak", "loop", "lock-free", "update"]
+doc = "Compare-and-swap loop that applies an update only if nobody changed the value."
+snippet = '''
+${1:int} ${2:expected} = ${3:a}.load();
+while (!${3:a}.compare_exchange_weak(${2:expected}, ${4:expected + 1})) {
+}$0'''
+
+[[entries]]
+name = "compare_exchange_strong"
+keys = ["atomic", "compare_exchange_strong", "cas", "once", "claim", "test and set"]
+doc = "Single compare-and-swap, e.g. to claim a slot exactly once."
+snippet = '''
+${1:int} ${2:expected} = ${3:0};
+if (${4:a}.compare_exchange_strong(${2:expected}, ${5:1})) {
+    $0
+}'''
+
+[[entries]]
+name = "memory orders"
+keys = ["memory_order", "relaxed", "acquire", "release", "seq_cst", "acq_rel", "ordering"]
+doc = "Memory orders: relaxed for counters, release/acquire for publishing data, seq_cst by default."
+snippet = '''
+std::memory_order_${1:seq_cst}$0'''
+
+[[entries]]
+name = "release / acquire publish"
+keys = ["release", "acquire", "publish", "ready", "flag", "handoff", "memory_order", "pattern"]
+doc = "Write data, then release the flag; the reader acquires the flag before reading the data."
+snippet = '''
+${1:data} = ${2:value};
+${3:ready}.store(true, std::memory_order_release);
+while (!${3:ready}.load(std::memory_order_acquire)) {
+}
+$0'''
+
+[[entries]]
+name = "atomic_flag spinlock"
+keys = ["atomic_flag", "spinlock", "test_and_set", "clear", "spin", "lock"]
+doc = "Spin until the flag is acquired, then clear it to release."
+snippet = '''
+std::atomic_flag ${1:lock} = ATOMIC_FLAG_INIT;
+while (${1:lock}.test_and_set(std::memory_order_acquire)) {
+}
+$0
+${1:lock}.clear(std::memory_order_release);'''
+
+[[entries]]
+name = "atomic wait / notify"
+keys = ["atomic", "wait", "notify_one", "notify_all", "block", "c++20", "futex"]
+doc = "C++20 block on an atomic until its value changes, then notify waiters."
+snippet = '''
+${1:flag}.wait(${2:false});
+${1:flag}.store(true);
+${1:flag}.notify_all();$0'''
+
+[[entries]]
+name = "atomic_ref"
+keys = ["atomic_ref", "atomic", "reference", "existing", "wrap", "c++20"]
+doc = "C++20 atomic operations on an existing non-atomic object."
+snippet = '''
+std::atomic_ref<${1:int}> ${2:ref}(${3:value});
+${2:ref}.fetch_add(${4:1});$0'''
+
+[[entries]]
+name = "is_lock_free"
+keys = ["is_lock_free", "atomic", "lock-free", "check", "hardware"]
+doc = "Whether operations on this atomic avoid an internal lock."
+snippet = '''
+${1:a}.is_lock_free()$0'''
+
+[[entries]]
+name = "atomic<shared_ptr>"
+keys = ["atomic", "shared_ptr", "pointer", "swap", "c++20", "rcu", "config"]
+doc = "C++20 atomically replaceable shared pointer, e.g. for hot-swapped config."
+snippet = '''
+std::atomic<std::shared_ptr<${1:Config}>> ${2:current};
+${2:current}.store(std::make_shared<${1:Config}>(${3:}));
+auto ${4:snapshot} = ${2:current}.load();$0'''

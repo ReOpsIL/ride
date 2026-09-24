@@ -1,0 +1,201 @@
+title = "Iterators: adapters"
+contexts = ["expression", "statement"]
+
+[[entries]]
+name = "map"
+keys = ["map", "transform", "iterator", "convert", "each", "apply"]
+doc = "Transform each element with a closure."
+snippet = '''
+.map(|${1:x}| ${2:expr})$0'''
+
+[[entries]]
+name = "map with deref pattern"
+keys = ["map", "deref", "pattern", "reference", "copy", "closure", "ampersand"]
+doc = "Destructure the reference in the closure parameter to work with values."
+snippet = '''
+.map(|&${1:x}| ${2:x * 2})$0'''
+
+[[entries]]
+name = "filter"
+keys = ["filter", "where", "select", "iterator", "keep", "condition", "predicate"]
+doc = "Keep only elements for which the predicate holds, the closure gets a reference."
+snippet = '''
+.filter(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "filter with deref pattern"
+keys = ["filter", "deref", "double", "reference", "pattern", "closure", "ampersand"]
+doc = "Match through the double reference that filter passes over an iter of references."
+snippet = '''
+.filter(|&&${1:x}| ${2:x > 0})$0'''
+
+[[entries]]
+name = "filter_map"
+keys = ["filter", "map", "option", "flatten", "iterator", "parse", "some"]
+doc = "Map to an Option and keep only the Some values."
+snippet = '''
+.filter_map(|${1:x}| ${2:x.parse().ok()})$0'''
+
+[[entries]]
+name = "flat_map"
+keys = ["flat", "map", "flatten", "nested", "iterator", "expand", "each"]
+doc = "Map each element to an iterator and flatten the results."
+snippet = '''
+.flat_map(|${1:x}| ${2:x.iter()})$0'''
+
+[[entries]]
+name = "flatten"
+keys = ["flatten", "nested", "option", "iterator", "vec", "of", "vecs", "results"]
+doc = "Flatten one level of nested iterables, Options or Results."
+snippet = '''
+.flatten()$0'''
+
+[[entries]]
+name = "enumerate"
+keys = ["enumerate", "index", "count", "iterator", "position", "with", "number"]
+doc = "Pair each element with its zero-based index."
+snippet = '''
+.enumerate()$0'''
+
+[[entries]]
+name = "zip"
+keys = ["zip", "pair", "combine", "iterator", "two", "parallel", "together"]
+doc = "Pair elements with those of another iterator, stopping at the shorter."
+snippet = '''
+.zip(${1:other}.iter())$0'''
+
+[[entries]]
+name = "iter::zip"
+keys = ["zip", "function", "pair", "two", "combine", "lists", "together"]
+doc = "Zip two iterables with the free function form."
+snippet = '''
+std::iter::zip(${1:a}, ${2:b})$0'''
+
+[[entries]]
+name = "zip three"
+keys = ["zip", "three", "nested", "tuples", "combine", "multiple", "pair"]
+doc = "Zip three iterators, flattening the nested tuple in the pattern."
+snippet = '''
+${1:a}.iter().zip(${2:b}).zip(${3:c}).map(|((${4:x}, ${5:y}), ${6:z})| ${7:expr})$0'''
+
+[[entries]]
+name = "chain"
+keys = ["chain", "concat", "append", "iterator", "then", "combine", "join"]
+doc = "Continue with the elements of a second iterator."
+snippet = '''
+.chain(${1:other})$0'''
+
+[[entries]]
+name = "rev"
+keys = ["rev", "reverse", "backwards", "iterator", "end", "descending"]
+doc = "Iterate from the end, for double-ended iterators."
+snippet = '''
+.rev()$0'''
+
+[[entries]]
+name = "enumerate then rev"
+keys = ["enumerate", "rev", "reverse", "index", "backwards", "last", "order"]
+doc = "Keep the original indices while iterating backwards."
+snippet = '''
+.enumerate().rev()$0'''
+
+[[entries]]
+name = "skip"
+keys = ["skip", "drop", "offset", "iterator", "first", "header", "ignore"]
+doc = "Skip the first n elements."
+snippet = '''
+.skip(${1:n})$0'''
+
+[[entries]]
+name = "take"
+keys = ["take", "limit", "first", "iterator", "top", "head", "n"]
+doc = "Yield at most the first n elements."
+snippet = '''
+.take(${1:n})$0'''
+
+[[entries]]
+name = "step_by"
+keys = ["step", "by", "stride", "every", "iterator", "nth", "other"]
+doc = "Yield every nth element starting with the first."
+snippet = '''
+.step_by(${1:2})$0'''
+
+[[entries]]
+name = "take_while"
+keys = ["take", "while", "prefix", "iterator", "until", "stop", "condition"]
+doc = "Yield elements until the predicate first fails."
+snippet = '''
+.take_while(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "skip_while"
+keys = ["skip", "while", "iterator", "until", "drop", "leading", "condition"]
+doc = "Skip elements until the predicate first fails, then yield the rest."
+snippet = '''
+.skip_while(|${1:x}| ${2:cond})$0'''
+
+[[entries]]
+name = "map_while"
+keys = ["map", "while", "option", "stop", "first", "none", "iterator", "parse"]
+doc = "Map to an Option and stop at the first None."
+snippet = '''
+.map_while(|${1:x}| ${2:x.parse().ok()})$0'''
+
+[[entries]]
+name = "inspect"
+keys = ["inspect", "debug", "peek", "iterator", "print", "side", "effect", "log"]
+doc = "Run a side effect on each element as it passes through."
+snippet = '''
+.inspect(|${1:x}| ${2:println!("{x:?\}")})$0'''
+
+[[entries]]
+name = "scan"
+keys = ["scan", "accumulate", "running", "prefix", "iterator", "state", "cumulative"]
+doc = "Map with a running state, yielding an intermediate value each step."
+snippet = '''
+.scan(${1:0}, |${2:acc}, ${3:x}| {
+    *${2:acc} += ${3:x};
+    Some(*${2:acc})
+})$0'''
+
+[[entries]]
+name = "cloned / copied"
+keys = ["cloned", "copied", "deref", "owned", "iterator", "values", "reference"]
+doc = "Turn an iterator of references into an iterator of owned values."
+snippet = '''
+.${1:cloned}()$0'''
+
+[[entries]]
+name = "cycle"
+keys = ["cycle", "repeat", "loop", "forever", "wrap", "iterator", "round", "robin"]
+doc = "Repeat the iterator endlessly, bounded by a later take."
+snippet = '''
+.cycle().take(${1:n})$0'''
+
+[[entries]]
+name = "fuse"
+keys = ["fuse", "none", "stop", "iterator", "after", "exhausted", "safe"]
+doc = "Guarantee that once next returns None it keeps returning None."
+snippet = '''
+.fuse()$0'''
+
+[[entries]]
+name = "map to tuple"
+keys = ["map", "tuple", "pair", "key", "value", "collect", "hashmap", "iterator"]
+doc = "Map each element to a key-value pair, ready to collect into a map."
+snippet = '''
+.map(|${1:x}| (${2:x.id}, ${3:x}))$0'''
+
+[[entries]]
+name = "map with index"
+keys = ["map", "index", "enumerate", "position", "closure", "tuple", "iterator"]
+doc = "Transform elements with access to their index."
+snippet = '''
+.enumerate().map(|(${1:i}, ${2:x})| ${3:expr})$0'''
+
+[[entries]]
+name = "fixed-size chunks to arrays"
+keys = ["array", "chunks", "fixed", "pairs", "chunks_exact", "arrays", "try_into", "tuples"]
+doc = "Turn fixed-size chunks of a slice into arrays with try_into."
+snippet = '''
+let ${1:pairs}: Vec<[${2:i32}; ${3:2}]> = ${4:items}.chunks_exact(${3:2}).map(|c| c.try_into().unwrap()).collect();$0'''

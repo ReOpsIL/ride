@@ -3,7 +3,7 @@ contexts = ["item"]
 
 [[entries]]
 name = "function"
-keys = ["fn", "func", "def"]
+keys = ["fn", "func", "def", "define", "void", "method"]
 doc = "Define a free function with a return type and parameters."
 snippet = """
 ${1:void} ${2:name}(${3:}) {
@@ -11,15 +11,24 @@ ${1:void} ${2:name}(${3:}) {
 }"""
 
 [[entries]]
+name = "function returning a value"
+keys = ["fn", "func", "return", "int", "compute"]
+doc = "Function that computes and returns a value."
+snippet = """
+${1:int} ${2:name}(${3:int a}, ${4:int b}) {
+    return $0;
+}"""
+
+[[entries]]
 name = "function declaration"
-keys = ["fn", "prototype", "declare", "forward"]
-doc = "Declare a function without defining it."
+keys = ["fn", "prototype", "declare", "forward", "signature", "header"]
+doc = "Declare a function without defining it, usually in a header."
 snippet = """
 ${1:void} ${2:name}(${3:});$0"""
 
 [[entries]]
 name = "main"
-keys = ["main", "entry"]
+keys = ["main", "entry", "argc", "argv", "args", "program"]
 doc = "Program entry point with argc and argv."
 snippet = """
 int main(int argc, char *argv[]) {
@@ -29,7 +38,7 @@ int main(int argc, char *argv[]) {
 
 [[entries]]
 name = "main (no args)"
-keys = ["main", "entry"]
+keys = ["main", "entry", "program", "start"]
 doc = "Program entry point that ignores its arguments."
 snippet = """
 int main() {
@@ -38,8 +47,21 @@ int main() {
 }"""
 
 [[entries]]
+name = "main with argument loop"
+keys = ["main", "argv", "args", "arguments", "command", "line"]
+doc = "Entry point that walks the command line arguments."
+snippet = """
+int main(int argc, char **argv) {
+    for (int i = 1; i < argc; ++i) {
+        std::string_view arg = argv[i];
+        $0
+    }
+    return 0;
+}"""
+
+[[entries]]
 name = "inline function"
-keys = ["inline", "fn"]
+keys = ["inline", "fn", "header", "odr"]
 doc = "Function that may be defined in several translation units."
 snippet = """
 inline ${1:int} ${2:name}(${3:}) {
@@ -48,7 +70,7 @@ inline ${1:int} ${2:name}(${3:}) {
 
 [[entries]]
 name = "static function"
-keys = ["static", "fn", "internal"]
+keys = ["static", "fn", "internal", "private", "file", "local"]
 doc = "Function with internal linkage, visible only in this file."
 snippet = """
 static ${1:void} ${2:name}(${3:}) {
@@ -57,7 +79,7 @@ static ${1:void} ${2:name}(${3:}) {
 
 [[entries]]
 name = "constexpr function"
-keys = ["constexpr", "fn", "compile"]
+keys = ["constexpr", "fn", "compile", "constant"]
 doc = "Function that can be evaluated at compile time."
 snippet = """
 constexpr ${1:int} ${2:name}(${3:int x}) {
@@ -66,7 +88,7 @@ constexpr ${1:int} ${2:name}(${3:int x}) {
 
 [[entries]]
 name = "consteval function"
-keys = ["consteval", "fn", "immediate"]
+keys = ["consteval", "fn", "immediate", "compile"]
 doc = "C++20 immediate function that must be evaluated at compile time."
 snippet = """
 consteval ${1:int} ${2:name}(${3:int x}) {
@@ -75,7 +97,7 @@ consteval ${1:int} ${2:name}(${3:int x}) {
 
 [[entries]]
 name = "trailing return type"
-keys = ["auto", "fn", "trailing", "arrow"]
+keys = ["auto", "fn", "trailing", "arrow", "->"]
 doc = "Function whose return type is written after the parameter list."
 snippet = """
 auto ${1:name}(${2:}) -> ${3:int} {
@@ -83,8 +105,17 @@ auto ${1:name}(${2:}) -> ${3:int} {
 }"""
 
 [[entries]]
+name = "auto return type"
+keys = ["auto", "fn", "deduce", "deduced", "return"]
+doc = "C++14 function whose return type is deduced from its return statements."
+snippet = """
+auto ${1:name}(${2:}) {
+    return $0;
+}"""
+
+[[entries]]
 name = "noexcept function"
-keys = ["noexcept", "fn"]
+keys = ["noexcept", "fn", "throw", "exception"]
 doc = "Function that promises not to throw."
 snippet = """
 ${1:void} ${2:name}(${3:}) noexcept {
@@ -92,8 +123,40 @@ ${1:void} ${2:name}(${3:}) noexcept {
 }"""
 
 [[entries]]
+name = "recursive function"
+keys = ["recursive", "recursion", "factorial", "fn", "self"]
+doc = "Function that calls itself with a base case."
+snippet = """
+${1:int} ${2:factorial}(${1:int} ${3:n}) {
+    if (${3:n} <= ${4:1}) {
+        return ${5:1};
+    }
+    return ${3:n} * ${2:factorial}(${3:n} - 1);$0
+}"""
+
+[[entries]]
+name = "overloaded functions"
+keys = ["overload", "overloading", "same", "name", "fn"]
+doc = "Two functions with the same name chosen by parameter types."
+snippet = """
+${1:void} ${2:print}(${3:int} ${4:value}) {
+    $5
+}
+
+${1:void} ${2:print}(${6:const std::string &} ${4:value}) {
+    $0
+}"""
+
+[[entries]]
+name = "deleted overload"
+keys = ["delete", "overload", "forbid", "fn", "="]
+doc = "Delete an overload so a conversion cannot silently pick it."
+snippet = """
+${1:void} ${2:name}(${3:double}) = delete;$0"""
+
+[[entries]]
 name = "[[nodiscard]] function"
-keys = ["nodiscard", "attribute", "fn"]
+keys = ["nodiscard", "attribute", "fn", "warn", "ignore"]
 doc = "Warn when the caller ignores the return value."
 snippet = """
 [[nodiscard]] ${1:bool} ${2:name}(${3:}) {
@@ -101,10 +164,38 @@ snippet = """
 }"""
 
 [[entries]]
-name = "member function out of line"
-keys = ["method", "define", "scope", "::"]
-doc = "Define a member function outside its class."
+name = "[[nodiscard]] with reason"
+keys = ["nodiscard", "attribute", "reason", "message", "fn"]
+doc = "C++20 nodiscard carrying a message shown in the warning."
 snippet = """
-${1:void} ${2:Name}::${3:method}(${4:}) {
+[[nodiscard("${1:reason}")]] ${2:bool} ${3:name}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "[[deprecated]] function"
+keys = ["deprecated", "attribute", "obsolete", "fn", "warn"]
+doc = "Warn at each call of an obsolete function."
+snippet = """
+[[deprecated("${1:use other() instead}")]] ${2:void} ${3:name}(${4:}) {
+    $0
+}"""
+
+[[entries]]
+name = "[[noreturn]] function"
+keys = ["noreturn", "attribute", "abort", "exit", "fn"]
+doc = "Function that never returns to its caller."
+snippet = """
+[[noreturn]] void ${1:fail}(${2:const char *msg}) {
+    $0
+    std::abort();
+}"""
+
+[[entries]]
+name = "extern \"C\" function"
+keys = ["extern", "c", "linkage", "fn", "ffi", "export"]
+doc = "Function with C linkage callable from C code."
+snippet = """
+extern "C" ${1:int} ${2:name}(${3:}) {
     $0
 }"""

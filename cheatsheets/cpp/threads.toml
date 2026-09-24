@@ -1,197 +1,204 @@
-title = "Threads and async"
+title = "Threads"
 contexts = ["statement"]
 
 [[entries]]
 name = "std::thread"
-keys = ["thread", "join", "spawn"]
-doc = "Start a thread and join it."
-snippet = """
+keys = ["thread", "join", "spawn", "start", "create", "new", "lambda"]
+doc = "Start a thread running a lambda and join it."
+snippet = '''
 std::thread ${1:t}([${2:&}] {
     $0
 });
-${1:t}.join();"""
+${1:t}.join();'''
+
+[[entries]]
+name = "thread with function"
+keys = ["thread", "function", "spawn", "start", "call", "worker"]
+doc = "Run a named function on a new thread."
+snippet = '''
+std::thread ${1:t}(${2:worker});
+${1:t}.join();$0'''
+
+[[entries]]
+name = "thread with arguments"
+keys = ["thread", "args", "arguments", "parameters", "pass", "copy"]
+doc = "Pass arguments to the thread function; they are copied."
+snippet = '''
+std::thread ${1:t}(${2:worker}, ${3:arg1}, ${4:arg2});
+${1:t}.join();$0'''
+
+[[entries]]
+name = "thread with reference argument"
+keys = ["thread", "ref", "reference", "std::ref", "argument", "share", "output"]
+doc = "Pass a reference into a thread with std::ref."
+snippet = '''
+std::thread ${1:t}(${2:worker}, std::ref(${3:result}));
+${1:t}.join();$0'''
+
+[[entries]]
+name = "thread with member function"
+keys = ["thread", "member", "method", "this", "object", "class"]
+doc = "Run a member function on an object in a new thread."
+snippet = '''
+std::thread ${1:t}(&${2:Class}::${3:method}, &${4:obj}${5:, args});
+${1:t}.join();$0'''
 
 [[entries]]
 name = "std::jthread"
-keys = ["jthread", "thread", "join", "spawn"]
+keys = ["jthread", "thread", "join", "spawn", "auto", "raii", "c++20"]
 doc = "C++20 thread that joins automatically on destruction."
-snippet = """
+snippet = '''
 std::jthread ${1:t}([${2:&}] {
     $0
-});"""
+});'''
 
 [[entries]]
 name = "jthread with stop_token"
-keys = ["jthread", "stop_token", "cancel", "thread"]
-doc = "Cooperative cancellation via a stop token."
-snippet = """
+keys = ["jthread", "stop_token", "cancel", "thread", "stop", "loop", "cooperative"]
+doc = "Cooperative cancellation: the loop exits when a stop is requested."
+snippet = '''
 std::jthread ${1:t}([](std::stop_token ${2:st}) {
     while (!${2:st}.stop_requested()) {
         $0
     }
-});"""
+});'''
 
 [[entries]]
 name = "request_stop"
-keys = ["request_stop", "stop", "cancel", "jthread"]
-doc = "Ask a jthread to stop."
-snippet = """
-${1:t}.request_stop();$0"""
+keys = ["request_stop", "stop", "cancel", "jthread", "shutdown"]
+doc = "Ask a jthread to stop; it joins when destroyed."
+snippet = '''
+${1:t}.request_stop();$0'''
+
+[[entries]]
+name = "join"
+keys = ["join", "thread", "wait", "finish", "block"]
+doc = "Wait for a thread to finish; required before a std::thread is destroyed."
+snippet = '''
+${1:t}.join();$0'''
+
+[[entries]]
+name = "joinable"
+keys = ["joinable", "thread", "check", "join", "safe"]
+doc = "Join only when the thread still owns a running thread."
+snippet = '''
+if (${1:t}.joinable()) {
+    ${1:t}.join();
+}$0'''
 
 [[entries]]
 name = "detach"
-keys = ["detach", "thread", "background"]
-doc = "Let a thread run independently."
-snippet = """
-${1:t}.detach();$0"""
+keys = ["detach", "thread", "background", "daemon", "fire"]
+doc = "Let a thread run independently; it must not touch destroyed locals."
+snippet = '''
+${1:t}.detach();$0'''
 
 [[entries]]
 name = "hardware_concurrency"
-keys = ["hardware_concurrency", "cores", "cpu", "thread"]
-doc = "Number of concurrent threads the hardware supports."
-snippet = """
-std::thread::hardware_concurrency()$0"""
+keys = ["hardware_concurrency", "cores", "cpu", "thread", "count", "parallelism"]
+doc = "Number of concurrent threads the hardware supports (0 if unknown)."
+snippet = '''
+unsigned ${1:n} = std::max(1u, std::thread::hardware_concurrency());$0'''
 
 [[entries]]
 name = "thread pool loop"
-keys = ["threads", "vector", "pool", "jthread", "workers"]
+keys = ["threads", "vector", "pool", "jthread", "workers", "spawn", "many", "parallel"]
 doc = "Launch n worker threads that join at scope end."
-snippet = """
+snippet = '''
 std::vector<std::jthread> ${1:workers};
 for (${2:unsigned} ${3:i} = 0; ${3:i} < ${4:n}; ++${3:i}) {
-    ${1:workers}.emplace_back([${5:&}] {
+    ${1:workers}.emplace_back([${5:&}, ${3:i}] {
         $0
     });
-}"""
+}'''
 
 [[entries]]
-name = "std::async"
-keys = ["async", "future", "launch", "task"]
-doc = "Run a task asynchronously and get a future."
-snippet = """
-auto ${1:fut} = std::async(std::launch::async, [${2:}] {
-    return $0;
-});"""
+name = "join vector of threads"
+keys = ["join", "vector", "threads", "all", "loop", "wait", "std::thread"]
+doc = "Join every std::thread stored in a vector."
+snippet = '''
+for (auto &${1:t} : ${2:threads}) {
+    ${1:t}.join();
+}$0'''
 
 [[entries]]
-name = "future get"
-keys = ["future", "get", "wait", "result"]
-doc = "Block until the result is ready."
-snippet = """
-auto ${1:result} = ${2:fut}.get();$0"""
+name = "per-thread results"
+keys = ["results", "vector", "threads", "index", "collect", "partial", "parallel", "sum"]
+doc = "Each thread writes its own slot so no lock is needed."
+snippet = '''
+std::vector<${1:long}> ${2:results}(${3:n});
+{
+    std::vector<std::jthread> ${4:workers};
+    for (std::size_t ${5:i} = 0; ${5:i} < ${3:n}; ++${5:i}) {
+        ${4:workers}.emplace_back([&, ${5:i}] { ${2:results}[${5:i}] = ${6:compute(i)}; });
+    }
+}
+auto ${7:total} = std::accumulate(${2:results}.begin(), ${2:results}.end(), ${8:0L});$0'''
 
 [[entries]]
-name = "future wait_for"
-keys = ["future", "wait_for", "timeout", "ready"]
-doc = "Wait for a result with a timeout."
-snippet = """
-if (${1:fut}.wait_for(${2:std::chrono::milliseconds(100)}) == std::future_status::ready) {
-    $0
-}"""
+name = "split work into chunks"
+keys = ["chunks", "split", "range", "threads", "partition", "parallel", "work", "divide"]
+doc = "Divide an index range across threads by contiguous chunks."
+snippet = '''
+std::size_t ${1:chunk} = (${2:total} + ${3:n} - 1) / ${3:n};
+for (std::size_t ${4:i} = 0; ${4:i} < ${3:n}; ++${4:i}) {
+    std::size_t ${5:begin} = ${4:i} * ${1:chunk};
+    std::size_t ${6:end} = std::min(${2:total}, ${5:begin} + ${1:chunk});
+    ${7:workers}.emplace_back([=] {
+        for (std::size_t ${8:j} = ${5:begin}; ${8:j} < ${6:end}; ++${8:j}) {
+            $0
+        }
+    });
+}'''
 
 [[entries]]
-name = "promise / future"
-keys = ["promise", "future", "set_value"]
-doc = "Hand a value from one thread to another."
-snippet = """
-std::promise<${1:int}> ${2:promise};
-std::future<${1:int}> ${3:fut} = ${2:promise}.get_future();
-${2:promise}.set_value(${4:value});$0"""
-
-[[entries]]
-name = "packaged_task"
-keys = ["packaged_task", "future", "task"]
-doc = "Wrap a callable so its result is delivered via a future."
-snippet = """
-std::packaged_task<${1:int}(${2:})> ${3:task}(${4:fn});
-auto ${5:fut} = ${3:task}.get_future();
-std::jthread ${6:t}(std::move(${3:task}));$0"""
+name = "thread_local"
+keys = ["thread_local", "per thread", "storage", "static", "tls"]
+doc = "Variable with one instance per thread."
+snippet = '''
+thread_local ${1:int} ${2:counter} = ${3:0};$0'''
 
 [[entries]]
 name = "this_thread::sleep_for"
-keys = ["sleep_for", "sleep", "this_thread", "delay"]
+keys = ["sleep_for", "sleep", "this_thread", "delay", "wait", "pause", "ms"]
 doc = "Pause the current thread for a duration."
-snippet = """
-std::this_thread::sleep_for(std::chrono::${1:milliseconds}(${2:100}));$0"""
+snippet = '''
+std::this_thread::sleep_for(std::chrono::${1:milliseconds}(${2:100}));$0'''
+
+[[entries]]
+name = "this_thread::sleep_until"
+keys = ["sleep_until", "sleep", "this_thread", "deadline", "time point", "until"]
+doc = "Pause until a time point."
+snippet = '''
+std::this_thread::sleep_until(${1:deadline});$0'''
 
 [[entries]]
 name = "this_thread::yield"
-keys = ["yield", "this_thread"]
-doc = "Offer the CPU to other threads."
-snippet = """
-std::this_thread::yield();$0"""
+keys = ["yield", "this_thread", "spin", "give up", "reschedule"]
+doc = "Offer the CPU to other threads, e.g. inside a spin loop."
+snippet = '''
+std::this_thread::yield();$0'''
 
 [[entries]]
 name = "this_thread::get_id"
-keys = ["get_id", "this_thread", "thread id"]
-doc = "Identifier of the current thread."
-snippet = """
-std::this_thread::get_id()$0"""
+keys = ["get_id", "this_thread", "thread id", "identify", "which"]
+doc = "Identifier of the current thread, printable with <<."
+snippet = '''
+std::this_thread::get_id()$0'''
 
 [[entries]]
-name = "chrono duration"
-keys = ["chrono", "duration", "milliseconds", "seconds", "ms"]
-doc = "Duration value using chrono literals."
-snippet = """
-using namespace std::chrono_literals;
-auto ${1:timeout} = ${2:500ms};$0"""
+name = "thread id compare"
+keys = ["get_id", "thread", "id", "compare", "main", "same", "check"]
+doc = "Check whether code runs on a remembered thread."
+snippet = '''
+static const std::thread::id ${1:main_id} = std::this_thread::get_id();
+if (std::this_thread::get_id() == ${1:main_id}) {
+    $0
+}'''
 
 [[entries]]
-name = "chrono now"
-keys = ["chrono", "now", "steady_clock", "time"]
-doc = "Current time point of the steady clock."
-snippet = """
-auto ${1:start} = std::chrono::steady_clock::now();$0"""
-
-[[entries]]
-name = "chrono elapsed"
-keys = ["chrono", "elapsed", "duration_cast", "timer", "benchmark"]
-doc = "Elapsed time since a time point in milliseconds."
-snippet = """
-auto ${1:elapsed} = std::chrono::duration_cast<std::chrono::${2:milliseconds}>(std::chrono::steady_clock::now() - ${3:start}).count();$0"""
-
-[[entries]]
-name = "system_clock to time_t"
-keys = ["system_clock", "time_t", "now", "date"]
-doc = "Wall-clock time as a C time_t."
-snippet = """
-std::time_t ${1:now} = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());$0"""
-
-[[entries]]
-name = "coroutine co_return"
-keys = ["coroutine", "co_return", "co_await", "task"]
-doc = "Coroutine body returning a value through its promise."
-snippet = """
-${1:Task<int>} ${2:name}(${3:}) {
-    ${4:co_await other();}
-    co_return $0;
-}"""
-
-[[entries]]
-name = "coroutine co_yield generator"
-keys = ["coroutine", "co_yield", "generator"]
-doc = "Generator coroutine yielding values lazily."
-snippet = """
-${1:std::generator<int>} ${2:name}(${3:}) {
-    for (${4:int i = 0; i < n; ++i}) {
-        co_yield $0;
-    }
-}"""
-
-[[entries]]
-name = "co_await"
-keys = ["co_await", "await", "coroutine"]
-doc = "Suspend until an awaitable completes."
-snippet = """
-auto ${1:result} = co_await ${2:awaitable};$0"""
-
-[[entries]]
-name = "awaitable skeleton"
-keys = ["awaitable", "await_ready", "await_suspend", "await_resume", "coroutine"]
-doc = "Minimal awaitable type with the three await_ functions."
-snippet = """
-struct ${1:Awaitable} {
-    bool await_ready() const noexcept { return ${2:false}; }
-    void await_suspend(std::coroutine_handle<> ${3:h}) { $0 }
-    ${4:void} await_resume() const noexcept {}
-};"""
+name = "move thread into vector"
+keys = ["move", "thread", "vector", "push_back", "std::move", "store"]
+doc = "Threads are move-only; move one into a container."
+snippet = '''
+${1:threads}.push_back(std::move(${2:t}));$0'''

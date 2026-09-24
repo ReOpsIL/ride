@@ -177,3 +177,43 @@ keys = ["use", "std", "path", "pathbuf", "import"]
 doc = "Import the filesystem path types."
 snippet = '''
 use std::path::{Path, PathBuf};$0'''
+
+[[entries]]
+name = "use nested braces"
+keys = ["use", "nested", "braces", "tree", "several", "paths", "import"]
+doc = "Import from several submodules in one statement with nested braces."
+snippet = '''
+use std::{
+    collections::${1:HashMap},
+    io::{self, ${2:Read}},$0
+};'''
+
+[[entries]]
+name = "use inside fn"
+keys = ["use", "local", "fn", "inside", "scope", "import", "function"]
+doc = "Import a path only for the current function body."
+snippet = '''
+use ${1:std::fmt::Write};
+$0'''
+
+[[entries]]
+name = "use enum variants"
+keys = ["use", "enum", "variants", "glob", "self", "short", "import"]
+doc = "Bring an enum's variants into scope so arms can name them bare."
+snippet = '''
+use ${1:Color}::{${2:Red, Green}};$0'''
+
+[[entries]]
+name = "cfg-gated mod"
+keys = ["mod", "cfg", "platform", "test", "unix", "windows", "conditional"]
+doc = "Compile a module only when a configuration predicate holds."
+snippet = '''
+#[cfg(${1:unix})]
+mod ${2:unix};$0'''
+
+[[entries]]
+name = "pub(crate) mod"
+keys = ["pub", "crate", "mod", "module", "internal", "visibility"]
+doc = "Declare a module visible throughout the crate but not exported."
+snippet = '''
+pub(crate) mod ${1:name};$0'''

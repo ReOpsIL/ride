@@ -1,0 +1,181 @@
+title = "Channels"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "mpsc channel"
+keys = ["mpsc", "channel", "sender", "receiver", "queue", "message", "create", "unbounded"]
+doc = "Create a multi-producer single-consumer channel."
+snippet = '''
+let (${1:tx}, ${2:rx}) = std::sync::mpsc::channel::<${3:T}>();$0'''
+
+[[entries]]
+name = "sync_channel"
+keys = ["sync", "channel", "bounded", "backpressure", "mpsc", "capacity", "rendezvous"]
+doc = "Create a bounded channel whose senders block when it is full."
+snippet = '''
+let (${1:tx}, ${2:rx}) = std::sync::mpsc::sync_channel::<${3:T}>(${4:capacity});$0'''
+
+[[entries]]
+name = "send"
+keys = ["send", "channel", "tx", "sender", "message", "push"]
+doc = "Send a value through a channel, failing if the receiver is gone."
+snippet = '''
+${1:tx}.send(${2:value}).unwrap();$0'''
+
+[[entries]]
+name = "send ignoring closed receiver"
+keys = ["send", "channel", "closed", "ignore", "let", "disconnected", "error"]
+doc = "Send and tolerate a dropped receiver instead of panicking."
+snippet = '''
+let _ = ${1:tx}.send(${2:value});$0'''
+
+[[entries]]
+name = "try_send"
+keys = ["try_send", "channel", "bounded", "full", "nonblocking", "sync"]
+doc = "Send on a bounded channel without blocking, failing when it is full."
+snippet = '''
+match ${1:tx}.try_send(${2:value}) {
+    Ok(()) => $0,
+    Err(std::sync::mpsc::TrySendError::Full(_)) => {}
+    Err(std::sync::mpsc::TrySendError::Disconnected(_)) => {}
+}'''
+
+[[entries]]
+name = "recv"
+keys = ["recv", "receive", "channel", "rx", "block", "wait", "next"]
+doc = "Block until a message arrives, erroring when every sender is gone."
+snippet = '''
+let ${1:msg} = ${2:rx}.recv()?;$0'''
+
+[[entries]]
+name = "receive loop"
+keys = ["recv", "receive", "channel", "rx", "for", "loop", "iter", "consume"]
+doc = "Process messages until every sender has been dropped."
+snippet = '''
+for ${1:msg} in ${2:rx} {
+    $0
+}'''
+
+[[entries]]
+name = "while let recv"
+keys = ["recv", "while", "let", "ok", "loop", "channel", "receive"]
+doc = "Receive in a loop that ends when the channel disconnects."
+snippet = '''
+while let Ok(${1:msg}) = ${2:rx}.recv() {
+    $0
+}'''
+
+[[entries]]
+name = "try_recv"
+keys = ["try_recv", "poll", "nonblocking", "channel", "empty", "check"]
+doc = "Take a message if one is waiting, without blocking."
+snippet = '''
+match ${1:rx}.try_recv() {
+    Ok(${2:msg}) => $0,
+    Err(std::sync::mpsc::TryRecvError::Empty) => {}
+    Err(std::sync::mpsc::TryRecvError::Disconnected) => break,
+}'''
+
+[[entries]]
+name = "recv_timeout"
+keys = ["recv", "timeout", "channel", "wait", "duration", "deadline", "poll"]
+doc = "Receive with a timeout so a quiet channel does not block forever."
+snippet = '''
+match ${1:rx}.recv_timeout(std::time::Duration::from_${2:millis}(${3:100})) {
+    Ok(${4:msg}) => $0,
+    Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {}
+    Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => break,
+}'''
+
+[[entries]]
+name = "try_iter drain"
+keys = ["try_iter", "drain", "pending", "channel", "all", "nonblocking", "collect"]
+doc = "Take every message currently queued without waiting for more."
+snippet = '''
+for ${1:msg} in ${2:rx}.try_iter() {
+    $0
+}'''
+
+[[entries]]
+name = "multiple producers"
+keys = ["clone", "sender", "producers", "multiple", "tx", "many", "threads"]
+doc = "Clone the sender for each producer thread."
+snippet = '''
+for ${1:i} in 0..${2:n} {
+    let ${3:tx} = ${3:tx}.clone();
+    std::thread::spawn(move || {
+        ${3:tx}.send($0).unwrap();
+    });
+}'''
+
+[[entries]]
+name = "drop sender to close"
+keys = ["drop", "sender", "close", "channel", "end", "disconnect", "finish"]
+doc = "Drop the original sender so the receive loop ends when producers finish."
+snippet = '''
+drop(${1:tx});
+for ${2:msg} in ${3:rx} {
+    $0
+}'''
+
+[[entries]]
+name = "Sender<T> parameter"
+keys = ["sender", "type", "parameter", "channel", "fn", "arg", "receiver"]
+doc = "Pass a channel end into a function by naming its type."
+snippet = '''
+fn ${1:producer}(${2:tx}: std::sync::mpsc::Sender<${3:T}>) {
+    $0
+}'''
+
+[[entries]]
+name = "Receiver<T> parameter"
+keys = ["receiver", "type", "parameter", "channel", "fn", "arg", "rx"]
+doc = "Take the receiving end of a channel as a function parameter."
+snippet = '''
+fn ${1:consumer}(${2:rx}: std::sync::mpsc::Receiver<${3:T}>) {
+    for ${4:msg} in ${2:rx} {
+        $0
+    }
+}'''
+
+[[entries]]
+name = "request / reply channel"
+keys = ["reply", "request", "response", "channel", "oneshot", "answer", "roundtrip"]
+doc = "Send a request that carries its own reply channel."
+snippet = '''
+let (${1:reply_tx}, ${2:reply_rx}) = std::sync::mpsc::channel();
+${3:tx}.send((${4:request}, ${1:reply_tx})).unwrap();
+let ${5:reply} = ${2:reply_rx}.recv().unwrap();$0'''
+
+[[entries]]
+name = "channel of enum messages"
+keys = ["message", "enum", "channel", "protocol", "command", "shutdown", "variant"]
+doc = "Define the messages a channel carries as an enum with a shutdown variant."
+snippet = '''
+enum ${1:Message} {
+    ${2:Job}(${3:u32}),
+    Shutdown,
+}
+match ${4:rx}.recv().unwrap() {
+    ${1:Message}::${2:Job}(${5:n}) => $0,
+    ${1:Message}::Shutdown => return,
+}'''
+
+[[entries]]
+name = "producer thread"
+keys = ["producer", "thread", "send", "spawn", "generate", "loop", "channel"]
+doc = "Spawn a thread that produces values into a channel."
+snippet = '''
+let ${1:producer} = std::thread::spawn(move || {
+    for ${2:i} in 0..${3:n} {
+        ${4:tx}.send(${2:i}).unwrap();
+    }
+});$0'''
+
+[[entries]]
+name = "Arc<Mutex<Receiver>> shared"
+keys = ["receiver", "shared", "arc", "mutex", "workers", "pool", "lock"]
+doc = "Share one receiver among threads by locking it around each recv."
+snippet = '''
+let ${1:rx} = Arc::new(Mutex::new(${1:rx}));
+let ${2:msg} = ${1:rx}.lock().unwrap().recv();$0'''

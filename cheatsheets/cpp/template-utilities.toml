@@ -1,0 +1,114 @@
+title = "Template utilities and traits"
+contexts = ["type", "expression"]
+
+[[entries]]
+name = "std::is_same_v"
+keys = ["is_same", "same", "equal", "compare", "trait", "type_traits"]
+doc = "True when two types are exactly the same."
+snippet = """
+std::is_same_v<${1:T}, ${2:int}>$0"""
+
+[[entries]]
+name = "std::is_class_v"
+keys = ["is_class", "is_enum", "is_union", "is_function", "is_arithmetic", "kind", "trait"]
+doc = "Kind traits: is_class_v, is_enum_v, is_scoped_enum_v, is_union_v, is_function_v, is_arithmetic_v, is_floating_point_v."
+snippet = """
+std::${1:is_class_v}<${2:T}>$0"""
+
+[[entries]]
+name = "std::is_constructible_v"
+keys = ["is_constructible", "is_default_constructible", "is_copy_constructible", "is_move_constructible", "constructor", "trait"]
+doc = "Constructibility traits, also is_default_constructible_v, is_copy_constructible_v, is_move_constructible_v, is_assignable_v."
+snippet = """
+std::${1:is_constructible_v}<${2:T}${3:, Args...}>$0"""
+
+[[entries]]
+name = "std::is_nothrow_move_constructible_v"
+keys = ["is_nothrow", "nothrow", "noexcept", "move", "trait", "exception"]
+doc = "Nothrow traits used for conditional noexcept: is_nothrow_move_constructible_v, is_nothrow_copy_constructible_v, is_nothrow_invocable_v."
+snippet = """
+std::${1:is_nothrow_move_constructible_v}<${2:T}>$0"""
+
+[[entries]]
+name = "std::is_trivially_copyable_v"
+keys = ["is_trivially_copyable", "is_standard_layout", "trivial", "pod", "memcpy", "trait"]
+doc = "Layout traits: is_trivially_copyable_v, is_standard_layout_v, is_trivial_v, is_empty_v, is_aggregate_v."
+snippet = """
+std::${1:is_trivially_copyable_v}<${2:T}>$0"""
+
+[[entries]]
+name = "std::remove_reference_t"
+keys = ["remove_reference", "remove_cv", "remove_const", "remove_extent", "strip", "trait"]
+doc = "Strip one qualifier: remove_reference_t, remove_cv_t, remove_const_t, remove_volatile_t, remove_extent_t."
+snippet = """
+std::${1:remove_reference_t}<${2:T}>$0"""
+
+[[entries]]
+name = "std::add_pointer_t"
+keys = ["add_pointer", "add_lvalue_reference", "add_rvalue_reference", "add_volatile", "trait", "wrap"]
+doc = "Add a qualifier: add_pointer_t, add_lvalue_reference_t, add_rvalue_reference_t, add_volatile_t."
+snippet = """
+std::${1:add_pointer_t}<${2:T}>$0"""
+
+[[entries]]
+name = "std::make_unsigned_t"
+keys = ["make_unsigned", "unsigned", "signed", "trait", "integer", "counterpart"]
+doc = "Unsigned counterpart of an integer type."
+snippet = """
+std::make_unsigned_t<${1:T}>$0"""
+
+[[entries]]
+name = "std::declval"
+keys = ["declval", "decltype", "fake", "instance", "unevaluated", "expression"]
+doc = "Pretend to have a value of T inside decltype without constructing it."
+snippet = """
+decltype(std::declval<${1:T}>().${2:method}())$0"""
+
+[[entries]]
+name = "std::integral_constant"
+keys = ["integral_constant", "tag", "dispatch", "constant", "value", "compile-time"]
+doc = "Tag type that wraps a compile-time value."
+snippet = """
+std::integral_constant<${1:int}, ${2:N}>$0"""
+
+[[entries]]
+name = "std::true_type / false_type"
+keys = ["true_type", "false_type", "bool_constant", "tag", "trait", "base"]
+doc = "Boolean tag types traits inherit from, also std::bool_constant<B>."
+snippet = """
+std::${1:true_type}$0"""
+
+[[entries]]
+name = "std::conjunction_v"
+keys = ["conjunction", "disjunction", "negation", "and", "or", "not", "traits"]
+doc = "Combine traits lazily: conjunction_v, disjunction_v, negation_v."
+snippet = """
+std::${1:conjunction_v}<${2:std::is_integral<T>}, ${3:std::is_signed<T>}>$0"""
+
+[[entries]]
+name = "std::tuple_size_v"
+keys = ["tuple_size", "tuple_element", "tuple", "size", "element", "trait"]
+doc = "Number of elements or the type at an index of a tuple-like type."
+snippet = """
+std::${1:tuple_size_v}<${2:Tuple}>$0"""
+
+[[entries]]
+name = "std::index_sequence"
+keys = ["index_sequence", "make_index_sequence", "index_sequence_for", "indices", "pack", "unpack"]
+doc = "Compile-time list of indices for expanding tuples and arrays."
+snippet = """
+std::make_index_sequence<${1:N}>{}$0"""
+
+[[entries]]
+name = "explicit template arguments"
+keys = ["call", "explicit", "template", "argument", "angle", "specify", "<>"]
+doc = "Call a function template with the type given instead of deduced."
+snippet = """
+${1:name}<${2:int}>(${3:args})$0"""
+
+[[entries]]
+name = "std::numeric_limits<T>"
+keys = ["numeric_limits", "max", "min", "digits", "epsilon", "template", "limits"]
+doc = "Limits of a template parameter type such as max(), min(), lowest(), epsilon()."
+snippet = """
+std::numeric_limits<${1:T}>::${2:max}()$0"""

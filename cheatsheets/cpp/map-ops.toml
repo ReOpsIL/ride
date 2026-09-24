@@ -1,83 +1,201 @@
-title = "Map and set operations"
+title = "Map operations"
 contexts = ["statement", "expression"]
 
 [[entries]]
+name = "map operator[]"
+keys = ["map", "[]", "index", "subscript", "insert", "default", "get", "set"]
+doc = "Access a value by key, inserting a default-constructed one when absent."
+snippet = '''
+${1:m}[${2:key}] = ${3:value};$0'''
+
+[[entries]]
+name = "map at"
+keys = ["map", "at", "get", "lookup", "throws", "out_of_range", "checked"]
+doc = "Value for a key, throwing std::out_of_range when it is missing."
+snippet = '''
+${1:m}.at(${2:key})$0'''
+
+[[entries]]
 name = "map find"
-keys = ["find", "map", "lookup", "contains"]
-doc = "Look up a key and test for presence."
-snippet = """
+keys = ["find", "map", "lookup", "contains", "search", "get", "exists"]
+doc = "Look up a key and test for presence in one if statement."
+snippet = '''
 if (auto ${1:it} = ${2:m}.find(${3:key}); ${1:it} != ${2:m}.end()) {
     $0
-}"""
+}'''
+
+[[entries]]
+name = "map find and use value"
+keys = ["find", "map", "second", "value", "it->second", "lookup", "get"]
+doc = "Read the mapped value through the iterator returned by find."
+snippet = '''
+auto ${1:it} = ${2:m}.find(${3:key});
+if (${1:it} != ${2:m}.end()) {
+    ${4:auto &value = it->second;}
+    $0
+}'''
 
 [[entries]]
 name = "map contains"
-keys = ["contains", "map", "set", "has"]
+keys = ["contains", "map", "set", "has", "exists", "key", "member"]
 doc = "C++20 key presence test."
-snippet = """
-${1:m}.contains(${2:key})$0"""
+snippet = '''
+${1:m}.contains(${2:key})$0'''
 
 [[entries]]
 name = "map count"
-keys = ["count", "map", "set"]
+keys = ["count", "map", "set", "exists", "has", "multimap", "occurrences"]
 doc = "Number of elements with a key (0 or 1 for unique containers)."
-snippet = """
-${1:m}.count(${2:key})$0"""
+snippet = '''
+${1:m}.count(${2:key})$0'''
 
 [[entries]]
-name = "map insert_or_assign"
-keys = ["insert_or_assign", "map", "insert", "assign", "upsert"]
-doc = "Insert a key or overwrite its value."
-snippet = """
-${1:m}.insert_or_assign(${2:key}, ${3:value});$0"""
-
-[[entries]]
-name = "map try_emplace"
-keys = ["try_emplace", "map", "emplace", "insert"]
-doc = "Insert only when the key is absent, without constructing otherwise."
-snippet = """
-${1:m}.try_emplace(${2:key}, ${3:args});$0"""
+name = "map insert pair"
+keys = ["insert", "map", "pair", "add", "put", "braces", "make_pair"]
+doc = "Insert a key/value pair, leaving an existing key untouched."
+snippet = '''
+${1:m}.insert({${2:key}, ${3:value}});$0'''
 
 [[entries]]
 name = "map insert with result"
-keys = ["insert", "map", "set", "inserted", "pair"]
+keys = ["insert", "map", "set", "inserted", "pair", "result", "bool", "new"]
 doc = "Insert and learn whether the key was new."
-snippet = """
-auto [${1:it}, ${2:inserted}] = ${3:m}.insert({${4:key}, ${5:value}});$0"""
+snippet = '''
+auto [${1:it}, ${2:inserted}] = ${3:m}.insert({${4:key}, ${5:value}});$0'''
+
+[[entries]]
+name = "map emplace"
+keys = ["emplace", "map", "insert", "construct", "in place", "add"]
+doc = "Construct the key/value pair in place, skipping if the key exists."
+snippet = '''
+${1:m}.emplace(${2:key}, ${3:value});$0'''
+
+[[entries]]
+name = "map try_emplace"
+keys = ["try_emplace", "map", "emplace", "insert", "absent", "default"]
+doc = "Insert only when the key is absent, without constructing the value otherwise."
+snippet = '''
+${1:m}.try_emplace(${2:key}, ${3:args});$0'''
+
+[[entries]]
+name = "map insert_or_assign"
+keys = ["insert_or_assign", "map", "insert", "assign", "upsert", "overwrite", "update"]
+doc = "Insert a key or overwrite its value."
+snippet = '''
+${1:m}.insert_or_assign(${2:key}, ${3:value});$0'''
 
 [[entries]]
 name = "map erase key"
-keys = ["erase", "map", "set", "key", "remove"]
-doc = "Erase by key and get the count removed."
-snippet = """
-${1:m}.erase(${2:key});$0"""
+keys = ["erase", "map", "set", "key", "remove", "delete"]
+doc = "Erase by key and get the count removed (0 or 1)."
+snippet = '''
+${1:m}.erase(${2:key});$0'''
+
+[[entries]]
+name = "map erase iterator"
+keys = ["erase", "map", "set", "iterator", "remove", "delete", "find"]
+doc = "Erase the element an iterator points to, e.g. after find."
+snippet = '''
+${1:m}.erase(${2:it});$0'''
+
+[[entries]]
+name = "map erase while iterating"
+keys = ["erase", "map", "loop", "iterator", "while", "remove", "filter", "delete"]
+doc = "Erase entries during a loop using the iterator erase returns."
+snippet = '''
+for (auto ${1:it} = ${2:m}.begin(); ${1:it} != ${2:m}.end();) {
+    if (${3:cond}) {
+        ${1:it} = ${2:m}.erase(${1:it});
+    } else {
+        ++${1:it};
+    }
+}$0'''
+
+[[entries]]
+name = "map erase_if"
+keys = ["erase_if", "map", "set", "remove", "filter", "predicate", "delete"]
+doc = "C++20 remove every entry matching a predicate on the pair."
+snippet = '''
+std::erase_if(${1:m}, [](${2:const auto &kv}) { return ${3:kv.second == 0}; });$0'''
 
 [[entries]]
 name = "map extract"
-keys = ["extract", "map", "node", "move"]
+keys = ["extract", "map", "node", "move", "rekey", "rename", "key"]
 doc = "Move a node out of a map to rekey or transfer it."
-snippet = """
-auto ${1:node} = ${2:m}.extract(${3:key});$0"""
+snippet = '''
+auto ${1:node} = ${2:m}.extract(${3:key});
+${1:node}.key() = ${4:new_key};
+${2:m}.insert(std::move(${1:node}));$0'''
+
+[[entries]]
+name = "map merge"
+keys = ["merge", "map", "set", "combine", "union", "nodes"]
+doc = "Move entries from another map, keeping existing keys."
+snippet = '''
+${1:m}.merge(${2:other});$0'''
+
+[[entries]]
+name = "map lower_bound"
+keys = ["lower_bound", "map", "set", "first", "not less", "sorted", "floor", "ceil"]
+doc = "First entry whose key is not less than the given key."
+snippet = '''
+auto ${1:it} = ${2:m}.lower_bound(${3:key});$0'''
+
+[[entries]]
+name = "map upper_bound"
+keys = ["upper_bound", "map", "set", "first", "greater", "sorted", "next"]
+doc = "First entry whose key is greater than the given key."
+snippet = '''
+auto ${1:it} = ${2:m}.upper_bound(${3:key});$0'''
 
 [[entries]]
 name = "equal_range"
-keys = ["equal_range", "multimap", "range"]
+keys = ["equal_range", "multimap", "multiset", "range", "all", "key", "duplicates"]
 doc = "Iterator range of all elements with a key."
-snippet = """
-auto [${1:first}, ${2:last}] = ${3:m}.equal_range(${4:key});$0"""
+snippet = '''
+auto [${1:first}, ${2:last}] = ${3:m}.equal_range(${4:key});
+for (auto ${5:it} = ${1:first}; ${5:it} != ${2:last}; ++${5:it}) {
+    $0
+}'''
 
 [[entries]]
-name = "stack top / pop"
-keys = ["top", "pop", "stack", "push"]
-doc = "Read and remove the top of a stack."
-snippet = """
-auto ${1:x} = ${2:st}.top();
-${2:st}.pop();$0"""
+name = "map iterate structured binding"
+keys = ["map", "loop", "iterate", "for", "key", "value", "binding", "pairs"]
+doc = "Loop over key/value pairs with structured bindings."
+snippet = '''
+for (const auto &[${1:key}, ${2:value}] : ${3:m}) {
+    $0
+}'''
 
 [[entries]]
-name = "queue front / pop"
-keys = ["front", "pop", "queue", "push"]
-doc = "Read and remove the front of a queue."
-snippet = """
-auto ${1:x} = ${2:q}.front();
-${2:q}.pop();$0"""
+name = "map iterate first / second"
+keys = ["map", "loop", "iterate", "first", "second", "pair", "kv"]
+doc = "Loop over entries reading .first and .second."
+snippet = '''
+for (const auto &${1:kv} : ${2:m}) {
+    ${3:std::cout << kv.first << ": " << kv.second << '\n';}
+    $0
+}'''
+
+[[entries]]
+name = "map modify values in loop"
+keys = ["map", "loop", "modify", "update", "value", "reference", "mutate"]
+doc = "Update every mapped value in place by binding it by reference."
+snippet = '''
+for (auto &[${1:key}, ${2:value}] : ${3:m}) {
+    ${2:value} = $0;
+}'''
+
+[[entries]]
+name = "map first / last entry"
+keys = ["map", "begin", "rbegin", "first", "last", "min", "max", "smallest", "largest"]
+doc = "Smallest key via begin() and largest via rbegin() of an ordered map."
+snippet = '''
+auto &[${1:key}, ${2:value}] = *${3:m}.${4:rbegin}();$0'''
+
+[[entries]]
+name = "map size / empty / clear"
+keys = ["size", "empty", "clear", "map", "set", "count", "reset"]
+doc = "Element count, emptiness test or removal of everything."
+snippet = '''
+${1:m}.${2:size}()$0'''

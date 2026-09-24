@@ -1,0 +1,158 @@
+title = "Chars and bytes"
+contexts = ["statement", "expression"]
+
+[[entries]]
+name = "chars"
+keys = ["chars", "characters", "iterate", "string", "each", "letters"]
+doc = "Iterate over the Unicode scalar values of a string."
+snippet = '''
+${1:text}.chars()$0'''
+
+[[entries]]
+name = "for over chars"
+keys = ["for", "chars", "loop", "each", "character", "string", "iterate"]
+doc = "Loop over every char of a string."
+snippet = '''
+for ${1:c} in ${2:text}.chars() {
+    $0
+}'''
+
+[[entries]]
+name = "bytes / as_bytes"
+keys = ["bytes", "as_bytes", "u8", "ascii", "string", "raw", "binary"]
+doc = "View a string as its UTF-8 bytes."
+snippet = '''
+${1:text}.as_bytes()$0'''
+
+[[entries]]
+name = "byte at index"
+keys = ["byte", "index", "ascii", "u8", "at", "position", "char"]
+doc = "Read the byte at an index, correct for ASCII text."
+snippet = '''
+${1:text}.as_bytes()[${2:i}]$0'''
+
+[[entries]]
+name = "into_bytes"
+keys = ["into", "bytes", "vec", "u8", "string", "owned", "convert"]
+doc = "Consume a String into its Vec<u8> of UTF-8 bytes."
+snippet = '''
+${1:s}.into_bytes()$0'''
+
+[[entries]]
+name = "char_indices"
+keys = ["char", "indices", "index", "offset", "chars", "position", "enumerate"]
+doc = "Iterate over chars together with their byte offsets."
+snippet = '''
+${1:text}.char_indices()$0'''
+
+[[entries]]
+name = "char methods"
+keys = ["char", "is_alphabetic", "is_numeric", "is_whitespace", "ascii", "classify", "digit", "letter"]
+doc = "Classify a char as letter, digit, whitespace, punctuation or ASCII."
+snippet = '''
+${1:c}.${2:is_alphabetic}()$0'''
+
+[[entries]]
+name = "is_ascii_digit / is_ascii_alphabetic"
+keys = ["char", "ascii", "digit", "alphabetic", "alphanumeric", "punctuation", "classify"]
+doc = "Classify a char within ASCII only, cheaper than the Unicode checks."
+snippet = '''
+${1:c}.${2:is_ascii_digit}()$0'''
+
+[[entries]]
+name = "char to_digit / from_digit"
+keys = ["char", "digit", "to_digit", "from_digit", "number", "convert", "radix"]
+doc = "Convert between a digit char and its numeric value in a radix."
+snippet = '''
+${1:c}.to_digit(${2:10})$0'''
+
+[[entries]]
+name = "to_ascii_uppercase / lowercase"
+keys = ["char", "upper", "lower", "case", "ascii", "convert", "letter"]
+doc = "Change the case of a single ASCII char, keeping other chars unchanged."
+snippet = '''
+${1:c}.${2:to_ascii_uppercase}()$0'''
+
+[[entries]]
+name = "char to_uppercase"
+keys = ["char", "upper", "lower", "case", "unicode", "iterator", "collect"]
+doc = "Upper- or lower-case a char, giving an iterator because it may expand."
+snippet = '''
+${1:c}.to_uppercase().collect::<String>()$0'''
+
+[[entries]]
+name = "u8 as char"
+keys = ["u8", "char", "cast", "ascii", "byte", "convert", "as"]
+doc = "Turn a byte into a char, valid for any u8 as Latin-1."
+snippet = '''
+${1:byte} as char$0'''
+
+[[entries]]
+name = "char as u32 / u8"
+keys = ["char", "u32", "u8", "cast", "code", "point", "ascii", "as"]
+doc = "Turn a char into its code point, or into a byte for ASCII chars."
+snippet = '''
+${1:c} as ${2:u32}$0'''
+
+[[entries]]
+name = "char::from_u32"
+keys = ["char", "from", "u32", "code", "point", "unicode", "option"]
+doc = "Build a char from a code point, giving None for an invalid one."
+snippet = '''
+char::from_u32(${1:code})$0'''
+
+[[entries]]
+name = "char arithmetic"
+keys = ["char", "arithmetic", "offset", "letter", "shift", "caesar", "u8", "add"]
+doc = "Shift an ASCII letter by computing on its byte value."
+snippet = '''
+(b'a' + (${1:c} as u8 - b'a' + ${2:shift}) % 26) as char$0'''
+
+[[entries]]
+name = "char to String"
+keys = ["char", "string", "to_string", "convert", "single", "from"]
+doc = "Turn a char into a one-char String."
+snippet = '''
+${1:c}.to_string()$0'''
+
+[[entries]]
+name = "chars filter"
+keys = ["chars", "filter", "remove", "keep", "digits", "letters", "clean", "collect"]
+doc = "Keep only chars matching a predicate and rebuild a string."
+snippet = '''
+${1:text}.chars().filter(|${2:c}| ${3:c.is_ascii_digit()}).collect::<String>()$0'''
+
+[[entries]]
+name = "chars all / any"
+keys = ["chars", "all", "any", "check", "numeric", "digits", "validate"]
+doc = "Test whether every char, or any char, matches a predicate."
+snippet = '''
+${1:text}.chars().${2:all}(|${3:c}| ${4:c.is_ascii_digit()})$0'''
+
+[[entries]]
+name = "str::from_utf8"
+keys = ["str", "from_utf8", "bytes", "borrow", "decode", "utf8", "slice"]
+doc = "Borrow a byte slice as a str after validating it as UTF-8."
+snippet = '''
+std::str::from_utf8(${1:bytes})?$0'''
+
+[[entries]]
+name = "escape_debug"
+keys = ["escape", "debug", "default", "unicode", "string", "quote", "printable"]
+doc = "Escape control and non-printable chars for display."
+snippet = '''
+${1:text}.escape_debug().to_string()$0'''
+
+[[entries]]
+name = "is_ascii"
+keys = ["ascii", "is", "check", "string", "only", "validate"]
+doc = "Test whether a string or char is entirely ASCII."
+snippet = '''
+${1:text}.is_ascii()$0'''
+
+[[entries]]
+name = "String from utf8"
+keys = ["string", "utf8", "from_utf8", "bytes", "decode", "lossy", "convert"]
+doc = "Build a String from bytes, validating or replacing invalid UTF-8."
+snippet = '''
+String::from_utf8${1:_lossy}(${2:bytes})$0'''

@@ -1,0 +1,191 @@
+title = "Error types and main"
+contexts = ["item", "body"]
+
+[[entries]]
+name = "main returning Result"
+keys = ["main", "result", "question", "error", "box", "dyn", "return", "exit"]
+doc = "Let main use ? by returning a Result, which prints the error and exits with 1."
+snippet = '''
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "main with run and exit"
+keys = ["main", "run", "exit", "eprintln", "error", "code", "process", "cli"]
+doc = "Keep main small and report the error of a run function with an exit code."
+snippet = '''
+fn main() {
+    if let Err(e) = ${1:run}() {
+        eprintln!("error: {e}");
+        std::process::exit(1);
+    }
+}
+
+fn ${1:run}() -> Result<(), Box<dyn std::error::Error>> {
+    $0
+    Ok(())
+}'''
+
+[[entries]]
+name = "fn returning Box<dyn Error>"
+keys = ["fn", "box", "dyn", "error", "result", "any", "return", "anyhow"]
+doc = "Return any error type through a boxed trait object, the std form of anyhow."
+snippet = '''
+fn ${1:name}(${2:}) -> Result<${3:()}, Box<dyn std::error::Error>> {
+    $0
+}'''
+
+[[entries]]
+name = "Result alias"
+keys = ["type", "alias", "result", "error", "shorthand", "crate", "custom"]
+doc = "Define a crate-wide Result alias with a fixed error type."
+snippet = '''
+pub type Result<T> = std::result::Result<T, ${1:Error}>;$0'''
+
+[[entries]]
+name = "custom error enum"
+keys = ["enum", "error", "custom", "display", "thiserror", "variants", "define"]
+doc = "Define an error enum with Display and Error impls."
+snippet = '''
+#[derive(Debug)]
+pub enum ${1:Error} {
+    ${2:Io}(std::io::Error),
+    ${3:Parse}(String),
+}
+
+impl std::fmt::Display for ${1:Error} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::${2:Io}(e) => write!(f, "io error: {e}"),
+            Self::${3:Parse}(msg) => write!(f, "parse error: {msg}"),
+        }
+    }
+}
+
+impl std::error::Error for ${1:Error} {}$0'''
+
+[[entries]]
+name = "struct error with message"
+keys = ["struct", "error", "message", "simple", "custom", "display", "define"]
+doc = "Define a simple error struct carrying a message."
+snippet = '''
+#[derive(Debug, Clone)]
+pub struct ${1:Error} {
+    pub message: String,
+}
+
+impl std::fmt::Display for ${1:Error} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.message)
+    }
+}
+
+impl std::error::Error for ${1:Error} {}$0'''
+
+[[entries]]
+name = "unit error variant"
+keys = ["enum", "error", "unit", "variant", "kind", "simple", "no", "data"]
+doc = "Define an error enum of plain variants, the smallest useful error type."
+snippet = '''
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ${1:Error} {
+    ${2:NotFound},
+    ${3:Invalid},
+}$0'''
+
+[[entries]]
+name = "From for error conversion"
+keys = ["from", "error", "convert", "question", "impl", "wrap", "io"]
+doc = "Let the question-mark operator convert a source error into your error type."
+snippet = '''
+impl From<${1:std::io::Error}> for ${2:Error} {
+    fn from(e: ${1:std::io::Error}) -> Self {
+        Self::${3:Io}(e)
+    }
+}$0'''
+
+[[entries]]
+name = "From ParseIntError"
+keys = ["from", "parse", "int", "error", "convert", "question", "impl", "number"]
+doc = "Convert a number parsing error into your error type for ? on parse."
+snippet = '''
+impl From<std::num::ParseIntError> for ${1:Error} {
+    fn from(e: std::num::ParseIntError) -> Self {
+        Self::${2:Parse}(e.to_string())
+    }
+}$0'''
+
+[[entries]]
+name = "Error source"
+keys = ["error", "source", "cause", "chain", "impl", "underlying", "inner"]
+doc = "Expose the underlying error for error chain reporting."
+snippet = '''
+impl std::error::Error for ${1:Error} {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::${2:Io}(e) => Some(e),
+            _ => None,
+        }
+    }
+}$0'''
+
+[[entries]]
+name = "error with context field"
+keys = ["error", "context", "path", "field", "source", "struct", "wrap", "describe"]
+doc = "Wrap a source error together with the context it happened in."
+snippet = '''
+#[derive(Debug)]
+pub struct ${1:ReadError} {
+    pub path: std::path::PathBuf,
+    pub source: std::io::Error,
+}
+
+impl std::fmt::Display for ${1:ReadError} {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "cannot read {}", self.path.display())
+    }
+}
+
+impl std::error::Error for ${1:ReadError} {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(&self.source)
+    }
+}$0'''
+
+[[entries]]
+name = "fn returning custom error"
+keys = ["fn", "result", "custom", "error", "return", "signature", "function"]
+doc = "Declare a function that returns your own error type."
+snippet = '''
+fn ${1:name}(${2:}) -> Result<${3:()}, ${4:Error}> {
+    $0
+}'''
+
+[[entries]]
+name = "fn returning Option"
+keys = ["fn", "option", "return", "maybe", "none", "signature", "function"]
+doc = "Declare a function that may have no result."
+snippet = '''
+fn ${1:find}(${2:}) -> Option<${3:T}> {
+    $0
+}'''
+
+[[entries]]
+name = "test should_panic"
+keys = ["test", "panic", "should", "expect", "assert", "attribute"]
+doc = "Assert that a test panics, optionally with a message substring."
+snippet = '''
+#[test]
+#[should_panic(expected = "${1:message}")]
+fn ${2:panics}() {
+    $0
+}'''
+
+[[entries]]
+name = "use Error trait"
+keys = ["use", "error", "std", "import", "trait", "source", "box"]
+doc = "Import the Error trait so source and Box<dyn Error> are usable."
+snippet = '''
+use std::error::Error;$0'''
