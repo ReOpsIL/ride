@@ -10,6 +10,7 @@ struct RideApp: App {
 
     init() {
         CrashReporter.install()
+        ShellPath.prime()
         UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
         UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
         NSWindow.allowsAutomaticWindowTabbing = false

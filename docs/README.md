@@ -23,6 +23,7 @@
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
 | AI suggestions in the completion popup: providers, account login, context levels, request shape | `docs/product/ai-complete.md` |
+| Tool lookup: the login-shell PATH resolved once, used for finding `cargo` and friends and passed to every child process | `docs/product/tool-lookup.md` |
 | Next features after 1.2: 1.3 understand and change code, 1.4 completion that knows types, 1.5 debugging depth and assembly | `plan/roadmap/next-1.3.md` |
 | Release 1.0 public cards: release train, onboarding, crash reports, `ride` command, C/C++ live verification, editor leftovers, site and manuals, hygiene gates | `plan/roadmap/release-1.0.md` |
 | 1.3 close-out cards: data-safety fixes, engine prologue, refactorings, intentions, hierarchy, code vision, Safe Delete | `plan/roadmap/close-out-1.3.md` |

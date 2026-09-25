@@ -27,7 +27,9 @@ final class ProcessRunner {
         let task = Process()
         task.executableURL = executable
         task.arguments = Array(invocation.argv.dropFirst())
-        task.environment = ProcessInfo.processInfo.environment.merging(invocation.env) { _, new in new }
+        task.environment = ProcessInfo.processInfo.environment
+            .merging(["PATH": ShellPath.value]) { _, new in new }
+            .merging(invocation.env) { _, new in new }
         if let dir = invocation.workingDir {
             task.currentDirectoryURL = URL(fileURLWithPath: dir)
         }
@@ -112,26 +114,5 @@ final class ProcessRunner {
             self?.process = nil
             onFinish(status)
         }
-    }
-}
-
-enum ProcessLookup {
-    static func url(for tool: String, workingDir: String?) -> URL? {
-        if tool.contains("/") {
-            if tool.hasPrefix("/") {
-                return URL(fileURLWithPath: tool)
-            }
-            let base = workingDir ?? FileManager.default.currentDirectoryPath
-            return URL(fileURLWithPath: (base as NSString).appendingPathComponent(tool))
-        }
-        let path = ProcessInfo.processInfo.environment["PATH"] ?? "/usr/bin:/bin:/usr/local/bin"
-        let dirs = path.components(separatedBy: ":") + ["/usr/bin", "/bin", "/usr/local/bin", "/opt/homebrew/bin"]
-        for dir in dirs where !dir.isEmpty {
-            let candidate = (dir as NSString).appendingPathComponent(tool)
-            if FileManager.default.isExecutableFile(atPath: candidate) {
-                return URL(fileURLWithPath: candidate)
-            }
-        }
-        return nil
     }
 }

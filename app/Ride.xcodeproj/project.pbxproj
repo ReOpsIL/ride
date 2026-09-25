@@ -21,6 +21,11 @@
 		P40000000000000000000013 /* OpenURLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000003 /* OpenURLParser.swift */; };
 		P40000000000000000000014 /* AppState+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000004 /* AppState+Open.swift */; };
 		P40000000000000000000015 /* ProcessRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000005 /* ProcessRun.swift */; };
+		SH0000000000000000000002 /* ShellPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH0000000000000000000001 /* ShellPath.swift */; };
+		SH0000000000000000000003 /* ShellPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH0000000000000000000001 /* ShellPath.swift */; };
+		SH0000000000000000000005 /* ProcessLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH0000000000000000000004 /* ProcessLookup.swift */; };
+		SH0000000000000000000007 /* ShellPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH0000000000000000000006 /* ShellPathTests.swift */; };
+		SH0000000000000000000008 /* ProcessRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000005 /* ProcessRun.swift */; };
 		P40000000000000000000016 /* RideCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000006 /* RideCommand.swift */; };
 		P40000000000000000000017 /* RideCommandRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000007 /* RideCommandRow.swift */; };
 		P40000000000000000000018 /* SelfTestSteps+OpenURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = P40000000000000000000008 /* SelfTestSteps+OpenURL.swift */; };
@@ -644,6 +649,9 @@
 		P40000000000000000000003 /* OpenURLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenURLParser.swift"; sourceTree = "<group>"; };
 		P40000000000000000000004 /* AppState+Open.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Open.swift"; sourceTree = "<group>"; };
 		P40000000000000000000005 /* ProcessRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessRun.swift"; sourceTree = "<group>"; };
+		SH0000000000000000000001 /* ShellPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellPath.swift; sourceTree = "<group>"; };
+		SH0000000000000000000004 /* ProcessLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLookup.swift; sourceTree = "<group>"; };
+		SH0000000000000000000006 /* ShellPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellPathTests.swift; sourceTree = "<group>"; };
 		P40000000000000000000006 /* RideCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideCommand.swift"; sourceTree = "<group>"; };
 		P40000000000000000000007 /* RideCommandRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideCommandRow.swift"; sourceTree = "<group>"; };
 		P40000000000000000000008 /* SelfTestSteps+OpenURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+OpenURL.swift"; sourceTree = "<group>"; };
@@ -1316,6 +1324,7 @@
 				Q4000000000000000000000C /* RunOutputBufferTests.swift */,
 				Q60000000000000000000006 /* BuildParseTests.swift */,
 				RA0000000000000000000007 /* BuildSessionStateTests.swift */,
+				SH0000000000000000000006 /* ShellPathTests.swift */,
 				RB0000000000000000000005 /* SingleFileRunTests.swift */,
 				S20000000000000000000013 /* TerminalTabsTests.swift */,
 				T20000000000000000000090 /* TestTreeTests.swift */,
@@ -1498,6 +1507,7 @@
 				Q10000000000000000000003 /* RunConfig+Sanitizers.swift */,
 				Q10000000000000000000005 /* RunConfig+Engine.swift */,
 				Q20000000000000000000001 /* ProcessRunner.swift */,
+				SH0000000000000000000004 /* ProcessLookup.swift */,
 				Q20000000000000000000003 /* RunOutput.swift */,
 				Q20000000000000000000005 /* RunOutputPanel.swift */,
 				Q20000000000000000000007 /* RunOutputText.swift */,
@@ -1960,6 +1970,7 @@
 				EA0000000000000000000003 /* ToolInstaller.swift */,
 				EA0000000000000000000005 /* ToolsInstallView.swift */,
 				P40000000000000000000005 /* ProcessRun.swift */,
+				SH0000000000000000000001 /* ShellPath.swift */,
 				P40000000000000000000006 /* RideCommand.swift */,
 				P40000000000000000000007 /* RideCommandRow.swift */,
 				SU0000000000000000000006 /* CopyCommandButton.swift */,
@@ -2205,6 +2216,9 @@
 				RA0000000000000000000003 /* BuildSessionState.swift in Sources */,
 				RA0000000000000000000006 /* RunFinish.swift in Sources */,
 				RA0000000000000000000008 /* BuildSessionStateTests.swift in Sources */,
+				SH0000000000000000000003 /* ShellPath.swift in Sources */,
+				SH0000000000000000000007 /* ShellPathTests.swift in Sources */,
+				SH0000000000000000000008 /* ProcessRun.swift in Sources */,
 				RB0000000000000000000003 /* RunInvocation.swift in Sources */,
 				RB0000000000000000000004 /* SingleFileRun.swift in Sources */,
 				RB0000000000000000000006 /* SingleFileRunTests.swift in Sources */,
@@ -2297,6 +2311,8 @@
 				P40000000000000000000013 /* OpenURLParser.swift in Sources */,
 				P40000000000000000000014 /* AppState+Open.swift in Sources */,
 				P40000000000000000000015 /* ProcessRun.swift in Sources */,
+				SH0000000000000000000002 /* ShellPath.swift in Sources */,
+				SH0000000000000000000005 /* ProcessLookup.swift in Sources */,
 				P40000000000000000000016 /* RideCommand.swift in Sources */,
 				P40000000000000000000017 /* RideCommandRow.swift in Sources */,
 				P40000000000000000000018 /* SelfTestSteps+OpenURL.swift in Sources */,

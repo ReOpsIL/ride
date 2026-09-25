@@ -70,7 +70,7 @@ enum AnthropicLogin {
         process.executableURL = URL(fileURLWithPath: executable)
         process.arguments = arguments
         var environment = ProcessInfo.processInfo.environment
-        environment["PATH"] = ["/opt/homebrew/bin", "/usr/local/bin", environment["PATH"] ?? "/usr/bin:/bin"].joined(separator: ":")
+        environment["PATH"] = ShellPath.value
         process.environment = environment
         let pipe = Pipe()
         process.standardOutput = pipe
