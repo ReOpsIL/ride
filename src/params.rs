@@ -60,17 +60,41 @@ fn open_paren(signature: &str, name: &str) -> Option<usize> {
     while !name.is_empty()
         && let Some(pos) = signature[search..].find(name)
     {
-        let abs = search + pos;
-        let after = signature[abs + name.len()..]
-            .trim_start_matches('!')
-            .trim_start();
-        if after.starts_with('(') || after.starts_with('<') {
-            let paren = signature[abs..].find('(')?;
-            return Some(abs + paren);
+        let end = search + pos + name.len();
+        let rest = &signature[end..];
+        let after = rest.trim_start_matches('!').trim_start();
+        let at = end + rest.len() - after.len();
+        if after.starts_with('(') {
+            return Some(at);
         }
-        search = abs + name.len();
+        if after.starts_with('<') {
+            let past = past_generics(signature, at)?;
+            return signature[past..].find('(').map(|p| past + p);
+        }
+        search = end;
     }
     signature.find('(')
+}
+
+fn past_generics(signature: &str, open: usize) -> Option<usize> {
+    let bytes = signature.as_bytes();
+    let mut depth = 0i32;
+    let mut i = open;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'-' if bytes.get(i + 1) == Some(&b'>') => i += 1,
+            b'<' => depth += 1,
+            b'>' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(i + 1);
+                }
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+    None
 }
 
 fn push_range(signature: &str, start: usize, end: usize, out: &mut Vec<(usize, usize)>) {
@@ -115,6 +139,13 @@ mod tests {
         let params = parse("é(a: u8, b: u8)", "").unwrap();
         assert_eq!(params.open, 2);
         assert_eq!(names("é(a: u8, b: u8)", &params), ["a", "b"]);
+    }
+
+    #[test]
+    fn fn_trait_bounds_in_generics_are_skipped() {
+        let sig = "fn apply<F: Fn(i32) -> i32>(f: F, x: i32) -> i32";
+        let params = parse(sig, "apply").unwrap();
+        assert_eq!(names(sig, &params), ["f", "x"]);
     }
 
     #[test]

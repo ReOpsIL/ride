@@ -3,8 +3,9 @@ use tree_sitter::Node;
 use crate::ffi::{ItemKind, TextEdit};
 use crate::highlight::Member;
 use crate::highlight::symbol::node_text;
+use crate::text::indent_at;
 
-use super::scrutinee::{enclosing_indent, scrutinee_type};
+use super::scrutinee::scrutinee_type;
 
 pub struct MatchSite {
     pub type_name: String,
@@ -134,10 +135,10 @@ fn anchor(body: Node<'_>, arms: &[Node<'_>], text: &str) -> Option<(u32, String,
     let open = body.child(0)?;
     let close = body.child(body.child_count().checked_sub(1)?)?;
     let Some(last) = arms.last() else {
-        let indent = format!("{}    ", enclosing_indent(text, close.start_byte()));
+        let indent = format!("{}    ", indent_at(text, close.start_byte()));
         return Some((open.end_byte() as u32, String::new(), indent));
     };
-    let indent = enclosing_indent(text, arms.first()?.start_byte());
+    let indent = indent_at(text, arms.first()?.start_byte());
     let mut at = last.end_byte();
     while text
         .as_bytes()

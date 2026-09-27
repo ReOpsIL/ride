@@ -28,7 +28,7 @@ pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
         cq.mode = QueryMode::Items;
         cq.current_crate = None;
         cq.current_module = None;
-        let mut resp = query::search(snap.catalog.src(), &cq, &snap.catalog.overlay);
+        let mut resp = snap.catalog.search(&cq);
         merge::boost_catalog(&mut resp.hits, prefix, &snap.imports);
         truncated |= resp.truncated;
         pool.extend(resp.hits);

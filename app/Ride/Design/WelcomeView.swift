@@ -74,7 +74,7 @@ struct WelcomeView: View {
         Grid(alignment: .leading, horizontalSpacing: Tokens.Space.xl, verticalSpacing: Tokens.Space.xs) {
             ForEach(Self.hints, id: \.0) { hint in
                 GridRow {
-                    KeyCap(key: hint.0, size: 11)
+                    KeyCap(key: Shortcuts.keys(for: hint.0) ?? "", size: 11)
                     Text(hint.1)
                         .font(Tokens.ui(11))
                         .foregroundStyle(ts.ui.textTertiary)
@@ -83,13 +83,13 @@ struct WelcomeView: View {
         }
     }
 
-    private static let hints = [
-        ("⌘P", "Open quickly"),
-        ("⇧⌥⌘O", "Go to symbol in project"),
-        ("⇧⌘F", "Find in project"),
-        ("⌘B", "Build the selected target"),
-        ("F12", "Go to definition"),
-        ("⌘/", "All shortcuts"),
+    static let hints = [
+        ("Navigate › Open Quickly…", "Open quickly"),
+        ("Navigate › Go to Symbol in Project…", "Go to symbol in project"),
+        ("Edit › Find in Project…", "Find in project"),
+        ("Run › Build", "Build the selected target"),
+        ("Navigate › Go to Definition", "Go to definition"),
+        ("Help › Keyboard Shortcuts", "All shortcuts"),
     ]
 }
 

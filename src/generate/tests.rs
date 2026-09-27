@@ -119,3 +119,11 @@ fn getter_keeps_namespace_qualifier() {
         "{text}"
     );
 }
+
+#[test]
+fn plain_c_offers_no_cpp_members() {
+    let src = "struct Rect {\n    int width;\n};\n";
+    let (session, _) = BufferSession::open_lang(Lang::C, src.to_string(), None).unwrap();
+    let t = GenType::from_scope("Rect", &session.scope().types);
+    assert!(options(&t, Lang::C, src).is_empty());
+}

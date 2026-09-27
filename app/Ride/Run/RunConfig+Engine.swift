@@ -11,18 +11,3 @@ extension RunProjectKind {
         }
     }
 }
-
-extension RunConfig {
-    static func `default`(target: Target, model: ProjectModel) -> RunConfig {
-        let dir = target.workingDir.isEmpty ? model.root : target.workingDir
-        return RunConfig(target: target.name, workingDir: dir)
-    }
-
-    func flags(for kind: ProjectKind) -> (env: [String: String], args: [String]) {
-        flags(for: RunProjectKind(kind))
-    }
-
-    func requiresNightly(for kind: ProjectKind) -> Bool {
-        requiresNightly(for: RunProjectKind(kind))
-    }
-}

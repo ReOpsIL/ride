@@ -89,9 +89,50 @@ impl Reach {
     pub fn remember(&self, engine: &Engine) {
         if let Some(fresh) = self.fresh.get() {
             let _ = engine.write(|i| {
-                i.scopes
-                    .put(self.session, self.scope.clone(), fresh.clone())
+                if i.sessions.contains_key(&self.session) {
+                    i.scopes
+                        .put(self.session, self.scope.clone(), fresh.clone());
+                }
             });
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::ffi::EngineConfig;
+
+    use super::*;
+
+    #[test]
+    fn remember_after_close_does_not_resurrect_the_scope_entry() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let engine = crate::engine::engine_start(EngineConfig {
+            index_dir: dir.path().display().to_string(),
+            cargo_home: None,
+            sysroot: None,
+            offline_metadata: true,
+            refs_dir: None,
+            report_dir: None,
+        });
+        let text = "#include \"a.h\"\nint main(void) { return 0; }\n";
+        let open = engine
+            .open_session("b".into(), Some("/tmp/x.c".into()), text.into(), None)
+            .expect("open");
+        let reach = engine
+            .read(|i| {
+                let session = i.sessions.get(&open.session_id)?;
+                Some(Reach::take(i, open.session_id, session))
+            })
+            .ok()
+            .flatten()
+            .expect("reach");
+        reach.headers();
+        engine.close_session(open.session_id);
+        reach.remember(&engine);
+        let leaked = engine
+            .read(|i| i.scopes.entries.contains_key(&open.session_id))
+            .unwrap_or(true);
+        assert!(!leaked);
     }
 }

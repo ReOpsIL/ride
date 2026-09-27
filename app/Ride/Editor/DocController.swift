@@ -1,11 +1,9 @@
 import AppKit
 
 final class DocController {
+    static let noExternalNotice = "No external documentation for this symbol"
     let panel = DocPanel()
-    private(set) var pinned = false
-    private var generation: UInt64 = 0
-    private weak var view: RideTextView?
-    private var openedAt: NSRange?
+    private lazy var popup = CaretPopup(panel: panel)
 
     init() {
         panel.onPin = { [weak self] in
@@ -60,7 +58,7 @@ final class DocController {
         guard let binding = view.hooks.binding?() else {
             return
         }
-        openedAt = IdentifierRange.at(view.string as NSString, index: utf16)
+        popup.anchor(at: utf16, in: view)
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: utf16))
         fetch(document: binding.document, view: view, byte: byte)
     }
@@ -69,9 +67,9 @@ final class DocController {
         guard let binding = view.hooks.binding?() else {
             return
         }
-        openedAt = IdentifierRange.at(view.string as NSString, index: view.selectedRange().location)
+        popup.anchor(at: view.selectedRange().location, in: view)
         let byte = hit.nameByte ?? hit.byteStart
-        if let path = hit.sourcePath, let byte, !Self.same(path, binding.document.fileURL?.path) {
+        if let path = hit.sourcePath, let byte, !CaretPopup.samePath(path, binding.document.fileURL?.path) {
             fetch(path: path, byte: byte, view: view)
             return
         }
@@ -83,56 +81,36 @@ final class DocController {
         guard let binding = view.hooks.binding?() else {
             return
         }
+        let state = binding.state
         Definitions.lookup(document: binding.document, view: view, utf16: view.selectedRange().location) { resp in
             guard let hit = resp.hits.first,
                   let url = DocExternal.url(name: hit.name, crate: hit.crateName, path: hit.path)
             else {
+                state.showNotice(Self.noExternalNotice)
                 return
             }
             NSWorkspace.shared.open(url)
         }
     }
 
-    func pin() {
-        pinned = true
-        panel.setPinned(true)
-    }
-
     func caretMoved() {
-        guard isVisible, !pinned, let view else {
-            return
-        }
-        let caret = view.selectedRange()
-        if let openedAt, caret.length == 0, NSLocationInRange(caret.location, openedAt) {
-            return
-        }
-        if let openedAt, let current = IdentifierRange.at(view.string as NSString, index: caret.location), current == openedAt {
-            return
-        }
-        hide()
+        popup.caretMoved()
     }
 
     func hideIfUnpinned() {
-        if !pinned {
-            hide()
-        }
+        popup.hideIfUnpinned()
     }
 
     func hide() {
-        generation += 1
-        pinned = false
-        view = nil
-        openedAt = nil
-        panel.hide()
+        popup.hide()
     }
 
     func togglePin() {
-        pinned.toggle()
-        panel.setPinned(pinned)
+        popup.togglePin()
     }
 
     func open(target: String) {
-        guard let view, let binding = view.hooks.binding?() else {
+        guard let view = popup.view, let binding = view.hooks.binding?() else {
             return
         }
         let leaf = target.split(separator: ":").filter { !$0.isEmpty }.last.map(String.init) ?? target
@@ -147,10 +125,9 @@ final class DocController {
     }
 
     private func fetch(document: BufferDocument, view: RideTextView, byte: UInt32) {
-        generation += 1
-        let expected = generation
+        let expected = popup.begin()
         SessionService.shared.quickDoc(document: document, cursorByte: byte) { [weak self, weak view] doc in
-            guard let self, let view, expected == self.generation, let doc else {
+            guard let self, let view, self.popup.accepts(expected), let doc else {
                 return
             }
             self.present(doc, in: view)
@@ -158,10 +135,9 @@ final class DocController {
     }
 
     private func fetch(path: String, byte: UInt32, view: RideTextView) {
-        generation += 1
-        let expected = generation
+        let expected = popup.begin()
         SessionService.shared.quickDoc(path: path, byte: byte) { [weak self, weak view] doc in
-            guard let self, let view, expected == self.generation, let doc else {
+            guard let self, let view, self.popup.accepts(expected), let doc else {
                 return
             }
             self.present(doc, in: view)
@@ -169,7 +145,7 @@ final class DocController {
     }
 
     private func present(_ doc: QuickDoc, in view: RideTextView) {
-        self.view = view
+        popup.present(in: view)
         HoverController.shared.hide()
         CompletionSession.shared.hide()
         EditorPanes.shared.host(for: view)?.peekStorage?.hide()
@@ -185,10 +161,4 @@ final class DocController {
         )
     }
 
-    private static func same(_ path: String, _ other: String?) -> Bool {
-        guard let other else {
-            return false
-        }
-        return URL(fileURLWithPath: path).standardizedFileURL == URL(fileURLWithPath: other).standardizedFileURL
-    }
 }

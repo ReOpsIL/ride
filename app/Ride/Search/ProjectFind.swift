@@ -28,8 +28,7 @@ enum ProjectFind {
         options: FindOptions = .defaults,
         cap: Int = cap
     ) -> ProjectFindResult {
-        let needle = query.trimmingCharacters(in: .whitespaces)
-        guard !needle.isEmpty else {
+        guard let needle = needle(query) else {
             return .empty
         }
         var matches: [ProjectFindMatch] = []
@@ -81,6 +80,10 @@ enum ProjectFind {
             return nil
         }
         return String(data: data, encoding: .utf8)
+    }
+
+    static func needle(_ query: String) -> String? {
+        query.trimmingCharacters(in: .whitespaces).isEmpty ? nil : query
     }
 
     static func preview(_ line: Substring) -> String {

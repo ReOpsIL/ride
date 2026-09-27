@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::discover::metadata::{CrateTarget, PackageTargets, workspace_targets};
+use crate::discover::metadata_targets::{CrateTarget, PackageTargets, workspace_targets};
 use crate::error::EngineError;
 use crate::ffi::{EngineConfig, Target, TargetKind};
 

@@ -7,7 +7,13 @@ use serde_json::{Value, json};
 fn fake() -> Transport {
     Transport::spawn(Path::new(env!("CARGO_BIN_EXE_fake-dap")), &[])
         .expect("spawn the fake adapter")
-        .with_timeout(Duration::from_secs(5))
+}
+
+fn next_event(transport: &Transport, timeout: Duration) -> Option<Value> {
+    transport
+        .poll_received(timeout)
+        .expect("event channel")
+        .map(|(_, event)| event)
 }
 
 #[test]
@@ -17,13 +23,10 @@ fn initialize_round_trips_and_emits_an_event() {
         .request("initialize", json!({ "adapterID": "fake" }))
         .expect("initialize response");
     assert_eq!(body["supportsConfigurationDoneRequest"], json!(true));
-    let event = transport
-        .poll_event(Duration::from_secs(5))
-        .expect("event channel")
-        .expect("output event");
+    let event = next_event(&transport, Duration::from_secs(5)).expect("output event");
     assert_eq!(event["event"], json!("output"));
     assert_eq!(event["body"]["category"], json!("console"));
-    assert!(transport.try_event().is_none());
+    assert!(next_event(&transport, Duration::ZERO).is_none());
 }
 
 #[test]
@@ -36,10 +39,7 @@ fn responses_correlate_across_several_requests() {
         .request("initialize", json!({ "adapterID": "fake" }))
         .expect("initialize response");
     assert_eq!(body["supportsConfigurationDoneRequest"], json!(true));
-    let first = transport
-        .poll_event(Duration::from_secs(5))
-        .expect("event channel")
-        .expect("output event");
+    let first = next_event(&transport, Duration::from_secs(5)).expect("output event");
     assert_eq!(first["event"], json!("output"));
 }
 

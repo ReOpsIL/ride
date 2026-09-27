@@ -8,13 +8,16 @@ use super::compile_db;
 use super::include_dirs;
 
 pub fn sources_including(header: &Path) -> Vec<PathBuf> {
+    sources_including_with(&HeaderCache::new(None), header)
+}
+
+pub fn sources_including_with(cache: &HeaderCache, header: &Path) -> Vec<PathBuf> {
     let Ok(header) = header.canonicalize() else {
         return Vec::new();
     };
-    let cache = HeaderCache::new(None);
     compile_db::sources_near(&header)
         .into_iter()
-        .filter(|src| reaches(&cache, src, &header))
+        .filter(|src| reaches(cache, src, &header))
         .collect()
 }
 

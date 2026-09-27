@@ -199,3 +199,16 @@ fn gtest_parameterised_failures_pair_with_their_run() {
     assert_eq!(named(&events, "Scales/0").status, TestStatus::Passed);
     assert_eq!(named(&events, "TrimsBlanks").status, TestStatus::Passed);
 }
+
+#[test]
+fn cargo_should_panic_mode_is_not_part_of_the_name() {
+    let text = "     Running unittests src/lib.rs (target/debug/deps/demo-1)\n\nrunning 2 tests\ntest tests::panics_loudly - should panic ... FAILED\ntest src/lib.rs - add (line 3) - compile fail ... ok\n\nfailures:\n\n---- tests::panics_loudly stdout ----\nnote: test did not panic as expected\n\nfailures:\n    tests::panics_loudly\n\ntest result: FAILED. 1 passed; 1 failed\n";
+    let events = engine().parse_test_output(TestFramework::Cargo, text.into());
+    let failed = named(&events, "panics_loudly");
+    assert_eq!(failed.suite.as_deref(), Some("tests"));
+    assert!(failed.output.contains("did not panic"), "{failed:?}");
+    assert!(
+        events.iter().any(|e| e.name.ends_with("add (line 3)")),
+        "{events:?}"
+    );
+}

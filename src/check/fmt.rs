@@ -3,7 +3,7 @@ use crate::highlight::Lang;
 use crate::toolchain::find_tool;
 
 use super::fmt_run::run;
-use super::fmt_rust;
+use super::fmt_rust::{self, RustSource};
 use super::make_fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,10 +64,14 @@ pub fn format_document(
         });
     };
     match formatter {
-        Formatter::Rustfmt => format_source(text, edition),
+        Formatter::Rustfmt => fmt_rust::format_source(&RustSource {
+            text,
+            file: path,
+            edition,
+        }),
         Formatter::ClangFormat => format_clang(text, path),
-        Formatter::CmakeFormat => format_cmake(text),
-        Formatter::Taplo => run("taplo", ["fmt", "-"], text),
+        Formatter::CmakeFormat => format_cmake(text, path),
+        Formatter::Taplo => run("taplo", ["fmt", "-"], text, path),
         Formatter::Builtin => Ok(make_fmt::format(text)),
     }
 }
@@ -85,13 +89,24 @@ pub fn format_range(
             let (from, to) = line_range(text, start_byte, end_byte);
             format_clang_lines(text, path, from, to)
         }
-        Some(Formatter::Rustfmt) => fmt_rust::format_range(text, edition, start_byte, end_byte),
+        Some(Formatter::Rustfmt) => {
+            let source = RustSource {
+                text,
+                file: path,
+                edition,
+            };
+            fmt_rust::format_range(&source, start_byte, end_byte)
+        }
         _ => format_document(lang, text, path, edition),
     }
 }
 
 pub fn format_source(text: &str, edition: Option<&str>) -> Result<String, EngineError> {
-    fmt_rust::format_source(text, edition)
+    fmt_rust::format_source(&RustSource {
+        text,
+        file: None,
+        edition,
+    })
 }
 
 pub fn format_clang(text: &str, assume_filename: Option<&str>) -> Result<String, EngineError> {
@@ -121,14 +136,14 @@ fn clang(
     if let Some(flag) = span.as_deref() {
         args.push(flag);
     }
-    run("clang-format", args, text)
+    run("clang-format", args, text, assume_filename)
 }
 
-fn format_cmake(text: &str) -> Result<String, EngineError> {
+fn format_cmake(text: &str, path: Option<&str>) -> Result<String, EngineError> {
     if find_tool("cmake-format").is_some() {
-        return run("cmake-format", ["-"], text);
+        return run("cmake-format", ["-"], text, path);
     }
-    run("gersemi", ["-"], text)
+    run("gersemi", ["-"], text, path)
 }
 
 pub fn selection_span(start: Option<u32>, end: Option<u32>) -> Option<(u32, u32)> {
@@ -140,8 +155,8 @@ pub fn selection_span(start: Option<u32>, end: Option<u32>) -> Option<(u32, u32)
 }
 
 fn line_range(text: &str, start_byte: u32, end_byte: u32) -> (u32, u32) {
-    let start = clamp_byte(text, start_byte);
-    let end = clamp_byte(text, end_byte).max(start);
+    let start = crate::text::floor_char_boundary(text, start_byte as usize);
+    let end = crate::text::floor_char_boundary(text, end_byte as usize).max(start);
     let last = if end > start { end - 1 } else { start };
     (line_at(text, start), line_at(text, last))
 }
@@ -152,12 +167,4 @@ fn line_at(text: &str, byte: usize) -> u32 {
         .filter(|b| **b == b'\n')
         .count() as u32;
     n + 1
-}
-
-fn clamp_byte(text: &str, byte: u32) -> usize {
-    let mut b = (byte as usize).min(text.len());
-    while b > 0 && !text.is_char_boundary(b) {
-        b -= 1;
-    }
-    b
 }

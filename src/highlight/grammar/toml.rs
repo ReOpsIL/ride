@@ -1,4 +1,4 @@
-use tree_sitter::{Language, Node};
+use tree_sitter::Language;
 
 use super::Grammar;
 use crate::highlight::editing::{EditingKinds, no_statement, toml_folds};
@@ -81,7 +81,8 @@ pub fn grammar() -> Grammar {
         declares: crate::highlight::locals::no_declares,
         local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["bare_key"],
-        qualifier: no_qualifier,
+        qualifier: super::none::no_qualifier,
+        postfix: super::none::no_postfix,
         outline: toml_outline::outline,
         member_ops: &[],
         member_kinds: &[],
@@ -99,8 +100,4 @@ pub fn grammar() -> Grammar {
             is_statement: no_statement,
         },
     }
-}
-
-fn no_qualifier(_: Node<'_>, _: &str) -> Option<String> {
-    None
 }

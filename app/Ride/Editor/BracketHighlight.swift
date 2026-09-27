@@ -30,11 +30,8 @@ enum BracketHighlight {
     }
 
     private static func query(document: BufferDocument, view: RideTextView) -> BracketPair? {
-        guard let id = document.sessionId, let engine = RideEngineClient.shared.engine else {
-            return nil
-        }
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
-        return engine.bracketPair(sessionId: id, byte: byte)
+        return SessionService.shared.readNow(document) { $0.bracketPair(sessionId: $1, byte: byte) } ?? nil
     }
 
     private static func strip() {

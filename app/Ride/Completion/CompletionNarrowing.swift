@@ -9,10 +9,6 @@ enum CompletionNarrowing {
         return items.filter { matches(name($0), lowercased: wanted) }
     }
 
-    static func matches(_ name: String, prefix: String) -> Bool {
-        matches(name, lowercased: prefix.lowercased())
-    }
-
     static func selection<T>(in items: [T], previous: String?, name: (T) -> String) -> Int {
         guard let previous, let index = items.firstIndex(where: { name($0) == previous }) else {
             return 0

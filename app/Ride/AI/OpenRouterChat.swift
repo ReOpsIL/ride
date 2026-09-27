@@ -5,7 +5,7 @@ enum OpenRouterChat {
     static let keyAccount = "openrouter"
 
     static func request(system: String, user: String, kind: AIRequestKind, config: AIConfig) -> Result<URLRequest, AIError> {
-        guard let key = Keychain.read(keyAccount) else {
+        guard let key = AICredentials.key(keyAccount) else {
             return .failure(.notConfigured("No OpenRouter API key saved. Open Preferences › AI"))
         }
         var request = URLRequest(url: endpoint)

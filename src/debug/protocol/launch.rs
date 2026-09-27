@@ -18,39 +18,6 @@ pub struct LaunchArguments {
     pub init_commands: Vec<String>,
 }
 
-impl LaunchArguments {
-    pub fn new(program: &str) -> Self {
-        Self {
-            program: program.to_string(),
-            ..Self::default()
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct AttachArguments {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub program: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub pid: Option<i64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wait_for: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub core_file: Option<String>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub init_commands: Vec<String>,
-}
-
-impl AttachArguments {
-    pub fn pid(pid: i64) -> Self {
-        Self {
-            pid: Some(pid),
-            ..Self::default()
-        }
-    }
-}
-
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DisconnectArguments {

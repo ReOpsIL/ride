@@ -11,22 +11,23 @@ extension AppState {
         }
         DebugFilters.shared.load()
         debugPanel.onFrame = { [weak self] path, line in
-            self?.showDebugFrame(path: path, line: line)
+            self?.showDebugLocation(path: path, line: line)
         }
         debugPanel.onWatchesChanged = { [weak self] in
             self?.scheduleWorkspaceSave()
+        }
+        debugPanel.onVisibilityChange = { [weak self] in
+            self?.syncMenu()
         }
     }
 
     func toggleDebugPanel() {
         debugPanel.visible.toggle()
-        syncMenu()
     }
 
     func showEvaluateSheet() {
         debugPanel.visible = true
         debugPanel.showEvaluate = true
-        syncMenu()
     }
 
     func toggleExceptionFilter(id: String) {
@@ -39,14 +40,5 @@ extension AppState {
             return
         }
         debugPanel.visible = true
-        syncMenu()
-    }
-
-    private func showDebugFrame(path: String, line: UInt32) {
-        let url = URL(fileURLWithPath: path).standardizedFileURL
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            return
-        }
-        openFile(url, at: .line(Int(line), mark: true), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 }

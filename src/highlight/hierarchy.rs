@@ -3,8 +3,8 @@ use super::types::TypeTable;
 pub fn supertypes(tables: &[&TypeTable], name: &str) -> Vec<String> {
     let mut out = Vec::new();
     for table in tables {
-        push_all(&mut out, name, table.bases_of(name));
-        push_all(&mut out, name, table.impls_of(name));
+        push_all(&mut out, name, table.relations().bases_of(name));
+        push_all(&mut out, name, table.relations().impls_of(name));
     }
     out
 }
@@ -12,8 +12,8 @@ pub fn supertypes(tables: &[&TypeTable], name: &str) -> Vec<String> {
 pub fn subtypes(tables: &[&TypeTable], name: &str) -> Vec<String> {
     let mut out = Vec::new();
     for table in tables {
-        push_all(&mut out, name, table.derived_of(name));
-        push_all(&mut out, name, table.implementors_of(name));
+        push_all(&mut out, name, table.relations().derived_of(name));
+        push_all(&mut out, name, table.relations().implementors_of(name));
     }
     out
 }

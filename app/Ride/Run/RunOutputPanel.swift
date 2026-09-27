@@ -9,7 +9,7 @@ struct RunOutputPanel: View {
         VStack(spacing: 0) {
             PanelHeader(icon: "play.rectangle", title: "Run", badges: badges) {
                 IconButton(symbol: "stop.fill", help: "Stop", tint: output.isRunning ? ts.ui.error : nil) {
-                    output.stop()
+                    state.stopRun()
                 }
                 .disabled(!output.isRunning)
                 IconButton(symbol: "arrow.clockwise", help: "Rerun") {

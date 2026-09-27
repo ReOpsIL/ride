@@ -44,44 +44,19 @@ extension AppState {
         syncMenu()
     }
 
-    func debugChanged() {
-        debugPanelChanged()
-        syncMenu()
-        refreshBreakpointGutters()
-        showStoppedLine()
+    func forgetBreakpoints(under url: URL) {
+        let root = url.standardizedFileURL.path
+        let affected = debug.breakpoints.paths.filter { $0 == root || $0.hasPrefix(root + "/") }
+        guard !affected.isEmpty else {
+            return
+        }
+        debug.breakpoints.removeAll(under: root)
+        affected.forEach(breakpointsChanged(path:))
     }
 
     func refreshBreakpointGutters() {
         for host in EditorPanes.shared.all {
             BreakpointMarkers.refresh(view: host.textView, gutter: host.gutter)
         }
-    }
-
-    func showStoppedLine() {
-        guard let path = debug.stoppedPath, debug.stoppedLine > 0 else {
-            HighlightApply.clearMarkedLine()
-            return
-        }
-        let url = URL(fileURLWithPath: path).standardizedFileURL
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            HighlightApply.clearMarkedLine()
-            return
-        }
-        openFile(url, at: .line(Int(debug.stoppedLine), mark: true), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
-    }
-
-}
-
-enum BreakpointMarkers {
-    static func refresh(view: RideTextView, gutter: GutterView) {
-        guard let path = view.hooks.binding?()?.document.fileURL?.standardizedFileURL.path else {
-            gutter.breakpointLines = [:]
-            return
-        }
-        var rows: [Int: Bool] = [:]
-        for mark in DebugController.shared.breakpoints.marks(path: path) {
-            rows[Int(mark.line)] = mark.verified
-        }
-        gutter.breakpointLines = rows
     }
 }

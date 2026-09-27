@@ -15,7 +15,7 @@ struct EmptyEditorView: View {
                     .foregroundStyle(ts.ui.textSecondary)
                 HStack(spacing: Tokens.Space.xs) {
                     Text("Select a file in the sidebar or press")
-                    KeyCap(key: "⌘P")
+                    KeyCap(key: Shortcuts.keys(for: "Navigate › Open Quickly…") ?? "")
                 }
                 .font(Tokens.ui(12))
                 .foregroundStyle(ts.ui.textTertiary)

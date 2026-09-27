@@ -1,11 +1,11 @@
 use std::path::Path;
 use std::process::ExitCode;
-use std::time::Instant;
 
 use ride_engine::{CompletionContext, CompletionQuery, EngineConfig, QueryMode, engine_start};
 
 use crate::cursor::{Cursor, place};
 use crate::out;
+use crate::timing::timed;
 
 pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> ExitCode {
     let placed = match place(file, &cursor) {
@@ -41,19 +41,7 @@ pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> Ex
         kind_filter: None,
         limit: 20,
     };
-    let mut resp = engine.query_completions(request(1));
-    let mut timings = Vec::new();
-    for i in 2..=repeat.max(1) {
-        let start = Instant::now();
-        resp = engine.query_completions(request(u64::from(i)));
-        timings.push(start.elapsed());
-    }
-    if !timings.is_empty() {
-        timings.sort();
-        let p50 = timings[timings.len() / 2];
-        let p95 = timings[(timings.len() * 95 / 100).min(timings.len() - 1)];
-        eprintln!("p50 {p50:?} p95 {p95:?} over {} runs", timings.len());
-    }
+    let resp = timed(repeat, |id| engine.query_completions(request(id)));
     out::print(&resp);
     ExitCode::SUCCESS
 }

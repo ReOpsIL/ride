@@ -82,7 +82,7 @@ struct TreeRow: View {
 
     private func select() {
         state.selectedURL = node.url
-        TreeKeyFocus.select(node.url)
+        TreeKeyFocus.focus()
     }
 
     private func activate() {
@@ -114,15 +114,11 @@ struct TreeRow: View {
             }
             Divider()
         }
-        Button("New File") {
-            if let url = TreeActions.newFile(in: dir, kind: state.projectModel.model?.kind) {
-                state.fileCreated(url)
-            }
-        }
-        Button("New Folder") { TreeActions.newFolder(in: dir) }
-        Button("Rename") { TreeActions.run(.rename, url: node.url) }
-        Button("Duplicate") { TreeActions.duplicate(node.url) }
-        Button("Delete") { TreeActions.run(.trash, url: node.url) }
+        Button("New File") { state.treeNewFile(in: dir) }
+        Button("New Folder") { state.treeNewFolder(in: dir) }
+        Button("Rename") { state.runTreeAction(.rename, url: node.url) }
+        Button("Duplicate") { state.treeDuplicate(node.url) }
+        Button("Delete") { state.runTreeAction(.trash, url: node.url) }
         Divider()
         Button("Copy Path") { TreeActions.copyPath(node.url, root: nil) }
         Button("Copy Relative Path") { TreeActions.copyPath(node.url, root: state.workspaceRoot) }

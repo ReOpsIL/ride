@@ -16,13 +16,7 @@ pub fn run(engine: &Engine, mut q: CompletionQuery) -> CompletionResponse {
     };
     let resp = match snap.site.clone() {
         Some(site) => with_site(&snap, q, &site),
-        None => query::run_query(
-            snap.catalog.src(),
-            q,
-            snap.lang,
-            Vec::new(),
-            &snap.catalog.overlay,
-        ),
+        None => snap.catalog.run_query(q, snap.lang),
     };
     snap.remember(engine);
     if !snapshot::is_latest(engine, session_id, query_id) {

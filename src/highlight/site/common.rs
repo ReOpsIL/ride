@@ -79,7 +79,7 @@ pub struct PositionWords {
 
 pub fn position(head: &str, words: &PositionWords) -> Position {
     let trimmed = head.trim_end();
-    if trimmed.is_empty() || trimmed.ends_with('\n') {
+    if trimmed.is_empty() {
         return Position::Value;
     }
     let tail = last_token(trimmed);

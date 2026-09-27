@@ -48,27 +48,13 @@ final class GitStatusService: ObservableObject {
     private static func git(root: URL, _ args: [String]) -> String? {
         let git = URL(fileURLWithPath: "/usr/bin/git")
         guard FileManager.default.isExecutableFile(atPath: git.path),
-              FileManager.default.fileExists(atPath: root.appendingPathComponent(".git").path)
+              FileManager.default.fileExists(atPath: root.appendingPathComponent(".git").path),
+              let result = ProcessRun.output(git, ["-C", root.path] + args, includeErrors: false),
+              result.succeeded
         else {
             return nil
         }
-        let proc = Process()
-        proc.executableURL = git
-        proc.arguments = ["-C", root.path] + args
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = FileHandle.nullDevice
-        do {
-            try proc.run()
-        } catch {
-            return nil
-        }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        proc.waitUntilExit()
-        guard proc.terminationStatus == 0 else {
-            return nil
-        }
-        return String(decoding: data, as: UTF8.self)
+        return result.text
     }
 }
 

@@ -37,10 +37,10 @@ struct SidebarView: View {
                 .foregroundStyle(ts.ui.textPrimary)
                 .lineLimit(1)
             Spacer(minLength: 0)
-            if let root = state.workspaceRoot {
+            if state.workspaceRoot != nil {
                 IconButton(symbol: "doc.badge.plus", help: "New File") {
-                    if let url = TreeActions.newFile(in: root, kind: state.projectModel.model?.kind) {
-                        state.fileCreated(url)
+                    if let directory = state.selectedDirectory {
+                        state.treeNewFile(in: directory)
                     }
                 }
                 IconButton(symbol: "arrow.down.right.and.arrow.up.left", help: "Collapse All") {

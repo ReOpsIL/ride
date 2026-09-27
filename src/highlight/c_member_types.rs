@@ -1,8 +1,6 @@
 use tree_sitter::Node;
 
-use crate::ffi::{ItemKind, OutlineItem};
-
-use super::c_names::{function_name, node_text, plain_name, type_name};
+use super::c_names::{function_name, plain_name, type_name};
 use super::types::TypeTable;
 
 const TYPED: &[&str] = &["field_declaration", "declaration", "function_definition"];
@@ -83,30 +81,4 @@ pub fn free_function(table: &mut TypeTable, node: Node<'_>, text: &str) {
             table.add_function(name, ty.clone());
         }
     }
-}
-
-pub fn enumerators(table: &mut TypeTable, node: Node<'_>, text: &str) {
-    let (Some(name), Some(body)) = (
-        node.child_by_field_name("name"),
-        node.child_by_field_name("body"),
-    ) else {
-        return;
-    };
-    let mut cursor = body.walk();
-    let items: Vec<OutlineItem> = body
-        .named_children(&mut cursor)
-        .filter(|c| c.kind() == "enumerator")
-        .filter_map(|c| c.child_by_field_name("name").map(|n| (c, n)))
-        .map(|(c, n)| {
-            let mut item = OutlineItem::new(
-                node_text(n, text),
-                ItemKind::Variant,
-                c.start_byte() as u32,
-                c.end_byte() as u32,
-            );
-            item.name_start_byte = n.start_byte() as u32;
-            item
-        })
-        .collect();
-    table.add_members(node_text(name, text), items);
 }

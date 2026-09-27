@@ -7,11 +7,8 @@ extension AppState {
         panel.directoryURL = buffer.fileURL?.deletingLastPathComponent() ?? workspaceRoot
         panel.nameFieldStringValue = buffer.fileURL?.lastPathComponent ?? buffer.displayName + "." + buffer.language.fileExtension
         let picker = SaveLanguagePicker(panel: panel, initial: buffer.language)
-        let response = withExtendedLifetime(picker) { panel.runModal() }
-        guard response == .OK, let url = panel.url else {
-            return nil
-        }
-        return url.standardizedFileURL
+        let url = withExtendedLifetime(picker) { ModalPanels.chooseURL(panel) }
+        return url?.standardizedFileURL
     }
 
     func rebind(_ buffer: BufferDocument, to url: URL) {
@@ -20,6 +17,7 @@ extension AppState {
         buffer.detectedLanguage = nil
         buffer.isReadOnly = false
         activeFileDidChange()
+        syncMenu()
         guard let host = EditorPanes.shared.host(bound: buffer) else {
             return
         }

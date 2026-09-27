@@ -4,7 +4,7 @@ use crate::error::EngineError;
 use crate::ffi::{RecompileCommand, SingleRun};
 use crate::highlight::Lang;
 use crate::run::db_flags;
-use crate::toolchain::find_tool;
+use crate::toolchain::{DEFAULT_EDITION, find_tool};
 
 enum Kind {
     C,
@@ -42,7 +42,7 @@ impl Kind {
         match self {
             Self::C => &[],
             Self::Cpp => &["-std=c++20"],
-            Self::Rust => &["--edition", "2021"],
+            Self::Rust => &["--edition", DEFAULT_EDITION],
         }
     }
 }

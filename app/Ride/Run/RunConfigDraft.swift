@@ -7,6 +7,7 @@ struct RunConfigEnvRow: Identifiable, Equatable {
 }
 
 struct RunConfigDraft {
+    var buildArgs = ""
     var args = ""
     var workingDir = ""
     var rustBacktrace = false
@@ -16,6 +17,7 @@ struct RunConfigDraft {
     init() {}
 
     init(_ config: RunConfig) {
+        buildArgs = RunArgs.join(config.buildArgs)
         args = RunArgs.join(config.args)
         workingDir = config.workingDir ?? ""
         rustBacktrace = config.rustBacktrace
@@ -30,6 +32,7 @@ struct RunConfigDraft {
         }
         return RunConfig(
             target: target,
+            buildArgs: RunArgs.split(buildArgs),
             args: RunArgs.split(args),
             env: pairs,
             workingDir: workingDir.isEmpty ? nil : workingDir,
@@ -40,6 +43,15 @@ struct RunConfigDraft {
 
     func requiresNightly(kind: RunProjectKind) -> Bool {
         config(target: "").requiresNightly(for: kind)
+    }
+
+    mutating func set(_ sanitizer: Sanitizer, on: Bool) {
+        guard on else {
+            sanitizers.remove(sanitizer)
+            return
+        }
+        sanitizers.subtract(sanitizer.conflicts)
+        sanitizers.insert(sanitizer)
     }
 }
 

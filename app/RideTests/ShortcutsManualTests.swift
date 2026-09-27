@@ -2,7 +2,7 @@ import XCTest
 
 final class ShortcutsManualTests: XCTestCase {
     func testCommittedManualMatchesEntries() throws {
-        let rendered = Self.markdown(Shortcuts.entries)
+        let rendered = Self.markdown(Shortcuts.groups)
         let url = Self.manualURL()
         if ProcessInfo.processInfo.environment["RIDE_WRITE_MANUALS"] != nil {
             try FileManager.default.createDirectory(
@@ -16,10 +16,18 @@ final class ShortcutsManualTests: XCTestCase {
         XCTAssertEqual(committed, rendered)
     }
 
-    static func markdown(_ entries: [ShortcutEntry]) -> String {
-        var lines = ["# Keyboard shortcuts", "", "| Command | Keys |", "|---|---|"]
-        for entry in entries {
-            lines.append("| \(entry.name) | \(entry.keys) |")
+    static func markdown(_ groups: [ShortcutGroup]) -> String {
+        var lines = [
+            "# Keyboard shortcuts",
+            "",
+            "Editor commands take their keys only while the editor has keyboard focus. In the terminal, text fields and the project tree the same keys reach that control.",
+        ]
+        for group in groups {
+            lines += ["", "## \(group.id)", "", "| Command | Keys | Scope | Notes |", "|---|---|---|---|"]
+            for entry in group.entries {
+                let scope = entry.bindings.allSatisfy { $0.scope == .editor } ? "editor" : "app"
+                lines.append("| \(entry.name) | \(entry.keys) | \(scope) | \(entry.note ?? "") |")
+            }
         }
         return lines.joined(separator: "\n") + "\n"
     }

@@ -4,8 +4,7 @@ Off by default. Preferences › AI turns it on, picks the provider and the amoun
 
 ## Providers
 
-- **Anthropic account** (default): the app signs requests with the OAuth token of the Anthropic CLI profile (`ant auth login`, stored under `~/.config/anthropic/`). No API key is stored by Ride. The AI tab shows the login state, starts `ant auth login` (browser sign-in) and tells the user to install the CLI (`brew install anthropics/tap/ant`) when it is missing. Tokens come from `ant auth print-credentials --access-token`, are cached for five minutes and dropped on a 401.
-- **Anthropic API key**: stored in the login keychain (service `dev.ride.Ride`, account `anthropic`).
+- **Anthropic** (default): API key in the login keychain (service `dev.ride.Ride`, account `anthropic`), sent as `x-api-key`. Ride does not offer Anthropic account login: Anthropic's terms direct third-party apps to API keys, and reusing the `ant` CLI's OAuth token is not a documented path.
 - **OpenRouter**: API key in the keychain (account `openrouter`), chat completions endpoint.
 
 The model is a picker of presets per provider plus "Custom…" for any model ID. The default is Claude Haiku 4.5 (`claude-haiku-4-5`, `anthropic/claude-haiku-4.5`): completion while typing needs a fast, cheap model, and Haiku answers the completion prompt in about 1.5 s against 4–5 s for Opus 5. OpenRouter also lists Codestral and Qwen3 Coder Flash as cheaper code models. An empty stored model means the default.

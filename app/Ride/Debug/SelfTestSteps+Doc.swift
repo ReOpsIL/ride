@@ -106,14 +106,14 @@ extension SelfTestSteps {
 
     static func docPin(e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "doc pin", wait: 0.4, run: {
-            EditorPanes.shared.focused?.docs.pin()
+            _ = SelfTestViews.click(in: EditorPanes.shared.focused?.docs.panel.panel.contentView) { $0.toolTip == "Pin" }
             placeCaret(e, on: "main")
         }, check: {
             docExpect(e, visible: true, contains: ["<h1>"])
         })
     }
 
-    private static func placeCaret(_ e: SelfTestEditor, on needle: String, atEnd: Bool = false) {
+    static func placeCaret(_ e: SelfTestEditor, on needle: String, atEnd: Bool = false) {
         guard let view = e.view else {
             return
         }

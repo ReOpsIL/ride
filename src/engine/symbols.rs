@@ -1,14 +1,14 @@
 use std::collections::HashSet;
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use crate::ffi::{CompletionHit, DefinitionResponse, ItemKind, OutlineItem, SymbolAt};
-use crate::highlight::{BufferSession, include_on_line};
-use crate::query::{IndexSrc, exact_search};
+use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem, SymbolAt};
+use crate::highlight::BufferSession;
 
+use super::catalog::Catalog;
 use super::def_rank::RankContext;
 use super::reach::Reach;
-use super::{Engine, Inner, def_rank, header_hits};
+use super::{Engine, Inner, def_rank, header_hits, include_def, local_defs, variant_hits};
 
 const LOCAL_SCORE: f32 = 2000.0;
 
@@ -24,74 +24,83 @@ impl Engine {
     }
 }
 
+struct Lookup {
+    symbol: SymbolAt,
+    local: Vec<CompletionHit>,
+    catalog: Option<Catalog>,
+    reach: Reach,
+    ctx: RankContext,
+}
+
 fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
-    if let Some(resp) = include_definition(engine, session_id, cursor_byte) {
+    if let Some(resp) = include_def::definition(engine, session_id, cursor_byte, LOCAL_SCORE) {
         return resp;
     }
-    let snap = engine.read(|i| {
-        let session = i.sessions.get(&session_id)?;
-        let symbol = session
-            .symbol_at(cursor_byte)
-            .or_else(|| outline_symbol(session.outline(), cursor_byte))?;
-        let local: Vec<CompletionHit> = session
-            .outline()
-            .iter()
-            .filter(|o| o.name == symbol.name)
-            .map(outline_hit)
-            .collect();
-        Some((
-            symbol,
-            local,
-            session.lang().has_catalog(),
-            Reach::take(i, session_id, session),
-            i.config.index_dir.clone(),
-            i.index.clone(),
-            i.reader.clone(),
-            base_context(i, session),
-        ))
-    });
-    let Ok(Some((symbol, mut hits, catalog, reach, index_dir, index, reader, mut ctx))) = snap
-    else {
-        return DefinitionResponse::empty();
-    };
-    if !catalog {
-        hits.extend(header_hits::definitions(reach.headers(), &symbol.name));
-        ctx.headers = reach.headers().iter().map(|h| h.path.clone()).collect();
-        reach.remember(engine);
-        rank(&mut hits, &ctx);
-        return DefinitionResponse {
-            symbol: Some(symbol),
-            hits,
-        };
+    match engine.read(|i| lookup(i, session_id, cursor_byte)) {
+        Ok(Some(found)) => resolve(engine, found),
+        _ => DefinitionResponse::empty(),
     }
-    let src = match (index.as_ref(), reader.as_ref()) {
-        (Some(index), Some(reader)) => IndexSrc::Live(index, reader),
-        _ => IndexSrc::Dir(Path::new(&index_dir)),
+}
+
+fn lookup(inner: &Inner, session_id: u64, cursor_byte: u32) -> Option<Lookup> {
+    let session = inner.sessions.get(&session_id)?;
+    let symbol = session
+        .symbol_at(cursor_byte)
+        .or_else(|| outline_symbol(session.outline(), cursor_byte))?;
+    let reach = Reach::take(inner, session_id, session);
+    let local = local_defs::hits(
+        session.outline(),
+        &reach.scope().types,
+        &symbol,
+        LOCAL_SCORE,
+    );
+    Some(Lookup {
+        symbol,
+        local,
+        catalog: session.lang().has_catalog().then(|| Catalog::of(inner)),
+        reach,
+        ctx: base_context(inner, session),
+    })
+}
+
+fn resolve(engine: &Engine, found: Lookup) -> DefinitionResponse {
+    let Lookup {
+        symbol,
+        local: mut hits,
+        catalog,
+        reach,
+        mut ctx,
+    } = found;
+    let headers = if catalog.is_some() {
+        &[][..]
+    } else {
+        reach.headers()
     };
-    hits.extend(exact_search(
-        src,
-        &symbol.name,
-        symbol.qualifier.as_deref(),
-        20,
-    ));
-    rank(&mut hits, &ctx);
+    let tables = header_hits::tables(&reach.scope().types, headers);
+    hits.extend(variant_hits::definitions(&tables, &symbol, LOCAL_SCORE));
+    match catalog {
+        Some(catalog) => hits.extend(catalog.exact(&symbol.name, symbol.qualifier.as_deref(), 20)),
+        None => {
+            hits.extend(header_hits::definitions(headers, &symbol.name));
+            ctx.headers = headers.iter().map(|h| h.path.clone()).collect();
+            reach.remember(engine);
+        }
+    }
+    hits.sort_by_key(|h| ctx.tier(h.source_path.as_deref(), &h.crate_name));
     DefinitionResponse {
         symbol: Some(symbol),
         hits,
     }
 }
 
-pub(crate) fn base_context(inner: &Inner, session: &BufferSession) -> RankContext {
+fn base_context(inner: &Inner, session: &BufferSession) -> RankContext {
     let mut crates = def_rank::imported_crates(session.replica());
     if let Some(workspace) = inner.workspace.as_ref() {
-        crates.extend(workspace.members.iter().cloned());
+        crates.extend(workspace.info.members.iter().cloned());
     }
     RankContext {
         session_path: session.path().map(Path::to_path_buf),
-        workspace_root: inner
-            .workspace
-            .as_ref()
-            .map(|w| PathBuf::from(w.root.clone())),
+        workspace: inner.workspace.as_ref().map(|w| w.tree.clone()),
         headers: HashSet::new(),
         crates,
     }
@@ -106,53 +115,6 @@ pub(crate) fn context(engine: &Engine, session_id: u64) -> RankContext {
         .ok()
         .flatten()
         .unwrap_or_default()
-}
-
-fn rank(hits: &mut [CompletionHit], ctx: &RankContext) {
-    hits.sort_by_key(|h| ctx.tier(h.source_path.as_deref(), &h.crate_name));
-}
-
-fn include_definition(
-    engine: &Engine,
-    session_id: u64,
-    cursor_byte: u32,
-) -> Option<DefinitionResponse> {
-    let (include, start, end, reach) = engine
-        .read(|i| {
-            let session = i.sessions.get(&session_id)?;
-            session.lang().clang_name()?;
-            let (include, start, end) = include_on_line(session.replica(), cursor_byte as usize)?;
-            Some((include, start, end, Reach::take(i, session_id, session)))
-        })
-        .ok()
-        .flatten()?;
-    let suffix = Path::new(&include.name);
-    let header = reach
-        .headers()
-        .iter()
-        .find(|h| h.path.ends_with(suffix))
-        .map(|h| h.path.display().to_string());
-    reach.remember(engine);
-    let mut hits = Vec::new();
-    if let Some(path) = header {
-        let mut hit =
-            CompletionHit::local(&include.name, ItemKind::Header, LOCAL_SCORE, Some((0, 0)));
-        hit.source_path = Some(path);
-        hits.push(hit);
-    }
-    Some(DefinitionResponse {
-        symbol: Some(SymbolAt {
-            name: include.name,
-            start_byte: start as u32,
-            end_byte: end as u32,
-            qualifier: None,
-        }),
-        hits,
-    })
-}
-
-fn outline_hit(item: &OutlineItem) -> CompletionHit {
-    CompletionHit::from_outline(item, LOCAL_SCORE, None)
 }
 
 fn outline_symbol(outline: &[OutlineItem], byte: u32) -> Option<SymbolAt> {

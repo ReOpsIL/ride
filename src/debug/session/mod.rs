@@ -17,7 +17,6 @@ use std::time::Duration;
 use crate::error::EngineError;
 use crate::ffi::{Breakpoint, DebugEvent, DebugLaunch, DebugListener, DebugState, DebugThread};
 
-use super::protocol::Capabilities;
 use super::registry::DebugRegistry;
 use super::transport::Transport;
 use progress::Progress;
@@ -31,7 +30,6 @@ pub struct DebugSession {
     launch: DebugLaunch,
     sysroot: Option<PathBuf>,
     state: Mutex<DebugState>,
-    capabilities: Mutex<Capabilities>,
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
     registration: Registration,
@@ -54,7 +52,6 @@ impl DebugSession {
             launch,
             sysroot,
             state: Mutex::new(DebugState::Launching),
-            capabilities: Mutex::new(Capabilities::default()),
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),
             registration: Registration::default(),
@@ -99,14 +96,6 @@ impl DebugSession {
             DebugState::Stopped { thread_id, .. } => Some(thread_id),
             _ => self.threads.lock().ok()?.first().map(|thread| thread.id),
         }
-    }
-
-    pub fn breakpoints(&self, path: &str) -> Vec<Breakpoint> {
-        self.breakpoints
-            .lock()
-            .ok()
-            .and_then(|store| store.get(path).cloned())
-            .unwrap_or_default()
     }
 
     pub(super) fn mark_processed(&self, stamp: u64) {

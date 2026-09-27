@@ -36,7 +36,12 @@ final class BufferDocument: ObservableObject, Identifiable {
     private(set) var visionInputs = 0
     var visionGeneration = 0
     var autoSaveWork: DispatchWorkItem?
+    var journal = EditJournal()
     lazy var undo = BufferUndo(document: self)
+
+    var textGeneration: Int {
+        journal.generation
+    }
 
     var undoManager: UndoManager {
         undo.manager
@@ -63,37 +68,6 @@ final class BufferDocument: ObservableObject, Identifiable {
         usesCRLF = loaded?.crlf ?? false
     }
 
-    static func load(_ url: URL) -> (text: String, crlf: Bool)? {
-        guard let data = try? Data(contentsOf: url) else {
-            return nil
-        }
-        let raw = String(decoding: data, as: UTF8.self)
-        let crlf = raw.contains("\r\n")
-        return (crlf ? raw.replacingOccurrences(of: "\r\n", with: "\n") : raw, crlf)
-    }
-
-    func reload() -> Bool {
-        guard let fileURL, let loaded = Self.load(fileURL) else {
-            return false
-        }
-        text = loaded.text
-        diskText = text
-        usesCRLF = loaded.crlf
-        isDirty = false
-        return true
-    }
-
-    func differsFromDisk() -> Bool {
-        guard let fileURL, let loaded = Self.load(fileURL) else {
-            return false
-        }
-        return loaded.text != diskText
-    }
-
-    var lineEnding: String {
-        usesCRLF ? "CRLF" : "LF"
-    }
-
     init(untitled index: Int) {
         fileURL = nil
         untitledIndex = index
@@ -109,6 +83,13 @@ final class BufferDocument: ObservableObject, Identifiable {
             return "Untitled \(untitledIndex)"
         }
         return "Untitled"
+    }
+
+    func replaceDetached(_ next: String) {
+        journal.record(ByteEdit(start: 0, oldEnd: UInt32(text.utf8.count), newEnd: UInt32(next.utf8.count)))
+        text = next
+        highlights = []
+        undo.manager.removeAllActions()
     }
 
     func bind(_ textView: RideTextView) {
@@ -150,30 +131,5 @@ final class BufferDocument: ObservableObject, Identifiable {
         foldStarts = textView.folds.ranges.map { range in
             UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
         }
-    }
-
-    func convertToLF() {
-        guard usesCRLF else {
-            return
-        }
-        usesCRLF = false
-        isDirty = true
-        objectWillChange.send()
-    }
-
-    func save(from textView: RideTextView?, lineEndings: String = LineEndings.keep) throws {
-        if let textView {
-            text = textView.string
-        }
-        guard let fileURL, !isReadOnly else {
-            return
-        }
-        let encoded = LineEndings.encode(text: text, usesCRLF: usesCRLF, policy: lineEndings)
-        try encoded.text.write(to: fileURL, atomically: true, encoding: .utf8)
-        usesCRLF = encoded.usesCRLF
-        diskText = text
-        changedOnDisk = false
-        isDirty = false
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: fileURL.path)
     }
 }

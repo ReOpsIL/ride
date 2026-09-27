@@ -1,124 +1,27 @@
 import AppKit
 
 enum TreeActions {
-    static func prompt(title: String, defaultName: String) -> String? {
-        let alert = NSAlert()
-        alert.messageText = title
-        alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Cancel")
-        let field = NSTextField(string: defaultName)
-        field.frame = NSRect(x: 0, y: 0, width: 260, height: 24)
-        alert.accessoryView = field
-        alert.window.initialFirstResponder = field
-        guard alert.runModal() == .alertFirstButtonReturn else {
-            return nil
-        }
-        let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        return name.isEmpty ? nil : name
-    }
-
-    static func newFile(in directory: URL, kind: ProjectKind?) -> URL? {
-        let mapped: NewFileKind
-        switch kind {
-        case .cMake: mapped = .cmake
-        case .make: mapped = .make
-        case .cargo: mapped = .cargo
-        default: mapped = .other
-        }
-        let picker = LanguageNameField(language: NewFilePrompt.language(for: mapped))
-        let alert = NSAlert()
-        alert.messageText = "New File"
-        alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Cancel")
-        alert.accessoryView = picker.accessory
-        alert.window.initialFirstResponder = picker.field
-        guard withExtendedLifetime(picker, { alert.runModal() }) == .alertFirstButtonReturn else {
-            return nil
-        }
-        let name = picker.field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else {
-            return nil
-        }
-        let url = directory.appendingPathComponent(name)
-        if !FileManager.default.fileExists(atPath: url.path) {
-            FileManager.default.createFile(atPath: url.path, contents: Data())
-        }
-        return url
-    }
-
-    static func newFolder(in directory: URL) {
-        guard let name = prompt(title: "New Folder", defaultName: "untitled") else {
+    static func trash(_ url: URL, completion: @escaping (Error?) -> Void) {
+        guard Confirm.ask("Delete \(url.lastPathComponent)?", message: "The item will be moved to the Trash.", ok: "Delete") else {
             return
         }
-        try? FileManager.default.createDirectory(
-            at: directory.appendingPathComponent(name),
-            withIntermediateDirectories: false
-        )
-    }
-
-    static func rename(_ url: URL) {
-        guard let name = prompt(title: "Rename", defaultName: url.lastPathComponent) else {
-            return
+        NSWorkspace.shared.recycle([url]) { _, error in
+            DispatchQueue.main.async {
+                completion(error)
+            }
         }
-        let dest = url.deletingLastPathComponent().appendingPathComponent(name)
-        try? FileManager.default.moveItem(at: url, to: dest)
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: dest.path)
-    }
-
-    static func trash(_ url: URL) {
-        guard confirmTrash(url) else {
-            return
-        }
-        NSWorkspace.shared.recycle([url], completionHandler: nil)
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
-    }
-
-    static func run(_ action: TreeAction, url: URL) {
-        switch action {
-        case .rename:
-            rename(url)
-        case .trash:
-            trash(url)
-        }
-    }
-
-    static func handleKey(keyCode: UInt16, url: URL?) -> Bool {
-        guard let url, let action = TreeModel.action(keyCode: keyCode) else {
-            return false
-        }
-        run(action, url: url)
-        return true
-    }
-
-    private static func confirmTrash(_ url: URL) -> Bool {
-        Confirm.ask("Delete \(url.lastPathComponent)?", message: "The item will be moved to the Trash.", ok: "Delete")
     }
 
     static func reveal(_ url: URL) {
         NSWorkspace.shared.activateFileViewerSelecting([url])
     }
 
-    static func duplicate(_ url: URL) {
-        let ext = url.pathExtension
-        let base = url.deletingPathExtension().lastPathComponent
-        var index = 2
-        var dest = url.deletingLastPathComponent().appendingPathComponent("\(base) copy")
-        while true {
-            let candidate = ext.isEmpty ? dest : dest.appendingPathExtension(ext)
-            if !FileManager.default.fileExists(atPath: candidate.path) {
-                try? FileManager.default.copyItem(at: url, to: candidate)
-                RideEngineClient.shared.engine?.workspaceFileChanged(path: candidate.path)
-                return
-            }
-            dest = url.deletingLastPathComponent().appendingPathComponent("\(base) copy \(index)")
-            index += 1
-        }
+    static func copyPath(_ url: URL, root: URL?) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(pathText(url, root: root), forType: .string)
     }
 
-    static func copyPath(_ url: URL, root: URL?) {
-        let text = root.map { WorkspaceFS.relativePath(root: $0, file: url) } ?? url.path
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(text, forType: .string)
+    static func pathText(_ url: URL, root: URL?) -> String {
+        root.map { WorkspaceFS.relativePath(root: $0, file: url) } ?? url.path
     }
 }

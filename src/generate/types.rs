@@ -1,5 +1,6 @@
 use crate::ffi::ItemKind;
 use crate::highlight::{Member, TypeTable};
+use crate::text::is_word;
 
 pub struct Field {
     pub name: String,
@@ -41,8 +42,8 @@ fn field_type(member: &Member) -> String {
     if !detail.is_empty() {
         let stripped = detail
             .strip_suffix(member.item.name.as_str())
+            .filter(|ty| !ty.is_empty() && !ty.ends_with(is_word))
             .map(str::trim_end)
-            .filter(|ty| !ty.is_empty())
             .unwrap_or(detail);
         return stripped.to_string();
     }

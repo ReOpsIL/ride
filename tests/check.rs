@@ -209,3 +209,13 @@ fn formatter_lookup_reports_tools_and_hints() {
         assert!(out.contains("int main()"));
     }
 }
+
+#[test]
+fn rustfmt_honours_the_project_config_next_to_the_file() {
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::write(dir.path().join("rustfmt.toml"), "tab_spaces = 2\n").unwrap();
+    let file = dir.path().join("a.rs");
+    let path = file.display().to_string();
+    let out = format_document(Lang::Rust, "fn main(){let x=1;}", Some(&path), None).unwrap();
+    assert_eq!(out, "fn main() {\n  let x = 1;\n}\n");
+}

@@ -69,8 +69,33 @@ final class TypeAtEndProbe {
         let caret = caretRect(view)
         let visible = view.visibleRect
         if caret.maxY > visible.maxY + 0.5 {
-            caretFailures.append("key \(key) +\(Int(tick * 1000))ms caret below view (\(Int(caret.maxY)) > \(Int(visible.maxY)))")
+            let usage = view.textLayoutManager?.usageBoundsForTextContainer.height ?? 0
+            caretFailures.append("key \(key) +\(Int(tick * 1000))ms caret below view (\(Int(caret.maxY)) > \(Int(visible.maxY)), frame \(Int(view.frame.height)), usage \(Int(usage)), last \(Int(lastBottom(view))), segment \(Int(segmentBottom(view))))")
         }
+    }
+
+    private func lastBottom(_ view: RideTextView) -> CGFloat {
+        guard let tlm = view.textLayoutManager else {
+            return 0
+        }
+        var bottom: CGFloat = 0
+        tlm.enumerateTextLayoutFragments(from: tlm.documentRange.endLocation, options: [.reverse]) { fragment in
+            bottom = fragment.layoutFragmentFrame.maxY
+            return false
+        }
+        return bottom
+    }
+
+    private func segmentBottom(_ view: RideTextView) -> CGFloat {
+        guard let tlm = view.textLayoutManager, let range = view.textRange(utf16: view.selectedRange()) else {
+            return 0
+        }
+        var bottom: CGFloat = 0
+        tlm.enumerateTextSegments(in: range, type: .selection, options: []) { _, frame, _, _ in
+            bottom = frame.maxY
+            return false
+        }
+        return bottom
     }
 
     private func caretRect(_ view: RideTextView) -> CGRect {

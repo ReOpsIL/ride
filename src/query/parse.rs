@@ -1,5 +1,6 @@
 use crate::ffi::ItemKind;
 use crate::index::item_kind_label;
+use crate::text::is_word;
 
 pub fn parse_prefix(raw: &str, existing: Option<ItemKind>) -> (Option<ItemKind>, String) {
     if existing.is_some() {
@@ -48,4 +49,10 @@ pub fn escape_regex(s: &str) -> String {
         out.push(c);
     }
     out
+}
+
+pub fn plain_terms(text: &str) -> String {
+    text.chars()
+        .map(|c| if is_word(c) || c == '"' { c } else { ' ' })
+        .collect()
 }

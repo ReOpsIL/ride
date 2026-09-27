@@ -4,20 +4,18 @@ struct ProblemsPanel: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject private var check = CheckService.shared
     @ObservedObject private var ts = ThemeStore.shared
-    @State private var showErrors = true
-    @State private var showWarnings = true
-    @State private var selected: Int?
+    @ObservedObject private var model = ProblemsPanelModel.shared
 
     var body: some View {
         VStack(spacing: 0) {
             PanelHeader(icon: "exclamationmark.triangle", title: "Problems", badges: badges) {
-                IconButton(symbol: "xmark.octagon", help: "Show errors", tint: showErrors ? ts.ui.error : nil, active: showErrors) {
-                    showErrors.toggle()
+                IconButton(symbol: "xmark.octagon", help: "Show errors", tint: model.filter.showErrors ? ts.ui.error : nil, active: model.filter.showErrors) {
+                    model.filter.showErrors.toggle()
                 }
-                IconButton(symbol: "exclamationmark.triangle", help: "Show warnings", tint: showWarnings ? ts.ui.warning : nil, active: showWarnings) {
-                    showWarnings.toggle()
+                IconButton(symbol: "exclamationmark.triangle", help: "Show warnings", tint: model.filter.showWarnings ? ts.ui.warning : nil, active: model.filter.showWarnings) {
+                    model.filter.showWarnings.toggle()
                 }
-                IconButton(symbol: "arrow.clockwise", help: "Check (⌥⌘B)") {
+                IconButton(symbol: "arrow.clockwise", help: Shortcuts.help("Check", "Build › Check")) {
                     state.runCheck()
                 }
                 IconButton(symbol: "xmark", help: "Hide Problems", size: 9) {
@@ -31,7 +29,7 @@ struct ProblemsPanel: View {
     }
 
     private var visible: [StoredDiagnostic] {
-        check.snapshot.filter { ($0.level == .error && showErrors) || ($0.level != .error && showWarnings) }
+        model.filter.visible(check.snapshot)
     }
 
     private var badges: [PanelBadge] {
@@ -62,7 +60,7 @@ struct ProblemsPanel: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(Tokens.Space.l)
         } else if visible.isEmpty {
-            Text(check.hasRun ? "No problems" : "Run Check (⌥⌘B) to see problems")
+            Text(check.hasRun ? "No problems" : Shortcuts.help("Run Check", "Build › Check") + " to see problems")
                 .font(Tokens.ui(12))
                 .foregroundStyle(ts.ui.textTertiary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -70,14 +68,13 @@ struct ProblemsPanel: View {
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(Array(visible.enumerated()), id: \.element) { index, diag in
+                    ForEach(visible, id: \.self) { diag in
                         ProblemRow(
                             diag: diag,
                             location: location(diag),
-                            selected: selected == index,
+                            selected: model.selected == diag,
                             fix: { state.applyDiagnosticFix(diag, fix: $0) }
                         ) {
-                            selected = index
                             state.openDiagnostic(diag)
                         }
                     }
@@ -91,77 +88,5 @@ struct ProblemsPanel: View {
         let url = URL(fileURLWithPath: diag.path)
         let rel = state.workspaceRoot.map { WorkspaceFS.relativePath(root: $0, file: url) } ?? url.lastPathComponent
         return "\(rel):\(diag.line):\(diag.column)"
-    }
-}
-
-struct ProblemRow: View {
-    let diag: StoredDiagnostic
-    let location: String
-    let selected: Bool
-    let fix: (StoredFix) -> Void
-    let action: () -> Void
-    @ObservedObject private var ts = ThemeStore.shared
-    @State private var hovering = false
-
-    var body: some View {
-        if diag.fixes.isEmpty {
-            row
-        } else {
-            row.contextMenu {
-                ForEach(Array(diag.fixes.enumerated()), id: \.offset) { _, entry in
-                    Button(entry.title) { fix(entry) }
-                }
-            }
-        }
-    }
-
-    private var row: some View {
-        HStack(spacing: Tokens.Space.m) {
-            Image(systemName: diag.level == .error ? "xmark.octagon.fill" : "exclamationmark.triangle.fill")
-                .font(.system(size: 11))
-                .foregroundStyle(diag.level == .error ? ts.ui.error : ts.ui.warning)
-                .frame(width: 14)
-            Text(diag.message)
-                .font(Tokens.ui(12))
-                .foregroundStyle(ts.ui.textPrimary)
-                .lineLimit(1)
-            Text(location)
-                .font(Tokens.mono(11))
-                .foregroundStyle(ts.ui.textTertiary)
-                .lineLimit(1)
-            if diag.origin == .build {
-                tag("build", tint: ts.ui.textTertiary)
-            }
-            if diag.origin == .live {
-                tag("live", tint: ts.ui.accent)
-            }
-            if let code = diag.code {
-                if let link = DiagnosticDocLink.url(for: code) {
-                    Button(action: { NSWorkspace.shared.open(link) }) {
-                        tag(code, tint: ts.ui.accent)
-                    }
-                    .buttonStyle(.plain)
-                    .help("Open documentation for \(code)")
-                } else {
-                    tag(code, tint: ts.ui.textTertiary)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, Tokens.Space.l)
-        .frame(height: Tokens.Size.sidebarRow)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(selected ? ts.ui.bgSelection : (hovering ? ts.ui.bgHover : Color.clear))
-        .contentShape(Rectangle())
-        .onHover { hovering = $0 }
-        .onTapGesture(perform: action)
-    }
-
-    private func tag(_ text: String, tint: Color) -> some View {
-        Text(text)
-            .font(Tokens.mono(10))
-            .foregroundStyle(tint)
-            .padding(.horizontal, Tokens.Space.xs)
-            .background(ts.ui.bgHover, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
     }
 }

@@ -22,10 +22,7 @@ pub fn place(file: &Path, cursor: &Cursor) -> Result<Placed, String> {
             .ok_or_else(|| format!("anchor not found: {anchor}"))?,
         (None, None) => text.len(),
     };
-    let mut at = at.min(text.len());
-    while !text.is_char_boundary(at) {
-        at -= 1;
-    }
+    let mut at = ride_engine::floor_char_boundary(&text, at);
     if let Some(typed) = &cursor.typed {
         text.insert_str(at, typed);
         at += typed.len();

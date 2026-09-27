@@ -1,76 +1,9 @@
 import AppKit
 
 extension AppState {
-    func newFile() {
-        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: WorkspaceFS.isDirectory($0)) } ?? workspaceRoot
-        let panel = NSSavePanel()
-        panel.canCreateDirectories = true
-        panel.directoryURL = directory
-        panel.nameFieldStringValue = "untitled.rs"
-        let picker = SaveLanguagePicker(panel: panel, initial: .rust)
-        let response = withExtendedLifetime(picker) { panel.runModal() }
-        guard response == .OK, let url = panel.url else {
-            return
-        }
-        if !FileManager.default.fileExists(atPath: url.path) {
-            FileManager.default.createFile(atPath: url.path, contents: Data())
-        }
-        fileCreated(url)
-    }
-
-    func fileCreated(_ url: URL) {
-        RideEngineClient.shared.engine?.workspaceFileChanged(path: url.path)
-        reloadTree()
-        openFile(url)
-    }
-
-    func newFolder() {
-        let directory = selectedURL.map { WorkspaceFS.parentDir(for: $0, isDirectory: WorkspaceFS.isDirectory($0)) } ?? workspaceRoot
-        guard let directory else {
-            return
-        }
-        TreeActions.newFolder(in: directory)
-        reloadTree()
-    }
-
-    func openAnything() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.message = "Open a file, a Cargo project or a folder"
-        guard panel.runModal() == .OK, let url = panel.url else {
-            return
-        }
-        if WorkspaceFS.isDirectory(url) {
-            open(url)
-            return
-        }
-        if !WorkspaceFS.contains(root: workspaceRoot, file: url) {
-            open(url.deletingLastPathComponent())
-        }
-        openFile(url)
-    }
-
-    func closeWorkspace() {
-        flushWorkspace()
-        guard closeAll() else {
-            return
-        }
-        workspaceRoot = nil
-        rootNodes = []
-        selectedURL = nil
-        expanded = []
-        quickFiles = []
-        git.clear()
-        projectModel.clear()
-    }
-
     func saveAll() {
         for buffer in buffers where buffer.isDirty && buffer.fileURL != nil && !buffer.isReadOnly {
-            EditorPanes.shared.host(bound: buffer)?.capture()
-            try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
-            didSave(buffer, allowFormat: false)
+            persist(buffer, allowFormat: false)
         }
         objectWillChange.send()
     }
@@ -80,9 +13,8 @@ extension AppState {
             return
         }
         rebind(buffer, to: url)
-        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
+        persist(buffer)
         objectWillChange.send()
-        didSave(buffer)
     }
 
     func revertToSaved() {
@@ -96,11 +28,11 @@ extension AppState {
     }
 
     func reloadFromDisk(_ buffer: BufferDocument) {
-        guard buffer.reload() else {
+        guard let loaded = buffer.readDisk() else {
             return
         }
-        buffer.changedOnDisk = false
-        refreshView(of: buffer)
+        replaceText(of: buffer, with: loaded.text)
+        buffer.markLoaded(loaded)
         objectWillChange.send()
     }
 
@@ -126,11 +58,17 @@ extension AppState {
     }
 
     func closeOthers(keeping id: UUID? = nil) {
-        let keep = id ?? activeID
-        for buffer in buffers where buffer.id != keep {
-            closeBuffer(buffer.id)
+        guard let keep = id ?? activeID else {
+            return
         }
-        if let keep, activeID != keep {
+        let pane = paneLayout.pane(showing: keep)
+        for buffer in buffers where buffer.id != keep && pane?.tabs.contains(buffer.id) != false {
+            closeBuffer(buffer.id)
+            if buffers.contains(where: { $0.id == buffer.id }) {
+                break
+            }
+        }
+        if activeID != keep {
             selectBuffer(keep)
         }
     }
@@ -152,20 +90,14 @@ extension AppState {
         guard buffer.changedOnDisk else {
             return true
         }
-        let alert = NSAlert()
-        alert.messageText = "\(buffer.displayName) changed on disk"
-        alert.informativeText = "Overwrite the file with your version, or reload it and lose your changes?"
-        alert.addButton(withTitle: "Overwrite")
-        alert.addButton(withTitle: "Reload")
-        alert.addButton(withTitle: "Cancel")
-        switch alert.runModal() {
-        case .alertFirstButtonReturn:
+        switch Confirm.overwrite(buffer.displayName) {
+        case .overwrite:
             buffer.changedOnDisk = false
             return true
-        case .alertSecondButtonReturn:
+        case .reload:
             reloadFromDisk(buffer)
             return false
-        default:
+        case .cancel:
             return false
         }
     }

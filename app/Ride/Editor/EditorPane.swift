@@ -22,7 +22,6 @@ struct EditorPane: NSViewRepresentable {
         context.coordinator.host = host
         host.bind(document)
         host.applyPrefs(state.prefs)
-        context.coordinator.boundID = document.id
         host.onViewport = { [weak coordinator = context.coordinator] in
             coordinator?.viewportChanged()
         }
@@ -44,19 +43,7 @@ struct EditorPane: NSViewRepresentable {
         if focused {
             EditorPanes.shared.adopt(pane: paneID)
         }
-        if context.coordinator.boundID != document.id {
-            host.capture()
-            host.bind(document)
-            context.coordinator.document = document
-            context.coordinator.boundID = document.id
-            context.coordinator.publishCursor(host.textView)
-            host.syncGutter()
-            SessionService.shared.attach(document: document, view: host.textView)
-            EditorPanes.shared.attach(host, pane: paneID)
-        }
         if document.pendingText != nil || document.pendingJump != nil {
-            // Delivering text or a jump edits the view and publishes document and app state,
-            // which SwiftUI forbids inside updateNSView. Deliver on the next turn instead.
             let document = document
             let state = state
             DispatchQueue.main.async {

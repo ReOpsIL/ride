@@ -7,6 +7,8 @@ final class BufferUndo {
     private var owned = 0
     private var batching = false
     private var run: UndoRecord?
+    private var changes = 0
+    private var knownInverse: UndoEdit?
 
     init(document: BufferDocument) {
         self.document = document
@@ -31,16 +33,23 @@ final class BufferUndo {
         owned += 1
     }
 
+    func note(_ inverse: UndoEdit?) {
+        changes += 1
+        knownInverse = inverse
+    }
+
     func close() {
         guard !batching else {
             return
         }
         if let before = snapshot {
             snapshot = nil
-            register(before: before)
+            register(changes == 1 ? knownInverse : UndoEdit.inverse(before: before, after: document.text))
         } else {
             run = nil
         }
+        changes = 0
+        knownInverse = nil
         while owned > 0 {
             manager.endUndoGrouping()
             owned -= 1
@@ -57,8 +66,8 @@ final class BufferUndo {
         close()
     }
 
-    private func register(before: String) {
-        guard let edit = UndoEdit.inverse(before: before, after: document.text) else {
+    private func register(_ edit: UndoEdit?) {
+        guard let edit else {
             return
         }
         if !isReverting, run?.extend(by: edit) == true {

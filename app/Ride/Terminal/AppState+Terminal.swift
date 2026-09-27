@@ -7,13 +7,18 @@ extension AppState {
 
     func openTerminal(directory: URL?) {
         showTerminal = true
-        terminals.applyTheme(font: terminalFont(), colors: TerminalColors.from(ThemeStore.shared.theme))
+        applyTerminalFont()
         terminals.open(directory: directory?.path)
         terminals.focusSelected()
     }
 
     func selectTerminal(_ id: UUID) {
         terminals.select(id)
+        terminals.focusSelected()
+    }
+
+    func closeTerminal(_ id: UUID) {
+        terminals.close(id)
         terminals.focusSelected()
     }
 
@@ -33,7 +38,8 @@ extension AppState {
         terminals.observeWorkspace($workspaceRoot)
     }
 
-    private func terminalFont() -> NSFont {
-        NSFont.monospacedSystemFont(ofSize: CGFloat(prefs.fontSize), weight: .regular)
+    func applyTerminalFont() {
+        let font = NSFont.monospacedSystemFont(ofSize: CGFloat(prefs.fontSize), weight: .regular)
+        terminals.applyTheme(font: font, colors: TerminalColors.from(ThemeStore.shared.theme))
     }
 }

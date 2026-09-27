@@ -273,3 +273,13 @@ fn quick_doc_includes_module_inner_docs() {
     assert!(doc.html.contains("A widget module"), "{}", doc.html);
     assert!(doc.html.contains("Builds widgets"), "{}", doc.html);
 }
+
+#[test]
+fn quick_doc_renders_raw_html_in_doc_comments_as_text() {
+    let src = "/// Hello <img src=x onerror=alert(1)> world\n///\n/// <script>alert(2)</script>\npub fn greet() {}\nfn main() { greet(); }\n";
+    let doc = quick("rs", src, "greet(); }");
+    assert!(!doc.html.contains("<img"), "{}", doc.html);
+    assert!(!doc.html.contains("<script"), "{}", doc.html);
+    assert!(doc.html.contains("&lt;img"), "{}", doc.html);
+    assert!(doc.html.contains("Hello"), "{}", doc.html);
+}

@@ -17,6 +17,26 @@ final class HierarchyModelTests: XCTestCase {
         XCTAssertFalse(model.running)
     }
 
+    func testRefreshKeepsTheTreeUntilANewRootArrives() {
+        var model = HierarchyModel()
+        let root = node("", "record", path: "util.rs", byte: 40)
+        let child = node(root.id, "main", path: "main.rs", byte: 120)
+        model.setRoot(root, children: [child])
+        let first = model.beginRefresh()
+        XCTAssertTrue(model.running)
+        XCTAssertEqual(model.rows.map(\.node.name), ["record", "main"])
+        model.finishUnchanged()
+        XCTAssertFalse(model.running)
+        XCTAssertTrue(model.finished)
+        XCTAssertEqual(model.rootName, "record")
+        let second = model.beginRefresh()
+        XCTAssertFalse(model.isCurrent(first))
+        XCTAssertTrue(model.isCurrent(second))
+        let next = node("", "count", path: "util.rs", byte: 90)
+        model.setRoot(next, children: [])
+        XCTAssertEqual(model.rootName, "count")
+    }
+
     func testCollapseHidesChildrenButKeepsThemLoaded() {
         var model = HierarchyModel()
         let root = node("", "record", path: "util.rs", byte: 40)

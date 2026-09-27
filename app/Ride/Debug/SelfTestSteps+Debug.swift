@@ -36,10 +36,13 @@ extension SelfTestSteps {
                 return
             }
             state.debug.breakpoints = Breakpoints()
-            state.debug.breakpoints = loaded.breakpoints
-            state.refreshBreakpointGutters()
+            state.restoreWorkspace(loaded)
         }, check: {
-            e.expect(marks(state) == [breakpointLine], "marks \(marks(state))")
+            let gutter = (e.view?.enclosingScrollView?.superview as? EditorHostView)?.gutter
+            return e.expect(
+                marks(state) == [breakpointLine] && gutter?.breakpointLines[Int(breakpointLine)] == false,
+                "marks \(marks(state)) gutter \(gutter?.breakpointLines ?? [:])"
+            )
         })
     }
 
@@ -64,6 +67,7 @@ extension SelfTestSteps {
                     "line \(state.debug.stoppedLine) stopped \(state.debug.isStopped)"
                 )
             }),
+            panelLoadsVariables(state: state, e: e),
             SelfTestStep(name: "debug step over", wait: 0.5, until: { state.debug.isStopped && state.debug.stoppedLine > 0 && state.debug.stoppedLine != breakpointLine }, timeout: 60, run: {
                 state.debugCommand(.next)
             }, check: {

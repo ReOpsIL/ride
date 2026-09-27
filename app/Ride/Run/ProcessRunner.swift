@@ -1,13 +1,11 @@
 import Foundation
 
 final class ProcessRunner {
-    private var process: Process?
-    private var killWork: DispatchWorkItem?
-    private var splitter = LineSplitter()
+    private var session: ProcessSession?
     private let queue = DispatchQueue(label: "ride.run.output")
 
     var isRunning: Bool {
-        process?.isRunning == true
+        session != nil
     }
 
     func start(
@@ -24,41 +22,44 @@ final class ProcessRunner {
             report(.failed("command not found: \(tool)"), onFinish: onFinish)
             return
         }
-        let task = Process()
-        task.executableURL = executable
-        task.arguments = Array(invocation.argv.dropFirst())
-        task.environment = ProcessInfo.processInfo.environment
-            .merging(["PATH": ShellPath.value]) { _, new in new }
-            .merging(invocation.env) { _, new in new }
-        if let dir = invocation.workingDir {
-            task.currentDirectoryURL = URL(fileURLWithPath: dir)
-        }
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-        splitter = LineSplitter()
-        pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
-            let data = handle.availableData
-            guard !data.isEmpty else {
-                return
-            }
-            self?.receive(data, runId: runId, onLine: onLine)
-        }
-        task.terminationHandler = { [weak self] finished in
-            pipe.fileHandleForReading.readabilityHandler = nil
-            let tail = try? pipe.fileHandleForReading.readToEnd()
-            if let tail, !tail.isEmpty {
-                self?.receive(tail, runId: runId, onLine: onLine)
-            }
-            self?.finish(finished, runId: runId, onLine: onLine, onFinish: onFinish)
-        }
         do {
-            try task.run()
-            process = task
+            let spawned = try ProcessSpawn.launch(
+                executable: executable.path,
+                arguments: Array(invocation.argv.dropFirst()),
+                environment: Self.environment(invocation),
+                workingDir: invocation.workingDir
+            )
+            begin(ProcessSession(spawned, queue: queue), runId: runId, onLine: onLine, onFinish: onFinish)
         } catch {
-            process = nil
             report(.failed(error.localizedDescription), onFinish: onFinish)
         }
+    }
+
+    func stop() {
+        session?.stop()
+    }
+
+    private func begin(
+        _ session: ProcessSession,
+        runId: Int,
+        onLine: @escaping (Int, String) -> Void,
+        onFinish: @escaping (RunFinish) -> Void
+    ) {
+        session.onLines = { lines in
+            DispatchQueue.main.async {
+                lines.forEach { onLine(runId, $0) }
+            }
+        }
+        session.onFinish = { [weak self, weak session] status in
+            DispatchQueue.main.async {
+                if let self, self.session === session {
+                    self.session = nil
+                }
+                onFinish(status)
+            }
+        }
+        self.session = session
+        session.start()
     }
 
     private func report(_ finish: RunFinish, onFinish: @escaping (RunFinish) -> Void) {
@@ -67,52 +68,9 @@ final class ProcessRunner {
         }
     }
 
-    func stop() {
-        guard let task = process, task.isRunning else {
-            return
-        }
-        task.terminate()
-        let work = DispatchWorkItem { [weak task] in
-            guard let task, task.isRunning else {
-                return
-            }
-            kill(task.processIdentifier, SIGKILL)
-        }
-        killWork?.cancel()
-        killWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
-    }
-
-    private func receive(_ data: Data, runId: Int, onLine: @escaping (Int, String) -> Void) {
-        let lines = queue.sync { splitter.take([UInt8](data)) }
-        guard !lines.isEmpty else {
-            return
-        }
-        DispatchQueue.main.async {
-            for line in lines {
-                onLine(runId, line)
-            }
-        }
-    }
-
-    private func finish(
-        _ task: Process,
-        runId: Int,
-        onLine: @escaping (Int, String) -> Void,
-        onFinish: @escaping (RunFinish) -> Void
-    ) {
-        let tail = queue.sync { splitter.flush() }
-        let status: RunFinish = task.terminationReason == .uncaughtSignal
-            ? .signalled(task.terminationStatus)
-            : .exited(task.terminationStatus)
-        DispatchQueue.main.async { [weak self] in
-            if let tail {
-                onLine(runId, tail)
-            }
-            self?.killWork?.cancel()
-            self?.killWork = nil
-            self?.process = nil
-            onFinish(status)
-        }
+    private static func environment(_ invocation: RunInvocation) -> [String: String] {
+        ProcessInfo.processInfo.environment
+            .merging(["PATH": ShellPath.value]) { _, new in new }
+            .merging(invocation.env) { _, new in new }
     }
 }

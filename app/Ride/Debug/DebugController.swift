@@ -2,6 +2,7 @@ import Foundation
 
 final class DebugController: ObservableObject {
     static let shared = DebugController()
+    static let queue = DispatchQueue(label: "ride.debug.control", qos: .userInitiated)
 
     @Published private(set) var state = DebugState.idle
     @Published private(set) var stoppedPath: String?
@@ -11,9 +12,10 @@ final class DebugController: ObservableObject {
     var onChange: (() -> Void)?
     var onOutput: ((String, String) -> Void)?
     var onStop: ((String?, UInt32) -> Void)?
-    var sessionId: UInt64?
+    private(set) var sessionId: UInt64?
     private(set) var stopSequence = 0
     private var forwarder: DebugForwarder?
+    private let breakpointSync = DebugBreakpointSync(queue: DebugController.queue)
 
     var isActive: Bool {
         switch state {
@@ -50,6 +52,7 @@ final class DebugController: ObservableObject {
         guard let engine = RideEngineClient.shared.engine, !isActive else {
             return false
         }
+        breakpointSync.cancel()
         let forwarder = DebugForwarder(controller: self)
         self.forwarder = forwarder
         publish(state: .launching, path: nil, line: 0)
@@ -58,7 +61,7 @@ final class DebugController: ObservableObject {
             breakpoints: engineBreakpoints(),
             listener: forwarder
         ) else {
-            publish(state: .terminated, path: nil, line: 0)
+            end(state: .terminated)
             return false
         }
         sessionId = id
@@ -69,10 +72,15 @@ final class DebugController: ObservableObject {
         guard let engine = RideEngineClient.shared.engine, let id = sessionId else {
             return
         }
-        try? engine.debugCommand(sessionId: id, command: command)
-        if case .disconnect = command {
-            sessionId = nil
-            publish(state: .terminated, path: nil, line: 0)
+        guard !DebugCommandEffect.disconnects(command) else {
+            disconnect(engine: engine, id: id)
+            return
+        }
+        guard (try? engine.debugCommand(sessionId: id, command: command)) != nil else {
+            return
+        }
+        if DebugCommandEffect.resumes(command), isStopped {
+            publish(state: .running, path: nil, line: 0)
         }
     }
 
@@ -80,11 +88,10 @@ final class DebugController: ObservableObject {
         guard let engine = RideEngineClient.shared.engine, let id = sessionId, isActive else {
             return
         }
-        _ = try? engine.debugSetBreakpoints(
-            sessionId: id,
-            path: path,
-            breakpoints: Self.engineBreakpoints(breakpoints.marks(path: path), path: path)
-        )
+        let marks = Self.engineBreakpoints(breakpoints.marks(path: path), path: path)
+        breakpointSync.schedule(path: path, breakpoints: marks) { path, list in
+            _ = try? engine.debugSetBreakpoints(sessionId: id, path: path, breakpoints: list)
+        }
     }
 
     func engineBreakpoints() -> [Breakpoint] {
@@ -105,6 +112,10 @@ final class DebugController: ObservableObject {
         }
     }
 
+    func accepts(_ sender: DebugForwarder) -> Bool {
+        sender === forwarder
+    }
+
     func publish(state next: DebugState, path: String?, line: UInt32) {
         stopSequence += 1
         state = next
@@ -118,27 +129,22 @@ final class DebugController: ObservableObject {
         onChange?()
     }
 
+    func end(state next: DebugState) {
+        sessionId = nil
+        breakpointSync.cancel()
+        breakpoints.unverifyAll()
+        publish(state: next, path: nil, line: 0)
+    }
+
     func changed() {
         onChange?()
     }
-}
 
-final class DebugForwarder: DebugListener, @unchecked Sendable {
-    weak var controller: DebugController?
-
-    init(controller: DebugController) {
-        self.controller = controller
-    }
-
-    func onEvent(event: DebugEvent) {
-        DispatchQueue.main.async { [weak self] in
-            self?.controller?.handle(event)
-        }
-    }
-
-    func onOutput(category: String, text: String) {
-        DispatchQueue.main.async { [weak self] in
-            self?.controller?.onOutput?(category, text)
+    private func disconnect(engine: Engine, id: UInt64) {
+        forwarder = nil
+        end(state: .terminated)
+        Self.queue.async {
+            try? engine.debugCommand(sessionId: id, command: .disconnect)
         }
     }
 }

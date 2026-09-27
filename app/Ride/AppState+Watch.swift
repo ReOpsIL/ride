@@ -2,14 +2,20 @@ import Foundation
 
 extension AppState {
     func filesChanged(_ paths: [String]) {
-        reloadTree()
-        diskChanged(paths: paths)
-        dropMissingClangDiagnostics()
         guard let root = workspaceRoot else {
             return
         }
-        git.refresh(root: root)
-        let change = ManifestWatch.change(paths, root: root)
+        let batch = WatchPaths.classify(paths, root: root)
+        if !batch.isEmpty {
+            git.refresh(root: root)
+        }
+        guard !batch.sources.isEmpty else {
+            return
+        }
+        reloadTree()
+        diskChanged(paths: batch.sources)
+        dropMissingClangDiagnostics()
+        let change = ManifestWatch.change(batch.sources, root: root)
         if change.reloadProject {
             projectModel.reload()
         }

@@ -6,8 +6,11 @@ extension AppState {
     }
 
     var runConfig: RunConfig {
-        let target = runTarget
-        return RunConfig.config(
+        runConfig(for: runTarget)
+    }
+
+    func runConfig(for target: RunTarget?) -> RunConfig {
+        RunConfig.config(
             for: target?.name ?? "",
             in: runConfigs,
             workingDir: target?.workingDir ?? activeProjectRoot?.path
@@ -15,11 +18,15 @@ extension AppState {
     }
 
     func runPlan(_ action: RunAction) -> RunPlan? {
+        runPlan(action, target: runTarget)
+    }
+
+    func runPlan(_ action: RunAction, target: RunTarget?) -> RunPlan? {
         RunPlanner.plan(
             action,
-            target: runTarget,
+            target: target,
             targets: projectModel.runTargets,
-            config: runConfig,
+            config: runConfig(for: target),
             kind: projectModel.runKind,
             profile: projectModel.profile
         )
@@ -30,31 +37,22 @@ extension AppState {
     }
 
     func runAction(_ action: RunAction) {
-        guard let plan = runPlan(action) else {
+        guard let request = runRequest(action) else {
             showNotice("Nothing to \(action.rawValue) for this project")
             return
         }
-        let kind = projectModel.runKind
-        let building = action == .build
-        let argv = building && kind == .cargo ? BuildParse.cargoArgv(plan.argv) : plan.argv
-        guard let runId = runInOutput(RunInvocation(argv: argv, workingDir: plan.cwd, env: plan.env)) else {
-            return
+        startRun(request)
+    }
+
+    func runRequest(_ action: RunAction, target: RunTarget? = nil) -> RunRequest? {
+        guard let plan = runPlan(action, target: target ?? runTarget) else {
+            return nil
         }
-        SingleFileChain.shared.cancel()
-        guard building else {
-            BuildSession.shared.cancel()
-            if action == .test {
-                beginTestRun(runId: runId, argv: argv)
-            } else {
-                TestSession.shared.cancel()
-            }
-            return
-        }
-        TestSession.shared.cancel()
-        BuildSession.shared.begin(
-            runId: runId,
-            kind: kind,
-            baseDir: plan.cwd ?? activeProjectRoot?.path ?? ""
+        return RunRequests.request(
+            action,
+            plan: plan,
+            kind: projectModel.runKind,
+            root: activeProjectRoot?.path ?? ""
         )
     }
 
@@ -62,15 +60,20 @@ extension AppState {
         guard runTarget != nil else {
             return
         }
+        runConfigEditor.begin(runConfig, kind: projectModel.runKind)
         showRunConfigSheet = true
     }
 
-    func saveRunConfig(_ config: RunConfig) {
-        runConfigs = RunConfig.merged(config, into: runConfigs)
+    func saveRunConfig() {
+        runConfigs = RunConfig.merged(runConfigEditor.config, into: runConfigs)
+        showRunConfigSheet = false
+    }
+
+    func cancelRunConfig() {
+        showRunConfigSheet = false
     }
 
     func selectTarget(_ row: TargetRow?) {
         projectModel.select(row)
-        scheduleWorkspaceSave()
     }
 }

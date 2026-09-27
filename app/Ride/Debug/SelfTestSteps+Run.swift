@@ -3,7 +3,7 @@ import AppKit
 extension SelfTestSteps {
     static func runEcho(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "run output", wait: 2.0, run: {
-            state.runInOutput(RunInvocation(argv: ["echo", "hello"], workingDir: state.workspaceRoot?.path))
+            state.startRun(.plain(RunInvocation(argv: ["echo", "hello"], workingDir: state.workspaceRoot?.path)))
         }, check: {
             e.expect(
                 state.showRunOutput && state.runOutput.text.contains("hello") && state.runOutput.status == "exit 0",
@@ -166,7 +166,7 @@ extension SelfTestSteps {
 
     static func runBigOutput(state: AppState, e: SelfTestEditor) -> SelfTestStep {
         SelfTestStep(name: "run output cap", wait: 0.5, until: { !state.runOutput.isRunning && state.runOutput.status != nil }, timeout: 60, run: {
-            state.runInOutput(RunInvocation(argv: ["sh", "-c", "seq 1 7000"], workingDir: state.workspaceRoot?.path))
+            state.startRun(.plain(RunInvocation(argv: ["sh", "-c", "seq 1 7000"], workingDir: state.workspaceRoot?.path)))
         }, check: {
             e.expect(
                 state.runOutput.status == "exit 0" && state.runOutput.buffer.last == "7000"

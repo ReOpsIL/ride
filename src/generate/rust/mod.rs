@@ -134,6 +134,25 @@ mod tests {
     }
 
     #[test]
+    fn field_type_keeps_a_name_suffix_inside_the_type() {
+        let src = "struct Row {\n    id: Uuid,\n}\n";
+        let t = gen_type("Row", src);
+        assert_eq!(t.fields[0].type_name, "Uuid");
+    }
+
+    #[test]
+    fn generic_impl_with_new_is_detected() {
+        let src = "struct W<T> {\n    v: T,\n}\nimpl<T> W<T> {\n    fn new(v: T) -> Self {\n        Self { v }\n    }\n}\n";
+        assert!(inherent_impl_has_new(src, "W"));
+    }
+
+    #[test]
+    fn new_with_is_not_new() {
+        let src = "struct W {\n    v: u8,\n}\nimpl W {\n    fn new_with(v: u8) -> Self {\n        Self { v }\n    }\n}\n";
+        assert!(!inherent_impl_has_new(src, "W"));
+    }
+
+    #[test]
     fn options_omit_new_when_impl_new_exists() {
         let src = "struct Counter {\n    counts: u32,\n}\nimpl Counter {\n    pub fn new() -> Self {\n        Self { counts: 0 }\n    }\n}\n";
         let opts = options(&gen_type("Counter", src), src);

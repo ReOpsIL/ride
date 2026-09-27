@@ -9,8 +9,11 @@ use super::Engine;
 #[uniffi::export]
 impl Engine {
     pub fn parse_cargo_line(&self, line: String, project_root: String) -> Vec<Diagnostic> {
-        let root = self.cargo_root(Path::new(&project_root));
-        catch_unwind(AssertUnwindSafe(|| parse_message_line(&root, &line))).unwrap_or_default()
+        catch_unwind(AssertUnwindSafe(|| {
+            let root = self.cargo_root(Path::new(&project_root));
+            parse_message_line(&root, &line)
+        }))
+        .unwrap_or_default()
     }
 
     pub fn parse_clang_output(&self, text: String, base_dir: String) -> Vec<Diagnostic> {

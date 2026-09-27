@@ -5,6 +5,7 @@ struct OutlineRow: Identifiable, Equatable {
     let kindLabel: String
     let startByte: UInt32
     let endByte: UInt32
+    let nameStartByte: UInt32
     var id: String { "\(startByte):\(name)" }
 }
 
@@ -39,12 +40,7 @@ final class SessionService {
                 open(document: document, view: view)
             }
         } else {
-            HighlightApply.restyle(
-                spans: document.highlights,
-                text: view.string,
-                view: view,
-                visible: nil
-            )
+            HighlightApply.restyle(spans: document.highlights, text: view.string, view: view)
             resync(document: document, view: view)
             FoldController.shared.restore(document: document, view: view)
         }
@@ -73,8 +69,8 @@ final class SessionService {
             resync(document: document, view: view)
             return
         }
-        let text = view.string
-        let vis = visible(view: view, text: text)
+        let vis = visible(view)
+        let mark = document.textGeneration
         queue(id).async {
             let update = try? RideEngineClient.shared.engine?.applyEdit(
                 sessionId: id,
@@ -82,26 +78,20 @@ final class SessionService {
                 insertedText: inserted,
                 visible: vis
             )
-            DispatchQueue.main.async {
-                self.paint(update, document: document, view: view, text: view.string)
-            }
+            self.deliver(update, document: document, session: id, mark: mark)
         }
     }
 
     func setVisible(document: BufferDocument, view: RideTextView) {
-        guard let id = document.sessionId, let vis = view.visibleBytes() else {
-            return
-        }
-        if view.textStorage.map({ $0.length }) ?? 0 < 1_048_576 {
+        guard let id = document.sessionId, let vis = visible(view) else {
             return
         }
         document.visibleWork?.cancel()
         let work = DispatchWorkItem {
+            let mark = document.textGeneration
             self.queue(id).async {
                 let update = try? RideEngineClient.shared.engine?.setVisibleRange(sessionId: id, visible: vis)
-                DispatchQueue.main.async {
-                    self.paint(update, document: document, view: view, text: view.string)
-                }
+                self.deliver(update, document: document, session: id, mark: mark)
             }
         }
         document.visibleWork = work
@@ -119,21 +109,32 @@ final class SessionService {
             return
         }
         let text = view.string
-        let vis = visible(view: view, text: text)
+        let vis = visible(view)
+        let mark = document.textGeneration
         queue(id).async {
             let update = try? RideEngineClient.shared.engine?.setText(sessionId: id, text: text, visible: vis)
-            DispatchQueue.main.async {
-                self.paint(update, document: document, view: view, text: text)
+            self.deliver(update, document: document, session: id, mark: mark)
+        }
+    }
+
+    private func deliver(_ update: SessionUpdate?, document: BufferDocument, session id: UInt64, mark: Int) {
+        DispatchQueue.main.async {
+            guard let update, document.sessionId == id, let edits = document.journal.edits(since: mark),
+                  let view = EditorPanes.shared.host(bound: document)?.textView
+            else {
+                return
             }
+            self.paint(update.rebased(through: edits), document: document, view: view)
         }
     }
 
     private func open(document: BufferDocument, view: RideTextView) {
         let text = view.string
-        let vis = visible(view: view, text: text)
+        let vis = visible(view)
         let bufferId = document.id.uuidString
         let path = document.fileURL?.path
         let generation = document.sessionGeneration
+        let mark = document.textGeneration
         document.sessionOpening = true
         DispatchQueue.global(qos: .userInitiated).async {
             let opened = try? RideEngineClient.shared.engine?.openSession(
@@ -143,12 +144,12 @@ final class SessionService {
                 visible: vis
             )
             DispatchQueue.main.async {
-                self.opened(opened, document: document, generation: generation, sent: text)
+                self.opened(opened, document: document, generation: generation, mark: mark)
             }
         }
     }
 
-    private func opened(_ opened: SessionOpen?, document: BufferDocument, generation: Int, sent: String) {
+    private func opened(_ opened: SessionOpen?, document: BufferDocument, generation: Int, mark: Int) {
         guard document.sessionGeneration == generation else {
             if let id = opened?.sessionId {
                 RideEngineClient.shared.engine?.closeSession(sessionId: id)
@@ -164,19 +165,19 @@ final class SessionService {
             document.detectedLanguage = BufferLanguage(lang)
             document.updateLabel(view)
         }
-        if view.string != sent {
+        guard document.textGeneration == mark else {
             resync(document: document, view: view)
             return
         }
-        paint(opened?.update, document: document, view: view, text: view.string)
-        FoldController.shared.restore(document: document, view: view)
-        if let id = opened?.sessionId {
-            UsageIndexer.index(sessionId: id)
+        if let update = opened?.update {
+            paint(update, document: document, view: view)
         }
+        FoldController.shared.restore(document: document, view: view)
+        UsageIndexer.index([document])
     }
 
-    private func visible(view: RideTextView, text: String) -> ByteRange? {
-        if text.utf8.count < 1_048_576 {
+    private func visible(_ view: RideTextView) -> ByteRange? {
+        guard let length = view.textStorage?.length, length >= 1_048_576 else {
             return nil
         }
         return view.visibleBytes()
@@ -187,7 +188,8 @@ final class SessionService {
             name: item.name,
             kindLabel: kindLabel(item.kind),
             startByte: item.startByte,
-            endByte: item.endByte
+            endByte: item.endByte,
+            nameStartByte: item.nameStartByte
         )
     }
 }

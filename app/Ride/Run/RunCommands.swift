@@ -28,7 +28,7 @@ struct RunCommands: Commands {
                 .disabled(!menu.isRunning)
             Divider()
             Button("Edit Configurations…") { state.editRunConfig() }
-                .disabled(!menu.canBuild)
+                .disabled(!menu.canEditRunConfig)
         }
     }
 }

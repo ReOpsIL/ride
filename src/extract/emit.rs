@@ -5,7 +5,7 @@ use tree_sitter::Node;
 use crate::ffi::ItemKind;
 
 use super::attrs::{derive_name, has_attr, is_deprecated};
-use super::docs::{preceding_docs, signature, source_chunk};
+use super::docs::{preceding_docs, signature};
 use super::item::{
     CrateContext, ItemDoc, ItemParts, Visibility, byte_range, field_text, join_path,
     name_start_byte,
@@ -17,6 +17,8 @@ use super::walk::{FileExtract, TypeCtx};
 pub struct EmitArgs<'a> {
     pub source: &'a str,
     pub file: &'a Path,
+    pub mod_dir: &'a Path,
+    pub inline: bool,
     pub module_path: &'a [String],
     pub reach: bool,
     pub ctx: &'a CrateContext,
@@ -117,7 +119,6 @@ pub fn make_item(
             name_start_byte: name_at,
             signature: signature(node, args.source),
             doc: preceding_docs(node, args.source),
-            chunk: source_chunk(node, args.source),
             reachable: args.reach && vis == Visibility::Pub,
             deprecated: is_deprecated(node, args.source),
         },

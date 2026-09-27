@@ -1,11 +1,11 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::{Path, PathBuf};
 
 use crate::ffi::{OutlineItem, RenameFile, RenamePlan, TextEdit, UsageHit};
 use crate::highlight::Lang;
 
 use super::Engine;
 use super::delete_span::deletion_range;
+use super::rel_path::relative;
 
 #[uniffi::export]
 impl Engine {
@@ -48,7 +48,7 @@ fn snap(engine: &Engine, session_id: u64) -> Option<Snap> {
         .read(|i| {
             let session = i.sessions.get(&session_id)?;
             let abs = session.path()?;
-            let root = i.workspace.as_ref().map(|w| PathBuf::from(&w.root));
+            let root = i.workspace_root();
             Some(Snap {
                 lang: session.lang(),
                 text: session.replica().to_string(),
@@ -108,16 +108,5 @@ fn deletion_edit(start: u32, end: u32) -> TextEdit {
         end_byte: end,
         text: String::new(),
         caret_byte: start,
-    }
-}
-
-fn relative(root: Option<&Path>, path: &Path) -> String {
-    match root {
-        Some(root) => path
-            .strip_prefix(root)
-            .unwrap_or(path)
-            .to_string_lossy()
-            .replace('\\', "/"),
-        None => path.to_string_lossy().into_owned(),
     }
 }

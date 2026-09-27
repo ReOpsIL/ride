@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use sha2::{Digest, Sha256};
+use crate::digest::sha256_hex;
 
 pub fn ref_index_dir(index_dir: &Path, refs_dir: Option<&str>, root: &Path) -> PathBuf {
     let base = match refs_dir {
@@ -13,13 +13,7 @@ pub fn ref_index_dir(index_dir: &Path, refs_dir: Option<&str>, root: &Path) -> P
 
 fn root_digest(root: &Path) -> String {
     let canonical = fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
-    let mut hasher = Sha256::new();
-    hasher.update(canonical.to_string_lossy().as_bytes());
-    hasher.finalize().iter().fold(String::new(), |mut out, b| {
-        use std::fmt::Write;
-        let _ = write!(out, "{b:02x}");
-        out
-    })
+    sha256_hex(&[canonical.to_string_lossy().as_bytes()])
 }
 
 #[cfg(test)]

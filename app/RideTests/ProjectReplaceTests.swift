@@ -86,4 +86,11 @@ final class ProjectReplaceTests: XCTestCase {
     private func text(_ edits: [FileEdit], _ path: String) -> String? {
         edits.first { $0.file.path == path }?.text
     }
+
+    func testRegexLookbehindReplacesOnlyTheMatchedText() {
+        let hit = FileHit(file: URL(fileURLWithPath: "/tmp/lookbehind.rs"), text: "let a; let b;", ranges: [])
+        let options = FindOptions(caseSensitive: true, wholeWord: false, regex: true)
+        let result = ProjectReplace.edits(hits: [hit], query: "(?<=let )\\w", replacement: "z", options: options)
+        XCTAssertEqual(result.edits.first?.text, "let z; let z;")
+    }
 }

@@ -11,23 +11,10 @@ enum AnthropicMessages {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-        var betas: [String] = []
-        switch config.auth {
-        case .login:
-            guard AnthropicLogin.executable != nil else {
-                return .failure(.notConfigured("Log in with your Anthropic account requires the Anthropic CLI (\(AnthropicLogin.installCommand))"))
-            }
-            guard let token = AnthropicLogin.accessToken() else {
-                return .failure(.notConfigured("Not logged in to Anthropic. Open Preferences › AI and log in"))
-            }
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            betas.append("oauth-2025-04-20")
-        case .key:
-            guard let key = Keychain.read(keyAccount) else {
-                return .failure(.notConfigured("No Anthropic API key saved. Open Preferences › AI"))
-            }
-            request.setValue(key, forHTTPHeaderField: "x-api-key")
+        guard let key = AICredentials.key(keyAccount) else {
+            return .failure(.notConfigured("No Anthropic API key saved. Open Preferences › AI"))
         }
+        request.setValue(key, forHTTPHeaderField: "x-api-key")
         var body: [String: Any] = [
             "model": config.model,
             "max_tokens": kind.maxTokens,
@@ -43,10 +30,7 @@ enum AnthropicMessages {
         }
         if fallbackModels.contains(where: config.model.hasPrefix) {
             body["fallbacks"] = "default"
-            betas.append("server-side-fallback-2026-07-01")
-        }
-        if !betas.isEmpty {
-            request.setValue(betas.joined(separator: ","), forHTTPHeaderField: "anthropic-beta")
+            request.setValue("server-side-fallback-2026-07-01", forHTTPHeaderField: "anthropic-beta")
         }
         guard let data = try? JSONSerialization.data(withJSONObject: body) else {
             return .failure(.malformed)

@@ -1,4 +1,4 @@
-use tree_sitter::{Language, Node};
+use tree_sitter::Language;
 
 use super::Grammar;
 use crate::highlight::editing::{EditingKinds, make_folds, no_statement};
@@ -96,7 +96,8 @@ pub fn grammar() -> Grammar {
         declares: crate::highlight::locals::no_declares,
         local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["word"],
-        qualifier: no_qualifier,
+        qualifier: super::none::no_qualifier,
+        postfix: super::none::no_postfix,
         outline: make_outline::outline,
         member_ops: &[],
         member_kinds: &[],
@@ -114,8 +115,4 @@ pub fn grammar() -> Grammar {
             is_statement: no_statement,
         },
     }
-}
-
-fn no_qualifier(_: Node<'_>, _: &str) -> Option<String> {
-    None
 }

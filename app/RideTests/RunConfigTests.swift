@@ -9,6 +9,7 @@ final class RunConfigTests: XCTestCase {
     func testRoundTripsThroughJson() throws {
         let config = RunConfig(
             target: "ride-demo",
+            buildArgs: ["--release"],
             args: ["--verbose", "1"],
             env: ["RUST_LOG": "debug"],
             workingDir: "/tmp/demo",
@@ -22,6 +23,7 @@ final class RunConfigTests: XCTestCase {
         let data = Data(#"{"target":"demo"}"#.utf8)
         let config = try JSONDecoder().decode(RunConfig.self, from: data)
         XCTAssertEqual(config.target, "demo")
+        XCTAssertEqual(config.buildArgs, [])
         XCTAssertEqual(config.args, [])
         XCTAssertEqual(config.env, [:])
         XCTAssertNil(config.workingDir)
@@ -55,38 +57,33 @@ final class RunConfigTests: XCTestCase {
         XCTAssertEqual(appended.map(\.target), ["a", "b", "c"])
     }
 
-    func testNoSanitizersYieldNoFlags() {
+    func testNoSanitizersNeedNoNightly() {
         let config = RunConfig(target: "demo")
         for kind in RunProjectKind.allCases {
-            let flags = config.flags(for: kind)
-            XCTAssertEqual(flags.env, [:])
-            XCTAssertEqual(flags.args, [])
+            XCTAssertEqual(config.activeSanitizers(for: kind), [])
             XCTAssertFalse(config.requiresNightly(for: kind))
         }
     }
 
-    func testCargoSanitizerFlagsUseRustflagsAndHostTriple() {
+    func testCargoOffersOnlyRustcSanitizers() {
+        XCTAssertEqual(Sanitizer.supported(by: .cargo), [.address, .thread])
         let config = RunConfig(target: "demo", sanitizers: [.undefined, .address])
-        let flags = config.flags(for: .cargo)
-        XCTAssertEqual(flags.env, ["RUSTFLAGS": "-Zsanitizer=address -Zsanitizer=undefined"])
-        XCTAssertEqual(flags.args, ["--target", RunConfig.hostTriple])
+        XCTAssertEqual(config.activeSanitizers(for: .cargo), [.address])
         XCTAssertTrue(config.requiresNightly(for: .cargo))
+        XCTAssertFalse(RunConfig(target: "demo", sanitizers: [.undefined]).requiresNightly(for: .cargo))
     }
 
-    func testCMakeSanitizerFlagsAreConfigureArguments() {
-        let config = RunConfig(target: "demo", sanitizers: [.thread])
-        let flags = config.flags(for: .cmake)
-        XCTAssertEqual(flags.env, [:])
-        XCTAssertEqual(flags.args, ["-DCMAKE_CXX_FLAGS=-fsanitize=thread"])
+    func testCMakeOffersEverySanitizerWithoutNightly() {
+        let config = RunConfig(target: "demo", sanitizers: [.thread, .undefined])
+        XCTAssertEqual(config.activeSanitizers(for: .cmake), [.undefined, .thread])
         XCTAssertFalse(config.requiresNightly(for: .cmake))
     }
 
-    func testMakeAndCompileDbTakeNoSanitizerFlags() {
+    func testMakeAndCompileDbOfferNoSanitizers() {
         let config = RunConfig(target: "demo", sanitizers: [.address])
         for kind in [RunProjectKind.make, .compileDb, .none] {
-            let flags = config.flags(for: kind)
-            XCTAssertEqual(flags.env, [:])
-            XCTAssertEqual(flags.args, [])
+            XCTAssertEqual(Sanitizer.supported(by: kind), [])
+            XCTAssertEqual(config.activeSanitizers(for: kind), [])
         }
     }
 

@@ -7,7 +7,7 @@ use crate::index::MAX_GRAM;
 
 use super::collect::BestPerName;
 use super::hit::doc_hit;
-use super::parse::{escape_regex, kind_term};
+use super::parse::{escape_regex, kind_term, plain_terms};
 use super::rank::Ranking;
 
 type Clause = (Occur, Box<dyn Query>);
@@ -100,9 +100,8 @@ fn push_phrase(clauses: &mut Vec<Clause>, index: &Index, schema: &Schema, text: 
     if fields.is_empty() {
         return;
     }
-    if let Ok(parsed) = QueryParser::for_index(index, fields).parse_query(text) {
-        clauses.push((Occur::Must, parsed));
-    }
+    let (parsed, _) = QueryParser::for_index(index, fields).parse_query_lenient(&plain_terms(text));
+    clauses.push((Occur::Must, parsed));
 }
 
 fn push_module(clauses: &mut Vec<Clause>, schema: &Schema, module: Option<&str>) {

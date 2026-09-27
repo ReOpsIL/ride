@@ -1,32 +1,12 @@
 use std::collections::HashSet;
-use std::path::Path;
 
 use tantivy::{Index, IndexReader};
 
 use crate::ffi::{CompletionQuery, CompletionResponse, ItemKind, QueryMode};
-use crate::index::live_index_dir;
 
 use super::items::item_search;
 
-pub fn open_dir(index_dir: &Path) -> Option<(Index, IndexReader)> {
-    let live = live_index_dir(index_dir)?;
-    let index = Index::open_in_dir(live).ok()?;
-    let reader = index.reader().ok()?;
-    Some((index, reader))
-}
-
-pub fn search_index(
-    index_dir: &Path,
-    q: &CompletionQuery,
-    overlay: &HashSet<String>,
-) -> CompletionResponse {
-    match open_dir(index_dir) {
-        Some((index, reader)) => search_open(&index, &reader, q, overlay),
-        None => empty_resp(q.query_id),
-    }
-}
-
-pub fn search_open(
+pub(super) fn search_open(
     index: &Index,
     reader: &IndexReader,
     q: &CompletionQuery,

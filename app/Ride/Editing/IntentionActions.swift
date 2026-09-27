@@ -12,35 +12,24 @@ enum IntentionActions {
 
     @discardableResult
     static func fetch(
-        sessionId: UInt64,
-        path: String?,
+        document: BufferDocument,
         text: String,
         caret: Int,
         qos: DispatchQoS.QoSClass = .userInitiated,
         then done: @escaping ([Intention]) -> Void
     ) -> Bool {
         let byte = UInt32(Utf16.utf8Offset(in: text, utf16: caret))
-        let items = diagnostics(for: path)
-        return RideEngineClient.shared.withEngine(qos: qos, { engine in
-            engine.intentions(sessionId: sessionId, cursorByte: byte, diagnostics: items)
+        let items = diagnostics(for: document.fileURL?.standardizedFileURL.path)
+        return SessionService.shared.read(document, delivery: .currentText, qos: qos, { engine, id in
+            engine.intentions(sessionId: id, cursorByte: byte, diagnostics: items)
         }, then: done)
     }
 
     static func apply(_ intention: Intention, to view: RideTextView) {
-        let text = view.string
-        let changes = intention.edits.map { edit in
-            TextChange(
-                range: Utf16.nsRange(in: text, startByte: edit.startByte, endByte: edit.endByte),
-                text: edit.text
-            )
+        guard let caret = intention.edits.last else {
+            return
         }
-        let applied = EditResult.applying(changes, to: text)
-        let caretByte = Int(intention.edits.last?.caretByte ?? 0)
-        let caret = Utf16.utf16Offset(in: applied, utf8: caretByte)
-        EditorCommand.apply(
-            EditResult(changes: changes, selection: NSRange(location: caret, length: 0)),
-            to: view
-        )
+        EditorCommand.apply(TextEditApply.result(intention.edits, caret: caret, in: view.string), to: view)
     }
 
     static func apply(fix: StoredFix, to view: RideTextView) {

@@ -2,6 +2,7 @@ import AppKit
 
 final class FoldController {
     static let shared = FoldController()
+    private var refreshing: Set<ObjectIdentifier> = []
 
     func fold() {
         guard let target = EditorCommands.target(), let ranges = ranges(for: target) else {
@@ -49,13 +50,13 @@ final class FoldController {
         after(target.view, caret: target.selection.location, before: before)
     }
 
-    func toggle(line: Int) {
-        guard let view = EditorPanes.shared.focusedView else {
+    func toggle(line: Int, in pane: RideTextView? = nil) {
+        guard let view = pane ?? EditorPanes.shared.focusedView else {
             return
         }
         view.window?.makeFirstResponder(view)
         refreshStarts(view)
-        guard let target = EditorCommands.target(), let bounds = lineRange(line, in: view) else {
+        guard let target = EditorCommands.target(), let bounds = view.lineRange(line) else {
             return
         }
         if let folded = target.view.folds.ranges.first(where: { NSLocationInRange($0.location, bounds) }) {
@@ -75,40 +76,55 @@ final class FoldController {
     }
 
     func refreshStarts(_ view: RideTextView) {
-        guard let binding = view.hooks.binding?() else {
+        guard let document = view.hooks.binding?()?.document else {
             return
         }
-        if !binding.document.hasSession {
+        guard document.hasSession else {
             view.folds.setStartLines([])
             return
         }
-        guard let id = binding.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        if let ranges = SessionService.shared.readNow(document, { $0.foldRanges(sessionId: $1) }) {
+            view.folds.setStartLines(startLines(ranges, in: view))
+        }
+    }
+
+    func scheduleStarts(_ view: RideTextView) {
+        guard let document = view.hooks.binding?()?.document else {
             return
         }
-        let text = view.string
-        let index = view.lineIndex()
-        let lines = Set(engine.foldRanges(sessionId: id).map { range in
-            index.line(at: Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte).location)
+        guard document.hasSession else {
+            view.folds.setStartLines([])
+            return
+        }
+        let key = ObjectIdentifier(view)
+        let mark = document.textGeneration
+        guard !refreshing.contains(key) else {
+            return
+        }
+        let started = SessionService.shared.read(document, { $0.foldRanges(sessionId: $1) }, then: { [weak self, weak view] ranges in
+            self?.refreshing.remove(key)
+            guard let self, let view else {
+                return
+            }
+            if document.textGeneration == mark {
+                view.folds.setStartLines(self.startLines(ranges, in: view))
+            }
+            (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
         })
-        view.folds.setStartLines(lines)
+        if started {
+            refreshing.insert(key)
+        }
+    }
+
+    private func startLines(_ ranges: [FoldRange], in view: RideTextView) -> Set<Int> {
+        let map = Utf16Map(view.string)
+        let index = view.lineIndex()
+        return Set(ranges.map { index.line(at: map.utf16(byte: Int($0.startByte))) })
     }
 
     private func ranges(for target: EditorTarget) -> [NSRange]? {
-        guard let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
-            return nil
-        }
-        let text = target.text
-        return engine.foldRanges(sessionId: id).map { Utf16.nsRange(in: text, startByte: $0.startByte, endByte: $0.endByte) }
-    }
-
-    private func lineRange(_ line: Int, in view: RideTextView) -> NSRange? {
-        let starts = view.lineIndex().starts
-        guard line >= 1, line <= starts.count else {
-            return nil
-        }
-        let start = starts[line - 1]
-        let end = line < starts.count ? starts[line] : (view.string as NSString).length
-        return NSRange(location: start, length: max(0, end - start))
+        let map = Utf16Map(target.text)
+        return target.session { $0.foldRanges(sessionId: $1) }?.map { map.nsRange(startByte: $0.startByte, endByte: $0.endByte) }
     }
 
     func restore(document: BufferDocument, view: RideTextView) {
@@ -118,22 +134,19 @@ final class FoldController {
 
     private func applyStoredFolds(document: BufferDocument, view: RideTextView) {
         guard !document.foldStarts.isEmpty,
-              let id = document.sessionId,
-              let engine = RideEngineClient.shared.engine
+              let ranges = SessionService.shared.readNow(document, { $0.foldRanges(sessionId: $1) })
         else {
             return
         }
-        let text = view.string
+        let map = Utf16Map(view.string)
         let wanted = Set(document.foldStarts)
-        let ranges = engine.foldRanges(sessionId: id)
         let before = view.folds
         view.folds.removeAll()
-        for range in ranges where wanted.contains(range.startByte) {
-            view.folds.add(Utf16.nsRange(in: text, startByte: range.startByte, endByte: range.endByte))
+        let kept = ranges.filter { wanted.contains($0.startByte) && $0.endByte > $0.startByte }
+        for range in kept {
+            view.folds.add(map.nsRange(startByte: range.startByte, endByte: range.endByte))
         }
-        document.foldStarts = view.folds.ranges.map { range in
-            UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
-        }
+        document.foldStarts = kept.map(\.startByte)
         view.refreshFolds(from: before)
     }
 

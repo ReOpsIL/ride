@@ -37,7 +37,6 @@ pub struct ItemDoc {
     pub name: String,
     pub signature: String,
     pub doc_first_paragraph: String,
-    pub source_chunk: String,
     pub source_path: PathBuf,
     pub byte_range: (u32, u32),
     pub name_start_byte: u32,
@@ -59,7 +58,6 @@ pub struct ItemParts {
     pub name_start_byte: u32,
     pub signature: String,
     pub doc: String,
-    pub chunk: String,
     pub reachable: bool,
     pub deprecated: bool,
 }
@@ -74,7 +72,6 @@ impl ItemDoc {
             name: parts.name,
             signature: parts.signature,
             doc_first_paragraph: parts.doc,
-            source_chunk: parts.chunk,
             source_path: parts.source_path,
             byte_range: parts.byte_range,
             name_start_byte: parts.name_start_byte,

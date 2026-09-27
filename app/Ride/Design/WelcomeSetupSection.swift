@@ -25,8 +25,6 @@ struct WelcomeSetupSection: View {
         }
         .onAppear {
             model.refresh()
-            // DeveloperMode.isEnabled runs DevToolsSecurity and waits for it, which spins the
-            // run loop; never do that while SwiftUI is building the view.
             DispatchQueue.global(qos: .utility).async {
                 let enabled = DeveloperMode.isEnabled
                 DispatchQueue.main.async {

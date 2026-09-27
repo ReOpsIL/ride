@@ -1,7 +1,6 @@
 use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
-use crate::text::first_line;
 
 use super::c_names::node_text;
 use super::walk::each_node;
@@ -22,7 +21,7 @@ fn definition(node: Node<'_>, head: &str, kind: ItemKind, text: &str, out: &mut 
     let Some(command) = node.named_children(&mut cursor).find(|c| c.kind() == head) else {
         return;
     };
-    if let Some(name) = first_argument(command, text) {
+    if let Some(name) = first_argument(command) {
         push(node, name, kind, text, out);
     }
 }
@@ -38,12 +37,12 @@ fn command(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
         "option" => ItemKind::Const,
         _ => return,
     };
-    if let Some(name) = first_argument(node, text) {
+    if let Some(name) = first_argument(node) {
         push(node, name, kind, text, out);
     }
 }
 
-fn first_argument(command: Node<'_>, text: &str) -> Option<String> {
+fn first_argument(command: Node<'_>) -> Option<Node<'_>> {
     let mut cursor = command.walk();
     let list = command
         .named_children(&mut cursor)
@@ -51,20 +50,8 @@ fn first_argument(command: Node<'_>, text: &str) -> Option<String> {
     let mut cursor = list.walk();
     list.named_children(&mut cursor)
         .find(|c| c.kind() == "argument")
-        .map(|a| node_text(a, text))
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
-    if !name.is_empty() {
-        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
-        out.push(OutlineItem {
-            name,
-            kind,
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-            name_start_byte,
-            signature: first_line(&node_text(node, text)),
-            doc: String::new(),
-        });
-    }
+fn push(node: Node<'_>, name: Node<'_>, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
+    out.extend(super::line_item::line_item(node, name, kind, text));
 }

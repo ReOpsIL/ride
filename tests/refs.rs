@@ -33,7 +33,6 @@ fn call_record(text: &str, name: &str, byte: usize) -> RefRecord {
     RefRecord {
         name: name.to_string(),
         kind: RefKind::Call,
-        path: "src/main.rs".to_string(),
         line: line_of(text, byte),
         byte_start: byte as u32,
         byte_end: (byte + name.len()) as u32,
@@ -261,4 +260,79 @@ fn refs_dir_override_keeps_the_support_directory_clean() {
 
     let at = text.find("record(").unwrap() as u32 + 1;
     assert_eq!(engine.find_usages(open.session_id, at).hits.len(), 2);
+}
+
+#[test]
+fn loose_files_after_close_do_not_leak_into_the_old_workspace_refs() {
+    let (dir, engine, root) = demo_engine();
+    let main = std::fs::read_to_string(root.join("src/main.rs")).unwrap();
+    let open_main = engine
+        .open_session(
+            "main".into(),
+            Some(root.join("src/main.rs").display().to_string()),
+            main,
+            None,
+        )
+        .unwrap();
+    assert_eq!(
+        engine.usage_counts(open_main.session_id, vec!["zlorp".into()]),
+        vec![0]
+    );
+    engine.close_workspace();
+    let loose = dir.path().join("loose.rs");
+    let open_loose = engine
+        .open_session(
+            "loose".into(),
+            Some(loose.display().to_string()),
+            "fn zlorp() {}\nfn main() { zlorp(); zlorp(); }\n".into(),
+            None,
+        )
+        .unwrap();
+    engine.note_saved(open_loose.session_id).unwrap();
+    engine.open_workspace(root.display().to_string()).unwrap();
+    assert_eq!(
+        engine.usage_counts(open_main.session_id, vec!["zlorp".into()]),
+        vec![0]
+    );
+}
+
+#[test]
+fn usages_in_the_open_buffer_follow_unsaved_edits() {
+    let (_dir, engine, root) = demo_engine();
+    let main = root.join("src/main.rs");
+    let text = std::fs::read_to_string(&main).unwrap();
+    let open = engine
+        .open_session(
+            "demo".into(),
+            Some(main.display().to_string()),
+            text.clone(),
+            None,
+        )
+        .unwrap();
+    engine.note_saved(open.session_id).unwrap();
+    let edited = format!("// unsaved\n{text}");
+    engine
+        .set_text(open.session_id, edited.clone(), None)
+        .unwrap();
+    let at = edited.find("record(").unwrap() as u32 + 1;
+    let resp = engine.find_usages(open.session_id, at);
+    assert_eq!(resp.hits.len(), 2, "{:?}", resp.hits);
+    for hit in &resp.hits {
+        let span = &edited[hit.byte_start as usize..hit.byte_end as usize];
+        assert_eq!(span, "record", "{hit:?}");
+    }
+    let plan = engine.rename_plan(open.session_id, at, "log".into());
+    let edits: Vec<_> = plan
+        .files
+        .iter()
+        .chain(&plan.review)
+        .filter(|f| f.path == "src/main.rs")
+        .flat_map(|f| &f.edits)
+        .collect();
+    assert!(!edits.is_empty());
+    assert!(
+        edits
+            .iter()
+            .all(|e| &edited[e.start_byte as usize..e.end_byte as usize] == "record")
+    );
 }

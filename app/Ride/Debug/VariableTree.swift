@@ -92,23 +92,10 @@ struct VariableTree: Equatable {
         return false
     }
 
-    mutating func collapse(_ id: String) {
-        expanded.remove(id)
-    }
-
     var rows: [VariableRow] {
         var out: [VariableRow] = []
         walk(id: Self.rootId, depth: 0, into: &out)
         return out
-    }
-
-    func node(id: String) -> VariableNode? {
-        for (_, nodes) in children {
-            if let found = nodes.first(where: { $0.id == id }) {
-                return found
-            }
-        }
-        return nil
     }
 
     static func childId(parent: String, index: Int, name: String) -> String {

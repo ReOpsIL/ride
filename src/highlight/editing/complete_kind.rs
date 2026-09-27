@@ -90,9 +90,7 @@ fn wants_semi(node: Node<'_>) -> bool {
         | "expression_statement"
         | "use_declaration"
         | "extern_crate_declaration"
-        | "return_statement"
-        | "break_expression"
-        | "continue_expression" => true,
+        | "return_statement" => true,
         "declaration" => !c_fn_decl(node),
         _ => false,
     }

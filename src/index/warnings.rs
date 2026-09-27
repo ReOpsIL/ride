@@ -29,9 +29,7 @@ pub fn append_warning(
         crate_name,
         message: error.to_string(),
     };
-    let mut json = serde_json::to_string(&line).map_err(|e| EngineError::Index {
-        message: e.to_string(),
-    })?;
+    let mut json = serde_json::to_string(&line).map_err(EngineError::index)?;
     json.push('\n');
     let mut file = OpenOptions::new()
         .create(true)

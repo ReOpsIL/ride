@@ -24,6 +24,20 @@ struct PreferenceBindings {
         )
     }
 
+    var provider: Binding<String> {
+        Binding(
+            get: { state.prefs.aiProvider },
+            set: { value in
+                state.updatePrefs {
+                    if $0.aiProvider != value {
+                        $0.aiModel = ""
+                    }
+                    $0.aiProvider = value
+                }
+            }
+        )
+    }
+
     var theme: Binding<String> {
         Binding(
             get: { state.prefs.theme },

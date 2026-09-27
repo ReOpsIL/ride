@@ -51,8 +51,7 @@ fn crates(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
     let limit = q.limit_or_default() as usize;
     let mut pool = Vec::new();
     if snap.lang.has_catalog() {
-        let mut hits = query::listed(
-            snap.catalog.src(),
+        let mut hits = snap.catalog.listed(
             query::Filter::Kind(ItemKind::Crate),
             &q.prefix,
             limit,
@@ -84,7 +83,7 @@ fn children(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> Vec<Co
     } else {
         q.context
     };
-    let mut hits = query::children(snap.catalog.src(), &parent, &q.prefix, limit, context);
+    let mut hits = snap.catalog.children(&parent, &q.prefix, limit, context);
     for hit in &mut hits {
         hit.score += case_bonus(&hit.name, &q.prefix);
         if context == CompletionContext::MemberAccess && takes_self(&hit.signature) {

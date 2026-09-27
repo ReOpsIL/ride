@@ -1,9 +1,7 @@
 use tree_sitter::{InputEdit, Node, Parser, Query, Range, Tree};
 
 use crate::error::EngineError;
-use crate::ffi::{
-    ByteRange, FoldRange, HighlightSpan, ItemKind, OutlineItem, ParseErrorSpan, SymbolAt,
-};
+use crate::ffi::{ByteRange, FoldRange, HighlightSpan, OutlineItem, ParseErrorSpan, SymbolAt};
 
 use super::editing::{markdown_enclosing, markdown_folds};
 use super::fences::Fences;
@@ -107,12 +105,10 @@ impl Syntax for MarkdownSyntax {
     }
 
     fn outline(&self, text: &str) -> Vec<OutlineItem> {
-        let Some(tree) = &self.block_tree else {
-            return Vec::new();
-        };
-        let mut out = Vec::new();
-        headings(tree.root_node(), text, &mut out);
-        out
+        self.block_tree
+            .as_ref()
+            .map(|t| super::markdown_outline::outline(t.root_node(), text))
+            .unwrap_or_default()
     }
 
     fn errors(&self) -> Vec<ParseErrorSpan> {
@@ -163,30 +159,4 @@ fn enclosing_block<'a>(root: Node<'a>, edit: &InputEdit) -> Option<Node<'a>> {
         node = parent;
     }
     Some(node)
-}
-
-fn headings(node: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
-    if matches!(node.kind(), "atx_heading" | "setext_heading") {
-        let name = node
-            .named_children(&mut node.walk())
-            .find(|c| c.kind() == "inline" || c.kind() == "paragraph")
-            .and_then(|c| c.utf8_text(text.as_bytes()).ok())
-            .unwrap_or("")
-            .trim()
-            .to_string();
-        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
-        out.push(OutlineItem {
-            name,
-            kind: ItemKind::Heading,
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-            name_start_byte,
-            signature: String::new(),
-            doc: String::new(),
-        });
-    }
-    let mut cursor = node.walk();
-    for child in node.named_children(&mut cursor) {
-        headings(child, text, out);
-    }
 }

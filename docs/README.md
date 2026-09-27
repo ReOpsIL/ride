@@ -17,12 +17,13 @@
 | Next features and releases 1.1 / 1.2 / 1.3 / 2.0 (trimmed to daily native-app work after the RustRover and CLion pass) | `plan/roadmap/next.md` |
 | Implementation plan for a delegated model: executor contract, tiers, task cards for 1.1 and 1.2 | `plan/roadmap/next-impl.md` |
 | Feature inventory for running and debugging C, C++, Rust and assembly, with verification status | `docs/product/feature-inventory.md` |
+| Every menu item, popup, panel control, key binding and preference: what it does (traced to its handler) and which test covers it | `docs/product/command-inventory.md` |
 | Editor binding rules: hosts own documents, pending text and jumps are per document, focus follows the pane layout | `docs/product/editor-binding.md` |
 | Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
 | AppKit view clipping: since macOS 14 a view that fills its dirty rect paints over its neighbours; the gutter clips | `docs/tui/appkit-view-clipping.md` |
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
-| AI suggestions in the completion popup: providers, account login, context levels, request shape | `docs/product/ai-complete.md` |
+| AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | Tool lookup: the login-shell PATH resolved once, used for finding `cargo` and friends and passed to every child process | `docs/product/tool-lookup.md` |
 | Next features after 1.2: 1.3 understand and change code, 1.4 completion that knows types, 1.5 debugging depth and assembly | `plan/roadmap/next-1.3.md` |
 | Release 1.0 public cards: release train, onboarding, crash reports, `ride` command, C/C++ live verification, editor leftovers, site and manuals, hygiene gates | `plan/roadmap/release-1.0.md` |
@@ -175,7 +176,7 @@ Two extraction changes ship with the bump: enum variants are emitted as `variant
 | `query_completions` | site-classified completions (see above); sessionless calls fall back to prefix / crate / phrase catalog search |
 | `import_edit` | `TextEdit` adding `use <path>;` to a Rust buffer, or none when already imported |
 | `signature_help` | signature of the call enclosing the caret with parameter ranges and the active parameter |
-| `find_definitions` | identifier under the caret to buffer outline or index definitions |
+| `find_definitions` | identifier under the caret to buffer outline, enum variants from the buffer and header type tables (qualified `Enum::Variant`, `Self::Variant`, C unscoped enumerators, Rust variants named by a `use`), header outlines or index definitions |
 | `run_check` | `cargo check` diagnostics with absolute paths and byte ranges |
 | `format_rust` | rustfmt a buffer |
 | `run_check_c` | `clang -fsyntax-only` diagnostics for one C or C++ file, flags from `compile_commands.json` |

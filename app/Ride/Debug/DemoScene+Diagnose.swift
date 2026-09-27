@@ -61,13 +61,12 @@ extension DemoScene {
     }
 
     private static func popIntentions(_ state: AppState, stage: DemoStage) {
-        guard let target = EditorCommands.target(), let id = target.document.sessionId else {
+        guard let target = EditorCommands.target() else {
             return
         }
         stage.busy = true
         let scheduled = IntentionActions.fetch(
-            sessionId: id,
-            path: target.document.fileURL?.standardizedFileURL.path,
+            document: target.document,
             text: target.text,
             caret: target.selection.location
         ) { items in

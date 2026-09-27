@@ -18,7 +18,11 @@ extension AppState {
         guard let root = workspaceRoot else {
             return
         }
-        IndexerProcess.run(project: root, indexDir: RideEngineClient.shared.indexDir, force: true)
+        let name = root.lastPathComponent
+        let started = IndexerProcess.run(project: root, indexDir: RideEngineClient.shared.indexDir, force: true) { [weak self] status in
+            self?.showNotice(status == 0 ? "Reindexed \(name)" : "Reindex of \(name) failed (exit \(status))")
+        }
+        showNotice(started ? "Reindexing \(name)…" : "Could not start the indexer for \(name)", seconds: started ? 30 : 6)
     }
 
     func updatePrefs(_ edit: (inout Preferences) -> Void) {
@@ -33,6 +37,8 @@ extension AppState {
         }
         if before.theme != prefs.theme {
             applyTheme()
+        } else if before.fontSize != prefs.fontSize {
+            applyTerminalFont()
         }
     }
 

@@ -125,7 +125,6 @@ fn record(node: Node<'_>, kind: RefKind, text: &str, outline: &[OutlineItem]) ->
     RefRecord {
         name: node_text(node, text),
         kind,
-        path: String::new(),
         line: node.start_position().row as u32 + 1,
         byte_start,
         byte_end,

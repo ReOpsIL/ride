@@ -172,3 +172,32 @@ fn enum_paths_still_list_variants() {
     assert!(has(&n, "A") && has(&n, "B"), "{n:?}");
     assert_eq!(kind_of(&resp, "A"), Some(ItemKind::Variant));
 }
+
+#[test]
+fn shadowing_let_resolves_through_the_outer_binding() {
+    let (_dir, engine) = engine();
+    let src = "struct Inner { depth: u8 }\nstruct Config { inner: Inner }\nfn f(cfg: Config) { let cfg = cfg.inner; cfg.| }\n";
+    assert_eq!(names(&complete(&engine, src)), vec!["depth"]);
+    let src =
+        "struct Point { x: f64, y: f64 }\nfn f(ps: Vec<Point>, p: Point) { let q = p; q.| }\n";
+    assert_eq!(names(&complete(&engine, src)), vec!["x", "y"]);
+}
+
+#[test]
+fn member_signatures_keep_array_lengths_and_bound_types() {
+    let (_dir, engine) = engine();
+    let src = "struct S { buf: [u8; 4], n: u8 }\nimpl S { fn apply(&self, f: impl Iterator<Item = u8>) -> u8 { 0 } }\nfn f(s: S) { s.| }\n";
+    let resp = complete(&engine, src);
+    let sig = |name: &str| {
+        resp.hits
+            .iter()
+            .find(|h| h.name == name)
+            .map(|h| h.signature.clone())
+            .unwrap_or_default()
+    };
+    assert_eq!(sig("buf"), "buf: [u8; 4]");
+    assert_eq!(
+        sig("apply"),
+        "fn apply(&self, f: impl Iterator<Item = u8>) -> u8"
+    );
+}

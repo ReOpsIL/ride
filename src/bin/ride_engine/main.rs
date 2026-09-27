@@ -6,8 +6,12 @@ use clap::{Parser, Subcommand};
 mod cheat;
 mod complete;
 mod cursor;
+mod index;
 mod out;
-use ride_engine::{EngineConfig, engine_start, last_status, rebuild_index, write_index};
+mod query;
+mod timing;
+
+use ride_engine::EngineConfig;
 
 #[derive(Parser, Debug)]
 #[command(name = "ride-engine", version)]
@@ -17,7 +21,7 @@ struct Cli {
     #[arg(long, global = true)]
     index_dir: Option<String>,
     #[command(subcommand)]
-    command: Option<Command>,
+    command: Command,
 }
 
 #[derive(Subcommand, Debug)]
@@ -59,142 +63,36 @@ enum Command {
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
+    let config = config(cli.index_dir.clone());
     match cli.command {
-        None => {
-            if let Some(path) = cli.project_path {
-                println!("Project root folder: {path}");
-            }
+        Command::Index { force } => index::run(cli.project_path, cli.index_dir, force, config),
+        Command::Query { query, repeat } => {
+            query::run(config, query, repeat);
             ExitCode::SUCCESS
         }
-        Some(Command::Index { force }) => index_cmd(cli.project_path, cli.index_dir, force),
-        Some(Command::Query { query, repeat }) => {
-            query_cmd(query, cli.index_dir, repeat);
-            ExitCode::SUCCESS
-        }
-        Some(Command::Complete {
+        Command::Complete {
             file,
             byte,
             find,
             typed,
             repeat,
-        }) => complete::run(
-            config(cli.index_dir),
-            &file,
-            cursor::Cursor { byte, find, typed },
-            repeat,
-        ),
-        Some(Command::Cheat {
+        } => complete::run(config, &file, cursor::Cursor { byte, find, typed }, repeat),
+        Command::Cheat {
             file,
             byte,
             find,
             typed,
             all,
-        }) => cheat::run(
-            config(cli.index_dir),
-            &file,
-            cursor::Cursor { byte, find, typed },
-            all,
-        ),
-        Some(Command::Status) => {
-            status_cmd(cli.index_dir);
+        } => cheat::run(config, &file, cursor::Cursor { byte, find, typed }, all),
+        Command::Status => {
+            index::status(cli.index_dir.as_deref(), config);
             ExitCode::SUCCESS
         }
-        Some(Command::Tools) => {
-            for tool in ride_engine::tool_status() {
-                match tool.path {
-                    Some(path) => println!("{:<14} {path}", tool.name),
-                    None => println!(
-                        "{:<14} missing  ({}; {})",
-                        tool.name,
-                        tool.install.unwrap_or_else(|| "no installer found".into()),
-                        tool.hint
-                    ),
-                }
-            }
+        Command::Tools => {
+            index::tools();
             ExitCode::SUCCESS
         }
     }
-}
-
-fn index_cmd(project_path: Option<String>, index_dir: Option<String>, force: bool) -> ExitCode {
-    let Some(project) = project_path else {
-        eprintln!("index requires --project-path");
-        return ExitCode::from(2);
-    };
-    let Some(index_dir) = index_dir else {
-        eprintln!("index requires --index-dir");
-        return ExitCode::from(2);
-    };
-    let config = config(Some(index_dir.clone()));
-    let run = if force { rebuild_index } else { write_index };
-    match run(
-        PathBuf::from(project).as_path(),
-        PathBuf::from(index_dir).as_path(),
-        &config,
-    ) {
-        Ok(status) => {
-            println!(
-                "{} docs {} crates {} warnings",
-                status.docs, status.crates_done, status.warnings
-            );
-            ExitCode::SUCCESS
-        }
-        Err(e) => {
-            eprintln!("{e}");
-            ExitCode::from(1)
-        }
-    }
-}
-
-fn query_cmd(query: String, index_dir: Option<String>, repeat: u32) {
-    let engine = engine_start(config(index_dir));
-    let mode = if query.contains(' ') {
-        ride_engine::QueryMode::Phrase
-    } else {
-        ride_engine::QueryMode::Items
-    };
-    let request = |id: u64| ride_engine::CompletionQuery {
-        query_id: id,
-        session_id: 0,
-        prefix: query.clone(),
-        mode,
-        context: ride_engine::CompletionContext::Unknown,
-        cursor_byte: 0,
-        replace_start_byte: 0,
-        current_crate: None,
-        current_module: None,
-        kind_filter: None,
-        limit: 20,
-    };
-    let mut timings = Vec::new();
-    let mut resp = engine.query_completions(request(1));
-    for i in 2..=repeat.max(1) {
-        let start = std::time::Instant::now();
-        resp = engine.query_completions(request(u64::from(i)));
-        timings.push(start.elapsed());
-    }
-    if !timings.is_empty() {
-        timings.sort();
-        let p50 = timings[timings.len() / 2];
-        let p95 = timings[(timings.len() * 95 / 100).min(timings.len() - 1)];
-        eprintln!("p50 {p50:?} p95 {p95:?} over {} runs", timings.len());
-    }
-    out::print(&resp);
-}
-
-fn status_cmd(index_dir: Option<String>) {
-    if let Some(dir) = &index_dir
-        && let Some(status) = last_status(PathBuf::from(dir).as_path())
-    {
-        println!(
-            "{:?} docs={} crates={}/{} warnings={}",
-            status.state, status.docs, status.crates_done, status.crates_total, status.warnings
-        );
-        return;
-    }
-    let engine = engine_start(config(index_dir));
-    let s = engine.status();
-    println!("{:?}", s.state);
 }
 
 fn config(index_dir: Option<String>) -> EngineConfig {

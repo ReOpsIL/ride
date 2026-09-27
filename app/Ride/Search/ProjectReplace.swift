@@ -39,8 +39,7 @@ enum ProjectReplace {
         replacement: String,
         options: FindOptions = .defaults
     ) -> ProjectReplaceResult {
-        let needle = query.trimmingCharacters(in: .whitespaces)
-        guard !needle.isEmpty, let expression = FindMatcher.expression(needle, options: options) else {
+        guard let needle = ProjectFind.needle(query), let expression = FindMatcher.expression(needle, options: options) else {
             return ProjectReplaceResult(edits: [], skipped: [])
         }
         let template = FindMatcher.replacement(replacement, options: options)
@@ -83,12 +82,8 @@ enum ProjectReplace {
         expression: NSRegularExpression,
         template: String
     ) -> FileEdit? {
-        let ns = hit.text as NSString
-        let next = expression.stringByReplacingMatches(
-            in: hit.text,
-            range: NSRange(location: 0, length: ns.length),
-            withTemplate: template
-        )
+        let changes = FindMatcher.replacements(in: hit.text, expression: expression, template: template)
+        let next = EditResult.applying(changes, to: hit.text)
         guard next != hit.text else {
             return nil
         }

@@ -1,12 +1,15 @@
 use std::fs::{self, Metadata};
 use std::path::{Path, PathBuf};
-use std::time::UNIX_EPOCH;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use sha2::{Digest, Sha256};
 
 use crate::highlight::FileSummary;
 
-const FORMAT: &str = "header-summary-v1";
+use super::header_sweep;
+
+const FORMAT: &str = "header-summary-v2";
+const REFRESH_AFTER: Duration = Duration::from_secs(24 * 60 * 60);
 
 pub struct HeaderStore {
     dir: PathBuf,
@@ -18,8 +21,11 @@ impl HeaderStore {
     }
 
     pub fn read(&self, path: &Path, meta: &Metadata) -> Option<FileSummary> {
-        let bytes = fs::read(self.file(path, meta)).ok()?;
-        serde_json::from_slice(&bytes).ok()
+        let file = self.file(path, meta);
+        let bytes = fs::read(&file).ok()?;
+        let summary = serde_json::from_slice(&bytes).ok()?;
+        refresh(&file);
+        Some(summary)
     }
 
     pub fn write(&self, path: &Path, meta: &Metadata, summary: &FileSummary) {
@@ -36,6 +42,10 @@ impl HeaderStore {
         }
     }
 
+    pub fn sweep(&self) {
+        header_sweep::sweep(&self.dir, &prefix());
+    }
+
     fn file(&self, path: &Path, meta: &Metadata) -> PathBuf {
         let mtime = meta
             .modified()
@@ -50,6 +60,20 @@ impl HeaderStore {
         hasher.update(meta.len().to_le_bytes());
         let digest = hasher.finalize();
         let hex: String = digest[..16].iter().map(|b| format!("{b:02x}")).collect();
-        self.dir.join(format!("{hex}.json"))
+        self.dir.join(format!("{}{hex}.json", prefix()))
+    }
+}
+
+fn prefix() -> String {
+    format!("{FORMAT}-")
+}
+
+fn refresh(file: &Path) {
+    let now = SystemTime::now();
+    let stale = fs::metadata(file)
+        .and_then(|m| m.modified())
+        .is_ok_and(|t| now.duration_since(t).is_ok_and(|age| age > REFRESH_AFTER));
+    if stale && let Ok(handle) = fs::File::options().write(true).open(file) {
+        let _ = handle.set_modified(now);
     }
 }

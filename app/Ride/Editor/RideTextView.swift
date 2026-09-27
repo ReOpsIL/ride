@@ -5,6 +5,7 @@ final class RideTextView: NSTextView {
     var baseFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
     var appliedFontSize = 0
     var showIndentGuides = true
+    var showWhitespace = false
     var showCodeVision = true
     let lines = LineIndex()
     let vision = VisionIndex()
@@ -17,6 +18,7 @@ final class RideTextView: NSTextView {
 
     override func didChangeText() {
         lines.invalidate()
+        selectionStack = []
         textGeneration &+= 1
         super.didChangeText()
     }
@@ -65,6 +67,7 @@ final class RideTextView: NSTextView {
     override func draw(_ dirtyRect: NSRect) {
         IndentGuides.draw(in: self, rect: dirtyRect)
         super.draw(dirtyRect)
+        WhitespaceMarks.draw(in: self, rect: dirtyRect)
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -137,8 +140,7 @@ final class RideTextView: NSTextView {
             return nil
         }
         let start16 = storage.offset(from: storage.documentRange.location, to: vp.location)
-        let endLoc = vp.endLocation ?? vp.location
-        let end16 = storage.offset(from: storage.documentRange.location, to: endLoc)
+        let end16 = storage.offset(from: storage.documentRange.location, to: vp.endLocation)
         let text = string
         return ByteRange(
             startByte: UInt32(Utf16.utf8Offset(in: text, utf16: start16)),

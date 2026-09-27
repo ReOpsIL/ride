@@ -13,6 +13,15 @@ final class LineIndexTests: XCTestCase {
         XCTAssertEqual(index.column(at: 9), 3)
     }
 
+    func testRangeOfALineIncludesItsBreak() {
+        let index = LineIndex()
+        index.refresh("ab\ncd\n\nxyz" as NSString)
+        XCTAssertEqual(index.range(line: 1), NSRange(location: 0, length: 3))
+        XCTAssertEqual(index.range(line: 4), NSRange(location: 7, length: 3))
+        XCTAssertNil(index.range(line: 0))
+        XCTAssertNil(index.range(line: 5))
+    }
+
     func testRefreshOnlyWhenInvalidated() {
         let index = LineIndex()
         index.refresh("a\nb" as NSString)

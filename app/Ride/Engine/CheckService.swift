@@ -35,6 +35,14 @@ final class CheckService: ObservableObject {
         schedule(delay: delay) { [weak self] in self?.runIncluding(header: header) }
     }
 
+    func run(_ plan: CheckPlan) {
+        switch plan {
+        case .clangFile(let file): run(file: file)
+        case .cargo(let root): run(root: root)
+        case .clangProject(let root): runProject(root: root)
+        }
+    }
+
     func run(root: URL) {
         start(.cargo(root: root.path), progress: "Checking…") { engine in
             try engine.runCheck(projectRoot: root.path)
@@ -86,6 +94,7 @@ final class CheckService: ObservableObject {
             liveTimers[path]?.cancel()
             liveTimers.removeValue(forKey: path)
             _ = bump(Self.livePrefix + path)
+            _ = bump(Self.tidyPrefix + path)
             any = store.remove(path: path) || any
         }
         if any {

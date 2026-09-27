@@ -1,14 +1,8 @@
 import Foundation
 
-extension IndexStatus {
-    var warningCount: UInt32 {
-        warnings
-    }
-}
-
 enum IndexStatusLabel {
     static func text(_ status: IndexStatus) -> String {
-        let skipped = status.warningCount > 0 ? " · \(status.warningCount) skipped" : ""
+        let skipped = status.warnings > 0 ? " · \(status.warnings) skipped" : ""
         switch status.state {
         case .idle:
             return status.rustSrcAvailable ? "idle" : "idle · rust-src missing"

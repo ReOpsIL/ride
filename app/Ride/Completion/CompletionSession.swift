@@ -76,13 +76,12 @@ final class CompletionSession {
 
     func trigger(view: RideTextView) {
         AICompletionSource.shared.trigger(view: view)
-        guard let binding = view.hooks.binding?(), binding.document.hasCompletions, binding.state.prefs.completions else {
+        guard let binding = view.hooks.binding?(), binding.document.hasCompletions else {
             return
         }
         schedule(document: binding.document, view: view, state: binding.state)
     }
 
-    /// Adds AI suggestions to the visible list, or shows a list of just them. Returns whether the popup is showing them.
     @discardableResult
     func merge(ai: [AISuggestion], anchor: Int, in view: RideTextView) -> Bool {
         let caret = view.selectedRange()

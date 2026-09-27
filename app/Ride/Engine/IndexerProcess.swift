@@ -6,9 +6,10 @@ enum IndexerProcess {
             .appendingPathComponent("Contents/Helpers/ride-engine")
     }
 
-    static func run(project: URL, indexDir: URL, force: Bool = false) {
+    @discardableResult
+    static func run(project: URL, indexDir: URL, force: Bool = false, onExit: ((Int32) -> Void)? = nil) -> Bool {
         guard let bin = helperURL(), FileManager.default.isExecutableFile(atPath: bin.path) else {
-            return
+            return false
         }
         try? FileManager.default.createDirectory(at: indexDir, withIntermediateDirectories: true)
         let proc = Process()
@@ -20,10 +21,17 @@ enum IndexerProcess {
         ] + (force ? ["--force"] : [])
         proc.standardOutput = FileHandle.nullDevice
         proc.standardError = FileHandle.nullDevice
+        if let onExit {
+            proc.terminationHandler = { finished in
+                let status = finished.terminationStatus
+                DispatchQueue.main.async { onExit(status) }
+            }
+        }
         do {
             try proc.run()
         } catch {
-            return
+            return false
         }
+        return true
     }
 }

@@ -9,16 +9,10 @@ extension CheatGroup {
 }
 
 enum CheatSheetFetch {
-    static func run(document: BufferDocument, view: RideTextView, all: Bool, done: @escaping (CheatSheetResponse) -> Void) {
-        guard let id = document.sessionId else {
-            return
-        }
-        let text = view.string
-        let cursor = UInt32(Utf16.utf8Offset(in: text, utf16: view.selectedRange().location))
-        RideEngineClient.shared.withEngine { engine in
-            engine.cheatSheet(sessionId: id, cursorByte: cursor, all: all)
-        } then: { resp in
-            done(resp)
-        }
+    static func run(document: BufferDocument, view: RideTextView, done: @escaping (CheatSheetResponse) -> Void) {
+        let cursor = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
+        SessionService.shared.read(document, { engine, id in
+            engine.cheatSheet(sessionId: id, cursorByte: cursor, all: false)
+        }, then: done)
     }
 }

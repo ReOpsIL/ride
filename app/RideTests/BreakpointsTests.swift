@@ -46,9 +46,47 @@ final class BreakpointsTests: XCTestCase {
     func testRemoveAllClearsTheFileOnly() {
         var set = Breakpoints()
         set.toggle(path: "/a/main.rs", line: 1)
+        set.toggle(path: "/a/main.rs.bak", line: 1)
         set.toggle(path: "/a/util.rs", line: 2)
-        set.removeAll(path: "/a/main.rs")
-        XCTAssertEqual(set.paths, ["/a/util.rs"])
+        set.removeAll(under: "/a/main.rs")
+        XCTAssertEqual(set.paths, ["/a/main.rs.bak", "/a/util.rs"])
+    }
+
+    func testRemoveAllUnderADirectoryClearsItsFiles() {
+        var set = Breakpoints()
+        set.toggle(path: "/a/src/main.rs", line: 1)
+        set.toggle(path: "/a/src/deep/util.rs", line: 2)
+        set.toggle(path: "/a/srcx/lib.rs", line: 3)
+        set.removeAll(under: "/a/src")
+        XCTAssertEqual(set.paths, ["/a/srcx/lib.rs"])
+    }
+
+    func testVerifiedIsNotPersisted() throws {
+        var set = Breakpoints()
+        set.toggle(path: "/a/main.rs", line: 10)
+        set.verify(path: "/a/main.rs", verified: [10])
+        let data = try JSONEncoder().encode(set)
+        XCTAssertFalse(String(decoding: data, as: UTF8.self).contains("verified"))
+        let back = try JSONDecoder().decode(Breakpoints.self, from: data)
+        XCTAssertEqual(back.mark(path: "/a/main.rs", line: 10)?.verified, false)
+    }
+
+    func testStoredVerifiedFlagIsIgnoredOnLoad() throws {
+        let json = Data(#"{"/a/main.rs":[{"line":4,"verified":true}]}"#.utf8)
+        let back = try JSONDecoder().decode(Breakpoints.self, from: json)
+        XCTAssertEqual(back.mark(path: "/a/main.rs", line: 4)?.verified, false)
+    }
+
+    func testUnverifyAllClearsEveryFile() {
+        var set = Breakpoints()
+        set.toggle(path: "/a/main.rs", line: 1)
+        set.toggle(path: "/a/util.rs", line: 2)
+        set.verify(path: "/a/main.rs", verified: [1])
+        set.verify(path: "/a/util.rs", verified: [2])
+        set.unverifyAll()
+        XCTAssertEqual(set.mark(path: "/a/main.rs", line: 1)?.verified, false)
+        XCTAssertEqual(set.mark(path: "/a/util.rs", line: 2)?.verified, false)
+        XCTAssertEqual(set.paths, ["/a/main.rs", "/a/util.rs"])
     }
 
     func testRoundTripsThroughJSON() throws {

@@ -5,6 +5,7 @@ use crate::ffi::ItemKind;
 use super::external::External;
 use super::glob::{self, OversizedGlob};
 use super::item::{ItemDoc, Scope, Visibility, join_path};
+use super::path_index::PathIndex;
 
 #[derive(Debug, Clone)]
 pub struct Reexport {
@@ -28,66 +29,82 @@ pub struct Applied {
     pub oversized_globs: Vec<OversizedGlob>,
 }
 
+struct Resolver<'a> {
+    items: &'a [ItemDoc],
+    external: &'a External,
+    aliases: &'a [(String, String)],
+    index: PathIndex<'a>,
+    applied: Applied,
+}
+
 pub fn apply(
     items: &[ItemDoc],
     reexports: &[Reexport],
     external: &External,
     aliases: &[(String, String)],
 ) -> Applied {
-    let mut extra: Vec<ItemDoc> = Vec::new();
-    let mut oversized: Vec<OversizedGlob> = Vec::new();
+    let mut resolver = Resolver {
+        items,
+        external,
+        aliases,
+        index: PathIndex::new(items),
+        applied: Applied::default(),
+    };
     let mut pending: Vec<&Reexport> = reexports.iter().collect();
     for _ in 0..3 {
         let before = pending.len();
-        let mut next = Vec::new();
-        for re in pending.drain(..) {
-            match &re.kind {
-                ReexportKind::Glob { module } => {
-                    let found = glob::expand(items, &extra, external, aliases, re, module);
-                    extra.extend(found.items);
-                    if let Some(target) = found.oversized {
-                        oversized.push(target);
-                    }
-                }
-                ReexportKind::Named { target, alias } => {
-                    match find_target(items, &extra, &re.module_path, target) {
-                        Some(src) => extra.push(remap(items, src, re, alias)),
-                        None => next.push(re),
-                    }
-                }
-            }
-        }
-        pending = next;
+        pending = resolver.pass(pending);
         if pending.is_empty() || pending.len() == before {
             break;
         }
     }
-    for re in pending {
-        if let ReexportKind::Named { target, alias } = &re.kind {
-            extra.push(match external.get(&dealias(target, aliases)) {
-                Some(src) => remap(items, src, re, alias),
-                None => unresolved(items, re, alias),
-            });
+    resolver.settle(pending);
+    resolver.applied
+}
+
+impl<'a> Resolver<'a> {
+    fn pass<'r>(&mut self, pending: Vec<&'r Reexport>) -> Vec<&'r Reexport> {
+        let mut next = Vec::new();
+        for re in pending {
+            match &re.kind {
+                ReexportKind::Glob { module } => self.expand(re, module),
+                ReexportKind::Named { target, alias } => {
+                    let extra = &self.applied.items;
+                    let found = self.index.find(extra, &re.module_path, target);
+                    match found.map(|src| remap(self.items, src, re, alias)) {
+                        Some(doc) => self.applied.items.push(doc),
+                        None => next.push(re),
+                    }
+                }
+            }
+            self.index.sync(&self.applied.items);
         }
+        next
     }
-    Applied {
-        items: extra,
-        oversized_globs: oversized,
+
+    fn expand(&mut self, re: &Reexport, module: &[String]) {
+        let extra = &self.applied.items;
+        let found = glob::expand(self.items, extra, self.external, self.aliases, re, module);
+        self.applied.items.extend(found.items);
+        self.applied.oversized_globs.extend(found.oversized);
+    }
+
+    fn settle(&mut self, pending: Vec<&Reexport>) {
+        for re in pending {
+            if let ReexportKind::Named { target, alias } = &re.kind {
+                let doc = match self.external.get(&dealias(target, self.aliases)) {
+                    Some(src) => remap(self.items, src, re, alias),
+                    None => unresolved(self.items, re, alias),
+                };
+                self.applied.items.push(doc);
+            }
+        }
     }
 }
 
 fn remap(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> ItemDoc {
-    let mut doc = src.clone();
-    doc.path = join_path(&re.module_path, alias);
+    let mut doc = glob::mirror(items, src, re, &join_path(&re.module_path, alias));
     doc.name = alias.to_string();
-    doc.visibility = re.vis;
-    doc.reachable = exported(re);
-    if let Some(host) = items.first() {
-        doc.crate_name = host.crate_name.clone();
-        doc.crate_version = host.crate_version.clone();
-        doc.edition = host.edition.clone();
-        doc.scope = host.scope;
-    }
     doc
 }
 
@@ -116,7 +133,6 @@ fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
         name: alias.to_string(),
         signature: String::new(),
         doc_first_paragraph: String::new(),
-        source_chunk: String::new(),
         source_path: re.source_path.clone(),
         byte_range: re.byte_range,
         name_start_byte: re.byte_range.0,
@@ -131,24 +147,6 @@ fn unresolved(items: &[ItemDoc], re: &Reexport, alias: &str) -> ItemDoc {
 
 pub(super) fn exported(re: &Reexport) -> bool {
     re.reach && re.vis == Visibility::Pub
-}
-
-fn find_target<'a>(
-    items: &'a [ItemDoc],
-    extra: &'a [ItemDoc],
-    module: &[String],
-    target: &[String],
-) -> Option<&'a ItemDoc> {
-    let joined = target.join("::");
-    let relative = join_path(module, &joined);
-    let from_root = module.first().map(|root| format!("{root}::{joined}"));
-    let matches = |i: &&ItemDoc| {
-        i.path == joined || i.path == relative || from_root.as_deref() == Some(i.path.as_str())
-    };
-    items
-        .iter()
-        .find(matches)
-        .or_else(|| extra.iter().find(matches))
 }
 
 fn guess_kind(name: &str) -> ItemKind {

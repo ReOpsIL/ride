@@ -63,10 +63,14 @@ extension AppState {
         if buffer.isDirty, !confirmClose(buffer) {
             return
         }
+        dropBuffer(buffer)
+    }
+
+    func dropBuffer(_ buffer: BufferDocument) {
         CompletionSession.shared.reset()
         SessionService.shared.close(buffer)
-        history.forget(bufferID: id)
-        buffers.removeAll { $0.id == id }
+        history.forget(bufferID: buffer.id)
+        buffers.removeAll { $0.id == buffer.id }
     }
 
     func saveActive() {
@@ -84,12 +88,22 @@ extension AppState {
                 return
             }
             rebind(buffer, to: url)
-        } else {
-            EditorPanes.shared.host(bound: buffer)?.capture()
         }
-        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
+        persist(buffer)
         objectWillChange.send()
-        didSave(buffer)
+    }
+
+    @discardableResult
+    func persist(_ buffer: BufferDocument, allowFormat: Bool = true) -> Bool {
+        EditorPanes.shared.host(bound: buffer)?.capture()
+        do {
+            try buffer.save(from: nil, lineEndings: prefs.lineEndings)
+        } catch {
+            showNotice("Could not save \(buffer.displayName): \(error.localizedDescription)")
+            return false
+        }
+        didSave(buffer, allowFormat: allowFormat)
+        return true
     }
 
     func scheduleAutoSave(_ buffer: BufferDocument) {
@@ -109,31 +123,23 @@ extension AppState {
     }
 
     func autoSave(_ buffer: BufferDocument) {
-        guard buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly, !buffer.changedOnDisk else {
+        guard buffers.contains(where: { $0 === buffer }),
+              buffer.fileURL != nil, buffer.isDirty, !buffer.isReadOnly, !buffer.changedOnDisk
+        else {
             return
         }
-        EditorPanes.shared.host(bound: buffer)?.capture()
-        try? buffer.save(from: nil, lineEndings: prefs.lineEndings)
+        persist(buffer)
         objectWillChange.send()
-        didSave(buffer)
     }
 
     func confirmClose(_ buffer: BufferDocument) -> Bool {
-        guard !DemoLaunch.isDemo else {
-            return true
-        }
-        let alert = NSAlert()
-        alert.messageText = "Save changes to \(buffer.displayName)?"
-        alert.addButton(withTitle: "Save")
-        alert.addButton(withTitle: "Don't Save")
-        alert.addButton(withTitle: "Cancel")
-        switch alert.runModal() {
-        case .alertFirstButtonReturn:
+        switch Confirm.close(buffer.displayName) {
+        case .save:
             save(buffer)
             return buffer.fileURL != nil && !buffer.isDirty
-        case .alertSecondButtonReturn:
+        case .discard:
             return true
-        default:
+        case .cancel:
             return false
         }
     }

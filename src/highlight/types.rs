@@ -8,6 +8,8 @@ use crate::ffi::OutlineItem;
 
 use super::members::Chain;
 use super::type_lookup;
+use super::type_relations::Relations;
+use super::visibility::{Unqualified, Visibility};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct TypeTable {
@@ -17,10 +19,11 @@ pub struct TypeTable {
     member_details: HashMap<String, HashMap<String, String>>,
     scopes: HashMap<String, Vec<OutlineItem>>,
     functions: HashMap<String, String>,
-    bases: HashMap<String, Vec<String>>,
     #[serde(default)]
-    impls: HashMap<String, Vec<String>>,
+    relations: Relations,
     aliases: HashMap<String, String>,
+    #[serde(default)]
+    unqualified: HashMap<String, Vec<Unqualified>>,
 }
 
 #[derive(Debug, Clone)]
@@ -53,6 +56,24 @@ impl TypeTable {
         }
     }
 
+    pub fn add_unqualified(&mut self, item: OutlineItem, visibility: Visibility) {
+        let entries = self.unqualified.entry(item.name.clone()).or_default();
+        if !entries
+            .iter()
+            .any(|e| e.item.name_start_byte == item.name_start_byte && e.visibility == visibility)
+        {
+            entries.push(Unqualified { item, visibility });
+        }
+    }
+
+    pub fn relations(&self) -> &Relations {
+        &self.relations
+    }
+
+    pub fn relations_mut(&mut self) -> &mut Relations {
+        &mut self.relations
+    }
+
     pub fn defines(&self, name: &str) -> bool {
         self.members.contains_key(name)
     }
@@ -65,54 +86,10 @@ impl TypeTable {
         self.functions.entry(name).or_insert(returns);
     }
 
-    pub fn add_bases(&mut self, name: String, bases: Vec<String>) {
-        if !bases.is_empty() {
-            self.bases.insert(name, bases);
-        }
-    }
-
-    pub fn add_impl(&mut self, type_name: String, trait_name: String) {
-        if type_name == trait_name {
-            return;
-        }
-        let traits = self.impls.entry(type_name).or_default();
-        if !traits.contains(&trait_name) {
-            traits.push(trait_name);
-        }
-    }
-
-    pub fn impls_of(&self, type_name: &str) -> Vec<String> {
-        self.impls.get(type_name).cloned().unwrap_or_default()
-    }
-
-    pub fn implementors_of(&self, trait_name: &str) -> Vec<String> {
-        self.impls
-            .iter()
-            .filter(|(_, traits)| traits.iter().any(|t| t == trait_name))
-            .map(|(type_name, _)| type_name.clone())
-            .collect()
-    }
-
-    pub fn derived_of(&self, name: &str) -> Vec<String> {
-        self.bases
-            .iter()
-            .filter(|(_, bases)| bases.iter().any(|b| b == name))
-            .map(|(derived, _)| derived.clone())
-            .collect()
-    }
-
-    pub fn bases_of(&self, name: &str) -> Vec<String> {
-        self.bases.get(name).cloned().unwrap_or_default()
-    }
-
     pub fn add_alias(&mut self, alias: String, target: String) {
         if alias != target {
             self.aliases.insert(alias, target);
         }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.members.is_empty() && self.aliases.is_empty() && self.scopes.is_empty()
     }
 
     pub fn resolve(tables: &[&TypeTable], name: &str) -> Vec<Member> {
@@ -121,6 +98,14 @@ impl TypeTable {
 
     pub fn scoped(tables: &[&TypeTable], segments: &[String]) -> Vec<Member> {
         type_lookup::scoped(tables, segments)
+    }
+
+    pub fn unqualified(tables: &[&TypeTable], name: &str, at: u32) -> Vec<Member> {
+        type_lookup::unqualified(tables, name, at)
+    }
+
+    pub fn declared_at(&self, name_start_byte: u32) -> Option<Member> {
+        type_lookup::declared_at(self, name_start_byte)
     }
 
     pub fn own_members(&self, name: &str) -> Vec<Member> {
@@ -164,6 +149,14 @@ impl TypeTable {
 
     pub(super) fn member_detail(&self, type_name: &str, member: &str) -> Option<&String> {
         self.member_details.get(type_name)?.get(member)
+    }
+
+    pub(super) fn all_members(&self) -> impl Iterator<Item = &OutlineItem> {
+        self.members.values().flatten()
+    }
+
+    pub(super) fn unqualified_named(&self, name: &str) -> &[Unqualified] {
+        self.unqualified.get(name).map_or(&[], Vec::as_slice)
     }
 
     pub(super) fn scope(&self, path: &str) -> Option<&Vec<OutlineItem>> {

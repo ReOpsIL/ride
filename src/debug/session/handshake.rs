@@ -60,11 +60,7 @@ fn initialize(session: &DebugSession) -> Result<Capabilities, EngineError> {
         INITIALIZE,
         arguments(INITIALIZE, &InitializeArguments::ride())?,
     )?;
-    let capabilities = body::<Capabilities>(INITIALIZE, response)?;
-    if let Ok(mut stored) = session.capabilities.lock() {
-        *stored = capabilities.clone();
-    }
-    Ok(capabilities)
+    body::<Capabilities>(INITIALIZE, response)
 }
 
 fn launch_arguments(session: &DebugSession) -> LaunchArguments {

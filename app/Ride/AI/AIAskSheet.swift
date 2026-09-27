@@ -25,7 +25,9 @@ struct AIAskSheet: View {
                 Button("Cancel") { assistant.showPrompt = false }
                     .keyboardShortcut(.cancelAction)
                 Button("Send") { assistant.send() }
-                    .keyboardShortcut(.defaultAction)
+                    .keyboardShortcut(.return, modifiers: .command)
+                    .buttonStyle(.borderedProminent)
+                    .help("Send (⌘↩). Return adds a new line to the request.")
                     .disabled(assistant.prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }

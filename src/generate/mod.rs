@@ -29,13 +29,14 @@ pub fn options(t: &GenType, lang: Lang, buffer: &str) -> Vec<GenOption> {
     }
     match lang {
         Lang::Rust => rust::options(t, buffer),
-        _ => CPP_KINDS
+        Lang::Cpp => CPP_KINDS
             .iter()
             .map(|&kind| GenOption {
                 kind,
                 title: title(kind),
             })
             .collect(),
+        _ => Vec::new(),
     }
 }
 

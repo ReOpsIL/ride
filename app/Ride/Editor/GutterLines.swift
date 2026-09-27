@@ -24,7 +24,7 @@ extension GutterView {
         tlm.enumerateTextLayoutFragments(from: start, options: [.ensuresLayout]) { fragment in
             let utf16 = storage.map { $0.offset(from: $0.documentRange.location, to: fragment.rangeInElement.location) } ?? 0
             let lineNo = index.line(at: utf16)
-            if let lineFragment = fragment.textLineFragments.first {
+            if fragment.layoutFragmentFrame.height > 0, let lineFragment = fragment.textLineFragments.first {
                 var r = lineFragment.typographicBounds
                 r.origin.y += fragment.layoutFragmentFrame.minY + origin.y
                 let line = convert(r, from: textView)
@@ -40,15 +40,5 @@ extension GutterView {
             }
             return true
         }
-    }
-
-    func lineRange(_ line: Int, in view: RideTextView) -> NSRange {
-        let starts = view.lineIndex().starts
-        guard line >= 1, line <= starts.count else {
-            return NSRange(location: 0, length: 0)
-        }
-        let start = starts[line - 1]
-        let end = line < starts.count ? starts[line] : (view.string as NSString).length
-        return NSRange(location: start, length: max(0, end - start))
     }
 }

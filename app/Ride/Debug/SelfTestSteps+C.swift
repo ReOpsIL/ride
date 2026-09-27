@@ -24,10 +24,12 @@ extension SelfTestSteps {
             workspaceRestore(state: state, e: e, file: file),
             cBuild(state: state, e: e),
             cRun(state: state, e: e),
+            cEnumeratorDefinition(state: state, e: e),
             buildDiagnostic(state: state, e: e, scratch: scratch, line: cErrorLine, suffix: cErrorSuffix),
             buildDiagnosticCleared(state: state, e: e, scratch: scratch, line: cErrorLine),
             recompileFile(state: state, e: e, relative: "src/main.c"),
-        ]
+        ] + cmakeRunSteps(state: state, e: e, binary: "demo", output: "distance 5.0, area 50.0")
+            + cMenuSteps(state: state, e: e)
     }
 
     private static func cBuild(state: AppState, e: SelfTestEditor) -> SelfTestStep {
@@ -37,6 +39,21 @@ extension SelfTestSteps {
             e.expect(
                 state.runOutput.status == "exit 0" && state.runOutput.text.contains("Built target demo"),
                 "status \(state.runOutput.status ?? "nil") text \(state.runOutput.text.suffix(240))"
+            )
+        })
+    }
+
+    private static func cEnumeratorDefinition(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "quick definition enumerator", wait: 1.2, run: {
+            e.activate()
+            placeCaret(e, on: "SHAPE_RECT;")
+            state.showQuickDefinition()
+        }, check: {
+            let peek = EditorPanes.shared.focused?.peek
+            let text = peek?.excerptText ?? ""
+            return e.expect(
+                peek?.isVisible == true && peek?.segmentCount == 1 && text.contains("SHAPE_RECT") && !text.contains("s->kind"),
+                "visible \(peek?.isVisible ?? false) segments \(peek?.segmentCount ?? 0) text \(text.prefix(160))"
             )
         })
     }

@@ -1,14 +1,11 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::PathBuf;
 
 use crate::ffi::{CompletionHit, Diagnostic, Intention};
 use crate::highlight::{BufferSession, Lang, TypeTable};
 use crate::intentions::{self, Draft};
 
-use super::reach::Reach;
+use super::include_intentions::IncludeJob;
 use super::{Engine, Inner};
-
-const MAX_HITS: usize = 5;
 
 #[uniffi::export]
 impl Engine {
@@ -32,88 +29,68 @@ fn collect(
     diagnostics: &[Diagnostic],
 ) -> Vec<Intention> {
     let hits = engine.find_definitions(session_id, caret).hits;
-    let drafts = engine
-        .read(|inner| match inner.sessions.get(&session_id) {
-            Some(session) => sources(inner, session_id, session, caret, diagnostics, &hits),
-            None => Vec::new(),
-        })
-        .unwrap_or_default();
-    intentions::number(drafts)
+    let Ok(Some(parts)) = engine.read(|inner| {
+        let session = inner.sessions.get(&session_id)?;
+        Some(parts(inner, session_id, session, caret, diagnostics, &hits))
+    }) else {
+        return Vec::new();
+    };
+    intentions::number(parts.ordered(engine, &hits))
 }
 
-fn sources(
+enum Reference {
+    Ready(Vec<Draft>),
+    Includes(IncludeJob),
+}
+
+struct Parts {
+    fixes: Vec<Draft>,
+    reference: Reference,
+    rest: Vec<Draft>,
+}
+
+impl Parts {
+    fn ordered(self, engine: &Engine, hits: &[CompletionHit]) -> Vec<Draft> {
+        let mut out = self.fixes;
+        match self.reference {
+            Reference::Ready(drafts) => out.extend(drafts),
+            Reference::Includes(job) => out.extend(job.drafts(engine, hits)),
+        }
+        out.extend(self.rest);
+        out
+    }
+}
+
+fn parts(
     inner: &Inner,
     session_id: u64,
     session: &BufferSession,
     caret: u32,
     diagnostics: &[Diagnostic],
     hits: &[CompletionHit],
-) -> Vec<Draft> {
-    let mut out = intentions::fix_drafts(diagnostics, caret, line_of(session.replica(), caret));
-    out.extend(reference_drafts(inner, session_id, session, caret, hits));
-    out.extend(intentions::underscore_drafts(session, caret));
-    out.extend(arm_drafts(session, caret));
-    out.extend(intentions::refactor_drafts(session, caret));
-    out
-}
-
-fn reference_drafts(
-    inner: &Inner,
-    session_id: u64,
-    session: &BufferSession,
-    caret: u32,
-    hits: &[CompletionHit],
-) -> Vec<Draft> {
-    match session.lang() {
-        Lang::Rust => match session.symbol_at(caret) {
-            Some(symbol) => intentions::import_drafts(session, &symbol.name, hits),
-            None => Vec::new(),
-        },
-        Lang::C | Lang::Cpp => include_drafts(inner, session_id, session, hits),
-        _ => Vec::new(),
-    }
-}
-
-fn include_drafts(
-    inner: &Inner,
-    session_id: u64,
-    session: &BufferSession,
-    hits: &[CompletionHit],
-) -> Vec<Draft> {
-    let Some(clang) = session.lang().clang_name() else {
-        return Vec::new();
+) -> Parts {
+    let fixes = intentions::fix_drafts(diagnostics, caret, line_of(session.replica(), caret));
+    let mut rest = intentions::underscore_drafts(session, caret);
+    rest.extend(arm_drafts(session, caret));
+    rest.extend(intentions::refactor_drafts(session, caret));
+    let reference = match session.lang() {
+        Lang::Rust => Reference::Ready(import_drafts(session, caret, hits)),
+        Lang::C | Lang::Cpp if !hits.is_empty() => IncludeJob::take(inner, session_id, session)
+            .map_or(Reference::Ready(Vec::new()), Reference::Includes),
+        _ => Reference::Ready(Vec::new()),
     };
-    let scope = session.scope();
-    let system = inner.system_includes.dirs(clang, &[]);
-    let reach = Reach::take(inner, session_id, session);
-    let headers = reach.headers();
-    let mut seen: Vec<PathBuf> = Vec::new();
-    let mut out = Vec::new();
-    for hit in hits.iter().take(MAX_HITS) {
-        let Some(path) = hit.source_path.as_ref().map(PathBuf::from) else {
-            continue;
-        };
-        if seen.contains(&path) {
-            continue;
-        }
-        seen.push(path.clone());
-        let Some(header) = headers.iter().find(|h| h.path == path) else {
-            continue;
-        };
-        let dirs = if header.system {
-            system.as_slice()
-        } else {
-            scope.search_dirs.as_slice()
-        };
-        out.extend(intentions::include_draft(
-            session.replica(),
-            &path,
-            header.system,
-            dirs,
-            &scope.includes,
-        ));
+    Parts {
+        fixes,
+        reference,
+        rest,
     }
-    out
+}
+
+fn import_drafts(session: &BufferSession, caret: u32, hits: &[CompletionHit]) -> Vec<Draft> {
+    match session.symbol_at(caret) {
+        Some(symbol) => intentions::import_drafts(session, &symbol.name, hits),
+        None => Vec::new(),
+    }
 }
 
 fn arm_drafts(session: &BufferSession, caret: u32) -> Vec<Draft> {

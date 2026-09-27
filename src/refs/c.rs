@@ -145,7 +145,6 @@ fn record(ctx: &mut Ctx<'_>, name: String, kind: RefKind, start: u32, end: u32) 
     ctx.out.push(RefRecord {
         name,
         kind,
-        path: String::new(),
         line: line_at(ctx.text, start as usize),
         byte_start: start,
         byte_end: end,

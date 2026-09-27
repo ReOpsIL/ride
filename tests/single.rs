@@ -198,3 +198,26 @@ fn project_source_uses_the_database_flags() {
         "{stderr}"
     );
 }
+
+#[test]
+fn rust_command_uses_the_formatter_edition() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("a.rs");
+    fs::write(&path, "fn main() {}\n").unwrap();
+    if which("rustc").is_none() {
+        eprintln!("skipping: rustc not found");
+        return;
+    }
+    let single = engine()
+        .single_file_command(
+            path.display().to_string(),
+            dir.path().join("out").display().to_string(),
+        )
+        .unwrap();
+    let at = single
+        .compile
+        .iter()
+        .position(|a| a == "--edition")
+        .unwrap();
+    assert_eq!(single.compile[at + 1], "2024");
+}

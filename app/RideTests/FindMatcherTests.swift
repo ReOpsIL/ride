@@ -32,4 +32,16 @@ final class FindMatcherTests: XCTestCase {
         let previous = FindMatcher.next(in: text, query: "counter", options: .defaults, from: 0, backwards: true)
         XCTAssertEqual(previous?.location, 24)
     }
+
+    func testRegexReplacementHonoursLookarounds() {
+        let options = FindOptions(caseSensitive: true, wholeWord: false, regex: true)
+        let changes = FindMatcher.replacements(in: "foobar foobaz", query: "foo(?=bar)", template: "X", options: options)
+        XCTAssertEqual(changes, [TextChange(range: NSRange(location: 0, length: 3), text: "X")])
+    }
+
+    func testRegexReplacementExpandsGroupsAgainstTheWholeText() {
+        let options = FindOptions(caseSensitive: true, wholeWord: false, regex: true)
+        let changes = FindMatcher.replacements(in: "let a = b", query: "(?<=let )(\\w+)", template: "$1_v", options: options)
+        XCTAssertEqual(changes, [TextChange(range: NSRange(location: 4, length: 1), text: "a_v")])
+    }
 }

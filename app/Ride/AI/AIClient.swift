@@ -47,16 +47,24 @@ enum AIRequestKind {
     var maxTokens: Int {
         self == .completion ? 400 : 4000
     }
+
+    var timeout: TimeInterval {
+        self == .completion ? 15 : 120
+    }
 }
 
 enum AIClient {
     static let log = Logger(subsystem: "dev.ride.Ride", category: "ai")
-    static let session: URLSession = {
+    private static let completionSession = session(for: .completion)
+    private static let answerSession = session(for: .answer)
+
+    private static func session(for kind: AIRequestKind) -> URLSession {
         let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 120
+        config.timeoutIntervalForRequest = kind.timeout
+        config.timeoutIntervalForResource = kind.timeout
         config.waitsForConnectivity = false
         return URLSession(configuration: config)
-    }()
+    }
 
     @discardableResult
     static func complete(
@@ -110,7 +118,7 @@ enum AIClient {
                 finish(.failure(error), handle: handle, done: done)
             case .success(let request):
                 log.info("sending \(config.provider.rawValue, privacy: .public) \(config.model, privacy: .public) prompt \(request.httpBody?.count ?? 0) bytes")
-                send(request, config: config, handle: handle, done: done)
+                send(request, session: kind == .completion ? completionSession : answerSession, config: config, handle: handle, done: done)
             }
         }
         return handle
@@ -125,13 +133,15 @@ enum AIClient {
         }
     }
 
-    private static func send(_ request: URLRequest, config: AIConfig, handle: AIRequestHandle, done: @escaping (Result<String, AIError>) -> Void) {
+    private static func send(
+        _ request: URLRequest,
+        session: URLSession,
+        config: AIConfig,
+        handle: AIRequestHandle,
+        done: @escaping (Result<String, AIError>) -> Void
+    ) {
         let task = session.dataTask(with: request) { data, response, error in
-            var result = parse(data: data, response: response, error: error, config: config)
-            if case .failure(.http(401, _)) = result, config.provider == .anthropic, config.auth == .login {
-                AnthropicLogin.forgetToken()
-                result = .failure(.notConfigured("Anthropic login expired. Open Preferences › AI and log in again"))
-            }
+            let result = parse(data: data, response: response, error: error, config: config)
             switch result {
             case .success:
                 log.info("reply \((response as? HTTPURLResponse)?.statusCode ?? 0) ok")

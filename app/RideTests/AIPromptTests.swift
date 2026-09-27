@@ -42,13 +42,12 @@ final class AIPromptTests: XCTestCase {
     }
 
     func testConfigFallsBackToDefaults() {
-        let config = AIConfig(provider: "openrouter", model: "  ", auth: "bogus", level: "project")
+        let config = AIConfig(provider: "openrouter", model: "  ", level: "project")
         XCTAssertEqual(config.provider, .openrouter)
         XCTAssertEqual(config.model, "anthropic/claude-haiku-4.5")
-        XCTAssertEqual(config.auth, .login)
         XCTAssertEqual(config.level, .project)
-        XCTAssertEqual(AIConfig(provider: "", model: "", auth: "", level: "").model, "claude-haiku-4-5")
-        XCTAssertEqual(AIConfig(provider: "anthropic", model: " claude-opus-5 ", auth: "key", level: "file").model, "claude-opus-5")
+        XCTAssertEqual(AIConfig(provider: "", model: "", level: "").model, "claude-haiku-4-5")
+        XCTAssertEqual(AIConfig(provider: "anthropic", model: " claude-opus-5 ", level: "file").model, "claude-opus-5")
     }
 
     func testDefaultModelIsTheFirstPresetOfEachProvider() {

@@ -40,7 +40,7 @@ struct RecentProjects {
 
     func adding(_ url: URL, to existing: [URL]) -> [URL] {
         let standardized = url.standardizedFileURL
-        var next = existing.filter { $0.standardizedFileURL != standardized }
+        var next = existing.filter { $0.standardizedFileURL != standardized && FileManager.default.fileExists(atPath: $0.path) }
         next.insert(standardized, at: 0)
         if next.count > maxEntries {
             next = Array(next.prefix(maxEntries))

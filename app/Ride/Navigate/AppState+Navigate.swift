@@ -21,7 +21,11 @@ extension AppState {
     }
 
     func noteEdit(_ view: RideTextView, in id: UUID) {
+        let first = history.lastEdit == nil
         history.noteEdit(NavLocation(bufferID: id, utf16: view.selectedRange().location))
+        if first {
+            syncMenu()
+        }
     }
 
     func goBack() {
@@ -67,9 +71,7 @@ extension AppState {
     }
 
     func toggleGoToLine() {
-        let next = !showGoToLine
-        closeOverlays()
-        showGoToLine = next
+        toggleOverlay(.goToLine)
         goToLineQuery = ""
     }
 
@@ -99,9 +101,7 @@ extension AppState {
     }
 
     func toggleRecentFiles() {
-        let next = !showRecentFiles
-        closeOverlays()
-        showRecentFiles = next
+        toggleOverlay(.recentFiles)
         recentQuery = ""
         recentSelection = recentHits.dropFirst().first ?? recentHits.first
     }

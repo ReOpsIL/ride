@@ -3,6 +3,7 @@ use tree_sitter::Node;
 use crate::ffi::ByteRange;
 
 use super::spans::trimmed;
+use super::tree::field_of;
 
 const ITEM_KINDS: [&str; 10] = [
     "function_item",
@@ -30,10 +31,18 @@ pub enum LiteralKind {
     Bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LiteralContext {
+    Plain,
+    Index,
+    ConstantExpr,
+}
+
 pub struct ConstantSpans {
     pub literal: ByteRange,
     pub anchor: ByteRange,
     pub kind: LiteralKind,
+    pub context: LiteralContext,
 }
 
 pub fn constant_spans(root: Node<'_>, text: &str, range: ByteRange) -> Option<ConstantSpans> {
@@ -54,7 +63,24 @@ pub fn constant_spans(root: Node<'_>, text: &str, range: ByteRange) -> Option<Co
             end_byte: anchor.end_byte() as u32,
         },
         kind,
+        context: context_of(node),
     })
+}
+
+fn context_of(node: Node<'_>) -> LiteralContext {
+    let Some(parent) = node.parent() else {
+        return LiteralContext::Plain;
+    };
+    let field = field_of(node);
+    match parent.kind() {
+        "index_expression" if parent.named_child(0).is_some_and(|n| n.id() != node.id()) => {
+            LiteralContext::Index
+        }
+        "case_statement" | "enumerator" if field == Some("value") => LiteralContext::ConstantExpr,
+        "array_declarator" if field == Some("size") => LiteralContext::ConstantExpr,
+        "bitfield_clause" => LiteralContext::ConstantExpr,
+        _ => LiteralContext::Plain,
+    }
 }
 
 fn kind_of(node: Node<'_>, text: &str) -> Option<LiteralKind> {
@@ -97,10 +123,17 @@ fn number_kind(literal: &str) -> LiteralKind {
 fn anchor(node: Node<'_>) -> Option<Node<'_>> {
     let mut current = node;
     while let Some(parent) = current.parent() {
-        if ITEM_KINDS.contains(&current.kind()) && CONTAINER_KINDS.contains(&parent.kind()) {
+        if ITEM_KINDS.contains(&current.kind()) && module_level(parent) {
             return Some(current);
         }
         current = parent;
     }
     None
+}
+
+fn module_level(container: Node<'_>) -> bool {
+    CONTAINER_KINDS.contains(&container.kind())
+        && !container
+            .parent()
+            .is_some_and(|owner| matches!(owner.kind(), "impl_item" | "trait_item"))
 }

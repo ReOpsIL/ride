@@ -1,6 +1,17 @@
 import AppKit
 import SwiftUI
 
+enum MainWindow {
+    static weak var window: NSWindow?
+
+    static func isOther(_ window: NSWindow) -> Bool {
+        guard let main = self.window else {
+            return false
+        }
+        return window !== main
+    }
+}
+
 struct WindowConfigurator: NSViewRepresentable {
     @ObservedObject private var ts = ThemeStore.shared
 
@@ -25,6 +36,7 @@ struct WindowConfigurator: NSViewRepresentable {
         guard let window else {
             return
         }
+        MainWindow.window = window
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.toolbarStyle = .unifiedCompact

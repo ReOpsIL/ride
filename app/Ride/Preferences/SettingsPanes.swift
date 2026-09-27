@@ -10,7 +10,7 @@ struct GeneralSettings: View {
                 ThemeSwatchPicker(selection: bind.theme)
             }
             Section("Text") {
-                Stepper(value: bind.int(\.fontSize), in: 11...18) {
+                Stepper(value: bind.int(\.fontSize), in: Preferences.fontSizes) {
                     LabeledContent("Font size", value: "\(state.prefs.fontSize) pt")
                 }
                 Stepper(value: bind.int(\.tabWidth), in: 2...8) {
@@ -47,6 +47,7 @@ struct EditorSettings: View {
             Section("Display") {
                 Toggle("Outline panel", isOn: bind.bool(\.outlinePanel))
                 Toggle("Line numbers", isOn: bind.bool(\.lineNumbers))
+                Toggle("Soft wrap", isOn: bind.bool(\.softWrap))
                 Toggle("Indent guides", isOn: bind.bool(\.indentGuides))
                 Toggle("Visible whitespace", isOn: bind.bool(\.visibleWhitespace))
                 Toggle("Code vision", isOn: bind.bool(\.codeVision))
@@ -58,15 +59,19 @@ struct EditorSettings: View {
 
 struct ToolsSettings: View {
     let bind: PreferenceBindings
+    @EnvironmentObject private var state: AppState
 
     var body: some View {
         Form {
-            Section("cargo check") {
-                Toggle("Check on save", isOn: bind.bool(\.checkOnSave))
-                Toggle("Use Clippy for live diagnostics", isOn: bind.bool(\.useClippy))
+            Section("Diagnostics") {
+                Toggle("Check on save and while typing", isOn: bind.bool(\.checkOnSave))
+                Toggle("Use Clippy for live Rust diagnostics", isOn: bind.bool(\.useClippy))
+                    .disabled(!state.prefs.checkOnSave)
             }
-            Section("rustfmt") {
-                Toggle("Format on save", isOn: bind.bool(\.formatOnSave))
+            Section("Formatting") {
+                Toggle("Format on save (rustfmt, clang-format)", isOn: bind.bool(\.formatOnSave))
+            }
+            Section("Tools") {
                 Toggle("Check for missing tools at launch", isOn: bind.bool(\.askMissingTools))
             }
             Section("Command line") {

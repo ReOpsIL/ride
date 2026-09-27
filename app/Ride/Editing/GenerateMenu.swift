@@ -2,12 +2,10 @@ import AppKit
 
 extension EditorCommands {
     static func generate() {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target() else {
             return
         }
-        let text = target.text
-        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        let options = engine.generateOptions(sessionId: id, cursorByte: byte)
+        let options = target.session { $0.generateOptions(sessionId: $1, cursorByte: target.caretByte) } ?? []
         guard !options.isEmpty else {
             target.state.showNotice("Nothing to generate here")
             return
@@ -19,10 +17,7 @@ extension EditorCommands {
             item.target = GenerateMenuTarget.shared
             menu.addItem(item)
         }
-        var actual = NSRange()
-        let rect = target.view.firstRect(forCharacterRange: target.selection, actualRange: &actual)
-        let origin = target.view.window.map { target.view.convert($0.convertFromScreen(rect).origin, from: nil) } ?? .zero
-        menu.popUp(positioning: nil, at: NSPoint(x: origin.x, y: origin.y), in: target.view)
+        IntentionMenu.pop(menu, at: target)
     }
 }
 

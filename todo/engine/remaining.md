@@ -53,3 +53,34 @@
 # Multi-project indexing (2026-09-23, see docs/product/multi-project.md)
 
 - A folder that is not a Cargo project is indexed as one plain crate named after the folder (`index/crates.rs` `plain_workspace`), so nested crates' items get the folder's crate name and wrong module paths, and their dependencies are not scoped as direct. Run `load_metadata` on each nested Cargo root from `project::project_roots`, add their packages as workspace crates, and exclude those roots from the plain folder walk.
+
+# Definitions (2026-09-27, enum variant Quick Definition review)
+
+- `find_definitions` returns a workspace file's own items twice, once as a local hit (`source_path` None) and once from the index (`source_path` set). `quick_definition` hides this by deduping on the loaded path, but Go to Definition lists both. Give local hits the session path, then dedupe on `(source_path, name_byte)`.
+- Struct fields have no definition source: `c.v` needs the receiver type (`rust_receiver`, C member chains) to resolve the owner, then the owner's `Field` members from the type table.
+- Rust variants imported by a `use` in another module file resolve only through the index; `rust_use_variants` covers enums declared in the same buffer.
+
+# Structure (2026-09-27, full code review)
+
+- One `RwLock<Inner>` guards every session: each keystroke's `apply_edit` (reparse, highlights, outline) holds the global write lock and blocks queries on other buffers. Move sessions behind per-session locks (`Arc<Mutex<BufferSession>>`) and keep `Inner` for shared state.
+- The Rust outline re-parses the whole buffer on every edit: `grammar/rust.rs` `outline` ignores the tree it is given and calls `rust_outline::from_source` → `extract_source`. Add an `extract` entry point that takes a parsed tree and use it from the outline.
+- `Syntax` has 25 methods and `tree_syntax.rs` is mostly `tree.as_ref()?` plus a free-function call. Expose `tree()`/`grammar()` and move the dispatch into `session_queries.rs`.
+- `InputEditFfi` is trusted as sent: `edit.rs` checks bounds but not `new_end_byte == start + inserted.len()` or the row/column points. Derive the new end and points in the engine from the replica and the inserted text, and shrink the FFI record.
+- Markdown reparses the inline tree and up to six fence grammars from scratch per keystroke (`markdown.rs`, `fences.rs`); apply the edit and reparse incrementally.
+- Bracket matching collects every string and comment in the file on each caret move (`editing/brackets.rs`); use the bracket token's ancestors instead.
+- Three `use`-tree parsers: `rust_use_variants`, `extract/use_walk.rs`, `imports.rs` + `site/use_path::leaf_names` (text tokenizer). Extract one use-tree visitor.
+- Boundary-floor loops are copied in `bin/ride_engine/cursor.rs`, `highlight/header.rs`, `check/output.rs`, `check/fmt_rust.rs`, `check/fmt.rs`; use `highlight::offset::floor_char`.
+- `Engine::read`/`write` return a `Result` that can never be `Err`; the `catch_unwind(read(sessions.get(id).map(f)).ok().flatten())` shape repeats ~15 times. Return `T` and share one session-query helper.
+
+# Full review follow-ups (2026-09-27)
+
+- `caret_byte` means different things across edits: rustc/clang fixes and generate use pre-edit positions, intentions post-edit. Pick one meaning (post-edit) and convert at the producers.
+- `intentions` `Draft` drops the ExtractPlan name selection, so Extract Variable from the lightbulb does not select the new name.
+- `last_status` still reads all of `status.jsonl`; the poll now skips unchanged files, but a changed file is read whole. Seek to the tail.
+- Quick-doc HTML: `doc_html` copies the markdown parser options; expose them from `markdown`. Also drop `javascript:` link targets.
+- Signature help still matches same-file hits by name only; order them with `local_defs` like go-to-definition.
+- Named re-exports of dependency crates (not only std) stay unresolved in workspace crates, which are built before their dependencies; std/sysroot is now built first.
+- A re-export of a whole module (`pub use core::option;`) does not bring the module's children, so `std::option::Option` resolves only through the sysroot path.
+- Generate for Rust still drops generics and lifetimes (`struct W<T>` → `impl W`): `GenType` carries no generics; add them where `engine/generate.rs` builds it. `generate::apply` has no language parameter, so a direct C call still emits C++.
+- `refactor/local.rs` and `highlight/rename_local.rs` both define `ident_at`/`enclosing_scope`/`SCOPE_KINDS`; make the highlight versions `pub(crate)` and delete the refactor copies.
+- Over 40 lines: `index::build::run`, `query::children::run`, `query::items::item_search`, `extract::walk_item`. Over 200 lines: `tests/intentions.rs`, `tests/refs.rs`.

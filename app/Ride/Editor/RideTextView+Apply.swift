@@ -44,8 +44,9 @@ extension RideTextView {
     }
 
     func applyPrefs(_ prefs: Preferences) {
-        if showIndentGuides != prefs.indentGuides {
+        if showIndentGuides != prefs.indentGuides || showWhitespace != prefs.visibleWhitespace {
             showIndentGuides = prefs.indentGuides
+            showWhitespace = prefs.visibleWhitespace
             needsDisplay = true
         }
         applyCodeVision(prefs.codeVision)

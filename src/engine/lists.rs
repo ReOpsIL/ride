@@ -1,5 +1,4 @@
 use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse, ItemKind, QueryMode};
-use crate::query;
 use crate::score::{KEYWORD, tiered};
 
 use super::merge;
@@ -93,7 +92,7 @@ pub fn attributes(snap: &Snapshot, q: &CompletionQuery, derive: bool) -> Complet
         let mut cq = q.clone();
         cq.mode = QueryMode::Items;
         cq.kind_filter = Some(ItemKind::Macro);
-        pool.extend(query::search(snap.catalog.src(), &cq, &snap.catalog.overlay).hits);
+        pool.extend(snap.catalog.search(&cq).hits);
     }
     merge::finish(q, pool, false)
 }

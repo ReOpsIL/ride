@@ -13,8 +13,9 @@ final class RunOutput: ObservableObject {
     var lineFilter: ((Int, String) -> String?)?
     var onFinish: ((Int, RunFinish) -> Void)?
     private let runner = ProcessRunner()
-    private var last: RunInvocation?
-    private var queued: (id: Int, invocation: RunInvocation)?
+    private(set) var lastRequest: RunRequest?
+    private(set) var origin: RunRequest?
+    private var queued: (id: Int, request: RunRequest, origin: RunRequest)?
     private var workspaceSink: AnyCancellable?
     private var nextId = 0
     private var stopping = false
@@ -29,27 +30,29 @@ final class RunOutput: ObservableObject {
     }
 
     var workingDir: String? {
-        last?.workingDir
+        lastRequest?.invocation.workingDir
     }
 
     var canRerun: Bool {
-        last != nil
+        origin != nil
     }
 
     @discardableResult
-    func start(_ invocation: RunInvocation) -> Int? {
+    func start(_ request: RunRequest, origin: RunRequest? = nil) -> Int? {
         guard !isRunning else {
             return nil
         }
         nextId += 1
-        return launch(invocation, id: nextId)
+        return launch(request, origin: origin ?? request, id: nextId)
     }
 
     @discardableResult
-    private func launch(_ invocation: RunInvocation, id: Int) -> Int? {
+    private func launch(_ request: RunRequest, origin: RunRequest, id: Int) -> Int? {
+        let invocation = request.invocation
         runId = id
         stopping = false
-        last = invocation
+        lastRequest = request
+        self.origin = origin
         buffer.clear()
         status = nil
         command = invocation.argv.joined(separator: " ")
@@ -63,21 +66,14 @@ final class RunOutput: ObservableObject {
         return id
     }
 
-    func rerun() {
-        guard let last else {
-            return
-        }
-        start(last)
-    }
-
     @discardableResult
-    func stopAndStart(_ invocation: RunInvocation) -> Int? {
+    func stopAndStart(_ request: RunRequest, origin: RunRequest? = nil) -> Int? {
         guard isRunning else {
-            return start(invocation)
+            return start(request, origin: origin)
         }
         nextId += 1
         let id = nextId
-        queued = (id, invocation)
+        queued = (id, request, origin ?? request)
         stopping = true
         runner.stop()
         return id
@@ -136,7 +132,7 @@ final class RunOutput: ObservableObject {
         onChange?()
         if let next = queued {
             queued = nil
-            launch(next.invocation, id: next.id)
+            launch(next.request, origin: next.origin, id: next.id)
         }
     }
 }

@@ -37,11 +37,6 @@ extension RideTextView {
     }
 
     func lineRange(_ line: Int) -> NSRange? {
-        let starts = lineIndex().starts
-        guard line >= 1, line <= starts.count else {
-            return nil
-        }
-        let end = line < starts.count ? starts[line] : (string as NSString).length
-        return NSRange(location: starts[line - 1], length: end - starts[line - 1])
+        lineIndex().range(line: line)
     }
 }

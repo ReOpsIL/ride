@@ -4,6 +4,7 @@ struct ProjectFindOverlay: View {
     @EnvironmentObject private var state: AppState
     @ObservedObject var model: ProjectFindModel
     @ObservedObject private var ts = ThemeStore.shared
+    @FocusState private var replaceFocused: Bool
 
     var body: some View {
         PickerCard(
@@ -16,7 +17,8 @@ struct ProjectFindOverlay: View {
                 PickerHint(id: "esc", key: "esc", label: "dismiss"),
             ],
             trailing: summary,
-            onSubmit: submit,
+            focusesQuery: model.field == .query,
+            onSubmit: state.projectFindSubmit,
             onDismiss: { state.showProjectFind = false }
         ) {
             VStack(spacing: 0) {
@@ -25,6 +27,8 @@ struct ProjectFindOverlay: View {
                 results
             }
         }
+        .onAppear { focusReplace(model.field) }
+        .onChange(of: model.field) { _, field in focusReplace(field) }
         .onKeyPress(.downArrow) {
             model.move(1)
             return .handled
@@ -40,6 +44,15 @@ struct ProjectFindOverlay: View {
                 onApply: { state.applyProjectReplace() },
                 onCancel: { model.showPreview = false }
             )
+        }
+    }
+
+    private func focusReplace(_ field: ProjectFindField) {
+        guard field == .replace else {
+            return
+        }
+        DispatchQueue.main.async {
+            replaceFocused = true
         }
     }
 
@@ -64,11 +77,12 @@ struct ProjectFindOverlay: View {
                 .textFieldStyle(.plain)
                 .font(Tokens.ui(16))
                 .foregroundStyle(ts.ui.textPrimary)
-                .onSubmit(preview)
+                .focused($replaceFocused)
+                .onSubmit(state.projectFindPreview)
             optionButtons
-            Button("Replace…") { preview() }
+            Button("Replace…") { state.projectFindPreview() }
                 .controlSize(.small)
-                .disabled(model.query.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(ProjectFind.needle(model.query) == nil)
         }
         .padding(.horizontal, Tokens.Space.xl)
         .frame(height: 44)
@@ -99,8 +113,8 @@ struct ProjectFindOverlay: View {
                         ForEach(model.groups, id: \.file) { group in
                             FindGroupHeader(file: group.file, count: group.matches.count, label: label(group.file))
                             ForEach(group.matches) { match in
-                                FindMatchRow(match: match, query: model.query, selected: model.selection == match.id) {
-                                    open(match)
+                                FindMatchRow(match: match, query: model.query, options: model.options, selected: model.selection == match.id) {
+                                    state.openProjectMatch(match)
                                 }
                                 .id(match.id)
                             }
@@ -123,29 +137,5 @@ struct ProjectFindOverlay: View {
             return url.lastPathComponent
         }
         return WorkspaceFS.relativePath(root: root, file: url)
-    }
-
-    private func submit() {
-        if model.needsRun || model.matches.isEmpty {
-            model.run(root: state.workspaceRoot, showHidden: state.prefs.showHidden)
-            return
-        }
-        if let match = model.selected {
-            open(match)
-        }
-    }
-
-    private func preview() {
-        if model.needsRun || model.matches.isEmpty {
-            model.pendingPreview = true
-            model.run(root: state.workspaceRoot, showHidden: state.prefs.showHidden)
-            return
-        }
-        model.requestPreview()
-    }
-
-    private func open(_ match: ProjectFindMatch) {
-        state.showProjectFind = false
-        state.openFile(match.file, at: .byte(match.byte))
     }
 }

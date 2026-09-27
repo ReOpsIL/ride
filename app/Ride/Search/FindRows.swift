@@ -34,6 +34,7 @@ struct FindMatchRow: View {
     @State private var hovering = false
     let match: ProjectFindMatch
     let query: String
+    let options: FindOptions
     let selected: Bool
     let action: () -> Void
 
@@ -43,7 +44,7 @@ struct FindMatchRow: View {
                 .font(Tokens.mono(11))
                 .foregroundStyle(ts.ui.textTertiary)
                 .frame(width: 44, alignment: .trailing)
-            HighlightedText.marks(match.preview, query: query, base: ts.ui.textPrimary, mark: ts.ui.accent.opacity(0.35), font: Tokens.mono(12))
+            HighlightedText.marks(match.preview, ranges: FindMatcher.matches(in: match.preview, query: query, options: options), base: ts.ui.textPrimary, mark: ts.ui.accent.opacity(0.35), font: Tokens.mono(12))
                 .lineLimit(1)
             Spacer(minLength: 0)
         }

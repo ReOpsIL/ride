@@ -2,7 +2,6 @@ use std::collections::HashSet;
 
 use crate::ffi::{CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, ItemKind};
 use crate::highlight::{Root, Site};
-use crate::query;
 
 use super::snapshot::Snapshot;
 use super::{header_hits, merge, struct_literal};
@@ -53,13 +52,9 @@ fn members(snap: &Snapshot, q: &CompletionQuery) -> Option<CompletionResponse> {
         })
         .unwrap_or_default();
     let taken: HashSet<String> = pool.iter().map(|h| h.name.clone()).collect();
-    let catalog = query::children(
-        snap.catalog.src(),
-        type_name,
-        &q.prefix,
-        limit,
-        CompletionContext::MemberAccess,
-    );
+    let catalog =
+        snap.catalog
+            .children(type_name, &q.prefix, limit, CompletionContext::MemberAccess);
     pool.extend(
         catalog
             .into_iter()

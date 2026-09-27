@@ -40,7 +40,6 @@ enum AIProvider: String, CaseIterable {
         }
     }
 
-    /// Fast, cheap models suit completion while typing; the first preset is the default.
     var defaultModel: String {
         presets[0].id
     }
@@ -65,7 +64,6 @@ enum AIProvider: String, CaseIterable {
     }
 }
 
-/// Status-bar text for a finished completion request.
 enum AIOutcome {
     static func text(count: Int, shown: Bool) -> String {
         if count == 0 {
@@ -81,7 +79,6 @@ struct AIModelPreset: Equatable, Identifiable {
     let title: String
 }
 
-/// What the model picker shows for a stored preference: a preset id, or `custom` for anything else.
 enum AIModelChoice {
     static let custom = "custom"
 
@@ -97,22 +94,15 @@ enum AIModelChoice {
     }
 }
 
-enum AIAuthMode: String, CaseIterable {
-    case login
-    case key
-}
-
 struct AIConfig: Equatable {
     let provider: AIProvider
     let model: String
-    let auth: AIAuthMode
     let level: AIContextLevel
 
-    init(provider: String, model: String, auth: String, level: String) {
+    init(provider: String, model: String, level: String) {
         self.provider = AIProvider(rawValue: provider) ?? .anthropic
         let trimmed = model.trimmingCharacters(in: .whitespaces)
         self.model = trimmed.isEmpty ? self.provider.defaultModel : trimmed
-        self.auth = AIAuthMode(rawValue: auth) ?? .login
         self.level = AIContextLevel(rawValue: level) ?? .function
     }
 }

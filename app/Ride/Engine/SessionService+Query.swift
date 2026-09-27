@@ -1,55 +1,34 @@
 import Foundation
 
 extension SessionService {
-    func importEdit(document: BufferDocument, importPath: String, done: @escaping (TextEdit?) -> Void) {
-        guard let id = document.sessionId else {
-            done(nil)
-            return
-        }
-        queue(id).async {
-            let edit = RideEngineClient.shared.engine?.importEdit(sessionId: id, importPath: importPath)
-            DispatchQueue.main.async {
+    func importEdit(document: BufferDocument, importPath: String, done: @escaping (TextEdit) -> Void) {
+        read(document, delivery: .currentText, { engine, id in
+            engine.importEdit(sessionId: id, importPath: importPath)
+        }, then: { edit in
+            if let edit {
                 done(edit)
             }
-        }
+        })
     }
 
     func signatureHelp(document: BufferDocument, cursorByte: UInt32, done: @escaping (SignatureHelp?) -> Void) {
-        guard let id = document.sessionId else {
+        if !read(document, { $0.signatureHelp(sessionId: $1, cursorByte: cursorByte) }, then: done) {
             done(nil)
-            return
-        }
-        queue(id).async {
-            let help = RideEngineClient.shared.engine?.signatureHelp(sessionId: id, cursorByte: cursorByte)
-            DispatchQueue.main.async {
-                done(help)
-            }
         }
     }
 
     func quickDoc(document: BufferDocument, cursorByte: UInt32, done: @escaping (QuickDoc?) -> Void) {
-        guard let id = document.sessionId else {
+        if !read(document, { $0.quickDoc(sessionId: $1, cursorByte: cursorByte) }, then: done) {
             done(nil)
-            return
-        }
-        queue(id).async {
-            let doc = RideEngineClient.shared.engine?.quickDoc(sessionId: id, cursorByte: cursorByte)
-            DispatchQueue.main.async {
-                done(doc)
-            }
         }
     }
 
     func quickDefinition(document: BufferDocument, cursorByte: UInt32, done: @escaping ([DefinitionExcerpt]) -> Void) {
-        guard let id = document.sessionId else {
+        let started = read(document, lane: .workspace, {
+            $0.quickDefinition(sessionId: $1, cursorByte: cursorByte)
+        }, then: done)
+        if !started {
             done([])
-            return
-        }
-        queue(id).async {
-            let excerpts = RideEngineClient.shared.engine?.quickDefinition(sessionId: id, cursorByte: cursorByte) ?? []
-            DispatchQueue.main.async {
-                done(excerpts)
-            }
         }
     }
 

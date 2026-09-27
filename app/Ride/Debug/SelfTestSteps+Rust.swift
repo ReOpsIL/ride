@@ -4,6 +4,9 @@ extension SelfTestSteps {
     static func rust(state: AppState, e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> [SelfTestStep] {
         [setup(e: e, file: file, scratch: scratch)] + gutterSteps(state: state, e: e) + [findUsages(state: state, e: e)]
             + rustRun(state: state, e: e, scratch: scratch)
+            + runMenuSteps(state: state, e: e)
+            + runPanelSteps(state: state, e: e)
+            + debugMenuSteps(state: state, e: e)
             + rustEdit(e: e, file: file, scratch: scratch)
             + rustSelect(e: e)
             + rustTools(state: state, e: e, file: file)
@@ -14,7 +17,7 @@ extension SelfTestSteps {
             + rustRefactor(e: e, scratch: scratch)
             + rustIntentions(e: e, scratch: scratch)
             + breakpointShiftSteps(state: state, e: e)
-            + [callHierarchy(state: state, e: e)]
+            + [callHierarchy(state: state, e: e), callHierarchyFollows(state: state, e: e)]
             + [codeVision(state: state, e: e)]
             + safeDeleteSteps(state: state, e: e, scratch: scratch)
             + openURLSteps(state: state, e: e)
@@ -29,6 +32,9 @@ extension SelfTestSteps {
                 second: "let move_b = 2;"
             )
             + [typeAtEnd(state: state, e: e)]
+            + nonMenuSteps(state: state, e: e)
+            + menuSteps(state: state, e: e)
+            + codeMenuRust(state: state, e: e)
     }
 
     private static func findUsages(state: AppState, e: SelfTestEditor) -> SelfTestStep {

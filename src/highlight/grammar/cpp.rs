@@ -139,6 +139,7 @@ pub fn grammar() -> Grammar {
         local_detail: c_locals::detail,
         symbol_kinds: SYMBOL_KINDS,
         qualifier,
+        postfix: super::none::no_postfix,
         outline: c_outline::outline,
         member_ops: super::c::MEMBER_OPS,
         member_kinds: super::c::MEMBER_KINDS,

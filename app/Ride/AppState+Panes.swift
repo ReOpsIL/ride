@@ -75,7 +75,8 @@ extension AppState {
             makeFocusedEditorFirstResponder()
             return
         }
-        guard let other = paneLayout.neighbour(of: paneLayout.focusedID) else {
+        let source = paneLayout.pane(showing: id)?.id ?? paneLayout.focusedID
+        guard let other = paneLayout.neighbour(of: source) else {
             return
         }
         paneLayout.move(id, to: other.id)

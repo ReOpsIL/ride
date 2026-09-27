@@ -5,7 +5,6 @@ extension AppState {
         showNewProjectSheet = true
     }
 
-    /// Creates the scaffold under `location/name`, opens it as the workspace and shows its main file.
     func createProject(_ scaffold: ProjectScaffold, in location: URL) -> String? {
         let root = location.appendingPathComponent(scaffold.name, isDirectory: true).standardizedFileURL
         do {
@@ -14,8 +13,9 @@ extension AppState {
             return error.localizedDescription
         }
         showNewProjectSheet = false
-        open(root)
-        openFile(root.appendingPathComponent(scaffold.mainFile))
+        if open(root) {
+            openFile(root.appendingPathComponent(scaffold.mainFile))
+        }
         return nil
     }
 

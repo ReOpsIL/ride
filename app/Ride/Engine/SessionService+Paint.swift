@@ -1,12 +1,9 @@
 import AppKit
 
 extension SessionService {
-    func paint(_ update: SessionUpdate?, document: BufferDocument, view: RideTextView, text: String) {
-        guard let update else {
-            return
-        }
+    func paint(_ update: SessionUpdate, document: BufferDocument, view: RideTextView) {
         mergeHighlights(document: document, update: update)
-        HighlightApply.apply(update, text: text, view: view)
+        HighlightApply.apply(update, text: view.string, view: view)
         if let outline = update.outline {
             let rows = outline.map(Self.row)
             let namesChanged = rows.map(\.name) != document.outline.map(\.name)

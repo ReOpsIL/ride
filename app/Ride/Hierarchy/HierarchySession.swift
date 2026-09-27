@@ -14,7 +14,7 @@ struct HierarchySession {
         names = rows.map(\.name)
         start = rows.map(\.startByte)
         end = rows.map(\.endByte)
-        nameStart = rows.map(\.startByte)
+        nameStart = rows.map(\.nameStartByte)
     }
 
     init(id: UInt64, owned: Bool, items: [OutlineItem]) {

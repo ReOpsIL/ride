@@ -11,6 +11,9 @@ struct MarkdownPreview: NSViewRepresentable {
 
     func makeNSView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
+        config.userContentController.addUserScript(
+            WKUserScript(source: PreviewTemplate.script, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        )
         let view = WKWebView(frame: .zero, configuration: config)
         view.navigationDelegate = context.coordinator
         view.setValue(false, forKey: "drawsBackground")
@@ -41,10 +44,12 @@ struct MarkdownPreview: NSViewRepresentable {
         var lastLine = 0
         var ready = false
         var pendingHTML: String?
+        var loading = false
 
         func load(_ view: WKWebView, theme: Theme, html: String) {
             themeName = theme.name
             ready = false
+            loading = true
             pendingHTML = html
             lastHTML = ""
             view.loadHTMLString(PreviewTemplate.page(theme), baseURL: nil)
@@ -76,12 +81,15 @@ struct MarkdownPreview: NSViewRepresentable {
             decidePolicyFor action: WKNavigationAction,
             decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
         ) {
-            if action.navigationType == .linkActivated, let url = action.request.url {
-                NSWorkspace.shared.open(url)
-                decisionHandler(.cancel)
+            if loading, action.navigationType == .other {
+                loading = false
+                decisionHandler(.allow)
                 return
             }
-            decisionHandler(.allow)
+            if action.navigationType == .linkActivated, let url = action.request.url, ["http", "https"].contains(url.scheme) {
+                NSWorkspace.shared.open(url)
+            }
+            decisionHandler(.cancel)
         }
     }
 }

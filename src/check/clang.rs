@@ -32,6 +32,9 @@ pub fn run_clang_check(file: &Path) -> Result<CheckResult, EngineError> {
 pub fn check_c_live(file: &Path, text: &str) -> Result<CheckResult, EngineError> {
     let lang = Lang::for_buffer(file.to_str(), text);
     let (mut cmd, cwd) = build_command(file, lang)?;
+    if let Some(dir) = file.parent() {
+        cmd.arg("-iquote").arg(dir);
+    }
     cmd.arg("-");
     let (success, stderr) = run_stdin(&mut cmd, &cwd, text)?;
     Ok(CheckResult {

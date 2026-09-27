@@ -94,7 +94,11 @@ fn namespace_paths_list_direct_members_in_declaration_order() {
 fn class_paths_list_members_and_enums_list_their_variants() {
     let (_dir, engine, id) = open();
     let (_, shape) = scoped(&engine, id, "geo::Shape::");
-    assert_eq!(names(&shape), vec!["area", "count", "Kind"], "{shape:?}");
+    assert_eq!(
+        names(&shape),
+        vec!["area", "count", "Kind", "Round", "Square"],
+        "{shape:?}"
+    );
     assert!(shape.contains(&("count".to_string(), ItemKind::Method)));
     assert!(shape.contains(&("Kind".to_string(), ItemKind::Enum)));
     let (_, kind) = scoped(&engine, id, "geo::Shape::Kind::");
@@ -121,7 +125,7 @@ fn namespace_and_type_aliases_are_followed() {
     let (_, via_type_alias) = scoped(&engine, id, "    Fig::");
     assert_eq!(
         names(&via_type_alias),
-        vec!["area", "count", "Kind"],
+        vec!["area", "count", "Kind", "Round", "Square"],
         "{via_type_alias:?}"
     );
 }

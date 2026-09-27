@@ -23,10 +23,9 @@ extension AppState {
             enterWorkspace(url)
             return
         }
-        guard WorkspaceFS.isFile(url) else {
+        guard WorkspaceFS.isFile(url), enterWorkspace(WorkspaceRootFinder.root(for: url)) else {
             return
         }
-        enterWorkspace(WorkspaceRootFinder.root(for: url))
         if let target = request.jump {
             openFile(url, at: target)
         } else {
@@ -35,10 +34,9 @@ extension AppState {
         makeFocusedEditorFirstResponder()
     }
 
-    private func enterWorkspace(_ root: URL) {
-        if workspaceRoot?.standardizedFileURL != root {
-            open(root)
-        }
+    @discardableResult
+    private func enterWorkspace(_ root: URL) -> Bool {
         NSApp.windows.first { $0.isVisible && !($0 is NSPanel) }?.makeKeyAndOrderFront(nil)
+        return workspaceRoot?.standardizedFileURL == root || open(root)
     }
 }

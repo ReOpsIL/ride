@@ -8,10 +8,14 @@ enum HighlightedText {
     }
 
     static func marks(_ text: String, query: String, base: Color, mark: Color, font: Font) -> Text {
+        marks(text, ranges: MatchHighlight.substrings(in: text, query: query), base: base, mark: mark, font: font)
+    }
+
+    static func marks(_ text: String, ranges: [NSRange], base: Color, mark: Color, font: Font) -> Text {
         var attributed = AttributedString(text)
         attributed.font = font
         attributed.foregroundColor = base
-        for range in MatchHighlight.substrings(in: text, query: query) {
+        for range in ranges {
             if let r = Range(range, in: attributed) {
                 attributed[r].backgroundColor = mark
             }

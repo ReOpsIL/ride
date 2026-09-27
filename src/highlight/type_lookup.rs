@@ -34,6 +34,27 @@ pub fn scoped(tables: &[&TypeTable], segments: &[String]) -> Vec<Member> {
     out
 }
 
+pub fn unqualified(tables: &[&TypeTable], name: &str, at: u32) -> Vec<Member> {
+    tables
+        .iter()
+        .flat_map(|table| {
+            let same_file = table.origin().is_none();
+            table
+                .unqualified_named(name)
+                .iter()
+                .filter(move |e| e.visibility.admits(at, same_file))
+                .map(|e| member(table, &e.item, None))
+        })
+        .collect()
+}
+
+pub fn declared_at(table: &TypeTable, name_start_byte: u32) -> Option<Member> {
+    table
+        .all_members()
+        .find(|item| item.name_start_byte == name_start_byte)
+        .map(|item| member(table, item, None))
+}
+
 pub fn follow(tables: &[&TypeTable], chain: &Chain) -> Option<String> {
     let mut current = match &chain.root {
         Root::Type(name) => name.clone(),
@@ -78,7 +99,7 @@ fn collect(
                 m
             }));
         }
-        for base in table.bases_of(name) {
+        for base in table.relations().bases_of(name) {
             collect(tables, &base, depth + 1, seen, out);
         }
     }

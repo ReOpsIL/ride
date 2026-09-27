@@ -35,6 +35,7 @@ extension SelfTestSteps {
             headerSourceSwitch(state: state, e: e),
             runFileError(state: state, e: e),
             recompileFile(state: state, e: e, relative: "src/shapes.cpp"),
+        ] + cmakeRunSteps(state: state, e: e, binary: "demo", output: "registry holds") + [
             generatePrep(state: state, e: e, scratch: scratch),
             generateConstructor(e: e),
             generateGetters(e: e),
@@ -50,5 +51,6 @@ extension SelfTestSteps {
                 first: "int move_a = 1;",
                 second: "int move_b = 2;"
             )
+            + cppMenuSteps(state: state, e: e)
     }
 }

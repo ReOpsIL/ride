@@ -28,11 +28,21 @@ final class RenameInlineBox: NSObject, NSTextFieldDelegate {
         field.currentEditor()?.selectedRange = NSRange(location: 0, length: (text as NSString).length)
     }
 
+    var isShown: Bool {
+        field.superview != nil
+    }
+
     func hide() {
-        if field.superview != nil {
-            host?.window?.makeFirstResponder(host)
-            field.removeFromSuperview()
+        guard isShown else {
+            return
         }
+        let host = self.host
+        field.removeFromSuperview()
+        host?.window?.makeFirstResponder(host)
+    }
+
+    func controlTextDidEndEditing(_ obj: Notification) {
+        field.removeFromSuperview()
     }
 
     private func viewRect(_ view: RideTextView, screenRect: NSRect) -> NSRect {

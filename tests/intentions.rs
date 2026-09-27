@@ -208,3 +208,17 @@ fn literal_at_the_caret_offers_introduce_constant() {
         .unwrap_or_else(|| panic!("{:?}", titles(&found)));
     assert!(applied(&text, wanted).contains("const VALUE: &str = \"ride\";"));
 }
+
+#[test]
+fn local_used_only_in_a_format_string_is_not_offered_an_underscore() {
+    let engine = engine();
+    let path = sample("rust-demo/src/main.rs");
+    let text = "fn main() {\n    let shown = 1;\n    println!(\"{shown}\");\n}\n";
+    let id = open(&engine, &path, text);
+    let found = engine.intentions(id, at(text, "shown") + 2, Vec::new());
+    assert!(
+        found.iter().all(|i| i.title != "Rename to _shown"),
+        "{:?}",
+        titles(&found)
+    );
+}

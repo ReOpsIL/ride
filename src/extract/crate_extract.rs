@@ -3,6 +3,7 @@ use std::path::Path;
 use crate::ffi::ItemKind;
 
 use super::cargo_toml::Package;
+use super::crate_names::{root_of, same_crate};
 use super::external::External;
 use super::glob::OversizedGlob;
 use super::item::{CrateContext, ItemDoc, ItemParts, Scope, Visibility};
@@ -55,7 +56,7 @@ impl CrateExtract {
                 _ => None,
             })
             .map(|path| root_of(&dealias(path, &self.aliases)).to_string())
-            .filter(|root| normalized(root) != normalized(&self.name))
+            .filter(|root| !same_crate(root, &self.name))
             .collect()
     }
 }
@@ -84,17 +85,8 @@ pub fn crate_item(pkg: &Package, crate_root: &Path, ctx: &CrateContext) -> ItemD
             name_start_byte: 0,
             signature: String::new(),
             doc: pkg.description.clone().unwrap_or_default(),
-            chunk: String::new(),
             reachable: true,
             deprecated: false,
         },
     )
-}
-
-pub fn normalized(name: &str) -> String {
-    name.replace('-', "_")
-}
-
-fn root_of(path: &str) -> &str {
-    path.split("::").next().unwrap_or(path)
 }

@@ -66,7 +66,7 @@ struct TargetsPanel: View {
 
     @ViewBuilder private var profilePicker: some View {
         if store.profiles.count > 1 {
-            Picker("", selection: $store.profile) {
+            Picker("", selection: Binding(get: { store.profile }, set: { store.choose(profile: $0) })) {
                 ForEach(store.profiles, id: \.self) { profile in
                     Text(profile).tag(profile)
                 }

@@ -3,7 +3,7 @@ use std::path::Path;
 
 use crate::check::{
     Formatter, check_c_live, format_clang, format_document, format_range, format_source, run_check,
-    run_check_c_project, run_clang_check, selection_span, sources_including,
+    run_check_c_project, run_clang_check, selection_span, sources_including_with,
 };
 use crate::error::EngineError;
 use crate::ffi::CheckResult;
@@ -19,9 +19,11 @@ impl Engine {
         project_root: String,
         clippy: bool,
     ) -> Result<CheckResult, EngineError> {
-        let project = Path::new(&project_root);
-        let workspace_root = self.cargo_root(project);
-        self.guard(|| run_check(project, &workspace_root, None, clippy))
+        self.guard(|| {
+            let project = Path::new(&project_root);
+            let workspace_root = self.cargo_root(project);
+            run_check(project, &workspace_root, None, clippy)
+        })
     }
 
     pub fn run_check_c(&self, path: String) -> Result<CheckResult, EngineError> {
@@ -37,8 +39,11 @@ impl Engine {
     }
 
     pub fn sources_including(&self, header: String) -> Vec<String> {
+        let Ok(cache) = self.read(|i| i.headers.clone()) else {
+            return Vec::new();
+        };
         catch_unwind(AssertUnwindSafe(|| {
-            sources_including(Path::new(&header))
+            sources_including_with(&cache, Path::new(&header))
                 .into_iter()
                 .map(|p| p.display().to_string())
                 .collect()

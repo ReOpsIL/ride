@@ -23,7 +23,7 @@ extension CompletionSession {
         }
         editSource = .user
         if let path = hit.importPath {
-            applyImport(path, document: binding.document, view: view)
+            applyImport(path, document: binding.document)
         }
         if list.site == .include, hit.itemKind == .mod {
             schedule(document: binding.document, view: view, state: binding.state)
@@ -60,9 +60,9 @@ extension CompletionSession {
         }
     }
 
-    private func applyImport(_ path: String, document: BufferDocument, view: RideTextView) {
-        SessionService.shared.importEdit(document: document, importPath: path) { [weak self, weak view] edit in
-            guard let self, let view, let edit else {
+    private func applyImport(_ path: String, document: BufferDocument) {
+        SessionService.shared.importEdit(document: document, importPath: path) { [weak self] edit in
+            guard let self, let view = EditorPanes.shared.host(bound: document)?.textView else {
                 return
             }
             let text = view.string

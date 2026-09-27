@@ -44,18 +44,17 @@ enum HighlightApply {
         view.updateCurrentLineHighlight()
     }
 
-    static func restyle(spans: [HighlightSpan], text: String, view: RideTextView, visible: ByteRange?) {
+    static func restyle(spans: [HighlightSpan], text: String, view: RideTextView) {
         let nsText = text as NSString
         let full = NSRange(location: 0, length: nsText.length)
         guard let storage = view.textContentStorage?.textStorage else {
             return
         }
         let map = Utf16Map(text)
-        let window = visible.map { map.nsRange(startByte: $0.startByte, endByte: $0.endByte) } ?? full
         storage.beginEditing()
         for span in spans {
             let ns = clamp(map.nsRange(startByte: span.startByte, endByte: span.endByte), in: full)
-            if ns.length == 0 || !overlap(ns, window) {
+            if ns.length == 0 {
                 continue
             }
             storage.addAttribute(.foregroundColor, value: theme.color(span.capture), range: ns)
@@ -68,9 +67,5 @@ enum HighlightApply {
         let loc = min(max(range.location, full.location), NSMaxRange(full))
         let end = min(max(NSMaxRange(range), loc), NSMaxRange(full))
         return NSRange(location: loc, length: end - loc)
-    }
-
-    private static func overlap(_ a: NSRange, _ b: NSRange) -> Bool {
-        NSMaxRange(a) > b.location && NSMaxRange(b) > a.location
     }
 }

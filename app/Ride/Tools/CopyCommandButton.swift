@@ -13,5 +13,12 @@ struct CopyCommandButton: View {
         }
         .controlSize(.small)
         .font(Tokens.ui(11))
+        .task(id: copied) {
+            guard copied else {
+                return
+            }
+            try? await Task.sleep(for: .seconds(1.5))
+            copied = false
+        }
     }
 }

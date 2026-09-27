@@ -9,7 +9,7 @@ enum CompletionFetch {
     }
 
     static func run(_ request: Request, done: @escaping (CompletionResponse, Int) -> Void) {
-        guard let view = request.view else {
+        guard let view = request.view, let document = request.document else {
             return
         }
         let text = view.string
@@ -17,7 +17,7 @@ enum CompletionFetch {
         let cursor = UInt32(Utf16.utf8Offset(in: text, utf16: caretUtf16))
         let q = CompletionQuery(
             queryId: request.queryId,
-            sessionId: request.document?.sessionId ?? 0,
+            sessionId: document.sessionId ?? 0,
             prefix: "",
             mode: .bufferLocal,
             context: .unknown,
@@ -28,10 +28,10 @@ enum CompletionFetch {
             kindFilter: nil,
             limit: 50
         )
-        RideEngineClient.shared.withEngine { engine in
+        SessionService.shared.read(document, lane: .workspace, { engine, _ in
             engine.queryCompletions(q: q)
-        } then: { resp in
+        }, then: { resp in
             done(resp, caretUtf16)
-        }
+        })
     }
 }

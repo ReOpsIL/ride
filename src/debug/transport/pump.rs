@@ -1,22 +1,14 @@
-use std::collections::{HashMap, HashSet};
-use std::io::{BufRead, BufReader};
+use std::io::BufReader;
 use std::process::ChildStdout;
+use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::mpsc::Sender;
-use std::sync::{Arc, Condvar, Mutex};
 
 use serde_json::Value;
 
-use crate::error::EngineError;
+use super::codec::read_frame;
+use super::inbox::Shared;
 
-#[derive(Default)]
-pub struct Inbox {
-    pub responses: HashMap<i64, Value>,
-    pub timed_out: HashSet<i64>,
-    pub failure: Option<String>,
-}
-
-pub type Shared = Arc<(Mutex<Inbox>, Condvar)>;
 pub type Events = Sender<(u64, Value)>;
 
 pub fn pump(stdout: ChildStdout, shared: Shared, events: Events, received: Arc<AtomicU64>) {
@@ -69,39 +61,4 @@ fn fail(shared: &Shared, reason: &str) {
         inbox.failure = Some(reason.to_string());
         signal.notify_all();
     }
-}
-
-fn read_frame<R: BufRead>(reader: &mut R) -> Result<Option<Value>, EngineError> {
-    let mut length: Option<usize> = None;
-    loop {
-        let mut line = String::new();
-        let read = reader
-            .read_line(&mut line)
-            .map_err(|err| EngineError::debug(format!("read header: {err}")))?;
-        if read == 0 {
-            return match length {
-                Some(_) => Err(EngineError::debug("truncated header")),
-                None => Ok(None),
-            };
-        }
-        let header = line.trim_end_matches(['\r', '\n']);
-        if header.is_empty() {
-            break;
-        }
-        if let Some((name, value)) = header.split_once(':')
-            && name.trim().eq_ignore_ascii_case("content-length")
-        {
-            let parsed = value
-                .trim()
-                .parse::<usize>()
-                .map_err(|err| EngineError::debug(format!("content length: {err}")))?;
-            length = Some(parsed);
-        }
-    }
-    let length = length.ok_or_else(|| EngineError::debug("frame without content length"))?;
-    let mut body = vec![0u8; length];
-    reader
-        .read_exact(&mut body)
-        .map_err(|err| EngineError::debug(format!("truncated frame: {err}")))?;
-    serde_json::from_slice(&body).map_err(|err| EngineError::debug(format!("frame json: {err}")))
 }

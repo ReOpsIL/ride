@@ -17,6 +17,7 @@ struct PickerCard<Content: View>: View {
         PickerHint(id: "esc", key: "esc", label: "dismiss"),
     ]
     var trailing: String?
+    var focusesQuery = true
     let onSubmit: () -> Void
     let onDismiss: () -> Void
     @ViewBuilder var content: () -> Content
@@ -39,7 +40,16 @@ struct PickerCard<Content: View>: View {
             }
             .padding(.top, 80)
         }
-        .onAppear { focused = true }
+        .onAppear {
+            DispatchQueue.main.async {
+                focused = focusesQuery
+            }
+        }
+        .onChange(of: focusesQuery) { _, wanted in
+            if wanted {
+                focused = true
+            }
+        }
         .onExitCommand(perform: onDismiss)
     }
 

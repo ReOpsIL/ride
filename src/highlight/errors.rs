@@ -4,20 +4,25 @@ use crate::ffi::ParseErrorSpan;
 
 pub fn collect(root: Node<'_>) -> Vec<ParseErrorSpan> {
     let mut out = Vec::new();
-    walk(root, &mut out);
-    out
-}
-
-fn walk(node: Node<'_>, out: &mut Vec<ParseErrorSpan>) {
-    if node.is_error() || node.is_missing() {
-        out.push(ParseErrorSpan {
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-        });
+    if !root.has_error() {
+        return out;
     }
-    for i in 0..node.named_child_count() {
-        if let Some(child) = node.named_child(u32::try_from(i).unwrap_or(u32::MAX)) {
-            walk(child, out);
+    let mut cursor = root.walk();
+    loop {
+        let node = cursor.node();
+        if node.is_error() || node.is_missing() {
+            out.push(ParseErrorSpan {
+                start_byte: node.start_byte() as u32,
+                end_byte: node.end_byte() as u32,
+            });
+        }
+        if node.has_error() && !node.is_error() && cursor.goto_first_child() {
+            continue;
+        }
+        while !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                return out;
+            }
         }
     }
 }

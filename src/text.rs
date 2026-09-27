@@ -40,3 +40,40 @@ pub fn line_end(text: &str, byte: usize) -> usize {
         .map(|i| byte + i)
         .unwrap_or(text.len())
 }
+
+pub fn names_inline_arg(literal: &str, name: &str) -> bool {
+    let mut rest = literal;
+    while let Some(open) = rest.find('{') {
+        let after = &rest[open + 1..];
+        if let Some(escaped) = after.strip_prefix('{') {
+            rest = escaped;
+            continue;
+        }
+        let end = after.find(['}', ':']).unwrap_or(after.len());
+        if after[..end].trim() == name {
+            return true;
+        }
+        rest = after;
+    }
+    false
+}
+
+pub fn indent_at(text: &str, at: usize) -> String {
+    let start = text
+        .get(..at)
+        .and_then(|head| head.rfind('\n').map(|i| i + 1))
+        .unwrap_or(0);
+    text.get(start..at)
+        .unwrap_or_default()
+        .chars()
+        .take_while(|c| c.is_whitespace())
+        .collect()
+}
+
+pub fn floor_char_boundary(text: &str, at: usize) -> usize {
+    let mut at = at.min(text.len());
+    while !text.is_char_boundary(at) {
+        at -= 1;
+    }
+    at
+}

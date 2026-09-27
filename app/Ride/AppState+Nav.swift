@@ -12,38 +12,27 @@ extension AppState {
         EditorPanes.shared.focused?.jump(byte: byte)
     }
 
-    func toggleSymbolInFile() {
-        closeOverlays()
-        showSymbolInFile.toggle()
-        if showSymbolInFile {
-            symbolQuery = ""
-            symbolSelection = activeBuffer?.outline.first?.startByte
-        }
-    }
-
     func toggleSymbolPicker() {
-        let next = !showSymbolPicker
-        closeOverlays()
-        showSymbolPicker = next
-        if next {
+        if toggleOverlay(.symbolInProject) {
             symbolPicker.reset()
         }
     }
 
-    func toggleProjectFind() {
-        let next = !showProjectFind
-        closeOverlays()
-        showProjectFind = next
+    func confirmSymbolPicker() {
+        let hit = symbolPicker.selected
+        showSymbolPicker = false
+        if let hit {
+            HitNavigation.open(hit, state: self)
+        }
     }
 
-    func closeOverlays() {
-        showQuickOpen = false
-        showFind = false
-        showSymbolInFile = false
-        showSymbolPicker = false
-        showProjectFind = false
-        projectFind.showPreview = false
-        showGoToLine = false
-        showRecentFiles = false
+    func toggleProjectFind(field: ProjectFindField = .query) {
+        if showProjectFind, projectFind.field != field {
+            projectFind.field = field
+            return
+        }
+        if toggleOverlay(.projectFind) {
+            projectFind.field = field
+        }
     }
 }

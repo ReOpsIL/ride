@@ -363,3 +363,72 @@ fn missing_database_reports_the_error_from_the_header() {
     assert_eq!(result.diagnostics[0].line, 2);
     assert_eq!(result.diagnostics[0].message, "missing VALUE");
 }
+
+#[test]
+fn live_check_finds_sibling_quoted_headers_with_an_out_of_tree_db() {
+    if !clang_available() {
+        return;
+    }
+    let dir = scratch("live-sibling");
+    let src_dir = dir.join("src");
+    let build = dir.join("build");
+    fs::create_dir_all(&src_dir).unwrap();
+    fs::create_dir_all(&build).unwrap();
+    fs::write(src_dir.join("util.h"), "int util(void);\n").unwrap();
+    let text = "#include \"util.h\"\nint main(void) { return util(); }\n";
+    let src = src_dir.join("main.c");
+    fs::write(&src, text).unwrap();
+    let db = format!(
+        "[{{\"directory\": \"{}\", \"file\": \"{}\", \"command\": \"cc -c {} -o main.o\"}}]",
+        build.display(),
+        src.display(),
+        src.display()
+    );
+    fs::write(build.join("compile_commands.json"), db).unwrap();
+    let result = ride_engine::check_c_live(&src, text).unwrap();
+    assert!(result.success, "{:?}", result.stderr_tail);
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+}
+
+#[test]
+fn project_check_keeps_diagnostics_when_one_file_fails() {
+    if !clang_available() {
+        return;
+    }
+    let dir = scratch("project-partial");
+    fs::write(
+        dir.join("ok.c"),
+        "int main(void) { int unused; return 0; }\n",
+    )
+    .unwrap();
+    let entry = |file: &str| {
+        format!(
+            "{{\"directory\": \"{}\", \"file\": \"{file}\", \"command\": \"cc -Wall -c {file}\"}}",
+            dir.display()
+        )
+    };
+    let db = format!("[{}, {}]", entry("ok.c"), entry("gone.c"));
+    fs::write(dir.join("compile_commands.json"), db).unwrap();
+    let result = run_check_c_project(&dir).unwrap();
+    assert!(!result.success);
+    assert!(
+        result.diagnostics.iter().any(|d| d.path.ends_with("ok.c")),
+        "{:?}",
+        result.diagnostics
+    );
+    assert!(
+        result.stderr_tail.contains("gone.c"),
+        "{}",
+        result.stderr_tail
+    );
+}
+
+#[test]
+fn clang_paths_with_parent_segments_are_normalized() {
+    let base = Path::new("/work/proj");
+    let got = parse_clang("build/../include/x.h:3:4: error: boom\n", base);
+    assert_eq!(got.len(), 1, "{got:?}");
+    assert_eq!(got[0].path, "/work/proj/include/x.h");
+    let got = parse_clang("/work/proj/./src/../lib/y.c:1:1: warning: w\n", base);
+    assert_eq!(got[0].path, "/work/proj/lib/y.c");
+}

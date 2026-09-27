@@ -14,6 +14,7 @@ struct RideApp: App {
         UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
         UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
         NSWindow.allowsAutomaticWindowTabbing = false
+        KeyRouter.install()
         let state = AppState()
         self.state = state
         RideAppDelegate.state = state
@@ -60,7 +61,7 @@ final class RideAppDelegate: NSObject, NSApplicationDelegate {
     static weak var state: AppState?
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        Self.state?.closeAll() == false ? .terminateCancel : .terminateNow
+        Self.state?.confirmQuit() == false ? .terminateCancel : .terminateNow
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {

@@ -6,6 +6,8 @@ use super::{event, suite_of};
 
 type Key = (String, String);
 
+const MODES: &[&str] = &[" - should panic", " - compile fail", " - compile"];
+
 pub fn parse(text: &str) -> Vec<TestEvent> {
     let mut outputs = stdout_blocks(text);
     let mut events = Vec::new();
@@ -57,7 +59,14 @@ fn result(line: &str) -> Option<(&str, TestStatus)> {
     } else {
         return None;
     };
-    Some((name.trim(), status))
+    Some((without_mode(name.trim()), status))
+}
+
+fn without_mode(name: &str) -> &str {
+    MODES
+        .iter()
+        .find_map(|mode| name.strip_suffix(mode))
+        .unwrap_or(name)
 }
 
 fn stdout_blocks(text: &str) -> HashMap<Key, String> {

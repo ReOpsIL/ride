@@ -2,12 +2,12 @@ import AppKit
 
 extension AppState {
     func findUsages() {
-        guard let (view, document) = focusedEditor, let id = document.sessionId else {
+        guard let (view, document) = focusedEditor, document.sessionId != nil else {
             return
         }
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: view.selectedRange().location))
         showUsages = true
-        usages.query(sessionId: id, byte: byte)
+        usages.query(document: document, byte: byte)
     }
 
     func toggleUsages() {

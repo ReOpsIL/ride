@@ -18,18 +18,6 @@ pub fn scrutinee_type(node: Node<'_>, text: &str) -> Option<String> {
     found
 }
 
-pub fn enclosing_indent(text: &str, at: usize) -> String {
-    let start = text
-        .get(..at)
-        .and_then(|head| head.rfind('\n').map(|i| i + 1))
-        .unwrap_or(0);
-    text.get(start..at)
-        .unwrap_or_default()
-        .chars()
-        .take_while(|c| c.is_whitespace())
-        .collect()
-}
-
 fn base_identifier(node: Node<'_>, text: &str) -> Option<String> {
     let mut current = node;
     while matches!(

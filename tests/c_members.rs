@@ -207,3 +207,31 @@ fn cpp_constructors_destructors_and_operators_come_last() {
         "{names:?}"
     );
 }
+
+const C_SCOPES: &str = "struct rect { int w; int h; };\nstruct circle { int r; };\nstruct rect g;\nvoid f(void) { struct circle g; g.r = 1; }\nvoid h(void) { g.w = 2; }\nvoid k(struct rect s) { { struct circle s; s.r = 0; } s.h = 3; }\n";
+
+#[test]
+fn c_receiver_lookup_respects_block_scope() {
+    let engine = engine();
+    let id = engine
+        .open_session(
+            "c".into(),
+            Some("/tmp/scopes.c".into()),
+            C_SCOPES.into(),
+            None,
+        )
+        .unwrap()
+        .session_id;
+    let rect = vec!["w".to_string(), "h".to_string()];
+    let circle = vec!["r".to_string()];
+    assert_eq!(
+        plain(&engine, id, C_SCOPES, "{ struct circle g; g."),
+        circle
+    );
+    assert_eq!(plain(&engine, id, C_SCOPES, "void h(void) { g."), rect);
+    assert_eq!(
+        plain(&engine, id, C_SCOPES, "{ struct circle s; s."),
+        circle
+    );
+    assert_eq!(plain(&engine, id, C_SCOPES, "} s."), rect);
+}

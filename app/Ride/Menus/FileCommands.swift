@@ -39,17 +39,12 @@ struct FileCommands: Commands {
                 .keyboardShortcut("s", modifiers: [.command, .option])
                 .disabled(!menu.hasEditor)
             Button("Revert to Saved") { state.revertToSaved() }
-                .disabled(!menu.hasEditor)
+                .disabled(!menu.canRevert)
         }
         CommandGroup(after: .saveItem) {
             Divider()
-            Button("Close Editor") {
-                if let id = state.activeID {
-                    state.closeBuffer(id)
-                }
-            }
-            .keyboardShortcut("w", modifiers: .command)
-            .disabled(!menu.hasEditor)
+            Button("Close Editor") { state.closeFrontmost() }
+                .keyboardShortcut("w", modifiers: .command)
             Button("Close All") { state.closeAll() }
                 .keyboardShortcut("w", modifiers: [.command, .option])
                 .disabled(!menu.hasEditor)

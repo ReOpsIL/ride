@@ -8,6 +8,7 @@ struct NavigateCommands: Commands {
         CommandMenu("Navigate") {
             Button("Open Quickly…") { state.toggleQuickOpen() }
                 .keyboardShortcut("p", modifiers: .command)
+                .disabled(!menu.hasWorkspace)
             Button("Recent Files…") { state.toggleRecentFiles() }
                 .keyboardShortcut("e", modifiers: .command)
             Divider()
@@ -19,6 +20,7 @@ struct NavigateCommands: Commands {
                 .disabled(!menu.canGoForward)
             Button("Last Edit Location") { state.goToLastEdit() }
                 .keyboardShortcut(.delete, modifiers: [.command, .shift])
+                .disabled(!menu.canGoToLastEdit)
             Button("Go to Line…") { state.toggleGoToLine() }
                 .keyboardShortcut("l", modifiers: .command)
                 .disabled(!menu.hasEditor)

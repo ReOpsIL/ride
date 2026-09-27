@@ -80,9 +80,32 @@ final class RunPlanTests: XCTestCase {
         XCTAssertEqual(made?.cwd, "/tmp/other")
     }
 
-    func testBuildArgsNeedNoSeparator() {
-        let config = RunConfig(target: "ride-demo", args: ["--release"])
-        XCTAssertEqual(plan(.build, config)?.argv, bin.build + ["--release"])
+    func testBuildArgsReachBuildTestAndCargoRunButNotTheProgram() {
+        let config = RunConfig(target: "ride-demo", buildArgs: ["--features", "x"], args: ["--fast"])
+        XCTAssertEqual(plan(.build, config)?.argv, bin.build + ["--features", "x"])
+        XCTAssertEqual(plan(.test, config)?.argv, tests.build + ["--features", "x"])
+        XCTAssertEqual(plan(.run, config)?.argv, bin.run + ["--features", "x", "--", "--fast"])
+    }
+
+    func testProgramArgsStayOutOfBuildAndTest() {
+        let config = RunConfig(target: "ride-demo", args: ["--fast"])
+        XCTAssertEqual(plan(.build, config)?.argv, bin.build)
+        XCTAssertEqual(plan(.test, config)?.argv, tests.build)
+    }
+
+    func testCMakeRunTakesProgramArgsOnly() {
+        let config = RunConfig(target: "demo", buildArgs: ["-j4"], args: ["--fast"])
+        let made = RunPlanner.plan(.run, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake)
+        XCTAssertEqual(made?.argv, ["build/Debug/demo", "--fast"])
+        let build = RunPlanner.plan(.build, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake)
+        XCTAssertEqual(build?.argv, cmakeBin.build + ["-j4"])
+    }
+
+    func testCargoReleaseProfileAddsTheReleaseFlag() {
+        let made = plan(.build, RunConfig(target: "ride-demo"), profile: "release")
+        XCTAssertEqual(made?.argv, bin.build + ["--release"])
+        XCTAssertEqual(plan(.run, RunConfig(target: "ride-demo"), profile: "release")?.argv, bin.run + ["--release"])
+        XCTAssertEqual(plan(.build, RunConfig(target: "ride-demo"), profile: "debug")?.argv, bin.build)
     }
 
     func testSanitizersAddTheTargetTripleAndRustflags() {
@@ -90,17 +113,48 @@ final class RunPlanTests: XCTestCase {
         let made = plan(.build, config)
         XCTAssertEqual(made?.argv, bin.build + ["--target", RunConfig.hostTriple])
         XCTAssertEqual(made?.env["RUSTFLAGS"], "-Zsanitizer=address")
+        XCTAssertNil(made?.prelude)
     }
 
-    func testCMakeBuildKeepsSanitizerFlagsOutOfTheArgv() {
-        let target = RunTarget(
-            name: "demo",
-            kind: .bin,
-            build: ["cmake", "--build", "build/Debug", "--target", "demo"],
-            workingDir: "/tmp/c"
-        )
-        let config = RunConfig(target: "demo", sanitizers: [.address])
-        let made = RunPlanner.plan(.build, target: target, targets: [target], config: config, kind: .cmake)
-        XCTAssertEqual(made?.argv, target.build)
+    func testCargoIgnoresTheUndefinedSanitizer() {
+        let made = plan(.build, RunConfig(target: "ride-demo", sanitizers: [.undefined]))
+        XCTAssertEqual(made?.argv, bin.build)
+        XCTAssertNil(made?.env["RUSTFLAGS"])
+    }
+
+    private let cmakeBin = RunTarget(
+        name: "demo",
+        kind: .bin,
+        build: ["cmake", "--build", "build/Debug", "--target", "demo"],
+        run: ["build/Debug/demo"],
+        workingDir: "/tmp/c"
+    )
+
+    func testCMakeDefaultVariantNeedsNoConfigure() {
+        let made = RunPlanner.plan(.build, target: cmakeBin, targets: [cmakeBin], config: RunConfig(target: "demo"), kind: .cmake, profile: "Debug")
+        XCTAssertEqual(made?.argv, cmakeBin.build)
+        XCTAssertNil(made?.prelude)
+    }
+
+    func testCMakeSanitizersConfigureTheirOwnBuildDirectory() {
+        let config = RunConfig(target: "demo", sanitizers: [.address, .undefined])
+        let build = RunPlanner.plan(.build, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake, profile: "Debug")
+        XCTAssertEqual(build?.argv, ["cmake", "--build", "build/Debug-address-undefined", "--target", "demo"])
+        XCTAssertEqual(build?.prelude, [
+            "cmake", "-S", "/tmp/c", "-B", "build/Debug-address-undefined", "-DCMAKE_BUILD_TYPE=Debug",
+            "-DCMAKE_C_FLAGS=-fsanitize=address,undefined", "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined",
+        ])
+        let run = RunPlanner.plan(.run, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake, profile: "Debug")
+        XCTAssertEqual(run?.argv, ["build/Debug-address-undefined/demo"])
+        XCTAssertNil(run?.prelude)
+    }
+
+    func testCMakeProfileSelectsItsBuildDirectory() {
+        let config = RunConfig(target: "demo")
+        let build = RunPlanner.plan(.build, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake, profile: "Release")
+        XCTAssertEqual(build?.argv, ["cmake", "--build", "build/Release", "--target", "demo"])
+        XCTAssertEqual(build?.prelude, ["cmake", "-S", "/tmp/c", "-B", "build/Release", "-DCMAKE_BUILD_TYPE=Release"])
+        let test = RunPlanner.plan(.test, target: cmakeBin, targets: [cmakeBin], config: config, kind: .cmake, profile: "Release")
+        XCTAssertEqual(test?.argv, ["ctest", "--test-dir", "build/Release"])
     }
 }

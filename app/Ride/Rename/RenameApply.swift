@@ -134,13 +134,7 @@ enum RenameApply {
     }
 
     private static func resync(_ buffer: BufferDocument) {
-        guard let id = buffer.sessionId else {
-            return
-        }
-        let text = buffer.text
-        DispatchQueue.global(qos: .userInitiated).async {
-            _ = try? RideEngineClient.shared.engine?.setText(sessionId: id, text: text, visible: nil)
-        }
+        SessionService.shared.replaceText(of: buffer, with: buffer.text)
     }
 
     private static func writeDisk(_ url: URL, _ text: String, count: Int) -> Outcome {

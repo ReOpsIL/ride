@@ -19,7 +19,7 @@ struct TerminalPanel: View {
                 TerminalTabStrip(
                     tabs: store.tabs,
                     select: { state.selectTerminal($0) },
-                    close: { store.close($0) }
+                    close: { state.closeTerminal($0) }
                 )
             }
             content

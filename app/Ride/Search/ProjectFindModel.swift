@@ -11,6 +11,7 @@ final class ProjectFindModel: ObservableObject {
     @Published var running = false
     @Published var selection: Int?
     @Published var showPreview = false
+    @Published var field = ProjectFindField.query
     private var ran = ""
     private var ranOptions = FindOptions.defaults
     private var generation = 0
@@ -67,6 +68,10 @@ final class ProjectFindModel: ObservableObject {
             included = Set(hits.map(\.file))
         }
         showPreview = true
+    }
+
+    func includeAll(_ on: Bool) {
+        included = on ? Set(hits.map(\.file)) : []
     }
 
     func setIncluded(_ file: URL, _ on: Bool) {

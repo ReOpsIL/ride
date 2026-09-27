@@ -20,21 +20,37 @@ struct TextChange: Equatable {
     var delta: Int {
         text.utf16.count - range.length
     }
+
+    static func ordered(_ changes: [TextChange]) -> [TextChange]? {
+        let sorted = changes.enumerated()
+            .sorted { ($0.element.range.location, $0.element.range.length, $0.offset) < ($1.element.range.location, $1.element.range.length, $1.offset) }
+            .map(\.element)
+        for (earlier, later) in zip(sorted, sorted.dropFirst()) where NSMaxRange(earlier.range) > later.range.location {
+            return nil
+        }
+        return sorted
+    }
 }
 
 struct EditResult: Equatable {
     let changes: [TextChange]
     let selection: NSRange
 
-    static let none = EditResult(changes: [], selection: NSRange(location: NSNotFound, length: 0))
+    init(changes: [TextChange], selection: NSRange) {
+        self.changes = TextChange.ordered(changes) ?? []
+        self.selection = selection
+    }
 
     static func keep(_ selection: NSRange) -> EditResult {
         EditResult(changes: [], selection: selection)
     }
 
     static func applying(_ changes: [TextChange], to text: String) -> String {
+        guard let ordered = TextChange.ordered(changes) else {
+            return text
+        }
         let result = NSMutableString(string: text)
-        for change in changes.reversed() {
+        for change in ordered.reversed() {
             result.replaceCharacters(in: change.range, with: change.text)
         }
         return result as String
@@ -58,7 +74,8 @@ struct EditResult: Equatable {
         return shifted
     }
 
-    static func mapping(_ selection: NSRange, through changes: [TextChange]) -> EditResult {
+    static func mapping(_ selection: NSRange, through unordered: [TextChange]) -> EditResult {
+        let changes = TextChange.ordered(unordered) ?? []
         if selection.length == 0 {
             let caret = shift(selection.location, through: changes, inclusive: true)
             return EditResult(changes: changes, selection: NSRange(location: caret, length: 0))

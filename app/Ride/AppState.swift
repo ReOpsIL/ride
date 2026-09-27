@@ -27,7 +27,7 @@ final class AppState: ObservableObject {
     @Published var prefs = Preferences.defaults {
         didSet { syncMenu() }
     }
-    @Published var showQuickOpen = false
+    @Published var overlay: Overlay?
     @Published var showFind = false
     @Published var quickQuery = ""
     @Published var quickHits: [URL] = []
@@ -35,11 +35,8 @@ final class AppState: ObservableObject {
     @Published var findQuery = ""
     @Published var replaceQuery = ""
     @Published var findRange: NSRange?
-    @Published var showSymbolInFile = false
     @Published var symbolQuery = ""
     @Published var symbolSelection: UInt32?
-    @Published var showSymbolPicker = false
-    @Published var showProjectFind = false
     @Published var showProblems = false {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -68,6 +65,7 @@ final class AppState: ObservableObject {
     @Published var notice: String?
     @Published var noticeAction: (title: String, run: () -> Void)?
     var noticeDismiss: (() -> Void)?
+    var noticeQueue = NoticeQueue()
     @Published var showToolsSheet = false
     @Published var showNewProjectSheet = false
     @Published var showRunConfigSheet = false
@@ -79,9 +77,7 @@ final class AppState: ObservableObject {
         didSet { scheduleWorkspaceSave() }
     }
     var noticeWork: DispatchWorkItem?
-    @Published var showGoToLine = false
     @Published var goToLineQuery = ""
-    @Published var showRecentFiles = false
     @Published var recentQuery = ""
     @Published var recentSelection: URL?
     @Published var findOptions = FindOptions.defaults
@@ -94,6 +90,7 @@ final class AppState: ObservableObject {
     let git = GitStatusService()
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
+    let runConfigEditor = RunConfigEditor()
     let runOutput = RunOutput()
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()

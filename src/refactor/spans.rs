@@ -2,7 +2,10 @@ use tree_sitter::Node;
 
 use crate::ffi::ByteRange;
 
-const EXPRESSION_KINDS: [&str; 20] = [
+use super::boundary::unconditional_statement;
+use super::position::value_position;
+
+const EXPRESSION_KINDS: [&str; 19] = [
     "binary_expression",
     "call_expression",
     "method_call_expression",
@@ -12,7 +15,6 @@ const EXPRESSION_KINDS: [&str; 20] = [
     "unary_expression",
     "parenthesized_expression",
     "identifier",
-    "field_identifier",
     "scoped_identifier",
     "integer_literal",
     "float_literal",
@@ -25,8 +27,6 @@ const EXPRESSION_KINDS: [&str; 20] = [
     "raw_string_literal",
 ];
 
-const BODY_KINDS: [&str; 2] = ["block", "compound_statement"];
-
 pub struct ExtractSpans {
     pub expr: ByteRange,
     pub statement: ByteRange,
@@ -38,10 +38,10 @@ pub fn spans(root: Node<'_>, text: &str, range: ByteRange) -> Option<ExtractSpan
     if node.start_byte() != start || node.end_byte() != end {
         return None;
     }
-    if !EXPRESSION_KINDS.contains(&node.kind()) {
+    if !EXPRESSION_KINDS.contains(&node.kind()) || !value_position(node) {
         return None;
     }
-    let statement = enclosing(node)?;
+    let statement = unconditional_statement(node)?;
     Some(ExtractSpans {
         expr: ByteRange {
             start_byte: start as u32,
@@ -52,17 +52,6 @@ pub fn spans(root: Node<'_>, text: &str, range: ByteRange) -> Option<ExtractSpan
             end_byte: statement.end_byte() as u32,
         },
     })
-}
-
-fn enclosing(node: Node<'_>) -> Option<Node<'_>> {
-    let mut current = node;
-    while let Some(parent) = current.parent() {
-        if BODY_KINDS.contains(&parent.kind()) {
-            return Some(current);
-        }
-        current = parent;
-    }
-    None
 }
 
 pub(super) fn trimmed(text: &str, range: ByteRange) -> Option<(usize, usize)> {

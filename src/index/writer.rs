@@ -10,6 +10,7 @@ use super::crates::collect_crates;
 use super::fingerprint::{HashedCrate, fingerprint, hash_crates};
 use super::gc::clean_stagings;
 use super::incremental::{self, key_of};
+use super::lock;
 use super::promote::promote;
 use super::schema::SCHEMA_VERSION;
 use super::status::{Manifest, append_status, read_manifest};
@@ -37,18 +38,11 @@ fn run(
     force: bool,
 ) -> Result<IndexStatus, EngineError> {
     fs::create_dir_all(index_dir).map_err(|e| EngineError::io(index_dir, e))?;
+    let _lock = lock::acquire(index_dir)?;
     clean_stagings(index_dir);
     let discovery = discover(config, Some(project))?;
     let crates = collect_crates(&discovery, project);
-    let mut status = IndexStatus {
-        state: IndexState::Indexing,
-        docs: 0,
-        crates_done: 0,
-        crates_total: crates.len() as u32,
-        rust_src_available: discovery.rust_src_available,
-        warnings: 0,
-        message: Some("indexing".into()),
-    };
+    let mut status = starting(crates.len(), discovery.rust_src_available);
     append_status(index_dir, &status)?;
     let hashed = hash_crates(crates);
     let fp = fingerprint(&hashed);
@@ -56,21 +50,39 @@ fn run(
     if !force && let Some(fresh) = prev.as_ref().filter(|m| is_fresh(m, index_dir, &fp)) {
         return finish(index_dir, status, fresh.docs);
     }
-    let crate_hashes = hashed.iter().map(|h| (key_of(h), h.hash.clone())).collect();
     match write(index_dir, prev.as_ref(), &hashed, &mut status, force) {
         Ok(docs) => {
-            let generation = prev.as_ref().map(|m| m.generation + 1).unwrap_or(1);
+            let generation = prev.as_ref().map_or(1, |m| m.generation + 1);
+            let crate_hashes = hashed.iter().map(|h| (key_of(h), h.hash.clone())).collect();
             let manifest = Manifest::next(generation, fp, docs, crate_hashes);
             promote(index_dir, &staging_dir(index_dir), &manifest)?;
             finish(index_dir, status, docs)
         }
-        Err(e) => {
-            status.state = IndexState::Error;
-            status.message = Some(e.to_string());
-            append_status(index_dir, &status)?;
-            Err(e)
-        }
+        Err(e) => fail(index_dir, status, e),
     }
+}
+
+fn starting(crates_total: usize, rust_src_available: bool) -> IndexStatus {
+    IndexStatus {
+        state: IndexState::Indexing,
+        docs: 0,
+        crates_done: 0,
+        crates_total: crates_total as u32,
+        rust_src_available,
+        warnings: 0,
+        message: Some("indexing".into()),
+    }
+}
+
+fn fail(
+    index_dir: &Path,
+    mut status: IndexStatus,
+    err: EngineError,
+) -> Result<IndexStatus, EngineError> {
+    status.state = IndexState::Error;
+    status.message = Some(err.to_string());
+    append_status(index_dir, &status)?;
+    Err(err)
 }
 
 fn write(

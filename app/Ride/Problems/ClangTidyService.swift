@@ -30,23 +30,10 @@ enum ClangTidyService {
     }
 
     private static func invoke(tool: URL, path: String, buildDir: String?) -> String {
-        let process = Process()
-        process.executableURL = tool
         var arguments = [path, "-quiet"]
         if let buildDir {
             arguments += ["-p", buildDir]
         }
-        process.arguments = arguments
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-        do {
-            try process.run()
-        } catch {
-            return ""
-        }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
-        return String(decoding: data, as: UTF8.self)
+        return ProcessRun.output(tool, arguments)?.text ?? ""
     }
 }

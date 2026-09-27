@@ -1,6 +1,6 @@
 import AppKit
 
-final class PeekPanel {
+final class PeekPanel: PinnablePanel {
     let panel: NSPanel
     private let chrome = PeekChrome(frame: .zero)
     private let scroll = NSScrollView()
@@ -14,22 +14,7 @@ final class PeekPanel {
 
     init() {
         text = RideTextView.makeTK2()
-        panel = NSPanel(
-            contentRect: NSRect(origin: .zero, size: DocPanel.defaultSize),
-            styleMask: [.borderless, .nonactivatingPanel, .resizable],
-            backing: .buffered,
-            defer: true
-        )
-        panel.isFloatingPanel = true
-        panel.hidesOnDeactivate = !DemoLaunch.isDemo
-        panel.becomesKeyOnlyIfNeeded = true
-        panel.level = DemoLaunch.isDemo ? .normal : .popUpMenu
-        panel.hasShadow = true
-        panel.isOpaque = false
-        panel.backgroundColor = .clear
-        panel.isMovableByWindowBackground = true
-        panel.isRestorable = false
-        panel.minSize = NSSize(width: 280, height: 160)
+        panel = PopupPanelKit.makePanel()
         chrome.autoresizingMask = [.width, .height]
         scroll.drawsBackground = false
         scroll.borderType = .noBorder
@@ -150,12 +135,7 @@ final class PeekChrome: NSView {
         open.bezelStyle = .roundRect
         open.font = Tokens.nsUI(11)
         open.toolTip = "Open (F12)"
-        pin.image = NSImage(systemSymbolName: "pin", accessibilityDescription: "Pin")
-        pin.alternateImage = NSImage(systemSymbolName: "pin.fill", accessibilityDescription: "Pinned")
-        pin.setButtonType(.toggle)
-        pin.isBordered = false
-        pin.imagePosition = .imageOnly
-        pin.toolTip = "Pin"
+        PopupPanelKit.configurePin(pin)
         segments.segmentStyle = .rounded
         segments.trackingMode = .selectOne
         segments.isHidden = true
@@ -171,8 +151,7 @@ final class PeekChrome: NSView {
     }
 
     func setPinned(_ pinned: Bool) {
-        pin.state = pinned ? .on : .off
-        pin.contentTintColor = pinned ? ThemeStore.shared.chrome.accent : ThemeStore.shared.chrome.textSecondary
+        PopupPanelKit.setPinned(pin, pinned)
     }
 
     func setSegments(_ labels: [String], selected: Int) {
@@ -196,7 +175,7 @@ final class PeekChrome: NSView {
         card.applyTheme()
         let chrome = ThemeStore.shared.chrome
         origin.textColor = chrome.textPrimary
-        pin.contentTintColor = pin.state == .on ? chrome.accent : chrome.textSecondary
+        PopupPanelKit.tint(pin)
         let extra: CGFloat = segments.isHidden ? 0 : 24
         let h = Tokens.Size.panelHeader + extra
         header.frame = NSRect(x: 0, y: bounds.height - h, width: bounds.width, height: h)

@@ -21,6 +21,10 @@ final class HoverController {
         }
     }
 
+    var isVisible: Bool {
+        panel.isVisible
+    }
+
     func upgradeIfVisible() -> Bool {
         guard panel.isVisible, let view, let shown else {
             return false
@@ -96,14 +100,21 @@ final class HoverController {
         }
         lastFire = Date()
         let started = DebugHover.request(view: view, range: range) { [weak self, weak view] content in
-            guard let self, let view, self.word == range, let content else {
+            guard let self, let view, self.word == range else {
+                return
+            }
+            guard let content else {
+                self.showDefinition(view: view, range: range)
                 return
             }
             self.show(content, view: view, range: range)
         }
-        if started {
-            return
+        if !started {
+            showDefinition(view: view, range: range)
         }
+    }
+
+    private func showDefinition(view: RideTextView, range: NSRange) {
         view.hooks.definitions?(range.location) { [weak self, weak view] resp in
             guard let self, let view, self.word == range else {
                 return

@@ -11,6 +11,7 @@ pub mod c;
 pub mod cmake;
 pub mod cpp;
 pub mod make;
+pub mod none;
 pub mod rust;
 pub mod toml;
 
@@ -23,6 +24,7 @@ pub struct Grammar {
     pub local_detail: crate::highlight::locals::LocalDetail,
     pub symbol_kinds: &'static [&'static str],
     pub qualifier: fn(Node<'_>, &str) -> Option<String>,
+    pub postfix: fn(&Tree, &str, usize) -> Option<(usize, usize)>,
     pub outline: fn(&Tree, &str) -> Vec<OutlineItem>,
     pub member_ops: &'static [&'static str],
     pub member_kinds: &'static [&'static str],

@@ -5,7 +5,7 @@ private var crashReportPath: UnsafeMutablePointer<CChar>?
 private var crashFrames: UnsafeMutablePointer<UnsafeMutableRawPointer?>?
 
 enum CrashSignals {
-    static let handled: [Int32] = [SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT]
+    static let handled: [Int32] = [SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT, SIGTRAP]
 
     static func install(path: String) {
         crashReportPath = strdup(path)
@@ -48,6 +48,8 @@ private func crashSignalName(_ number: Int32) -> StaticString {
         return "Ride crash: SIGFPE\n"
     case SIGABRT:
         return "Ride crash: SIGABRT\n"
+    case SIGTRAP:
+        return "Ride crash: SIGTRAP\n"
     default:
         return "Ride crash: signal\n"
     }

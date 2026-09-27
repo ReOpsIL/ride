@@ -4,11 +4,13 @@ mod abspath;
 mod cheatsheet;
 mod check;
 pub mod debug;
+mod digest;
 mod discover;
 mod engine;
 mod error;
 mod extract;
 mod ffi;
+mod files;
 mod generate;
 mod highlight;
 pub mod includes;
@@ -40,8 +42,8 @@ pub use debug::registry::DebugRegistry;
 pub use debug::session::DebugSession;
 pub use debug::transport::Transport;
 pub use discover::{
-    CrateTarball, DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args,
-    rustc_sysroot, sysroot_path, system_includes, tool_status, workspace_info,
+    DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args, rustc_sysroot,
+    sysroot_path, system_includes, tool_status, workspace_info,
 };
 pub use engine::{Engine, engine_start};
 pub use error::EngineError;
@@ -57,5 +59,6 @@ pub use index::{
 };
 pub use markdown::render as render_markdown;
 pub use refs::{RefExtractor, RefKind, RefRecord, extractor_for};
-pub use report::{install_panic_hook, panic_line};
+pub use report::install_panic_hook;
+pub use text::floor_char_boundary;
 pub use toolchain::tool_path;

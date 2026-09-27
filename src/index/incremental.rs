@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::fs;
 use std::path::Path;
 
 use tantivy::{Index, IndexWriter, Term};
@@ -8,11 +7,11 @@ use crate::error::EngineError;
 use crate::extract::{External, Scope};
 use crate::ffi::IndexStatus;
 
+use super::clone::clone_generation;
 use super::crates::extract_items;
 use super::doc::{keep_item, to_document};
 use super::fingerprint::HashedCrate;
 use super::hash::crate_key;
-use super::promote::tv;
 use super::schema::build_fields;
 use super::status::{Manifest, append_status};
 use super::warnings::{append_warning, reset_warnings};
@@ -67,12 +66,11 @@ pub fn apply(
     status: &mut IndexStatus,
 ) -> Result<u32, EngineError> {
     reset_warnings(index_dir)?;
-    clone_dir(live, staging)?;
-    let _ = fs::remove_file(staging.join(".tantivy-writer.lock"));
-    let index = Index::open_in_dir(staging).map_err(tv)?;
-    super::tokenizers::register(&index).map_err(tv)?;
+    clone_generation(live, staging)?;
+    let index = Index::open_in_dir(staging).map_err(EngineError::index)?;
+    super::tokenizers::register(&index).map_err(EngineError::index)?;
     let fields = build_fields();
-    let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(tv)?;
+    let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(EngineError::index)?;
     for hash in &d.stale_hashes {
         writer.delete_term(Term::from_field_text(fields.content_hash, hash));
     }
@@ -83,7 +81,7 @@ pub fn apply(
                 for item in items.iter().filter(|i| keep_item(i)) {
                     writer
                         .add_document(to_document(&fields, item, &h.hash))
-                        .map_err(tv)?;
+                        .map_err(EngineError::index)?;
                 }
             }
             Err(e) => {
@@ -94,26 +92,8 @@ pub fn apply(
         status.crates_done += 1;
         append_status(index_dir, status)?;
     }
-    writer.commit().map_err(tv)?;
-    writer.wait_merging_threads().map_err(tv)?;
-    let reader = index.reader().map_err(tv)?;
+    writer.commit().map_err(EngineError::index)?;
+    writer.wait_merging_threads().map_err(EngineError::index)?;
+    let reader = index.reader().map_err(EngineError::index)?;
     Ok(reader.searcher().num_docs() as u32)
-}
-
-fn clone_dir(from: &Path, to: &Path) -> Result<(), EngineError> {
-    if to.exists() {
-        fs::remove_dir_all(to).map_err(|e| EngineError::io(to, e))?;
-    }
-    fs::create_dir_all(to).map_err(|e| EngineError::io(to, e))?;
-    let entries = fs::read_dir(from).map_err(|e| EngineError::io(from, e))?;
-    for entry in entries.flatten() {
-        let src = entry.path();
-        let dest = to.join(entry.file_name());
-        if src.is_dir() {
-            clone_dir(&src, &dest)?;
-        } else {
-            fs::copy(&src, &dest).map_err(|e| EngineError::io(&src, e))?;
-        }
-    }
-    Ok(())
 }

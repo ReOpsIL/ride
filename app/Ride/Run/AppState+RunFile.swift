@@ -27,7 +27,7 @@ extension AppState {
         startSingleFile(
             RunInvocation(argv: single.compile, workingDir: directory),
             baseDir: directory,
-            then: RunInvocation(argv: single.run, workingDir: directory)
+            then: .run(.plain(RunInvocation(argv: single.run, workingDir: directory)))
         )
     }
 
@@ -42,22 +42,11 @@ extension AppState {
         startSingleFile(
             RunInvocation(argv: command.argv, workingDir: command.directory),
             baseDir: command.directory,
-            then: nil
+            then: .none
         )
     }
 
-    func continueSingleFile(_ runId: Int, _ finish: RunFinish) {
-        guard let next = SingleFileChain.shared.take(runId: runId, status: finish) else {
-            return
-        }
-        runInOutput(next)
-    }
-
-    private func startSingleFile(_ invocation: RunInvocation, baseDir: String, then next: RunInvocation?) {
-        guard let runId = runInOutput(invocation) else {
-            return
-        }
-        BuildSession.shared.begin(runId: runId, kind: .none, baseDir: baseDir)
-        SingleFileChain.shared.expect(next, after: runId)
+    private func startSingleFile(_ invocation: RunInvocation, baseDir: String, then next: RunFollowUp) {
+        startRun(RunRequest(invocation: invocation, session: .singleFile(baseDir: baseDir), then: next))
     }
 }

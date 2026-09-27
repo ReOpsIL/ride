@@ -28,7 +28,7 @@ final class AIAssistant: ObservableObject {
         let range = view.selectedRange()
         selection = range.length > 0 ? (view.string as NSString).substring(with: range) : ""
         let tokens = CommentTokens.tokens(for: document.language)
-        prompt = AICommentPrompt.extract(view.string, caret: range.location, tokens: tokens) ?? prompt
+        prompt = AICommentPrompt.extract(view.string, caret: range.location, tokens: tokens) ?? ""
         level = state.prefs.aiContext
         showPrompt = true
     }
@@ -39,7 +39,7 @@ final class AIAssistant: ObservableObject {
         guard !request.isEmpty, let document, let view, let state else {
             return
         }
-        let config = AIConfig(provider: state.prefs.aiProvider, model: state.prefs.aiModel, auth: state.prefs.aiAuth, level: level)
+        let config = AIConfig(provider: state.prefs.aiProvider, model: state.prefs.aiModel, level: level)
         let plan = AIContextBuilder.plan(document: document, view: view, state: state, level: config.level)
         let selected = selection.isEmpty ? nil : selection
         question = request

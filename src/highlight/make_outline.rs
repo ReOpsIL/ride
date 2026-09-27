@@ -1,9 +1,7 @@
 use tree_sitter::{Node, Tree};
 
 use crate::ffi::{ItemKind, OutlineItem};
-use crate::text::first_line;
 
-use super::c_names::node_text;
 use super::walk::each_node;
 
 pub fn outline(tree: &Tree, text: &str) -> Vec<OutlineItem> {
@@ -12,13 +10,7 @@ pub fn outline(tree: &Tree, text: &str) -> Vec<OutlineItem> {
         "rule" => targets(node, text, &mut out),
         "variable_assignment" | "define_directive" | "shell_assignment" => {
             if let Some(name) = node.child_by_field_name("name") {
-                push(
-                    node,
-                    node_text(name, text),
-                    ItemKind::Static,
-                    text,
-                    &mut out,
-                );
+                push(node, name, ItemKind::Static, text, &mut out);
             }
         }
         _ => {}
@@ -37,22 +29,11 @@ fn targets(rule: Node<'_>, text: &str, out: &mut Vec<OutlineItem>) {
     let mut cursor = targets.walk();
     for word in targets.named_children(&mut cursor) {
         if word.kind() == "word" {
-            push(rule, node_text(word, text), ItemKind::Target, text, out);
+            push(rule, word, ItemKind::Target, text, out);
         }
     }
 }
 
-fn push(node: Node<'_>, name: String, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
-    if !name.is_empty() {
-        let name_start_byte = super::symbol::name_start_byte(node, &name, text);
-        out.push(OutlineItem {
-            name,
-            kind,
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-            name_start_byte,
-            signature: first_line(&node_text(node, text)),
-            doc: String::new(),
-        });
-    }
+fn push(node: Node<'_>, name: Node<'_>, kind: ItemKind, text: &str, out: &mut Vec<OutlineItem>) {
+    out.extend(super::line_item::line_item(node, name, kind, text));
 }

@@ -91,9 +91,7 @@ extension SelfTestSteps {
             } else {
                 util.text = "let _stale = 0;\n" + util.text
             }
-            if let id = reviewId(state, suffix: "util.rs") {
-                state.renamePreview.selection.setReview(id, true)
-            }
+            _ = chooseOnly(state, suffix: "util.rs")
             scratch.applied = true
             RenameController.shared.applyWorkspace()
             return noticeFired(state)
@@ -135,22 +133,44 @@ extension SelfTestSteps {
     }
 
     private static func renameReviewApply(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "rename review apply", wait: 0.6, run: {
+        let scratch = RenameSkipScratch()
+        return SelfTestStep(name: "rename review apply", wait: 0.6, until: {
+            if scratch.applied {
+                return e.text.contains("logged")
+            }
             e.focus()
             e.place(on: "record")
             RenameController.shared.prepare(state: state)
             RenameController.shared.buildPreview("logged")
-            state.renamePreview.selection.selectAllFiles(false)
-            if let id = reviewId(state, suffix: "main.rs") {
-                state.renamePreview.selection.setReview(id, true)
+            guard state.renamePlan?.newName == "logged", chooseOnly(state, suffix: "main.rs") else {
+                return false
             }
+            scratch.applied = true
             RenameController.shared.applyWorkspace()
-        }, check: {
+            return false
+        }, timeout: 30, run: {}, check: {
             e.expect(
                 e.text.contains("logged") && !e.text.contains(".record("),
-                "line10 '\(e.line(10))'"
+                "line10 '\(e.line(10))' paths \(renamePaths(state))"
             )
         })
+    }
+
+    private static func chooseOnly(_ state: AppState, suffix: String) -> Bool {
+        let file = state.renamePreview.selection.files.first { $0.path.hasSuffix(suffix) }?.path
+        let review = reviewId(state, suffix: suffix)
+        guard file != nil || review != nil else {
+            return false
+        }
+        state.renamePreview.selection.selectAllFiles(false)
+        state.renamePreview.selection.selectAllReview(false)
+        if let file {
+            state.renamePreview.selection.setFile(file, true)
+        }
+        if let review {
+            state.renamePreview.selection.setReview(review, true)
+        }
+        return true
     }
 
     private static func reviewId(_ state: AppState, suffix: String) -> Int? {

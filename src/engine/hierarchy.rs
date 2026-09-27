@@ -6,7 +6,7 @@ use crate::highlight::{subtypes, supertypes};
 
 use super::headers::Header;
 use super::reach::Reach;
-use super::{Engine, header_hits, refs};
+use super::{Engine, header_hits, usages};
 
 const TYPE_KINDS: &[ItemKind] = &[
     ItemKind::Struct,
@@ -51,7 +51,7 @@ fn hierarchy(engine: &Engine, session_id: u64, cursor_byte: u32) -> TypeHierarch
     let Ok(Some(ctx)) = engine.read(|i| {
         let session = i.sessions.get(&session_id)?;
         Some(Ctx {
-            name: refs::symbol_name(session, cursor_byte)?,
+            name: usages::symbol_name(session, cursor_byte)?,
             outline: session.outline().to_vec(),
             path: session
                 .path()

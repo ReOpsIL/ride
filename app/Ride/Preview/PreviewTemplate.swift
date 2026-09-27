@@ -1,15 +1,18 @@
 import AppKit
 
 enum PreviewTemplate {
+    static let policy = "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:"
+
+    static let script = """
+    function setBody(h){document.getElementById('main').innerHTML=h;}
+    function scrollToLine(n){var best=null;document.querySelectorAll('.ride-line').forEach(function(e){var l=parseInt(e.dataset.line,10);if(l<=n&&(best===null||l>parseInt(best.dataset.line,10)))best=e;});if(best){window.scrollTo({top:best.getBoundingClientRect().top+window.scrollY-24});}}
+    """
+
     static func popup(_ theme: Theme) -> String {
-        let csp =
-            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; img-src data:\">"
-        return page(theme)
-            .replacingOccurrences(
-                of: "main{max-width:72ch;margin:0 auto;padding:28px 32px 96px}",
-                with: "main{max-width:none;margin:0;padding:12px 14px 20px}h1{font-size:1.2em;margin-top:.2em}"
-            )
-            .replacingOccurrences(of: "<meta charset=\"utf-8\">", with: "<meta charset=\"utf-8\">" + csp)
+        page(theme).replacingOccurrences(
+            of: "main{max-width:72ch;margin:0 auto;padding:28px 32px 96px}",
+            with: "main{max-width:none;margin:0;padding:12px 14px 20px}h1{font-size:1.2em;margin-top:.2em}"
+        )
     }
 
     static func page(_ theme: Theme) -> String {
@@ -24,7 +27,8 @@ enum PreviewTemplate {
         ]
         let tokens = syntax.map { ".tk-\($0.0){color:\(hex($0.1))}" }.joined()
         return """
-        <!doctype html><html><head><meta charset="utf-8"><style>
+        <!doctype html><html><head><meta charset="utf-8">
+        <meta http-equiv="Content-Security-Policy" content="\(policy)"><style>
         :root{color-scheme:\(theme.isDark ? "dark" : "light")}
         html,body{margin:0;background:\(hex(theme.editor.background));color:\(hex(c.textPrimary))}
         body{font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;-webkit-text-size-adjust:100%}
@@ -51,11 +55,7 @@ enum PreviewTemplate {
         del{color:\(hex(c.textTertiary))}
         .ride-line{display:block;height:0}
         \(tokens)
-        </style></head><body><main id="main"></main>
-        <script>
-        function setBody(h){document.getElementById('main').innerHTML=h;}
-        function scrollToLine(n){var best=null;document.querySelectorAll('.ride-line').forEach(function(e){var l=parseInt(e.dataset.line,10);if(l<=n&&(best===null||l>parseInt(best.dataset.line,10)))best=e;});if(best){window.scrollTo({top:best.getBoundingClientRect().top+window.scrollY-24});}}
-        </script></body></html>
+        </style></head><body><main id="main"></main></body></html>
         """
     }
 

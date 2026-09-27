@@ -13,7 +13,7 @@ const MARKERS: [&str; 6] = [
 const MAX_DEPTH: usize = 5;
 const MAX_DIRS: usize = 4000;
 
-pub fn is_project_root(dir: &Path) -> bool {
+fn is_project_root(dir: &Path) -> bool {
     MARKERS.iter().any(|name| dir.join(name).is_file())
 }
 

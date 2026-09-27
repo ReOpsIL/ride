@@ -15,15 +15,12 @@ extension DebugController {
             breakpoints.verify(path: path, verified: Set(list.filter(\.verified).map(\.line)))
             changed()
         case let .exited(code):
-            sessionId = nil
-            publish(state: .exited(code: code), path: nil, line: 0)
+            end(state: .exited(code: code))
         case .terminated:
-            sessionId = nil
-            publish(state: .terminated, path: nil, line: 0)
+            end(state: .terminated)
         case let .failed(message):
-            sessionId = nil
             onOutput?("stderr", message + "\n")
-            publish(state: .terminated, path: nil, line: 0)
+            end(state: .terminated)
         }
     }
 

@@ -61,3 +61,13 @@ fn rust_fences_get_rust_highlights_in_the_editor() {
     );
     assert!(session.outline().len() == 1);
 }
+
+#[test]
+fn a_multi_line_construct_in_a_fence_is_highlighted_as_one() {
+    let md = "```rust\nlet s = \"first\nsecond\";\n```\n";
+    let html = render_markdown(md);
+    assert!(
+        html.contains("<span class=\"tk-string\">&quot;first\nsecond&quot;</span>"),
+        "{html}"
+    );
+}

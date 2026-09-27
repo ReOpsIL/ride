@@ -13,10 +13,17 @@ struct FindBar: View {
                 .onSubmit {
                     state.findNext()
                 }
-            IconButton(symbol: "chevron.up", help: "Previous (⇧⌘G)") {
+                .onKeyPress(.return, phases: .down) { press in
+                    guard press.modifiers.contains(.shift) else {
+                        return .ignored
+                    }
+                    state.findPrevious()
+                    return .handled
+                }
+            IconButton(symbol: "chevron.up", help: Shortcuts.help("Previous", "Edit › Find Previous")) {
                 state.findPrevious()
             }
-            IconButton(symbol: "chevron.down", help: "Next (⌘G)") {
+            IconButton(symbol: "chevron.down", help: Shortcuts.help("Next", "Edit › Find Next")) {
                 state.findNext()
             }
             IconButton(symbol: "textformat", help: "Match case", active: state.findOptions.caseSensitive) {
@@ -28,12 +35,15 @@ struct FindBar: View {
             IconButton(symbol: "asterisk", help: "Regular expression", active: state.findOptions.regex) {
                 state.findOptions.regex.toggle()
             }
-            IconButton(symbol: "arrow.left.arrow.right", help: "Replace (⌥⌘F)", active: state.showReplaceField) {
+            IconButton(symbol: "arrow.left.arrow.right", help: Shortcuts.help("Replace", "Edit › Find and Replace…"), active: state.showReplaceField) {
                 state.showReplaceField.toggle()
             }
             if state.showReplaceField {
                 field(icon: "pencil", placeholder: "Replace", text: $state.replaceQuery, trailing: nil)
                     .frame(width: 200)
+                    .onSubmit {
+                        state.replaceOne()
+                    }
                 Button("Replace") {
                     state.replaceOne()
                 }
@@ -43,7 +53,7 @@ struct FindBar: View {
             }
             Spacer(minLength: 0)
             IconButton(symbol: "xmark", help: "Close (esc)") {
-                state.showFind = false
+                state.closeFind()
             }
         }
         .controlSize(.small)
@@ -54,11 +64,12 @@ struct FindBar: View {
             ts.ui.border.frame(height: Tokens.Size.hairline)
         }
         .onAppear {
-            focused = true
+            DispatchQueue.main.async {
+                focused = true
+            }
         }
         .onExitCommand {
-            state.showFind = false
-            EditorPanes.shared.focusedView?.window?.makeFirstResponder(EditorPanes.shared.focusedView)
+            state.closeFind()
         }
     }
 

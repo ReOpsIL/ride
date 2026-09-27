@@ -1,25 +1,40 @@
 use crate::error::EngineError;
 use crate::ffi::OutlineItem;
 use crate::highlight::BufferSession;
+use crate::text::line_start;
+use crate::toolchain::DEFAULT_EDITION;
 
 use super::fmt_run::run;
-use crate::text::line_start;
 
-pub fn format_source(text: &str, edition: Option<&str>) -> Result<String, EngineError> {
-    let edition = edition.unwrap_or("2024");
-    run("rustfmt", ["--emit", "stdout", "--edition", edition], text)
+pub struct RustSource<'a> {
+    pub text: &'a str,
+    pub file: Option<&'a str>,
+    pub edition: Option<&'a str>,
+}
+
+pub fn format_source(source: &RustSource<'_>) -> Result<String, EngineError> {
+    rustfmt(source.text, source)
 }
 
 pub fn format_range(
-    text: &str,
-    edition: Option<&str>,
+    source: &RustSource<'_>,
     start_byte: u32,
     end_byte: u32,
 ) -> Result<String, EngineError> {
-    let Some((start, end)) = item_span(text, start_byte, end_byte) else {
-        return format_source(text, edition);
+    let Some((start, end)) = item_span(source.text, start_byte, end_byte) else {
+        return format_source(source);
     };
-    splice(text, edition, start, end)
+    splice(source, start, end)
+}
+
+fn rustfmt(text: &str, source: &RustSource<'_>) -> Result<String, EngineError> {
+    let edition = source.edition.unwrap_or(DEFAULT_EDITION);
+    run(
+        "rustfmt",
+        ["--emit", "stdout", "--edition", edition],
+        text,
+        source.file,
+    )
 }
 
 fn item_span(text: &str, start_byte: u32, end_byte: u32) -> Option<(usize, usize)> {
@@ -35,17 +50,13 @@ fn enclosing(outline: &[OutlineItem], start: u32, end: u32) -> Option<(usize, us
         .map(|item| (item.start_byte as usize, item.end_byte as usize))
 }
 
-fn splice(
-    text: &str,
-    edition: Option<&str>,
-    start: usize,
-    end: usize,
-) -> Result<String, EngineError> {
-    let start = floor_boundary(text, start.min(text.len()));
-    let end = floor_boundary(text, end.min(text.len())).max(start);
+fn splice(source: &RustSource<'_>, start: usize, end: usize) -> Result<String, EngineError> {
+    let text = source.text;
+    let start = crate::text::floor_char_boundary(text, start.min(text.len()));
+    let end = crate::text::floor_char_boundary(text, end.min(text.len())).max(start);
     let snippet = &text[start..end];
     let indent = leading_indent(text, start);
-    let formatted = format_source(snippet, edition)?;
+    let formatted = rustfmt(snippet, source)?;
     let formatted = strip_added_newline(formatted, snippet.ends_with('\n'));
     let formatted = indent_body(&formatted, indent);
     let mut out = String::with_capacity(text.len() + formatted.len());
@@ -90,11 +101,4 @@ fn indent_body(formatted: &str, indent: &str) -> String {
         out.push_str(line);
     }
     out
-}
-
-fn floor_boundary(text: &str, mut byte: usize) -> usize {
-    while byte > 0 && !text.is_char_boundary(byte) {
-        byte -= 1;
-    }
-    byte
 }

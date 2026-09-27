@@ -32,7 +32,6 @@ pub struct MetaTarget {
 #[derive(Debug, Deserialize)]
 pub struct Resolve {
     pub nodes: Vec<ResolveNode>,
-    pub root: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -45,15 +44,10 @@ pub fn cargo_metadata(
     manifest: &Path,
     offline: bool,
     no_deps: bool,
-) -> Result<(Metadata, bool), EngineError> {
+) -> Result<Metadata, EngineError> {
     match run_cargo_metadata(manifest, offline, no_deps) {
-        Ok(meta) => Ok((meta, false)),
-        Err(e) if offline => {
-            let meta = run_cargo_metadata(manifest, false, no_deps)?;
-            let _ = e;
-            Ok((meta, true))
-        }
-        Err(e) => Err(e),
+        Err(_) if offline => run_cargo_metadata(manifest, false, no_deps),
+        other => other,
     }
 }
 

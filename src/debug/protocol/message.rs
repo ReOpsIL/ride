@@ -6,30 +6,6 @@ use serde_json::Value;
 
 use crate::error::EngineError;
 
-pub const REQUEST: &str = "request";
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Request {
-    pub seq: i64,
-    #[serde(rename = "type")]
-    pub kind: String,
-    pub command: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub arguments: Option<Value>,
-}
-
-impl Request {
-    pub fn new(seq: i64, command: &str, arguments: Option<Value>) -> Self {
-        Self {
-            seq,
-            kind: REQUEST.to_string(),
-            command: command.to_string(),
-            arguments,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {

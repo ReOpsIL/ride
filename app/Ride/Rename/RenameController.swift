@@ -5,9 +5,16 @@ final class RenameController {
     weak var state: AppState?
     private var context: Context?
     private let box = RenameInlineBox()
+    private var wanted: String?
+    private static let safeDeleteNotice = "Place the caret on an item name to delete"
+    static let renameNotice = "Place the caret on a name to rename"
+
+    var isEditingName: Bool {
+        box.isShown
+    }
 
     private struct Context {
-        let sessionId: UInt64
+        let document: BufferDocument
         let view: RideTextView
         let caretByte: UInt32
         let name: String
@@ -16,6 +23,7 @@ final class RenameController {
 
     func begin(state: AppState) {
         guard prepare(state: state), let context else {
+            state.showNotice(Self.renameNotice)
             return
         }
         box.onCommit = { [weak self] in self?.commit($0) }
@@ -40,29 +48,34 @@ final class RenameController {
     }
 
     func beginSafeDelete(state: AppState) {
-        guard prepare(state: state), let plan = fetchSafeDelete() else {
-            state.showNotice("Place the caret on an item name to delete")
-            return
+        let started = prepare(state: state) && fetchSafeDelete { [weak self] plan in
+            guard let plan else {
+                state.showNotice(Self.safeDeleteNotice)
+                return
+            }
+            _ = self?.load(
+                plan,
+                present: true,
+                title: "Safe Delete \(plan.name)",
+                applyTitle: "Delete",
+                reviewTitle: "Usages that would break"
+            )
         }
-        _ = load(
-            plan,
-            present: true,
-            title: "Safe Delete \(plan.name)",
-            applyTitle: "Delete",
-            reviewTitle: "Usages that would break"
-        )
+        if !started {
+            state.showNotice(Self.safeDeleteNotice)
+        }
     }
 
     @discardableResult
     func applySafeDeleteDirect(state: AppState) -> Bool {
-        guard prepare(state: state), let plan = fetchSafeDelete(), plan.review.isEmpty else {
-            return false
+        prepare(state: state) && fetchSafeDelete { [weak self] plan in
+            guard let plan, plan.review.isEmpty, let context = self?.context,
+                  let edits = plan.files.first?.edits, !edits.isEmpty
+            else {
+                return
+            }
+            RenameApply.applyLocal(edits, to: context.view)
         }
-        guard let context, let edits = plan.files.first?.edits, !edits.isEmpty else {
-            return false
-        }
-        RenameApply.applyLocal(edits, to: context.view)
-        return true
     }
 
     func applyWorkspace() {
@@ -80,6 +93,7 @@ final class RenameController {
         state.showRenamePreview = false
         state.renamePlan = nil
         state.renameExpected = [:]
+        wanted = nil
     }
 
     @discardableResult
@@ -87,7 +101,7 @@ final class RenameController {
         self.state = state
         context = nil
         guard let (view, document) = state.focusedEditor,
-              let id = document.sessionId,
+              document.sessionId != nil,
               !document.isReadOnly
         else {
             return false
@@ -97,19 +111,22 @@ final class RenameController {
             return false
         }
         let caretByte = UInt32(Utf16.utf8Offset(in: view.string, utf16: range.location))
-        context = Context(sessionId: id, view: view, caretByte: caretByte, name: ns.substring(with: range), range: range)
+        context = Context(document: document, view: view, caretByte: caretByte, name: ns.substring(with: range), range: range)
         return true
     }
 
     private func resolve(_ newName: String, present: Bool, localOnly: Bool) -> Bool {
-        guard let context, let engine = RideEngineClient.shared.engine else {
+        guard let context else {
             return false
         }
         let trimmed = newName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty, trimmed != context.name else {
             return false
         }
-        let local = engine.renameLocal(sessionId: context.sessionId, cursorByte: context.caretByte, newName: trimmed)
+        let caret = context.caretByte
+        let local = SessionService.shared.readNow(context.document) {
+            $0.renameLocal(sessionId: $1, cursorByte: caret, newName: trimmed)
+        } ?? []
         if !local.isEmpty {
             RenameApply.applyLocal(local, to: context.view)
             return true
@@ -117,30 +134,37 @@ final class RenameController {
         if localOnly {
             return false
         }
-        let plan = engine.renamePlan(sessionId: context.sessionId, cursorByte: context.caretByte, newName: trimmed)
-        return load(
-            plan,
-            present: present,
-            title: "Rename \(plan.name) to \(plan.newName)",
-            applyTitle: "Rename",
-            reviewTitle: "Review — could not verify these are the same symbol"
-        )
+        wanted = trimmed
+        return SessionService.shared.read(context.document, lane: .workspace, delivery: .currentText, {
+            $0.renamePlan(sessionId: $1, cursorByte: caret, newName: trimmed)
+        }, then: { [weak self] plan in
+            guard let self, self.wanted == plan.newName else {
+                return
+            }
+            _ = self.load(
+                plan,
+                present: present,
+                title: "Rename \(plan.name) to \(plan.newName)",
+                applyTitle: "Rename",
+                reviewTitle: "Review — could not verify these are the same symbol"
+            )
+        })
     }
 
-    private func fetchSafeDelete() -> RenamePlan? {
-        guard let context, let engine = RideEngineClient.shared.engine else {
-            return nil
+    private func fetchSafeDelete(_ done: @escaping (RenamePlan?) -> Void) -> Bool {
+        guard let context else {
+            return false
         }
-        let id = context.sessionId
-        let text = context.view.string
-        SessionService.shared.queue(id).sync {
-            _ = try? engine.setText(sessionId: id, text: text, visible: nil)
-        }
-        let plan = engine.safeDeletePlan(sessionId: id, cursorByte: context.caretByte)
-        if plan.files.isEmpty && plan.review.isEmpty {
-            return nil
-        }
-        return plan
+        let caret = context.caretByte
+        wanted = ""
+        return SessionService.shared.read(context.document, lane: .workspace, delivery: .currentText, {
+            $0.safeDeletePlan(sessionId: $1, cursorByte: caret)
+        }, then: { [weak self] plan in
+            guard self?.wanted == plan.newName else {
+                return
+            }
+            done(plan.files.isEmpty && plan.review.isEmpty ? nil : plan)
+        })
     }
 
     private func load(

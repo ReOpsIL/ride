@@ -44,9 +44,5 @@ fn clip(text: &str) -> &str {
     if text.len() <= SNIFF_LIMIT {
         return text;
     }
-    let mut end = SNIFF_LIMIT;
-    while !text.is_char_boundary(end) {
-        end -= 1;
-    }
-    &text[..end]
+    &text[..crate::text::floor_char_boundary(text, SNIFF_LIMIT)]
 }

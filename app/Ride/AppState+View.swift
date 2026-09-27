@@ -1,11 +1,10 @@
 import Foundation
 
 extension AppState {
-    static let zoomRange = 10...24
 
     func zoom(_ delta: Int) {
         updatePrefs { prefs in
-            prefs.fontSize = min(Self.zoomRange.upperBound, max(Self.zoomRange.lowerBound, prefs.fontSize + delta))
+            prefs.fontSize = min(Preferences.fontSizes.upperBound, max(Preferences.fontSizes.lowerBound, prefs.fontSize + delta))
         }
     }
 
@@ -33,39 +32,8 @@ extension AppState {
         updatePrefs { $0.codeVision.toggle() }
     }
 
-    func showNotice(
-        _ text: String,
-        seconds: Double = 6,
-        action: (title: String, run: () -> Void)? = nil,
-        onDismiss: (() -> Void)? = nil
-    ) {
-        noticeWork?.cancel()
-        notice = text
-        noticeAction = action
-        noticeDismiss = onDismiss
-        let work = DispatchWorkItem { [weak self] in
-            self?.clearNotice()
-        }
-        noticeWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
-    }
-
-    func dismissNotice() {
-        let run = noticeDismiss
-        clearNotice()
-        run?()
-    }
-
-    func clearNotice() {
-        noticeWork?.cancel()
-        noticeWork = nil
-        notice = nil
-        noticeAction = nil
-        noticeDismiss = nil
-    }
-
     func checkTools() {
-        guard prefs.askMissingTools, !DemoLaunch.isDemo else {
+        guard prefs.askMissingTools else {
             return
         }
         ToolsModel.shared.refresh { [weak self] in

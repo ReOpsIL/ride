@@ -4,7 +4,7 @@ use crate::error::EngineError;
 use crate::extract::Scope;
 use crate::ffi::EngineConfig;
 
-use super::DiscoveredCrate;
+use super::model::DiscoveredCrate;
 
 const SYSROOT_CRATES: [&str; 5] = ["core", "alloc", "std", "proc_macro", "test"];
 

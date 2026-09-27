@@ -2,7 +2,9 @@ use std::path::Path;
 
 use sha2::{Digest, Sha256};
 
+use crate::digest::{hex, sha256_hex};
 use crate::discover::DiscoveredCrate;
+use crate::extract::EXTRACTOR_VERSION;
 
 use super::hash::content_hash;
 use super::schema::SCHEMA_VERSION;
@@ -16,10 +18,14 @@ pub fn hash_crates(crates: Vec<DiscoveredCrate>) -> Vec<HashedCrate> {
     crates
         .into_iter()
         .map(|crate_| HashedCrate {
-            hash: content_hash(&crate_.path),
+            hash: crate_hash(&crate_.path, EXTRACTOR_VERSION),
             crate_,
         })
         .collect()
+}
+
+fn crate_hash(path: &Path, extractor: u32) -> String {
+    sha256_hex(&[&extractor.to_le_bytes(), content_hash(path).as_bytes()])
 }
 
 pub fn fingerprint(hashed: &[HashedCrate]) -> String {
@@ -40,10 +46,15 @@ fn key_bytes(path: &Path) -> Vec<u8> {
     path.to_string_lossy().into_owned().into_bytes()
 }
 
-fn hex(bytes: &[u8]) -> String {
-    bytes.iter().fold(String::new(), |mut out, b| {
-        use std::fmt::Write;
-        let _ = write!(out, "{b:02x}");
-        out
-    })
+#[cfg(test)]
+mod tests {
+    use super::crate_hash;
+    use std::path::Path;
+
+    #[test]
+    fn crate_hash_changes_with_the_extractor_version() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/sample_crate");
+        assert_eq!(crate_hash(&root, 1), crate_hash(&root, 1));
+        assert_ne!(crate_hash(&root, 1), crate_hash(&root, 2));
+    }
 }

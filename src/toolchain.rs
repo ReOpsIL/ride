@@ -3,6 +3,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::OnceLock;
 
+pub const DEFAULT_EDITION: &str = "2024";
+
 const EXTRA_DIRS: [&str; 7] = [
     "/usr/local/bin",
     "/opt/homebrew/bin",

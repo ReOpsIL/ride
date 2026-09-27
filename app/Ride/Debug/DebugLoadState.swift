@@ -1,37 +1,44 @@
 import Foundation
 
+struct DebugLoadToken: Equatable {
+    let generation: Int
+    let selection: Int?
+}
+
 struct DebugLoadState: Equatable {
     private(set) var generation = 0
-    private var inFlight: Set<String> = []
+    private(set) var selection = 0
+    private var inFlight: [String: Bool] = [:]
 
     @discardableResult
     mutating func invalidate() -> Int {
         generation += 1
-        inFlight = []
+        inFlight = [:]
         return generation
+    }
+
+    mutating func select() {
+        selection += 1
+        inFlight = inFlight.filter { !$0.value }
     }
 
     func isCurrent(_ value: Int) -> Bool {
         value == generation
     }
 
-    var pending: Int {
-        inFlight.count
-    }
-
-    mutating func begin(_ key: String) -> Int? {
-        guard !inFlight.contains(key) else {
+    mutating func begin(_ key: String, scoped: Bool = true) -> DebugLoadToken? {
+        guard inFlight[key] == nil else {
             return nil
         }
-        inFlight.insert(key)
-        return generation
+        inFlight[key] = scoped
+        return DebugLoadToken(generation: generation, selection: scoped ? selection : nil)
     }
 
-    mutating func finish(_ key: String, generation value: Int) -> Bool {
-        guard value == generation else {
+    mutating func finish(_ key: String, token: DebugLoadToken) -> Bool {
+        guard token.generation == generation, token.selection.map({ $0 == selection }) ?? true else {
             return false
         }
-        inFlight.remove(key)
+        inFlight[key] = nil
         return true
     }
 }

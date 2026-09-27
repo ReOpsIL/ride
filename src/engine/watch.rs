@@ -10,14 +10,14 @@ use crate::index::{
     Manifest, SCHEMA_VERSION, last_status, live_index_dir, prune_generations, read_manifest,
 };
 
+use super::index_watch::DiskStamp;
 use super::{Engine, Inner};
 
 const POLL: Duration = Duration::from_millis(250);
 
 struct Tick {
-    reopen: bool,
-    notify: bool,
-    generation: u32,
+    reopen: Option<u32>,
+    changed: bool,
 }
 
 pub fn spawn(engine: Weak<Engine>) {
@@ -38,62 +38,73 @@ impl Engine {
         let Ok(index_dir) = self.read(|i| PathBuf::from(&i.config.index_dir)) else {
             return;
         };
+        let stamp = DiskStamp::of(&index_dir);
+        if self.read(|i| i.watch.unchanged(&stamp)).unwrap_or(false) {
+            return;
+        }
         let manifest = read_manifest(&index_dir);
         let disk_status = last_status(&index_dir);
         let Ok(tick) = self.write(|i| apply(i, manifest.as_ref(), disk_status)) else {
             return;
         };
-        if tick.reopen {
-            open_reader(self, &index_dir);
-            prune_generations(&index_dir, tick.generation);
+        let reopened = tick
+            .reopen
+            .is_some_and(|generation| open_reader(self, &index_dir, generation));
+        if tick.reopen.is_none() || reopened {
+            let _ = self.write(|i| i.watch.settle(stamp));
         }
-        if tick.notify {
-            let Ok((status, listener)) = self.read(|i| (i.last_status.clone(), i.listener.clone()))
-            else {
-                return;
-            };
-            if let Some(listener) = listener {
-                listener.on_status(status);
-            }
+        if tick.changed || reopened {
+            self.notify();
+        }
+    }
+
+    fn notify(&self) {
+        let Ok((status, listener)) = self.read(|i| (i.last_status.clone(), i.listener.clone()))
+        else {
+            return;
+        };
+        if let Some(listener) = listener {
+            listener.on_status(status);
         }
     }
 }
 
 fn apply(i: &mut Inner, manifest: Option<&Manifest>, disk_status: Option<IndexStatus>) -> Tick {
-    let reopen = manifest.is_some_and(|m| m.generation != i.generation);
-    if let Some(m) = manifest.filter(|_| reopen) {
-        i.generation = m.generation;
-        i.overlay.clear();
-    }
+    let reopen = manifest
+        .map(|m| m.generation)
+        .filter(|generation| i.watch.wants(*generation));
     let mut status = disk_status.unwrap_or_else(|| i.last_status.clone());
-    if i.workspace.as_ref().is_some_and(|w| w.rust_src_available) {
+    if i.workspace
+        .as_ref()
+        .is_some_and(|w| w.info.rust_src_available)
+    {
         status.rust_src_available = true;
     }
     if manifest.is_some_and(|m| m.schema_version != SCHEMA_VERSION) {
         status.state = IndexState::Rebuilding;
         status.message = Some("Index outdated — rebuilding".into());
     }
-    let notify = reopen || status != i.last_status;
+    let changed = status != i.last_status;
     i.last_status = status;
-    Tick {
-        reopen,
-        notify,
-        generation: i.generation,
-    }
+    Tick { reopen, changed }
 }
 
-fn open_reader(engine: &Engine, index_dir: &Path) {
+fn open_reader(engine: &Engine, index_dir: &Path, generation: u32) -> bool {
     let Some(live) = live_index_dir(index_dir) else {
-        return;
+        return false;
     };
     let Ok(index) = Index::open_in_dir(live) else {
-        return;
+        return false;
     };
     let Ok(reader) = index.reader() else {
-        return;
+        return false;
     };
     let _ = engine.write(|i| {
         i.index = Some(index);
         i.reader = Some(reader);
+        i.overlay.clear();
+        i.watch.opened(generation);
     });
+    prune_generations(index_dir, generation);
+    true
 }

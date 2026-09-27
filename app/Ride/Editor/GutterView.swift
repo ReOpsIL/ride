@@ -63,7 +63,6 @@ final class GutterView: NSView {
     func attach(textView: RideTextView) {
         self.textView = textView
         viewport = textView.textLayoutManager?.textViewportLayoutController
-        FoldController.shared.refreshStarts(textView)
         needsDisplay = true
     }
 
@@ -71,11 +70,11 @@ final class GutterView: NSView {
         let theme = ThemeStore.shared.theme
         theme.editor.background.setFill()
         bounds.intersection(dirtyRect).fill()
-        if let textView, textView.folds.startsDirty {
-            FoldController.shared.refreshStarts(textView)
-        }
         guard let textView else {
             return
+        }
+        if textView.folds.startsDirty {
+            FoldController.shared.scheduleStarts(textView)
         }
         let index = textView.lineIndex()
         let currentLine = index.line(at: textView.selectedRange().location)
@@ -112,10 +111,12 @@ final class GutterView: NSView {
         if textView.folds.startsDirty {
             FoldController.shared.refreshStarts(textView)
         }
-        guard textView.folds.isFoldStart(line: line) else {
-            return
+        if textView.folds.isFoldStart(line: line) {
+            FoldController.shared.toggle(line: line, in: textView)
+        } else if intentionLines.contains(line) {
+            textView.window?.makeFirstResponder(textView)
+            EditorCommands.showIntentions()
         }
-        FoldController.shared.toggle(line: line)
     }
 
     override func rightMouseDown(with event: NSEvent) {
@@ -132,7 +133,7 @@ final class GutterView: NSView {
         guard let marker = runMarkers[line], let state = state(of: textView) else {
             return
         }
-        state.runTestMarker(marker)
+        state.runTestMarker(marker, path: path(of: textView))
     }
 
     private func state(of textView: RideTextView) -> AppState? {
@@ -153,7 +154,7 @@ final class GutterView: NSView {
             drawNumber(lineNo, at: dest, attrs: attributes)
         }
         if let textView, textView.folds.isFoldStart(line: lineNo) {
-            let collapsed = textView.folds.startsFold(at: lineRange(lineNo, in: textView))
+            let collapsed = textView.lineRange(lineNo).map(textView.folds.startsFold(at:)) ?? false
             drawChevron(collapsed: collapsed, at: dest, color: collapsed ? theme.chrome.accent : theme.editor.gutterText)
         } else if let level = diagnosticLines[lineNo] {
             let color = level == .error ? theme.chrome.error : theme.chrome.warning

@@ -35,6 +35,20 @@ extension SelfTestSteps {
         })
     }
 
+    static func callHierarchyFollows(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "call hierarchy follows caret", wait: 0.4, until: {
+            !state.hierarchy.running && state.hierarchy.rootName == "count"
+        }, timeout: 20, run: {
+            e.activate()
+            place(e, after: ".count(")
+        }, check: {
+            e.expect(
+                state.showHierarchy && state.hierarchy.rootName == "count",
+                "root \(state.hierarchy.rootName) running \(state.hierarchy.running) generation \(state.hierarchy.generation)"
+            )
+        })
+    }
+
     private static func openMain(_ state: AppState) {
         guard let url = state.workspaceRoot?.appendingPathComponent("src/main.rs") else {
             return
@@ -43,10 +57,14 @@ extension SelfTestSteps {
     }
 
     private static func placeOnRecord(_ e: SelfTestEditor) {
+        place(e, after: ".record(")
+    }
+
+    private static func place(_ e: SelfTestEditor, after needle: String) {
         guard let view = e.view else {
             return
         }
-        let found = (view.string as NSString).range(of: ".record(")
+        let found = (view.string as NSString).range(of: needle)
         guard found.location != NSNotFound else {
             return
         }

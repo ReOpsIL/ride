@@ -63,9 +63,7 @@ pub fn read_manifest(index_dir: &Path) -> Option<Manifest> {
 pub fn write_manifest_atomic(index_dir: &Path, manifest: &Manifest) -> Result<(), EngineError> {
     let tmp = index_dir.join("manifest.json.tmp");
     let dest = index_dir.join("manifest.json");
-    let body = serde_json::to_vec_pretty(manifest).map_err(|e| EngineError::Index {
-        message: e.to_string(),
-    })?;
+    let body = serde_json::to_vec_pretty(manifest).map_err(EngineError::index)?;
     fs::write(&tmp, &body).map_err(|e| EngineError::io(&tmp, e))?;
     if let Ok(f) = fs::File::open(&tmp) {
         let _ = f.sync_all();
@@ -84,9 +82,7 @@ pub fn append_status(index_dir: &Path, status: &IndexStatus) -> Result<(), Engin
         warnings: status.warnings,
         message: status.message.clone(),
     };
-    let mut json = serde_json::to_string(&line).map_err(|e| EngineError::Index {
-        message: e.to_string(),
-    })?;
+    let mut json = serde_json::to_string(&line).map_err(EngineError::index)?;
     json.push('\n');
     let mut file = OpenOptions::new()
         .create(true)

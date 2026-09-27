@@ -48,6 +48,20 @@ impl Recorder {
         self.events().iter().filter(matches).count()
     }
 
+    fn breakpoints(&self, path: &str) -> Vec<Breakpoint> {
+        self.events()
+            .into_iter()
+            .rev()
+            .find_map(|event| match event {
+                DebugEvent::Breakpoints {
+                    path: reported,
+                    breakpoints,
+                } if reported == path => Some(breakpoints),
+                _ => None,
+            })
+            .unwrap_or_default()
+    }
+
     fn wait(&self, what: &str, matches: impl Fn(&DebugEvent) -> bool) -> DebugEvent {
         let deadline = Instant::now() + Duration::from_secs(20);
         while Instant::now() < deadline {
@@ -559,7 +573,7 @@ fn the_scripted_session_stops_inspects_and_steps() {
         "{:?}",
         listener.output()
     );
-    assert!(session.breakpoints("src/main.rs")[0].verified);
+    assert!(listener.breakpoints("src/main.rs")[0].verified);
 
     let threads = session.threads().expect("threads");
     assert_eq!(threads.len(), 1);
@@ -614,7 +628,7 @@ fn breakpoints_can_be_edited_while_the_session_runs() {
         .expect("setBreakpoints");
     assert_eq!(stored.len(), 1);
     assert!(stored[0].verified);
-    assert_eq!(session.breakpoints("src/util.rs"), stored);
+    assert_eq!(listener.breakpoints("src/util.rs"), stored);
     assert!(listener.saw(
         |event| matches!(event, DebugEvent::Breakpoints { path, .. } if path == "src/util.rs")
     ));
@@ -752,7 +766,7 @@ fn a_symlinked_breakpoint_path_reaches_the_adapter_as_opened() {
     let threads = session.threads().expect("threads");
     let stack = session.stack(threads[0].id).expect("stackTrace");
     assert_eq!(stack[0].path.as_deref(), Some(linked.as_str()));
-    assert_eq!(session.breakpoints(&linked).len(), 1);
+    assert_eq!(listener.breakpoints(&linked).len(), 1);
     let _ = session.command(DebugCommand::Disconnect);
 }
 
@@ -771,7 +785,7 @@ fn a_breakpoint_the_adapter_binds_only_resolved_is_sent_again_resolved() {
         stack[0].path.as_deref(),
         Some(canonical.to_string_lossy().as_ref())
     );
-    let stored = session.breakpoints(&linked);
+    let stored = listener.breakpoints(&linked);
     assert_eq!(stored.len(), 1);
     assert!(stored[0].verified, "{stored:?}");
     let _ = session.command(DebugCommand::Disconnect);

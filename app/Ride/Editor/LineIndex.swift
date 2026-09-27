@@ -50,6 +50,14 @@ final class LineIndex {
         return lo + 1
     }
 
+    func range(line: Int) -> NSRange? {
+        guard line >= 1, line <= starts.count else {
+            return nil
+        }
+        let end = line < starts.count ? starts[line] : length
+        return NSRange(location: starts[line - 1], length: max(0, end - starts[line - 1]))
+    }
+
     func column(at utf16: Int) -> Int {
         utf16 - starts[line(at: utf16) - 1] + 1
     }

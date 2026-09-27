@@ -1,20 +1,16 @@
-use std::collections::{HashMap, HashSet};
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::{Arc, PoisonError, RwLock};
 
-use tantivy::{Index, IndexReader};
-
-use crate::discover::workspace_info;
 use crate::error::EngineError;
-use crate::ffi::{
-    CompletionQuery, CompletionResponse, EngineConfig, IndexStatus, IndexStatusListener,
-    ProjectModel, WorkspaceInfo,
-};
-use crate::highlight::BufferSession;
+use crate::ffi::{CompletionQuery, CompletionResponse, EngineConfig};
+
+pub(crate) use inner::Inner;
 
 mod access;
+mod bound_refs;
 mod build_output;
+mod catalog;
 mod cheat;
 mod debug;
 mod def_rank;
@@ -22,22 +18,33 @@ mod definition;
 mod delete_span;
 mod doc_block;
 mod doc_comment;
+mod doc_html;
 mod doc_links;
 mod docs;
 mod doxygen;
 mod editing;
 mod edits;
+mod excerpt;
 mod generate;
 mod header_hits;
 mod header_store;
+mod header_sweep;
 pub(crate) mod headers;
 mod hierarchy;
+mod hit_source;
 mod identifier;
+mod include_def;
 pub(crate) mod include_graph;
+mod include_intentions;
 mod includes;
+mod index_watch;
+mod inner;
 mod intentions;
 mod lists;
+mod live_refs;
+mod local_defs;
 mod merge;
+mod open_workspace;
 mod paths;
 mod postfix;
 mod project;
@@ -45,6 +52,7 @@ mod query;
 mod reach;
 mod refactor;
 mod refs;
+mod rel_path;
 mod rename;
 mod run;
 mod rust_members;
@@ -58,30 +66,10 @@ mod symbols;
 mod system_paths;
 mod test_runner;
 mod tools;
+mod usages;
+mod variant_hits;
 mod watch;
-
-pub(crate) struct Inner {
-    pub(crate) config: EngineConfig,
-    pub(crate) workspace: Option<WorkspaceInfo>,
-    pub(crate) sessions: HashMap<u64, BufferSession>,
-    pub(crate) next_session_id: u64,
-    pub(crate) overlay: HashSet<String>,
-    pub(crate) latest_query_id: HashMap<u64, u64>,
-    pub(crate) listener: Option<Arc<dyn IndexStatusListener>>,
-    pub(crate) last_status: IndexStatus,
-    pub(crate) generation: u32,
-    pub(crate) index: Option<Index>,
-    pub(crate) reader: Option<IndexReader>,
-    pub(crate) headers: Arc<headers::HeaderCache>,
-    pub(crate) scopes: reach::ScopeCache,
-    pub(crate) system_includes: Arc<crate::discover::SystemIncludes>,
-    pub(crate) projects: HashMap<String, ProjectModel>,
-    pub(crate) cargo_roots: HashMap<PathBuf, PathBuf>,
-    pub(crate) debug_sessions: Arc<crate::debug::registry::DebugRegistry>,
-    pub(crate) sysroot: Option<PathBuf>,
-    pub(crate) refs: Option<std::sync::Arc<crate::refs::RefIndex>>,
-    pub(crate) refs_root: Option<PathBuf>,
-}
+mod workspace;
 
 #[derive(uniffi::Object)]
 pub struct Engine {
@@ -90,32 +78,8 @@ pub struct Engine {
 
 impl Engine {
     fn new(config: EngineConfig) -> Self {
-        let sysroot = crate::discover::sysroot_path(&config).ok().flatten();
-        let rust_src = crate::discover::rust_src_available(sysroot.as_deref());
-        let header_store = Path::new(&config.index_dir).join("headers");
         Self {
-            inner: RwLock::new(Inner {
-                config,
-                workspace: None,
-                sessions: HashMap::new(),
-                next_session_id: 1,
-                overlay: HashSet::new(),
-                latest_query_id: HashMap::new(),
-                listener: None,
-                last_status: IndexStatus::idle(rust_src),
-                generation: 0,
-                index: None,
-                reader: None,
-                headers: Arc::new(headers::HeaderCache::new(Some(header_store))),
-                scopes: reach::ScopeCache::default(),
-                system_includes: Arc::default(),
-                projects: HashMap::new(),
-                cargo_roots: HashMap::new(),
-                debug_sessions: Arc::default(),
-                sysroot,
-                refs: None,
-                refs_root: None,
-            }),
+            inner: RwLock::new(Inner::new(config)),
         }
     }
 
@@ -149,53 +113,16 @@ pub fn engine_start(config: EngineConfig) -> Arc<Engine> {
     let engine = Arc::new(Engine::new(config));
     engine.poll_index();
     watch::spawn(Arc::downgrade(&engine));
+    engine.sweep_header_store();
     engine
 }
 
 #[uniffi::export]
 impl Engine {
-    pub fn open_workspace(&self, path: String) -> Result<WorkspaceInfo, EngineError> {
-        self.guard(|| {
-            let config = self.read(|i| i.config.clone())?;
-            let info = workspace_info(Path::new(&path), &config)?;
-            self.write(|i| {
-                i.last_status.rust_src_available = info.rust_src_available;
-                i.workspace = Some(info.clone());
-            })?;
-            Ok(info)
-        })
-    }
-
-    pub fn close_workspace(&self) {
-        let _ = self.write(|i| {
-            i.workspace = None;
-            i.overlay.clear();
-        });
-    }
-
-    pub fn status(&self) -> IndexStatus {
-        self.read(|i| i.last_status.clone())
-            .unwrap_or_else(|_| IndexStatus::idle(false))
-    }
-
-    pub fn set_status_listener(&self, listener: Arc<dyn IndexStatusListener>) {
-        let status = self.status();
-        let _ = self.write(|i| {
-            i.listener = Some(listener.clone());
-        });
-        listener.on_status(status);
-    }
-
     pub fn query_completions(&self, q: CompletionQuery) -> CompletionResponse {
         match catch_unwind(AssertUnwindSafe(|| query::run(self, q.clone()))) {
             Ok(resp) => resp,
             Err(_) => CompletionResponse::empty(q.query_id),
         }
-    }
-
-    pub fn workspace_file_changed(&self, path: String) {
-        let _ = self.write(|i| {
-            i.overlay.insert(path);
-        });
     }
 }

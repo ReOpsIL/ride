@@ -1,5 +1,7 @@
 use tree_sitter::Node;
 
+pub use super::symbol::node_text;
+
 pub const NAME_KINDS: [&str; 6] = [
     "identifier",
     "field_identifier",
@@ -18,6 +20,10 @@ pub const WRAPPERS: [&str; 3] = [
 pub const SPECIFIERS: [&str; 3] = ["struct_specifier", "class_specifier", "union_specifier"];
 
 pub fn function_name(declarator: Node<'_>, text: &str) -> Option<(String, bool)> {
+    function_name_node(declarator).map(|(name, qualified)| (node_text(name, text), qualified))
+}
+
+pub fn function_name_node(declarator: Node<'_>) -> Option<(Node<'_>, bool)> {
     let mut node = declarator;
     while WRAPPERS.contains(&node.kind()) {
         node = wrapped(node)?;
@@ -27,14 +33,18 @@ pub fn function_name(declarator: Node<'_>, text: &str) -> Option<(String, bool)>
     }
     let inner = node.child_by_field_name("declarator")?;
     let qualified = inner.kind() == "qualified_identifier";
-    plain_name(inner, text).map(|name| (name, qualified))
+    plain_name_node(inner).map(|name| (name, qualified))
 }
 
 pub fn plain_name(declarator: Node<'_>, text: &str) -> Option<String> {
+    plain_name_node(declarator).map(|name| node_text(name, text))
+}
+
+pub fn plain_name_node(declarator: Node<'_>) -> Option<Node<'_>> {
     let mut node = declarator;
     loop {
         if NAME_KINDS.contains(&node.kind()) {
-            return Some(node_text(node, text));
+            return Some(node);
         }
         node = match node.kind() {
             k if WRAPPERS.contains(&k) => wrapped(node)?,
@@ -70,10 +80,4 @@ pub fn type_name(node: Node<'_>, text: &str) -> Option<String> {
             .and_then(|n| type_name(n, text)),
         _ => None,
     }
-}
-
-pub fn node_text(node: Node<'_>, text: &str) -> String {
-    node.utf8_text(text.as_bytes())
-        .unwrap_or_default()
-        .to_string()
 }

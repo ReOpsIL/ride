@@ -59,4 +59,24 @@ final class UndoEditTests: XCTestCase {
         XCTAssertFalse(edit.isTyping)
         XCTAssertNil(edit.extended(by: UndoEdit(range: NSRange(location: 3, length: 1), text: "")))
     }
+
+    func testKnownEditInverseMatchesTheDiffedInverse() {
+        let before = "let abc = 1;"
+        let range = NSRange(location: 4, length: 3)
+        let after = (before as NSString).replacingCharacters(in: range, with: "abd")
+        XCTAssertEqual(
+            UndoEdit.inverse(replacing: range, with: "abd", in: before),
+            UndoEdit.inverse(before: before, after: after)
+        )
+    }
+
+    func testKnownTypedCharacterInverseIsATypingStep() {
+        let inverse = UndoEdit.inverse(replacing: NSRange(location: 2, length: 0), with: "x", in: "abcd")
+        XCTAssertEqual(inverse, UndoEdit(range: NSRange(location: 2, length: 1), text: ""))
+        XCTAssertEqual(inverse?.isTyping, true)
+    }
+
+    func testKnownNoOpReplacementHasNoInverse() {
+        XCTAssertNil(UndoEdit.inverse(replacing: NSRange(location: 0, length: 2), with: "ab", in: "abcd"))
+    }
 }

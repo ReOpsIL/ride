@@ -111,29 +111,6 @@ fn strip_attributes(text: &str) -> String {
     out
 }
 
-pub fn source_chunk(node: Node<'_>, source: &str) -> String {
-    let start = node.start_byte();
-    let end = node.end_byte().min(source.len());
-    let Some(slice) = source.get(start..end) else {
-        return String::new();
-    };
-    let mut lines = slice.lines();
-    let mut out = String::new();
-    for _ in 0..40 {
-        let Some(line) = lines.next() else {
-            break;
-        };
-        if !out.is_empty() {
-            out.push('\n');
-        }
-        out.push_str(line);
-        if out.len() > 2048 {
-            break;
-        }
-    }
-    out
-}
-
 fn comment_doc(node: Node<'_>, source: &str) -> Option<String> {
     let text = node.utf8_text(source.as_bytes()).ok()?.trim();
     strip_outer(text)

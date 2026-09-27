@@ -7,15 +7,10 @@ enum Definitions {
         utf16: Int,
         done: @escaping (DefinitionResponse) -> Void
     ) {
-        guard let id = document.sessionId else {
-            return
-        }
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: utf16))
-        RideEngineClient.shared.withEngine { engine in
+        SessionService.shared.read(document, lane: .workspace, { engine, id in
             engine.findDefinitions(sessionId: id, cursorByte: byte)
-        } then: { resp in
-            done(resp)
-        }
+        }, then: done)
     }
 }
 

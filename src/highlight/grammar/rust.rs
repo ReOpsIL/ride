@@ -5,8 +5,11 @@ use crate::ffi::OutlineItem;
 use super::Grammar;
 use crate::highlight::editing::{EditingKinds, rust_folds, rust_statement};
 use crate::highlight::members::{Chain, Root};
+use crate::highlight::rust_type_names::enclosing_impl;
 use crate::highlight::symbol::node_text;
-use crate::highlight::{context, imports, includes, rust_outline, rust_receiver, rust_types, site};
+use crate::highlight::{
+    context, imports, includes, rust_outline, rust_postfix, rust_receiver, rust_types, site,
+};
 
 const HIGHLIGHTS: &str = include_str!("../../../queries/rust/highlights.scm");
 
@@ -32,6 +35,7 @@ pub fn grammar() -> Grammar {
             "primitive_type",
         ],
         qualifier,
+        postfix: rust_postfix::receiver,
         outline,
         member_ops: &["."],
         member_kinds: &["field_identifier"],
@@ -57,8 +61,8 @@ pub fn grammar() -> Grammar {
     }
 }
 
-fn outline(_: &Tree, text: &str) -> Vec<OutlineItem> {
-    rust_outline::from_source(text).unwrap_or_default()
+fn outline(tree: &Tree, text: &str) -> Vec<OutlineItem> {
+    rust_outline::from_tree(tree, text)
 }
 
 fn qualifier(node: Node<'_>, text: &str) -> Option<String> {
@@ -73,10 +77,12 @@ fn qualifier(node: Node<'_>, text: &str) -> Option<String> {
     if name.id() != node.id() {
         return None;
     }
-    parent
-        .child_by_field_name("path")
-        .map(|p| node_text(p, text))
-        .filter(|q| !q.is_empty())
+    let path = parent.child_by_field_name("path")?;
+    match node_text(path, text).as_str() {
+        "" => None,
+        "Self" => enclosing_impl(path, text).or_else(|| Some("Self".into())),
+        qualifier => Some(qualifier.to_string()),
+    }
 }
 
 fn receiver_chain(tree: &Tree, text: &str, node: Node<'_>) -> Option<Chain> {

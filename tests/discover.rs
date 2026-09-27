@@ -42,7 +42,6 @@ fn fake_cargo_home_and_sysroot() {
             .iter()
             .any(|c| c.name == "alloc" && c.scope == Scope::Sysroot)
     );
-    assert!(d.tarballs.iter().any(|t| t.file_name == "demo-1.2.3.crate"));
 }
 
 #[test]

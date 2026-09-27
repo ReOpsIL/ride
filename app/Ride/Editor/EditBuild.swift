@@ -2,24 +2,23 @@ import Foundation
 
 enum EditBuild {
     static func make(before: String, utf16Range: NSRange, inserted: String) -> InputEditFfi {
-        let start = Utf16.utf8Offset(in: before, utf16: utf16Range.location)
-        let oldEnd = Utf16.utf8Offset(in: before, utf16: utf16Range.location + utf16Range.length)
-        let newEnd = start + inserted.utf8.count
-        let (startRow, startCol) = Utf16.point(in: before, utf8: start)
-        let (oldEndRow, oldEndCol) = Utf16.point(in: before, utf8: oldEnd)
-        let ns = before as NSString
-        let after = ns.replacingCharacters(in: utf16Range, with: inserted)
-        let (newEndRow, newEndCol) = Utf16.point(in: after, utf8: newEnd)
+        let points = EditPoints(before: before, utf16Range: utf16Range, inserted: inserted)
         return InputEditFfi(
-            startByte: UInt32(start),
-            oldEndByte: UInt32(oldEnd),
-            newEndByte: UInt32(newEnd),
-            startRow: startRow,
-            startColumn: startCol,
-            oldEndRow: oldEndRow,
-            oldEndColumn: oldEndCol,
-            newEndRow: newEndRow,
-            newEndColumn: newEndCol
+            startByte: UInt32(points.start.byte),
+            oldEndByte: UInt32(points.oldEnd.byte),
+            newEndByte: UInt32(points.newEnd.byte),
+            startRow: points.start.row,
+            startColumn: points.start.column,
+            oldEndRow: points.oldEnd.row,
+            oldEndColumn: points.oldEnd.column,
+            newEndRow: points.newEnd.row,
+            newEndColumn: points.newEnd.column
         )
+    }
+}
+
+extension ByteEdit {
+    init(_ edit: InputEditFfi) {
+        self.init(start: edit.startByte, oldEnd: edit.oldEndByte, newEnd: edit.newEndByte)
     }
 }

@@ -4,7 +4,7 @@ use crate::highlight::{BufferSession, Lang};
 use super::extract_variable;
 use super::tests_apply::applied;
 
-fn plan(lang: Lang, text: &str, needle: &str) -> Option<ExtractPlan> {
+pub fn plan(lang: Lang, text: &str, needle: &str) -> Option<ExtractPlan> {
     let (session, _) = BufferSession::open_lang(lang, text.to_string(), None).unwrap();
     let start = text.find(needle).unwrap() as u32;
     extract_variable(&session, start, start + needle.len() as u32)

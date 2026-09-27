@@ -33,7 +33,7 @@ struct RootView: View {
             AIAskSheet(assistant: assistant)
         }
         .sheet(isPresented: $state.showRunConfigSheet) {
-            RunConfigSheet().environmentObject(state)
+            RunConfigSheet(editor: state.runConfigEditor).environmentObject(state)
         }
         .sheet(isPresented: $state.showRenamePreview) {
             RenamePreviewSheet(

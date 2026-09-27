@@ -16,7 +16,6 @@ enum Tokens {
         static let s: CGFloat = 4
         static let m: CGFloat = 6
         static let l: CGFloat = 8
-        static let xl: CGFloat = 12
         static let card: CGFloat = 10
     }
 

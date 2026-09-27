@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 
@@ -43,11 +44,12 @@ impl Detect for CompileDb {
 fn targets(root: &Path, db: &Path, entries: &[Entry]) -> Vec<Target> {
     let base = db.parent().unwrap_or(root);
     let mut out: Vec<Target> = Vec::new();
+    let mut seen = HashSet::new();
     for entry in entries {
         let dir = abspath::absolute(base, Path::new(&entry.directory));
         let source = abspath::absolute(&dir, Path::new(&entry.file));
         let name = display_name(root, &source);
-        if out.iter().any(|t| t.name == name) {
+        if !seen.insert(name.clone()) {
             continue;
         }
         out.push(Target {

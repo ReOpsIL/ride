@@ -1,14 +1,12 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
-use std::path::Path;
 
 use crate::ffi::{CompletionHit, OutlineItem, QuickDoc};
-use crate::highlight::Lang;
-use crate::query::exact_search;
 
 use super::Engine;
+use super::catalog::Catalog;
 use super::doc_block::{self, Lifted};
-use super::doc_links;
-use super::snapshot::Catalog;
+use super::hit_source::{self, Buffer, Loaded};
+use super::{doc_html, doc_links};
 
 #[uniffi::export]
 impl Engine {
@@ -20,17 +18,9 @@ impl Engine {
 }
 
 struct Ctx {
-    replica: String,
-    lang: Lang,
-    path: Option<String>,
+    buffer: Buffer,
     outline: Vec<OutlineItem>,
     catalog: Catalog,
-}
-
-struct Loaded {
-    text: String,
-    lang: Lang,
-    path: String,
 }
 
 fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<QuickDoc> {
@@ -40,7 +30,10 @@ fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<QuickDoc>
         .into_iter()
         .next()?;
     let ctx = session(engine, session_id)?;
-    let loaded = load(&hit, &ctx);
+    let loaded = hit_source::load(
+        hit_source::file_of(&hit, Some(&ctx.buffer)),
+        Some(&ctx.buffer),
+    );
     let lifted = lift_from(&hit, &loaded);
     Some(assemble(&hit, &ctx, &loaded, lifted))
 }
@@ -50,42 +43,13 @@ fn session(engine: &Engine, session_id: u64) -> Option<Ctx> {
         .read(|i| {
             let session = i.sessions.get(&session_id)?;
             Some(Ctx {
-                replica: session.replica().to_string(),
-                lang: session.lang(),
-                path: session.path().map(|p| p.display().to_string()),
+                buffer: Buffer::of(session),
                 outline: session.outline().to_vec(),
-                catalog: Catalog {
-                    index_dir: i.config.index_dir.clone(),
-                    index: i.index.clone(),
-                    reader: i.reader.clone(),
-                    overlay: i.overlay.clone(),
-                },
+                catalog: Catalog::of(i),
             })
         })
         .ok()
         .flatten()
-}
-
-fn load(hit: &CompletionHit, ctx: &Ctx) -> Loaded {
-    if use_buffer(hit, ctx) {
-        return Loaded {
-            text: ctx.replica.clone(),
-            lang: ctx.lang,
-            path: ctx.path.clone().unwrap_or_default(),
-        };
-    }
-    let path = hit.source_path.clone().unwrap_or_default();
-    let text = std::fs::read_to_string(&path).unwrap_or_default();
-    let lang = Lang::for_buffer(Some(&path), &text);
-    Loaded { text, lang, path }
-}
-
-fn use_buffer(hit: &CompletionHit, ctx: &Ctx) -> bool {
-    match (hit.source_path.as_deref(), ctx.path.as_deref()) {
-        (None, _) => true,
-        (Some(a), Some(b)) => Path::new(a) == Path::new(b),
-        (Some(_), None) => false,
-    }
 }
 
 fn lift_from(hit: &CompletionHit, loaded: &Loaded) -> Option<Lifted> {
@@ -102,7 +66,7 @@ fn assemble(hit: &CompletionHit, ctx: &Ctx, loaded: &Loaded, lifted: Option<Lift
     QuickDoc {
         title: hit.name.clone(),
         signature: hit.signature.clone(),
-        html: crate::markdown::render(&rewritten.markdown),
+        html: crate::markdown::render(&doc_html::inert(&rewritten.markdown)),
         origin_path: origin(hit, loaded),
         origin_line: origin_line(&lifted, hit, loaded),
         links: rewritten.links,
@@ -132,7 +96,8 @@ fn resolve(path: &str, ctx: &Ctx) -> Option<String> {
         return Some(path.to_string());
     }
     let (name, qual) = split(path);
-    exact_search(ctx.catalog.src(), name, qual, 8)
+    ctx.catalog
+        .exact(name, qual, 8)
         .into_iter()
         .next()
         .map(|h| h.path)

@@ -19,9 +19,9 @@ extension AppState {
         else {
             return
         }
-        let gen = CheckService.shared.bump(CheckService.livePrefix + url.path)
+        let gen = CheckService.shared.bump(CheckService.tidyPrefix + url.path)
         ClangTidyService.run(file: url, root: root) { items in
-            CheckService.shared.setLive(path: url.path, diagnostics: items, generation: gen)
+            CheckService.shared.setTidy(path: url.path, diagnostics: items, generation: gen)
         }
     }
 }

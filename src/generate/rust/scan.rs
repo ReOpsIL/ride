@@ -21,28 +21,64 @@ pub(super) fn has_derive(buffer: &str, name: &str, trait_name: &str) -> bool {
 }
 
 pub(super) fn inherent_impl_has_new(buffer: &str, name: &str) -> bool {
-    let needle = "impl ";
-    for (idx, _) in buffer.match_indices(needle) {
-        let rest = buffer[idx + needle.len()..].trim_start();
-        let Some(rest) = rest.strip_prefix(name) else {
-            continue;
-        };
-        if rest.starts_with(is_word) {
-            continue;
-        }
-        let Some(open) = rest.find('{') else {
-            continue;
-        };
-        if rest[..open].contains(" for ") {
-            continue;
-        }
-        if let Some(body) = balanced_block(&rest[open..])
-            && body.contains("fn new")
-        {
-            return true;
-        }
+    buffer
+        .match_indices("impl")
+        .any(|(idx, _)| impl_has_new_at(buffer, idx, name))
+}
+
+fn impl_has_new_at(buffer: &str, idx: usize, name: &str) -> bool {
+    let rest = &buffer[idx + "impl".len()..];
+    if buffer[..idx].ends_with(is_word) || rest.starts_with(is_word) {
+        return false;
     }
-    false
+    let Some(rest) = past_generics(rest.trim_start())
+        .trim_start()
+        .strip_prefix(name)
+    else {
+        return false;
+    };
+    if rest.starts_with(is_word) {
+        return false;
+    }
+    let Some(open) = rest.find('{') else {
+        return false;
+    };
+    !rest[..open].contains(" for ")
+        && balanced_block(&rest[open..]).is_some_and(|body| declares_fn(body, "new"))
+}
+
+fn past_generics(text: &str) -> &str {
+    if !text.starts_with('<') {
+        return text;
+    }
+    let bytes = text.as_bytes();
+    let mut depth = 0i32;
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'-' if bytes.get(i + 1) == Some(&b'>') => i += 1,
+            b'<' => depth += 1,
+            b'>' => {
+                depth -= 1;
+                if depth == 0 {
+                    return &text[i + 1..];
+                }
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+    ""
+}
+
+fn declares_fn(body: &str, name: &str) -> bool {
+    body.match_indices("fn ").any(|(i, _)| {
+        !body[..i].ends_with(is_word)
+            && body[i + 3..]
+                .trim_start()
+                .strip_prefix(name)
+                .is_some_and(|after| !after.starts_with(is_word))
+    })
 }
 
 fn find_struct(buffer: &str, name: &str) -> Option<usize> {

@@ -34,101 +34,6 @@ struct TabState: Codable, Equatable {
     }
 }
 
-struct LayoutState: Codable, Equatable {
-    var sidebarWidth: Double
-    var outlineWidth: Double
-    var hierarchyWidth: Double
-    var problemsHeight: Double
-    var runOutputHeight: Double
-    var terminalHeight: Double
-    var testsHeight: Double
-    var debugHeight: Double
-    var previewWidth: Double
-    var showSidebar: Bool
-    var showProblems: Bool
-    var showRunOutput: Bool
-    var showTerminal: Bool
-    var showTests: Bool
-    var showPreview: Bool
-    var outlinePanel: Bool
-
-    static let defaults = LayoutState(
-        sidebarWidth: 230,
-        outlineWidth: 220,
-        hierarchyWidth: 220,
-        problemsHeight: 180,
-        runOutputHeight: 200,
-        terminalHeight: 220,
-        testsHeight: 200,
-        debugHeight: 320,
-        previewWidth: 460,
-        showSidebar: true,
-        showProblems: false,
-        showRunOutput: false,
-        showTerminal: false,
-        showTests: false,
-        showPreview: false,
-        outlinePanel: true
-    )
-
-    init(
-        sidebarWidth: Double,
-        outlineWidth: Double,
-        hierarchyWidth: Double = 220,
-        problemsHeight: Double,
-        runOutputHeight: Double,
-        terminalHeight: Double = 220,
-        testsHeight: Double = 200,
-        debugHeight: Double = 320,
-        previewWidth: Double,
-        showSidebar: Bool,
-        showProblems: Bool,
-        showRunOutput: Bool,
-        showTerminal: Bool = false,
-        showTests: Bool = false,
-        showPreview: Bool,
-        outlinePanel: Bool
-    ) {
-        self.sidebarWidth = sidebarWidth
-        self.outlineWidth = outlineWidth
-        self.hierarchyWidth = hierarchyWidth
-        self.problemsHeight = problemsHeight
-        self.runOutputHeight = runOutputHeight
-        self.terminalHeight = terminalHeight
-        self.testsHeight = testsHeight
-        self.debugHeight = debugHeight
-        self.previewWidth = previewWidth
-        self.showSidebar = showSidebar
-        self.showProblems = showProblems
-        self.showRunOutput = showRunOutput
-        self.showTerminal = showTerminal
-        self.showTests = showTests
-        self.showPreview = showPreview
-        self.outlinePanel = outlinePanel
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        let d = LayoutState.defaults
-        sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
-        outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
-        hierarchyWidth = try c.decodeIfPresent(Double.self, forKey: .hierarchyWidth) ?? d.hierarchyWidth
-        problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
-        runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
-        terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
-        testsHeight = try c.decodeIfPresent(Double.self, forKey: .testsHeight) ?? d.testsHeight
-        debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
-        previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
-        showSidebar = try c.decodeIfPresent(Bool.self, forKey: .showSidebar) ?? d.showSidebar
-        showProblems = try c.decodeIfPresent(Bool.self, forKey: .showProblems) ?? d.showProblems
-        showRunOutput = try c.decodeIfPresent(Bool.self, forKey: .showRunOutput) ?? d.showRunOutput
-        showTerminal = try c.decodeIfPresent(Bool.self, forKey: .showTerminal) ?? d.showTerminal
-        showTests = try c.decodeIfPresent(Bool.self, forKey: .showTests) ?? d.showTests
-        showPreview = try c.decodeIfPresent(Bool.self, forKey: .showPreview) ?? d.showPreview
-        outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
-    }
-}
-
 struct WorkspaceState: Codable, Equatable {
     static let currentVersion = 1
 
@@ -139,6 +44,7 @@ struct WorkspaceState: Codable, Equatable {
     var split: SplitState?
     var runConfigs: [RunConfig]
     var selectedTarget: String?
+    var profile: String?
     var breakpoints: Breakpoints
     var watches: [String]
 
@@ -150,6 +56,7 @@ struct WorkspaceState: Codable, Equatable {
         split: SplitState? = nil,
         runConfigs: [RunConfig] = [],
         selectedTarget: String? = nil,
+        profile: String? = nil,
         breakpoints: Breakpoints = Breakpoints(),
         watches: [String] = []
     ) {
@@ -160,6 +67,7 @@ struct WorkspaceState: Codable, Equatable {
         self.split = split
         self.runConfigs = runConfigs
         self.selectedTarget = selectedTarget
+        self.profile = profile
         self.breakpoints = breakpoints
         self.watches = watches
     }
@@ -173,6 +81,7 @@ struct WorkspaceState: Codable, Equatable {
         split = try c.decodeIfPresent(SplitState.self, forKey: .split)
         runConfigs = try c.decodeIfPresent([RunConfig].self, forKey: .runConfigs) ?? []
         selectedTarget = try c.decodeIfPresent(String.self, forKey: .selectedTarget)
+        profile = try c.decodeIfPresent(String.self, forKey: .profile)
         breakpoints = try c.decodeIfPresent(Breakpoints.self, forKey: .breakpoints) ?? Breakpoints()
         watches = try c.decodeIfPresent([String].self, forKey: .watches) ?? []
     }

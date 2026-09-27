@@ -13,6 +13,9 @@ extension AppState {
         debug.onChange = { [weak self] in
             self?.debugChanged()
         }
+        debug.onStop = { [weak self] path, line in
+            self?.showDebugLocation(path: path, line: line)
+        }
         debug.onOutput = { [weak self] _, text in
             self?.appendDebugOutput(text)
         }
@@ -23,25 +26,20 @@ extension AppState {
         guard !debug.isActive else {
             return
         }
-        guard let launch = debugLaunch() else {
+        guard debugLaunch() != nil else {
             showNotice("Nothing to debug for this project")
             return
         }
-        DebugChain.shared.cancel()
         showRunOutput = true
-        guard canRun(.build) else {
-            debug.launch(launch)
+        guard let build = runRequest(.build) else {
+            launchDebugger()
             return
         }
-        runAction(.build)
-        guard runOutput.isRunning else {
-            return
-        }
-        DebugChain.shared.expect(launch, after: runOutput.runId)
+        startRun(build.followed(by: .debug))
     }
 
-    func continueDebug(_ runId: Int, _ finish: RunFinish) {
-        guard let launch = DebugChain.shared.take(runId: runId, status: finish) else {
+    func launchDebugger() {
+        guard !debug.isActive, let launch = debugLaunch() else {
             return
         }
         debug.launch(launch)
@@ -52,7 +50,6 @@ extension AppState {
     }
 
     func stopDebug() {
-        DebugChain.shared.cancel()
         debug.send(.disconnect)
     }
 
@@ -67,26 +64,21 @@ extension AppState {
         guard let target = runTarget, let plan = runPlan(.run) else {
             return nil
         }
-        guard let resolved = DebugProgram.resolve(
-            plan: plan,
+        let variant = RunVariant(
             kind: projectModel.runKind,
-            targetName: target.name,
-            workingDir: target.workingDir,
-            profile: projectModel.profile
-        ) else {
+            profile: projectModel.profile,
+            sanitizers: runConfig.activeSanitizers(for: projectModel.runKind)
+        )
+        guard let resolved = DebugProgram.resolve(plan: plan, target: target, variant: variant) else {
             return nil
         }
         return DebugLaunch(
             program: resolved.program,
             args: resolved.args,
-            cwd: plan.cwd ?? nonEmpty(target.workingDir) ?? activeProjectRoot?.path,
+            cwd: plan.cwd ?? DebugProgram.emptyToNil(target.workingDir) ?? activeProjectRoot?.path,
             env: plan.env,
             stopOnEntry: false,
             exceptionFilters: DebugFilters.shared.enabledIds
         )
-    }
-
-    private func nonEmpty(_ text: String) -> String? {
-        text.isEmpty ? nil : text
     }
 }

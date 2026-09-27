@@ -9,12 +9,12 @@ enum TreeModel {
     static let `return`: UInt16 = 36
     static let keypadEnter: UInt16 = 76
 
-    static func action(keyCode: UInt16) -> TreeAction? {
+    static func action(keyCode: UInt16, modifiers: KeyModifiers = []) -> TreeAction? {
         switch keyCode {
         case delete, forwardDelete:
-            return .trash
+            return modifiers.isSubset(of: .command) ? .trash : nil
         case `return`, keypadEnter:
-            return .rename
+            return modifiers.isEmpty ? .rename : nil
         default:
             return nil
         }

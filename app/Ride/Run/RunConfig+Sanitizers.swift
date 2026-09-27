@@ -1,5 +1,29 @@
 import Foundation
 
+extension Sanitizer {
+    static func supported(by kind: RunProjectKind) -> [Sanitizer] {
+        switch kind {
+        case .cargo:
+            return [.address, .thread]
+        case .cmake:
+            return allCases
+        case .make, .compileDb, .none:
+            return []
+        }
+    }
+
+    var conflicts: Set<Sanitizer> {
+        switch self {
+        case .address:
+            return [.thread]
+        case .thread:
+            return [.address]
+        case .undefined:
+            return []
+        }
+    }
+}
+
 extension RunConfig {
     static var hostTriple: String {
         #if arch(arm64)
@@ -9,27 +33,11 @@ extension RunConfig {
         #endif
     }
 
-    var orderedSanitizers: [Sanitizer] {
-        Sanitizer.allCases.filter { sanitizers.contains($0) }
+    func activeSanitizers(for kind: RunProjectKind) -> [Sanitizer] {
+        Sanitizer.supported(by: kind).filter { sanitizers.contains($0) }
     }
 
     func requiresNightly(for kind: RunProjectKind) -> Bool {
-        kind == .cargo && !sanitizers.isEmpty
-    }
-
-    func flags(for kind: RunProjectKind) -> (env: [String: String], args: [String]) {
-        let names = orderedSanitizers.map(\.rawValue)
-        if names.isEmpty {
-            return ([:], [])
-        }
-        switch kind {
-        case .cargo:
-            let rustflags = names.map { "-Zsanitizer=\($0)" }.joined(separator: " ")
-            return (["RUSTFLAGS": rustflags], ["--target", RunConfig.hostTriple])
-        case .cmake:
-            return ([:], ["-DCMAKE_CXX_FLAGS=-fsanitize=\(names.joined(separator: ","))"])
-        case .make, .compileDb, .none:
-            return ([:], [])
-        }
+        kind == .cargo && !activeSanitizers(for: kind).isEmpty
     }
 }

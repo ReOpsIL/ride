@@ -16,13 +16,6 @@ pub struct ContinueArguments {
     pub single_thread: Option<bool>,
 }
 
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ContinueResponseBody {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub all_threads_continued: Option<bool>,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StepArguments {

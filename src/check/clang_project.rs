@@ -14,7 +14,7 @@ use super::output::stderr_tail;
 const WORKERS: usize = 4;
 
 type IndexedFile = (usize, PathBuf);
-type IndexedResult = (usize, Result<CheckResult, EngineError>);
+type IndexedResult = (usize, CheckResult);
 
 pub fn run_check_c_project(root: &Path) -> Result<CheckResult, EngineError> {
     let files = compile_db::sources_in(root);
@@ -23,7 +23,7 @@ pub fn run_check_c_project(root: &Path) -> Result<CheckResult, EngineError> {
             message: format!("clang: no compile_commands.json under {}", root.display()),
         });
     }
-    gather(files)
+    Ok(gather(files))
 }
 
 pub fn merge_indexed(jobs: impl IntoIterator<Item = (usize, CheckResult)>) -> CheckResult {
@@ -34,25 +34,13 @@ pub fn merge_indexed(jobs: impl IntoIterator<Item = (usize, CheckResult)>) -> Ch
     merged.finish()
 }
 
-fn gather(files: Vec<PathBuf>) -> Result<CheckResult, EngineError> {
+fn gather(files: Vec<PathBuf>) -> CheckResult {
     let (rx, threads) = start_pool(files);
-    let mut checks = Vec::new();
-    let mut first_err = None;
-    for (index, item) in rx {
-        match item {
-            Ok(check) => checks.push((index, check)),
-            Err(e) => {
-                first_err.get_or_insert(e);
-            }
-        }
-    }
+    let checks: Vec<(usize, CheckResult)> = rx.into_iter().collect();
     for handle in threads {
         let _ = handle.join();
     }
-    match first_err {
-        Some(e) => Err(e),
-        None => Ok(merge_indexed(checks)),
-    }
+    merge_indexed(checks)
 }
 
 fn start_pool(files: Vec<PathBuf>) -> (mpsc::Receiver<IndexedResult>, Vec<thread::JoinHandle<()>>) {
@@ -86,10 +74,18 @@ fn drain(work: Arc<Mutex<VecDeque<IndexedFile>>>, tx: mpsc::Sender<IndexedResult
         let Some((index, file)) = next else {
             break;
         };
-        if tx.send((index, run_clang_check(&file))).is_err() {
+        if tx.send((index, check_or_report(&file))).is_err() {
             break;
         }
     }
+}
+
+fn check_or_report(file: &Path) -> CheckResult {
+    run_clang_check(file).unwrap_or_else(|e| CheckResult {
+        success: false,
+        diagnostics: Vec::new(),
+        stderr_tail: format!("{}: {e}", file.display()),
+    })
 }
 
 #[derive(Default)]

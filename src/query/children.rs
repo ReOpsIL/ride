@@ -10,7 +10,6 @@ use super::collect::BestPerName;
 use super::hit::doc_hit;
 use super::parse::{escape_regex, kind_term};
 use super::rank::Ranking;
-use super::search::open_dir;
 
 pub enum Filter {
     Parent(String),
@@ -40,12 +39,9 @@ pub fn listed(
     limit: usize,
     context: CompletionContext,
 ) -> Vec<CompletionHit> {
-    match src {
-        IndexSrc::Live(index, reader) => run(index, reader, &filter, prefix, limit, context),
-        IndexSrc::Dir(dir) => open_dir(dir)
-            .map(|(index, reader)| run(&index, &reader, &filter, prefix, limit, context))
-            .unwrap_or_default(),
-    }
+    src.with(Vec::new(), |index, reader| {
+        run(index, reader, &filter, prefix, limit, context)
+    })
 }
 
 fn run(

@@ -2,7 +2,7 @@ import AppKit
 
 extension SelfTestSteps {
     static func debugPanelSteps(state: AppState, e: SelfTestEditor) -> [SelfTestStep] {
-        [panelToggle(state: state, e: e), watchPersists(state: state, e: e), variableTree(e: e)]
+        [panelToggle(state: state, e: e), watchPersists(state: state, e: e)]
     }
 
     private static func panelToggle(state: AppState, e: SelfTestEditor) -> SelfTestStep {
@@ -35,29 +35,15 @@ extension SelfTestSteps {
         })
     }
 
-    private static func variableTree(e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "debug variable tree pages", wait: 0.2, run: {}, check: {
-            var tree = VariableTree()
-            let root = VariableNode(id: "locals", name: "Locals", value: "", reference: 7, childrenCount: 150)
-            tree.replace([root], of: VariableTree.rootId)
-            tree.toggle(root.id)
-            tree.append(page(0, parent: root.id, count: VariableTree.pageSize), to: root.id, expected: 150)
-            let paged = tree.hasMore(root.id) && tree.rows.count == 1 + VariableTree.pageSize
-            tree.append(page(VariableTree.pageSize, parent: root.id, count: 50), to: root.id, expected: 150)
+    static func panelLoadsVariables(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "debug panel loads variables", wait: 0.3, until: { state.debugPanel.tree.rows.count > 1 }, timeout: 30, run: {}, check: {
+            let rows = state.debugPanel.tree.rows
+            let scope = rows.first(where: \.expanded)
+            let children = rows.dropFirst().filter { $0.depth == 1 }
             return e.expect(
-                paged && !tree.hasMore(root.id) && tree.rows.count == 151,
-                "rows \(tree.rows.count) more \(tree.hasMore(root.id))"
+                state.debugPanel.visible && state.debugPanel.selectedFrame != nil && scope?.expanded == true && !children.isEmpty,
+                "visible \(state.debugPanel.visible) frame \(String(describing: state.debugPanel.selectedFrame)) rows \(rows.map(\.node.name))"
             )
         })
-    }
-
-    private static func page(_ start: Int, parent: String, count: Int) -> [VariableNode] {
-        (start ..< start + count).map { index in
-            VariableNode(
-                id: VariableTree.childId(parent: parent, index: index, name: "item"),
-                name: "item\(index)",
-                value: "\(index)"
-            )
-        }
     }
 }

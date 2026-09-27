@@ -4,18 +4,12 @@ pub const HUGE: usize = 1024 * 1024;
 pub const MARGIN: u32 = 2048;
 
 pub fn paint_range(len: usize, visible: Option<ByteRange>) -> Vec<ByteRange> {
-    if len < HUGE || visible.is_none() {
-        vec![ByteRange {
+    match visible {
+        Some(visible) if len >= HUGE => vec![expand(visible, len)],
+        _ => vec![ByteRange {
             start_byte: 0,
             end_byte: len as u32,
-        }]
-    } else if let Some(visible) = visible {
-        vec![expand(visible, len)]
-    } else {
-        vec![ByteRange {
-            start_byte: 0,
-            end_byte: len as u32,
-        }]
+        }],
     }
 }
 
@@ -32,13 +26,10 @@ pub fn clip_changed(
     visible: Option<ByteRange>,
     len: usize,
 ) -> Vec<ByteRange> {
-    if len < HUGE || visible.is_none() {
-        return changed.to_vec();
-    }
-    let Some(visible) = visible else {
-        return changed.to_vec();
+    let window = match visible {
+        Some(visible) if len >= HUGE => expand(visible, len),
+        _ => return changed.to_vec(),
     };
-    let window = expand(visible, len);
     changed
         .iter()
         .filter_map(|c| super::ranges::intersect(*c, window))

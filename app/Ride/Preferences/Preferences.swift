@@ -32,10 +32,11 @@ struct Preferences: Codable, Equatable {
     var aiComplete: Bool
     var aiProvider: String
     var aiModel: String
-    var aiAuth: String
     var aiContext: String
     var reportsAcknowledged: Double
     var lineEndings: String
+
+    static let fontSizes = 10...24
 
     static let defaults = Preferences(
         theme: "dark",
@@ -50,15 +51,6 @@ struct Preferences: Codable, Equatable {
         useClippy: false,
         formatOnSave: false,
         indentGuides: true,
-        sidebarWidth: 230,
-        outlineWidth: 220,
-        hierarchyWidth: 220,
-        problemsHeight: 180,
-        runOutputHeight: 200,
-        terminalHeight: 220,
-        testsHeight: 200,
-        debugHeight: 320,
-        previewWidth: 460,
         cheatSheet: true,
         softWrap: true,
         askMissingTools: true
@@ -78,15 +70,15 @@ struct Preferences: Codable, Equatable {
         formatOnSave: Bool = false,
         indentGuides: Bool = true,
         lineNumbers: Bool = true,
-        sidebarWidth: Double = 230,
-        outlineWidth: Double = 220,
-        hierarchyWidth: Double = 220,
-        problemsHeight: Double = 180,
-        runOutputHeight: Double = 200,
-        terminalHeight: Double = 220,
-        testsHeight: Double = 200,
-        debugHeight: Double = 320,
-        previewWidth: Double = 460,
+        sidebarWidth: Double = LayoutState.defaults.sidebarWidth,
+        outlineWidth: Double = LayoutState.defaults.outlineWidth,
+        hierarchyWidth: Double = LayoutState.defaults.hierarchyWidth,
+        problemsHeight: Double = LayoutState.defaults.problemsHeight,
+        runOutputHeight: Double = LayoutState.defaults.runOutputHeight,
+        terminalHeight: Double = LayoutState.defaults.terminalHeight,
+        testsHeight: Double = LayoutState.defaults.testsHeight,
+        debugHeight: Double = LayoutState.defaults.debugHeight,
+        previewWidth: Double = LayoutState.defaults.previewWidth,
         cheatSheet: Bool = true,
         softWrap: Bool = true,
         askMissingTools: Bool = true,
@@ -96,7 +88,6 @@ struct Preferences: Codable, Equatable {
         aiComplete: Bool = false,
         aiProvider: String = "anthropic",
         aiModel: String = "",
-        aiAuth: String = "login",
         aiContext: String = "function",
         reportsAcknowledged: Double = 0,
         lineEndings: String = LineEndings.keep
@@ -132,7 +123,6 @@ struct Preferences: Codable, Equatable {
         self.aiComplete = aiComplete
         self.aiProvider = aiProvider
         self.aiModel = aiModel
-        self.aiAuth = aiAuth
         self.aiContext = aiContext
         self.reportsAcknowledged = reportsAcknowledged
         self.lineEndings = lineEndings
@@ -172,7 +162,6 @@ struct Preferences: Codable, Equatable {
         aiComplete = try c.decodeIfPresent(Bool.self, forKey: .aiComplete) ?? d.aiComplete
         aiProvider = try c.decodeIfPresent(String.self, forKey: .aiProvider) ?? d.aiProvider
         aiModel = try c.decodeIfPresent(String.self, forKey: .aiModel) ?? d.aiModel
-        aiAuth = try c.decodeIfPresent(String.self, forKey: .aiAuth) ?? d.aiAuth
         aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
         reportsAcknowledged = try c.decodeIfPresent(Double.self, forKey: .reportsAcknowledged) ?? d.reportsAcknowledged
         lineEndings = try c.decodeIfPresent(String.self, forKey: .lineEndings) ?? d.lineEndings
@@ -180,7 +169,7 @@ struct Preferences: Codable, Equatable {
 
     var clamped: Preferences {
         var next = self
-        next.fontSize = min(24, max(10, fontSize))
+        next.fontSize = min(Self.fontSizes.upperBound, max(Self.fontSizes.lowerBound, fontSize))
         next.tabWidth = min(8, max(2, tabWidth))
         next.sidebarWidth = min(420, max(180, sidebarWidth))
         next.outlineWidth = min(420, max(160, outlineWidth))

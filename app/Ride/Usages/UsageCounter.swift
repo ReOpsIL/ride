@@ -4,14 +4,6 @@ enum UsageCounter {
     static let nameCap = 200
     private static var pending: [ObjectIdentifier: DispatchWorkItem] = [:]
 
-    static func refresh(sessionId: UInt64) {
-        let document = EditorPanes.shared.all.first { $0.document?.sessionId == sessionId }?.document
-        guard let document else {
-            return
-        }
-        refresh(document: document)
-    }
-
     static func refresh(document: BufferDocument) {
         let key = ObjectIdentifier(document)
         pending[key]?.cancel()
@@ -24,7 +16,7 @@ enum UsageCounter {
     }
 
     private static func fetch(document: BufferDocument) {
-        guard let id = document.sessionId else {
+        guard document.sessionId != nil else {
             return
         }
         let enabled = EditorPanes.shared.host(bound: document)?.textView.showCodeVision ?? true
@@ -35,10 +27,10 @@ enum UsageCounter {
         let names = uniqueNames(document.outline)
         document.visionGeneration += 1
         let token = document.visionGeneration
-        _ = RideEngineClient.shared.withEngine(qos: .utility, { engine in
+        SessionService.shared.read(document, lane: .workspace, qos: .utility, { engine, id in
             engine.usageCounts(sessionId: id, names: names)
         }, then: { counts in
-            guard document.visionGeneration == token, document.sessionId == id else {
+            guard document.visionGeneration == token else {
                 return
             }
             apply(zipped(names, counts), to: document)

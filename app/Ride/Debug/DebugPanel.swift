@@ -21,7 +21,7 @@ struct DebugPanel: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ts.ui.bgBase)
         .sheet(isPresented: $model.showEvaluate) {
-            DebugEvaluateSheet(model: model)
+            DebugEvaluateSheet(model: model, evaluation: DebugEvaluation.shared)
         }
     }
 
@@ -59,64 +59,6 @@ struct DebugPanel: View {
                 DebugWatchesList(model: model)
                     .frame(minWidth: 180, idealWidth: 240, maxWidth: .infinity)
             }
-        }
-    }
-}
-
-struct DebugEvaluateSheet: View {
-    @ObservedObject var model: DebugPanelModel
-    @ObservedObject private var ts = ThemeStore.shared
-    @State private var expression = ""
-    @State private var result = ""
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Tokens.Space.m) {
-            Text("Evaluate Expression")
-                .font(Tokens.ui(13, weight: .semibold))
-                .foregroundStyle(ts.ui.textPrimary)
-            TextField("expression", text: $expression)
-                .font(Tokens.mono(12))
-                .textFieldStyle(.roundedBorder)
-                .onSubmit(evaluate)
-            ScrollView {
-                Text(result)
-                    .font(Tokens.mono(11))
-                    .foregroundStyle(ts.ui.textSecondary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-            }
-            .frame(height: 80)
-            HStack {
-                Button("Watch") {
-                    model.addWatch(expression)
-                }
-                .disabled(expression.isEmpty)
-                Spacer()
-                Button("Evaluate", action: evaluate)
-                    .keyboardShortcut(.defaultAction)
-                Button("Close") {
-                    model.showEvaluate = false
-                }
-                .keyboardShortcut(.cancelAction)
-            }
-        }
-        .padding(Tokens.Space.l)
-        .frame(width: 460)
-        .background(ts.ui.bgBase)
-    }
-
-    private func evaluate() {
-        let trimmed = expression.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else {
-            return
-        }
-        result = "evaluating…"
-        model.evaluate(trimmed, context: .repl) { row in
-            guard let row else {
-                result = "not stopped"
-                return
-            }
-            result = row.typeName.map { "\(row.value)  ·  \($0)" } ?? row.value
         }
     }
 }

@@ -1,51 +1,45 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
+use crate::abspath::absolute_string;
+use crate::check::{CompileArg, compile_args};
 use crate::highlight::Lang;
 
-const WITH_VALUE: &[&str] = &["-I", "-D", "-isystem", "-iquote", "-F"];
-const PREFIXES: &[&str] = &["-I", "-D", "-std=", "-isystem", "-iquote", "-F"];
-const PATH_FLAGS: &[&str] = &["-I", "-isystem", "-iquote", "-F"];
+const KEPT_PREFIXES: &[&str] = &["-std="];
 
 pub fn flags(path: &Path, lang: Lang) -> Vec<String> {
     let Some(command) = crate::check::lookup(path, lang) else {
         return Vec::new();
     };
-    let dir = command.directory;
+    let dir = command.directory.as_path();
     let mut out = Vec::new();
-    let mut args = command.args.into_iter();
-    while let Some(arg) = args.next() {
-        if WITH_VALUE.contains(&arg.as_str()) {
-            if let Some(value) = args.next() {
-                let is_path = PATH_FLAGS.contains(&arg.as_str());
-                out.push(arg);
-                out.push(if is_path {
-                    absolute(&dir, &value)
+    for arg in compile_args(&command.args) {
+        let path_flag = arg.is_path();
+        match arg {
+            CompileArg::Valued {
+                flag,
+                value,
+                joined,
+            } => {
+                let value = if path_flag {
+                    absolute_string(dir, value)
                 } else {
-                    value
-                });
+                    value.to_string()
+                };
+                push_valued(&mut out, flag, value, joined);
             }
-        } else if let Some(flag) = PATH_FLAGS.iter().find(|f| joined(&arg, f)) {
-            out.push(format!("{}{}", flag, absolute(&dir, &arg[flag.len()..])));
-        } else if PREFIXES.iter().any(|p| joined(&arg, p)) {
-            out.push(arg);
+            CompileArg::Plain(plain) if KEPT_PREFIXES.iter().any(|p| plain.starts_with(p)) => {
+                out.push(plain.to_string());
+            }
+            CompileArg::Plain(_) => {}
         }
     }
     out
 }
 
-fn joined(arg: &str, flag: &str) -> bool {
-    arg.len() > flag.len() && arg.starts_with(flag)
-}
-
-fn absolute(dir: &Path, value: &str) -> String {
-    let path = PathBuf::from(value);
-    if path.is_absolute() {
-        return value.to_string();
+fn push_valued(out: &mut Vec<String>, flag: &str, value: String, joined: bool) {
+    if joined {
+        out.push(format!("{flag}{value}"));
+    } else {
+        out.extend([flag.to_string(), value]);
     }
-    let joined = dir.join(path);
-    joined
-        .canonicalize()
-        .unwrap_or(joined)
-        .display()
-        .to_string()
 }

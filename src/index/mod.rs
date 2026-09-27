@@ -1,4 +1,5 @@
 mod build;
+mod clone;
 mod crates;
 mod deferred;
 mod doc;
@@ -9,6 +10,7 @@ mod hash;
 mod hump;
 mod incremental;
 mod labels;
+mod lock;
 mod promote;
 mod schema;
 mod status;

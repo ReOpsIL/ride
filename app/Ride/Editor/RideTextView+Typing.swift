@@ -38,7 +38,8 @@ extension RideTextView {
     }
 
     override func insertText(_ string: Any, replacementRange: NSRange) {
-        guard let typed = string as? String, typed.count == 1, replacementRange.location == NSNotFound,
+        let string = Self.lineFeedsOnly(string)
+        guard let typed = string as? String, typed.count == 1, replacementRange.location == NSNotFound, !hasMarkedText(),
               let target = typingTarget, CompletionSession.shared.editSource == .user
         else {
             super.insertText(string, replacementRange: replacementRange)
@@ -61,6 +62,24 @@ extension RideTextView {
         case .none:
             super.insertText(string, replacementRange: replacementRange)
         }
+    }
+
+    override func readSelection(from pboard: NSPasteboard, type: NSPasteboard.PasteboardType) -> Bool {
+        guard type == .string, let text = pboard.string(forType: .string) else {
+            return super.readSelection(from: pboard, type: type)
+        }
+        insertText(text, replacementRange: selectedRange())
+        return true
+    }
+
+    private static func lineFeedsOnly(_ string: Any) -> Any {
+        if let text = string as? String {
+            return LineEndings.normalized(text)
+        }
+        if let attributed = string as? NSAttributedString, attributed.string.utf8.contains(13) {
+            return LineEndings.normalized(attributed.string)
+        }
+        return string
     }
 
     override func deleteBackward(_ sender: Any?) {

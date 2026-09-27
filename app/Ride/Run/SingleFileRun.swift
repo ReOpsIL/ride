@@ -16,29 +16,3 @@ enum SingleFileRun {
         return "single/" + digest.map { String(format: "%02x", $0) }.joined()
     }
 }
-
-final class SingleFileChain {
-    static let shared = SingleFileChain()
-
-    private var next: RunInvocation?
-    private var state = RunChainState()
-
-    func expect(_ invocation: RunInvocation?, after runId: Int) {
-        next = invocation
-        state.expect(runId: runId)
-    }
-
-    func cancel() {
-        next = nil
-        state.cancel()
-    }
-
-    func take(runId: Int, status: RunFinish) -> RunInvocation? {
-        let pending = next
-        guard state.take(runId: runId, status: status) else {
-            return nil
-        }
-        next = nil
-        return pending
-    }
-}

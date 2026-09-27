@@ -24,4 +24,15 @@ final class LineEndingsTests: XCTestCase {
         XCTAssertEqual(result.text, "a\r\nb")
         XCTAssertTrue(result.usesCRLF)
     }
+
+    func testNormalizedTurnsCRLFAndLoneCRIntoLF() {
+        XCTAssertEqual(LineEndings.normalized("a\r\nb\rc\n"), "a\nb\nc\n")
+        XCTAssertEqual(LineEndings.normalized("plain\n"), "plain\n")
+    }
+
+    func testCRLFBufferRoundTripsWithoutDoubledCarriageReturns() {
+        let pasted = LineEndings.normalized("x\r\ny")
+        let result = LineEndings.encode(text: pasted, usesCRLF: true, policy: LineEndings.keep)
+        XCTAssertEqual(result.text, "x\r\ny")
+    }
 }

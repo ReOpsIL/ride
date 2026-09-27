@@ -17,6 +17,7 @@ use super::variants::emit_variants;
 
 pub struct PendingMod {
     pub file: PathBuf,
+    pub dir: PathBuf,
     pub module_path: Vec<String>,
     pub reach: bool,
 }
@@ -37,14 +38,15 @@ pub struct TypeCtx {
     pub default_vis: Option<Visibility>,
 }
 
-pub fn extract_tree(
-    root: Node<'_>,
-    source: &str,
-    file: &Path,
-    module_path: &[String],
-    reach: bool,
-    ctx: &CrateContext,
-) -> FileExtract {
+pub struct TreeInput<'a> {
+    pub source: &'a str,
+    pub file: &'a Path,
+    pub mod_dir: &'a Path,
+    pub module_path: &'a [String],
+    pub reach: bool,
+}
+
+pub fn extract_tree(root: Node<'_>, input: TreeInput<'_>, ctx: &CrateContext) -> FileExtract {
     let mut out = FileExtract {
         items: Vec::new(),
         pending: Vec::new(),
@@ -52,14 +54,16 @@ pub fn extract_tree(
         reexports: Vec::new(),
         crate_aliases: Vec::new(),
         assoc: Vec::new(),
-        inner_docs: inner_docs(root, source),
+        inner_docs: inner_docs(root, input.source),
     };
     {
         let mut args = EmitArgs {
-            source,
-            file,
-            module_path,
-            reach,
+            source: input.source,
+            file: input.file,
+            mod_dir: input.mod_dir,
+            inline: false,
+            module_path: input.module_path,
+            reach: input.reach,
             ctx,
             out: &mut out,
         };

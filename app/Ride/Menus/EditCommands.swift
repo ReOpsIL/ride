@@ -55,7 +55,7 @@ struct EditCommands: Commands {
                 .keyboardShortcut("e", modifiers: [.command, .option])
             Button("Find in Project…") { state.toggleProjectFind() }
                 .keyboardShortcut("f", modifiers: [.command, .shift])
-            Button("Replace in Project…") { state.toggleProjectFind() }
+            Button("Replace in Project…") { state.toggleProjectFind(field: .replace) }
                 .keyboardShortcut("h", modifiers: [.command, .shift])
         }
     }

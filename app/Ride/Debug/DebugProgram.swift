@@ -4,31 +4,27 @@ struct DebugProgram: Equatable {
     var program: String
     var args: [String]
 
-    static func resolve(
-        plan: RunPlan,
-        kind: RunProjectKind,
-        targetName: String,
-        workingDir: String,
-        profile: String
-    ) -> DebugProgram? {
-        guard kind == .cargo else {
+    static func resolve(plan: RunPlan, target: RunTarget, variant: RunVariant) -> DebugProgram? {
+        guard variant.kind == .cargo else {
             guard let first = plan.argv.first, !first.isEmpty else {
                 return nil
             }
             return DebugProgram(
-                program: located(first, base: plan.cwd ?? emptyToNil(workingDir)),
+                program: located(first, base: plan.cwd ?? emptyToNil(target.workingDir)),
                 args: Array(plan.argv.dropFirst())
             )
         }
-        guard !targetName.isEmpty, !workingDir.isEmpty else {
+        guard !target.name.isEmpty, !target.workingDir.isEmpty else {
             return nil
         }
-        let directory = profile.isEmpty || profile == "debug" ? "debug" : profile
-        let binary = URL(fileURLWithPath: workingDir)
-            .appendingPathComponent("target")
-            .appendingPathComponent(directory)
-            .appendingPathComponent(targetName)
-        return DebugProgram(program: binary.path, args: passthrough(plan.argv))
+        return DebugProgram(program: cargoBinary(target: target, variant: variant), args: passthrough(plan.argv))
+    }
+
+    static func cargoBinary(target: RunTarget, variant: RunVariant) -> String {
+        let parts = ["target", variant.cargoTriple, variant.cargoProfileDir, target.kind == .example ? "examples" : nil, target.name]
+        return parts.compactMap { $0 }.reduce(URL(fileURLWithPath: target.workingDir)) { url, part in
+            url.appendingPathComponent(part)
+        }.path
     }
 
     static func located(_ program: String, base: String?) -> String {
@@ -41,7 +37,7 @@ struct DebugProgram: Equatable {
             .path
     }
 
-    private static func emptyToNil(_ text: String) -> String? {
+    static func emptyToNil(_ text: String) -> String? {
         text.isEmpty ? nil : text
     }
 

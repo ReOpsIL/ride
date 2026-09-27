@@ -1,6 +1,6 @@
 import AppKit
 
-extension RideTextView {
+extension RideTextView: ClaimsKeysBeforeMenus {
     override func insertTab(_ sender: Any?) {
         if CompletionSession.shared.accept() || CompletionSession.shared.snippetNext() || indentSelection(unindent: false) {
             return
@@ -50,31 +50,12 @@ extension RideTextView {
         if CompletionSession.shared.endSnippet() {
             return
         }
-        super.cancelOperation(sender)
+        _ = nextResponder?.tryToPerform(#selector(cancelOperation(_:)), with: sender)
     }
 
     override func keyDown(with event: NSEvent) {
         HoverController.shared.hide()
         EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
-        if event.keyCode == 49, event.modifierFlags.contains(.control) {
-            if event.modifierFlags.contains(.shift) {
-                CheatSheetController.shared.toggle(view: self)
-            } else {
-                CompletionSession.shared.trigger(view: self)
-            }
-            return
-        }
-        if event.keyCode == 49, event.modifierFlags.contains(.option) {
-            PeekController.showFocused()
-            return
-        }
-        if event.keyCode == 126,
-           event.modifierFlags.contains(.control),
-           event.modifierFlags.contains(.option)
-        {
-            hooks.binding?()?.state.switchHeaderSource()
-            return
-        }
         if CheatSheetController.shared.isVisible, handleCheatSheetKey(event) {
             return
         }
@@ -83,6 +64,16 @@ extension RideTextView {
         }
         super.keyDown(with: event)
     }
+
+    override func complete(_ sender: Any?) {
+        CompletionSession.shared.trigger(view: self)
+    }
+
+    func claimsKeyBeforeMenus(_ event: NSEvent) -> Bool {
+        CheatSheetController.shared.isVisible && event.modifierFlags.contains(.option) && Self.popupKeys.contains(event.keyCode)
+    }
+
+    private static let popupKeys: Set<UInt16> = [126, 125, 36, 76, 48]
 
     private func handleCheatSheetKey(_ event: NSEvent) -> Bool {
         let sheet = CheatSheetController.shared
@@ -121,11 +112,12 @@ extension RideTextView {
             DocController.showCompletion(in: self)
             return true
         }
+        let plain = event.modifierFlags.isDisjoint(with: [.shift, .command, .option, .control])
         switch event.keyCode {
-        case 126:
+        case 126 where plain:
             popup.move(-1)
             return true
-        case 125:
+        case 125 where plain:
             popup.move(1)
             return true
         case 53:

@@ -9,8 +9,9 @@ extension AppState {
         } catch {
             return error.localizedDescription
         }
-        open(root)
-        openFile(root.appendingPathComponent(sample.mainFile))
+        if open(root) {
+            openFile(root.appendingPathComponent(sample.mainFile))
+        }
         return nil
     }
 

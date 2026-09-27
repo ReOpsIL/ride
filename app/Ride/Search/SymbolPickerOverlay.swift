@@ -16,7 +16,7 @@ struct SymbolPickerOverlay: View {
                 PickerHint(id: "esc", key: "esc", label: "dismiss"),
             ],
             trailing: model.hits.isEmpty ? nil : Plural.count(model.hits.count, "symbol"),
-            onSubmit: confirm,
+            onSubmit: { state.confirmSymbolPicker() },
             onDismiss: { state.showSymbolPicker = false }
         ) {
             if model.hits.isEmpty {
@@ -32,7 +32,7 @@ struct SymbolPickerOverlay: View {
                         selected: model.selection == i,
                         action: {
                             model.selection = i
-                            confirm()
+                            state.confirmSymbolPicker()
                         }
                     ) {
                         KindBadge(kind: hit.itemKind)
@@ -55,14 +55,6 @@ struct SymbolPickerOverlay: View {
         .onKeyPress(.upArrow) {
             model.move(-1)
             return .handled
-        }
-    }
-
-    private func confirm() {
-        let hit = model.selected
-        state.showSymbolPicker = false
-        if let hit {
-            HitNavigation.open(hit, state: state)
         }
     }
 }

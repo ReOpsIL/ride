@@ -30,6 +30,12 @@ impl HeaderCache {
         }
     }
 
+    pub fn sweep_store(&self) {
+        if let Some(store) = &self.store {
+            store.sweep();
+        }
+    }
+
     pub fn load(&self, path: &Path) -> Option<Arc<Header>> {
         self.load_with(path, false)
     }

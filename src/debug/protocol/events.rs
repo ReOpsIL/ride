@@ -45,13 +45,6 @@ pub struct ExitedBody {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct TerminatedBody {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub restart: Option<bool>,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct OutputBody {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<String>,
@@ -68,13 +61,6 @@ impl OutputBody {
     pub fn category_or_console(&self) -> &str {
         self.category.as_deref().unwrap_or("console")
     }
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ThreadBody {
-    pub reason: String,
-    pub thread_id: i64,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

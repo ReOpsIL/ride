@@ -5,6 +5,8 @@ use std::path::{Path, PathBuf};
 use std::sync::{Once, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::error::panic_message;
+
 use super::line::panic_line;
 
 static PATH: OnceLock<PathBuf> = OnceLock::new();
@@ -32,7 +34,12 @@ fn append(info: &PanicHookInfo<'_>) {
     let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) else {
         return;
     };
-    let line = panic_line(now(), &message(info), &location(info), &backtrace());
+    let line = panic_line(
+        now(),
+        &panic_message(info.payload()),
+        &location(info),
+        &backtrace(),
+    );
     let _ = writeln!(file, "{line}");
 }
 
@@ -41,15 +48,6 @@ fn now() -> u64 {
         .duration_since(UNIX_EPOCH)
         .map(|elapsed| elapsed.as_secs())
         .unwrap_or_default()
-}
-
-fn message(info: &PanicHookInfo<'_>) -> String {
-    let payload = info.payload();
-    payload
-        .downcast_ref::<&str>()
-        .map(|text| (*text).to_string())
-        .or_else(|| payload.downcast_ref::<String>().cloned())
-        .unwrap_or_else(|| "panic".to_string())
 }
 
 fn location(info: &PanicHookInfo<'_>) -> String {

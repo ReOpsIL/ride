@@ -5,7 +5,6 @@ pub struct CallSite {
     pub name: String,
     pub qualifier: Option<String>,
     pub active_parameter: u32,
-    pub open_paren: usize,
 }
 
 const WINDOW: usize = 8000;
@@ -45,7 +44,6 @@ pub fn find(text: &str, at: usize) -> Option<CallSite> {
         name,
         qualifier,
         active_parameter: commas,
-        open_paren: open,
     })
 }
 

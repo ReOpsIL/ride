@@ -23,12 +23,6 @@ pub fn live_index_dir(index_dir: &Path) -> Option<PathBuf> {
     Some(index_dir.join(&manifest.live_dir))
 }
 
-pub fn tv(err: tantivy::TantivyError) -> EngineError {
-    EngineError::Index {
-        message: err.to_string(),
-    }
-}
-
 fn sync_dir(path: &Path) {
     if let Ok(f) = fs::File::open(path) {
         let _ = f.sync_all();

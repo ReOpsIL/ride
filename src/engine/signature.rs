@@ -1,12 +1,11 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
 use crate::ffi::{ByteRange, CompletionHit, ItemKind, SignatureHelp};
-use crate::highlight::CallSite;
+use crate::highlight::{BufferSession, CallSite};
 use crate::params;
-use crate::query::exact_search;
 
+use super::catalog::Catalog;
 use super::reach::Reach;
-use super::snapshot::Catalog;
 use super::{Engine, header_hits};
 
 const CALLABLE: &[ItemKind] = &[ItemKind::Fn, ItemKind::Method, ItemKind::Macro];
@@ -25,50 +24,52 @@ fn help(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<SignatureH
         .read(|i| {
             let session = i.sessions.get(&session_id)?;
             let call = session.call_site(cursor_byte)?;
-            let local: Vec<CompletionHit> = session
-                .outline()
-                .iter()
-                .filter(|o| o.name == call.name && CALLABLE.contains(&o.kind))
-                .map(|o| {
-                    let mut hit = CompletionHit::from_outline(o, 0.0, None);
-                    if hit.signature.is_empty() {
-                        hit.signature = declaration_head(session.replica(), o.start_byte as usize);
-                    }
-                    hit
-                })
-                .collect();
             Some((
+                local_hits(session, &call),
                 call,
-                local,
                 session.lang().has_catalog(),
                 Reach::take(i, session_id, session),
-                Catalog {
-                    index_dir: i.config.index_dir.clone(),
-                    index: i.index.clone(),
-                    reader: i.reader.clone(),
-                    overlay: i.overlay.clone(),
-                },
+                Catalog::of(i),
             ))
         })
         .ok()
         .flatten()?;
-    let (call, mut hits, catalog, reach, cat) = snap;
+    let (mut hits, call, catalog, reach, cat) = snap;
     if hits.iter().all(|h| h.signature.is_empty()) {
-        hits.extend(
-            header_hits::definitions(reach.headers(), &call.name)
-                .into_iter()
-                .filter(|h| CALLABLE.contains(&h.item_kind)),
-        );
+        hits.extend(callable(header_hits::definitions(
+            reach.headers(),
+            &call.name,
+        )));
+        reach.remember(engine);
     }
     if catalog && hits.iter().all(|h| h.signature.is_empty()) {
-        hits.extend(
-            exact_search(cat.src(), &call.name, call.qualifier.as_deref(), 10)
-                .into_iter()
-                .filter(|h| CALLABLE.contains(&h.item_kind)),
-        );
+        hits.extend(callable(cat.exact(
+            &call.name,
+            call.qualifier.as_deref(),
+            10,
+        )));
     }
     let hit = hits.into_iter().find(|h| !h.signature.is_empty())?;
     build(&call, &hit)
+}
+
+fn local_hits(session: &BufferSession, call: &CallSite) -> Vec<CompletionHit> {
+    session
+        .outline()
+        .iter()
+        .filter(|o| o.name == call.name && CALLABLE.contains(&o.kind))
+        .map(|o| {
+            let mut hit = CompletionHit::from_outline(o, 0.0, None);
+            if hit.signature.is_empty() {
+                hit.signature = declaration_head(session.replica(), o.start_byte as usize);
+            }
+            hit
+        })
+        .collect()
+}
+
+fn callable(hits: Vec<CompletionHit>) -> impl Iterator<Item = CompletionHit> {
+    hits.into_iter().filter(|h| CALLABLE.contains(&h.item_kind))
 }
 
 fn declaration_head(text: &str, start: usize) -> String {

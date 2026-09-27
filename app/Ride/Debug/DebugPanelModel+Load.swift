@@ -2,7 +2,7 @@ import Foundation
 
 extension DebugPanelModel {
     func reloadThreads() {
-        load(key: "threads") { engine, id in
+        load(key: "threads", scoped: false) { engine, id in
             (try? engine.debugThreads(sessionId: id)) ?? []
         } apply: { [weak self] list in
             self?.apply(threads: list)
@@ -30,7 +30,7 @@ extension DebugPanelModel {
             return
         }
         let page = tree.nextPage(of: node.id)
-        load(key: "children.\(node.id).\(page.start)") { engine, id in
+        load(key: "children.\(node.reference).\(page.start)") { engine, id in
             (try? engine.debugVariables(
                 sessionId: id,
                 variablesReference: node.reference,
@@ -117,16 +117,17 @@ extension DebugPanelModel {
 
     private func load<T>(
         key: String,
+        scoped: Bool = true,
         work: @escaping (Engine, UInt64) -> T,
         apply: @escaping (T) -> Void
     ) {
-        guard let session = session(), let generation = beginLoad(key) else {
+        guard let session = session(), let token = beginLoad(key, scoped: scoped) else {
             return
         }
         DebugPanelModel.queue.async {
             let value = work(session.engine, session.id)
             DispatchQueue.main.async { [weak self] in
-                guard let self, self.finishLoad(key, generation: generation) else {
+                guard let self, self.finishLoad(key, token: token) else {
                     return
                 }
                 apply(value)

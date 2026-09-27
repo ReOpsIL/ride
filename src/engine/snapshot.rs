@@ -1,35 +1,15 @@
-use std::collections::HashSet;
-use std::path::Path;
 use std::sync::Arc;
-
-use tantivy::{Index, IndexReader};
 
 use crate::discover::SystemIncludes;
 use crate::ffi::{CompletionQuery, WorkspaceInfo};
 use crate::highlight::{
     Lang, LiteralState, LocalHits, LocalQuery, Site, SiteAt, SourceScope, literal_state,
 };
-use crate::query::IndexSrc;
 
+use super::catalog::Catalog;
 use super::headers::Header;
 use super::reach::Reach;
 use super::{Engine, Inner};
-
-pub struct Catalog {
-    pub index_dir: String,
-    pub index: Option<Index>,
-    pub reader: Option<IndexReader>,
-    pub overlay: HashSet<String>,
-}
-
-impl Catalog {
-    pub fn src(&self) -> IndexSrc<'_> {
-        match (self.index.as_ref(), self.reader.as_ref()) {
-            (Some(index), Some(reader)) => IndexSrc::Live(index, reader),
-            _ => IndexSrc::Dir(Path::new(&self.index_dir)),
-        }
-    }
-}
 
 pub struct Snapshot {
     pub lang: Lang,
@@ -117,13 +97,8 @@ fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
         reach: session.map(|s| Reach::take(i, q.session_id, s)),
         imports: session.map(|s| s.imports()).unwrap_or_default(),
         system_includes: i.system_includes.clone(),
-        catalog: Catalog {
-            index_dir: i.config.index_dir.clone(),
-            index: i.index.clone(),
-            reader: i.reader.clone(),
-            overlay: i.overlay.clone(),
-        },
-        workspace: i.workspace.clone(),
+        catalog: Catalog::of(i),
+        workspace: i.workspace.as_ref().map(|w| w.info.clone()),
     })
 }
 

@@ -1,7 +1,7 @@
 use crate::ffi::{ByteRange, ExtractPlan, TextEdit};
 use crate::highlight::{BufferSession, Lang};
+use crate::text::indent_at;
 
-use super::indent::indent_of;
 use super::name::placeholder;
 
 const BASE: &str = "value";
@@ -20,7 +20,7 @@ pub fn extract_variable(
     let expr = text.get(spans.expr.start_byte as usize..spans.expr.end_byte as usize)?;
     let name = placeholder(text, BASE);
     let anchor = spans.statement.start_byte;
-    let indent = indent_of(text, anchor as usize);
+    let indent = indent_at(text, anchor as usize);
     let declaration = format!("{keyword} {name} = {expr};\n{indent}");
     let select_start = anchor + keyword.len() as u32 + 1;
     let select_end = select_start + name.len() as u32;
@@ -49,7 +49,7 @@ pub fn extract_variable(
 fn keyword(lang: Lang) -> Option<&'static str> {
     match lang {
         Lang::Rust => Some("let"),
-        Lang::C | Lang::Cpp => Some("auto"),
+        Lang::Cpp => Some("auto"),
         _ => None,
     }
 }

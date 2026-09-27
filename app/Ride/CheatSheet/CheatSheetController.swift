@@ -157,7 +157,7 @@ final class CheatSheetController {
             guard let self, let document, let view else {
                 return
             }
-            CheatSheetFetch.run(document: document, view: view, all: false) { [weak self] resp in
+            CheatSheetFetch.run(document: document, view: view) { [weak self] resp in
                 self?.received(resp, id: id, view: view)
             }
         }

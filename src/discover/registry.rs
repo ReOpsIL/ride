@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use crate::extract::{Scope, parse_toml, workspace_members};
 use crate::skip::skip_dir_name;
 
+use super::model::DiscoveredCrate;
 use super::name_version::split_name_version;
-use super::{CrateTarball, DiscoveredCrate};
 
 pub fn scan_registry_src(cargo_home: &Path) -> Vec<DiscoveredCrate> {
     let src = cargo_home.join("registry/src");
@@ -35,35 +35,6 @@ pub fn scan_registry_src(cargo_home: &Path) -> Vec<DiscoveredCrate> {
                 version,
                 path: crate_path,
                 scope: Scope::Cache,
-            });
-        }
-    }
-    out
-}
-
-pub fn scan_registry_cache(cargo_home: &Path) -> Vec<CrateTarball> {
-    let cache = cargo_home.join("registry/cache");
-    let Ok(sources) = fs::read_dir(&cache) else {
-        return Vec::new();
-    };
-    let mut out = Vec::new();
-    for source in sources.flatten() {
-        let path = source.path();
-        if !path.is_dir() {
-            continue;
-        }
-        let Ok(files) = fs::read_dir(&path) else {
-            continue;
-        };
-        for entry in files.flatten() {
-            let file = entry.path();
-            if file.extension().and_then(|e| e.to_str()) != Some("crate") {
-                continue;
-            }
-            let file_name = entry.file_name().to_string_lossy().to_string();
-            out.push(CrateTarball {
-                file_name,
-                path: file,
             });
         }
     }

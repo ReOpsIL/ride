@@ -4,6 +4,7 @@ extension CheckService {
     static let liveDelay: TimeInterval = 0.8
     static let livePrefix = "live:"
     static let liveCargoPrefix = "live-cargo:"
+    static let tidyPrefix = "tidy:"
 
     func scheduleLive(file: URL, text: String, delay: TimeInterval = CheckService.liveDelay) {
         let path = file.path
@@ -31,6 +32,14 @@ extension CheckService {
     func setLive(path: String, diagnostics items: [StoredDiagnostic], generation gen: UInt64) {
         guard generations[Self.livePrefix + path] == gen else { return }
         setLive(path: path, diagnostics: items)
+    }
+
+    func setTidy(path: String, diagnostics items: [StoredDiagnostic], generation gen: UInt64) {
+        guard generations[Self.tidyPrefix + path] == gen else { return }
+        store.replaceTidy(path: path, with: items)
+        hasRun = true
+        publish()
+        onLiveFinished?(diagnostics)
     }
 
     private func runLive(path: String, text: String) {

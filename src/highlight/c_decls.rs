@@ -19,6 +19,7 @@ pub enum Declared<'a> {
 pub fn declared<'a>(tree: &'a Tree, text: &str, ident: Node<'_>) -> Option<Declared<'a>> {
     let name = node_text(ident, text);
     let at = ident.start_byte();
+    let mut visible: Option<Node<'a>> = None;
     let mut before: Option<Node<'a>> = None;
     let mut first: Option<Node<'a>> = None;
     each_node(tree.root_node(), &mut |node| {
@@ -26,16 +27,53 @@ pub fn declared<'a>(tree: &'a Tree, text: &str, ident: Node<'_>) -> Option<Decla
             return;
         }
         first.get_or_insert(node);
-        if node.start_byte() < at && before.is_none_or(|b| node.start_byte() > b.start_byte()) {
+        if node.start_byte() >= at {
+            return;
+        }
+        let later = |b: Node<'_>| node.start_byte() > b.start_byte();
+        if before.is_none_or(later) {
             before = Some(node);
         }
+        if in_scope(node, at) && visible.is_none_or(later) {
+            visible = Some(node);
+        }
     });
-    let declaration = before.or(first)?;
+    let declaration = visible.or(before).or(first)?;
     let ty = declaration.child_by_field_name("type")?;
     if is_auto(ty, text) {
         return initializer(declaration, text, &name).map(Declared::Init);
     }
     type_name(ty, text).map(Declared::Type)
+}
+
+const SCOPES: &[&str] = &[
+    "compound_statement",
+    "for_statement",
+    "for_range_loop",
+    "function_definition",
+    "lambda_expression",
+    "field_declaration_list",
+    "declaration_list",
+    "translation_unit",
+];
+
+fn in_scope(declaration: Node<'_>, at: usize) -> bool {
+    let parameter = declaration.kind().ends_with("parameter_declaration");
+    let mut current = if declaration.kind() == "for_range_loop" {
+        Some(declaration)
+    } else {
+        declaration.parent()
+    };
+    while let Some(scope) = current {
+        let kind = scope.kind();
+        let owns = SCOPES.contains(&kind)
+            && (!parameter || matches!(kind, "function_definition" | "lambda_expression"));
+        if owns {
+            return scope.start_byte() <= at && at <= scope.end_byte();
+        }
+        current = scope.parent();
+    }
+    true
 }
 
 fn is_auto(ty: Node<'_>, text: &str) -> bool {

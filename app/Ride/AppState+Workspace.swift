@@ -46,41 +46,68 @@ extension AppState {
         panel.allowsMultipleSelection = false
         panel.canCreateDirectories = false
         panel.message = "Open a Cargo project or folder"
-        guard panel.runModal() == .OK, let url = panel.url else {
-            return
+        if let url = ModalPanels.chooseURL(panel) {
+            open(url)
         }
-        open(url)
     }
 
-    func open(_ url: URL) {
-        flushWorkspace()
-        guard closeAll() else {
-            return
+    @discardableResult
+    func open(_ url: URL) -> Bool {
+        guard releaseWorkspace() else {
+            return false
         }
-        stopRun()
-        terminals.closeAll()
         restoringWorkspace = true
         workspaceRoot = url.standardizedFileURL
-        selectedURL = nil
         cursorLine = 1
         cursorColumn = 1
-        expanded = []
         recent = recents.adding(url, to: recent)
-        recents.save(recent)
-        quickFiles = []
-        showQuickOpen = false
-        CompletionSession.shared.reset()
+        if !DemoLaunch.isDemo {
+            recents.save(recent)
+        }
         reloadTree()
         watcher.start(path: url.path)
         RideEngineClient.shared.openWorkspace(url) { [weak self] in
             self?.indexOpenBuffers()
         }
         projectModel.load(workspace: url)
-        git.clear()
         git.refresh(root: url, delay: 0)
         restoreOpenedWorkspace()
         restoringWorkspace = false
         scheduleWorkspaceSave()
+        return true
+    }
+
+    func closeWorkspace() {
+        if releaseWorkspace() {
+            workspaceRoot = nil
+        }
+    }
+
+    private func releaseWorkspace() -> Bool {
+        flushWorkspace()
+        guard closeAll() else {
+            return false
+        }
+        stopRun()
+        terminals.closeAll()
+        watcher.stop()
+        RideEngineClient.shared.closeWorkspace()
+        CompletionSession.shared.reset()
+        overlay = nil
+        rootNodes = []
+        selectedURL = nil
+        expanded = []
+        quickFiles = []
+        git.clear()
+        projectModel.clear()
+        return true
+    }
+
+    func confirmQuit() -> Bool {
+        buffers.filter(\.isDirty).allSatisfy { buffer in
+            activeID = buffer.id
+            return confirmClose(buffer)
+        }
     }
 
     func restoreOpenedWorkspace() {
@@ -90,103 +117,13 @@ extension AppState {
         restoreWorkspace(saved)
     }
 
-    func captureWorkspace() -> WorkspaceState {
-        if !restoringWorkspace {
-            EditorPanes.shared.all.forEach { $0.capture() }
-        }
-        return WorkspaceState(
-            tabs: buffers.compactMap(tabState(of:)),
-            focusedPath: activeBuffer?.fileURL?.standardizedFileURL.path,
-            layout: currentLayout(),
-            split: capturedSplit(),
-            runConfigs: runConfigs,
-            selectedTarget: projectModel.selected?.name,
-            breakpoints: DebugController.shared.breakpoints,
-            watches: DebugPanelModel.shared.expressions
-        )
-    }
-
-    func restoreWorkspace(_ saved: WorkspaceState) {
-        restoringWorkspace = true
-        workspaceStore.cancelPending()
-        for buffer in buffers {
-            SessionService.shared.close(buffer)
-            history.forget(bufferID: buffer.id)
-        }
-        applyLayout(saved.layout)
-        runConfigs = saved.runConfigs
-        DebugController.shared.breakpoints = saved.breakpoints
-        DebugPanelModel.shared.restore(watches: saved.watches)
-        projectModel.restoreSelection(saved.selectedTarget)
-        let restored = saved.tabs.compactMap(buffer(from:))
-        buffers = restored
-        restoreSplit(saved, restored)
-        syncSplitFocus()
-        cursorLine = 1
-        cursorColumn = 1
-        refreshPreview()
-        restoringWorkspace = false
-        scheduleWorkspaceSave()
-    }
-
-    private func capturedSplit() -> SplitState? {
-        guard splitLayout.isSplit else {
-            return nil
-        }
-        return SplitState.from(
-            ratio: splitLayout.ratio,
-            panes: paneLayout.panes,
-            focused: paneLayout.focusedID,
-            pathOf: { buffer($0)?.fileURL?.standardizedFileURL.path }
-        )
-    }
-
-    private func restoreSplit(_ saved: WorkspaceState, _ restored: [BufferDocument]) {
-        splitLayout = SplitLayout.restore(saved.split)
-        guard let split = saved.split, splitLayout.isSplit else {
-            paneLayout.reset(tabs: restored.map(\.id), active: focusedID(saved.focusedPath, in: restored))
+    func closeFrontmost() {
+        if let key = NSApp.keyWindow, MainWindow.isOther(key) {
+            key.performClose(nil)
             return
         }
-        let ids = Dictionary(uniqueKeysWithValues: restored.compactMap { buffer in
-            buffer.fileURL.map { ($0.standardizedFileURL.path, buffer.id) }
-        })
-        paneLayout.restorePanes(split.tabs(ids: ids, leftover: restored.map(\.id)), focused: split.focused)
-        if let focused = focusedID(saved.focusedPath, in: restored) {
-            paneLayout.select(focused)
+        if let id = activeID {
+            closeBuffer(id)
         }
-    }
-
-    private func tabState(of buffer: BufferDocument) -> TabState? {
-        guard let path = buffer.fileURL?.standardizedFileURL.path else {
-            return nil
-        }
-        return TabState(
-            path: path,
-            caretByte: buffer.caretByte,
-            scrollLine: buffer.scrollLine,
-            folds: buffer.foldStarts
-        )
-    }
-
-    private func buffer(from tab: TabState) -> BufferDocument? {
-        let url = URL(fileURLWithPath: tab.path).standardizedFileURL
-        guard WorkspaceFS.isFile(url) else {
-            return nil
-        }
-        let buffer = BufferDocument(url: url)
-        let clamped = tab.clamped(toUtf8Count: buffer.text.utf8.count)
-        buffer.caretByte = clamped.caretByte
-        buffer.scrollLine = clamped.scrollLine
-        buffer.foldStarts = clamped.folds
-        buffer.isReadOnly = CatalogPath.isCatalog(url) || BufferLanguage.isReadOnly(url)
-        return buffer
-    }
-
-    private func focusedID(_ path: String?, in restored: [BufferDocument]) -> UUID? {
-        guard let path else {
-            return nil
-        }
-        let standard = URL(fileURLWithPath: path).standardizedFileURL.path
-        return restored.first { $0.fileURL?.standardizedFileURL.path == standard }?.id
     }
 }

@@ -2,52 +2,47 @@ import AppKit
 
 extension EditorCommands {
     static func selectLine() {
-        run { target in
+        run(editing: false) { target in
             let line = (target.text as NSString).lineRange(for: target.selection)
             return EditResult(changes: [], selection: line)
         }
     }
 
     static func selectWord() {
-        run { target in
+        run(editing: false) { target in
             let range = IdentifierRange.at(target.text as NSString, index: target.selection.location) ?? target.selection
             return EditResult(changes: [], selection: range)
         }
     }
 
     static func extendSelection() {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target(editing: false) else {
             return
         }
-        let text = target.text
-        let start = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(target.selection)))
-        let ranges = engine.enclosingRanges(sessionId: id, startByte: start, endByte: end)
+        let ranges = target.session {
+            $0.enclosingRanges(sessionId: $1, startByte: target.caretByte, endByte: target.selectionEndByte)
+        } ?? []
         guard let next = ranges.first else {
             return
         }
         target.view.selectionStack.append(target.selection)
-        let range = Utf16.nsRange(in: text, startByte: next.startByte, endByte: next.endByte)
-        target.view.setSelectedRange(range)
+        target.view.setSelectedRange(Utf16Map(target.text).nsRange(startByte: next.startByte, endByte: next.endByte))
     }
 
     static func shrinkSelection() {
-        guard let target = target(), let previous = target.view.selectionStack.popLast() else {
+        guard let target = target(editing: false), let previous = target.view.selectionStack.popLast() else {
             return
         }
         target.view.setSelectedRange(previous)
     }
 
     static func matchingBrace() {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target(editing: false), let pair = target.session({ $0.bracketPair(sessionId: $1, byte: target.caretByte) }) else {
             return
         }
-        let byte = UInt32(Utf16.utf8Offset(in: target.text, utf16: target.selection.location))
-        guard let pair = engine.bracketPair(sessionId: id, byte: byte) else {
-            return
-        }
-        let open = Utf16.utf16Offset(in: target.text, utf8: Int(pair.openByte))
-        let close = Utf16.utf16Offset(in: target.text, utf8: Int(pair.closeByte))
+        let map = Utf16Map(target.text)
+        let open = map.utf16(byte: Int(pair.openByte))
+        let close = map.utf16(byte: Int(pair.closeByte))
         let caret = target.selection.location
         let destination = abs(caret - open) <= 1 ? close : open
         target.state.recordLocation()

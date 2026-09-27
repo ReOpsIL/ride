@@ -13,21 +13,9 @@
 
 # Must-have follow-ups (2026-09-10, see plan/roadmap/must_have.md)
 
-- Folding: gutter chevrons and a fold-state indicator; folds are only reachable from the Code menu and ⌥⌘← / ⌥⌘→ today
-- Matching brace: highlight the pair under the caret as a rendering attribute (the jump exists)
-- Reformat Selection (`clang-format --lines`, rustfmt on the enclosing item), Move Statement, Complete Current Statement
 - Replace in Project with a preview sheet
 - Project tree: ⌫ deletes and ↩ renames the selected node; Recent Locations picker
 - Line endings: a preference to convert CRLF to LF on save (today the original ending is preserved)
-
-# Audit follow-ups (2026-09-17, bound-host review)
-
-- Breakpoints are stored as absolute line numbers (`Breakpoints.swift`) and never shifted by edits; `EditorCoordinator.textDidChange` shifts folds and underlines but not breakpoints, so inserting lines above a breakpoint moves it onto a different statement. Shift them through the same edit, then re-sync to the debugger.
-- Format, Reload and Replace in Project replace the whole text through `EditorHostView.replaceText`, which clears the document's undo stack instead of registering an undoable step. Route whole-text replacement through `replaceText(in:with:)` so ⌘Z restores the pre-format text.
-- `document.highlights` keeps engine byte offsets and is never shifted after an edit (`SessionService+Paint.swift`), so `HighlightApply.restyle` on re-attach paints stale ranges until the next engine paint. Shift spans with the edit or drop them on edit.
-- UsageVision ("N usages" editor overlay) has a pure model and tests but no view (see `plan/roadmap/next-1.3.md`).
-- Files over 200 lines to split: `SelfTestSteps+Cpp.swift`, `SelfTestSteps+Rust.swift`, `RideTextView.swift` (apply* helpers), `AppState.swift` (overlay flags), `PeekPanel.swift` (`PeekChrome`), `RootView.swift` (`DetailColumn`), `Buffers+File.swift` (new/open/close workspace).
-- 17 copies of the `guard let engine = RideEngineClient.shared.engine` + background queue + main hop prologue; add `RideEngineClient.withEngine(_:then:)`.
 
 # Run output (added 2026-09-20, dropped from 1.3-1e at merge)
 
@@ -37,7 +25,6 @@
 # Editor undo follow-ups (2026-09-20, from the undo flake fix)
 
 - `RenameApply.applyBackground` commits through `host.bind(doc)`, which assigns `textView.string` while the document is bound; that rewrite bypasses the edit path and leaves every NSTextView undo record on the stack pointing at ranges of the old text. Route it through `EditorHostView.replaceText` (or drop the records) so a background rename stays undoable.
-- Format, Reload and Replace in Project still clear the undo stack (see the bound-host review item above); they now share `applyChanges`, so registering them as one step is a small change.
 
 # Editor (added 2026-09-20, P-6 review)
 
@@ -56,3 +43,28 @@
 - Build diagnostics are one slot (`DiagnosticStore.build`): building project B drops the build problems of project A. Key them by project root like cargo check diagnostics.
 - Cargo diagnostics of a project that disappears on rescan stay in the Problems panel until the app restarts; drop the slots of roots no longer listed.
 - Run configurations are keyed by target name only; two projects with a target of the same name share one configuration. Key them by project root and target.
+
+# Full review follow-ups (2026-09-27)
+
+- `xcodebuild test` from an empty derived-data folder fails ("Unable to resolve module dependency 'Ride'"): ten RideTests files `@testable import Ride` but RideTests has no target dependency on Ride. CI runs `build test` so it passes there. Add the dependency, or drop the imports and compile those files into RideTests.
+- Debugger: `debugLaunch` still runs on the main thread; continue/step stay synchronous on purpose so a stop event cannot arrive before the running state is set. The engine should emit `Running` itself after a continue/step response, then these calls can leave the main thread.
+- Breakpoints do not move with a renamed file (tree rename updates open tabs only).
+- `rebind()` does not give the engine session the new path when a renamed file keeps its language.
+- `DebugChain.expect` uses the previous `runId` when a run is queued behind a running one.
+- Layout panel sizes live in both `Preferences` and `LayoutState` (defaults are now only in `LayoutState.defaults`); embedding `LayoutState` in `Preferences` needs flat coding to keep old prefs loading.
+- `HierarchyQuery.children` and `TestMarkers` still read sessions off `SessionService.read`.
+- Slow workspace reads (usages, hierarchy, definitions) can see edits made while they run and still show their results.
+- An auto-import is dropped when the user keeps typing before the engine replies.
+- Build diagnostics are not de-duplicated per build (`cargo test`/`--all-targets` compile the lib twice): `parse_cargo_line` is stateless per line, so dedupe in `BuildSession`/`DiagnosticStore`.
+- Cargo messages without a primary span (missing native library, some E-codes) are dropped; `Diagnostic.path` is required, so decide a Swift-side home for file-less diagnostics first.
+
+# Menu coverage follow-ups (2026-09-27, see docs/product/command-inventory.md)
+
+- Not reachable by the self-test yet: Install Tools › Install Selected and the tool checkboxes (would install software), Settings › Install `ride` command and Test connection (system install / network), AI answer panel header buttons, the project switcher (the demo samples hold one project each), real NSAlert buttons (steps answer through `DialogScript`), the SwiftTerm terminal itself (a probe view stands in).
+- Exception breakpoint filter changes do not reach a live debug session (the engine has no call to set exception breakpoints mid-session), and filter states are not saved in the workspace.
+- The Pause step accepts any stop reason except breakpoint/step because lldb-dap reports a pause as "exception"; map it to a pause state in the engine's DAP layer.
+- Quick Documentation shows two rows (⌃J and F1): SwiftUI Commands have no alternate items; ⌃? needs Shift on US layouts.
+- C++ Generate offers members that already exist (the engine does not check).
+- Navigate › Go to Symbol in Project has no ⌘C copy-path test; there is no View item to reopen a hidden Hierarchy panel; Save All skips untitled buffers silently.
+- Two self-test key helpers do the same job: `SelfTestKeys` (KeyCombo glyphs, posts events) and `SelfTestKey` in `SelfTestKeyPress.swift` (fixed enum, sends to a view/sheet). Fold `SelfTestKey` into `SelfTestKeys`.
+- `DiagnosticTidyTests` and `DiagnosticStoreTidyTests` cover the same tidy slot from two angles; merge them.

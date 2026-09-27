@@ -58,20 +58,31 @@ extension AppState {
         guard let host = EditorPanes.shared.host(bound: buffer) else {
             return
         }
+        buffer.undo.manager.removeAllActions()
         apply(PendingText(text: buffer.text, disk: .clean), to: buffer, host: host)
     }
 
-    private func apply(_ pending: PendingText, to document: BufferDocument, host: EditorHostView) {
+    func replaceText(of buffer: BufferDocument, with text: String) {
+        if let host = EditorPanes.shared.host(bound: buffer) {
+            replaceShown(text, host: host)
+        } else {
+            buffer.replaceDetached(text)
+            SessionService.shared.replaceText(of: buffer, with: text)
+        }
+    }
+
+    private func replaceShown(_ text: String, host: EditorHostView) {
         let view = host.textView
         let line = view.lineIndex().line(at: view.selectedRange().location)
-        document.text = pending.text
-        host.replaceText(pending.text)
+        host.replaceText(text)
         host.jump(toLine: line, focus: host === EditorPanes.shared.focused)
-        SessionService.shared.resync(document: document, view: view)
+    }
+
+    private func apply(_ pending: PendingText, to document: BufferDocument, host: EditorHostView) {
+        replaceShown(pending.text, host: host)
         switch pending.disk {
         case .save:
-            try? document.save(from: view, lineEndings: prefs.lineEndings)
-            didSave(document, allowFormat: false)
+            persist(document, allowFormat: false)
         case .dirty:
             document.isDirty = true
             scheduleAutoSave(document)

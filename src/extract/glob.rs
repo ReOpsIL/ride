@@ -1,3 +1,4 @@
+use super::crate_names::{root_of, same_crate};
 use super::external::External;
 use super::item::{ItemDoc, Visibility, join_path};
 use super::reexport::{Reexport, dealias, exported};
@@ -74,7 +75,7 @@ fn local_children(
         .collect()
 }
 
-fn mirror(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, path: &str) -> ItemDoc {
+pub(super) fn mirror(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, path: &str) -> ItemDoc {
     let mut doc = src.clone();
     doc.path = path.to_string();
     doc.visibility = re.vis;
@@ -95,12 +96,4 @@ fn rerooted(re: &Reexport, target: &str, path: &str) -> String {
 
 fn host_crate(items: &[ItemDoc]) -> &str {
     items.first().map(|i| i.crate_name.as_str()).unwrap_or("")
-}
-
-fn same_crate(a: &str, b: &str) -> bool {
-    a.replace('-', "_") == b.replace('-', "_")
-}
-
-fn root_of(path: &str) -> &str {
-    path.split("::").next().unwrap_or(path)
 }

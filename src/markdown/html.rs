@@ -1,56 +1,89 @@
-use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, html};
+use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd, html};
 
 use crate::highlight::Lang;
 
 use super::code::code_to_html;
+use super::lines::LineIndex;
+
+struct Fence {
+    lang: Option<Lang>,
+    text: String,
+}
+
+struct Renderer<'a> {
+    lines: LineIndex,
+    depth: usize,
+    fence: Option<Fence>,
+    events: Vec<Event<'a>>,
+}
 
 pub fn render(text: &str) -> String {
-    let mut options = Options::empty();
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TASKLISTS);
-    options.insert(Options::ENABLE_FOOTNOTES);
-    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
-    let lines = LineIndex::new(text);
-    let mut depth = 0usize;
-    let mut code_lang: Option<Lang> = None;
-    let mut in_fence = false;
-    let mut events: Vec<Event<'_>> = Vec::new();
-    for (event, range) in Parser::new_ext(text, options).into_offset_iter() {
+    let mut renderer = Renderer {
+        lines: LineIndex::new(text),
+        depth: 0,
+        fence: None,
+        events: Vec::new(),
+    };
+    for (event, range) in Parser::new_ext(text, options()).into_offset_iter() {
+        renderer.feed(event, range.start);
+    }
+    let mut out = String::with_capacity(text.len() * 2);
+    html::push_html(&mut out, renderer.events.into_iter());
+    out
+}
+
+fn options() -> Options {
+    Options::ENABLE_TABLES
+        | Options::ENABLE_STRIKETHROUGH
+        | Options::ENABLE_TASKLISTS
+        | Options::ENABLE_FOOTNOTES
+        | Options::ENABLE_HEADING_ATTRIBUTES
+}
+
+impl<'a> Renderer<'a> {
+    fn feed(&mut self, event: Event<'a>, start: usize) {
         match &event {
-            Event::Start(tag) => {
-                if depth == 0 && is_block(tag) {
-                    let line = lines.line_at(range.start);
-                    events.push(Event::Html(
-                        format!("<span class=\"ride-line\" data-line=\"{line}\"></span>").into(),
-                    ));
-                }
-                if let Tag::CodeBlock(CodeBlockKind::Fenced(info)) = tag {
-                    code_lang = Lang::for_fence(info);
-                    in_fence = true;
-                }
-                depth += 1;
-            }
-            Event::End(_) => {
-                depth = depth.saturating_sub(1);
-                if in_fence && matches!(event, Event::End(pulldown_cmark::TagEnd::CodeBlock)) {
-                    code_lang = None;
-                    in_fence = false;
-                }
-            }
+            Event::Start(tag) => self.open(tag, start),
+            Event::End(TagEnd::CodeBlock) => self.close_fence(),
+            Event::End(_) => self.depth = self.depth.saturating_sub(1),
             Event::Text(code) => {
-                if let Some(lang) = code_lang {
-                    events.push(Event::Html(code_to_html(lang, code).into()));
-                    continue;
+                if let Some(fence) = self.fence.as_mut().filter(|f| f.lang.is_some()) {
+                    fence.text.push_str(code);
+                    return;
                 }
             }
             _ => {}
         }
-        events.push(event);
+        self.events.push(event);
     }
-    let mut out = String::with_capacity(text.len() * 2);
-    html::push_html(&mut out, events.into_iter());
-    out
+
+    fn open(&mut self, tag: &Tag<'_>, start: usize) {
+        if self.depth == 0 && is_block(tag) {
+            let line = self.lines.line_at(start);
+            self.events.push(Event::Html(
+                format!("<span class=\"ride-line\" data-line=\"{line}\"></span>").into(),
+            ));
+        }
+        if let Tag::CodeBlock(CodeBlockKind::Fenced(info)) = tag {
+            self.fence = Some(Fence {
+                lang: Lang::for_fence(info),
+                text: String::new(),
+            });
+        }
+        self.depth += 1;
+    }
+
+    fn close_fence(&mut self) {
+        self.depth = self.depth.saturating_sub(1);
+        if let Some(Fence {
+            lang: Some(lang),
+            text,
+        }) = self.fence.take()
+        {
+            self.events
+                .push(Event::Html(code_to_html(lang, &text).into()));
+        }
+    }
 }
 
 fn is_block(tag: &Tag<'_>) -> bool {
@@ -64,27 +97,4 @@ fn is_block(tag: &Tag<'_>) -> bool {
             | Tag::BlockQuote(_)
             | Tag::HtmlBlock
     )
-}
-
-struct LineIndex {
-    starts: Vec<usize>,
-}
-
-impl LineIndex {
-    fn new(text: &str) -> Self {
-        let mut starts = vec![0];
-        for (i, b) in text.bytes().enumerate() {
-            if b == b'\n' {
-                starts.push(i + 1);
-            }
-        }
-        Self { starts }
-    }
-
-    fn line_at(&self, byte: usize) -> usize {
-        match self.starts.binary_search(&byte) {
-            Ok(i) => i + 1,
-            Err(i) => i,
-        }
-    }
 }

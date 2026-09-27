@@ -3,7 +3,7 @@ import AppKit
 extension AppState {
     func applyProjectReplace() {
         let model = projectFind
-        let query = model.query.trimmingCharacters(in: .whitespaces)
+        let query = model.query
         let options = model.options
         let hits = ProjectReplace.refresh(model.chosenHits, query: query, options: options, text: liveText)
         let planned = ProjectReplace.edits(
@@ -66,16 +66,12 @@ extension AppState {
         }
         let previous = buffer.text
         let dirty = buffer.isDirty
-        buffer.text = text
-        do {
-            try buffer.save(from: nil, lineEndings: prefs.lineEndings)
-        } catch {
-            buffer.text = previous
+        replaceText(of: buffer, with: text)
+        guard persist(buffer, allowFormat: false) else {
+            replaceText(of: buffer, with: previous)
             buffer.isDirty = dirty
             return false
         }
-        refreshView(of: buffer)
-        didSave(buffer, allowFormat: false)
         return true
     }
 

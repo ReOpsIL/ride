@@ -9,14 +9,20 @@ final class DividerGrip: NSView {
         return chrome.bgBase.blended(withFraction: 0.7, of: chrome.textSecondary) ?? chrome.textSecondary
     }
     private weak var split: NSSplitView?
+    private var index = 0
     private var observer: NSObjectProtocol?
 
     static func install(in split: NSSplitView) {
-        if split.subviews.contains(where: { $0 is DividerGrip }) {
-            return
+        let present = Set(split.subviews.compactMap { ($0 as? DividerGrip)?.index })
+        for index in 0 ..< max(split.arrangedSubviews.count - 1, 0) where !present.contains(index) {
+            add(to: split, index: index)
         }
+    }
+
+    private static func add(to split: NSSplitView, index: Int) {
         let grip = DividerGrip(frame: .zero)
         grip.split = split
+        grip.index = index
         grip.wantsLayer = true
         grip.layer?.zPosition = 100
         split.addSubview(grip, positioned: .above, relativeTo: nil)
@@ -33,13 +39,13 @@ final class DividerGrip: NSView {
     override var isFlipped: Bool { true }
 
     func reposition() {
-        guard let split, split.arrangedSubviews.count > 1 else {
+        guard let split, split.arrangedSubviews.count > index + 1 else {
             isHidden = true
             return
         }
         isHidden = false
-        let a = split.arrangedSubviews[0].frame
-        let b = split.arrangedSubviews[1].frame
+        let a = split.arrangedSubviews[index].frame
+        let b = split.arrangedSubviews[index + 1].frame
         let t = Self.thickness
         let l = Self.length
         if split.isVertical {

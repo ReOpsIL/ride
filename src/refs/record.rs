@@ -39,7 +39,6 @@ impl RefKind {
 pub struct RefRecord {
     pub name: String,
     pub kind: RefKind,
-    pub path: String,
     pub line: u32,
     pub byte_start: u32,
     pub byte_end: u32,

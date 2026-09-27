@@ -1,19 +1,39 @@
 use std::path::Path;
 
-use crate::extract::{CrateContext, Scope, extract_source};
+use tree_sitter::Tree;
+
+use crate::extract::{CrateContext, ItemDoc, Scope, extract_parsed, extract_source};
 use crate::ffi::{ItemKind, OutlineItem};
 
+const MODULE: &str = "buf";
+
 pub fn from_source(text: &str) -> Option<Vec<OutlineItem>> {
-    let ctx = CrateContext {
-        crate_name: "buf".into(),
+    let items = extract_source(text, &context(), &[MODULE.into()]).ok()?;
+    Some(outline(items))
+}
+
+pub fn from_tree(tree: &Tree, text: &str) -> Vec<OutlineItem> {
+    outline(extract_parsed(
+        tree.root_node(),
+        text,
+        &context(),
+        &[MODULE.into()],
+    ))
+}
+
+fn context() -> CrateContext {
+    CrateContext {
+        crate_name: MODULE.into(),
         crate_version: "0.0.0".into(),
         crate_root: Path::new("<mem>").to_path_buf(),
         edition: None,
         features: Vec::new(),
         scope: Scope::Workspace,
-    };
-    let items = extract_source(text, &ctx, &["buf".into()]).ok()?;
-    let outline: Vec<OutlineItem> = items
+    }
+}
+
+fn outline(items: Vec<ItemDoc>) -> Vec<OutlineItem> {
+    items
         .into_iter()
         .filter(|i| {
             matches!(
@@ -40,6 +60,5 @@ pub fn from_source(text: &str) -> Option<Vec<OutlineItem>> {
             signature: i.signature,
             doc: i.doc_first_paragraph,
         })
-        .collect();
-    Some(outline)
+        .collect()
 }

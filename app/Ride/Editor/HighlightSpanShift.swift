@@ -1,17 +1,13 @@
 import Foundation
 
-extension HighlightSpan: ByteSpan {}
+extension HighlightSpan: ByteSpan {
+    func moved(_ start: UInt32, _ end: UInt32) -> HighlightSpan {
+        HighlightSpan(startByte: start, endByte: end, capture: capture)
+    }
+}
 
 enum HighlightShift {
-    static func apply(document: BufferDocument, edit: InputEditFfi) {
-        document.highlights = ByteSpanShift.shifted(
-            document.highlights,
-            start: edit.startByte,
-            oldEnd: edit.oldEndByte,
-            newEnd: edit.newEndByte,
-            rebuild: { span, start, end in
-                HighlightSpan(startByte: start, endByte: end, capture: span.capture)
-            }
-        )
+    static func apply(document: BufferDocument, edit: ByteEdit) {
+        document.highlights = edit.shifted(document.highlights) { $0.moved($1, $2) }
     }
 }

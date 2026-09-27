@@ -1,6 +1,12 @@
 import Foundation
 
 struct BreakpointMark: Codable, Equatable {
+    private enum CodingKeys: String, CodingKey {
+        case line
+        case condition
+        case hitCondition
+    }
+
     var line: UInt32
     var condition: String?
     var hitCondition: String?
@@ -18,7 +24,7 @@ struct BreakpointMark: Codable, Equatable {
         line = try c.decodeIfPresent(UInt32.self, forKey: .line) ?? 1
         condition = try c.decodeIfPresent(String.self, forKey: .condition)
         hitCondition = try c.decodeIfPresent(String.self, forKey: .hitCondition)
-        verified = try c.decodeIfPresent(Bool.self, forKey: .verified) ?? false
+        verified = false
     }
 }
 
@@ -77,8 +83,15 @@ struct Breakpoints: Codable, Equatable {
         replace(path: path, marks: marks(path: path).filter { $0.line != line })
     }
 
-    mutating func removeAll(path: String) {
-        files[path] = nil
+    mutating func removeAll(under directory: String) {
+        let prefix = directory.hasSuffix("/") ? directory : directory + "/"
+        files = files.filter { path, _ in path != directory && !path.hasPrefix(prefix) }
+    }
+
+    mutating func unverifyAll() {
+        for path in paths {
+            verify(path: path, verified: [])
+        }
     }
 
     mutating func edit(path: String, line: UInt32, condition: String?, hitCondition: String?) {

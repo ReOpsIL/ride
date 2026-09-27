@@ -77,10 +77,6 @@ struct ProjectReplacePreview: View {
     }
 
     private func select(_ on: Bool) {
-        if on {
-            model.included = Set(model.hits.map(\.file))
-        } else {
-            model.included = []
-        }
+        model.includeAll(on)
     }
 }

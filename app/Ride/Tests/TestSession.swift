@@ -16,7 +16,11 @@ final class TestSession {
     }
 
     func cancel() {
+        guard state.isActive else {
+            return
+        }
         state.cancel()
+        TestRunStore.shared.finish("stopped")
     }
 
     func line(runId: Int, _ line: String) -> String? {

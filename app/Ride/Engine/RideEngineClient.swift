@@ -10,6 +10,8 @@ final class RideEngineClient: ObservableObject {
     @Published var statusKnown = false
 
     private(set) var engine: Engine?
+    private(set) var openRoot: URL?
+    private let workspaceQueue = DispatchQueue(label: "dev.ride.workspace", qos: .userInitiated)
     private var listener: StatusForwarder?
     let indexDir: URL
 
@@ -56,12 +58,14 @@ final class RideEngineClient: ObservableObject {
     }
 
     func openWorkspace(_ url: URL, then completion: (() -> Void)? = nil) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self, let engine = self.engine else {
-                return
-            }
+        guard let engine else {
+            return
+        }
+        openRoot = url
+        let indexDir = indexDir
+        workspaceQueue.async {
             _ = try? engine.openWorkspace(path: url.path)
-            IndexerProcess.run(project: url, indexDir: self.indexDir)
+            IndexerProcess.run(project: url, indexDir: indexDir)
             if let completion {
                 DispatchQueue.main.async(execute: completion)
             }
@@ -69,7 +73,13 @@ final class RideEngineClient: ObservableObject {
     }
 
     func closeWorkspace() {
-        engine?.closeWorkspace()
+        guard let engine, openRoot != nil else {
+            return
+        }
+        openRoot = nil
+        workspaceQueue.async {
+            engine.closeWorkspace()
+        }
     }
 
     func apply(_ status: IndexStatus) {

@@ -58,10 +58,10 @@ fn declared(tree: &Tree, text: &str, ident: Node<'_>, depth: usize) -> Option<St
     let at = ident.start_byte();
     let mut best: Option<((bool, usize), Node<'_>)> = None;
     each_node(tree.root_node(), &mut |node| {
-        if node.start_byte() >= at || !declares(node, text, &name) {
+        if node.start_byte() >= at || encloses(node, at) || !declares(node, text, &name) {
             return;
         }
-        let in_scope = scope_of(node).is_some_and(|s| s.start_byte() <= at && at <= s.end_byte());
+        let in_scope = visible_range(node).is_some_and(|(start, end)| start <= at && at <= end);
         let key = (in_scope, node.start_byte());
         if best.is_none_or(|(prev, _)| prev < key) {
             best = Some((key, node));
@@ -98,16 +98,27 @@ fn binds(pattern: Node<'_>, text: &str, name: &str) -> bool {
     }
 }
 
-fn scope_of(decl: Node<'_>) -> Option<Node<'_>> {
+fn encloses(decl: Node<'_>, at: usize) -> bool {
+    decl.kind() == "let_declaration" && decl.end_byte() > at
+}
+
+fn visible_range(decl: Node<'_>) -> Option<(usize, usize)> {
     match decl.kind() {
-        "let_declaration" => decl.parent(),
-        "for_expression" => Some(decl),
-        "identifier" => decl.parent()?.parent(),
+        "let_declaration" => decl
+            .parent()
+            .map(|block| (decl.end_byte(), block.end_byte())),
+        "for_expression" => decl
+            .child_by_field_name("body")
+            .map(|body| (body.start_byte(), body.end_byte())),
+        "identifier" => decl
+            .parent()?
+            .parent()
+            .map(|closure| (closure.start_byte(), closure.end_byte())),
         _ => {
             let mut current = decl.parent();
             while let Some(parent) = current {
                 if FN_SCOPES.contains(&parent.kind()) {
-                    return Some(parent);
+                    return Some((parent.start_byte(), parent.end_byte()));
                 }
                 current = parent.parent();
             }

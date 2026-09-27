@@ -16,6 +16,7 @@ enum RunProjectKind: String, Codable, CaseIterable {
 
 struct RunConfig: Codable, Equatable {
     var target: String
+    var buildArgs: [String]
     var args: [String]
     var env: [String: String]
     var workingDir: String?
@@ -24,6 +25,7 @@ struct RunConfig: Codable, Equatable {
 
     init(
         target: String,
+        buildArgs: [String] = [],
         args: [String] = [],
         env: [String: String] = [:],
         workingDir: String? = nil,
@@ -31,6 +33,7 @@ struct RunConfig: Codable, Equatable {
         sanitizers: Set<Sanitizer> = []
     ) {
         self.target = target
+        self.buildArgs = buildArgs
         self.args = args
         self.env = env
         self.workingDir = workingDir
@@ -41,6 +44,7 @@ struct RunConfig: Codable, Equatable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         target = try c.decodeIfPresent(String.self, forKey: .target) ?? ""
+        buildArgs = try c.decodeIfPresent([String].self, forKey: .buildArgs) ?? []
         args = try c.decodeIfPresent([String].self, forKey: .args) ?? []
         env = try c.decodeIfPresent([String: String].self, forKey: .env) ?? [:]
         workingDir = try c.decodeIfPresent(String.self, forKey: .workingDir)

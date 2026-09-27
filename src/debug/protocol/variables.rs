@@ -49,10 +49,6 @@ pub struct Variable {
 }
 
 impl Variable {
-    pub fn expandable(&self) -> bool {
-        self.variables_reference != 0
-    }
-
     pub fn children_count(&self) -> u32 {
         self.named_variables.unwrap_or(0) + self.indexed_variables.unwrap_or(0)
     }
@@ -65,17 +61,6 @@ pub enum EvaluateContext {
     Hover,
     Repl,
     Variables,
-}
-
-impl EvaluateContext {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Watch => "watch",
-            Self::Hover => "hover",
-            Self::Repl => "repl",
-            Self::Variables => "variables",
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

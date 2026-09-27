@@ -35,18 +35,6 @@ pub struct SourceBreakpoint {
     pub log_message: Option<String>,
 }
 
-impl SourceBreakpoint {
-    pub fn line(line: u32) -> Self {
-        Self {
-            line,
-            column: None,
-            condition: None,
-            hit_condition: None,
-            log_message: None,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SetBreakpointsArguments {
@@ -111,13 +99,6 @@ pub struct ExceptionFilterOptions {
     pub filter_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub condition: Option<String>,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SetExceptionBreakpointsResponseBody {
-    #[serde(default)]
-    pub breakpoints: Vec<Breakpoint>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

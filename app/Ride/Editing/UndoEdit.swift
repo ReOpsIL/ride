@@ -14,6 +14,17 @@ struct UndoEdit: Equatable {
         )
     }
 
+    static func inverse(replacing range: NSRange, with inserted: String, in before: String) -> UndoEdit? {
+        let replaced = (before as NSString).substring(with: range)
+        guard let edit = TextDiff.minimalEdit(from: replaced, to: inserted) else {
+            return nil
+        }
+        return UndoEdit(
+            range: NSRange(location: range.location + edit.range.location, length: (edit.text as NSString).length),
+            text: (replaced as NSString).substring(with: edit.range)
+        )
+    }
+
     var isTyping: Bool {
         text.isEmpty && range.length == 1
     }

@@ -16,6 +16,5 @@ dropping empty entries and duplicates while keeping the first position. `merged(
 
 - `app/Ride/Run/ProcessLookup.swift` finds a bare tool name (`cargo`, `clang-tidy`) in `ShellPath.directories`; names with a `/` resolve against the working directory or as given.
 - `ProcessRunner` sets the child's `PATH` to the resolved value before merging the configuration's own env, so cargo's build scripts, `cc` and rustup proxies see the same PATH the user's terminal has.
-- `AnthropicLogin` gives the `ant` CLI the same PATH.
 
 Anything else that spawns a tool by bare name goes through `ProcessLookup`; do not add per-call hardcoded directory lists.

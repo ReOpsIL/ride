@@ -1,32 +1,19 @@
 use crate::ffi::{ByteRange, ExtractPlan, TextEdit};
 use crate::highlight::{BufferSession, Lang};
 
+use super::uses::InlineUse;
+
 pub fn inline_variable(session: &BufferSession, cursor_byte: u32) -> Option<ExtractPlan> {
     if !matches!(session.lang(), Lang::Rust | Lang::C | Lang::Cpp) {
         return None;
     }
     let text = session.replica();
     let spans = session.inline_spans(cursor_byte)?;
-    let init = text.get(spans.init.start_byte as usize..spans.init.end_byte as usize)?;
-    let replacement = if spans.parenthesize {
-        format!("({init})")
-    } else {
-        init.to_string()
-    };
-    let name = text
-        .get(spans.name.start_byte as usize..spans.name.end_byte as usize)?
-        .to_string();
-    let occurrences = session.local_occurrences(spans.name.start_byte);
-    if occurrences.is_empty() {
-        return None;
-    }
-    let uses: Vec<&ByteRange> = occurrences
-        .iter()
-        .filter(|r| r.start_byte != spans.name.start_byte)
-        .collect();
-    let first = uses.first()?;
+    let init = slice(text, spans.init)?;
+    let name = slice(text, spans.name)?.to_string();
+    let first = spans.uses.first()?;
     let (removal_start, removal_end) = removal(text, spans.statement)?;
-    if removal_end > first.start_byte {
+    if removal_end > first.range.start_byte {
         return None;
     }
     let mut edits = vec![TextEdit {
@@ -35,22 +22,37 @@ pub fn inline_variable(session: &BufferSession, cursor_byte: u32) -> Option<Extr
         text: String::new(),
         caret_byte: removal_start,
     }];
-    for range in &uses {
-        edits.push(TextEdit {
-            start_byte: range.start_byte,
-            end_byte: range.end_byte,
-            text: replacement.clone(),
-            caret_byte: range.start_byte,
-        });
-    }
-    let select_start = first.start_byte.checked_sub(removal_end - removal_start)?;
-    let select_end = select_start + replacement.len() as u32;
+    edits.extend(spans.uses.iter().map(|u| TextEdit {
+        start_byte: u.range.start_byte,
+        end_byte: u.range.end_byte,
+        text: replacement(u, init, &name),
+        caret_byte: u.range.start_byte,
+    }));
+    let select_start = first
+        .range
+        .start_byte
+        .checked_sub(removal_end - removal_start)?;
+    let select_end = select_start + replacement(first, init, &name).len() as u32;
     Some(ExtractPlan {
         edits,
         name,
         select_start,
         select_end,
     })
+}
+
+fn slice(text: &str, range: ByteRange) -> Option<&str> {
+    text.get(range.start_byte as usize..range.end_byte as usize)
+}
+
+fn replacement(use_: &InlineUse, init: &str, name: &str) -> String {
+    if use_.shorthand {
+        format!("{name}: {init}")
+    } else if use_.parenthesize {
+        format!("({init})")
+    } else {
+        init.to_string()
+    }
 }
 
 fn removal(text: &str, statement: ByteRange) -> Option<(u32, u32)> {

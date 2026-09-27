@@ -34,12 +34,20 @@ impl Syntax for TreeSyntax {
             .parser
             .parse(text, Some(old))
             .ok_or_else(parse_failed)?;
-        let changed = old
+        let mut changed: Vec<ByteRange> = old
             .changed_ranges(&new_tree)
             .map(|r| from_ts(r.start_byte, r.end_byte))
             .collect();
+        if let Some(node) = new_tree
+            .root_node()
+            .descendant_for_byte_range(edit.start_byte, edit.new_end_byte)
+        {
+            changed.push(from_ts(node.start_byte(), node.end_byte()));
+        }
         self.tree = Some(new_tree);
-        Ok(changed)
+        let mut merged = Vec::new();
+        super::ranges::union_into(&mut merged, &changed);
+        Ok(merged)
     }
 
     fn highlights(&self, text: &str, ranges: &[ByteRange]) -> Vec<HighlightSpan> {
@@ -98,11 +106,8 @@ impl Syntax for TreeSyntax {
     }
 
     fn postfix_receiver(&self, text: &str, replace_start: usize) -> Option<(usize, usize)> {
-        if self.grammar.language != tree_sitter::Language::new(tree_sitter_rust::LANGUAGE) {
-            return None;
-        }
         let tree = self.tree.as_ref()?;
-        super::rust_postfix::receiver(tree, text, replace_start)
+        (self.grammar.postfix)(tree, text, replace_start)
     }
 
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt> {

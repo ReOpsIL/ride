@@ -1,6 +1,7 @@
 import Foundation
 
 enum ShellPath {
+    static let loginTimeout: TimeInterval = 3
     private static let lock = NSLock()
     private static var cached: String?
 
@@ -47,10 +48,15 @@ enum ShellPath {
         guard FileManager.default.isExecutableFile(atPath: shell) else {
             return nil
         }
-        let (output, success) = ProcessRun.capture(shell, ["-lc", "printf '%s' \"$PATH\""])
-        guard success else {
+        let result = ProcessRun.output(
+            URL(fileURLWithPath: shell),
+            ["-lc", "printf '%s' \"$PATH\""],
+            includeErrors: false,
+            timeout: loginTimeout
+        )
+        guard let result, result.succeeded else {
             return nil
         }
-        return output.components(separatedBy: .newlines).last { $0.contains("/") }
+        return result.text.components(separatedBy: .newlines).last { $0.contains("/") }
     }
 }

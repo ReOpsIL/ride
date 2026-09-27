@@ -3,8 +3,9 @@ import SwiftUI
 struct AISettingsPane: View {
     let bind: PreferenceBindings
     @EnvironmentObject private var state: AppState
-    @State private var anthropicKey = Keychain.read(AnthropicMessages.keyAccount) ?? ""
-    @State private var openRouterKey = Keychain.read(OpenRouterChat.keyAccount) ?? ""
+    @State private var anthropicKey = ""
+    @State private var openRouterKey = ""
+    @FocusState private var focusedAccount: String?
     @State private var testResult = ""
     @State private var editingCustom = false
 
@@ -19,7 +20,7 @@ struct AISettingsPane: View {
                 }
             }
             Section("Provider") {
-                Picker("Provider", selection: bind.string(\.aiProvider)) {
+                Picker("Provider", selection: bind.provider) {
                     ForEach(AIProvider.allCases, id: \.rawValue) { provider in
                         Text(provider.title).tag(provider.rawValue)
                     }
@@ -27,15 +28,7 @@ struct AISettingsPane: View {
                 if state.prefs.aiProvider == AIProvider.openrouter.rawValue {
                     keyField("OpenRouter API key", text: $openRouterKey, account: OpenRouterChat.keyAccount)
                 } else {
-                    Picker("Sign in", selection: bind.string(\.aiAuth)) {
-                        Text("Anthropic account").tag(AIAuthMode.login.rawValue)
-                        Text("API key").tag(AIAuthMode.key.rawValue)
-                    }
-                    if state.prefs.aiAuth == AIAuthMode.key.rawValue {
-                        keyField("Anthropic API key", text: $anthropicKey, account: AnthropicMessages.keyAccount)
-                    } else {
-                        AILoginRow()
-                    }
+                    keyField("Anthropic API key", text: $anthropicKey, account: AnthropicMessages.keyAccount)
                 }
                 Picker("Model", selection: modelSelection) {
                     ForEach(config.provider.presets) { preset in
@@ -59,6 +52,15 @@ struct AISettingsPane: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            anthropicKey = Keychain.read(AnthropicMessages.keyAccount) ?? ""
+            openRouterKey = Keychain.read(OpenRouterChat.keyAccount) ?? ""
+        }
+        .onDisappear {
+            if let focusedAccount {
+                commitKey(focusedAccount)
+            }
+        }
     }
 
     private var modelSelection: Binding<String> {
@@ -74,16 +76,26 @@ struct AISettingsPane: View {
     }
 
     private var config: AIConfig {
-        AIConfig(provider: state.prefs.aiProvider, model: state.prefs.aiModel, auth: state.prefs.aiAuth, level: state.prefs.aiContext)
+        state.prefs.aiConfig
     }
 
     private func keyField(_ title: String, text: Binding<String>, account: String) -> some View {
         SecureField(title, text: text, prompt: Text("Stored in the keychain"))
-            .onSubmit { Keychain.write(text.wrappedValue, account: account) }
-            .onChange(of: text.wrappedValue) { _, value in Keychain.write(value, account: account) }
+            .focused($focusedAccount, equals: account)
+            .onSubmit { commitKey(account) }
+            .onChange(of: focusedAccount) { previous, _ in
+                if let previous {
+                    commitKey(previous)
+                }
+            }
+    }
+
+    private func commitKey(_ account: String) {
+        Keychain.write(account == OpenRouterChat.keyAccount ? openRouterKey : anthropicKey, account: account)
     }
 
     private func test() {
+        commitKey(config.provider == .openrouter ? OpenRouterChat.keyAccount : AnthropicMessages.keyAccount)
         testResult = "Testing…"
         let input = AIPromptInput(language: "Rust", path: "src/main.rs", prefix: "fn main() {\n    let total = 1 + ", suffix: ";\n}\n", extras: [])
         AIClient.complete({ input }, config: config) { result in
@@ -93,61 +105,6 @@ struct AISettingsPane: View {
             case .failure(let error):
                 testResult = error.message
             }
-        }
-    }
-}
-
-struct AILoginRow: View {
-    @State private var profile: String?
-    @State private var checking = true
-    @State private var loggingIn = false
-
-    var body: some View {
-        HStack {
-            if AnthropicLogin.executable == nil {
-                Text("Needs the Anthropic CLI: \(AnthropicLogin.installCommand)")
-                    .font(Tokens.ui(11))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button("Copy command") {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(AnthropicLogin.installCommand, forType: .string)
-                }
-            } else {
-                Text(status)
-                    .font(Tokens.ui(11))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button(profile == nil ? "Log in…" : "Log in again…") { login() }
-                    .disabled(loggingIn)
-            }
-        }
-        .onAppear(perform: refresh)
-    }
-
-    private var status: String {
-        if loggingIn {
-            return "Waiting for the browser sign-in…"
-        }
-        if checking {
-            return "Checking…"
-        }
-        return profile.map { "Logged in (profile \($0))" } ?? "Not logged in"
-    }
-
-    private func refresh() {
-        checking = true
-        AnthropicLogin.status { found in
-            profile = found
-            checking = false
-        }
-    }
-
-    private func login() {
-        loggingIn = true
-        AnthropicLogin.login { _ in
-            loggingIn = false
-            refresh()
         }
     }
 }

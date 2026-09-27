@@ -42,6 +42,7 @@ struct DiagnosticStore {
     private var build: [StoredDiagnostic] = []
     private var owner: [String: String] = [:]
     private var liveClang: [String: [StoredDiagnostic]] = [:]
+    private var tidy: [String: [StoredDiagnostic]] = [:]
 
     mutating func insert(_ item: StoredDiagnostic) {
         clang[item.path, default: []].append(item)
@@ -78,7 +79,8 @@ struct DiagnosticStore {
     mutating func remove(path: String) -> Bool {
         owner.removeValue(forKey: path)
         let hadLive = liveClang.removeValue(forKey: path) != nil
-        return (clang.removeValue(forKey: path) != nil) || hadLive
+        let hadTidy = tidy.removeValue(forKey: path) != nil
+        return (clang.removeValue(forKey: path) != nil) || hadLive || hadTidy
     }
 
     mutating func replaceLive(path: String, with items: [StoredDiagnostic]) {
@@ -88,6 +90,18 @@ struct DiagnosticStore {
         } else {
             liveClang[path] = mine
         }
+    }
+
+    mutating func replaceTidy(path: String, with items: [StoredDiagnostic]) {
+        let lint = items.filter { $0.path == path && Self.isLint($0) }
+        tidy[path] = lint.isEmpty ? nil : lint
+    }
+
+    private static func isLint(_ item: StoredDiagnostic) -> Bool {
+        guard let code = item.code else {
+            return false
+        }
+        return !code.hasPrefix("clang-diagnostic")
     }
 
     mutating func replaceLiveCargo(root: String, _ items: [StoredDiagnostic]) {
@@ -122,13 +136,14 @@ struct DiagnosticStore {
         let liveKeys = Set(liveClang.keys)
         let liveItems = liveClang.values.flatMap { $0 }
         let saveClang = clang.filter { !liveKeys.contains($0.key) }.values.flatMap { $0 }
-        return (liveItems + saveClang + cargo.values.flatMap { $0 } + build).sorted {
+        let lint = tidy.values.flatMap { $0 }
+        return (liveItems + saveClang + lint + cargo.values.flatMap { $0 } + build).sorted {
             ($0.path, $0.byteStart) < ($1.path, $1.byteStart)
         }
     }
 
     var clangPaths: [String] {
-        Array(Set(clang.keys).union(liveClang.keys))
+        Array(Set(clang.keys).union(liveClang.keys).union(tidy.keys))
     }
 
     var buildDiagnostics: [StoredDiagnostic] {

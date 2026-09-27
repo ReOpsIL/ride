@@ -2,9 +2,17 @@ import CoreServices
 import Foundation
 
 final class FileWatcher {
+    static let coalesceDelay = 0.3
+
     private var stream: FSEventStreamRef?
     private let queue = DispatchQueue(label: "dev.ride.fs")
+    private var pending: [String] = []
+    private var flushScheduled = false
     var handler: (([String]) -> Void)?
+
+    var isWatching: Bool {
+        stream != nil
+    }
 
     func start(path: String) {
         stop()
@@ -21,9 +29,7 @@ final class FileWatcher {
             }
             let watcher = Unmanaged<FileWatcher>.fromOpaque(info).takeUnretainedValue()
             let paths = unsafeBitCast(eventPaths, to: NSArray.self) as? [String] ?? []
-            DispatchQueue.main.async {
-                watcher.handler?(paths)
-            }
+            watcher.collect(paths)
         }
         let paths = [path] as CFArray
         let flags = UInt32(
@@ -44,6 +50,30 @@ final class FileWatcher {
         self.stream = stream
         FSEventStreamSetDispatchQueue(stream, queue)
         FSEventStreamStart(stream)
+    }
+
+    private func collect(_ paths: [String]) {
+        pending.append(contentsOf: paths)
+        guard !flushScheduled else {
+            return
+        }
+        flushScheduled = true
+        queue.asyncAfter(deadline: .now() + Self.coalesceDelay) { [weak self] in
+            self?.flush()
+        }
+    }
+
+    private func flush() {
+        flushScheduled = false
+        var seen = Set<String>()
+        let batch = pending.filter { seen.insert($0).inserted }
+        pending = []
+        guard !batch.isEmpty else {
+            return
+        }
+        DispatchQueue.main.async { [weak self] in
+            self?.handler?(batch)
+        }
     }
 
     func stop() {

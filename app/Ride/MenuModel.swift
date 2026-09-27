@@ -5,10 +5,12 @@ final class MenuModel: ObservableObject {
     @Published var previewAvailable = false
     @Published var hasEditor = false
     @Published var hasWorkspace = false
-    @Published var canGenerate = false
+    @Published var code = CodeMenuGates()
     @Published var canRefactor = false
     @Published var canGoBack = false
     @Published var canGoForward = false
+    @Published var canGoToLastEdit = false
+    @Published var canRevert = false
     @Published var softWrap = true
     @Published var visibleWhitespace = false
     @Published var indentGuides = true
@@ -26,6 +28,7 @@ final class MenuModel: ObservableObject {
     @Published var hasSplit = false
     @Published var selectedTarget: String?
     @Published var canBuild = false
+    @Published var canEditRunConfig = false
     @Published var canRunTarget = false
     @Published var canRunTests = false
     @Published var canRunFile = false
@@ -41,10 +44,12 @@ final class MenuModel: ObservableObject {
         set(\.previewAvailable, state.previewAvailable)
         set(\.hasEditor, state.activeBuffer != nil)
         set(\.hasWorkspace, state.workspaceRoot != nil)
-        set(\.canGenerate, generatable(state.activeBuffer?.language))
+        set(\.code, state.codeMenuGates)
         set(\.canRefactor, generatable(state.activeBuffer?.language))
         set(\.canGoBack, state.history.canGoBack)
         set(\.canGoForward, state.history.canGoForward)
+        set(\.canGoToLastEdit, state.history.lastEdit != nil)
+        set(\.canRevert, state.activeBuffer?.fileURL != nil)
         set(\.softWrap, state.prefs.softWrap)
         set(\.visibleWhitespace, state.prefs.visibleWhitespace)
         set(\.indentGuides, state.prefs.indentGuides)
@@ -62,6 +67,7 @@ final class MenuModel: ObservableObject {
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)
         set(\.canBuild, state.canRun(.build))
+        set(\.canEditRunConfig, state.runTarget != nil)
         set(\.canRunTarget, state.canRun(.run))
         set(\.canRunTests, state.canRun(.test))
         set(\.canRunFile, state.canRunFile)

@@ -18,12 +18,21 @@ extension AppState {
         )
     }
 
-    func runTestMarker(_ marker: TestMarkerRow) {
+    func runTestMarker(_ marker: TestMarkerRow, path: String?) {
         guard let framework = marker.framework else {
-            runAction(.run)
+            runMain(path: path)
             return
         }
         runTests(names: [marker.name], framework: framework)
+    }
+
+    func runMain(path: String?) {
+        let owner = path.flatMap { projectModel.runTarget(owning: $0) }
+        guard let request = runRequest(.run, target: owner) else {
+            showNotice("Nothing to run for this file")
+            return
+        }
+        startRun(request)
     }
 
     func rerunFailedTests() {
@@ -42,7 +51,7 @@ extension AppState {
     }
 
     private func rerunFramework() -> TestMarkerFramework? {
-        TestRunStore.shared.framework ?? markerFramework()
+        TestRunStore.shared.framework ?? TestSession.framework(for: projectModel.runKind)
     }
 
     private func runTests(names: [String], framework: TestMarkerFramework) {
@@ -54,23 +63,10 @@ extension AppState {
         }
         let plan = runPlan(.test)
         let cwd = plan?.cwd ?? activeProjectRoot?.path
-        guard let runId = runInOutput(RunInvocation(argv: argv, workingDir: cwd, env: plan?.env ?? [:])) else {
-            return
-        }
-        BuildSession.shared.cancel()
-        SingleFileChain.shared.cancel()
-        beginTestRun(runId: runId, argv: argv, framework: framework)
-    }
-
-    private func markerFramework() -> TestMarkerFramework? {
-        switch projectModel.runKind {
-        case .cargo:
-            return .cargo
-        case .cmake:
-            return .ctest
-        case .make, .compileDb, .none:
-            return nil
-        }
+        startRun(RunRequest(
+            invocation: RunInvocation(argv: argv, workingDir: cwd, env: plan?.env ?? [:]),
+            session: .tests(framework: framework)
+        ))
     }
 
     private func testBase(_ framework: TestMarkerFramework) -> [String]? {

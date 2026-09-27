@@ -10,7 +10,6 @@ final class UsagesModel: ObservableObject {
     @Published private(set) var finished = false
 
     private var generation = 0
-    private static let queue = DispatchQueue(label: "ride.usages.query", qos: .userInitiated)
 
     var total: Int {
         UsageGrouping.total(primary) + UsageGrouping.total(other)
@@ -25,31 +24,28 @@ final class UsagesModel: ObservableObject {
         finished = false
     }
 
-    func query(sessionId: UInt64, byte: UInt32) {
+    func query(document: BufferDocument, byte: UInt32) {
         generation += 1
         let current = generation
         running = true
         finished = false
-        guard let engine = RideEngineClient.shared.engine else {
+        let started = SessionService.shared.read(document, lane: .workspace, { engine, id in
+            _ = try? engine.noteSaved(sessionId: id)
+            let response = engine.findUsages(sessionId: id, cursorByte: byte)
+            return (response.name, UsageGrouping.split(response.hits.map(UsagesModel.row)))
+        }, then: { [weak self] name, split in
+            guard let self, self.generation == current else {
+                return
+            }
+            self.name = name
+            self.primary = split.primary
+            self.other = split.other
+            self.running = false
+            self.finished = true
+        })
+        if !started {
             running = false
             finished = true
-            return
-        }
-        UsagesModel.queue.async {
-            _ = try? engine.noteSaved(sessionId: sessionId)
-            let response = engine.findUsages(sessionId: sessionId, cursorByte: byte)
-            let rows = response.hits.map(UsagesModel.row)
-            let split = UsageGrouping.split(rows)
-            DispatchQueue.main.async { [weak self] in
-                guard let self, self.generation == current else {
-                    return
-                }
-                self.name = response.name
-                self.primary = split.primary
-                self.other = split.other
-                self.running = false
-                self.finished = true
-            }
         }
     }
 

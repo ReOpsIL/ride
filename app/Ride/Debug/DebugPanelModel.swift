@@ -15,7 +15,11 @@ final class DebugPanelModel: ObservableObject {
     static let shared = DebugPanelModel()
     static let queue = DispatchQueue(label: "ride.debug.load", qos: .utility, attributes: .concurrent)
 
-    @Published var visible = false
+    @Published var visible = false {
+        didSet {
+            onVisibilityChange?()
+        }
+    }
     @Published var showEvaluate = false
     @Published private(set) var threads: [DebugThread] = []
     @Published private(set) var frames: [StackFrame] = []
@@ -25,6 +29,7 @@ final class DebugPanelModel: ObservableObject {
     @Published private(set) var watches: [WatchRow] = []
 
     var onFrame: ((String, UInt32) -> Void)?
+    var onVisibilityChange: (() -> Void)?
     var onWatchesChanged: (() -> Void)?
     private var loads = DebugLoadState()
     private var seenSequence = 0
@@ -41,12 +46,12 @@ final class DebugPanelModel: ObservableObject {
         loads.generation
     }
 
-    func beginLoad(_ key: String) -> Int? {
-        loads.begin(key)
+    func beginLoad(_ key: String, scoped: Bool) -> DebugLoadToken? {
+        loads.begin(key, scoped: scoped)
     }
 
-    func finishLoad(_ key: String, generation: Int) -> Bool {
-        loads.finish(key, generation: generation)
+    func finishLoad(_ key: String, token: DebugLoadToken) -> Bool {
+        loads.finish(key, token: token)
     }
 
     func isCurrent(_ generation: Int) -> Bool {
@@ -101,11 +106,13 @@ final class DebugPanelModel: ObservableObject {
     }
 
     func selectThread(_ id: Int64) {
+        loads.select()
         selectedThread = id
         reloadFrames(thread: id)
     }
 
     func selectFrame(_ id: Int64, jump: Bool = true) {
+        loads.select()
         selectedFrame = id
         tree.clear()
         loadScopes(frame: id)

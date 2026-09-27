@@ -28,6 +28,20 @@ enum FindMatcher {
         return all.first(where: { $0.location >= origin }) ?? all.first
     }
 
+    static func replacements(in text: String, query: String, template: String, options: FindOptions) -> [TextChange] {
+        guard !query.isEmpty, let expression = expression(query, options: options) else {
+            return []
+        }
+        return replacements(in: text, expression: expression, template: replacement(template, options: options))
+    }
+
+    static func replacements(in text: String, expression: NSRegularExpression, template: String) -> [TextChange] {
+        let full = NSRange(location: 0, length: (text as NSString).length)
+        return expression.matches(in: text, range: full).map { match in
+            TextChange(range: match.range, text: expression.replacementString(for: match, in: text, offset: 0, template: template))
+        }
+    }
+
     static func replacement(_ template: String, options: FindOptions) -> String {
         options.regex ? template : NSRegularExpression.escapedTemplate(for: template)
     }

@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
+use super::open_workspace::WorkspaceTree;
+
 pub const BUFFER: u8 = 0;
 pub const WORKSPACE: u8 = 1;
 pub const HEADER: u8 = 2;
@@ -10,7 +12,7 @@ pub const OTHER: u8 = 4;
 #[derive(Default)]
 pub struct RankContext {
     pub session_path: Option<PathBuf>,
-    pub workspace_root: Option<PathBuf>,
+    pub workspace: Option<WorkspaceTree>,
     pub headers: HashSet<PathBuf>,
     pub crates: HashSet<String>,
 }
@@ -25,9 +27,9 @@ impl RankContext {
             return BUFFER;
         }
         if self
-            .workspace_root
+            .workspace
             .as_ref()
-            .is_some_and(|root| path.starts_with(root))
+            .is_some_and(|tree| tree.contains(path))
         {
             return WORKSPACE;
         }
@@ -78,7 +80,7 @@ mod tests {
     fn context() -> RankContext {
         RankContext {
             session_path: Some(PathBuf::from("/w/src/main.rs")),
-            workspace_root: Some(PathBuf::from("/w")),
+            workspace: Some(WorkspaceTree::new(Path::new("/w"))),
             headers: HashSet::from([PathBuf::from("/usr/include/geo.h")]),
             crates: HashSet::from(["serde".to_string()]),
         }

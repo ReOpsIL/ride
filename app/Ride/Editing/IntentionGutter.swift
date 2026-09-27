@@ -26,14 +26,13 @@ final class IntentionGutter {
     }
 
     private func refresh(document: BufferDocument, view: RideTextView, generation: Int) {
-        guard generation == self.generation, let id = document.sessionId else {
+        guard generation == self.generation else {
             return
         }
         let caret = view.selectedRange().location
         let line = view.lineIndex().line(at: caret)
         IntentionActions.fetch(
-            sessionId: id,
-            path: document.fileURL?.standardizedFileURL.path,
+            document: document,
             text: view.string,
             caret: caret,
             qos: .utility

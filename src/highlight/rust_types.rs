@@ -3,6 +3,7 @@ use tree_sitter::{Node, Tree};
 use crate::ffi::{ItemKind, OutlineItem};
 
 use super::rust_type_names::type_name;
+use super::rust_use_variants;
 use super::symbol::node_text;
 use super::types::TypeTable;
 use super::walk::each_node;
@@ -10,6 +11,7 @@ use crate::text::is_word;
 
 pub fn build(tree: &Tree, text: &str) -> TypeTable {
     let mut table = TypeTable::default();
+    let mut uses = Vec::new();
     each_node(tree.root_node(), &mut |node| match node.kind() {
         "struct_item" | "union_item" => register(&mut table, node, text, field_kind),
         "enum_item" => register(&mut table, node, text, variant_kind),
@@ -19,8 +21,10 @@ pub fn build(tree: &Tree, text: &str) -> TypeTable {
             register(&mut table, node, text, assoc_kind);
         }
         "type_item" => alias(&mut table, node, text),
+        "use_declaration" => uses.push(node),
         _ => {}
     });
+    rust_use_variants::register(&mut table, &uses, text);
     table
 }
 
@@ -44,7 +48,7 @@ fn trait_impl(table: &mut TypeTable, node: Node<'_>, text: &str) {
         && let Some(implementor) = type_name(type_node, text)
         && let Some(implemented) = type_name(trait_node, text)
     {
-        table.add_impl(implementor, implemented);
+        table.relations_mut().add_impl(implementor, implemented);
     }
 }
 
@@ -124,9 +128,13 @@ fn type_name_of(detail: &str) -> Option<String> {
 }
 
 fn head_text(node: Node<'_>, text: &str) -> String {
-    let raw = node_text(node, text);
-    let end = raw.find(['{', ';', '=']).unwrap_or(raw.len());
-    let head: String = raw[..end].split_whitespace().collect::<Vec<_>>().join(" ");
+    let end = ["body", "value"]
+        .iter()
+        .find_map(|field| node.child_by_field_name(field))
+        .map_or(node.end_byte(), |tail| tail.start_byte());
+    let raw = text.get(node.start_byte()..end).unwrap_or_default();
+    let raw = raw.trim_end().trim_end_matches([';', '=', ',']).trim_end();
+    let head: String = raw.split_whitespace().collect::<Vec<_>>().join(" ");
     head.chars().take(160).collect()
 }
 

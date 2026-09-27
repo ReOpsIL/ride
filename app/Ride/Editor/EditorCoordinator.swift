@@ -2,11 +2,8 @@ import AppKit
 
 extension EditorPane {
     final class Coordinator: NSObject, NSTextViewDelegate {
-        var document: BufferDocument
+        let document: BufferDocument
         var state: AppState
-        var boundID: UUID?
-        /// True while SwiftUI runs makeNSView or updateNSView. AppState must not publish then,
-        /// so cursor updates raised by binding the document are delivered on the next turn.
         var inViewUpdate = false
         weak var textView: RideTextView?
         weak var host: EditorHostView?
@@ -36,14 +33,19 @@ extension EditorPane {
             let typed = document.pending
             document.pending = nil
             let pending = typed ?? replayedEdit(view)
+            let edit = pending.map { EditBuild.make(before: $0.before, utf16Range: $0.range, inserted: $0.inserted) }
+            if let edit {
+                document.journal.record(ByteEdit(edit))
+            }
             document.text = view.string
+            document.undo.note(pending.flatMap { UndoEdit.inverse(replacing: $0.range, with: $0.inserted, in: $0.before) })
             document.undo.close()
             document.isDirty = true
             state.noteEdit(view, in: document.id)
             host?.syncGutter()
             publishCursor(view)
-            if let pending {
-                shift(view, pending: pending)
+            if let pending, let edit {
+                shift(view, pending: pending, edit: edit)
             }
             if let typed {
                 assist(view, pending: typed)
@@ -64,12 +66,11 @@ extension EditorPane {
             return PendingEdit(range: edit.range, inserted: edit.text, before: before)
         }
 
-        private func shift(_ view: RideTextView, pending: PendingEdit) {
+        private func shift(_ view: RideTextView, pending: PendingEdit, edit: InputEditFfi) {
             let released = view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
             view.refreshFragments(in: released)
             Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
-            let edit = EditBuild.make(before: pending.before, utf16Range: pending.range, inserted: pending.inserted)
-            HighlightShift.apply(document: document, edit: edit)
+            HighlightShift.apply(document: document, edit: ByteEdit(edit))
             shiftBreakpoints(pending)
             SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
         }
@@ -112,6 +113,7 @@ extension EditorPane {
                 SignatureHelpController.shared.caretMoved(document: document, view: view)
                 CheatSheetController.shared.caretMoved(view: view)
                 IntentionGutter.shared.caretMoved(document: document, view: view)
+                HierarchyFollower.shared.caretMoved(document: document, view: view, state: state)
                 host?.docsCaretMoved()
             }
         }

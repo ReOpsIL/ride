@@ -16,6 +16,9 @@ extension AppState {
         projectModel.onChange = { [weak self] in
             self?.syncMenu()
         }
+        projectModel.onChoice = { [weak self] in
+            self?.scheduleWorkspaceSave()
+        }
         runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
@@ -49,14 +52,16 @@ extension AppState {
                 self?.openFile(url, readOnly: CatalogPath.isCatalog(url))
             }
         }
-        if let url = Self.launchFolder() {
-            open(url)
+        if let url = Self.launchTarget() {
+            openLaunchTarget(url)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.checkCrashReports()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-            self?.checkTools()
+        if !DemoLaunch.isDemo {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.checkTools()
+            }
         }
     }
 }

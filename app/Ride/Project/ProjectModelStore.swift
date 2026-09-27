@@ -7,13 +7,15 @@ final class ProjectModelStore: ObservableObject {
     @Published private(set) var profiles: [String] = []
     @Published private(set) var notice: String?
     @Published private(set) var selected: TargetRow?
-    @Published var profile = ""
+    @Published private(set) var profile = ""
     @Published private(set) var model: ProjectModel?
 
     var onChange: (() -> Void)?
+    var onChoice: (() -> Void)?
     private(set) var workspace: URL?
     private var fetches = 0
     private var wanted: String?
+    private var wantedProfile: String?
     private var focusedPath: String?
 
     var groups: [TargetGroup] { TargetRows.grouped(rows) }
@@ -45,11 +47,28 @@ final class ProjectModelStore: ObservableObject {
         wanted = row?.name
         selected = row
         onChange?()
+        onChoice?()
     }
 
     func restoreSelection(_ name: String?) {
         wanted = name
         applySelection()
+    }
+
+    func choose(profile name: String) {
+        guard profiles.contains(name) else {
+            return
+        }
+        wantedProfile = name
+        profile = name
+        onChange?()
+        onChoice?()
+    }
+
+    func restoreProfile(_ name: String?) {
+        wantedProfile = name
+        applyProfile()
+        onChange?()
     }
 
     func focus(file: URL?) {
@@ -111,10 +130,16 @@ final class ProjectModelStore: ObservableObject {
         kindLabel = project.map { ProjectModelStore.label($0.kind) } ?? ""
         profiles = project?.profiles ?? []
         notice = project?.notice
-        if !profiles.contains(profile) {
+        applyProfile()
+        applySelection()
+    }
+
+    private func applyProfile() {
+        if let wantedProfile, profiles.contains(wantedProfile) {
+            profile = wantedProfile
+        } else if !profiles.contains(profile) {
             profile = profiles.first ?? ""
         }
-        applySelection()
     }
 
     private func applySelection() {

@@ -12,6 +12,10 @@ use super::site::SiteAt;
 use super::syntax::{Lang, LocalHits, LocalQuery};
 
 impl BufferSession {
+    fn at(&self, byte: u32) -> usize {
+        crate::text::floor_char_boundary(&self.replica, byte as usize)
+    }
+
     pub fn highlights(&self) -> Vec<HighlightSpan> {
         self.syntax.highlights(
             &self.replica,
@@ -31,11 +35,11 @@ impl BufferSession {
     }
 
     pub fn site_at(&self, byte: u32) -> SiteAt {
-        self.syntax.site_at(&self.replica, byte as usize)
+        self.syntax.site_at(&self.replica, self.at(byte))
     }
 
     pub fn context_at(&self, byte: u32) -> Context {
-        self.syntax.context_at(&self.replica, byte as usize)
+        self.syntax.context_at(&self.replica, self.at(byte))
     }
 
     pub fn imports(&self) -> Vec<String> {
@@ -50,7 +54,7 @@ impl BufferSession {
     }
 
     pub fn call_site(&self, byte: u32) -> Option<CallSite> {
-        super::call_site::find(&self.replica, byte as usize)
+        super::call_site::find(&self.replica, self.at(byte))
     }
 
     pub fn postfix_receiver(&self, replace_start: usize) -> Option<(usize, usize)> {
@@ -94,7 +98,7 @@ impl BufferSession {
     }
 
     pub fn bracket_pair(&self, byte: u32) -> Option<BracketPair> {
-        self.syntax.bracket_pair(&self.replica, byte as usize)
+        self.syntax.bracket_pair(&self.replica, self.at(byte))
     }
 
     pub fn statement_bounds(&self, byte: u32) -> Option<StatementBounds> {

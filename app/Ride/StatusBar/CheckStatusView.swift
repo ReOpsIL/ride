@@ -27,7 +27,7 @@ struct CheckStatusView: View {
         .onTapGesture {
             state.toggleProblems()
         }
-        .help(check.failure ?? "Problems (⇧⌘M)")
+        .help(check.failure ?? Shortcuts.help("Problems", "View › Problems"))
     }
 
     private var symbol: String {

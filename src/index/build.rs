@@ -11,7 +11,6 @@ use super::crates::extract_parts;
 use super::deferred::{Deferred, absorb_target};
 use super::doc::{keep_item, to_document};
 use super::fingerprint::HashedCrate;
-use super::promote::tv;
 use super::schema::build_fields;
 use super::status::append_status;
 use super::warnings::{append_warning, reset_warnings};
@@ -44,9 +43,9 @@ pub fn build(
     }
     fs::create_dir_all(staging).map_err(|e| EngineError::io(staging, e))?;
     let fields = build_fields();
-    let index = Index::create_in_dir(staging, fields.schema.clone()).map_err(tv)?;
-    super::tokenizers::register(&index).map_err(tv)?;
-    let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(tv)?;
+    let index = Index::create_in_dir(staging, fields.schema.clone()).map_err(EngineError::index)?;
+    super::tokenizers::register(&index).map_err(EngineError::index)?;
+    let mut writer: IndexWriter = index.writer(WRITER_MEMORY).map_err(EngineError::index)?;
     let mut sink = Sink {
         writer: &mut writer,
         fields: &fields,
@@ -55,8 +54,8 @@ pub fn build(
     let docs = run(&mut sink, hashed, status)?;
     status.message = Some(COMMITTING.into());
     append_status(index_dir, status)?;
-    writer.commit().map_err(tv)?;
-    writer.wait_merging_threads().map_err(tv)?;
+    writer.commit().map_err(EngineError::index)?;
+    writer.wait_merging_threads().map_err(EngineError::index)?;
     Ok(docs)
 }
 
@@ -163,7 +162,7 @@ impl Sink<'_> {
         for item in write.items.items.iter().filter(|i| keep_item(i)) {
             self.writer
                 .add_document(to_document(self.fields, item, write.hash))
-                .map_err(tv)?;
+                .map_err(EngineError::index)?;
             docs += 1;
         }
         Ok(docs)

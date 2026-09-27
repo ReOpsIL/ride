@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use super::crate_extract::normalized;
+use super::crate_names::{normalized, root_of};
 use super::item::{ItemDoc, Visibility};
 
 #[derive(Default)]
@@ -38,16 +38,4 @@ impl External {
         }
         Some(found)
     }
-
-    pub fn len(&self) -> usize {
-        self.by_path.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.by_path.is_empty()
-    }
-}
-
-fn root_of(path: &str) -> &str {
-    path.split("::").next().unwrap_or(path)
 }

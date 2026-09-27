@@ -18,16 +18,13 @@ extension SelfTestSteps {
                 view.insertText("    let unused = 1;\n", replacementRange: NSRange(location: at, length: 0))
                 resync(e: e)
             }, check: { e.expect(e.line(9) == "    let unused = 1;", "line 9: '\(e.line(9))'") }),
-            SelfTestStep(name: "intention underscore", wait: 1.5, run: {
-                e.activate()
-                e.caret(line: 9, column: 11)
-                EditorCommands.applyIntention(matching: "Rename to _unused")
-            }, check: {
-                e.expect(
-                    e.line(9) == "    let _unused = 1;",
-                    "line 9: '\(e.line(9))' notice \(e.state.notice ?? "nil")"
-                )
-            }),
+            popupStep(
+                "intention underscore",
+                menu: "Code › Show Intention Actions",
+                e: e,
+                reset: {},
+                pick: PopupCase(title: "Rename to _unused", expect: ["    let _unused = 1;"]) { e.caret(line: 9, column: 11) }
+            ),
             SelfTestStep(name: "intention undo", until: { e.line(9) == "    let unused = 1;" }, timeout: 10, run: { e.undo() }, check: {
                 e.expect(e.line(9) == "    let unused = 1;", "line 9: '\(e.line(9))'")
             }),
@@ -45,23 +42,15 @@ extension SelfTestSteps {
                 scratch.saved = view.string
                 resync(e: e)
             }, check: { e.expect(!e.text.contains("VALUE"), "VALUE present") }),
-            SelfTestStep(name: "intention constant", wait: 1.5, run: {
-                e.activate()
-                guard let view = e.view else {
-                    return
+            popupStep(
+                "intention constant",
+                menu: "Code › Show Intention Actions",
+                e: e,
+                reset: {},
+                pick: PopupCase(title: "Introduce Constant", expect: ["const VALUE: &str = \"ride\";"]) {
+                    MenuBlock.select(e, "\"ride\"")
                 }
-                let range = (view.string as NSString).range(of: "\"ride\"")
-                guard range.location != NSNotFound else {
-                    return
-                }
-                view.setSelectedRange(range)
-                EditorCommands.applyIntention(matching: "Introduce Constant")
-            }, check: {
-                e.expect(
-                    e.lines.contains("const VALUE: &str = \"ride\";"),
-                    "notice \(e.state.notice ?? "nil") lines \(e.lines.filter { $0.contains("VALUE") })"
-                )
-            }),
+            ),
             restore(name: "intention constant cleanup", e: e, scratch: scratch),
         ]
     }

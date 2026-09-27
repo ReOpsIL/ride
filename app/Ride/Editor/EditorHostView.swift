@@ -38,18 +38,11 @@ final class EditorHostView: NSView {
             scroll.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
         gutter.attach(textView: textView)
-        onViewport = nil
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(viewportMoved),
             name: NSView.boundsDidChangeNotification,
             object: scroll.contentView
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(syncGutter),
-            name: NSText.didChangeNotification,
-            object: textView
         )
     }
 
@@ -79,7 +72,7 @@ final class EditorHostView: NSView {
         gutter.needsDisplay = true
     }
 
-    @objc func syncGutter() {
+    func syncGutter() {
         let lines = max(1, textView.lineIndex().lineCount)
         gutterWidth.constant = GutterView.width(digits: String(lines).count, numbers: gutter.showsNumbers)
         gutter.needsDisplay = true

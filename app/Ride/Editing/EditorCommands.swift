@@ -14,11 +14,23 @@ struct EditorTarget {
     var tokens: CommentTokens {
         CommentTokens.tokens(for: document.language)
     }
+
+    var caretByte: UInt32 {
+        UInt32(Utf16.utf8Offset(in: text, utf16: selection.location))
+    }
+
+    var selectionEndByte: UInt32 {
+        UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(selection)))
+    }
+
+    func session<T>(_ work: (Engine, UInt64) -> T?) -> T? {
+        SessionService.shared.readNow(document, work) ?? nil
+    }
 }
 
 enum EditorCommands {
-    static func target() -> EditorTarget? {
-        guard let view = EditorPanes.shared.focusedView, view.window?.firstResponder === view, view.isEditable,
+    static func target(editing: Bool = true) -> EditorTarget? {
+        guard let view = EditorPanes.shared.focusedView, view.window?.firstResponder === view, view.isEditable || !editing,
               let binding = view.hooks.binding?()
         else {
             return nil
@@ -26,8 +38,8 @@ enum EditorCommands {
         return EditorTarget(view: view, document: binding.document, state: binding.state, text: view.string, selection: view.selectedRange())
     }
 
-    static func run(_ transform: (EditorTarget) -> EditResult) {
-        guard let target = target() else {
+    static func run(editing: Bool = true, _ transform: (EditorTarget) -> EditResult) {
+        guard let target = target(editing: editing) else {
             return
         }
         EditorCommand.apply(transform(target), to: target.view)
@@ -58,56 +70,36 @@ enum EditorCommands {
     }
 
     static func moveStatement(up: Bool) {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target(),
+              let bounds = target.session({ $0.statementBounds(sessionId: $1, byte: target.caretByte) }),
+              let other = up ? bounds.previous : bounds.next
+        else {
             return
         }
-        let text = target.text
-        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        guard let bounds = engine.statementBounds(sessionId: id, byte: byte) else {
-            return
-        }
-        guard let other = up ? bounds.previous : bounds.next else {
-            return
-        }
+        let map = Utf16Map(target.text)
         let result = LineOps.moveStatement(
-            text,
-            current: Utf16.nsRange(in: text, startByte: bounds.current.startByte, endByte: bounds.current.endByte),
-            other: Utf16.nsRange(in: text, startByte: other.startByte, endByte: other.endByte),
+            target.text,
+            current: map.nsRange(startByte: bounds.current.startByte, endByte: bounds.current.endByte),
+            other: map.nsRange(startByte: other.startByte, endByte: other.endByte),
             selection: target.selection
         )
         EditorCommand.apply(result, to: target.view)
     }
 
     static func completeStatement() {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target(), let edit = target.session({ $0.completeStatement(sessionId: $1, byte: target.caretByte) }) else {
             return
         }
-        let text = target.text
-        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        guard let edit = engine.completeStatement(sessionId: id, byte: byte) else {
-            return
-        }
-        let range = Utf16.nsRange(in: text, startByte: edit.startByte, endByte: edit.endByte)
-        let change = TextChange(range: range, text: edit.text)
-        let applied = EditResult.applying([change], to: text)
-        let caret = Utf16.utf16Offset(in: applied, utf8: Int(edit.caretByte))
-        EditorCommand.apply(EditResult(changes: [change], selection: NSRange(location: caret, length: 0)), to: target.view)
+        EditorCommand.apply(TextEditApply.result([edit], caret: edit, in: target.text), to: target.view)
     }
 
     static func applyGenerator(_ kind: GenKind) {
-        guard let target = target(), let id = target.document.sessionId, let engine = RideEngineClient.shared.engine else {
+        guard let target = target(),
+              let edit = target.session({ $0.generateApply(sessionId: $1, cursorByte: target.caretByte, kind: kind) })
+        else {
             return
         }
-        let text = target.text
-        let byte = UInt32(Utf16.utf8Offset(in: text, utf16: target.selection.location))
-        guard let edit = engine.generateApply(sessionId: id, cursorByte: byte, kind: kind) else {
-            return
-        }
-        let range = Utf16.nsRange(in: text, startByte: edit.startByte, endByte: edit.endByte)
-        let change = TextChange(range: range, text: edit.text)
-        let applied = EditResult.applying([change], to: text)
-        let caret = Utf16.utf16Offset(in: applied, utf8: Int(edit.caretByte))
-        EditorCommand.apply(EditResult(changes: [change], selection: NSRange(location: caret, length: 0)), to: target.view)
+        EditorCommand.apply(TextEditApply.result([edit], caret: edit, in: target.text), to: target.view)
     }
 
     static func newLine(before: Bool) {
