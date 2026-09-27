@@ -68,3 +68,7 @@
 - Navigate › Go to Symbol in Project has no ⌘C copy-path test; there is no View item to reopen a hidden Hierarchy panel; Save All skips untitled buffers silently.
 - Two self-test key helpers do the same job: `SelfTestKeys` (KeyCombo glyphs, posts events) and `SelfTestKey` in `SelfTestKeyPress.swift` (fixed enum, sends to a view/sheet). Fold `SelfTestKey` into `SelfTestKeys`.
 - `DiagnosticTidyTests` and `DiagnosticStoreTidyTests` cover the same tidy slot from two angles; merge them.
+
+# Soft-wrap viewport gap (2026-09-27)
+
+- Typing Enter between items repainted the whole file (the engine's edited-node repaint returned the root node), and the whole-file attribute edit made TextKit 2 re-estimate every wrapped paragraph above the viewport. With soft wrap on, the viewport's first fragment then started below the visible top, leaving a blank band until the next scroll. Fixed at the source: the engine repaints only the leaf tokens that overlap the edit, covered by `tests/repaint.rs` and the self-test "type between labelled items". Other whole-document attribute edits (theme change, reload, format) can still trigger the re-estimation with soft wrap. If that shows up, relocate the viewport in the viewport-did-layout path when its first fragment starts below `visibleRect.minY`.

@@ -38,6 +38,7 @@ final class ViewportWatch {
             return
         }
         layouts += 1
+        checkTop(view, tlm, controller, range)
         var laidOut: CGFloat = 0
         tlm.enumerateTextLayoutFragments(from: range.location, options: []) { fragment in
             laidOut = max(laidOut, fragment.layoutFragmentFrame.maxY)
@@ -46,6 +47,21 @@ final class ViewportWatch {
         let wanted = min(controller.viewportBounds.maxY, tlm.usageBoundsForTextContainer.maxY)
         if laidOut + 0.5 < wanted, failures.count < 20 {
             failures.append("\(label) laid out to \(Int(laidOut)) of \(Int(wanted))")
+        }
+    }
+
+    private func checkTop(_ view: RideTextView, _ tlm: NSTextLayoutManager, _ controller: NSTextViewportLayoutController, _ range: NSTextRange) {
+        guard range.location.compare(tlm.documentRange.location) == .orderedDescending else {
+            return
+        }
+        var top: CGFloat?
+        tlm.enumerateTextLayoutFragments(from: range.location, options: []) { fragment in
+            top = fragment.layoutFragmentFrame.minY
+            return false
+        }
+        let visible = view.visibleRect.minY - view.textContainerOrigin.y
+        if let top, top > visible + 0.5, failures.count < 20 {
+            failures.append("\(label) first fragment at \(Int(top)) below visible top \(Int(visible))")
         }
     }
 }

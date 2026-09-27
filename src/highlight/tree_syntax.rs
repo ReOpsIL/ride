@@ -38,12 +38,7 @@ impl Syntax for TreeSyntax {
             .changed_ranges(&new_tree)
             .map(|r| from_ts(r.start_byte, r.end_byte))
             .collect();
-        if let Some(node) = new_tree
-            .root_node()
-            .descendant_for_byte_range(edit.start_byte, edit.new_end_byte)
-        {
-            changed.push(from_ts(node.start_byte(), node.end_byte()));
-        }
+        changed.extend(edited_tokens(new_tree.root_node(), edit));
         self.tree = Some(new_tree);
         let mut merged = Vec::new();
         super::ranges::union_into(&mut merged, &changed);
@@ -183,4 +178,15 @@ impl Syntax for TreeSyntax {
             |tree| editing::complete(tree.root_node(), text, byte),
         )
     }
+}
+
+fn edited_tokens(root: tree_sitter::Node<'_>, edit: &InputEdit) -> Vec<ByteRange> {
+    [edit.start_byte, edit.new_end_byte]
+        .iter()
+        .filter_map(|&at| root.descendant_for_byte_range(at, at))
+        .filter(|node| node.child_count() == 0)
+        .filter(|node| node.start_byte() <= edit.new_end_byte && node.end_byte() >= edit.start_byte)
+        .filter(|node| node.start_byte() < node.end_byte())
+        .map(|node| from_ts(node.start_byte(), node.end_byte()))
+        .collect()
 }

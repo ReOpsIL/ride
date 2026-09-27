@@ -830,6 +830,7 @@
 		C70000000000000000000019 /* FileTreeRowsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000018 /* FileTreeRowsTests.swift */; };
 		C7000000000000000000001B /* SelfTestSteps+Gutter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001A /* SelfTestSteps+Gutter.swift */; };
 		C7000000000000000000001D /* SelfTestSteps+TypeAtEnd.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */; };
+		CVAEB4F8EEBA60B0A59BFEEE /* SelfTestSteps+TypeInMiddle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CVEB4F8EEBA60B0A59BFEEEA /* SelfTestSteps+TypeInMiddle.swift */; };
 		C7000000000000000000001F /* ViewportWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7000000000000000000001E /* ViewportWatch.swift */; };
 		C70000000000000000000023 /* VisionIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000022 /* VisionIndex.swift */; };
 		C70000000000000000000025 /* FragmentRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70000000000000000000024 /* FragmentRefresh.swift */; };
@@ -1526,6 +1527,7 @@
 		C70000000000000000000018 /* FileTreeRowsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeRowsTests.swift; sourceTree = "<group>"; };
 		C7000000000000000000001A /* SelfTestSteps+Gutter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Gutter.swift"; sourceTree = "<group>"; };
 		C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+TypeAtEnd.swift"; sourceTree = "<group>"; };
+		CVEB4F8EEBA60B0A59BFEEEA /* SelfTestSteps+TypeInMiddle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+TypeInMiddle.swift"; sourceTree = "<group>"; };
 		C7000000000000000000001E /* ViewportWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportWatch.swift; sourceTree = "<group>"; };
 		C70000000000000000000022 /* VisionIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionIndex.swift; sourceTree = "<group>"; };
 		C70000000000000000000024 /* FragmentRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentRefresh.swift; sourceTree = "<group>"; };
@@ -2257,6 +2259,7 @@
 			children = (
 				C7000000000000000000001E /* ViewportWatch.swift */,
 				C7000000000000000000001C /* SelfTestSteps+TypeAtEnd.swift */,
+				CVEB4F8EEBA60B0A59BFEEEA /* SelfTestSteps+TypeInMiddle.swift */,
 				C7000000000000000000001A /* SelfTestSteps+Gutter.swift */,
 				P40000000000000000000008 /* SelfTestSteps+OpenURL.swift */,
 				D50000000000000000000001 /* VariableTree.swift */,
@@ -2880,6 +2883,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CVAEB4F8EEBA60B0A59BFEEE /* SelfTestSteps+TypeInMiddle.swift in Sources */,
 				MBAA9A5D0E8664A5B9BCC193 /* SelfTestKeyPress.swift in Sources */,
 				MDA79E51F435EB0BB84D0511 /* SelfTestSteps+ProbeSources.swift in Sources */,
 				MDA78249B929F5DF95947A85 /* AppState+OpenDiagnostic.swift in Sources */,

@@ -19,6 +19,7 @@ extension SelfTestSteps {
             + breakpointShiftSteps(state: state, e: e)
             + [callHierarchy(state: state, e: e), callHierarchyFollows(state: state, e: e)]
             + [codeVision(state: state, e: e)]
+            + typeInMiddleSteps(state: state, e: e)
             + safeDeleteSteps(state: state, e: e, scratch: scratch)
             + openURLSteps(state: state, e: e)
             + sampleSteps(state: state, e: e)

@@ -51,3 +51,28 @@ fn queries_inside_a_multibyte_character_do_not_panic() {
         let _ = session.bracket_pair(at);
     }
 }
+
+#[test]
+fn newline_between_items_repaints_only_what_changed() {
+    let src = "fn a() {}\n\nfn b() {}\n\nfn c() {}\n";
+    let (mut session, _) = BufferSession::open(src.to_string(), None).unwrap();
+    let at = src.find("\n\nfn b").unwrap() as u32 + 1;
+    let edit = InputEditFfi {
+        start_byte: at,
+        old_end_byte: at,
+        new_end_byte: at + 1,
+        start_row: 1,
+        start_column: 0,
+        old_end_row: 1,
+        old_end_column: 0,
+        new_end_row: 2,
+        new_end_column: 0,
+    };
+    let update = session.apply_edit(edit, "\n", None).unwrap();
+    let painted: u32 = update
+        .changed
+        .iter()
+        .map(|r| r.end_byte - r.start_byte)
+        .sum();
+    assert!(painted < 12, "{:?}", update.changed);
+}
