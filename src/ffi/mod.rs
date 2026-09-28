@@ -10,6 +10,7 @@ mod hierarchy;
 mod index;
 mod intentions;
 mod kind;
+mod oracle;
 mod project;
 mod query;
 mod refactor;
@@ -37,6 +38,7 @@ pub use hierarchy::{CalleeHit, TypeHierarchy, TypeNode};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use intentions::Intention;
 pub use kind::{CaptureKind, ItemKind};
+pub use oracle::{OracleListener, OracleState, OracleStatus};
 pub use project::{ProjectKind, ProjectModel, Target, TargetKind};
 pub use query::{
     CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, CompletionSiteKind,

@@ -1,4 +1,5 @@
 use std::env;
+use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::OnceLock;
@@ -40,8 +41,21 @@ pub fn install_hint(name: &str) -> &'static str {
         "rustfmt" => "rustup component add rustfmt",
         "cmake-format" => "pip install cmake-format, or brew install gersemi",
         "taplo" => "brew install taplo",
+        "rust-analyzer" => "rustup component add rust-analyzer",
         _ => "install it and make sure it is on PATH",
     }
+}
+
+pub fn search_path() -> OsString {
+    let mut dirs: Vec<PathBuf> = env::var_os("PATH")
+        .map(|p| env::split_paths(&p).collect())
+        .unwrap_or_default();
+    for dir in candidate_dirs() {
+        if !dirs.contains(&dir) {
+            dirs.push(dir);
+        }
+    }
+    env::join_paths(dirs).unwrap_or_default()
 }
 
 fn on_path(name: &str) -> Option<PathBuf> {

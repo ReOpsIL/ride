@@ -1,6 +1,5 @@
-mod codec;
-mod inbox;
 mod pump;
+mod reply;
 mod trace;
 
 use std::path::Path;
@@ -15,7 +14,7 @@ use std::time::Duration;
 use serde_json::{Value, json};
 
 use crate::error::EngineError;
-use inbox::{Shared, poisoned};
+use crate::wire::{Mailbox, write_frame};
 
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(15);
 
@@ -23,7 +22,7 @@ pub struct Transport {
     child: Mutex<Child>,
     stdin: Mutex<ChildStdin>,
     seq: AtomicI64,
-    shared: Shared,
+    mailbox: Arc<Mailbox>,
     events: Mutex<Receiver<(u64, Value)>>,
     received: Arc<AtomicU64>,
 }
@@ -45,9 +44,9 @@ impl Transport {
             .stdout
             .take()
             .ok_or_else(|| EngineError::debug("adapter stdout unavailable"))?;
-        let shared = inbox::shared();
+        let mailbox = Arc::new(Mailbox::default());
         let (sender, events) = channel();
-        let reader = Arc::clone(&shared);
+        let reader = Arc::clone(&mailbox);
         let received = Arc::new(AtomicU64::new(0));
         let counter = Arc::clone(&received);
         thread::spawn(move || pump::pump(stdout, reader, sender, counter));
@@ -55,7 +54,7 @@ impl Transport {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             seq: AtomicI64::new(1),
-            shared,
+            mailbox,
             events: Mutex::new(events),
             received,
         })
@@ -72,11 +71,11 @@ impl Transport {
         timeout: Duration,
     ) -> Result<Value, EngineError> {
         let seq = self.send_request(command, arguments)?;
-        inbox::await_response(&self.shared, seq, command, timeout)
+        reply::await_body(&self.mailbox, seq, command, timeout)
     }
 
     pub fn await_response(&self, seq: i64, command: &str) -> Result<Value, EngineError> {
-        inbox::await_response(&self.shared, seq, command, DEFAULT_TIMEOUT)
+        reply::await_body(&self.mailbox, seq, command, DEFAULT_TIMEOUT)
     }
 
     pub fn send_request(&self, command: &str, arguments: Value) -> Result<i64, EngineError> {
@@ -86,8 +85,11 @@ impl Transport {
             message["arguments"] = arguments;
         }
         trace::record("->", &message);
-        let mut stdin = self.stdin.lock().map_err(|_| poisoned())?;
-        codec::write_frame(&mut *stdin, &message)
+        let mut stdin = self
+            .stdin
+            .lock()
+            .map_err(|_| EngineError::debug("transport poisoned"))?;
+        write_frame(&mut *stdin, &message)
             .map_err(|err| EngineError::debug(format!("{command}: {err}")))?;
         Ok(seq)
     }
@@ -97,7 +99,10 @@ impl Transport {
     }
 
     pub fn poll_received(&self, timeout: Duration) -> Result<Option<(u64, Value)>, EngineError> {
-        let events = self.events.lock().map_err(|_| poisoned())?;
+        let events = self
+            .events
+            .lock()
+            .map_err(|_| EngineError::debug("transport poisoned"))?;
         match events.recv_timeout(timeout) {
             Ok(stamped) => Ok(Some(stamped)),
             Err(RecvTimeoutError::Timeout) => Ok(None),

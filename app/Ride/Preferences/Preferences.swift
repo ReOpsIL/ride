@@ -35,6 +35,7 @@ struct Preferences: Codable, Equatable {
     var aiContext: String
     var reportsAcknowledged: Double
     var lineEndings: String
+    var semanticCompletion: Bool
 
     static let fontSizes = 10...24
 
@@ -90,7 +91,8 @@ struct Preferences: Codable, Equatable {
         aiModel: String = "",
         aiContext: String = "function",
         reportsAcknowledged: Double = 0,
-        lineEndings: String = LineEndings.keep
+        lineEndings: String = LineEndings.keep,
+        semanticCompletion: Bool = true
     ) {
         self.theme = theme
         self.fontSize = fontSize
@@ -126,6 +128,7 @@ struct Preferences: Codable, Equatable {
         self.aiContext = aiContext
         self.reportsAcknowledged = reportsAcknowledged
         self.lineEndings = lineEndings
+        self.semanticCompletion = semanticCompletion
     }
 
     init(from decoder: Decoder) throws {
@@ -165,6 +168,7 @@ struct Preferences: Codable, Equatable {
         aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
         reportsAcknowledged = try c.decodeIfPresent(Double.self, forKey: .reportsAcknowledged) ?? d.reportsAcknowledged
         lineEndings = try c.decodeIfPresent(String.self, forKey: .lineEndings) ?? d.lineEndings
+        semanticCompletion = try c.decodeIfPresent(Bool.self, forKey: .semanticCompletion) ?? d.semanticCompletion
     }
 
     var clamped: Preferences {

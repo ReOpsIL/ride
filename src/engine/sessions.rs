@@ -95,6 +95,7 @@ impl Engine {
 
     pub fn close_session(&self, session_id: u64) {
         let _ = self.write(|i| {
+            i.oracle.forget(session_id);
             i.sessions.remove(&session_id);
             i.latest_query_id.remove(&session_id);
             i.scopes.remove(session_id);

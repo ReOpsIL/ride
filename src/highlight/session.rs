@@ -36,6 +36,10 @@ impl BufferSession {
         &self.last_outline
     }
 
+    pub fn text_version(&self) -> u64 {
+        self.edits
+    }
+
     pub fn path(&self) -> Option<&Path> {
         self.path.as_deref()
     }

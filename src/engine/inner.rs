@@ -6,6 +6,7 @@ use tantivy::{Index, IndexReader};
 
 use crate::ffi::{EngineConfig, IndexStatus, IndexStatusListener, ProjectModel};
 use crate::highlight::BufferSession;
+use crate::oracle::Oracle;
 
 use super::bound_refs::BoundRefs;
 use super::headers::HeaderCache;
@@ -33,6 +34,7 @@ pub(crate) struct Inner {
     pub(crate) debug_sessions: Arc<crate::debug::registry::DebugRegistry>,
     pub(crate) sysroot: Option<PathBuf>,
     pub(crate) refs: Option<BoundRefs>,
+    pub(crate) oracle: Arc<Oracle>,
 }
 
 impl Inner {
@@ -60,6 +62,7 @@ impl Inner {
             debug_sessions: Arc::default(),
             sysroot,
             refs: None,
+            oracle: Arc::default(),
         }
     }
 

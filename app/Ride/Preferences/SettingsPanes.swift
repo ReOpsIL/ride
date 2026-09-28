@@ -39,6 +39,7 @@ struct EditorSettings: View {
             }
             Section("Popups") {
                 Toggle("Completions as you type", isOn: bind.bool(\.completions))
+                OracleSettingsRow(bind: bind)
                 Toggle("AI suggestions in the completion popup", isOn: bind.bool(\.aiComplete))
                 Toggle("Cheat sheet with completions", isOn: bind.bool(\.cheatSheet))
                 Toggle("Signature help", isOn: bind.bool(\.signatureHelp))

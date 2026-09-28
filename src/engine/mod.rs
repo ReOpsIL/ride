@@ -45,6 +45,8 @@ mod live_refs;
 mod local_defs;
 mod merge;
 mod open_workspace;
+mod oracle_api;
+mod oracle_members;
 mod paths;
 mod postfix;
 mod project;

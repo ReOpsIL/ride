@@ -311,6 +311,7 @@
 		A00000000000000000000081 /* RideEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00000000000000000000080 /* RideEngine.xcframework */; };
 		A00000000000000000000083 /* RideEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000082 /* RideEngine.swift */; };
 		A00000000000000000000085 /* RideEngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000084 /* RideEngineClient.swift */; };
+		0AC1E0000000000000000101 /* OracleForwarder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000001 /* OracleForwarder.swift */; };
 		A00000000000000000000A01 /* DemoRefsDir.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000A02 /* DemoRefsDir.swift */; };
 		A00000000000000000000087 /* IndexerProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000086 /* IndexerProcess.swift */; };
 		A000000000000000000000A1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000091 /* Theme.swift */; };
@@ -323,6 +324,7 @@
 		MAA6AC2AF4201DE061D15192 /* AppState+SymbolInFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA6AC2AF4201DE061D15192A /* AppState+SymbolInFile.swift */; };
 		A000000000000000000000B2 /* CompletionPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000099 /* CompletionPopup.swift */; };
 		A000000000000000000000B3 /* CompletionSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009A /* CompletionSession.swift */; };
+		0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */; };
 		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
 		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
 		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
@@ -354,6 +356,7 @@
 		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
 		D2500000000000000000000B /* SelfTestSteps+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2500000000000000000000A /* SelfTestSteps+Tests.swift */; };
 		D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000001 /* SelfTestSteps+Rust.swift */; };
+		0AC1E0000000000000000104 /* SelfTestSteps+Semantic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */; };
 		MAA0F6357E53BF3CFF133B53 /* SelfTestSteps+MenusWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */; };
 		MAA52251F40DA4EC02BA6430 /* SelfTestSteps+MenusRename.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */; };
 		MAA6678D0B9FC7D25E0A108D /* SelfTestSteps+MenusNavigate.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */; };
@@ -512,6 +515,7 @@
 		D0E9C9E1392729A70EA5DE1A /* EmptyEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */; };
 		D037C8618339D53D0298E7A6 /* PreferenceBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */; };
 		MDAA8717E5AEBCB437D17FB6 /* Preferences+AI.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDA8717E5AEBCB437D17FB6A /* Preferences+AI.swift */; };
+		0AC1E0000000000000000103 /* OracleSettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000003 /* OracleSettingsRow.swift */; };
 		D083A372352C2B9E383710E5 /* ThemeSwatchPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */; };
 		D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D073023A1B0A76E5775FC72B /* SettingsPanes.swift */; };
 		E10000000000000000000002 /* CompletionTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000001 /* CompletionTrigger.swift */; };
@@ -1080,6 +1084,7 @@
 		A00000000000000000000080 /* RideEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RideEngine.xcframework; sourceTree = "<group>"; };
 		A00000000000000000000082 /* RideEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngine.swift; sourceTree = "<group>"; };
 		A00000000000000000000084 /* RideEngineClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEngineClient.swift; sourceTree = "<group>"; };
+		0AC1E0000000000000000001 /* OracleForwarder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OracleForwarder.swift; sourceTree = "<group>"; };
 		A00000000000000000000A02 /* DemoRefsDir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRefsDir.swift; sourceTree = "<group>"; };
 		A00000000000000000000086 /* IndexerProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerProcess.swift; sourceTree = "<group>"; };
 		A00000000000000000000091 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -1102,6 +1107,7 @@
 		MA6AC2AF4201DE061D15192A /* AppState+SymbolInFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+SymbolInFile.swift"; sourceTree = "<group>"; };
 		A00000000000000000000099 /* CompletionPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPopup.swift; sourceTree = "<group>"; };
 		A0000000000000000000009A /* CompletionSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionSession.swift; sourceTree = "<group>"; };
+		0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Oracle.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
 		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
@@ -1222,6 +1228,7 @@
 		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
 		D2500000000000000000000A /* SelfTestSteps+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Tests.swift"; sourceTree = "<group>"; };
 		D19200000000000000000001 /* SelfTestSteps+Rust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rust.swift"; sourceTree = "<group>"; };
+		0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Semantic.swift"; sourceTree = "<group>"; };
 		MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusWorkspace.swift"; sourceTree = "<group>"; };
 		MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusRename.swift"; sourceTree = "<group>"; };
 		MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusNavigate.swift"; sourceTree = "<group>"; };
@@ -1361,6 +1368,7 @@
 		D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EmptyEditorView.swift"; sourceTree = "<group>"; };
 		D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferenceBindings.swift"; sourceTree = "<group>"; };
 		MDA8717E5AEBCB437D17FB6A /* Preferences+AI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preferences+AI.swift"; sourceTree = "<group>"; };
+		0AC1E0000000000000000003 /* OracleSettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OracleSettingsRow.swift; sourceTree = "<group>"; };
 		D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeSwatchPicker.swift"; sourceTree = "<group>"; };
 		D073023A1B0A76E5775FC72B /* SettingsPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPanes.swift"; sourceTree = "<group>"; };
 		E10000000000000000000001 /* CompletionTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionTrigger.swift"; sourceTree = "<group>"; };
@@ -2124,6 +2132,7 @@
 				D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */,
 				D0703EF139A6BFB1B34EBFE0 /* PreferenceBindings.swift */,
 				MDA8717E5AEBCB437D17FB6A /* Preferences+AI.swift */,
+				0AC1E0000000000000000003 /* OracleSettingsRow.swift */,
 				A00000000000000000000064 /* Preferences.swift */,
 				AA0000000000000000000043 /* AISettingsPane.swift */,
 				AA0000000000000000000041 /* PreferencesStore.swift */,
@@ -2156,6 +2165,7 @@
 				FEE0000000000000000000A2 /* CheckService+Live.swift */,
 				H16000000000000000000010 /* CheckConvert.swift */,
 				A00000000000000000000084 /* RideEngineClient.swift */,
+				0AC1E0000000000000000001 /* OracleForwarder.swift */,
 				A00000000000000000000A02 /* DemoRefsDir.swift */,
 				A00000000000000000000086 /* IndexerProcess.swift */,
 				A00000000000000000000095 /* SessionService.swift */,
@@ -2225,6 +2235,7 @@
 				C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */,
 				A00000000000000000000099 /* CompletionPopup.swift */,
 				A0000000000000000000009A /* CompletionSession.swift */,
+				0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */,
 				A0000000000000000000009B /* CatalogPath.swift */,
 				A000000000000000000000CF /* CompletionGate.swift */,
 				AA0000000000000000000036 /* CompletionItem.swift */,
@@ -2287,6 +2298,7 @@
 				E80000000000000000000003 /* SelfTestSteps.swift */,
 				P6100000000000000000000B /* SelfTestSteps+Move.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
+				0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */,
 				MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */,
 				MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */,
 				MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */,
@@ -2909,6 +2921,7 @@
 				MDAEDAF5F4F77D2D696D24F4 /* SelfTestPixels.swift in Sources */,
 				MDA215E940F0F8C157E8C163 /* AppState+ProjectFind.swift in Sources */,
 				MDAA8717E5AEBCB437D17FB6 /* Preferences+AI.swift in Sources */,
+				0AC1E0000000000000000103 /* OracleSettingsRow.swift in Sources */,
 				MDA1D1A2173C0541A0D6ADC4 /* WhitespaceMarks.swift in Sources */,
 				MDA85FCEC9391DE4B425F3E5 /* IndentLabel.swift in Sources */,
 				MDA3264C369F462F94A04022 /* LineEndingMenu.swift in Sources */,
@@ -3100,6 +3113,7 @@
 				E90000000000000000000002 /* NoticeBar.swift in Sources */,
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
 				D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */,
+				0AC1E0000000000000000104 /* SelfTestSteps+Semantic.swift in Sources */,
 				P8B00000000000000000000A /* SelfTestSteps+RustGenerate.swift in Sources */,
 				P8B00000000000000000000C /* SelfTestSteps+RustEdit.swift in Sources */,
 				P8B00000000000000000000E /* SelfTestSteps+RustSelect.swift in Sources */,
@@ -3436,6 +3450,7 @@
 				A00000000000000000000075 /* PreferencesView.swift in Sources */,
 				A00000000000000000000083 /* RideEngine.swift in Sources */,
 				A00000000000000000000085 /* RideEngineClient.swift in Sources */,
+				0AC1E0000000000000000101 /* OracleForwarder.swift in Sources */,
 				A00000000000000000000A01 /* DemoRefsDir.swift in Sources */,
 				A00000000000000000000087 /* IndexerProcess.swift in Sources */,
 				A000000000000000000000A1 /* Theme.swift in Sources */,
@@ -3455,6 +3470,7 @@
 				A000000000000000000000A7 /* SymbolInFile.swift in Sources */,
 				A000000000000000000000B2 /* CompletionPopup.swift in Sources */,
 				A000000000000000000000B3 /* CompletionSession.swift in Sources */,
+				0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */,
 				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
 				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
 				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,

@@ -17,6 +17,7 @@ pub mod includes;
 mod index;
 mod intentions;
 mod markdown;
+mod oracle;
 mod params;
 mod process;
 pub mod project;
@@ -29,6 +30,7 @@ mod score;
 mod skip;
 mod text;
 mod toolchain;
+mod wire;
 
 pub use cheatsheet::{Entry, Section, Selected, Sheet, SheetError, select, sheet, validate};
 pub use check::{

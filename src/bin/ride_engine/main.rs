@@ -9,6 +9,7 @@ mod cursor;
 mod index;
 mod out;
 mod query;
+mod semantic;
 mod timing;
 
 use ride_engine::EngineConfig;
@@ -45,6 +46,8 @@ enum Command {
         typed: Option<String>,
         #[arg(long, default_value_t = 1)]
         repeat: u32,
+        #[arg(long)]
+        semantic: bool,
     },
     Cheat {
         file: PathBuf,
@@ -76,7 +79,13 @@ fn main() -> ExitCode {
             find,
             typed,
             repeat,
-        } => complete::run(config, &file, cursor::Cursor { byte, find, typed }, repeat),
+            semantic,
+        } => complete::run(
+            config,
+            &file,
+            cursor::Cursor { byte, find, typed },
+            complete::Probe { repeat, semantic },
+        ),
         Command::Cheat {
             file,
             byte,

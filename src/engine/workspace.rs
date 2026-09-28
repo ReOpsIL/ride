@@ -25,6 +25,7 @@ impl Engine {
 
     pub fn close_workspace(&self) {
         let _ = self.write(|i| {
+            i.oracle.stop_all();
             i.workspace = None;
             i.refs = None;
             i.overlay.clear();

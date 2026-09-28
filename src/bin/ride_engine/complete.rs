@@ -5,9 +5,15 @@ use ride_engine::{CompletionContext, CompletionQuery, EngineConfig, QueryMode, e
 
 use crate::cursor::{Cursor, place};
 use crate::out;
+use crate::semantic::Ready;
 use crate::timing::timed;
 
-pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> ExitCode {
+pub struct Probe {
+    pub repeat: u32,
+    pub semantic: bool,
+}
+
+pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, probe: Probe) -> ExitCode {
     let placed = match place(file, &cursor) {
         Ok(p) => p,
         Err(e) => {
@@ -17,6 +23,7 @@ pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> Ex
     };
     let (text, at) = (placed.text, placed.at);
     let engine = engine_start(config);
+    let ready = probe.semantic.then(|| Ready::enable(&engine));
     if let Some(parent) = file.parent()
         && let Ok(root) = std::fs::canonicalize(parent)
     {
@@ -41,7 +48,15 @@ pub fn run(config: EngineConfig, file: &Path, cursor: Cursor, repeat: u32) -> Ex
         kind_filter: None,
         limit: 20,
     };
-    let resp = timed(repeat, |id| engine.query_completions(request(id)));
+    let mut resp = timed(probe.repeat, |id| engine.query_completions(request(id)));
+    if let Some(ready) = ready
+        && ready.wait(open.session_id)
+    {
+        let first = u64::from(probe.repeat) + 1;
+        resp = timed(probe.repeat, |id| {
+            engine.query_completions(request(first + id))
+        });
+    }
     out::print(&resp);
     ExitCode::SUCCESS
 }

@@ -25,7 +25,7 @@ final class AppState: ObservableObject {
     @Published var cursorLine = 1
     @Published var cursorColumn = 1
     @Published var prefs = Preferences.defaults {
-        didSet { syncMenu() }
+        didSet { syncMenu(); RideEngineClient.shared.setSemantic(prefs.semanticCompletion) }
     }
     @Published var overlay: Overlay?
     @Published var showFind = false

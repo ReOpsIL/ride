@@ -8,11 +8,14 @@ final class RideEngineClient: ObservableObject {
     @Published var rustSrcAvailable = false
     @Published var indexProgress: Double?
     @Published var statusKnown = false
+    @Published var oracleStatus = OracleStatus(state: .off, message: nil)
 
     private(set) var engine: Engine?
     private(set) var openRoot: URL?
     private let workspaceQueue = DispatchQueue(label: "dev.ride.workspace", qos: .userInitiated)
     private var listener: StatusForwarder?
+    private var oracleListener: OracleForwarder?
+    private var semantic: Bool?
     let indexDir: URL
 
     private init() {
@@ -35,6 +38,9 @@ final class RideEngineClient: ObservableObject {
         let listener = StatusForwarder(client: self)
         engine.setStatusListener(listener: listener)
         self.listener = listener
+        let oracleListener = OracleForwarder(client: self)
+        engine.setOracleListener(listener: oracleListener)
+        self.oracleListener = oracleListener
         self.engine = engine
         apply(engine.status())
     }
@@ -69,6 +75,16 @@ final class RideEngineClient: ObservableObject {
             if let completion {
                 DispatchQueue.main.async(execute: completion)
             }
+        }
+    }
+
+    func setSemantic(_ enabled: Bool) {
+        guard let engine, semantic != enabled else {
+            return
+        }
+        semantic = enabled
+        workspaceQueue.async {
+            engine.setOracleEnabled(enabled: enabled)
         }
     }
 

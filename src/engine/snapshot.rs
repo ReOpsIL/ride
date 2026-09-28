@@ -1,13 +1,14 @@
 use std::sync::Arc;
 
 use crate::discover::SystemIncludes;
-use crate::ffi::{CompletionQuery, WorkspaceInfo};
+use crate::ffi::{CompletionHit, CompletionQuery, WorkspaceInfo};
 use crate::highlight::{
     Lang, LiteralState, LocalHits, LocalQuery, Site, SiteAt, SourceScope, literal_state,
 };
 
 use super::catalog::Catalog;
 use super::headers::Header;
+use super::oracle_members;
 use super::reach::Reach;
 use super::{Engine, Inner};
 
@@ -23,6 +24,7 @@ pub struct Snapshot {
     pub system_includes: Arc<SystemIncludes>,
     pub catalog: Catalog,
     pub workspace: Option<WorkspaceInfo>,
+    pub oracle_members: Option<Arc<[CompletionHit]>>,
 }
 
 impl Snapshot {
@@ -87,6 +89,9 @@ fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
     let receiver_text = postfix_receiver
         .zip(session)
         .map(|((a, b), s)| s.replica()[a..b].to_string());
+    let oracle_members = session
+        .zip(site.as_ref())
+        .and_then(|(s, at)| oracle_members::lookup(i, q.session_id, s, at));
     Some(Snapshot {
         lang,
         site,
@@ -99,6 +104,7 @@ fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
         system_includes: i.system_includes.clone(),
         catalog: Catalog::of(i),
         workspace: i.workspace.as_ref().map(|w| w.info.clone()),
+        oracle_members,
     })
 }
 

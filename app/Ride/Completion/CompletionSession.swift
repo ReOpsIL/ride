@@ -12,6 +12,7 @@ final class CompletionSession {
     var snippet: SnippetSession?
     var list: CompletionList?
     var editSource = CompletionEditSource.user
+    var oracleWait: OracleWait?
     private var work: DispatchWorkItem?
     private var lifecycle: CompletionLifecycle?
 
@@ -38,6 +39,7 @@ final class CompletionSession {
     }
 
     func reset() {
+        oracleWait = nil
         hide()
         AICompletionSource.shared.cancel()
         snippet = nil
@@ -97,6 +99,7 @@ final class CompletionSession {
 
     func schedule(document: BufferDocument, view: RideTextView, state: AppState) {
         work?.cancel()
+        awaitOracle(document: document, view: view, state: state)
         let request = CompletionFetch.Request(queryId: state.nextQueryId(), document: document, view: view, state: state)
         let work = DispatchWorkItem { [weak self] in
             CompletionFetch.run(request) { [weak self] resp, caret in

@@ -28,8 +28,9 @@ extension RideTextView: ClaimsKeysBeforeMenus {
     }
 
     override func cancelOperation(_ sender: Any?) {
+        CompletionSession.shared.oracleWait = nil
         if CompletionSession.shared.isVisible || CheatSheetController.shared.isVisible {
-            CompletionSession.shared.hide()
+            CompletionSession.shared.dismiss()
             CheatSheetController.shared.close()
             return
         }
@@ -101,7 +102,7 @@ extension RideTextView: ClaimsKeysBeforeMenus {
     }
 
     private func cancelPopups() -> Bool {
-        CompletionSession.shared.hide()
+        CompletionSession.shared.dismiss()
         CheatSheetController.shared.close()
         return true
     }

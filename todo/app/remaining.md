@@ -72,3 +72,7 @@
 # Soft-wrap viewport gap (2026-09-27)
 
 - Typing Enter between items repainted the whole file (the engine's edited-node repaint returned the root node), and the whole-file attribute edit made TextKit 2 re-estimate every wrapped paragraph above the viewport. With soft wrap on, the viewport's first fragment then started below the visible top, leaving a blank band until the next scroll. Fixed at the source: the engine repaints only the leaf tokens that overlap the edit, covered by `tests/repaint.rs` and the self-test "type between labelled items". Other whole-document attribute edits (theme change, reload, format) can still trigger the re-estimation with soft wrap. If that shows up, relocate the viewport in the viewport-did-layout path when its first fragment starts below `visibleRect.minY`.
+
+# Self-test (added 2026-09-28)
+
+- selftest: `type at end` fails deterministically in the full Rust suite ("first fragment at N below visible top M", ~39 layouts) and passes with `--only "type at end"`; reproduced on 13e0ab3 without the oracle work, so an earlier step leaves editor state (folds, soft wrap, scroll) that the viewport check trips on
