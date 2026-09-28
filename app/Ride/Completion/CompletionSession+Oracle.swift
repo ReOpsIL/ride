@@ -27,12 +27,20 @@ extension CompletionSession {
         guard let wait = oracleWait, wait.sessionId == sessionId,
               let document = wait.document, let view = wait.view, let state = wait.state,
               view.window?.firstResponder === view,
-              view.selectedRange() == NSRange(location: wait.caret, length: 0),
-              (view.string as NSString).length == wait.length
+              view.selectedRange().length == 0,
+              showing(in: view) || unchanged(view, since: wait)
         else {
             return
         }
         schedule(document: document, view: view, state: state)
+    }
+
+    private func showing(in view: RideTextView) -> Bool {
+        popup.isVisible && popup.textView === view
+    }
+
+    private func unchanged(_ view: RideTextView, since wait: OracleWait) -> Bool {
+        view.selectedRange().location == wait.caret && (view.string as NSString).length == wait.length
     }
 
     func dismiss() {

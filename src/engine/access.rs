@@ -2,12 +2,11 @@ use crate::ffi::{CompletionHit, CompletionQuery, CompletionResponse};
 use crate::highlight::TypeTable;
 
 use super::snapshot::Snapshot;
-use super::{header_hits, merge, oracle_members, rust_members};
+use super::{header_hits, merge, oracle_hits, rust_members};
 
 pub fn hits(snap: &Snapshot, q: &CompletionQuery) -> CompletionResponse {
-    if let Some(members) = &snap.oracle_members {
-        let next_char = snap.site.as_ref().and_then(|s| s.next_char);
-        return oracle_members::hits(members, q, next_char);
+    if let Some(known) = &snap.oracle_hits {
+        return oracle_hits::members(known, q, snap.next_char());
     }
     if let Some(resp) = rust_members::try_hits(snap, q) {
         return resp;

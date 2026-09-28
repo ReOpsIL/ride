@@ -7,7 +7,7 @@ final class OracleForwarder: OracleListener, @unchecked Sendable {
         self.client = client
     }
 
-    func onMembersReady(sessionId: UInt64) {
+    func onCompletionsReady(sessionId: UInt64) {
         DispatchQueue.main.async {
             CompletionSession.shared.oracleAnswered(sessionId: sessionId)
         }

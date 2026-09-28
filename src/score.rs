@@ -7,6 +7,7 @@ pub const TIER_ITEM: f32 = 850.0;
 pub const TIER_HEADER: f32 = 800.0;
 pub const TIER_MENTION: f32 = 700.0;
 pub const IMPORT_BONUS: f32 = 600.0;
+pub const IN_SCOPE_BONUS: f32 = 700.0;
 pub const PRELUDE_BONUS: f32 = 300.0;
 pub const CASE_BONUS: f32 = 50.0;
 pub const DEPRECATED_PENALTY: f32 = 200.0;

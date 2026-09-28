@@ -5,30 +5,30 @@ use crate::ffi::CompletionHit;
 
 use super::board::Board;
 use super::facts::Facts;
-use super::key::MemberKey;
+use super::key::SiteKey;
 
 #[derive(Default)]
 pub struct Shared {
     pub board: Board,
     facts: Mutex<Facts>,
     synced: Mutex<HashMap<u64, u64>>,
-    pending: Mutex<HashSet<MemberKey>>,
+    pending: Mutex<HashSet<SiteKey>>,
 }
 
 impl Shared {
-    pub fn members(&self, key: &MemberKey) -> Option<Arc<[CompletionHit]>> {
-        lock(&self.facts).members(key)
+    pub fn hits(&self, key: &SiteKey) -> Option<Arc<[CompletionHit]>> {
+        lock(&self.facts).hits(key)
     }
 
-    pub fn is_pending(&self, key: &MemberKey) -> bool {
+    pub fn is_pending(&self, key: &SiteKey) -> bool {
         lock(&self.pending).contains(key)
     }
 
-    pub fn claim(&self, key: MemberKey) -> bool {
+    pub fn claim(&self, key: SiteKey) -> bool {
         lock(&self.pending).insert(key)
     }
 
-    pub fn done(&self, key: &MemberKey) {
+    pub fn done(&self, key: &SiteKey) {
         lock(&self.pending).remove(key);
     }
 
@@ -44,9 +44,9 @@ impl Shared {
         lock(&self.synced).remove(&session_id);
     }
 
-    pub fn store(&self, key: MemberKey, hits: Vec<CompletionHit>) {
+    pub fn store(&self, key: SiteKey, hits: Vec<CompletionHit>) {
         lock(&self.facts).insert(key, hits);
-        self.board.members_ready(key.session_id);
+        self.board.completions_ready(key.session_id);
     }
 
     pub fn forget(&self, session_id: u64) {

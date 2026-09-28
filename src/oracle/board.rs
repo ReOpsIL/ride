@@ -38,9 +38,9 @@ impl Board {
         self.set(state, Some(err.to_string()));
     }
 
-    pub fn members_ready(&self, session_id: u64) {
+    pub fn completions_ready(&self, session_id: u64) {
         if let Some(listener) = self.listener() {
-            listener.on_members_ready(session_id);
+            listener.on_completions_ready(session_id);
         }
     }
 

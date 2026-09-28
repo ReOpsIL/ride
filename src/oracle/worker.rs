@@ -9,7 +9,7 @@ use crate::ffi::{CompletionHit, OracleState};
 
 use super::discover;
 use super::error::OracleError;
-use super::job::MemberJob;
+use super::job::SiteJob;
 use super::restarts::Restarts;
 use super::roots::Roots;
 use super::shared::Shared;
@@ -19,7 +19,7 @@ const LOAD_TIMEOUT: Duration = Duration::from_secs(180);
 const POLL: Duration = Duration::from_millis(100);
 
 pub enum Msg {
-    Members(MemberJob),
+    Complete(SiteJob),
     Close(u64),
     StopAll,
     Quit,
@@ -55,10 +55,10 @@ impl Worker {
     fn run(mut self) {
         while let Some(msg) = self.next() {
             match msg {
-                Msg::Members(job) => {
+                Msg::Complete(job) => {
                     let key = job.key;
                     if !self.superseded(&job) {
-                        self.members(&job);
+                        self.complete(&job);
                     }
                     self.shared.done(&key);
                 }
@@ -77,13 +77,13 @@ impl Worker {
         self.backlog.pop_front().or_else(|| self.rx.recv().ok())
     }
 
-    fn superseded(&mut self, job: &MemberJob) -> bool {
+    fn superseded(&mut self, job: &SiteJob) -> bool {
         while let Ok(msg) = self.rx.try_recv() {
             self.backlog.push_back(msg);
         }
         let session = job.doc.session_id;
         self.backlog.iter().any(|msg| match msg {
-            Msg::Members(next) => next.doc.session_id == session,
+            Msg::Complete(next) => next.doc.session_id == session,
             Msg::Close(id) => *id == session,
             Msg::StopAll | Msg::Quit => true,
         })
@@ -95,7 +95,7 @@ impl Worker {
         }
     }
 
-    fn members(&mut self, job: &MemberJob) {
+    fn complete(&mut self, job: &SiteJob) {
         let Some(root) = self.roots.of(&job.doc.path) else {
             return;
         };
@@ -127,7 +127,7 @@ impl Worker {
         Ok(())
     }
 
-    fn await_ready(&mut self, root: &Path, job: &MemberJob) -> bool {
+    fn await_ready(&mut self, root: &Path, job: &SiteJob) -> bool {
         let started = Instant::now();
         loop {
             let Some(sidecar) = self.sidecars.get(root) else {
@@ -149,7 +149,7 @@ impl Worker {
         }
     }
 
-    fn query(&mut self, root: &Path, job: &MemberJob) -> Result<Vec<CompletionHit>, OracleError> {
+    fn query(&mut self, root: &Path, job: &SiteJob) -> Result<Vec<CompletionHit>, OracleError> {
         let sidecar = self
             .sidecars
             .get_mut(root)
@@ -163,7 +163,7 @@ impl Worker {
         }
         sidecar.sync(&job.doc)?;
         self.shared.mark_synced(job.doc.session_id, job.doc.version);
-        sidecar.members(&job.doc, job.key.site)
+        sidecar.complete(&job.doc, job.key.site, job.shape)
     }
 
     fn check_exit(&mut self, root: &Path) {

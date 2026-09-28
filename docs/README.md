@@ -52,7 +52,7 @@
 | `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
 | `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), the cheat sheet lookup (`cheat.rs`), definitions, import edits, signature help, tools, manifest watch |
 | `src/wire` | Content-Length JSON framing and the response mailbox shared by the debug adapter and LSP clients |
-| `src/oracle` | rust-analyzer sidecars per Cargo root, background member-completion jobs, the facts cache the completion router reads |
+| `src/oracle` | rust-analyzer sidecars per Cargo root, background completion jobs for member, identifier, `Type::` and `use` sites, the facts cache the completion router reads |
 | `src/ffi` | UniFFI records, enums and listener traits |
 
 ## Languages

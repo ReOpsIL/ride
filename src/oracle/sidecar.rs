@@ -7,7 +7,7 @@ use serde_json::json;
 use crate::ffi::CompletionHit;
 
 use super::error::OracleError;
-use super::items::member_hits;
+use super::items::{Shape, completion_hits};
 use super::job::DocText;
 use super::lsp::{self, Client, Encoding, document_uri};
 
@@ -89,7 +89,12 @@ impl Sidecar {
         }
     }
 
-    pub fn members(&self, doc: &DocText, site: usize) -> Result<Vec<CompletionHit>, OracleError> {
+    pub fn complete(
+        &self,
+        doc: &DocText,
+        site: usize,
+        shape: Shape,
+    ) -> Result<Vec<CompletionHit>, OracleError> {
         let position = lsp::position(&doc.text, site, self.encoding);
         let uri = self
             .docs
@@ -99,6 +104,6 @@ impl Sidecar {
         let result = self
             .client
             .request("textDocument/completion", params, COMPLETION_TIMEOUT)?;
-        Ok(member_hits(&result))
+        Ok(completion_hits(&result, shape))
     }
 }

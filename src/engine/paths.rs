@@ -5,20 +5,27 @@ use crate::query;
 use crate::score::{KEYWORD, case_bonus};
 
 use super::snapshot::Snapshot;
-use super::{header_hits, merge};
+use super::{header_hits, merge, oracle_hits};
 
 const ROOTS: &[&str] = &["crate", "self", "super", "std", "core", "alloc"];
 const IN_GROUP: &[&str] = &["self", "*"];
 const SELF_METHOD_PENALTY: f32 = 60.0;
 
 pub fn use_hits(snap: &Snapshot, q: &CompletionQuery, segments: &[String]) -> CompletionResponse {
-    if segments.is_empty() {
-        return crates(snap, q);
-    }
-    let mut pool = children(snap, q, segments);
-    pool.retain(|h| h.item_kind != ItemKind::Method);
-    pool.extend(specials(IN_GROUP, &q.prefix));
-    merge::finish(q, pool, false)
+    let ours = if segments.is_empty() {
+        crates(snap, q)
+    } else {
+        let mut pool = children(snap, q, segments);
+        pool.retain(|h| h.item_kind != ItemKind::Method);
+        pool.extend(specials(IN_GROUP, &q.prefix));
+        merge::finish(q, pool, false)
+    };
+    let Some(known) = &snap.oracle_hits else {
+        return ours;
+    };
+    let mut pool = oracle_hits::in_scope(known, q, snap.next_char());
+    oracle_hits::add_missing(&mut pool, ours.hits);
+    merge::finish(q, pool, ours.truncated)
 }
 
 pub fn scoped_hits(
@@ -28,6 +35,10 @@ pub fn scoped_hits(
 ) -> CompletionResponse {
     if !snap.lang.has_catalog() {
         return scoped_tables(snap, q, segments);
+    }
+    if let Some(known) = &snap.oracle_hits {
+        let pool = oracle_hits::in_scope(known, q, snap.next_char());
+        return merge::finish(q, pool, false);
     }
     if segments.is_empty() {
         return crates(snap, q);

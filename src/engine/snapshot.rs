@@ -8,7 +8,7 @@ use crate::highlight::{
 
 use super::catalog::Catalog;
 use super::headers::Header;
-use super::oracle_members;
+use super::oracle_sites;
 use super::reach::Reach;
 use super::{Engine, Inner};
 
@@ -24,12 +24,16 @@ pub struct Snapshot {
     pub system_includes: Arc<SystemIncludes>,
     pub catalog: Catalog,
     pub workspace: Option<WorkspaceInfo>,
-    pub oracle_members: Option<Arc<[CompletionHit]>>,
+    pub oracle_hits: Option<Arc<[CompletionHit]>>,
 }
 
 impl Snapshot {
     pub fn scope(&self) -> Option<&Arc<SourceScope>> {
         self.reach.as_ref().map(Reach::scope)
+    }
+
+    pub fn next_char(&self) -> Option<char> {
+        self.site.as_ref().and_then(|s| s.next_char)
     }
 
     pub fn headers(&self) -> &[Arc<Header>] {
@@ -89,9 +93,9 @@ fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
     let receiver_text = postfix_receiver
         .zip(session)
         .map(|((a, b), s)| s.replica()[a..b].to_string());
-    let oracle_members = session
+    let oracle_hits = session
         .zip(site.as_ref())
-        .and_then(|(s, at)| oracle_members::lookup(i, q.session_id, s, at));
+        .and_then(|(s, at)| oracle_sites::lookup(i, q.session_id, s, at));
     Some(Snapshot {
         lang,
         site,
@@ -104,7 +108,7 @@ fn build(i: &Inner, q: &CompletionQuery, limit: u32) -> Option<Snapshot> {
         system_includes: i.system_includes.clone(),
         catalog: Catalog::of(i),
         workspace: i.workspace.as_ref().map(|w| w.info.clone()),
-        oracle_members,
+        oracle_hits,
     })
 }
 

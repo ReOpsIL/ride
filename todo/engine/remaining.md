@@ -91,5 +91,6 @@
 - oracle: clangd sidecar for C and C++ (2.1-3) behind the same `Oracle`; `Sidecar` is rust-analyzer specific in its init options and item mapping
 - oracle: status bar badge for `Failed`/`Unavailable`; today the state shows only in Preferences
 - oracle: two sessions on the same path would both `didOpen` the same URI; key open documents by URI if split panes ever get separate sessions per file
-- oracle: `Vec::new().` style identifier and path completions (`Site::Identifier`, `ScopedPath`) still come from the catalog; decide per site whether rust-analyzer should win
+- oracle: empty answers are not cached, so a path into a non-dependency crate asks rust-analyzer again on every keystroke; add a short-lived negative entry if it shows in profiles
+- oracle: struct-literal fields (`Site::StructLiteral`) still come from the buffer's type table
 - oracle: the first answer after a cold start takes ~1–3 s on a small crate; measure on a large workspace and consider starting the sidecar when a Rust workspace opens instead of on the first dot

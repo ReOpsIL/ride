@@ -13,6 +13,7 @@ mod shared;
 mod sidecar;
 mod worker;
 
-pub use job::{DocText, MemberJob};
-pub use key::MemberKey;
+pub use items::Shape;
+pub use job::{DocText, SiteJob};
+pub use key::SiteKey;
 pub use service::Oracle;

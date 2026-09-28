@@ -33,7 +33,7 @@ struct Forward {
 }
 
 impl OracleListener for Forward {
-    fn on_members_ready(&self, session_id: u64) {
+    fn on_completions_ready(&self, session_id: u64) {
         if let Ok(tx) = self.tx.lock() {
             let _ = tx.send(session_id);
         }

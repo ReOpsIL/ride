@@ -17,6 +17,6 @@ pub struct OracleStatus {
 
 #[uniffi::export(with_foreign)]
 pub trait OracleListener: Send + Sync {
-    fn on_members_ready(&self, session_id: u64);
+    fn on_completions_ready(&self, session_id: u64);
     fn on_oracle_status(&self, status: OracleStatus);
 }

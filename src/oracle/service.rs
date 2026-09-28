@@ -3,8 +3,8 @@ use std::sync::{Arc, Mutex};
 
 use crate::ffi::{CompletionHit, OracleListener, OracleState, OracleStatus};
 
-use super::job::MemberJob;
-use super::key::MemberKey;
+use super::job::SiteJob;
+use super::key::SiteKey;
 use super::shared::{Shared, lock};
 use super::worker::{self, Msg};
 
@@ -44,11 +44,11 @@ impl Oracle {
         self.shared.board.listen(listener);
     }
 
-    pub fn members(&self, key: &MemberKey) -> Option<Arc<[CompletionHit]>> {
-        self.shared.members(key)
+    pub fn hits(&self, key: &SiteKey) -> Option<Arc<[CompletionHit]>> {
+        self.shared.hits(key)
     }
 
-    pub fn wants(&self, key: &MemberKey) -> bool {
+    pub fn wants(&self, key: &SiteKey) -> bool {
         lock(&self.sender).is_some() && !self.shared.is_pending(key)
     }
 
@@ -56,9 +56,9 @@ impl Oracle {
         self.shared.synced_version(session_id)
     }
 
-    pub fn request(&self, job: MemberJob) {
+    pub fn request(&self, job: SiteJob) {
         let key = job.key;
-        if self.shared.claim(key) && !self.send(Msg::Members(job)) {
+        if self.shared.claim(key) && !self.send(Msg::Complete(job)) {
             self.shared.done(&key);
         }
     }
