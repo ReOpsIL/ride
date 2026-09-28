@@ -106,6 +106,9 @@ struct CodeCommands: Commands {
         Button("Quick Definition") { PeekController.showFocused() }
             .keyboardShortcut(.space, modifiers: .option)
             .disabled(!menu.code.editor)
+        Button("Type Info") { DocController.showTypeInfoFocused() }
+            .keyboardShortcut("p", modifiers: [.control, .shift])
+            .disabled(!menu.code.editor)
         Button("External Documentation") { DocController.showExternalFocused() }
             .keyboardShortcut(FunctionKeys.f1, modifiers: .shift)
             .disabled(!menu.code.editor)

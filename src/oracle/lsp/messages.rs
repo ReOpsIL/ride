@@ -17,7 +17,11 @@ pub fn initialize(root: &Path, options: Value) -> Value {
         "capabilities": {
             "general": { "positionEncodings": ["utf-8", "utf-16"] },
             "textDocument": {
-                "completion": { "completionItem": { "snippetSupport": true } }
+                "completion": { "completionItem": { "snippetSupport": true } },
+                "definition": { "linkSupport": true },
+                "declaration": { "linkSupport": true },
+                "implementation": { "linkSupport": true },
+                "hover": { "contentFormat": ["markdown", "plaintext"] }
             },
             "experimental": { "serverStatusNotification": true }
         },
@@ -42,6 +46,6 @@ pub fn did_close(uri: &str) -> Value {
     json!({ "textDocument": { "uri": uri } })
 }
 
-pub fn completion(uri: &str, position: Value) -> Value {
+pub fn at(uri: &str, position: Value) -> Value {
     json!({ "textDocument": { "uri": uri }, "position": position })
 }

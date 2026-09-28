@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 use std::time::Duration;
 
 use serde_json::json;
@@ -8,18 +9,22 @@ use crate::ffi::CompletionHit;
 
 use super::clangd::compile_settings;
 use super::error::OracleError;
+use super::hover::{Hover, hover_of};
 use super::items::{Shape, completion_hits};
 use super::job::DocText;
 use super::lsp::{self, Client, Encoding, document_uri};
 use super::server::{Server, language_id};
+use super::shared::lock;
 
 const INIT_TIMEOUT: Duration = Duration::from_secs(30);
+pub const ASK_TIMEOUT: Duration = Duration::from_millis(1500);
 
 pub struct Sidecar {
     server: Server,
+    root: PathBuf,
     client: Client,
     encoding: Encoding,
-    docs: HashMap<u64, OpenDoc>,
+    docs: Mutex<HashMap<u64, OpenDoc>>,
 }
 
 struct OpenDoc {
@@ -29,17 +34,35 @@ struct OpenDoc {
 }
 
 impl Sidecar {
-    pub fn start(server: Server, program: &Path, root: &Path) -> Result<Self, OracleError> {
-        let client = Client::spawn(program, server.args(), root)?;
+    pub fn start(
+        server: Server,
+        program: &Path,
+        root: &Path,
+        cache: &Path,
+    ) -> Result<Self, OracleError> {
+        let client = Client::spawn(program, &server.args(root, cache), root)?;
         let params = lsp::initialize(root, server.init_options());
         let init = client.request("initialize", params, INIT_TIMEOUT)?;
         client.notify("initialized", json!({}))?;
         Ok(Self {
             server,
+            root: root.to_path_buf(),
             encoding: Encoding::from_capabilities(&init["capabilities"]),
             client,
-            docs: HashMap::new(),
+            docs: Mutex::default(),
         })
+    }
+
+    pub fn server(&self) -> Server {
+        self.server
+    }
+
+    pub fn root(&self) -> &Path {
+        &self.root
+    }
+
+    pub fn encoding(&self) -> Encoding {
+        self.encoding
     }
 
     pub fn ready(&self) -> bool {
@@ -50,44 +73,31 @@ impl Sidecar {
         self.client.failure()
     }
 
-    pub fn holds(&self, session_id: u64) -> bool {
-        self.docs.contains_key(&session_id)
+    pub fn sessions(&self) -> Vec<u64> {
+        lock(&self.docs).keys().copied().collect()
     }
 
-    pub fn sessions(&self) -> impl Iterator<Item = u64> + '_ {
-        self.docs.keys().copied()
-    }
-
-    pub fn sync(&mut self, doc: &DocText) -> Result<(), OracleError> {
-        let uri = document_uri(&doc.path);
-        if let Some(open) = self.docs.get_mut(&doc.session_id)
-            && open.uri == uri
-        {
-            if open.version == doc.version {
-                return Ok(());
+    pub fn sync_all(
+        &self,
+        doc: &DocText,
+        stale: &[DocText],
+        mut synced: impl FnMut(u64, u64),
+    ) -> Result<(), OracleError> {
+        let mut docs = lock(&self.docs);
+        for other in stale {
+            if !docs.contains_key(&other.session_id) {
+                continue;
             }
-            open.version = doc.version;
-            open.revision += 1;
-            let params = lsp::did_change(&uri, open.revision, &doc.text);
-            return self.client.notify("textDocument/didChange", params);
+            self.sync(&mut docs, other)?;
+            synced(other.session_id, other.version);
         }
-        self.close(doc.session_id);
-        self.configure(doc)?;
-        let params = lsp::did_open(&uri, language_id(doc.lang), 1, &doc.text);
-        self.client.notify("textDocument/didOpen", params)?;
-        self.docs.insert(
-            doc.session_id,
-            OpenDoc {
-                uri,
-                version: doc.version,
-                revision: 1,
-            },
-        );
+        self.sync(&mut docs, doc)?;
+        synced(doc.session_id, doc.version);
         Ok(())
     }
 
-    pub fn close(&mut self, session_id: u64) {
-        if let Some(doc) = self.docs.remove(&session_id) {
+    pub fn close(&self, session_id: u64) {
+        if let Some(doc) = lock(&self.docs).remove(&session_id) {
             let _ = self
                 .client
                 .notify("textDocument/didClose", lsp::did_close(&doc.uri));
@@ -100,17 +110,61 @@ impl Sidecar {
         site: usize,
         shape: Shape,
     ) -> Result<Vec<CompletionHit>, OracleError> {
+        let timeout = self.server.completion_timeout();
+        let result = self.ask("textDocument/completion", doc, site, timeout)?;
+        Ok(completion_hits(&result, shape, self.server.dialect()))
+    }
+
+    pub fn hover(&self, doc: &DocText, site: usize) -> Result<Option<Hover>, OracleError> {
+        let result = self.ask("textDocument/hover", doc, site, ASK_TIMEOUT)?;
+        Ok(hover_of(&result))
+    }
+
+    pub fn ask(
+        &self,
+        method: &str,
+        doc: &DocText,
+        site: usize,
+        timeout: Duration,
+    ) -> Result<serde_json::Value, OracleError> {
         let position = lsp::position(&doc.text, site, self.encoding);
-        let uri = self
-            .docs
+        let uri = lock(&self.docs)
             .get(&doc.session_id)
             .map_or_else(|| document_uri(&doc.path), |open| open.uri.clone());
-        let params = lsp::completion(&uri, position);
-        let timeout = self.server.completion_timeout();
-        let result = self
-            .client
-            .request("textDocument/completion", params, timeout)?;
-        Ok(completion_hits(&result, shape, self.server.dialect()))
+        self.client
+            .request(method, lsp::at(&uri, position), timeout)
+    }
+
+    fn sync(&self, docs: &mut HashMap<u64, OpenDoc>, doc: &DocText) -> Result<(), OracleError> {
+        let uri = document_uri(&doc.path);
+        if let Some(open) = docs.get_mut(&doc.session_id)
+            && open.uri == uri
+        {
+            if open.version == doc.version {
+                return Ok(());
+            }
+            open.version = doc.version;
+            open.revision += 1;
+            let params = lsp::did_change(&uri, open.revision, &doc.text);
+            return self.client.notify("textDocument/didChange", params);
+        }
+        if let Some(old) = docs.remove(&doc.session_id) {
+            let _ = self
+                .client
+                .notify("textDocument/didClose", lsp::did_close(&old.uri));
+        }
+        self.configure(doc)?;
+        let params = lsp::did_open(&uri, language_id(doc.lang), 1, &doc.text);
+        self.client.notify("textDocument/didOpen", params)?;
+        docs.insert(
+            doc.session_id,
+            OpenDoc {
+                uri,
+                version: doc.version,
+                revision: 1,
+            },
+        );
+        Ok(())
     }
 
     fn configure(&self, doc: &DocText) -> Result<(), OracleError> {

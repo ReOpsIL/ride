@@ -30,6 +30,37 @@ pub fn position(text: &str, byte: usize, encoding: Encoding) -> Value {
     json!({ "line": line, "character": character })
 }
 
+pub fn byte_at(text: &str, line: usize, character: usize, encoding: Encoding) -> usize {
+    let start = text
+        .split_inclusive('\n')
+        .take(line)
+        .map(str::len)
+        .sum::<usize>()
+        .min(text.len());
+    let rest = &text[start..];
+    let line_text = rest.split('\n').next().unwrap_or_default();
+    let offset = match encoding {
+        Encoding::Utf8 => character.min(line_text.len()),
+        Encoding::Utf16 => utf16_offset(line_text, character),
+    };
+    let mut byte = start + offset;
+    while !text.is_char_boundary(byte) {
+        byte -= 1;
+    }
+    byte
+}
+
+fn utf16_offset(line: &str, units: usize) -> usize {
+    let mut seen = 0;
+    for (byte, ch) in line.char_indices() {
+        if seen >= units {
+            return byte;
+        }
+        seen += ch.len_utf16();
+    }
+    line.len()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -46,6 +77,17 @@ mod tests {
             position(text, end, Encoding::Utf16),
             json!({"line": 1, "character": 10})
         );
+    }
+
+    #[test]
+    fn a_position_maps_back_to_its_byte() {
+        let text = "fn a() {}\nlet é = s.";
+        for encoding in [Encoding::Utf8, Encoding::Utf16] {
+            let spot = position(text, text.len(), encoding);
+            let line = spot["line"].as_u64().expect("line") as usize;
+            let character = spot["character"].as_u64().expect("character") as usize;
+            assert_eq!(byte_at(text, line, character, encoding), text.len());
+        }
     }
 
     #[test]

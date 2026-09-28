@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -6,8 +8,8 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use ride_engine::{
-    CompletionContext, CompletionQuery, CompletionResponse, Engine, EngineConfig, OracleListener,
-    OracleStatus, QueryMode, engine_start,
+    CompletionContext, CompletionHit, CompletionQuery, CompletionResponse, Engine, EngineConfig,
+    OracleListener, OracleStatus, QueryMode, engine_start,
 };
 
 struct Forward(Mutex<Sender<u64>>);
@@ -126,6 +128,29 @@ impl Probe {
             got = names(&self.at(anchor));
         }
         got
+    }
+}
+
+impl Probe {
+    pub fn root(&self) -> &Path {
+        self._dir.path()
+    }
+
+    pub fn definition_until(
+        &self,
+        anchor: &str,
+        wanted: impl Fn(&CompletionHit) -> bool,
+    ) -> Option<CompletionHit> {
+        let cursor = self.text.find(anchor).expect("anchor") + anchor.len() - 1;
+        let deadline = Instant::now() + Duration::from_secs(120);
+        while Instant::now() < deadline {
+            let resp = self.engine.find_definitions(self.session_id, cursor as u32);
+            if let Some(hit) = resp.hits.into_iter().find(|h| wanted(h)) {
+                return Some(hit);
+            }
+            std::thread::sleep(Duration::from_millis(300));
+        }
+        None
     }
 }
 

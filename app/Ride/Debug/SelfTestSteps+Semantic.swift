@@ -31,7 +31,11 @@ struct SemanticCase {
 extension SelfTestSteps {
     static func semanticSteps(state: AppState, e: SelfTestEditor, c: SemanticCase = .rust) -> [SelfTestStep] {
         let s = SemanticScratch()
-        return [semanticOpen(state: state, e: e, c: c), semanticMembers(state: state, e: e, c: c, s: s)]
+        let definition = c.label.isEmpty
+            ? semanticDefinition(state: state, e: e)
+            : semanticCppDefinition(state: state, e: e)
+        let rustOnly = c.label.isEmpty ? [menuTypeInfo(e: e)] : []
+        return [semanticOpen(state: state, e: e, c: c), semanticMembers(state: state, e: e, c: c, s: s), definition] + rustOnly
     }
 
     private static func semanticOpen(state: AppState, e: SelfTestEditor, c: SemanticCase) -> SelfTestStep {

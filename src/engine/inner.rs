@@ -42,6 +42,7 @@ impl Inner {
         let sysroot = crate::discover::sysroot_path(&config).ok().flatten();
         let rust_src = crate::discover::rust_src_available(sysroot.as_deref());
         let header_store = Path::new(&config.index_dir).join("headers");
+        let oracle_cache = Path::new(&config.index_dir).join("oracle");
         Self {
             config,
             workspace: None,
@@ -62,7 +63,7 @@ impl Inner {
             debug_sessions: Arc::default(),
             sysroot,
             refs: None,
-            oracle: Arc::default(),
+            oracle: Arc::new(Oracle::new(oracle_cache)),
         }
     }
 

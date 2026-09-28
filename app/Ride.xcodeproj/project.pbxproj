@@ -351,12 +351,14 @@
 		D19000000000000000000005 /* DocPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000004 /* DocPanel.swift */; };
 		D19000000000000000000007 /* DocWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000006 /* DocWebView.swift */; };
 		D19000000000000000000009 /* DocController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000008 /* DocController.swift */; };
+		0AC1E0000000000000000106 /* TypeInfoText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000006 /* TypeInfoText.swift */; };
 		D19100000000000000000002 /* PeekPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000001 /* PeekPanel.swift */; };
 		D19100000000000000000004 /* PeekController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000003 /* PeekController.swift */; };
 		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
 		D2500000000000000000000B /* SelfTestSteps+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2500000000000000000000A /* SelfTestSteps+Tests.swift */; };
 		D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000001 /* SelfTestSteps+Rust.swift */; };
 		0AC1E0000000000000000104 /* SelfTestSteps+Semantic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */; };
+		0AC1E0000000000000000105 /* SelfTestSteps+SemanticDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000005 /* SelfTestSteps+SemanticDefinition.swift */; };
 		MAA0F6357E53BF3CFF133B53 /* SelfTestSteps+MenusWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */; };
 		MAA52251F40DA4EC02BA6430 /* SelfTestSteps+MenusRename.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */; };
 		MAA6678D0B9FC7D25E0A108D /* SelfTestSteps+MenusNavigate.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */; };
@@ -1223,12 +1225,14 @@
 		D19000000000000000000004 /* DocPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPanel.swift; sourceTree = "<group>"; };
 		D19000000000000000000006 /* DocWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocWebView.swift; sourceTree = "<group>"; };
 		D19000000000000000000008 /* DocController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocController.swift; sourceTree = "<group>"; };
+		0AC1E0000000000000000006 /* TypeInfoText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeInfoText.swift; sourceTree = "<group>"; };
 		D19100000000000000000001 /* PeekPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekPanel.swift; sourceTree = "<group>"; };
 		D19100000000000000000003 /* PeekController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekController.swift; sourceTree = "<group>"; };
 		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
 		D2500000000000000000000A /* SelfTestSteps+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Tests.swift"; sourceTree = "<group>"; };
 		D19200000000000000000001 /* SelfTestSteps+Rust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rust.swift"; sourceTree = "<group>"; };
 		0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Semantic.swift"; sourceTree = "<group>"; };
+		0AC1E0000000000000000005 /* SelfTestSteps+SemanticDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+SemanticDefinition.swift"; sourceTree = "<group>"; };
 		MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusWorkspace.swift"; sourceTree = "<group>"; };
 		MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusRename.swift"; sourceTree = "<group>"; };
 		MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+MenusNavigate.swift"; sourceTree = "<group>"; };
@@ -2047,6 +2051,7 @@
 				F1A5E0000000000000000009 /* CaretPopup.swift */,
 				D19000000000000000000006 /* DocWebView.swift */,
 				D19000000000000000000008 /* DocController.swift */,
+				0AC1E0000000000000000006 /* TypeInfoText.swift */,
 				D19100000000000000000001 /* PeekPanel.swift */,
 				F1A000000000000000000001 /* PeekSegments.swift */,
 				D19100000000000000000003 /* PeekController.swift */,
@@ -2299,6 +2304,7 @@
 				P6100000000000000000000B /* SelfTestSteps+Move.swift */,
 				D19200000000000000000001 /* SelfTestSteps+Rust.swift */,
 				0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */,
+				0AC1E0000000000000000005 /* SelfTestSteps+SemanticDefinition.swift */,
 				MA0F6357E53BF3CFF133B536 /* SelfTestSteps+MenusWorkspace.swift */,
 				MA52251F40DA4EC02BA64302 /* SelfTestSteps+MenusRename.swift */,
 				MA6678D0B9FC7D25E0A108D6 /* SelfTestSteps+MenusNavigate.swift */,
@@ -3114,6 +3120,7 @@
 				E80000000000000000000004 /* SelfTestSteps.swift in Sources */,
 				D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */,
 				0AC1E0000000000000000104 /* SelfTestSteps+Semantic.swift in Sources */,
+				0AC1E0000000000000000105 /* SelfTestSteps+SemanticDefinition.swift in Sources */,
 				P8B00000000000000000000A /* SelfTestSteps+RustGenerate.swift in Sources */,
 				P8B00000000000000000000C /* SelfTestSteps+RustEdit.swift in Sources */,
 				P8B00000000000000000000E /* SelfTestSteps+RustSelect.swift in Sources */,
@@ -3263,6 +3270,7 @@
 				D19000000000000000000005 /* DocPanel.swift in Sources */,
 				D19000000000000000000007 /* DocWebView.swift in Sources */,
 				D19000000000000000000009 /* DocController.swift in Sources */,
+				0AC1E0000000000000000106 /* TypeInfoText.swift in Sources */,
 				D19100000000000000000002 /* PeekPanel.swift in Sources */,
 				D19100000000000000000004 /* PeekController.swift in Sources */,
 				D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */,

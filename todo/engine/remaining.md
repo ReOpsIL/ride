@@ -90,7 +90,8 @@
 - oracle: only completion comes from the servers; hover, definition, inlay hints and type info (2.1-5) and live type errors (2.1-6) still use heuristics
 - oracle: one `OracleStatus` for both servers shows whichever changed last; give each server its own status once the UI has room for two
 - oracle: clangd identifier lists are large (~6.8k items with `<vector>`/`<string>` included, 150 ms); fine today, but consider asking at the caret once one character is typed if large projects make the cache heavy
-- oracle: clangd's compile command is sent once per document open; a `compile_commands.json` that changes while the file is open is picked up only after reopening it
+- oracle: Ride copies the compile database for clangd when the sidecar starts; a `compile_commands.json` regenerated later (new files, changed flags) reaches clangd only after the sidecar restarts. Rewrite the copy when the project's database changes (the project watcher already sees the file)
+- oracle: a definition asked while no server is running starts one and answers from Ride's heuristics that time; the first ⌘-click after opening a project may still land on a heuristic guess
 - oracle: status bar badge for `Failed`/`Unavailable`; today the state shows only in Preferences
 - oracle: two sessions on the same path would both `didOpen` the same URI; key open documents by URI if split panes ever get separate sessions per file
 - oracle: empty answers are not cached, so a path into a non-dependency crate asks rust-analyzer again on every keystroke; add a short-lived negative entry if it shows in profiles

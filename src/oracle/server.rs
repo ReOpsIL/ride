@@ -13,7 +13,6 @@ const CLANGD_ARGS: &[&str] = &[
     "--header-insertion=never",
     "--header-insertion-decorators=false",
     "--function-arg-placeholders=1",
-    "--background-index=false",
     "--log=error",
 ];
 
@@ -46,10 +45,16 @@ impl Server {
         }
     }
 
-    pub fn args(self) -> &'static [&'static str] {
+    pub fn args(self, root: &Path, cache: &Path) -> Vec<String> {
         match self {
-            Self::RustAnalyzer => &[],
-            Self::Clangd => CLANGD_ARGS,
+            Self::RustAnalyzer => Vec::new(),
+            Self::Clangd => {
+                let mut args: Vec<String> = CLANGD_ARGS.iter().map(|a| a.to_string()).collect();
+                if let Some(dir) = super::clangd::database_dir(cache, root) {
+                    args.push(format!("--compile-commands-dir={}", dir.display()));
+                }
+                args
+            }
         }
     }
 
@@ -119,7 +124,19 @@ mod tests {
     }
 
     #[test]
-    fn clangd_never_writes_an_index_into_the_project() {
-        assert!(Server::Clangd.args().contains(&"--background-index=false"));
+    fn clangd_reads_the_database_ride_writes_into_its_cache() {
+        let cache = tempfile::tempdir().expect("cache");
+        let root = tempfile::tempdir().expect("root");
+        let args = Server::Clangd.args(root.path(), cache.path());
+        let dir = args
+            .iter()
+            .find_map(|a| a.strip_prefix("--compile-commands-dir="))
+            .expect("database dir");
+        assert!(dir.starts_with(&cache.path().display().to_string()));
+        assert!(
+            std::path::Path::new(dir)
+                .join("compile_commands.json")
+                .is_file()
+        );
     }
 }

@@ -5,7 +5,7 @@ use crate::highlight::{BufferSession, Lang, TypeTable};
 use crate::intentions::{self, Draft};
 
 use super::include_intentions::IncludeJob;
-use super::{Engine, Inner};
+use super::{Engine, Inner, symbols};
 
 #[uniffi::export]
 impl Engine {
@@ -28,7 +28,7 @@ fn collect(
     caret: u32,
     diagnostics: &[Diagnostic],
 ) -> Vec<Intention> {
-    let hits = engine.find_definitions(session_id, caret).hits;
+    let hits = symbols::own_definitions(engine, session_id, caret).hits;
     let Ok(Some(parts)) = engine.read(|inner| {
         let session = inner.sessions.get(&session_id)?;
         Some(parts(inner, session_id, session, caret, diagnostics, &hits))

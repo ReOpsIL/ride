@@ -1,11 +1,15 @@
 mod board;
 mod clangd;
+mod definition;
 mod discover;
 mod error;
 mod facts;
+mod fleet;
+mod hover;
 mod items;
 mod job;
 mod key;
+mod launch;
 mod lsp;
 mod restarts;
 mod roots;
@@ -13,9 +17,11 @@ mod server;
 mod service;
 mod shared;
 mod sidecar;
+mod target;
 mod worker;
 
 pub use items::Shape;
 pub use job::{DocText, SiteJob};
 pub use key::SiteKey;
 pub use service::Oracle;
+pub use target::Target;

@@ -46,6 +46,7 @@ extension Shortcuts {
             ShortcutEntry("cheat", "Cheat Sheet", [.menu("Code › Cheat Sheet", "⌃⇧Space", .editor)]),
             ShortcutEntry("doc", "Quick Documentation", [.menu("Code › Quick Documentation", "⌃J", .editor), .menu("Code › Quick Documentation", "F1", .editor)]),
             ShortcutEntry("peek", "Quick Definition", [.menu("Code › Quick Definition", "⌥Space", .editor)]),
+            ShortcutEntry("typeinfo", "Type Info", [.menu("Code › Type Info", "⌃⇧P", .editor)]),
             ShortcutEntry("extdoc", "External Documentation", [.menu("Code › External Documentation", "⇧F1", .editor)]),
             ShortcutEntry("signature", "Signature Help", [.menu("Code › Signature Help", "⇧⌘Space", .editor)]),
         ]),

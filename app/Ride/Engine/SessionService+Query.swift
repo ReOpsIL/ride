@@ -18,7 +18,7 @@ extension SessionService {
     }
 
     func quickDoc(document: BufferDocument, cursorByte: UInt32, done: @escaping (QuickDoc?) -> Void) {
-        if !read(document, { $0.quickDoc(sessionId: $1, cursorByte: cursorByte) }, then: done) {
+        if !read(document, lane: .workspace, { $0.quickDoc(sessionId: $1, cursorByte: cursorByte) }, then: done) {
             done(nil)
         }
     }

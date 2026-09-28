@@ -7,7 +7,7 @@ enum CodeMenuPaths {
         "Code › Show Intention Actions", "Code › Ask AI from Comment…", "Code › Surround With…",
         "Code › Fold", "Code › Unfold", "Code › Fold All", "Code › Unfold All",
         "Code › Trigger Completion", "Code › Quick Documentation", "Code › Quick Definition",
-        "Code › External Documentation",
+        "Code › External Documentation", "Code › Type Info",
     ]
     static let language = [
         "Code › Complete Statement", "Code › Introduce Constant", "Code › Inline Variable",

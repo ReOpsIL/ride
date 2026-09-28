@@ -80,6 +80,7 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Cheat Sheet | ⌃⇧Space | editor |  |
 | Quick Documentation | ⌃J · F1 | editor |  |
 | Quick Definition | ⌥Space | editor |  |
+| Type Info | ⌃⇧P | editor |  |
 | External Documentation | ⇧F1 | editor |  |
 | Signature Help | ⇧⌘Space | editor |  |
 

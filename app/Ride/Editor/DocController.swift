@@ -32,6 +32,13 @@ final class DocController {
         host.docs.showAtCaret(in: host.textView)
     }
 
+    static func showTypeInfoFocused() {
+        guard let host = EditorPanes.shared.focused else {
+            return
+        }
+        host.docs.showTypeInfo(in: host.textView)
+    }
+
     static func showExternalFocused() {
         guard let host = EditorPanes.shared.focused else {
             return
@@ -61,6 +68,24 @@ final class DocController {
         popup.anchor(at: utf16, in: view)
         let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: utf16))
         fetch(document: binding.document, view: view, byte: byte)
+    }
+
+    func showTypeInfo(in view: RideTextView) {
+        guard let binding = view.hooks.binding?() else {
+            return
+        }
+        let utf16 = view.selectedRange().location
+        popup.anchor(at: utf16, in: view)
+        let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: utf16))
+        let expected = popup.begin()
+        SessionService.shared.read(binding.document, lane: .workspace, {
+            $0.typeInfo(sessionId: $1, cursorByte: byte)
+        }, then: { [weak self, weak view] doc in
+            guard let self, let view, self.popup.accepts(expected) else {
+                return
+            }
+            self.present(doc ?? TypeInfoText.unknown, in: view)
+        })
     }
 
     func show(hit: CompletionHit, in view: RideTextView) {

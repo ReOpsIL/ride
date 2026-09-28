@@ -38,7 +38,7 @@ fn shape_of(site: &Site) -> Option<Shape> {
     }
 }
 
-fn doc_text(session_id: u64, session: &BufferSession, path: &std::path::Path) -> DocText {
+pub fn doc_text(session_id: u64, session: &BufferSession, path: &std::path::Path) -> DocText {
     DocText {
         session_id,
         lang: session.lang(),
@@ -48,7 +48,7 @@ fn doc_text(session_id: u64, session: &BufferSession, path: &std::path::Path) ->
     }
 }
 
-fn stale_docs(i: &Inner, except: u64) -> Vec<DocText> {
+pub fn stale_docs(i: &Inner, except: u64) -> Vec<DocText> {
     i.sessions
         .iter()
         .filter(|(id, _)| **id != except)

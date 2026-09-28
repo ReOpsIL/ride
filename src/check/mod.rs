@@ -22,7 +22,7 @@ mod run;
 pub use clang::{check_c_live, run_clang_check};
 pub use clang_parse::parse_clang;
 pub use clang_project::{merge_indexed, run_check_c_project};
-pub use compile_db::{Entry, lookup, project_root, raw_command};
+pub use compile_db::{Entry, lookup, normalized, project_root, raw_command};
 pub use compile_flags::{CompileArg, compile_args};
 pub use fmt::{
     Formatter, format_clang, format_document, format_range, format_source, selection_span,

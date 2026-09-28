@@ -4,8 +4,10 @@ use std::path::{Path, PathBuf};
 use crate::highlight::Lang;
 
 mod entry;
+mod normalize;
 
 pub use entry::Entry;
+pub use normalize::normalized;
 
 const DB_NAME: &str = "compile_commands.json";
 const DB_DIRS: &[&str] = &[
@@ -43,9 +45,15 @@ pub fn sources_near(file: &Path) -> Vec<PathBuf> {
 
 pub fn sources_in(root: &Path) -> Vec<PathBuf> {
     let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
+    databases_in(&root)
+        .find_map(|db| under(&root, listed(&db)?))
+        .unwrap_or_default()
+}
+
+fn databases_in(root: &Path) -> impl Iterator<Item = PathBuf> + '_ {
     DB_DIRS
         .iter()
-        .map(|d| {
+        .map(move |d| {
             if d.is_empty() {
                 root.join(DB_NAME)
             } else {
@@ -53,8 +61,6 @@ pub fn sources_in(root: &Path) -> Vec<PathBuf> {
             }
         })
         .filter(|p| p.is_file())
-        .find_map(|db| under(&root, listed(&db)?))
-        .unwrap_or_default()
 }
 
 fn under(root: &Path, files: Vec<PathBuf>) -> Option<Vec<PathBuf>> {

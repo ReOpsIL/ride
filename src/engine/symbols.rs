@@ -8,7 +8,9 @@ use crate::highlight::BufferSession;
 use super::catalog::Catalog;
 use super::def_rank::RankContext;
 use super::reach::Reach;
-use super::{Engine, Inner, def_rank, header_hits, include_def, local_defs, variant_hits};
+use super::{
+    Engine, Inner, def_rank, header_hits, include_def, local_defs, oracle_defs, variant_hits,
+};
 
 const LOCAL_SCORE: f32 = 2000.0;
 
@@ -33,9 +35,21 @@ struct Lookup {
 }
 
 fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
-    if let Some(resp) = include_def::definition(engine, session_id, cursor_byte, LOCAL_SCORE) {
-        return resp;
-    }
+    include_def::definition(engine, session_id, cursor_byte, LOCAL_SCORE)
+        .or_else(|| oracle_defs::definition(engine, session_id, cursor_byte))
+        .unwrap_or_else(|| resolved(engine, session_id, cursor_byte))
+}
+
+pub(crate) fn own_definitions(
+    engine: &Engine,
+    session_id: u64,
+    cursor_byte: u32,
+) -> DefinitionResponse {
+    include_def::definition(engine, session_id, cursor_byte, LOCAL_SCORE)
+        .unwrap_or_else(|| resolved(engine, session_id, cursor_byte))
+}
+
+fn resolved(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
     match engine.read(|i| lookup(i, session_id, cursor_byte)) {
         Ok(Some(found)) => resolve(engine, found),
         _ => DefinitionResponse::empty(),

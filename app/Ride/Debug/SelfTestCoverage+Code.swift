@@ -35,6 +35,7 @@ extension SelfTestCoverage {
         "Code › Quick Documentation": ["menu quick documentation", "doc pin button", "doc escape"] + editorGates,
         "Code › Quick Definition": ["menu quick definition", "peek pin button", "peek escape", "peek open button"],
         "Code › External Documentation": ["menu external documentation"] + editorGates,
+        "Code › Type Info": ["menu type info"] + editorGates,
         "Code › Signature Help": ["menu signature help", "signature escape", "signature newline hides"],
         "Build › Check": ["menu check cargo", "menu check clang", "c check reports the error", "menu check cpp"],
         "Build › Check Project": ["menu check project cargo", "menu check project clang"],
