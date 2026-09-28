@@ -33,8 +33,19 @@ pub fn find_tool(name: &str) -> Option<PathBuf> {
     })
 }
 
+pub fn find_runnable(name: &str) -> Option<PathBuf> {
+    let path = find_tool(name)?;
+    Command::new(&path)
+        .arg("--version")
+        .env("PATH", search_path())
+        .output()
+        .is_ok_and(|out| out.status.success())
+        .then_some(path)
+}
+
 pub fn install_hint(name: &str) -> &'static str {
     match name {
+        "clangd" => "install Xcode or the Command Line Tools (xcode-select --install)",
         "clang-format" => {
             "install Xcode or the Command Line Tools (xcode-select --install), or brew install clang-format"
         }

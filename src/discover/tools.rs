@@ -1,5 +1,5 @@
 use crate::ffi::ToolInfo;
-use crate::toolchain::{find_tool, install_hint};
+use crate::toolchain::{find_runnable, find_tool, install_hint};
 
 use super::setup::{RUSTUP_INSTALL, setup_status};
 
@@ -7,7 +7,15 @@ const TOOLS: &[(&str, &str)] = &[
     ("rustup", "installs and updates Rust toolchains"),
     ("rustfmt", "formats Rust files"),
     ("cargo-clippy", "extra Rust lints for Check"),
+    (
+        "rust-analyzer",
+        "type-aware Rust completion, definitions and Type Info",
+    ),
     ("clang", "C and C++ diagnostics"),
+    (
+        "clangd",
+        "type-aware C and C++ completion, definitions and Type Info",
+    ),
     ("clang-format", "formats C and C++ files"),
     ("cmake", "configures and builds CMake projects"),
     ("taplo", "formats TOML files"),
@@ -16,6 +24,7 @@ const TOOLS: &[(&str, &str)] = &[
 ];
 
 const MANUAL: &[&str] = &["rustup"];
+const RUSTUP_PROXIES: &[&str] = &["rustfmt", "cargo-clippy", "rust-analyzer"];
 
 pub fn tool_status() -> Vec<ToolInfo> {
     setup_status().into_iter().chain(probed()).collect()
@@ -26,7 +35,12 @@ fn probed() -> Vec<ToolInfo> {
     TOOLS
         .iter()
         .map(|(name, purpose)| {
-            let path = find_tool(name).or_else(|| {
+            let found = if RUSTUP_PROXIES.contains(name) {
+                find_runnable(name)
+            } else {
+                find_tool(name)
+            };
+            let path = found.or_else(|| {
                 (*name == "cmake-format")
                     .then(|| find_tool("gersemi"))
                     .flatten()
@@ -66,7 +80,10 @@ impl Installers {
             "rustup" => Some(RUSTUP_INSTALL.into()),
             "rustfmt" => self.rustup.then(|| "rustup component add rustfmt".into()),
             "cargo-clippy" => self.rustup.then(|| "rustup component add clippy".into()),
-            "clang" | "git" => Some("xcode-select --install".into()),
+            "rust-analyzer" => self
+                .rustup
+                .then(|| "rustup component add rust-analyzer".into()),
+            "clang" | "clangd" | "git" => Some("xcode-select --install".into()),
             "clang-format" => {
                 brew("clang-format").or_else(|| Some("xcode-select --install".into()))
             }

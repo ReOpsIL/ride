@@ -114,6 +114,16 @@ fn tool_status_lists_every_tool_with_a_hint() {
     assert!(
         names.contains(&"rustfmt") && names.contains(&"clang-format") && names.contains(&"taplo")
     );
+    assert!(names.contains(&"rust-analyzer") && names.contains(&"clangd"));
+    let analyzer = tools.iter().find(|t| t.name == "rust-analyzer").unwrap();
+    if analyzer.path.is_none() {
+        assert!(
+            analyzer
+                .install
+                .as_deref()
+                .is_none_or(|c| c.contains("rust-analyzer"))
+        );
+    }
     assert!(
         tools
             .iter()
