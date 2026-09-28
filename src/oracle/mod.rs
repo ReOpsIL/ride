@@ -1,4 +1,5 @@
 mod board;
+mod clangd;
 mod discover;
 mod error;
 mod facts;
@@ -8,6 +9,7 @@ mod key;
 mod lsp;
 mod restarts;
 mod roots;
+mod server;
 mod service;
 mod shared;
 mod sidecar;

@@ -1,25 +1,32 @@
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::hash::Hash;
 use std::time::{Duration, Instant};
 
 const WINDOW: Duration = Duration::from_secs(300);
 const LIMIT: usize = 3;
 
-#[derive(Default)]
-pub struct Restarts {
-    exits: HashMap<PathBuf, Vec<Instant>>,
+pub struct Restarts<K> {
+    exits: HashMap<K, Vec<Instant>>,
 }
 
-impl Restarts {
-    pub fn record(&mut self, root: &Path) {
+impl<K> Default for Restarts<K> {
+    fn default() -> Self {
+        Self {
+            exits: HashMap::new(),
+        }
+    }
+}
+
+impl<K: Eq + Hash + Clone> Restarts<K> {
+    pub fn record(&mut self, key: &K) {
         self.exits
-            .entry(root.to_path_buf())
+            .entry(key.clone())
             .or_default()
             .push(Instant::now());
     }
 
-    pub fn exhausted(&mut self, root: &Path) -> bool {
-        let Some(exits) = self.exits.get_mut(root) else {
+    pub fn exhausted(&mut self, key: &K) -> bool {
+        let Some(exits) = self.exits.get_mut(key) else {
             return false;
         };
         exits.retain(|at| at.elapsed() < WINDOW);
@@ -38,11 +45,11 @@ mod tests {
     #[test]
     fn three_exits_in_the_window_stop_restarts() {
         let mut restarts = Restarts::default();
-        let root = Path::new("/r");
+        let key = "root".to_string();
         for _ in 0..LIMIT {
-            assert!(!restarts.exhausted(root));
-            restarts.record(root);
+            assert!(!restarts.exhausted(&key));
+            restarts.record(&key);
         }
-        assert!(restarts.exhausted(root));
+        assert!(restarts.exhausted(&key));
     }
 }

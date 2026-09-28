@@ -53,5 +53,6 @@ extension SelfTestSteps {
                 second: "int move_b = 2;"
             )
             + cppMenuSteps(state: state, e: e)
+            + semanticSteps(state: state, e: e, c: .cpp)
     }
 }

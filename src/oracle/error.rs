@@ -2,8 +2,11 @@ use crate::wire::{FrameError, MailboxError};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum OracleError {
-    #[error("rust-analyzer not found (rustup component add rust-analyzer)")]
-    NotInstalled,
+    #[error("{tool} not found ({hint})")]
+    NotInstalled {
+        tool: &'static str,
+        hint: &'static str,
+    },
     #[error("spawn rust-analyzer: {0}")]
     Spawn(String),
     #[error(transparent)]
@@ -15,6 +18,6 @@ pub enum OracleError {
     },
     #[error("{method}: {message}")]
     Server { method: String, message: String },
-    #[error("rust-analyzer keeps exiting: {0}")]
+    #[error("language server keeps exiting: {0}")]
     GaveUp(String),
 }

@@ -22,8 +22,9 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn spawn(program: &Path, root: &Path) -> Result<Self, OracleError> {
+    pub fn spawn(program: &Path, args: &[&str], root: &Path) -> Result<Self, OracleError> {
         let mut child = Command::new(program)
+            .args(args)
             .current_dir(root)
             .env("PATH", crate::toolchain::search_path())
             .stdin(Stdio::piped())

@@ -4,7 +4,7 @@ use serde_json::{Value, json};
 
 use super::uri::file_uri;
 
-pub fn initialize(root: &Path) -> Value {
+pub fn initialize(root: &Path, options: Value) -> Value {
     let uri = file_uri(root);
     let name = root
         .file_name()
@@ -21,21 +21,13 @@ pub fn initialize(root: &Path) -> Value {
             },
             "experimental": { "serverStatusNotification": true }
         },
-        "initializationOptions": {
-            "checkOnSave": false,
-            "diagnostics": { "enable": false },
-            "completion": {
-                "autoimport": { "enable": false },
-                "postfix": { "enable": false },
-                "callable": { "snippets": "fill_arguments" }
-            }
-        }
+        "initializationOptions": options
     })
 }
 
-pub fn did_open(uri: &str, version: i32, text: &str) -> Value {
+pub fn did_open(uri: &str, language: &str, version: i32, text: &str) -> Value {
     json!({
-        "textDocument": { "uri": uri, "languageId": "rust", "version": version, "text": text }
+        "textDocument": { "uri": uri, "languageId": language, "version": version, "text": text }
     })
 }
 

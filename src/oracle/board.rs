@@ -32,7 +32,7 @@ impl Board {
 
     pub fn fail(&self, err: &OracleError) {
         let state = match err {
-            OracleError::NotInstalled => OracleState::Unavailable,
+            OracleError::NotInstalled { .. } => OracleState::Unavailable,
             _ => OracleState::Failed,
         };
         self.set(state, Some(err.to_string()));

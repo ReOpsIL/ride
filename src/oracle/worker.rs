@@ -1,5 +1,5 @@
 use std::collections::{HashMap, VecDeque};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender, channel};
 use std::thread;
@@ -12,8 +12,11 @@ use super::error::OracleError;
 use super::job::SiteJob;
 use super::restarts::Restarts;
 use super::roots::Roots;
+use super::server::Server;
 use super::shared::Shared;
 use super::sidecar::Sidecar;
+
+type Key = (Server, PathBuf);
 
 const LOAD_TIMEOUT: Duration = Duration::from_secs(180);
 const POLL: Duration = Duration::from_millis(100);
@@ -46,9 +49,9 @@ struct Worker {
     shared: Arc<Shared>,
     rx: Receiver<Msg>,
     backlog: VecDeque<Msg>,
-    sidecars: HashMap<PathBuf, Sidecar>,
+    sidecars: HashMap<Key, Sidecar>,
     roots: Roots,
-    restarts: Restarts,
+    restarts: Restarts<Key>,
 }
 
 impl Worker {
@@ -96,52 +99,62 @@ impl Worker {
     }
 
     fn complete(&mut self, job: &SiteJob) {
-        let Some(root) = self.roots.of(&job.doc.path) else {
+        let Some(server) = Server::for_lang(job.doc.lang) else {
             return;
         };
-        if let Err(err) = self.ensure(&root) {
+        let Some(root) = self.roots.of(server, &job.doc.path) else {
+            return;
+        };
+        let key = (server, root);
+        if let Err(err) = self.ensure(&key) {
             self.shared.board.fail(&err);
             return;
         }
-        if !self.await_ready(&root, job) {
+        if !self.await_ready(&key, job) {
             return;
         }
-        match self.query(&root, job) {
+        match self.query(&key, job) {
             Ok(hits) if !hits.is_empty() => self.shared.store(job.key, hits),
             Ok(_) => {}
-            Err(_) => self.check_exit(&root),
+            Err(_) => self.check_exit(&key),
         }
     }
 
-    fn ensure(&mut self, root: &Path) -> Result<(), OracleError> {
-        if self.sidecars.contains_key(root) {
+    fn ensure(&mut self, key: &Key) -> Result<(), OracleError> {
+        if self.sidecars.contains_key(key) {
             return Ok(());
         }
-        if self.restarts.exhausted(root) {
-            return Err(OracleError::GaveUp(root.display().to_string()));
+        let (server, root) = key;
+        if self.restarts.exhausted(key) {
+            return Err(OracleError::GaveUp(format!(
+                "{} in {}",
+                server.name(),
+                root.display()
+            )));
         }
-        self.shared.board.set(OracleState::Starting, None);
-        let program = discover::rust_analyzer()?;
-        let sidecar = Sidecar::start(&program, root).inspect_err(|_| self.restarts.record(root))?;
-        self.sidecars.insert(root.to_path_buf(), sidecar);
+        self.announce(OracleState::Starting, *server);
+        let program = discover::program(*server)?;
+        let sidecar =
+            Sidecar::start(*server, &program, root).inspect_err(|_| self.restarts.record(key))?;
+        self.sidecars.insert(key.clone(), sidecar);
         Ok(())
     }
 
-    fn await_ready(&mut self, root: &Path, job: &SiteJob) -> bool {
+    fn await_ready(&mut self, key: &Key, job: &SiteJob) -> bool {
         let started = Instant::now();
         loop {
-            let Some(sidecar) = self.sidecars.get(root) else {
+            let Some(sidecar) = self.sidecars.get(key) else {
                 return false;
             };
             if sidecar.failure().is_some() {
-                self.check_exit(root);
+                self.check_exit(key);
                 return false;
             }
             if sidecar.ready() {
-                self.shared.board.set(OracleState::Ready, None);
+                self.announce(OracleState::Ready, key.0);
                 return true;
             }
-            self.shared.board.set(OracleState::Starting, None);
+            self.announce(OracleState::Starting, key.0);
             if started.elapsed() > LOAD_TIMEOUT || self.superseded(job) {
                 return false;
             }
@@ -149,11 +162,11 @@ impl Worker {
         }
     }
 
-    fn query(&mut self, root: &Path, job: &SiteJob) -> Result<Vec<CompletionHit>, OracleError> {
+    fn query(&mut self, key: &Key, job: &SiteJob) -> Result<Vec<CompletionHit>, OracleError> {
         let sidecar = self
             .sidecars
-            .get_mut(root)
-            .ok_or_else(|| OracleError::GaveUp(root.display().to_string()))?;
+            .get_mut(key)
+            .ok_or_else(|| OracleError::GaveUp(key.1.display().to_string()))?;
         for doc in &job.stale {
             if !sidecar.holds(doc.session_id) {
                 continue;
@@ -166,16 +179,23 @@ impl Worker {
         sidecar.complete(&job.doc, job.key.site, job.shape)
     }
 
-    fn check_exit(&mut self, root: &Path) {
-        let Some(exit) = self.sidecars.get(root).and_then(Sidecar::failure) else {
+    fn check_exit(&mut self, key: &Key) {
+        let Some(exit) = self.sidecars.get(key).and_then(Sidecar::failure) else {
             return;
         };
-        if let Some(sidecar) = self.sidecars.remove(root) {
+        if let Some(sidecar) = self.sidecars.remove(key) {
             for session_id in sidecar.sessions() {
                 self.shared.unmark(session_id);
             }
         }
-        self.restarts.record(root);
-        self.shared.board.set(OracleState::Failed, Some(exit));
+        self.restarts.record(key);
+        let message = format!("{}: {exit}", key.0.name());
+        self.shared.board.set(OracleState::Failed, Some(message));
+    }
+
+    fn announce(&self, state: OracleState, server: Server) {
+        self.shared
+            .board
+            .set(state, Some(server.name().to_string()));
     }
 }

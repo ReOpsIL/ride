@@ -2,6 +2,7 @@ use serde_json::Value;
 
 use crate::ffi::CompletionHit;
 
+use super::dialect::Dialect;
 use super::members::members;
 use super::parse::parse;
 use super::scope::scope;
@@ -12,7 +13,7 @@ pub enum Shape {
     Scope,
 }
 
-pub fn completion_hits(result: &Value, shape: Shape) -> Vec<CompletionHit> {
+pub fn completion_hits(result: &Value, shape: Shape, dialect: Dialect) -> Vec<CompletionHit> {
     let parsed = result
         .get("items")
         .unwrap_or(result)
@@ -20,10 +21,10 @@ pub fn completion_hits(result: &Value, shape: Shape) -> Vec<CompletionHit> {
         .map(Vec::as_slice)
         .unwrap_or_default()
         .iter()
-        .filter_map(parse)
+        .filter_map(|item| parse(item, dialect))
         .collect();
     match shape {
-        Shape::Members => members(parsed),
+        Shape::Members => members(parsed, dialect),
         Shape::Scope => scope(parsed),
     }
 }
@@ -55,13 +56,13 @@ mod tests {
 
     #[test]
     fn members_list_fields_then_inherent_then_trait_methods() {
-        let hits = completion_hits(&members_sample(), Shape::Members);
+        let hits = completion_hits(&members_sample(), Shape::Members, Dialect::Rust);
         assert_eq!(names(&hits), ["len", "remainder", "map", "rev"]);
     }
 
     #[test]
     fn a_trait_method_keeps_its_snippet_signature_and_owner() {
-        let hits = completion_hits(&members_sample(), Shape::Members);
+        let hits = completion_hits(&members_sample(), Shape::Members, Dialect::Rust);
         let map = hits.iter().find(|h| h.name == "map").expect("map");
         assert!(map.snippet);
         assert_eq!(map.insert_text, "map(${1:f})$0");
@@ -69,6 +70,18 @@ mod tests {
         assert_eq!(map.detail, "Iterator");
         assert_eq!(map.doc_first_sentence, "Takes a closure");
         assert_eq!(map.item_kind, ItemKind::Method);
+    }
+
+    #[test]
+    fn clangd_members_follow_its_relevance_and_keep_one_row_per_overload_name() {
+        let result = json!({ "items": [
+            { "label": " scale(Real factor)", "kind": 2, "detail": "void", "sortText": "409198afscale" },
+            { "label": " area() const", "kind": 2, "detail": "Real", "sortText": "40620f8barea" },
+            { "label": " name_", "kind": 5, "detail": "std::string", "sortText": "40aaaaaaname_" }
+        ]});
+        let hits = completion_hits(&result, Shape::Members, Dialect::Clang);
+        assert_eq!(names(&hits), ["area", "scale", "name_"]);
+        assert_eq!(hits[2].signature, "std::string name_");
     }
 
     #[test]
@@ -80,7 +93,7 @@ mod tests {
             { "label": "Counter", "kind": 22, "sortText": "7ffffffa" },
             { "label": "println!(…)", "kind": 3, "detail": "macro_rules! println", "sortText": "7fffffff" }
         ]);
-        let hits = completion_hits(&result, Shape::Scope);
+        let hits = completion_hits(&result, Shape::Scope, Dialect::Rust);
         assert_eq!(names(&hits), ["total", "Counter", "HashMap", "println"]);
     }
 }

@@ -33,12 +33,12 @@ pub fn scoped_hits(
     q: &CompletionQuery,
     segments: &[String],
 ) -> CompletionResponse {
-    if !snap.lang.has_catalog() {
-        return scoped_tables(snap, q, segments);
-    }
     if let Some(known) = &snap.oracle_hits {
         let pool = oracle_hits::in_scope(known, q, snap.next_char());
         return merge::finish(q, pool, false);
+    }
+    if !snap.lang.has_catalog() {
+        return scoped_tables(snap, q, segments);
     }
     if segments.is_empty() {
         return crates(snap, q);

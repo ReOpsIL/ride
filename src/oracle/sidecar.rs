@@ -6,15 +6,17 @@ use serde_json::json;
 
 use crate::ffi::CompletionHit;
 
+use super::clangd::compile_settings;
 use super::error::OracleError;
 use super::items::{Shape, completion_hits};
 use super::job::DocText;
 use super::lsp::{self, Client, Encoding, document_uri};
+use super::server::{Server, language_id};
 
 const INIT_TIMEOUT: Duration = Duration::from_secs(30);
-const COMPLETION_TIMEOUT: Duration = Duration::from_secs(5);
 
 pub struct Sidecar {
+    server: Server,
     client: Client,
     encoding: Encoding,
     docs: HashMap<u64, OpenDoc>,
@@ -27,11 +29,13 @@ struct OpenDoc {
 }
 
 impl Sidecar {
-    pub fn start(program: &Path, root: &Path) -> Result<Self, OracleError> {
-        let client = Client::spawn(program, root)?;
-        let init = client.request("initialize", lsp::initialize(root), INIT_TIMEOUT)?;
+    pub fn start(server: Server, program: &Path, root: &Path) -> Result<Self, OracleError> {
+        let client = Client::spawn(program, server.args(), root)?;
+        let params = lsp::initialize(root, server.init_options());
+        let init = client.request("initialize", params, INIT_TIMEOUT)?;
         client.notify("initialized", json!({}))?;
         Ok(Self {
+            server,
             encoding: Encoding::from_capabilities(&init["capabilities"]),
             client,
             docs: HashMap::new(),
@@ -39,7 +43,7 @@ impl Sidecar {
     }
 
     pub fn ready(&self) -> bool {
-        self.client.is_quiescent()
+        !self.server.waits_for_load() || self.client.is_quiescent()
     }
 
     pub fn failure(&self) -> Option<String> {
@@ -68,8 +72,9 @@ impl Sidecar {
             return self.client.notify("textDocument/didChange", params);
         }
         self.close(doc.session_id);
-        self.client
-            .notify("textDocument/didOpen", lsp::did_open(&uri, 1, &doc.text))?;
+        self.configure(doc)?;
+        let params = lsp::did_open(&uri, language_id(doc.lang), 1, &doc.text);
+        self.client.notify("textDocument/didOpen", params)?;
         self.docs.insert(
             doc.session_id,
             OpenDoc {
@@ -101,9 +106,23 @@ impl Sidecar {
             .get(&doc.session_id)
             .map_or_else(|| document_uri(&doc.path), |open| open.uri.clone());
         let params = lsp::completion(&uri, position);
+        let timeout = self.server.completion_timeout();
         let result = self
             .client
-            .request("textDocument/completion", params, COMPLETION_TIMEOUT)?;
-        Ok(completion_hits(&result, shape))
+            .request("textDocument/completion", params, timeout)?;
+        Ok(completion_hits(&result, shape, self.server.dialect()))
+    }
+
+    fn configure(&self, doc: &DocText) -> Result<(), OracleError> {
+        if self.server != Server::Clangd {
+            return Ok(());
+        }
+        let path = std::fs::canonicalize(&doc.path).unwrap_or_else(|_| doc.path.clone());
+        match compile_settings(&path, doc.lang) {
+            Some(settings) => self
+                .client
+                .notify("workspace/didChangeConfiguration", settings),
+            None => Ok(()),
+        }
     }
 }

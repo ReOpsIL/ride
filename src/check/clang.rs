@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use super::clang_parse::{parse_clang, parse_clang_live};
-use super::compile_db;
+use super::invocation::invocation;
 use super::output::stderr_tail;
 
 const DIAG_FLAGS: &[&str] = &[
@@ -45,25 +45,15 @@ pub fn check_c_live(file: &Path, text: &str) -> Result<CheckResult, EngineError>
 }
 
 fn build_command(file: &Path, lang: Lang) -> Result<(Command, PathBuf), EngineError> {
-    let Some(lang_name) = lang.clang_name() else {
+    let Some(invocation) = invocation(file, lang) else {
         return Err(EngineError::Tool {
             message: format!("clang: not a C or C++ file: {}", file.display()),
         });
     };
     let mut cmd = crate::toolchain::tool("clang");
-    cmd.args(["-x", lang_name]);
-    let cwd = match compile_db::lookup(file, lang) {
-        Some(cc) => {
-            cmd.args(cc.args);
-            cc.directory
-        }
-        None => {
-            cmd.args(default_args(lang, file));
-            file.parent().map(Path::to_path_buf).unwrap_or_default()
-        }
-    };
+    cmd.args(invocation.args);
     cmd.args(DIAG_FLAGS);
-    Ok((cmd, cwd))
+    Ok((cmd, invocation.directory))
 }
 
 fn run(cmd: &mut Command, cwd: &Path) -> Result<(bool, String), EngineError> {
@@ -89,21 +79,4 @@ fn run_stdin(cmd: &mut Command, cwd: &Path, text: &str) -> Result<(bool, String)
         output.status.success(),
         String::from_utf8_lossy(&output.stderr).into_owned(),
     ))
-}
-
-fn default_args(lang: Lang, file: &Path) -> Vec<String> {
-    let std = match lang {
-        Lang::Cpp => "-std=c++23",
-        _ => "-std=c23",
-    };
-    let include = file
-        .parent()
-        .map(Path::to_path_buf)
-        .unwrap_or_else(|| PathBuf::from("."));
-    vec![
-        std.to_string(),
-        "-Wall".to_string(),
-        "-I".to_string(),
-        include.display().to_string(),
-    ]
 }

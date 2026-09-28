@@ -4,6 +4,7 @@ use crate::ffi::{CompletionHit, ItemKind};
 use crate::score::TIER_ITEM;
 use crate::text::first_sentence;
 
+use super::dialect::Dialect;
 use super::kind::item_kind;
 
 const SNIPPET_FORMAT: u64 = 2;
@@ -15,11 +16,11 @@ pub struct Parsed {
     pub sort_text: String,
 }
 
-pub fn parse(item: &Value) -> Option<Parsed> {
+pub fn parse(item: &Value, dialect: Dialect) -> Option<Parsed> {
     let label = item["label"].as_str()?;
     let detail = item["detail"].as_str().unwrap_or_default();
     let is_macro = label.contains("!(") || detail.starts_with("macro_rules!");
-    let kind = item_kind(item["kind"].as_u64()?, is_macro)?;
+    let kind = item_kind(item["kind"].as_u64()?, is_macro, dialect)?;
     let name = name_of(label);
     if name.is_empty() {
         return None;
@@ -29,7 +30,10 @@ pub fn parse(item: &Value) -> Option<Parsed> {
     let mut hit = CompletionHit::local(name, kind, TIER_ITEM, None);
     hit.snippet = item["insertTextFormat"].as_u64() == Some(SNIPPET_FORMAT) && insert.contains('$');
     hit.insert_text = insert.to_string();
-    hit.signature = signature(name, kind, detail);
+    hit.signature = match dialect {
+        Dialect::Rust => signature(name, kind, detail),
+        Dialect::Clang => c_signature(name, kind, detail, label),
+    };
     hit.detail = owner.unwrap_or_default().to_string();
     hit.doc_paragraph = documentation(item);
     hit.doc_first_sentence = first_sentence(&hit.doc_paragraph);
@@ -42,11 +46,12 @@ pub fn parse(item: &Value) -> Option<Parsed> {
 }
 
 fn name_of(label: &str) -> &str {
-    label
+    let head = label
+        .trim_start()
         .split(['(', ' ', '<', '!'])
         .next()
-        .unwrap_or_default()
-        .trim()
+        .unwrap_or_default();
+    head.rsplit("::").next().unwrap_or_default()
 }
 
 fn trait_of(label: &str) -> Option<&str> {
@@ -73,6 +78,19 @@ fn signature(name: &str, kind: ItemKind, detail: &str) -> String {
             format!("{prefix}fn {name}{rest}")
         }
         (ItemKind::Macro, _) => detail.to_string(),
+        _ => String::new(),
+    }
+}
+
+fn c_signature(name: &str, kind: ItemKind, detail: &str, label: &str) -> String {
+    let label = label.trim();
+    let tail = label.find(name).map_or(label, |at| &label[at..]);
+    match kind {
+        ItemKind::Fn | ItemKind::Method if !detail.is_empty() => format!("{detail} {tail}"),
+        ItemKind::Fn | ItemKind::Method => tail.to_string(),
+        ItemKind::Field | ItemKind::Local | ItemKind::Const if !detail.is_empty() => {
+            format!("{detail} {name}")
+        }
         _ => String::new(),
     }
 }
@@ -104,10 +122,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_clangd_method_reads_like_a_c_declaration() {
+        let item = json!({ "label": " area() const", "kind": 2, "detail": "Real",
+            "insertTextFormat": 2, "textEdit": { "newText": "area()" }, "sortText": "40620f8barea" });
+        let parsed = parse(&item, Dialect::Clang).expect("parsed");
+        assert_eq!(parsed.hit.name, "area");
+        assert_eq!(parsed.hit.signature, "Real area() const");
+        assert!(!parsed.hit.snippet);
+    }
+
+    #[test]
+    fn a_qualified_clangd_label_is_named_by_its_last_segment() {
+        let item = json!({ "label": " geo::Registry", "kind": 7,
+            "textEdit": { "newText": "geo::Registry" } });
+        let parsed = parse(&item, Dialect::Clang).expect("parsed");
+        assert_eq!(parsed.hit.name, "Registry");
+        assert_eq!(parsed.hit.insert_text, "geo::Registry");
+        assert_eq!(parsed.hit.item_kind, ItemKind::Class);
+    }
+
+    #[test]
     fn a_macro_is_named_without_its_bang_and_keeps_its_snippet() {
         let item = json!({ "label": "println!(…)", "kind": 3, "detail": "macro_rules! println",
             "insertTextFormat": 2, "textEdit": { "newText": "println!($0)" } });
-        let parsed = parse(&item).expect("parsed");
+        let parsed = parse(&item, Dialect::Rust).expect("parsed");
         assert_eq!(parsed.hit.name, "println");
         assert_eq!(parsed.hit.item_kind, ItemKind::Macro);
         assert_eq!(parsed.hit.insert_text, "println!($0)");
@@ -118,14 +156,14 @@ mod tests {
     fn a_const_fn_keeps_its_qualifier_in_the_signature() {
         let item =
             json!({ "label": "capacity()", "kind": 2, "detail": "const fn(&self) -> usize" });
-        let parsed = parse(&item).expect("parsed");
+        let parsed = parse(&item, Dialect::Rust).expect("parsed");
         assert_eq!(parsed.hit.signature, "const fn capacity(&self) -> usize");
     }
 
     #[test]
     fn a_local_reads_as_name_and_type() {
         let item = json!({ "label": "total", "kind": 6, "detail": "i32", "sortText": "7ffffff9" });
-        let parsed = parse(&item).expect("parsed");
+        let parsed = parse(&item, Dialect::Rust).expect("parsed");
         assert_eq!(parsed.hit.item_kind, ItemKind::Local);
         assert_eq!(parsed.hit.signature, "total: i32");
         assert_eq!(parsed.sort_text, "7ffffff9");
@@ -135,7 +173,7 @@ mod tests {
     fn an_alias_label_keeps_the_real_name() {
         let item =
             json!({ "label": "Vec(alias list, vector)", "kind": 22, "detail": "Vec<{unknown}>" });
-        let parsed = parse(&item).expect("parsed");
+        let parsed = parse(&item, Dialect::Rust).expect("parsed");
         assert_eq!(parsed.hit.name, "Vec");
         assert_eq!(parsed.hit.signature, "");
     }

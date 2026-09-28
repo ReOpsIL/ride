@@ -30,6 +30,11 @@ pub fn lookup(file: &Path, lang: Lang) -> Option<CompileCommand> {
     databases(&file).find_map(|(_, db)| best_entry(&db, &file, lang))
 }
 
+pub fn project_root(file: &Path) -> Option<PathBuf> {
+    let file = file.canonicalize().ok()?;
+    databases(&file).next().map(|(root, _)| root)
+}
+
 pub fn sources_near(file: &Path) -> Vec<PathBuf> {
     databases(file)
         .find_map(|(root, db)| under(&root, listed(&db)?))

@@ -7,7 +7,7 @@ struct OracleSettingsRow: View {
     var body: some View {
         Toggle(isOn: bind.bool(\.semanticCompletion)) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Type-aware Rust completion (rust-analyzer)")
+                Text("Type-aware completion (rust-analyzer, clangd)")
                 Text(Self.caption(client.oracleStatus))
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -18,15 +18,15 @@ struct OracleSettingsRow: View {
     static func caption(_ status: OracleStatus) -> String {
         switch status.state {
         case .off:
-            return "Off: member lists use Ride's own type guesses"
+            return "Off: completion uses Ride's own index and type guesses"
         case .idle:
-            return "Starts with the first member completion in a Cargo project"
+            return "Starts with the first completion in a Rust, C or C++ file"
         case .starting:
-            return "rust-analyzer is loading the workspace"
+            return "\(status.message ?? "The language server") is loading the project"
         case .ready:
-            return "rust-analyzer is ready"
+            return "\(status.message ?? "The language server") is ready"
         case .unavailable, .failed:
-            return status.message ?? "rust-analyzer is not running"
+            return status.message ?? "The language server is not running"
         }
     }
 }

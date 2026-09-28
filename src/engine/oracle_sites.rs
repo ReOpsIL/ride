@@ -12,7 +12,8 @@ pub fn lookup(
     session: &BufferSession,
     at: &SiteAt,
 ) -> Option<Arc<[CompletionHit]>> {
-    let shape = shape_of(&at.site).filter(|_| session.lang() == Lang::Rust)?;
+    let shape = shape_of(&at.site)
+        .filter(|_| matches!(session.lang(), Lang::Rust | Lang::C | Lang::Cpp))?;
     let path = session.path()?;
     let key = SiteKey::new(session_id, session.replica(), at.replace_start)?;
     if let Some(hits) = i.oracle.hits(&key) {
@@ -40,6 +41,7 @@ fn shape_of(site: &Site) -> Option<Shape> {
 fn doc_text(session_id: u64, session: &BufferSession, path: &std::path::Path) -> DocText {
     DocText {
         session_id,
+        lang: session.lang(),
         path: path.to_path_buf(),
         version: session.text_version(),
         text: session.replica().to_string(),
