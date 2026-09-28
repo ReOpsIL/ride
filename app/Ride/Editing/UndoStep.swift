@@ -9,11 +9,14 @@ enum UndoStep {
         return manager
     }
 
-    static func open(_ manager: UndoManager?) {
-        guard let manager, !manager.isUndoing, !manager.isRedoing, manager.groupingLevel == 0 else {
+    static func add(_ manager: UndoManager, _ register: () -> Void) {
+        guard manager.groupingLevel == 0 else {
+            register()
             return
         }
         manager.beginUndoGrouping()
+        register()
+        manager.endUndoGrouping()
     }
 
     static func close(_ manager: UndoManager?) {

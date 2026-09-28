@@ -75,13 +75,11 @@ final class UndoStepTests: XCTestCase {
         XCTAssertEqual(box.value, 1)
     }
 
-    func testOpenAndCloseMakeOneStepPerChange() {
+    func testEachAddIsOneUndoStep() {
         let manager = manager()
         let box = Box()
         for value in 1...3 {
-            UndoStep.open(manager)
-            register(manager, box, value)
-            UndoStep.close(manager)
+            UndoStep.add(manager) { register(manager, box, value) }
             XCTAssertEqual(manager.groupingLevel, 0)
         }
         manager.undo()
@@ -90,13 +88,33 @@ final class UndoStepTests: XCTestCase {
         XCTAssertEqual(box.value, 2)
     }
 
-    func testOpenDoesNotNestInsideAnOpenGroup() {
+    func testAddJoinsAnOpenGroup() {
         let manager = manager()
-        UndoStep.open(manager)
-        UndoStep.open(manager)
+        let box = Box()
+        manager.beginUndoGrouping()
+        UndoStep.add(manager) { register(manager, box, 1) }
         XCTAssertEqual(manager.groupingLevel, 1)
-        UndoStep.close(manager)
+        UndoStep.add(manager) { register(manager, box, 2) }
+        manager.endUndoGrouping()
+        manager.undo()
+        XCTAssertEqual(box.value, 1)
+        XCTAssertFalse(manager.canUndo)
+    }
+
+    func testAddWhileUndoingRegistersTheRedo() {
+        let manager = manager()
+        let box = Box()
+        UndoStep.add(manager) {
+            manager.registerUndo(withTarget: box) { target in
+                UndoStep.add(manager) { self.register(manager, target, 1) }
+                target.value = 0
+            }
+        }
+        manager.undo()
+        XCTAssertEqual(box.value, 0)
         XCTAssertEqual(manager.groupingLevel, 0)
+        manager.redo()
+        XCTAssertEqual(box.value, 1)
     }
 
     func testCloseIsSuppressedInsideAPerform() {

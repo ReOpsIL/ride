@@ -4,7 +4,6 @@ final class BufferUndo {
     let manager = UndoStep.manager()
     private unowned let document: BufferDocument
     private var snapshot: String?
-    private var owned = 0
     private var batching = false
     private var run: UndoRecord?
     private var changes = 0
@@ -22,15 +21,6 @@ final class BufferUndo {
         if snapshot == nil {
             snapshot = document.text
         }
-        guard isReverting else {
-            UndoStep.open(manager)
-            return
-        }
-        guard manager.groupingLevel == 0 else {
-            return
-        }
-        manager.beginUndoGrouping()
-        owned += 1
     }
 
     func note(_ inverse: UndoEdit?) {
@@ -50,11 +40,6 @@ final class BufferUndo {
         }
         changes = 0
         knownInverse = nil
-        while owned > 0 {
-            manager.endUndoGrouping()
-            owned -= 1
-        }
-        UndoStep.close(manager)
     }
 
     func batch(_ body: () -> Void) {
@@ -74,8 +59,10 @@ final class BufferUndo {
             return
         }
         let record = UndoRecord(document: document, edit: edit)
-        manager.registerUndo(withTarget: document) { _ in
-            record.revert()
+        UndoStep.add(manager) {
+            manager.registerUndo(withTarget: document) { _ in
+                record.revert()
+            }
         }
         run = !isReverting && record.isTyping ? record : nil
     }

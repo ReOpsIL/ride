@@ -11,6 +11,7 @@ extension SelfTestSteps {
             unindentKeeps(e: e, file: file, scratch: scratch),
             tabInserts(e: e, file: file, scratch: scratch),
             undoOneStep(e: e, file: file, scratch: scratch),
+            undoTypingRun(e: e, file: file, scratch: scratch),
             duplicateLine(e: e, file: file, scratch: scratch),
             deleteLine(e: e, file: file, scratch: scratch),
             moveLineDown(e: e, file: file, scratch: scratch),

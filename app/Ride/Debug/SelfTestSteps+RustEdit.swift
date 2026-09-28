@@ -7,6 +7,7 @@ extension SelfTestSteps {
             unindentKeeps(e: e, file: file, scratch: scratch),
             tabInserts(e: e, file: file, scratch: scratch),
             undoOneStep(e: e, file: file, scratch: scratch),
+            undoTypingRun(e: e, file: file, scratch: scratch),
             SelfTestStep(name: "comment line", run: { e.caret(line: 10); EditorCommands.commentLine() }, check: { e.expect(e.line(10) == "    // counter.record(\"ride\");", "line 10: \(e.line(10))") }),
             SelfTestStep(name: "uncomment line", run: { EditorCommands.commentLine() }, check: { e.expect(e.line(10) == "    counter.record(\"ride\");", "line 10: \(e.line(10))") }),
             SelfTestStep(name: "comment block", run: { e.selectLines(10, 11); EditorCommands.commentBlock() }, check: { e.expect(e.line(10) == "    " + blockOpen + " counter.record(\"ride\");" && e.line(11).hasSuffix("\"engine\"); " + blockClose), "\(e.line(10)) | \(e.line(11))") }),

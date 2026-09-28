@@ -60,6 +60,21 @@ enum SelfTestSteps {
         })
     }
 
+    static func undoTypingRun(e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> SelfTestStep {
+        SelfTestStep(name: "undo typing run is one step", run: {
+            e.view?.breakUndoCoalescing()
+            e.caret(line: file.bodyLine)
+            e.type("q")
+            e.view?.breakUndoCoalescing()
+            e.place(on: scratch.body, atEnd: true)
+            e.type("xyz")
+            e.undo()
+            e.undo()
+        }, check: {
+            e.expect(e.line(file.bodyLine) == scratch.body, "line \(file.bodyLine): \(e.line(file.bodyLine))")
+        })
+    }
+
     static func duplicateLine(e: SelfTestEditor, file: SelfTestOpened, scratch: SelfTestScratch) -> SelfTestStep {
         SelfTestStep(name: "duplicate line", run: { e.caret(line: file.bodyLine); EditorCommands.duplicate() }, check: {
             e.expect(e.line(file.bodyLine + 1) == e.line(file.bodyLine) && e.line(file.bodyLine) == scratch.body, "line \(file.bodyLine + 1): \(e.line(file.bodyLine + 1))")
