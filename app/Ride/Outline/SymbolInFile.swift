@@ -20,7 +20,7 @@ struct SymbolInFileOverlay: View {
                     PickerRow(
                         title: row.name,
                         query: state.symbolQuery,
-                        subtitle: row.kindLabel,
+                        subtitle: row.scope.map { "\(row.kindLabel) · \($0.label)" } ?? row.kindLabel,
                         selected: state.symbolSelection == row.startByte,
                         action: {
                             state.symbolSelection = row.startByte

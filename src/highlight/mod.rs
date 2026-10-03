@@ -40,6 +40,7 @@ mod rust_locals;
 pub(crate) mod rust_outline;
 mod rust_postfix;
 mod rust_receiver;
+mod rust_scopes;
 mod rust_type_names;
 mod rust_types;
 mod rust_use_variants;

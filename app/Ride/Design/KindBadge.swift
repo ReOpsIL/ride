@@ -36,11 +36,12 @@ enum KindStyle {
 
 struct KindBadge: View {
     let kind: ItemKind
+    var letter: String?
     var size: CGFloat = Tokens.Size.badge
 
     var body: some View {
         let color = Color(KindStyle.color(kind))
-        Text(KindStyle.letter(kind))
+        Text(letter ?? KindStyle.letter(kind))
             .font(.system(size: size * 0.6, weight: .bold, design: .monospaced))
             .foregroundStyle(color)
             .frame(width: size, height: size)

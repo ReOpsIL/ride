@@ -49,7 +49,8 @@ pub use refs::{UsageHit, UsagesResponse};
 pub use rename::{RenameFile, RenamePlan};
 pub use run::{RecompileCommand, SingleRun};
 pub use session::{
-    ByteRange, HighlightSpan, InputEditFfi, OutlineItem, ParseErrorSpan, SessionOpen, SessionUpdate,
+    ByteRange, HighlightSpan, InputEditFfi, OutlineItem, OutlineScope, ParseErrorSpan, SessionOpen,
+    SessionUpdate,
 };
 pub use symbol::{DefinitionExcerpt, DefinitionResponse, SymbolAt};
 pub use tests::{TestEvent, TestFramework, TestMarker, TestStatus};

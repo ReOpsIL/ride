@@ -35,5 +35,6 @@ fn heading(node: Node<'_>, text: &str) -> OutlineItem {
         name_start_byte: name_start_byte as u32,
         signature: String::new(),
         doc: String::new(),
+        scope: None,
     }
 }

@@ -34,8 +34,8 @@ struct FileOutlineView: View {
 
 struct OutlineList: View {
     @ObservedObject var buffer: BufferDocument
-    @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
+    @State private var collapsed: Set<String> = []
 
     var body: some View {
         if buffer.outline.isEmpty {
@@ -46,66 +46,14 @@ struct OutlineList: View {
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(buffer.outline) { row in
-                        OutlineRowView(row: row)
+                    ForEach(OutlineTree.visible(OutlineTree.nodes(buffer.outline), collapsed: collapsed)) { node in
+                        OutlineRowView(node: node, expanded: !collapsed.contains(node.id)) {
+                            collapsed.formSymmetricDifference([node.id])
+                        }
                     }
                 }
                 .padding(.vertical, Tokens.Space.xs)
             }
-        }
-    }
-}
-
-struct OutlineRowView: View {
-    let row: OutlineRow
-    @EnvironmentObject private var state: AppState
-    @ObservedObject private var ts = ThemeStore.shared
-    @State private var hovering = false
-
-    var body: some View {
-        let kind = OutlineKind.itemKind(row.kindLabel)
-        HStack(spacing: Tokens.Space.s) {
-            KindBadge(kind: kind)
-            Text(row.name)
-                .font(Tokens.mono(11))
-                .foregroundStyle(ts.ui.textPrimary)
-                .lineLimit(1)
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, Tokens.Space.m)
-        .frame(height: Tokens.Size.sidebarRow)
-        .background(hovering ? ts.ui.bgHover : Color.clear, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
-        .padding(.horizontal, Tokens.Space.xs)
-        .contentShape(Rectangle())
-        .onHover { hovering = $0 }
-        .onTapGesture {
-            state.jumpTo(byte: row.startByte)
-        }
-    }
-}
-
-enum OutlineKind {
-    static func itemKind(_ label: String) -> ItemKind {
-        switch label {
-        case "mod": return .mod
-        case "struct": return .struct
-        case "enum": return .enum
-        case "union": return .union
-        case "trait": return .trait
-        case "fn": return .fn
-        case "method": return .method
-        case "macro": return .macro
-        case "const": return .const
-        case "static": return .static
-        case "heading": return .heading
-        case "class": return .`class`
-        case "namespace": return .namespace
-        case "field": return .field
-        case "table": return .table
-        case "target": return .target
-        case "variant": return .variant
-        case "header": return .header
-        default: return .type
         }
     }
 }

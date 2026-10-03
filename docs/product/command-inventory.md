@@ -269,6 +269,7 @@ The SwiftUI pickers (Quick Open, Recent Files, Go to Line, both Symbol pickers) 
 |---|---|---|---|---|---|
 | Outline header › Hide Outline (xmark) | — | `updatePrefs { $0.outlinePanel = false }` | Hides the panel, the same as unticking View › Outline. | NONE | |
 | Outline › click row | — | `state.jumpTo(byte: row.startByte)` | Jumps the focused editor to the item and records the location. | NONE | `jumpTo` runs indirectly in "next method". |
+| Outline › click chevron | — | `OutlineList.collapsed` | Collapses or expands a row's children. Rows nest by byte-range containment (`OutlineTree.nodes`): trait and mod members under their item, Rust impl members under a synthesized `impl …` row built from the engine's `OutlineItem.scope`. Collapse state is keyed by the row's name path, so it survives edits that shift bytes. | `OutlineTreeTests` | Markdown headings stay flat (each heading's range is its own line). |
 
 ### Preview pane (`PreviewPane` / `MarkdownPreview`)
 

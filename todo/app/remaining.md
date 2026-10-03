@@ -80,3 +80,8 @@
 # Popup stacking (2026-10-03)
 
 - Completion, cheat sheet and signature help each keep the caret line plus `CompletionPlacement.clearLines` clear, but they place independently. When the cheat sheet flips to the side opposite the completion list, it and signature help can land on the same side and overlap. Fold the three into one stack planner that hands out lanes above and below the caret band.
+
+# Outline tree (2026-10-03)
+
+- Markdown headings stay flat in the outline: a heading's range covers only its line. Nest by heading level (engine section ranges or an app-side level rule).
+- C++ out-of-class definitions (`void Circle::area() {}`) do not carry an `OutlineItem.scope`, so they sit at top level instead of under their class.

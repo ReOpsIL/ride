@@ -1,9 +1,12 @@
+use std::collections::HashSet;
 use std::path::Path;
 
 use tree_sitter::Tree;
 
 use crate::extract::{CrateContext, ItemDoc, Scope, extract_parsed, extract_source};
 use crate::ffi::{ItemKind, OutlineItem};
+
+use super::rust_scopes;
 
 const MODULE: &str = "buf";
 
@@ -13,12 +16,17 @@ pub fn from_source(text: &str) -> Option<Vec<OutlineItem>> {
 }
 
 pub fn from_tree(tree: &Tree, text: &str) -> Vec<OutlineItem> {
-    outline(extract_parsed(
+    let mut items = outline(extract_parsed(
         tree.root_node(),
         text,
         &context(),
         &[MODULE.into()],
-    ))
+    ));
+    rust_scopes::attach(
+        &mut items,
+        &rust_scopes::impl_scopes(tree.root_node(), text),
+    );
+    items
 }
 
 fn context() -> CrateContext {
@@ -33,8 +41,10 @@ fn context() -> CrateContext {
 }
 
 fn outline(items: Vec<ItemDoc>) -> Vec<OutlineItem> {
+    let mut seen = HashSet::new();
     items
         .into_iter()
+        .filter(|i| seen.insert((i.byte_range, i.name_start_byte, i.name.clone())))
         .filter(|i| {
             matches!(
                 i.item_kind,
@@ -59,6 +69,7 @@ fn outline(items: Vec<ItemDoc>) -> Vec<OutlineItem> {
             name_start_byte: i.name_start_byte,
             signature: i.signature,
             doc: i.doc_first_paragraph,
+            scope: None,
         })
         .collect()
 }

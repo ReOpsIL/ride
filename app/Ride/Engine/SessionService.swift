@@ -1,14 +1,5 @@
 import AppKit
 
-struct OutlineRow: Identifiable, Equatable {
-    let name: String
-    let kindLabel: String
-    let startByte: UInt32
-    let endByte: UInt32
-    let nameStartByte: UInt32
-    var id: String { "\(startByte):\(name)" }
-}
-
 struct PendingEdit {
     let range: NSRange
     let inserted: String
@@ -189,7 +180,8 @@ final class SessionService {
             kindLabel: kindLabel(item.kind),
             startByte: item.startByte,
             endByte: item.endByte,
-            nameStartByte: item.nameStartByte
+            nameStartByte: item.nameStartByte,
+            scope: item.scope.map { OutlineRow.Scope(label: $0.label, startByte: $0.startByte, endByte: $0.endByte) }
         )
     }
 }

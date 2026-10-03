@@ -38,6 +38,15 @@ pub struct OutlineItem {
     pub name_start_byte: u32,
     pub signature: String,
     pub doc: String,
+    #[serde(default)]
+    pub scope: Option<OutlineScope>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, uniffi::Record)]
+pub struct OutlineScope {
+    pub label: String,
+    pub start_byte: u32,
+    pub end_byte: u32,
 }
 
 impl OutlineItem {
@@ -50,6 +59,7 @@ impl OutlineItem {
             name_start_byte: start_byte,
             signature: String::new(),
             doc: String::new(),
+            scope: None,
         }
     }
 }

@@ -322,6 +322,13 @@
 		A000000000000000000000A4 /* HighlightApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000094 /* HighlightApply.swift */; };
 		A000000000000000000000A5 /* SessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000095 /* SessionService.swift */; };
 		A000000000000000000000A6 /* FileOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000096 /* FileOutlineView.swift */; };
+		OT0000000000000000000002 /* OutlineRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000001 /* OutlineRow.swift */; };
+		OT0000000000000000000003 /* OutlineRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000001 /* OutlineRow.swift */; };
+		OT0000000000000000000005 /* OutlineTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000004 /* OutlineTree.swift */; };
+		OT0000000000000000000006 /* OutlineTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000004 /* OutlineTree.swift */; };
+		OT0000000000000000000008 /* OutlineRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000007 /* OutlineRowView.swift */; };
+		OT000000000000000000000A /* OutlineKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT0000000000000000000009 /* OutlineKind.swift */; };
+		OT000000000000000000000C /* OutlineTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OT000000000000000000000B /* OutlineTreeTests.swift */; };
 		A000000000000000000000A7 /* SymbolInFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000097 /* SymbolInFile.swift */; };
 		MAA6AC2AF4201DE061D15192 /* AppState+SymbolInFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA6AC2AF4201DE061D15192A /* AppState+SymbolInFile.swift */; };
 		A000000000000000000000B2 /* CompletionPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000099 /* CompletionPopup.swift */; };
@@ -1111,6 +1118,11 @@
 		A00000000000000000000094 /* HighlightApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightApply.swift; sourceTree = "<group>"; };
 		A00000000000000000000095 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
 		A00000000000000000000096 /* FileOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOutlineView.swift; sourceTree = "<group>"; };
+		OT0000000000000000000001 /* OutlineRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineRow.swift; sourceTree = "<group>"; };
+		OT0000000000000000000004 /* OutlineTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineTree.swift; sourceTree = "<group>"; };
+		OT0000000000000000000007 /* OutlineRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineRowView.swift; sourceTree = "<group>"; };
+		OT0000000000000000000009 /* OutlineKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineKind.swift; sourceTree = "<group>"; };
+		OT000000000000000000000B /* OutlineTreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineTreeTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000097 /* SymbolInFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolInFile.swift; sourceTree = "<group>"; };
 		MA6AC2AF4201DE061D15192A /* AppState+SymbolInFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+SymbolInFile.swift"; sourceTree = "<group>"; };
 		A00000000000000000000099 /* CompletionPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionPopup.swift; sourceTree = "<group>"; };
@@ -1676,6 +1688,7 @@
 				E600000000000000000000B0 /* UndoEditTests.swift */,
 				E20000000000000000000013 /* CheatSheetRowsTests.swift */,
 				VC0000000000000000000005 /* CompletionPlacementTests.swift */,
+				OT000000000000000000000B /* OutlineTreeTests.swift */,
 				E5000000000000000000000C /* EditingFixtures.swift */,
 				E5000000000000000000000D /* LineOpsTests.swift */,
 				P61000000000000000000004 /* LineEndingsTests.swift */,
@@ -2201,6 +2214,10 @@
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000096 /* FileOutlineView.swift */,
+				OT0000000000000000000001 /* OutlineRow.swift */,
+				OT0000000000000000000004 /* OutlineTree.swift */,
+				OT0000000000000000000007 /* OutlineRowView.swift */,
+				OT0000000000000000000009 /* OutlineKind.swift */,
 				A00000000000000000000097 /* SymbolInFile.swift */,
 				MA6AC2AF4201DE061D15192A /* AppState+SymbolInFile.swift */,
 			);
@@ -2768,6 +2785,9 @@
 				E60000000000000000000039 /* FoldSetTests.swift in Sources */,
 				E20000000000000000000014 /* CheatSheetRowsTests.swift in Sources */,
 				VC0000000000000000000006 /* CompletionPlacementTests.swift in Sources */,
+				OT0000000000000000000003 /* OutlineRow.swift in Sources */,
+				OT0000000000000000000006 /* OutlineTree.swift in Sources */,
+				OT000000000000000000000C /* OutlineTreeTests.swift in Sources */,
 				E50000000000000000000201 /* TextChange.swift in Sources */,
 				E500000000000000000002A0 /* UndoStep.swift in Sources */,
 				E600000000000000000000A1 /* UndoStepTests.swift in Sources */,
@@ -3492,6 +3512,10 @@
 				A000000000000000000000A4 /* HighlightApply.swift in Sources */,
 				A000000000000000000000A5 /* SessionService.swift in Sources */,
 				A000000000000000000000A6 /* FileOutlineView.swift in Sources */,
+				OT0000000000000000000002 /* OutlineRow.swift in Sources */,
+				OT0000000000000000000005 /* OutlineTree.swift in Sources */,
+				OT0000000000000000000008 /* OutlineRowView.swift in Sources */,
+				OT000000000000000000000A /* OutlineKind.swift in Sources */,
 				A000000000000000000000A7 /* SymbolInFile.swift in Sources */,
 				A000000000000000000000B2 /* CompletionPopup.swift in Sources */,
 				A000000000000000000000B3 /* CompletionSession.swift in Sources */,

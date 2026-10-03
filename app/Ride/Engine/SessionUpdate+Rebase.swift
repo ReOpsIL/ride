@@ -27,7 +27,16 @@ extension SessionUpdate {
             endByte: edit.map(item.endByte, towardEnd: true),
             nameStartByte: edit.map(item.nameStartByte, towardEnd: false),
             signature: item.signature,
-            doc: item.doc
+            doc: item.doc,
+            scope: item.scope.map { moved($0, through: edit) }
+        )
+    }
+
+    private static func moved(_ scope: OutlineScope, through edit: ByteEdit) -> OutlineScope {
+        OutlineScope(
+            label: scope.label,
+            startByte: edit.map(scope.startByte, towardEnd: false),
+            endByte: edit.map(scope.endByte, towardEnd: true)
         )
     }
 }

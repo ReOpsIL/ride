@@ -18,6 +18,7 @@ pub fn item(node: Node<'_>, name: Node<'_>, kind: ItemKind, text: &str) -> Optio
         name_start_byte: name.start_byte() as u32,
         signature: c_docs::signature(node, text),
         doc: c_docs::doc(node, text),
+        scope: None,
     })
 }
 

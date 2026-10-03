@@ -23,5 +23,6 @@ pub fn line_item(
         name_start_byte: name.start_byte() as u32,
         signature: first_line(&node_text(node, text)),
         doc: String::new(),
+        scope: None,
     })
 }
