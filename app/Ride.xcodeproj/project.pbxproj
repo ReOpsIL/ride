@@ -194,6 +194,7 @@
 		A00000000000000000000902 /* DemoLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000901 /* DemoLaunch.swift */; };
 		A00000000000000000000904 /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000903 /* DemoScene.swift */; };
 		F20000000000000000000002 /* DemoScene+Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DemoScene+Popups.swift */; };
+		DS0000000000000000000002 /* DemoScene+Semantic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DS0000000000000000000001 /* DemoScene+Semantic.swift */; };
 		F20000000000000000000004 /* DemoScene+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* DemoScene+Docs.swift */; };
 		F20000000000000000000006 /* DemoScene+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* DemoScene+Run.swift */; };
 		F20000000000000000000008 /* DemoScene+Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007 /* DemoScene+Lang.swift */; };
@@ -990,6 +991,7 @@
 		A00000000000000000000901 /* DemoLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoLaunch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000903 /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene.swift"; sourceTree = "<group>"; };
 		F20000000000000000000001 /* DemoScene+Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Popups.swift"; sourceTree = "<group>"; };
+		DS0000000000000000000001 /* DemoScene+Semantic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Semantic.swift"; sourceTree = "<group>"; };
 		F20000000000000000000003 /* DemoScene+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Docs.swift"; sourceTree = "<group>"; };
 		F20000000000000000000005 /* DemoScene+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Run.swift"; sourceTree = "<group>"; };
 		F20000000000000000000007 /* DemoScene+Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Lang.swift"; sourceTree = "<group>"; };
@@ -2321,6 +2323,7 @@
 				A00000000000000000000901 /* DemoLaunch.swift */,
 				A00000000000000000000903 /* DemoScene.swift */,
 				F20000000000000000000001 /* DemoScene+Popups.swift */,
+				DS0000000000000000000001 /* DemoScene+Semantic.swift */,
 				F20000000000000000000003 /* DemoScene+Docs.swift */,
 				F20000000000000000000005 /* DemoScene+Run.swift */,
 				F20000000000000000000007 /* DemoScene+Lang.swift */,
@@ -3249,6 +3252,7 @@
 				A00000000000000000000902 /* DemoLaunch.swift in Sources */,
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				F20000000000000000000002 /* DemoScene+Popups.swift in Sources */,
+				DS0000000000000000000002 /* DemoScene+Semantic.swift in Sources */,
 				F20000000000000000000004 /* DemoScene+Docs.swift in Sources */,
 				F20000000000000000000006 /* DemoScene+Run.swift in Sources */,
 				F20000000000000000000008 /* DemoScene+Lang.swift in Sources */,

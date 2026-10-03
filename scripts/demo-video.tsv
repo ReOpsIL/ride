@@ -1,0 +1,39 @@
+-	Ride	A native macOS IDE for Rust, C and C++
+welcome	Start in seconds	Open a folder or try a bundled Rust, C or C++ sample project
+editor	A focused editor	Project tree and targets on the left, file outline on the right, index ready in the status bar
+outline	Structured outline	Traits, impl blocks and their members as a collapsible tree
+completion	Sub-millisecond completion	From the buffer, the workspace and every crate on disk, with signatures and a doc card
+members	Type-aware completion	rust-analyzer answers member completion with the real receiver type
+typeinfo	Type Info	The inferred type, size and alignment of any binding
+cheatsheet	Cheat sheet	Idiomatic templates for the caret's context, previewed and inserted as snippets
+hover	Hover cards	Signature and documentation for any symbol under the pointer
+quickdoc	Quick Documentation	Rendered docs with the item's origin, one keystroke away
+peek	Quick Definition	Peek at a trait and every implementation without leaving the file
+quickopen	Quick Open	Fuzzy file search across the workspace
+codevision	Code vision	Usage counts above structs, traits and functions
+usages	Find Usages	Every hit grouped by file, with line numbers and kinds
+hierarchy	Call hierarchy	Callers and callees of a function as a navigable tree
+rename	Safe rename	Verified occurrences are ticked; unverified ones are set aside for review
+intentions	Intentions	Quick fixes and refactorings right at the caret
+problems	Problems panel	cargo check errors with the offending line underlined
+livecheck	Live checking	C++ errors flagged while you type, before saving
+split	Split editors	Work on two files side by side
+findbar	Find in file	Incremental search with match counts
+find	Find in Project	Results grouped by file across the workspace
+symbols	Go to Symbol	Jump to any type or function in the project and its dependencies
+targets	Build targets	Binaries and test targets with a profile picker
+run	Run	cargo output and program output with the exit status
+tests	Test runner	Pass and fail per test, with the raw output below
+terminal	Built-in terminal	A shell in the workspace root under the editor
+debug	Debugger	Breakpoints, frames, locals and watches for Rust
+cppdebug	C++ debugging	STL containers expanded in the locals tree
+c	C support	Member completion and a C cheat sheet
+cpp	C++ support	Namespaces, classes and member calls with a full outline
+cppmembers	C++ semantic completion	clangd resolves iterators and templates for member completion
+makefile	Makefiles	Highlighting and targets in the outline
+cmake	CMake	Projects, variables, functions and targets
+toml	Cargo.toml	Key completion and a manifest cheat sheet
+preview	Markdown preview	Edit and preview side by side
+light	Light theme	Every panel follows the theme
+tools	Toolchain check	Every tool Ride uses — rust-analyzer, clangd, formatters — found and verified
+-	Ride	Rust, C and C++ — native, fast, focused

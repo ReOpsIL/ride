@@ -45,12 +45,16 @@ rm -rf "$WORK/cpp-demo/build/Debug" "$WORK/c-demo/build/Debug"
 
 SCENES=(
   "editor rust-demo"
+  "outline rust-demo"
   "completion rust-demo"
+  "members rust-demo"
+  "typeinfo rust-demo"
   "cheatsheet rust-demo"
   "hover rust-demo"
   "quickdoc rust-demo"
   "peek rust-demo"
   "split rust-demo"
+  "quickopen rust-demo"
   "symbols rust-demo"
   "find rust-demo"
   "findbar rust-demo"
@@ -60,6 +64,7 @@ SCENES=(
   "toml rust-demo"
   "c c-demo"
   "cpp cpp-demo"
+  "cppmembers cpp-demo"
   "makefile cpp-demo"
   "cmake cpp-demo"
   "targets rust-demo"
@@ -67,6 +72,7 @@ SCENES=(
   "tests rust-demo"
   "terminal rust-demo"
   "debug rust-demo"
+  "tools rust-demo"
   "welcome none"
   "usages rust-demo"
   "hierarchy rust-demo"
@@ -161,7 +167,7 @@ capture() {
   fi
   rm -f "$ready"
   "$APP" ${workspace[@]+"${workspace[@]}"} --demo "$scene" --frame "$FRAME" \
-    --ready-file "$ready" --quit-after 15 >"$WORK/log-$scene.txt" 2>&1 &
+    --ready-file "$ready" --quit-after 15 -ApplePersistenceIgnoreState YES >"$WORK/log-$scene.txt" 2>&1 &
   local pid=$!
   if ! await "$scene" "$ready" "$pid"; then
     return 1

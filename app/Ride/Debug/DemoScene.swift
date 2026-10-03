@@ -12,6 +12,7 @@ enum DemoScene {
             || diagnose(name, state: state)
             || cppDebug(name, state: state)
             || welcome(name, state: state)
+            || semantic(name, state: state)
         if !handled {
             DemoLaunch.ready()
         }
@@ -49,7 +50,7 @@ enum DemoScene {
             }
         case "outline":
             state.prefs.outlinePanel = true
-            editor(state)
+            editor(state, file: "src/util.rs", line: 13)
             ready(after: 1.2)
         case "light":
             state.prefs.theme = "light"

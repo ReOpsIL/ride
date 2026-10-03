@@ -85,3 +85,4 @@
 
 - Markdown headings stay flat in the outline: a heading's range covers only its line. Nest by heading level (engine section ranges or an app-side level rule).
 - C++ out-of-class definitions (`void Circle::area() {}`) do not carry an `OutlineItem.scope`, so they sit at top level instead of under their class.
+- Cheat sheet at member-access sites opens unrelated sections: after `"a.b".split('.').` (Rust) it lists Control flow, after `it->` (C++) Template utilities and traits. Seen in the `members` / `cppmembers` demo scenes; the demo disables the sheet there.
