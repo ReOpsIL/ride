@@ -33,7 +33,7 @@ extension RideTextView {
         }
         tlm.textViewportLayoutController.layoutViewport()
         needsDisplay = true
-        (enclosingScrollView?.superview as? EditorHostView)?.gutter.needsDisplay = true
+        (enclosingScrollView?.superview as? EditorHostView)?.viewportMoved()
     }
 
     func lineRange(_ line: Int) -> NSRange? {

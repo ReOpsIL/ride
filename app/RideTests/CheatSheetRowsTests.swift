@@ -66,11 +66,33 @@ final class CheatSheetRowsTests: XCTestCase {
             size: size,
             anchor: .init(completion: low, completionAboveCaret: false, caret: caret, screen: screen)
         )
-        XCTAssertEqual(frame.minY, low.maxY + CheatSheetPlacement.gap)
+        XCTAssertEqual(frame.minY, caret.maxY + CompletionPlacement.gap(caret: caret))
         let alone = CheatSheetPlacement.frame(
             size: size,
             anchor: .init(completion: nil, completionAboveCaret: false, caret: caret, screen: screen)
         )
-        XCTAssertEqual(alone.minY, caret.maxY + 2)
+        XCTAssertEqual(alone.minY, caret.maxY + CompletionPlacement.gap(caret: caret))
+    }
+
+    func testFlippedPlacementKeepsTheCaretLinesClear() {
+        let screen = NSRect(x: 0, y: 0, width: 1000, height: 800)
+        let size = NSSize(width: 500, height: 300)
+        let caret = NSRect(x: 100, y: 380, width: 1, height: 16)
+        let clear = CompletionPlacement.gap(caret: caret)
+        let corridor = NSRect(x: 0, y: caret.minY - clear, width: 1000, height: caret.height + clear * 2)
+        let below = NSRect(x: 92, y: 100, width: 520, height: caret.minY - clear - 100)
+        let over = CheatSheetPlacement.frame(
+            size: size,
+            anchor: .init(completion: below, completionAboveCaret: false, caret: caret, screen: screen)
+        )
+        XCTAssertFalse(over.intersects(corridor.insetBy(dx: 0, dy: 1)))
+        XCTAssertEqual(over.minY, caret.maxY + clear)
+        let above = NSRect(x: 92, y: caret.maxY + clear, width: 520, height: 800 - caret.maxY - clear - 100)
+        let under = CheatSheetPlacement.frame(
+            size: size,
+            anchor: .init(completion: above, completionAboveCaret: true, caret: caret, screen: screen)
+        )
+        XCTAssertFalse(under.intersects(corridor.insetBy(dx: 0, dy: 1)))
+        XCTAssertEqual(under.maxY, caret.minY - clear)
     }
 }

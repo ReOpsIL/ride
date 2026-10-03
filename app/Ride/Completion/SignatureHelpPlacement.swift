@@ -2,18 +2,10 @@ import AppKit
 
 enum SignatureHelpPlacement {
     static func frame(size: NSSize, caret: NSRect, screen: NSRect, below: Bool) -> NSRect {
-        let above = caret.maxY + Tokens.Space.xxs
-        let under = caret.minY - size.height - Tokens.Space.xxs
-        var frame = NSRect(x: caret.minX - Tokens.Space.m, y: below ? under : above, width: size.width, height: size.height)
-        if frame.maxY > screen.maxY {
-            frame.origin.y = under
-        }
-        if frame.minY < screen.minY {
-            frame.origin.y = above
-        }
-        if frame.maxX > screen.maxX {
-            frame.origin.x = max(screen.minX, screen.maxX - size.width)
-        }
-        return frame
+        let clear = CompletionPlacement.gap(caret: caret)
+        let above = PopupLane.above(from: caret.maxY + clear, screen: screen)
+        let under = PopupLane.below(from: caret.minY - clear, screen: screen)
+        let lane = below ? PopupLane.pick(under, above, height: size.height) : PopupLane.pick(above, under, height: size.height)
+        return lane.frame(x: caret.minX - Tokens.Space.m, size: size, screen: screen)
     }
 }

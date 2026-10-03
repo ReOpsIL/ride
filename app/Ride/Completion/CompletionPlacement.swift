@@ -15,15 +15,20 @@ enum CompletionPlacement {
         frame(caret: caretRect(in: view), screen: screen(for: view), size: size)
     }
 
+    static let clearLines: CGFloat = 2
+
+    static func gap(caret rect: NSRect) -> CGFloat {
+        rect.height * clearLines
+    }
+
     static func frame(caret rect: NSRect, screen: NSRect, size: NSSize) -> NSRect {
-        var frame = NSRect(x: rect.minX - Tokens.Space.m, y: rect.minY - size.height - 2, width: size.width, height: size.height)
-        if frame.minY < screen.minY {
-            frame.origin.y = rect.maxY + 2
-        }
-        if frame.maxX > screen.maxX {
-            frame.origin.x = max(screen.minX, screen.maxX - size.width)
-        }
-        return frame
+        let clear = gap(caret: rect)
+        let lane = PopupLane.pick(
+            .below(from: rect.minY - clear, screen: screen),
+            .above(from: rect.maxY + clear, screen: screen),
+            height: size.height
+        )
+        return lane.frame(x: rect.minX - Tokens.Space.m, size: size, screen: screen)
     }
 
     static func caretVisible(in view: NSTextView) -> Bool {

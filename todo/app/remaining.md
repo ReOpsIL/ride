@@ -76,3 +76,7 @@
 # Self-test (added 2026-09-28)
 
 - selftest: `type at end` fails deterministically in the full Rust suite ("first fragment at N below visible top M", ~39 layouts) and passes with `--only "type at end"`; reproduced on 13e0ab3 without the oracle work, so an earlier step leaves editor state (folds, soft wrap, scroll) that the viewport check trips on
+
+# Popup stacking (2026-10-03)
+
+- Completion, cheat sheet and signature help each keep the caret line plus `CompletionPlacement.clearLines` clear, but they place independently. When the cheat sheet flips to the side opposite the completion list, it and signature help can land on the same side and overlap. Fold the three into one stack planner that hands out lanes above and below the caret band.
