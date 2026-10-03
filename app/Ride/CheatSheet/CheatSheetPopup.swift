@@ -10,6 +10,7 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
     private var lastClicked = -1
     var onInsert: (() -> Void)?
     var onBrowse: (() -> Void)?
+    var onSearch: (() -> Void)?
 
     override init() {
         panel = OverlayPanel.make(size: CheatSheetLayout.initialSize)
@@ -33,6 +34,9 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
         table.backgroundColor = .clear
         table.selectionHighlightStyle = .regular
         layout.scroll.documentView = table
+        layout.searchBar.onClick = { [weak self] in
+            self?.onSearch?()
+        }
         panel.contentView = layout
     }
 
@@ -44,13 +48,14 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
         rows.indices.contains(selected) ? rows[selected].entry : nil
     }
 
-    func show(rows: [CheatRow], prefix: String, keeping name: String?, hints: CheatSheetLayout.Hints, frame: (NSSize) -> NSRect) {
+    func show(rows: [CheatRow], prefix: String, search: PopupSearch, keeping name: String?, hints: CheatSheetLayout.Hints, frame: (NSSize) -> NSRect) {
         self.rows = rows
         self.prefix = prefix
         selected = CheatSheetRows.selection(rows, keeping: name) ?? -1
         lastClicked = -1
         layout.applyTheme()
         layout.setHints(hints)
+        layout.searchBar.fill(search)
         table.reloadData()
         table.sizeLastColumnToFit()
         select()

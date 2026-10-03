@@ -336,6 +336,7 @@
 		A000000000000000000000B3 /* CompletionSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009A /* CompletionSession.swift */; };
 		0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */; };
 		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
+		F7A1C0DE0000000000000011 /* PopupSearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */; };
 		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
 		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
 		MAA54F22BF408A605B50B3BA /* AppState+Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA54F22BF408A605B50B3BAC /* AppState+Overlay.swift */; };
@@ -448,6 +449,8 @@
 		MDA8B8A8E129D0ABAC760084 /* SelfTestSteps+Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD8B8A8E129D0ABAC7600846 /* SelfTestSteps+Sidebar.swift */; };
 		MDA7017D57126B5BF4C62024 /* SelfTestSteps+NonMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD7017D57126B5BF4C620242 /* SelfTestSteps+NonMenu.swift */; };
 		MDAEDAF5F4F77D2D696D24F4 /* SelfTestPixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */; };
+		F7A1C0DE0000000000000019 /* SelfTestSteps+CheatSheetSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */; };
+		F7A1C0DE000000000000000B /* SelfTestSteps+CompletionSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */; };
 		MDAFF0DE8B3AE6DD95D6BBCD /* SelfTestSteps+CompletionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */; };
 		MDABDF13F314B89FD5A11B23 /* SelfTestSteps+KeyRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */; };
 		MDA0BE1676A2633C604E1604 /* SelfTestSteps+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD0BE1676A2633C604E16042 /* SelfTestSteps+Shortcuts.swift */; };
@@ -532,6 +535,12 @@
 		D09376A9017C10D34601D824 /* SettingsPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D073023A1B0A76E5775FC72B /* SettingsPanes.swift */; };
 		E10000000000000000000002 /* CompletionTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000001 /* CompletionTrigger.swift */; };
 		E10000000000000000000003 /* CompletionTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000001 /* CompletionTrigger.swift */; };
+		F7A1C0DE0000000000000002 /* PopupSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000001 /* PopupSearch.swift */; };
+		F7A1C0DE0000000000000003 /* PopupSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000001 /* PopupSearch.swift */; };
+		F7A1C0DE0000000000000005 /* PopupSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000004 /* PopupSearchBar.swift */; };
+		F7A1C0DE0000000000000007 /* CompletionSession+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000006 /* CompletionSession+Search.swift */; };
+		F7A1C0DE0000000000000017 /* CheatSheetSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000016 /* CheatSheetSearchTests.swift */; };
+		F7A1C0DE0000000000000009 /* PopupSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000008 /* PopupSearchTests.swift */; };
 		E10000000000000000000005 /* CompletionNarrowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000004 /* CompletionNarrowing.swift */; };
 		E10000000000000000000006 /* CompletionNarrowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000004 /* CompletionNarrowing.swift */; };
 		E10000000000000000000008 /* SnippetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000007 /* SnippetParser.swift */; };
@@ -555,6 +564,8 @@
 		E10000000000000000000023 /* SnippetParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000022 /* SnippetParserTests.swift */; };
 		E10000000000000000000102 /* CompletionSession+Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000101 /* CompletionSession+Snippet.swift */; };
 		E10000000000000000000104 /* SessionService+Kinds.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10000000000000000000103 /* SessionService+Kinds.swift */; };
+		F7A1C0DE0000000000000013 /* CheatSheetController+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000012 /* CheatSheetController+Search.swift */; };
+		F7A1C0DE0000000000000015 /* CheatSheetController+Insert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000014 /* CheatSheetController+Insert.swift */; };
 		E20000000000000000000002 /* CheatSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* CheatSheetController.swift */; };
 		E20000000000000000000004 /* CheatSheetFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000003 /* CheatSheetFetch.swift */; };
 		E20000000000000000000006 /* CheatSheetLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000005 /* CheatSheetLayout.swift */; };
@@ -1131,6 +1142,7 @@
 		A0000000000000000000009A /* CompletionSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionSession.swift; sourceTree = "<group>"; };
 		0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Oracle.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupSearchRouter.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
 		MA54F22BF408A605B50B3BAC /* AppState+Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Overlay.swift"; sourceTree = "<group>"; };
@@ -1327,6 +1339,8 @@
 		MD8B8A8E129D0ABAC7600846 /* SelfTestSteps+Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Sidebar.swift"; sourceTree = "<group>"; };
 		MD7017D57126B5BF4C620242 /* SelfTestSteps+NonMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+NonMenu.swift"; sourceTree = "<group>"; };
 		MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfTestPixels.swift; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CheatSheetSearch.swift"; sourceTree = "<group>"; };
+		F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CompletionSearch.swift"; sourceTree = "<group>"; };
 		MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CompletionKeys.swift"; sourceTree = "<group>"; };
 		MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+KeyRouting.swift"; sourceTree = "<group>"; };
 		MD0BE1676A2633C604E16042 /* SelfTestSteps+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Shortcuts.swift"; sourceTree = "<group>"; };
@@ -1396,6 +1410,11 @@
 		D0410C063E6805FA5C07941F /* ThemeSwatchPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThemeSwatchPicker.swift"; sourceTree = "<group>"; };
 		D073023A1B0A76E5775FC72B /* SettingsPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPanes.swift"; sourceTree = "<group>"; };
 		E10000000000000000000001 /* CompletionTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionTrigger.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000001 /* PopupSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupSearch.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000004 /* PopupSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupSearchBar.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000006 /* CompletionSession+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Search.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000016 /* CheatSheetSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetSearchTests.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000008 /* PopupSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupSearchTests.swift"; sourceTree = "<group>"; };
 		E10000000000000000000004 /* CompletionNarrowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionNarrowing.swift"; sourceTree = "<group>"; };
 		E10000000000000000000007 /* SnippetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParser.swift"; sourceTree = "<group>"; };
 		E1000000000000000000000A /* SnippetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSession.swift"; sourceTree = "<group>"; };
@@ -1416,6 +1435,8 @@
 		E10000000000000000000022 /* SnippetParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetParserTests.swift"; sourceTree = "<group>"; };
 		E10000000000000000000101 /* CompletionSession+Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Snippet.swift"; sourceTree = "<group>"; };
 		E10000000000000000000103 /* SessionService+Kinds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionService+Kinds.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000012 /* CheatSheetController+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetController+Search.swift"; sourceTree = "<group>"; };
+		F7A1C0DE0000000000000014 /* CheatSheetController+Insert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetController+Insert.swift"; sourceTree = "<group>"; };
 		E20000000000000000000001 /* CheatSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetController.swift"; sourceTree = "<group>"; };
 		E20000000000000000000003 /* CheatSheetFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetFetch.swift"; sourceTree = "<group>"; };
 		E20000000000000000000005 /* CheatSheetLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheatSheetLayout.swift"; sourceTree = "<group>"; };
@@ -1617,6 +1638,8 @@
 		B0BFC2E56FBC0D62926D318D /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				F7A1C0DE0000000000000004 /* PopupSearchBar.swift */,
+				F7A1C0DE0000000000000001 /* PopupSearch.swift */,
 				D030F4C1ECF674570AF221B3 /* EmptyEditorView.swift */,
 				D0805A44393AFDF81FEFB357 /* AboutPanel.swift */,
 				D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */,
@@ -1680,6 +1703,8 @@
 				D50000000000000000000035 /* DebugLoadStateTests.swift */,
 				E1000000000000000000001E /* CompletionTriggerTests.swift */,
 				E10000000000000000000020 /* CompletionNarrowingTests.swift */,
+				F7A1C0DE0000000000000008 /* PopupSearchTests.swift */,
+				F7A1C0DE0000000000000016 /* CheatSheetSearchTests.swift */,
 				E10000000000000000000022 /* SnippetParserTests.swift */,
 				H11000000000000000000004 /* SnippetStackTests.swift */,
 				E60000000000000000000032 /* NavigationHistoryTests.swift */,
@@ -2124,6 +2149,7 @@
 				F1A5E0000000000000000004 /* EditPoints.swift */,
 				A00000000000000000000094 /* HighlightApply.swift */,
 				A0000000000000000000009C /* RideTextView+Keys.swift */,
+				F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -2255,6 +2281,7 @@
 				E10000000000000000000101 /* CompletionSession+Snippet.swift */,
 				E10000000000000000000001 /* CompletionTrigger.swift */,
 				E10000000000000000000004 /* CompletionNarrowing.swift */,
+				F7A1C0DE0000000000000006 /* CompletionSession+Search.swift */,
 				E10000000000000000000007 /* SnippetParser.swift */,
 				E1000000000000000000000A /* SnippetSession.swift */,
 				H11000000000000000000001 /* SnippetStack.swift */,
@@ -2396,6 +2423,8 @@
 				MD7017D57126B5BF4C620242 /* SelfTestSteps+NonMenu.swift */,
 				MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */,
 				MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */,
+				F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */,
+				F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */,
 				MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */,
 				MD0BE1676A2633C604E16042 /* SelfTestSteps+Shortcuts.swift */,
 				MDDB6B76AB92B2E7CFEE1EA2 /* SelfTestKeys.swift */,
@@ -2472,6 +2501,8 @@
 			isa = PBXGroup;
 			children = (
 				E20000000000000000000001 /* CheatSheetController.swift */,
+				F7A1C0DE0000000000000014 /* CheatSheetController+Insert.swift */,
+				F7A1C0DE0000000000000012 /* CheatSheetController+Search.swift */,
 				E20000000000000000000003 /* CheatSheetFetch.swift */,
 				E20000000000000000000005 /* CheatSheetLayout.swift */,
 				E20000000000000000000007 /* CheatSheetPlacement.swift */,
@@ -2767,6 +2798,9 @@
 				D50000000000000000000036 /* DebugLoadStateTests.swift in Sources */,
 				E10000000000000000000003 /* CompletionTrigger.swift in Sources */,
 				E10000000000000000000006 /* CompletionNarrowing.swift in Sources */,
+				F7A1C0DE0000000000000003 /* PopupSearch.swift in Sources */,
+				F7A1C0DE0000000000000009 /* PopupSearchTests.swift in Sources */,
+				F7A1C0DE0000000000000017 /* CheatSheetSearchTests.swift in Sources */,
 				E10000000000000000000009 /* SnippetParser.swift in Sources */,
 				E30000000000000000000009 /* DesignTokens.swift in Sources */,
 				E30000000000000000000001 /* CheatSheetRows.swift in Sources */,
@@ -2978,6 +3012,8 @@
 				MDA91AE5EE88446E7EF42B86 /* TreeFileOps.swift in Sources */,
 				MDA3425B0D807D77E0413555 /* ShortcutAudit.swift in Sources */,
 				MDAFF0DE8B3AE6DD95D6BBCD /* SelfTestSteps+CompletionKeys.swift in Sources */,
+				F7A1C0DE000000000000000B /* SelfTestSteps+CompletionSearch.swift in Sources */,
+				F7A1C0DE0000000000000019 /* SelfTestSteps+CheatSheetSearch.swift in Sources */,
 				MDABDF13F314B89FD5A11B23 /* SelfTestSteps+KeyRouting.swift in Sources */,
 				MDA0BE1676A2633C604E1604 /* SelfTestSteps+Shortcuts.swift in Sources */,
 				MDADB6B76AB92B2E7CFEE1EA /* SelfTestKeys.swift in Sources */,
@@ -3124,6 +3160,9 @@
 				E10000000000000000000104 /* SessionService+Kinds.swift in Sources */,
 				E10000000000000000000002 /* CompletionTrigger.swift in Sources */,
 				E10000000000000000000005 /* CompletionNarrowing.swift in Sources */,
+				F7A1C0DE0000000000000002 /* PopupSearch.swift in Sources */,
+				F7A1C0DE0000000000000005 /* PopupSearchBar.swift in Sources */,
+				F7A1C0DE0000000000000007 /* CompletionSession+Search.swift in Sources */,
 				E10000000000000000000008 /* SnippetParser.swift in Sources */,
 				E1000000000000000000000B /* SnippetSession.swift in Sources */,
 				H11000000000000000000002 /* SnippetStack.swift in Sources */,
@@ -3207,6 +3246,8 @@
 				E6000000000000000000002E /* FindMatcher.swift in Sources */,
 				E60000000000000000000031 /* AppState+View.swift in Sources */,
 				E20000000000000000000002 /* CheatSheetController.swift in Sources */,
+				F7A1C0DE0000000000000015 /* CheatSheetController+Insert.swift in Sources */,
+				F7A1C0DE0000000000000013 /* CheatSheetController+Search.swift in Sources */,
 				E20000000000000000000004 /* CheatSheetFetch.swift in Sources */,
 				E20000000000000000000006 /* CheatSheetLayout.swift in Sources */,
 				E20000000000000000000008 /* CheatSheetPlacement.swift in Sources */,
@@ -3526,6 +3567,7 @@
 				0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */,
 				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
 				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
+				F7A1C0DE0000000000000011 /* PopupSearchRouter.swift in Sources */,
 				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,
 				A000000000000000000000D2 /* CompletionGate.swift in Sources */,
 				A000000000000000000000D4 /* CompletionPlacement.swift in Sources */,

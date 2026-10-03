@@ -4,14 +4,14 @@ extension SelfTestSteps {
     static func codeMenuAssist(e: SelfTestEditor, stash: SelfTestStash) -> [SelfTestStep] {
         [
             SelfTestStep(name: "menu shortcuts", run: {}, check: {
-                let wanted: [(String, NSEvent.ModifierFlags)] = [
-                    ("Code › Trigger Completion", [.control]),
-                    ("Code › Cheat Sheet", [.control, .shift]),
-                    ("Code › Quick Definition", [.option]),
+                let wanted: [(String, String, NSEvent.ModifierFlags)] = [
+                    ("Code › Trigger Completion", " ", [.option]),
+                    ("Code › Cheat Sheet", " ", [.option, .shift]),
+                    ("Code › Quick Definition", "y", [.command]),
                 ]
-                let wrong = wanted.filter { path, flags in
+                let wrong = wanted.filter { path, key, flags in
                     let item = SelfTestMenu.item(path)
-                    return item?.keyEquivalent != " " || item?.keyEquivalentModifierMask.intersection([.control, .shift, .option, .command]) != flags
+                    return item?.keyEquivalent != key || item?.keyEquivalentModifierMask.intersection([.control, .shift, .option, .command]) != flags
                 }
                 return e.expect(wrong.isEmpty, "shortcuts not on the menu: \(wrong.map(\.0))")
             }),
@@ -48,6 +48,7 @@ extension SelfTestSteps {
                 stash.probe = sheet.popup.selectedEntry?.name ?? ""
                 return e.expect(sheet.isVisible && sheet.pinned, "visible \(sheet.isVisible) pinned \(sheet.pinned)")
             }),
+        ] + cheatSheetSearchSteps(e: e, stash: stash) + [
             SelfTestStep(name: "cheat sheet arrow down", run: { SelfTestKey.down.press(e.view) }, check: {
                 let now = sheet.popup.selectedEntry?.name ?? ""
                 return e.expect(sheet.focused && now != stash.probe, "focused \(sheet.focused) entry \(now)")

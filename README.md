@@ -16,7 +16,7 @@ A second popup shows the part of the language cheat sheet that fits the caret: i
 
 ![The cheat sheet popup below the completion list, with the Control flow section first and the full match template previewed on the right](docs/images/ride-cheatsheet.png)
 
-Arrow keys or a click select a row and the preview pane shows the complete example with its placeholders; `↩`, `⇥`, a second click on the selected row or a double-click inserts it as a snippet with tab stops. The sheet follows the completion popup automatically (preference "Cheat sheet with completions"); `⌃⇧Space` pins it open on its own. With both popups open, `⌥↑` / `⌥↓` or a click move focus to the sheet and `⌥↩` inserts.
+Arrow keys or a click select a row and the preview pane shows the complete example with its placeholders; `↩`, `⇥`, a second click on the selected row or a double-click inserts it as a snippet with tab stops. The sheet follows the completion popup automatically (preference "Cheat sheet with completions"); `⌥⇧Space` pins it open on its own. With both popups open, `⌥↑` / `⌥↓` or a click move focus to the sheet and `⌥↩` inserts.
 
 ## Editing
 
@@ -28,7 +28,7 @@ Hover an identifier for its signature and first doc paragraph; F12 jumps to the 
 
 ![Quick Documentation on Counter: the rendered doc block under the struct signature, with its origin file in the header](docs/images/ride-quickdoc.png)
 
-⌥Space peeks the definition without leaving the file: the source excerpt with its own highlighting, one segment per declaration and implementation, and Open to jump there.
+⌘Y peeks the definition without leaving the file: the source excerpt with its own highlighting, one segment per declaration and implementation, and Open to jump there.
 
 ![Quick Definition on record: the trait declaration with a segment per implementation and util.rs:10 in the header](docs/images/ride-peek.png)
 

@@ -13,6 +13,7 @@ final class CompletionSession {
     var list: CompletionList?
     var editSource = CompletionEditSource.user
     var oracleWait: OracleWait?
+    var search = PopupSearch()
     private var work: DispatchWorkItem?
     private var lifecycle: CompletionLifecycle?
 
@@ -30,6 +31,7 @@ final class CompletionSession {
         work?.cancel()
         work = nil
         list = nil
+        search = PopupSearch()
         let view = popup.textView
         popup.hide()
         if let view {
@@ -157,7 +159,7 @@ final class CompletionSession {
     }
 
     @discardableResult
-    private func present(_ list: CompletionList, in view: RideTextView, keepSelection: Bool) -> Bool {
+    func present(_ list: CompletionList, in view: RideTextView, keepSelection: Bool) -> Bool {
         let prefix = CompletionList.typed(in: view, from: list.replaceUtf16)
         let hits = list.narrowed(prefix, in: view)
         guard !hits.isEmpty else {
@@ -166,7 +168,8 @@ final class CompletionSession {
         }
         self.list = list
         let keep = keepSelection ? popup.selectedHit?.name : nil
-        popup.show(hits: hits, prefix: prefix, truncated: list.truncated, selectedName: keep, in: view)
+        let shown = search.filter(hits) { $0.searchFields }
+        popup.show(hits: shown, prefix: prefix, search: search, truncated: list.truncated, selectedName: keep, in: view)
         SignatureHelpController.shared.relocate(in: view)
         if let binding = view.hooks.binding?() {
             CheatSheetController.shared.follow(document: binding.document, view: view, state: binding.state)

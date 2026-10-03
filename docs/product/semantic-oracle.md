@@ -27,7 +27,7 @@ Both servers return the full list for a site when asked at the start of the word
 
 ## Definitions
 
-Go to Definition (⌘-click, F12), Quick Definition (⌥Space), Quick Documentation (⌃J, F1, the hover card) and Find Usages all start from `Engine::find_definitions`. It now answers, in order: an `#include` line (Ride's own), then the server (`engine/oracle_defs.rs`), then Ride's heuristics.
+Go to Definition (⌘-click, F12), Quick Definition (⌘Y), Quick Documentation (⌃J, F1, the hover card) and Find Usages all start from `Engine::find_definitions`. It now answers, in order: an `#include` line (Ride's own), then the server (`engine/oracle_defs.rs`), then Ride's heuristics.
 
 - The server step builds the document text under the engine read lock, releases it, and calls `Oracle::definitions`, which uses a sidecar that is already running and ready (1.5 s per request). With none, it asks the worker to start one (`Msg::Warm`) and returns nothing, so this lookup falls back and the next one gets the server.
 - `oracle/definition.rs` decides what to ask: `textDocument/definition` always (answers are `LocationLink`s, whose name range is used, or `Location`s); clangd also `textDocument/declaration`, so a method declared in a header and defined in a `.cpp` keeps both segments in Quick Definition; rust-analyzer also `textDocument/implementation` (at most 8) when every definition lies inside the project root, so a trait method lists its `impl`s without listing every `Clone` impl in the dependencies for `x.clone()`.

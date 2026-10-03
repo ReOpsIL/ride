@@ -57,6 +57,9 @@ extension RideTextView: ClaimsKeysBeforeMenus {
     override func keyDown(with event: NSEvent) {
         HoverController.shared.hide()
         EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
+        if PopupSearchRouter.key(event) {
+            return
+        }
         if CheatSheetController.shared.isVisible, handleCheatSheetKey(event) {
             return
         }
@@ -71,7 +74,10 @@ extension RideTextView: ClaimsKeysBeforeMenus {
     }
 
     func claimsKeyBeforeMenus(_ event: NSEvent) -> Bool {
-        CheatSheetController.shared.isVisible && event.modifierFlags.contains(.option) && Self.popupKeys.contains(event.keyCode)
+        if PopupSearchRouter.claims(event) {
+            return true
+        }
+        return CheatSheetController.shared.isVisible && event.modifierFlags.contains(.option) && Self.popupKeys.contains(event.keyCode)
     }
 
     private static let popupKeys: Set<UInt16> = [126, 125, 36, 76, 48]

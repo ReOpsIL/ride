@@ -92,10 +92,10 @@ struct CodeCommands: Commands {
 
     @ViewBuilder private var assistance: some View {
         Button("Trigger Completion") { EditorCommands.triggerCompletion() }
-            .keyboardShortcut(.space, modifiers: .control)
+            .keyboardShortcut(.space, modifiers: .option)
             .disabled(!menu.code.editor)
         Button("Cheat Sheet") { EditorCommands.toggleCheatSheet() }
-            .keyboardShortcut(.space, modifiers: [.control, .shift])
+            .keyboardShortcut(.space, modifiers: [.option, .shift])
             .disabled(!menu.code.cheatSheet)
         Button("Quick Documentation") { DocController.showFocused() }
             .keyboardShortcut("j", modifiers: .control)
@@ -104,7 +104,7 @@ struct CodeCommands: Commands {
             .keyboardShortcut(FunctionKeys.f1, modifiers: [])
             .disabled(!menu.code.editor)
         Button("Quick Definition") { PeekController.showFocused() }
-            .keyboardShortcut(.space, modifiers: .option)
+            .keyboardShortcut("y", modifiers: .command)
             .disabled(!menu.code.editor)
         Button("Type Info") { DocController.showTypeInfoFocused() }
             .keyboardShortcut("p", modifiers: [.control, .shift])

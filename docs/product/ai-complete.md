@@ -27,7 +27,7 @@ Prefix is clipped to the last 12k characters and suffix to the first 4k, on line
 
 ## Flow
 
-`AICompletionSource` waits 400 ms after the last keystroke (or fires at once on ⌃Space), builds the plan on the main thread, loads extra files and sends on a background queue, and drops results that arrive after a newer request. A request already in flight is kept while the user types identifier characters (its suggestions are filtered by the text typed since its caret) and a fresh request follows once it lands; any other edit cancels it. Results are merged into the current completion list as `CompletionItem.ai` rows (shown first, badge "AI"); a suggestion stays visible while what the user keeps typing matches its start, and accepting it replaces the typed part from the request's caret position with the full text. The doc pane shows the whole suggestion. Errors surface once per distinct message as a notice.
+`AICompletionSource` waits 400 ms after the last keystroke (or fires at once on ⌥Space), builds the plan on the main thread, loads extra files and sends on a background queue, and drops results that arrive after a newer request. A request already in flight is kept while the user types identifier characters (its suggestions are filtered by the text typed since its caret) and a fresh request follows once it lands; any other edit cancels it. Results are merged into the current completion list as `CompletionItem.ai` rows (shown first, badge "AI"); a suggestion stays visible while what the user keeps typing matches its start, and accepting it replaces the typed part from the request's caret position with the full text. The doc pane shows the whole suggestion. Errors surface once per distinct message as a notice.
 
 ## Activity
 

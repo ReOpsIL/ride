@@ -76,10 +76,10 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Surround With | ⌥⌘T | editor |  |
 | Fold / Unfold | ⌥⌘← · ⌥⌘→ | editor |  |
 | Fold All / Unfold All | ⌥⇧⌘← · ⌥⇧⌘→ | editor |  |
-| Trigger Completion | ⌃Space · ⌥esc | editor | macOS uses ⌃Space for Select Previous Input Source; ⌥esc always works |
-| Cheat Sheet | ⌃⇧Space | editor |  |
+| Trigger Completion | ⌥Space · ⌥esc | editor |  |
+| Cheat Sheet | ⌥⇧Space | editor |  |
 | Quick Documentation | ⌃J · F1 | editor |  |
-| Quick Definition | ⌥Space | editor |  |
+| Quick Definition | ⌘Y | editor |  |
 | Type Info | ⌃⇧P | editor |  |
 | External Documentation | ⇧F1 | editor |  |
 | Signature Help | ⇧⌘Space | editor |  |

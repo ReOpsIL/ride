@@ -49,7 +49,7 @@
     <section id="cheatsheet">
       <h2>Cheat sheet</h2>
       <p>A second popup shows the part of the language cheat sheet that fits the caret: items at file level, statements inside a body, patterns in a <code>match</code> arm, <code>$(...)</code> functions in a Makefile. Rust, C, C++ and GNU Make each ship a full sheet as TOML data.</p>
-      <p>Arrow keys or a click select a row and the preview pane shows the complete example; <code>↩</code>, <code>⇥</code>, a second click or a double-click inserts it as a snippet with tab stops. The sheet follows the completion popup automatically; <code>⌃⇧Space</code> pins it open on its own.</p>
+      <p>Arrow keys or a click select a row and the preview pane shows the complete example; <code>↩</code>, <code>⇥</code>, a second click or a double-click inserts it as a snippet with tab stops. The sheet follows the completion popup automatically; <code>⌥⇧Space</code> pins it open on its own.</p>
       <figure>
         <img src="../images/ride-cheatsheet.png" alt="The cheat sheet popup below the completion list, with the Control flow section first and the full match template previewed on the right" width="1440" height="900">
         <figcaption>The cheat sheet popup below the completion list, with the Control flow section first.</figcaption>
@@ -58,7 +58,7 @@
 
     <section id="editing">
       <h2>Editing</h2>
-      <p>Hover an identifier for its signature and first doc paragraph; F12 jumps to the definition in the buffer, a crate on disk or an included header. ⌃J (or F1) opens Quick Documentation for the whole doc block; ⌥Space peeks the definition without leaving the file. ⌘\ splits the editor into two panes.</p>
+      <p>Hover an identifier for its signature and first doc paragraph; F12 jumps to the definition in the buffer, a crate on disk or an included header. ⌃J (or F1) opens Quick Documentation for the whole doc block; ⌘Y peeks the definition without leaving the file. ⌘\ splits the editor into two panes.</p>
       <p>Reformat Document runs rustfmt, clang-format (from the Xcode toolchain), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing follows RustRover’s menus: smart Enter, comments, folding, Surround With, Back/Forward, Go to Line, Recent Files, next problem and header/source switch. ⌘? lists every shortcut.</p>
       <figure>
         <img src="../images/ride-hover.png" alt="Hover card over HashMap showing the struct signature and documentation" width="1440" height="900">

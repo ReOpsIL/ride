@@ -4,7 +4,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     let panel: NSPanel
     private let layout = CompletionPopupLayout(frame: NSRect(origin: .zero, size: CompletionPopupLayout.initialSize))
     private let table = NSTableView()
-    private var hits: [CompletionItem] = []
+    private(set) var hits: [CompletionItem] = []
     private var prefix = ""
     private var selected = 0
     weak var textView: RideTextView?
@@ -31,6 +31,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         table.backgroundColor = .clear
         table.selectionHighlightStyle = .regular
         layout.scroll.documentView = table
+        layout.searchBar.onClick = { PopupSearchRouter.begin(CompletionSession.shared) }
         panel.contentView = layout
     }
 
@@ -46,19 +47,22 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         hits.first { $0.name == name }
     }
 
-    func show(hits: [CompletionItem], prefix: String, truncated: Bool, selectedName: String?, in view: RideTextView) {
+    func show(hits: [CompletionItem], prefix: String, search: PopupSearch, truncated: Bool, selectedName: String?, in view: RideTextView) {
         self.hits = hits
         self.prefix = prefix
         textView = view
         selected = CompletionNarrowing.selection(in: hits, previous: selectedName) { $0.name }
         layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
-        layout.truncated = truncated
+        layout.footer(truncated: truncated, search: search)
         layout.applyTheme()
+        layout.searchBar.fill(search)
         layout.configureScrolling(rows: hits.count)
         table.reloadData()
         table.sizeLastColumnToFit()
-        table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
-        table.scrollRowToVisible(selected)
+        if !hits.isEmpty {
+            table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
+            table.scrollRowToVisible(selected)
+        }
         layout.doc.fill(selectedHit)
         OverlayPanel.present(panel, frame: frame(in: view))
     }

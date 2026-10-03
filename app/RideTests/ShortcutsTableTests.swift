@@ -18,7 +18,7 @@ final class ShortcutsTableTests: XCTestCase {
     }
 
     func testEditorScopeCoversTheStandardTextKeys() {
-        let taken = ["⌃W", "⌃H", "⌘⌫", "⇧⌘↑", "⇧⌘↓", "⌥↑", "⌥↓", "⌥⇧↑", "⌥⇧↓", "⌃Space", "⇧↩", "⌃J", "⌃M"]
+        let taken = ["⌃W", "⌃H", "⌘⌫", "⇧⌘↑", "⇧⌘↓", "⌥↑", "⌥↓", "⌥⇧↑", "⌥⇧↓", "⌥Space", "⌥⇧Space", "⇧↩", "⌃J", "⌃M"]
         for keys in taken {
             XCTAssertTrue(Shortcuts.editorScoped.contains(KeyCombo(glyphs: keys)!), keys)
         }

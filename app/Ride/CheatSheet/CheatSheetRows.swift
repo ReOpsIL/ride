@@ -38,6 +38,16 @@ enum CheatSheetRows {
         }
     }
 
+    static func rows(_ groups: [CheatGroup], search: PopupSearch) -> [CheatRow] {
+        guard !search.terms.isEmpty else {
+            return rows(groups)
+        }
+        let found = groups.map { group in
+            CheatGroup(title: group.title, matched: group.matched, items: search.filter(group.items) { [$0.name, $0.doc, $0.snippet, group.title] })
+        }
+        return rows(found.filter { !$0.items.isEmpty })
+    }
+
     static func firstEntry(_ rows: [CheatRow]) -> Int? {
         rows.firstIndex(where: \.isEntry)
     }

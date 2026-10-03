@@ -57,6 +57,14 @@ enum CompletionItem {
         hit?.signature ?? ""
     }
 
+    var searchFields: [String] {
+        guard let hit else {
+            return [name, label, insertText]
+        }
+        let origin = [hit.path, hit.crateName, hit.importPath ?? ""]
+        return [hit.name, hit.detail, hit.signature, hit.docFirstSentence, hit.docParagraph] + origin
+    }
+
     var label: String {
         if case .ai(let suggestion) = self {
             return suggestion.label

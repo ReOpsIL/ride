@@ -12,13 +12,17 @@ src/util.rs    Counter, record, counts_one
 
 ## Completions and the cheat sheet
 
-Open `src/main.rs`. Type `Has` and trigger completion (`⌃Space` if it is not already up). Rows come from the buffer, this crate, and the catalog (including `std`). A selected row's documentation sits in the card on the right; an `use` tag means accepting will add the import.
+Open `src/main.rs`. Type `Has` and trigger completion (`⌥Space` if it is not already up). Rows come from the buffer, this crate, and the catalog (including `std`). A selected row's documentation sits in the card on the right; an `use` tag means accepting will add the import.
 
-The cheat sheet stacks under the list when **Cheat sheet with completions** is on. `⌃⇧Space` pins it on its own. Arrow keys or a click select a row; `↩` or `⇥` inserts it as a snippet with tab stops.
+To find an item by what it does rather than its name, press `⌘F` (or click the search bar at the top of the popup) and type, for example `capacity`. The list keeps the rows whose name, signature or documentation contain every word; `Esc` ends the search.
+
+The cheat sheet stacks under the list when **Cheat sheet with completions** is on. `⌥⇧Space` pins it on its own. Arrow keys or a click select a row; `↩` or `⇥` inserts it as a snippet with tab stops.
+
+The cheat sheet has its own search bar: click it (or press `⌘F` when the sheet is open on its own) and type to keep only the entries whose name, description or snippet match.
 
 ## Navigation
 
-In `src/main.rs`, hover `Counter` for its signature and first doc paragraph. `F12` jumps to the definition in `src/util.rs`. `⌃J` opens Quick Documentation for the whole doc block. `⌥Space` peeks the definition without leaving the file.
+In `src/main.rs`, hover `Counter` for its signature and first doc paragraph. `F12` jumps to the definition in `src/util.rs`. `⌃J` opens Quick Documentation for the whole doc block. `⌘Y` peeks the definition without leaving the file.
 
 `⇧⌥⌘O` searches symbols in the workspace and the crate catalog. `⌘P` opens files by path.
 

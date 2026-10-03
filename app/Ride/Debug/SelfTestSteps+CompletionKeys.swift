@@ -2,7 +2,8 @@ import AppKit
 
 extension SelfTestSteps {
     static func completionKeySteps(e: SelfTestEditor, k: KeyRoutingScratch) -> [SelfTestStep] {
-        [optionEscapeCompletes(e: e, k: k), escapeClosesCompletion(e: e), escapeWithNothingOpen(e: e, k: k), cheatSheetTakesOptionArrows(e: e, k: k)]
+        [optionEscapeCompletes(e: e, k: k)] + completionSearchSteps(e: e)
+            + [escapeClosesCompletion(e: e), escapeWithNothingOpen(e: e, k: k), cheatSheetTakesOptionArrows(e: e, k: k)]
     }
 
     private static func placeInRecord(_ e: SelfTestEditor) {

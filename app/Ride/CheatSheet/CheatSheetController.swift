@@ -4,8 +4,9 @@ final class CheatSheetController {
     static let shared = CheatSheetController()
     let popup = CheatSheetPopup()
     private(set) var pinned = false
-    private(set) var focused = false
-    private var response: CheatSheetResponse?
+    var search = PopupSearch()
+    private var browsing = false
+    private(set) var response: CheatSheetResponse?
     private var work: DispatchWorkItem?
     private var generation: UInt64 = 0
     private var lifecycle: CompletionLifecycle?
@@ -22,6 +23,13 @@ final class CheatSheetController {
         popup.onBrowse = { [weak self] in
             self?.focus()
         }
+        popup.onSearch = { [weak self] in
+            self.map(PopupSearchRouter.begin)
+        }
+    }
+
+    var focused: Bool {
+        browsing || search.isActive
     }
 
     var isVisible: Bool {
@@ -99,51 +107,37 @@ final class CheatSheetController {
     }
 
     func focus() {
-        guard !focused else {
+        guard !browsing else {
             return
         }
-        focused = true
+        browsing = true
+        popup.setHints(hints(shared: CompletionSession.shared.isVisible))
+    }
+
+    func blur() {
+        guard browsing else {
+            return
+        }
+        browsing = false
         popup.setHints(hints(shared: CompletionSession.shared.isVisible))
     }
 
     private func hints(shared: Bool) -> CheatSheetLayout.Hints {
+        if search.isActive {
+            return .searching
+        }
         if !shared {
             return .alone
         }
         return focused ? .focused : .shared
     }
 
-    func insert() -> Bool {
-        guard isVisible, let entry = popup.selectedEntry, let response, let view else {
-            return false
-        }
-        let session = CompletionSession.shared
-        session.hide()
-        close()
-        let caret = view.selectedRange().location
-        let start = min(Utf16.utf16Offset(in: view.string, utf8: Int(response.replaceStartByte)), caret)
-        session.editSource = .completion
-        session.insertSnippet(entry.snippet, snippet: true, replacing: NSRange(location: start, length: caret - start), in: view)
-        session.editSource = .user
-        return true
-    }
-
-    private func anchor(for view: RideTextView) -> CheatSheetPlacement.Anchor {
-        let popup = CompletionSession.shared.popup
-        let visible = popup.isVisible && popup.textView === view
-        return CheatSheetPlacement.Anchor(
-            completion: visible ? popup.panel.frame : nil,
-            completionAboveCaret: visible && popup.isAboveCaret(in: view),
-            caret: CompletionPlacement.caretRect(in: view),
-            screen: CompletionPlacement.screen(for: view)
-        )
-    }
-
     private func hidePopup() {
         work?.cancel()
         work = nil
         response = nil
-        focused = false
+        browsing = false
+        search = PopupSearch()
         popup.hide()
     }
 
@@ -174,11 +168,19 @@ final class CheatSheetController {
             return
         }
         response = resp
-        focused = false
+        browsing = false
+        present(in: view)
+    }
+
+    func present(in view: RideTextView) {
+        guard let response else {
+            return
+        }
         let anchor = anchor(for: view)
         popup.show(
-            rows: CheatSheetRows.rows(resp.sections.map(CheatGroup.init)),
-            prefix: resp.prefix,
+            rows: CheatSheetRows.rows(response.sections.map(CheatGroup.init), search: search),
+            prefix: response.prefix,
+            search: search,
             keeping: popup.selectedEntry?.name,
             hints: hints(shared: anchor.completion != nil)
         ) { CheatSheetPlacement.frame(size: $0, anchor: anchor) }
