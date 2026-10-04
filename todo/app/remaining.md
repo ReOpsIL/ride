@@ -71,11 +71,11 @@
 
 # Soft-wrap viewport gap (2026-09-27)
 
-- Typing Enter between items repainted the whole file (the engine's edited-node repaint returned the root node), and the whole-file attribute edit made TextKit 2 re-estimate every wrapped paragraph above the viewport. With soft wrap on, the viewport's first fragment then started below the visible top, leaving a blank band until the next scroll. Fixed at the source: the engine repaints only the leaf tokens that overlap the edit, covered by `tests/repaint.rs` and the self-test "type between labelled items". Other whole-document attribute edits (theme change, reload, format) can still trigger the re-estimation with soft wrap. If that shows up, relocate the viewport in the viewport-did-layout path when its first fragment starts below `visibleRect.minY`.
+- Resolved 2026-10-04: style writers (`HighlightApply`, `Underlines`) now settle the layout they invalidate above the viewport and keep the top line anchored (`RideTextView+Styles.swift`, see docs/tui/editor-fragment-refresh.md).
 
 # Self-test (added 2026-09-28)
 
-- selftest: `type at end` fails deterministically in the full Rust suite ("first fragment at N below visible top M", ~39 layouts) and passes with `--only "type at end"`; reproduced on 13e0ab3 without the oracle work, so an earlier step leaves editor state (folds, soft wrap, scroll) that the viewport check trips on
+- selftest: `type at end` failed in the full Rust suite ("first fragment at N below visible top M"); cause was whole-range style invalidation above the viewport, fixed 2026-10-04 with `editStyles`.
 
 # Popup stacking (2026-10-03)
 
@@ -86,3 +86,7 @@
 - Markdown headings stay flat in the outline: a heading's range covers only its line. Nest by heading level (engine section ranges or an app-side level rule).
 - C++ out-of-class definitions (`void Circle::area() {}`) do not carry an `OutlineItem.scope`, so they sit at top level instead of under their class.
 - Cheat sheet at member-access sites opens unrelated sections: after `"a.b".split('.').` (Rust) it lists Control flow, after `it->` (C++) Template utilities and traits. Seen in the `members` / `cppmembers` demo scenes; the demo disables the sheet there.
+
+# Parse error spans (2026-10-04)
+
+- `errors::collect` reports every ERROR node whole. One unclosed `(` makes tree-sitter wrap the entire file in an ERROR node, so the editor underlines the whole file with dotted red and the whole-file underline flips on and off as the bracket opens and closes. Report a narrow span instead (the ERROR node's unexpected leaf tokens, or its first line) and cover it in `tests/`.

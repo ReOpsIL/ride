@@ -33,6 +33,7 @@ extension SelfTestSteps {
                 second: "let move_b = 2;"
             )
             + [typeAtEnd(state: state, e: e)]
+            + scrolledTypingSteps(state: state, e: e)
             + nonMenuSteps(state: state, e: e)
             + menuSteps(state: state, e: e)
             + codeMenuRust(state: state, e: e)

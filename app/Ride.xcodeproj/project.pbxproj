@@ -337,6 +337,8 @@
 		0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */; };
 		A000000000000000000000B4 /* CatalogPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009B /* CatalogPath.swift */; };
 		F7A1C0DE0000000000000011 /* PopupSearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */; };
+		F7A1C0DE000000000000001D /* RideTextView+Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE000000000000001C /* RideTextView+Styles.swift */; };
+		F7A1C0DE000000000000001F /* UnderlineMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE000000000000001E /* UnderlineMark.swift */; };
 		A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009C /* RideTextView+Keys.swift */; };
 		A000000000000000000000B6 /* AppState+Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000009D /* AppState+Nav.swift */; };
 		MAA54F22BF408A605B50B3BA /* AppState+Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA54F22BF408A605B50B3BAC /* AppState+Overlay.swift */; };
@@ -450,6 +452,7 @@
 		MDA7017D57126B5BF4C62024 /* SelfTestSteps+NonMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD7017D57126B5BF4C620242 /* SelfTestSteps+NonMenu.swift */; };
 		MDAEDAF5F4F77D2D696D24F4 /* SelfTestPixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */; };
 		F7A1C0DE0000000000000019 /* SelfTestSteps+CheatSheetSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */; };
+		F7A1C0DE000000000000001B /* SelfTestSteps+ScrolledTyping.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE000000000000001A /* SelfTestSteps+ScrolledTyping.swift */; };
 		F7A1C0DE000000000000000B /* SelfTestSteps+CompletionSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */; };
 		MDAFF0DE8B3AE6DD95D6BBCD /* SelfTestSteps+CompletionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */; };
 		MDABDF13F314B89FD5A11B23 /* SelfTestSteps+KeyRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */; };
@@ -1143,6 +1146,8 @@
 		0AC1E0000000000000000002 /* CompletionSession+Oracle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CompletionSession+Oracle.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009B /* CatalogPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPath.swift; sourceTree = "<group>"; };
 		F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupSearchRouter.swift"; sourceTree = "<group>"; };
+		F7A1C0DE000000000000001C /* RideTextView+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Styles.swift"; sourceTree = "<group>"; };
+		F7A1C0DE000000000000001E /* UnderlineMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnderlineMark.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009C /* RideTextView+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Keys.swift"; sourceTree = "<group>"; };
 		A0000000000000000000009D /* AppState+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Nav.swift"; sourceTree = "<group>"; };
 		MA54F22BF408A605B50B3BAC /* AppState+Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Overlay.swift"; sourceTree = "<group>"; };
@@ -1340,6 +1345,7 @@
 		MD7017D57126B5BF4C620242 /* SelfTestSteps+NonMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+NonMenu.swift"; sourceTree = "<group>"; };
 		MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfTestPixels.swift; sourceTree = "<group>"; };
 		F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CheatSheetSearch.swift"; sourceTree = "<group>"; };
+		F7A1C0DE000000000000001A /* SelfTestSteps+ScrolledTyping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+ScrolledTyping.swift"; sourceTree = "<group>"; };
 		F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CompletionSearch.swift"; sourceTree = "<group>"; };
 		MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+CompletionKeys.swift"; sourceTree = "<group>"; };
 		MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+KeyRouting.swift"; sourceTree = "<group>"; };
@@ -2149,6 +2155,8 @@
 				F1A5E0000000000000000004 /* EditPoints.swift */,
 				A00000000000000000000094 /* HighlightApply.swift */,
 				A0000000000000000000009C /* RideTextView+Keys.swift */,
+				F7A1C0DE000000000000001E /* UnderlineMark.swift */,
+				F7A1C0DE000000000000001C /* RideTextView+Styles.swift */,
 				F7A1C0DE0000000000000010 /* PopupSearchRouter.swift */,
 			);
 			path = Editor;
@@ -2424,6 +2432,7 @@
 				MDEDAF5F4F77D2D696D24F4B /* SelfTestPixels.swift */,
 				MDFF0DE8B3AE6DD95D6BBCD6 /* SelfTestSteps+CompletionKeys.swift */,
 				F7A1C0DE000000000000000A /* SelfTestSteps+CompletionSearch.swift */,
+				F7A1C0DE000000000000001A /* SelfTestSteps+ScrolledTyping.swift */,
 				F7A1C0DE0000000000000018 /* SelfTestSteps+CheatSheetSearch.swift */,
 				MDBDF13F314B89FD5A11B234 /* SelfTestSteps+KeyRouting.swift */,
 				MD0BE1676A2633C604E16042 /* SelfTestSteps+Shortcuts.swift */,
@@ -3013,6 +3022,7 @@
 				MDA3425B0D807D77E0413555 /* ShortcutAudit.swift in Sources */,
 				MDAFF0DE8B3AE6DD95D6BBCD /* SelfTestSteps+CompletionKeys.swift in Sources */,
 				F7A1C0DE000000000000000B /* SelfTestSteps+CompletionSearch.swift in Sources */,
+				F7A1C0DE000000000000001B /* SelfTestSteps+ScrolledTyping.swift in Sources */,
 				F7A1C0DE0000000000000019 /* SelfTestSteps+CheatSheetSearch.swift in Sources */,
 				MDABDF13F314B89FD5A11B23 /* SelfTestSteps+KeyRouting.swift in Sources */,
 				MDA0BE1676A2633C604E1604 /* SelfTestSteps+Shortcuts.swift in Sources */,
@@ -3567,6 +3577,8 @@
 				0AC1E0000000000000000102 /* CompletionSession+Oracle.swift in Sources */,
 				A000000000000000000000B4 /* CatalogPath.swift in Sources */,
 				A000000000000000000000B5 /* RideTextView+Keys.swift in Sources */,
+				F7A1C0DE000000000000001F /* UnderlineMark.swift in Sources */,
+				F7A1C0DE000000000000001D /* RideTextView+Styles.swift in Sources */,
 				F7A1C0DE0000000000000011 /* PopupSearchRouter.swift in Sources */,
 				A000000000000000000000B6 /* AppState+Nav.swift in Sources */,
 				A000000000000000000000D2 /* CompletionGate.swift in Sources */,

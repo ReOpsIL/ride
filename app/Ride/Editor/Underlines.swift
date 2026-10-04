@@ -19,14 +19,9 @@ enum Underlines {
     }
 
     static func apply(document: BufferDocument, view: RideTextView, parseErrors: [ParseErrorSpan]?) {
-        guard let storage = view.textStorage else {
-            return
-        }
         let text = view.string
-        let length = storage.length
-        storage.beginEditing()
-        clear(document.parseUnderlines, in: storage)
-        clear(document.diagnosticUnderlines.map(\.range), in: storage)
+        let length = (text as NSString).length
+        let previous = document.parseUnderlines + document.diagnosticUnderlines.map(\.range)
         if let parseErrors {
             document.parseUnderlines = parseRanges(parseErrors, text: text, length: length)
         }
@@ -34,13 +29,15 @@ enum Underlines {
             document.diagnosticsVersion = CheckService.shared.version
             document.diagnosticUnderlines = diagnosticRanges(document: document, text: text, length: length)
         }
-        for range in document.parseUnderlines {
-            add(RangeShift.clamp(range, length: length), style: parseStyle, color: HighlightApply.theme.error, to: storage)
+        let marks = self.marks(document, length: length)
+        view.editStyles { storage in
+            for old in previous.map({ RangeShift.clamp($0, length: storage.length) }) where old.length > 0 && !marks.contains(where: { $0.range == old }) {
+                UnderlineMark.clear(old, in: storage)
+            }
+            for mark in marks where mark.range.length > 0 && !mark.isApplied(in: storage) {
+                mark.apply(to: storage)
+            }
         }
-        for item in document.diagnosticUnderlines {
-            add(RangeShift.clamp(item.range, length: length), style: diagnosticStyle, color: color(item.level), to: storage)
-        }
-        storage.endEditing()
         view.lines.refresh(text as NSString)
         (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.diagnosticLines = gutterLines(document, view: view)
         view.needsDisplay = true
@@ -51,21 +48,14 @@ enum Underlines {
         return level == .error ? chrome.error : chrome.warning
     }
 
-    private static func clear(_ ranges: [NSRange], in storage: NSTextStorage) {
-        for old in ranges {
-            let range = RangeShift.clamp(old, length: storage.length)
-            if range.length > 0 {
-                storage.removeAttribute(.underlineStyle, range: range)
-                storage.removeAttribute(.underlineColor, range: range)
-            }
+    private static func marks(_ document: BufferDocument, length: Int) -> [UnderlineMark] {
+        let parse = document.parseUnderlines.map {
+            UnderlineMark(range: RangeShift.clamp($0, length: length), style: parseStyle, color: HighlightApply.theme.error)
         }
-    }
-
-    private static func add(_ range: NSRange, style: Int, color: NSColor, to storage: NSTextStorage) {
-        if range.length > 0 {
-            storage.addAttribute(.underlineStyle, value: style, range: range)
-            storage.addAttribute(.underlineColor, value: color, range: range)
+        let diagnostics = document.diagnosticUnderlines.map {
+            UnderlineMark(range: RangeShift.clamp($0.range, length: length), style: diagnosticStyle, color: color($0.level))
         }
+        return parse + diagnostics
     }
 
     private static func parseRanges(_ errors: [ParseErrorSpan], text: String, length: Int) -> [NSRange] {

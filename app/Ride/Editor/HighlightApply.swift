@@ -6,12 +6,16 @@ enum HighlightApply {
     static func apply(_ update: SessionUpdate, text: String, view: RideTextView) {
         let nsText = text as NSString
         let full = NSRange(location: 0, length: nsText.length)
-        guard let storage = view.textContentStorage?.textStorage else {
-            return
-        }
         let map = Utf16Map(text)
         let fonts = MarkupFonts(base: view.baseFont)
-        storage.beginEditing()
+        view.editStyles { storage in
+            paint(update, text: nsText, full: full, map: map, fonts: fonts, view: view, storage: storage)
+        }
+        view.needsDisplay = true
+        view.updateCurrentLineHighlight()
+    }
+
+    private static func paint(_ update: SessionUpdate, text nsText: NSString, full: NSRange, map: Utf16Map, fonts: MarkupFonts, view: RideTextView, storage: NSTextStorage) {
         for range in update.changed {
             let ns = clamp(map.nsRange(startByte: range.startByte, endByte: range.endByte), in: full)
             if ns.length > 0 {
@@ -39,27 +43,20 @@ enum HighlightApply {
                 tlm.addRenderingAttribute(.foregroundColor, value: color, for: tr)
             }
         }
-        storage.endEditing()
-        view.needsDisplay = true
-        view.updateCurrentLineHighlight()
     }
 
     static func restyle(spans: [HighlightSpan], text: String, view: RideTextView) {
         let nsText = text as NSString
         let full = NSRange(location: 0, length: nsText.length)
-        guard let storage = view.textContentStorage?.textStorage else {
-            return
-        }
         let map = Utf16Map(text)
-        storage.beginEditing()
-        for span in spans {
-            let ns = clamp(map.nsRange(startByte: span.startByte, endByte: span.endByte), in: full)
-            if ns.length == 0 {
-                continue
+        view.editStyles { storage in
+            for span in spans {
+                let ns = clamp(map.nsRange(startByte: span.startByte, endByte: span.endByte), in: full)
+                if ns.length > 0 {
+                    storage.addAttribute(.foregroundColor, value: theme.color(span.capture), range: ns)
+                }
             }
-            storage.addAttribute(.foregroundColor, value: theme.color(span.capture), range: ns)
         }
-        storage.endEditing()
         view.needsDisplay = true
     }
 

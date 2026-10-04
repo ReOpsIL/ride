@@ -21,6 +21,21 @@ The earlier `refreshFolds()` marked the whole store edited and invalidated the d
 
 Invariant: no path invalidates layout for more than the paragraphs whose presentation changed, and every invalidated paragraph is laid out again before the viewport is.
 
+## Style writers settle what they invalidate (`Editor/RideTextView+Styles.swift`)
+
+Syntax colours (`HighlightApply`) and underlines (`Underlines`) are text-storage attributes. Any attribute write, even one that sets the value already there, makes TextKit 2 drop the layout of every paragraph in the storage's `editedRange`, and inside one `beginEditing`/`endEditing` that range is the union of all writes. Two writes far apart (a warning underline near the top, a parse error at the caret) therefore invalidate everything between them. Paragraphs above the viewport fall back to estimated heights that ignore vision margins, hidden folds and soft wrap, and the viewport's first fragment lands below the visible top: a blank band that flickers while typing and fills in on scroll.
+
+Both writers go through `editStyles`, which:
+
+1. records the fragment at the visible top and its distance from it,
+2. runs the writes in one transaction and reads the storage's `editedRange`,
+3. lays out again the part of that range above the anchor (`ensureLayout(for:)`), so nothing above the viewport stays estimated,
+4. scrolls so the anchor fragment keeps its distance from the visible top. If the prefix had only been estimated before (a jump into a large file), the exact layout changes its height, and the text on screen stays put instead of moving.
+
+`Underlines.apply` also writes only what differs: it clears old ranges that are no longer wanted and applies a mark only when the storage does not already carry that style and colour over the whole range (`UnderlineMark.isApplied`). Unchanged diagnostics no longer widen the edited range on every keystroke.
+
+Self-test `type in scrolled labelled file` opens `util.rs` with usage labels and soft wrap on, appends a trait impl with a long method, scrolls to its end and types `(1, (2, x`, which turns the whole file into a parse error. It checks every viewport layout through `ViewportWatch` and that the top visible line does not move.
+
 ## Vision lines are computed once per change
 
 The delegate asks `visionLine(at:)` for every paragraph it lays out. `VisionIndex` caches the line → label map keyed by the document, the view's text generation and length, and `BufferDocument.visionInputs` (bumped when `outline` or `visionCounts` change), and builds it with one `Utf16Map` instead of scanning the text per outline row per paragraph.
