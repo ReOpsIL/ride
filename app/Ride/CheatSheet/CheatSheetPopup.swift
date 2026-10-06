@@ -4,7 +4,9 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
     let panel: NSPanel
     private let layout = CheatSheetLayout(frame: NSRect(origin: .zero, size: CheatSheetLayout.initialSize))
     private let table = NSTableView()
-    private(set) var rows: [CheatRow] = []
+    private(set) var rows: [CheatRow] = [] {
+        didSet { table.reloadData() }
+    }
     private var prefix = ""
     private var selected = -1
     private var lastClicked = -1
@@ -49,14 +51,13 @@ final class CheatSheetPopup: NSObject, NSTableViewDataSource, NSTableViewDelegat
     }
 
     func show(rows: [CheatRow], prefix: String, search: PopupSearch, keeping name: String?, hints: CheatSheetLayout.Hints, frame: (NSSize) -> NSRect) {
-        self.rows = rows
         self.prefix = prefix
+        self.rows = rows
         selected = CheatSheetRows.selection(rows, keeping: name) ?? -1
         lastClicked = -1
         layout.applyTheme()
         layout.setHints(hints)
         layout.searchBar.fill(search)
-        table.reloadData()
         table.sizeLastColumnToFit()
         select()
         layout.scroll.contentView.scroll(to: .zero)
