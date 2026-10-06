@@ -70,9 +70,10 @@ enum AIClient {
     static func complete(
         _ load: @escaping () -> AIPromptInput,
         config: AIConfig,
+        system: String = AIPrompt.system,
         done: @escaping (Result<[AISuggestion], AIError>) -> Void
     ) -> AIRequestHandle {
-        run(kind: .completion, config: config, build: { (AIPrompt.system, AIPrompt.user(load())) }) { result in
+        run(kind: .completion, config: config, build: { (system, AIPrompt.user(load())) }) { result in
             done(result.map { text in
                 let suggestions = AIResponseParser.suggestions(in: text)
                 if suggestions.isEmpty {

@@ -35,7 +35,7 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Command | Keys | Scope | Notes |
 |---|---|---|---|
 | Sidebar / Debug / Run / Tests | ⌘1 · ⌘3 · ⌘4 · ⌘5 | app |  |
-| Problems / Outline / AI | ⌘6 · ⌘7 · ⌘8 | app |  |
+| Problems / Outline / AI Chat | ⌘6 · ⌘7 · ⌘8 | app |  |
 | Terminal | ⌥F12 | app |  |
 | Toggle Markdown Preview | ⇧⌘V | app |  |
 | Zoom In / Out / Actual Size | ⌘= · ⌘− · ⌃⌘0 | app |  |
@@ -73,6 +73,9 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Inline Variable | ⌃⌥N | editor |  |
 | Show Intention Actions | ⌥↩ | editor |  |
 | Ask AI from Comment | ⌃? | editor |  |
+| Suggest with AI | ⌥\ | editor |  |
+| Accept AI suggestion / next word / dismiss | ⌥⇥ · ⌘→ · esc | editor | ⇥ also accepts unless the completion popup is open, which keeps ⇥ |
+| Explain / Add Selection to Chat | ⌃⌘E · ⌃⌘L | editor |  |
 | Surround With | ⌥⌘T | editor |  |
 | Fold / Unfold | ⌥⌘← · ⌥⌘→ | editor |  |
 | Fold All / Unfold All | ⌥⇧⌘← · ⌥⇧⌘→ | editor |  |

@@ -1,4 +1,4 @@
-# AI suggestions in the completion popup
+# AI code suggestions: inline ghost text or popup rows
 
 Off by default. Preferences › AI turns it on, picks the provider and the amount of context, and Preferences › Editor › Popups chooses which popups show at all (engine completions, AI suggestions, cheat sheet, signature help, hover documentation).
 
@@ -25,6 +25,16 @@ The model is a picker of presets per provider plus "Custom…" for any model ID.
 
 Prefix is clipped to the last 12k characters and suffix to the first 4k, on line boundaries; each extra file to its first 6k.
 
+## Inline ghost text (default)
+
+Preferences › AI › Show suggestions picks inline ghost text (default) or the popup rows below. Inline mode (`AI/Inline/`):
+
+- **When.** 300 ms after a typed insertion (any keystroke cancels the pending or in-flight request), or at once with Code › Suggest with AI (⌥\). A suggestion is requested and shown only when the rest of the caret line is blank, so ghost text never sits on top of real text.
+- **Request.** The same context plan as the popup, with `AIPrompt.inlineSystem` asking for exactly one suggestion that may run to the end of the statement or block. A reply that repeats what is already typed on the line is trimmed; trailing blank space is dropped.
+- **Drawing.** `RideTextView.inlineGhost` holds the anchor, the text and how much of it has been typed. The layout delegate returns a `GhostFragment` for the caret's paragraph: the first line is drawn after the caret in the tertiary text colour, further lines in the fragment's bottom margin, so the lines below move down (the same mechanism as code-vision labels). Only the old and new caret paragraphs are refreshed.
+- **Keys.** ⇥ accepts when the completion popup is closed (the popup keeps ⇥ while open); ⌥⇥ always accepts; ⌘→ accepts the next word, whitespace run or punctuation mark; esc dismisses. Accepting inserts as one undoable edit and does not open the completion popup.
+- **Typing through.** Typing characters that match the start of the ghost keeps it and shortens it; anything else, or moving the caret elsewhere, removes it and schedules a new request.
+
 ## Flow
 
 `AICompletionSource` waits 400 ms after the last keystroke (or fires at once on ⌥Space), builds the plan on the main thread, loads extra files and sends on a background queue, and drops results that arrive after a newer request. A request already in flight is kept while the user types identifier characters (its suggestions are filtered by the text typed since its caret) and a fresh request follows once it lands; any other edit cancels it. Results are merged into the current completion list as `CompletionItem.ai` rows (shown first, badge "AI"); a suggestion stays visible while what the user keeps typing matches its start, and accepting it replaces the typed part from the request's caret position with the full text. The doc pane shows the whole suggestion. Errors surface once per distinct message as a notice.
@@ -35,4 +45,4 @@ While any AI request is in flight the status bar shows a spinner with "AI…" (a
 
 ## Ask AI from a comment
 
-Code › Ask AI from Comment… (⌃?) takes the comment under the caret, or the comment run directly above it, as the request text (comment markers stripped, doc-comment slashes included). A sheet shows the editable request, the context level (preset from Preferences › AI, changeable per request) and whether the current selection is included. Sending builds the same context as completion plus the selection inside `<selection>` tags and the request line, asks for a markdown answer (4k tokens, no JSON schema, default effort), and opens the AI panel at the bottom: the question, the answer with text selection, and actions to insert the answer's fenced code blocks at the caret (the whole answer when there are none), copy it, or reopen the sheet to refine the request.
+Code › Ask AI from Comment… (⌃?) takes the comment under the caret, or the comment run directly above it, as the request text (comment markers stripped, doc-comment slashes included). A sheet shows the editable request and the context level (preset from Preferences › AI, changeable per request). Sending starts a new thread in the AI chat panel (`docs/product/ai-chat.md`) with the selection pack attached (selection or caret item, its enclosing item, the definitions it uses), plus the whole file at File level and the directory or project files at those levels.

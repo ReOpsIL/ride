@@ -76,7 +76,7 @@ extension DemoScene {
         return false
     }
 
-    private static func visionStaged(_ state: AppState) -> Bool {
+    static func visionStaged(_ state: AppState) -> Bool {
         guard let document = state.activeBuffer,
               document.fileURL?.lastPathComponent == "util.rs",
               document.outline.contains(where: { $0.name == "record" })

@@ -29,41 +29,6 @@ enum AIContextLevel: String, CaseIterable {
     }
 }
 
-enum AIProvider: String, CaseIterable {
-    case anthropic
-    case openrouter
-
-    var title: String {
-        switch self {
-        case .anthropic: return "Anthropic"
-        case .openrouter: return "OpenRouter"
-        }
-    }
-
-    var defaultModel: String {
-        presets[0].id
-    }
-
-    var presets: [AIModelPreset] {
-        switch self {
-        case .anthropic:
-            return [
-                AIModelPreset(id: "claude-haiku-4-5", title: "Claude Haiku 4.5 (fast, cheap)"),
-                AIModelPreset(id: "claude-sonnet-5", title: "Claude Sonnet 5"),
-                AIModelPreset(id: "claude-opus-5", title: "Claude Opus 5"),
-            ]
-        case .openrouter:
-            return [
-                AIModelPreset(id: "anthropic/claude-haiku-4.5", title: "Claude Haiku 4.5 (fast, cheap)"),
-                AIModelPreset(id: "anthropic/claude-sonnet-5", title: "Claude Sonnet 5"),
-                AIModelPreset(id: "anthropic/claude-opus-5", title: "Claude Opus 5"),
-                AIModelPreset(id: "mistralai/codestral-2508", title: "Codestral 2508 (code, cheapest)"),
-                AIModelPreset(id: "qwen/qwen3-coder-flash", title: "Qwen3 Coder Flash (code, cheapest)"),
-            ]
-        }
-    }
-}
-
 enum AIOutcome {
     static func text(count: Int, shown: Bool) -> String {
         if count == 0 {
@@ -82,15 +47,15 @@ struct AIModelPreset: Equatable, Identifiable {
 enum AIModelChoice {
     static let custom = "custom"
 
-    static func selection(model: String, provider: AIProvider, editingCustom: Bool) -> String {
+    static func selection(model: String, presets: [AIModelPreset], editingCustom: Bool) -> String {
         let trimmed = model.trimmingCharacters(in: .whitespaces)
         if editingCustom {
             return custom
         }
         if trimmed.isEmpty {
-            return provider.defaultModel
+            return presets.first?.id ?? custom
         }
-        return provider.presets.contains { $0.id == trimmed } ? trimmed : custom
+        return presets.contains { $0.id == trimmed } ? trimmed : custom
     }
 }
 

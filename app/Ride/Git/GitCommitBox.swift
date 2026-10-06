@@ -30,21 +30,13 @@ struct GitCommitBox: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s) {
-            ZStack(alignment: .topLeading) {
-                TextEditor(text: $model.message)
-                    .font(Tokens.ui(12))
-                    .scrollContentBackground(.hidden)
-                    .focused($editing)
-                if model.message.isEmpty {
-                    Text("Commit message")
-                        .font(Tokens.ui(12))
-                        .foregroundStyle(ts.ui.textTertiary)
-                        .padding(.leading, 5)
-                        .allowsHitTesting(false)
-                }
-            }
+            GrowingTextEditor(
+                text: $model.message,
+                placeholder: "Commit message",
+                lines: 2...8,
+                focus: $editing
+            )
             .padding(Tokens.Space.xs)
-            .frame(minHeight: 56, idealHeight: 72, maxHeight: 140)
             .background(ts.ui.bgRaised, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
             .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.s).stroke(ts.ui.border))
             HStack(spacing: Tokens.Space.m) {

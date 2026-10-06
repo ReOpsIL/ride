@@ -110,6 +110,7 @@ extension EditorPane {
                 BracketHighlight.update(document: document, view: view)
                 publishCursor(view)
                 CompletionSession.shared.selectionChanged(view: view)
+                AIInlineController.shared.caretMoved(in: view)
                 SignatureHelpController.shared.caretMoved(document: document, view: view)
                 CheatSheetController.shared.caretMoved(view: view)
                 IntentionGutter.shared.caretMoved(document: document, view: view)

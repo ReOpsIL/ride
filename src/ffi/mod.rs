@@ -1,3 +1,4 @@
+mod ai;
 mod cheat;
 mod check;
 mod config;
@@ -24,6 +25,7 @@ mod tests;
 mod tools;
 mod workspace;
 
+pub use ai::{AiContext, AiSnippet};
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticFix, DiagnosticLevel};
 pub use config::EngineConfig;

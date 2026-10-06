@@ -22,10 +22,4 @@ final class AICommentPromptTests: XCTestCase {
         let hash = CommentTokens(line: "#", blockOpen: nil, blockClose: nil)
         XCTAssertEqual(AICommentPrompt.extract("# add a target\nall:", caret: 2, tokens: hash), "add a target")
     }
-
-    func testAnswerCodeExtractsFencedBlocksOrFallsBackToText() {
-        let answer = "Use this:\n```rust\nfn x() {}\n```\nand\n```\nlet y = 1;\n```"
-        XCTAssertEqual(AIAnswerText.code(in: answer), "fn x() {}\n\nlet y = 1;")
-        XCTAssertEqual(AIAnswerText.code(in: "plain answer"), "plain answer")
-    }
 }

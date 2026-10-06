@@ -41,8 +41,8 @@ extension SelfTestSteps {
             set()
             e.place(on: "counter.record(\"ride\");", atEnd: true)
             e.type("c")
-            scheduled = AICompletionSource.shared.isScheduled
-            AICompletionSource.shared.cancel()
+            scheduled = AICompletionSource.shared.isScheduled || AIInlineController.shared.isScheduled
+            AISuggestRouter.cancel()
             e.view?.deleteBackward(nil)
             CompletionSession.shared.hide()
             if expected {

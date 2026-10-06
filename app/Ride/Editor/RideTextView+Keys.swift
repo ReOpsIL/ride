@@ -2,7 +2,9 @@ import AppKit
 
 extension RideTextView: ClaimsKeysBeforeMenus {
     override func insertTab(_ sender: Any?) {
-        if CompletionSession.shared.accept() || CompletionSession.shared.snippetNext() || indentSelection(unindent: false) {
+        if CompletionSession.shared.accept() || AIInlineController.shared.accept(in: self)
+            || CompletionSession.shared.snippetNext() || indentSelection(unindent: false)
+        {
             return
         }
         let unit = hooks.binding?()?.document.language == .make ? "\t" : String(repeating: " ", count: tabWidth)
@@ -38,6 +40,9 @@ extension RideTextView: ClaimsKeysBeforeMenus {
             SignatureHelpController.shared.hide()
             return
         }
+        if AIInlineController.shared.dismiss(in: self) {
+            return
+        }
         if let host = EditorPanes.shared.host(for: self) {
             if let peek = host.peekStorage, peek.isVisible {
                 peek.hide()
@@ -64,6 +69,9 @@ extension RideTextView: ClaimsKeysBeforeMenus {
             return
         }
         if CompletionSession.shared.isVisible, handleCompletionKey(event) {
+            return
+        }
+        if inlineGhost != nil, handleGhostKey(event) {
             return
         }
         super.keyDown(with: event)
@@ -102,6 +110,18 @@ extension RideTextView: ClaimsKeysBeforeMenus {
             return sheet.insert()
         case 48:
             return sheet.insert()
+        default:
+            return false
+        }
+    }
+
+    private func handleGhostKey(_ event: NSEvent) -> Bool {
+        let modifiers = event.modifierFlags.intersection([.shift, .command, .option, .control])
+        switch (event.keyCode, modifiers) {
+        case (48, .option):
+            return AIInlineController.shared.accept(in: self)
+        case (124, .command):
+            return AIInlineController.shared.acceptWord(in: self)
         default:
             return false
         }

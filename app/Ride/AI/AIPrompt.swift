@@ -19,6 +19,10 @@ enum AIPrompt {
     You complete code inside an editor. The user message contains the file being edited with \(cursor) marking the caret, and sometimes other files from the same project for context. Reply with JSON only, shaped as {"suggestions":[{"label":"short summary","text":"code to insert"}]}. Give one to three suggestions, best first. Each text is inserted verbatim at the caret: it continues exactly what is already typed on the caret line, never repeats text before the caret, and contains no explanation and no markdown fences. Prefer completing the current statement or block; stop at a natural boundary.
     """
 
+    static let inlineSystem = """
+    You predict the code a developer types next. The user message contains the file being edited with \(cursor) marking the caret, and sometimes other files from the same project. Reply with JSON only, shaped as {"suggestions":[{"label":"short summary","text":"code to insert"}]}, with exactly one suggestion. Its text is inserted verbatim at the caret: it continues exactly what is already typed on the caret line, never repeats text before the caret, may span several lines up to the end of the current statement or block, follows the file's indentation, and contains no explanation and no markdown fences. Return an empty suggestions array when nothing useful fits.
+    """
+
     static let askSystem = """
     You are a coding assistant inside the Ride editor. The user message holds files from the project, the file being edited with \(cursor) at the caret, optionally the user's selection inside <selection> tags, and a request. Answer the request for exactly this code. Use markdown, put code in fenced blocks with the language name, and keep prose short.
     """

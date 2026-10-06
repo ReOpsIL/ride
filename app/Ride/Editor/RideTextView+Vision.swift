@@ -75,7 +75,7 @@ extension RideTextView {
         }
         let origin = textContainerOrigin
         let container = CGPoint(x: point.x - origin.x, y: point.y - origin.y)
-        guard let fragment = tlm.textLayoutFragment(for: container) as? VisionFragment else {
+        guard let fragment = tlm.textLayoutFragment(for: container) as? DecoratedFragment else {
             return nil
         }
         let local = CGPoint(

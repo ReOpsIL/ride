@@ -8,6 +8,7 @@ use crate::ffi::{CompletionQuery, CompletionResponse, EngineConfig};
 pub(crate) use inner::Inner;
 
 mod access;
+mod ai_context;
 mod bound_refs;
 mod build_output;
 mod catalog;

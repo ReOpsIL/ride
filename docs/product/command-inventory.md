@@ -154,7 +154,7 @@ The SwiftUI pickers (Quick Open, Recent Files, Go to Line, both Symbol pickers) 
 | View › Run Output | ⌘4 | `toggleRunOutput()` → `Run/AppState+RunOutput.swift` | Toggles the Run Output panel. | NONE | "run output close" sets the flag directly and does not assert it. |
 | View › Tests | ⌘5 | `toggleTests()` → `Tests/AppState+Tests.swift` | Toggles the Tests panel. | NONE | |
 | View › Usages | — | `toggleUsages()` → `Usages/AppState+Usages.swift` | Toggles the Usages panel, which shows the last Find Usages result. | NONE | No shortcut. "find usages" opens the panel through `findUsages()`, not through this toggle. |
-| View › AI | ⌘8 | `AIAssistant.shared.showPanel.toggle()` | Shows or hides the AI answer panel. `onPanelChange` keeps the menu checkmark in sync. | NONE | |
+| View › AI Chat | ⌘8 | `AIAssistant.shared.showPanel.toggle()` | Shows or hides the AI chat side panel. `onPanelChange` keeps the menu checkmark in sync. | SELFTEST: "menu ai toggle", "menu ai restore" | |
 | View › Terminal | ⌥F12 | `toggleTerminal()` → `Terminal/AppState+Terminal.swift` | Toggles the terminal panel. On show it opens a tab in the workspace root if none exist, otherwise it focuses the selected tab. Hiding leaves the sessions running. | SELFTEST: "terminal open" (rust; calls `openTerminal`, the no-tabs branch) | The hide path and the focus-existing path are untested. |
 | View › Toggle Markdown Preview | ⇧⌘V | `togglePreview()` → `AppState+Preview.swift` | Flips `showPreview`. When visible it renders the active buffer through engine `renderMarkdown` into `PreviewPane`. Disabled unless the active buffer is Markdown (`previewAvailable`). | RUST: tests/markdown.rs::renders_tables_task_lists_and_line_anchors, rust_fences_are_highlighted_in_html | ⚠ This is a `Button`, not a `Toggle`, so it gets no checkmark, unlike the other panel items. `showPreview` persists across buffers: it hides for non-md files and comes back on md. demo: "preview" |
 | View › Zoom In | ⌘= | `zoom(1)` → `AppState+View.swift` | Adds 1 to `prefs.fontSize`, clamped to 10…24. | SELFTEST: "zoom" (rust, c, cpp) | |
@@ -465,16 +465,21 @@ Engine order is: diagnostic fixes, then import/include, then underscore, missing
 | Ask AI › Prompt editor | — | `TextEditor($assistant.prompt)` | An editable request, pre-filled from the comment at or above the caret. | UNIT: AICommentPromptTests.testCaretOnCommentLineJoinsTheCommentRun, testCommentAboveTheCaretLineIsUsed, testBlockCommentsAndHashComments | |
 | Ask AI › Context picker | — | `Picker($assistant.level)` | Chooses the context sent: Code block, Function, File, Directory or Project. It starts from `prefs.aiContext`. | NONE | The choice applies to this request only and is not saved to prefs. |
 | Ask AI › Cancel | Esc | `assistant.showPrompt = false` | Closes the sheet without sending. | NONE | |
-| Ask AI › Send | ↩ | `AIAssistant.send()` → `AIContextBuilder.plan` → `AIClient.ask` | Opens the AI panel and sends the prompt, context and selection to Anthropic or OpenRouter. The answer or error lands in the panel. Disabled while the prompt is blank. | NONE | ⚠ Return is the default action, but the focused `TextEditor` probably takes ↩ as a newline (not verified). If the captured document or view is gone, it closes the sheet and silently drops the request. |
+| Ask AI › Send | ⌘↩ | `AIAssistant.send()` → `AIChatContext.selection` (+ file and directory/project files by level) → `AIChatStore.send` | Starts a chat thread with the request and its context chips and streams the answer into the AI chat panel. Disabled while the prompt is blank. | NONE | ⚠ Return is the default action, but the focused `TextEditor` probably takes ↩ as a newline (not verified). If the captured document or view is gone, it closes the sheet and silently drops the request. |
 
-### AI answer panel (`AIAnswerPanel` header buttons)
+### AI chat panel and Explain (`AI/Chat/`, added 2026-10-06)
 
 | Command (path) | Shortcut | Handler | What it does | Coverage | Notes/⚠ |
 |---|---|---|---|---|---|
-| AI panel › Insert code at caret | — | `AIAssistant.insertAnswer()` → `AIAnswerText.code` | Focuses the original editor and inserts the fenced code blocks (or the whole answer) over its selection. Disabled while the answer is empty. | UNIT: AICommentPromptTests.testAnswerCodeExtractsFencedBlocksOrFallsBackToText | Targets the view captured at ask time (weak). Does nothing if that view is closed. |
-| AI panel › Copy answer | — | `AIAssistant.copyAnswer()` | Copies the raw answer to the pasteboard. Disabled while the answer is empty. | NONE | |
-| AI panel › Edit the request and ask again | — | `assistant.showPrompt = true` | Reopens the Ask AI sheet with the last prompt. | NONE | ⚠ Reuses the selection and view captured by the earlier ask. A changed selection is not picked up. |
-| AI panel › Hide AI panel | — | `assistant.showPanel = false` | Hides the AI panel. | NONE | Same state as View › AI panel (⌘8). |
+| Code › Suggest with AI | ⌥\ | `suggestInline()` → `AIInlineController.trigger` | Requests an inline suggestion at the caret now, whatever the AI suggestions preference; the result is ghost text (⇥ / ⌥⇥ accept, ⌘→ one word, esc dismiss). | SELFTEST: "menu suggest with ai without key"; UNIT: AIInlineGhostTests | Needs the rest of the caret line to be blank. |
+| Code › Explain | ⌃⌘E | `explainSelection()` → `AIChatContext.selection` → `engine.aiContext` | New thread with the selection (or the item under the caret), its enclosing item and the definitions it uses, streaming an explanation. | SELFTEST: "menu explain without key"; RUST: tests/ai_context.rs | |
+| Code › Explain File | — | `explainFile()` | New thread with the whole file (60k characters, marked truncated beyond). | SELFTEST: "menu explain file without key" | |
+| Code › Add Selection to Chat | ⌃⌘L | `addSelectionToChat()` | Adds the selection pack as chips to the next message and focuses the chat input. | SELFTEST: "menu add selection to chat" | |
+| Chat › history menu, New Chat, close | — | `AIChatStore.select/delete/newThread`, `showPanel = false` | Switches, deletes or starts threads (in memory for the session). | NONE | |
+| Chat › input ↩ / ⇧↩, Send, Stop | ↩ | `sendChat()` / `AIChatStore.stop()` | Sends the message with its chips; Stop cancels the stream and keeps what arrived. | UNIT: AIChatPromptTests | |
+| Chat › Selection / File buttons, chip × | — | `addSelectionToChat()`, `addFileToChat()`, `detach` | Attach or remove context for the next message. | NONE | |
+| Chat › code block Copy / Insert | — | `rideChat` message → pasteboard / `insertAtCaret` | Copies the block, or inserts it over the selection of the focused editor. | NONE | |
+| Chat › `path:line` link and chips | — | `openChatLocation(path:line:)` | Opens the file at that line (workspace-relative or absolute). | UNIT: AIChatLocationTests | |
 
 ### Install Tools sheet (`ToolsInstallView`, `CopyCommandButton`; plus `RideCommandRow`)
 
@@ -1035,7 +1040,7 @@ General gaps: no unit test covers `Preferences` decoding (missing keys → defau
 - View › Run Output
 - View › Tests
 - View › Usages
-- View › AI
+- View › AI Chat
 - View › Zoom Out
 - View › Soft Wrap
 - View › Show Whitespace

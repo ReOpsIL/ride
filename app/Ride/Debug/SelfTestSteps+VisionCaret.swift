@@ -28,7 +28,7 @@ enum VisionCaretProbe {
         }
         var start: Int?
         tlm.enumerateTextLayoutFragments(from: tlm.documentRange.location, options: [.ensuresLayout]) { fragment in
-            guard fragment is VisionFragment else {
+            guard (fragment as? DecoratedFragment)?.vision != nil else {
                 return true
             }
             start = storage.offset(from: storage.documentRange.location, to: fragment.rangeInElement.location)
@@ -39,7 +39,7 @@ enum VisionCaretProbe {
 
     static func textBand(in view: RideTextView) -> CGRect? {
         guard let tlm = view.textLayoutManager, let range = view.textRange(utf16: view.selectedRange()),
-              let fragment = tlm.textLayoutFragment(for: range.location) as? VisionFragment,
+              let fragment = tlm.textLayoutFragment(for: range.location) as? DecoratedFragment, fragment.vision != nil,
               let line = fragment.textLineFragments.first else {
             return nil
         }

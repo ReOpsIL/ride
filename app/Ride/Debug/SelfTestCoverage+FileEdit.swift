@@ -61,7 +61,7 @@ extension SelfTestCoverage {
         "View › Run Output": ["menu run output toggle", "menu run output restore"],
         "View › Tests": ["menu tests toggle", "menu tests restore"],
         "View › Usages": ["menu usages toggle", "menu usages restore"],
-        "View › AI": ["menu ai toggle", "menu ai restore"],
+        "View › AI Chat": ["menu ai toggle", "menu ai restore"],
         "View › Terminal": ["menu terminal toggle", "menu terminal restore"],
         "View › Toggle Markdown Preview": ["menu markdown preview", "menu markdown preview close"],
         "View › Zoom In": ["menu zoom in"],

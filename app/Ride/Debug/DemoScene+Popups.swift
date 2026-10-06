@@ -15,6 +15,10 @@ extension DemoScene {
             editor(state)
             DemoLaunch.after(1.5) { unformat() }
             ready(after: 2.4)
+        case "shortcuts":
+            editor(state)
+            DemoLaunch.after(1.0) { ShortcutsPanel.show() }
+            ready(after: 2.0)
         case "tools":
             editor(state)
             DemoLaunch.after(1.0) { state.showToolsSheet = true }

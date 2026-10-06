@@ -70,6 +70,17 @@ struct CodeCommands: Commands {
         Button("Ask AI from Comment…") { AIAssistant.shared.askFromEditor(state: state) }
             .keyboardShortcut("?", modifiers: .control)
             .disabled(!menu.code.editor)
+        Button("Suggest with AI") { state.suggestInline() }
+            .keyboardShortcut("\\", modifiers: .option)
+            .disabled(!menu.code.editor)
+        Button("Explain") { state.explainSelection() }
+            .keyboardShortcut("e", modifiers: [.control, .command])
+            .disabled(!menu.code.editor)
+        Button("Explain File") { state.explainFile() }
+            .disabled(!menu.code.editor)
+        Button("Add Selection to Chat") { state.addSelectionToChat() }
+            .keyboardShortcut("l", modifiers: [.control, .command])
+            .disabled(!menu.code.editor)
     }
 
     @ViewBuilder private var wrapping: some View {
