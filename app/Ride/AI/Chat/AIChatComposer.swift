@@ -9,28 +9,14 @@ struct AIChatComposer: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s) {
             chips
-            ZStack(alignment: .topLeading) {
-                TextEditor(text: $store.input)
-                    .font(Tokens.ui(12))
-                    .scrollContentBackground(.hidden)
-                    .focused($focused)
-                    .onKeyPress(.return, phases: .down) { press in
-                        if press.modifiers.contains(.shift) {
-                            return .ignored
-                        }
-                        send()
-                        return .handled
-                    }
-                if store.input.isEmpty {
-                    Text("Ask about the code… (↩ sends, ⇧↩ new line)")
-                        .font(Tokens.ui(12))
-                        .foregroundStyle(ts.ui.textTertiary)
-                        .padding(.leading, 5)
-                        .allowsHitTesting(false)
-                }
-            }
+            GrowingTextEditor(
+                text: $store.input,
+                placeholder: "Ask about the code… (↩ sends, ⇧↩ new line)",
+                lines: 1...10,
+                focus: $focused,
+                onReturn: send
+            )
             .padding(Tokens.Space.xs)
-            .frame(minHeight: 52, idealHeight: 64, maxHeight: 160)
             .background(ts.ui.bgRaised, in: RoundedRectangle(cornerRadius: Tokens.Radius.s))
             .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.s).stroke(ts.ui.border))
             HStack(spacing: Tokens.Space.s) {

@@ -119,7 +119,7 @@ final class AIChatPage: NSObject, WKNavigationDelegate {
         view.evaluateJavaScript(script)
     }
 
-    private static let placeholder = "<p class=\"empty\">Ask about the open project. ⌘L adds the selection, Code › Explain explains it.</p>"
+    private static let placeholder = "<p class=\"empty\">Ask about the open project. ⌃⌘L adds the selection, Code › Explain explains it.</p>"
 
     private static func key(_ message: AIChatMessage) -> Int {
         var hasher = Hasher()

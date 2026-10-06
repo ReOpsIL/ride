@@ -42,6 +42,16 @@ cp -R "$ROOT/samples/rust-demo" "$WORK/clean/rust-demo"
 cp -R "$ROOT/samples/c-demo" "$WORK/c-demo"
 cp -R "$ROOT/samples/cpp-demo" "$WORK/cpp-demo"
 rm -rf "$WORK/cpp-demo/build/Debug" "$WORK/c-demo/build/Debug"
+cp -R "$ROOT/samples/rust-demo" "$WORK/git-demo"
+(
+  cd "$WORK/git-demo"
+  git init -q
+  git add -A
+  git -c user.name=Ride -c user.email=ride@example.invalid commit -qm "Initial import"
+  perl -0pi -e 's/or_insert\(0\) \+= 1;/or_insert(0) += weight;/; s/fn record\(&mut self, name: &str\) \{\n        \*/fn record(&mut self, name: &str) {\n        let weight = if name.is_empty() { 0 } else { 1 };\n        */' src/util.rs
+  printf '%s\n' 'pub fn report(total: u32) -> String {' '    format!("{total} events")' '}' >src/report.rs
+  git add src/report.rs
+)
 
 SCENES=(
   "editor rust-demo"
@@ -81,6 +91,12 @@ SCENES=(
   "intentions rust-demo"
   "livecheck cpp-demo"
   "cppdebug cpp-demo"
+  "chat rust-demo"
+  "chatempty rust-demo"
+  "ghost rust-demo"
+  "ghostvision rust-demo"
+  "git git-demo"
+  "shortcuts rust-demo"
 )
 
 if (($# > 0)); then

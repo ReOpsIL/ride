@@ -74,7 +74,7 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Show Intention Actions | ⌥↩ | editor |  |
 | Ask AI from Comment | ⌃? | editor |  |
 | Suggest with AI | ⌥\ | editor |  |
-| Accept AI suggestion / next word / dismiss | ⇥ · ⌥⇥ · ⌘→ · esc | editor | Tab goes to the completion popup while it is open; ⌥⇥ always takes the AI suggestion |
+| Accept AI suggestion / next word / dismiss | ⌥⇥ · ⌘→ · esc | editor | ⇥ also accepts unless the completion popup is open, which keeps ⇥ |
 | Explain / Add Selection to Chat | ⌃⌘E · ⌃⌘L | editor |  |
 | Surround With | ⌥⌘T | editor |  |
 | Fold / Unfold | ⌥⌘← · ⌥⌘→ | editor |  |

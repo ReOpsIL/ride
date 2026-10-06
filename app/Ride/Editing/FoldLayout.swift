@@ -28,58 +28,6 @@ enum FoldEllipsis {
     }
 }
 
-final class FoldHeadFragment: NSTextLayoutFragment {
-    override func draw(at point: CGPoint, in context: CGContext) {
-        super.draw(at: point, in: context)
-        guard let line = textLineFragments.first else {
-            return
-        }
-        FoldEllipsis.draw(line: line, at: point, in: context)
-    }
-}
-
-final class VisionFragment: NSTextLayoutFragment {
-    var extra: CGFloat = 0
-    var label = ""
-    var indent: CGFloat = 0
-    var padding: CGFloat = 5
-    var font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-    var showsFoldMark = false
-    private(set) var labelFrame = CGRect.zero
-
-    override var topMargin: CGFloat { extra }
-
-    override func draw(at point: CGPoint, in context: CGContext) {
-        super.draw(at: point, in: context)
-        drawLabel(at: point, in: context)
-        if showsFoldMark, let line = textLineFragments.first {
-            FoldEllipsis.draw(line: line, at: point, in: context)
-        }
-    }
-
-    func containsLabel(at local: CGPoint) -> Bool {
-        labelFrame.contains(local)
-    }
-
-    private func drawLabel(at point: CGPoint, in context: CGContext) {
-        let text = label as NSString
-        let color = ThemeStore.shared.chrome.textTertiary
-        let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: color]
-        let size = text.size(withAttributes: attrs)
-        labelFrame = VisionLayout.labelRect(
-            extraHeight: extra,
-            indent: indent,
-            labelSize: size,
-            padding: padding
-        )
-        let origin = CGPoint(x: point.x + labelFrame.minX, y: point.y + labelFrame.minY)
-        NSGraphicsContext.saveGraphicsState()
-        NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: true)
-        text.draw(at: origin, withAttributes: attrs)
-        NSGraphicsContext.restoreGraphicsState()
-    }
-}
-
 final class FoldLayoutDelegate: NSObject, NSTextLayoutManagerDelegate {
     weak var view: RideTextView?
 
@@ -93,23 +41,21 @@ final class FoldLayoutDelegate: NSObject, NSTextLayoutManagerDelegate {
         if !view.folds.isEmpty, view.folds.hides(paragraph) {
             return HiddenFragment(textElement: textElement, range: range)
         }
-        if let ghost = view.ghostFragment(for: textElement, range: range, paragraph: paragraph) {
-            return ghost
+        let vision = view.visionLine(at: paragraph).map { line in
+            VisionLabel(
+                text: line.label,
+                height: view.visionLineHeight,
+                indent: view.visionIndent(at: paragraph),
+                padding: view.textContainer?.lineFragmentPadding ?? 5,
+                font: view.visionFont
+            )
         }
-        let foldHead = !view.folds.isEmpty && view.folds.startsFold(at: paragraph)
-        if let line = view.visionLine(at: paragraph) {
-            let fragment = VisionFragment(textElement: textElement, range: range)
-            fragment.extra = view.visionLineHeight
-            fragment.label = line.label
-            fragment.indent = view.visionIndent(at: paragraph)
-            fragment.padding = view.textContainer?.lineFragmentPadding ?? 5
-            fragment.font = view.visionFont
-            fragment.showsFoldMark = foldHead
-            return fragment
-        }
-        if foldHead {
-            return FoldHeadFragment(textElement: textElement, range: range)
-        }
-        return NSTextLayoutFragment(textElement: textElement, range: range)
+        return DecoratedFragment.make(
+            textElement: textElement,
+            range: range,
+            vision: vision,
+            foldMark: !view.folds.isEmpty && view.folds.startsFold(at: paragraph),
+            ghost: view.ghostText(at: paragraph)
+        )
     }
 }

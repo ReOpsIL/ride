@@ -168,6 +168,7 @@
 		B0F83C797749BB50FFC695BE /* FileIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02A3458F9D381E22B936563 /* FileIcon.swift */; };
 		B080E440BBA2FD35445605BF /* PanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B029006F6C1E502ECAB3121A /* PanelHeader.swift */; };
 		B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B037435DCB732FB951116C82 /* IconButton.swift */; };
+		GTE000000000000000000002 /* GrowingTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = GTE000000000000000000001 /* GrowingTextEditor.swift */; };
 		B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04E875F537AC051D62D8653 /* AppToolbar.swift */; };
 		B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */; };
 		B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05134279C118A62C90B7732 /* ContrastTests.swift */; };
@@ -195,6 +196,9 @@
 		A00000000000000000000904 /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000903 /* DemoScene.swift */; };
 		F20000000000000000000002 /* DemoScene+Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DemoScene+Popups.swift */; };
 		DS0000000000000000000002 /* DemoScene+Semantic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DS0000000000000000000001 /* DemoScene+Semantic.swift */; };
+		QZ0000000000000000000006 /* DemoScene+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = QZ0000000000000000000005 /* DemoScene+Git.swift */; };
+		QZ0000000000000000000004 /* DemoChatScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = QZ0000000000000000000003 /* DemoChatScript.swift */; };
+		QZ0000000000000000000002 /* DemoScene+AI.swift in Sources */ = {isa = PBXBuildFile; fileRef = QZ0000000000000000000001 /* DemoScene+AI.swift */; };
 		F20000000000000000000004 /* DemoScene+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* DemoScene+Docs.swift */; };
 		F20000000000000000000006 /* DemoScene+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* DemoScene+Run.swift */; };
 		F20000000000000000000008 /* DemoScene+Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007 /* DemoScene+Lang.swift */; };
@@ -543,6 +547,9 @@
 		MDA6098368096964C44353A3 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD6098368096964C44353A3C /* KeyCombo.swift */; };
 		MDT6098368096964C44353A3 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD6098368096964C44353A3C /* KeyCombo.swift */; };
 		P70000000000000000000003 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = P70000000000000000000001 /* Shortcuts.swift */; };
+		SCC000000000000000000002 /* ShortcutColumns.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCC000000000000000000001 /* ShortcutColumns.swift */; };
+		SCC000000000000000000003 /* ShortcutColumns.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCC000000000000000000001 /* ShortcutColumns.swift */; };
+		SCC000000000000000000005 /* ShortcutColumnsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCC000000000000000000004 /* ShortcutColumnsTests.swift */; };
 		P70000000000000000000005 /* ShortcutsManualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = P70000000000000000000004 /* ShortcutsManualTests.swift */; };
 		MDT41F1D77744077673F1EA6 /* ShortcutAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD41F1D77744077673F1EA67 /* ShortcutAuditTests.swift */; };
 		MDT0BE767C98EB94C63375BC /* KeyComboTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD0BE767C98EB94C63375BC3 /* KeyComboTests.swift */; };
@@ -673,6 +680,8 @@
 		E6000000000000000000003D /* GenerateMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6000000000000000000003C /* GenerateMenu.swift */; };
 		E60000000000000000000023 /* FoldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000022 /* FoldController.swift */; };
 		E60000000000000000000025 /* FoldLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000024 /* FoldLayout.swift */; };
+		QZ0000000000000000000014 /* VisionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = QZ0000000000000000000013 /* VisionLabel.swift */; };
+		QZ0000000000000000000012 /* DecoratedFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = QZ0000000000000000000011 /* DecoratedFragment.swift */; };
 		E60000000000000000000027 /* FoldSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000026 /* FoldSet.swift */; };
 		E60000000000000000000028 /* FoldSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000026 /* FoldSet.swift */; };
 		E6000000000000000000002A /* Buffers+File.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60000000000000000000029 /* Buffers+File.swift */; };
@@ -917,7 +926,7 @@
 		GIT000000000000000000062 /* AIInlineLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000061 /* AIInlineLine.swift */; };
 		GIT000000000000000000063 /* AIInlineLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000061 /* AIInlineLine.swift */; };
 		GIT000000000000000000065 /* AIInlineController.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000064 /* AIInlineController.swift */; };
-		GIT000000000000000000067 /* GhostFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000066 /* GhostFragment.swift */; };
+		GIT000000000000000000067 /* GhostText.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000066 /* GhostText.swift */; };
 		GIT000000000000000000069 /* AISuggestRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000068 /* AISuggestRouter.swift */; };
 		GIT00000000000000000006B /* AIInlineGhostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000006A /* AIInlineGhostTests.swift */; };
 /* End PBXBuildFile section */
@@ -1033,6 +1042,7 @@
 		B02A3458F9D381E22B936563 /* FileIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileIcon.swift"; sourceTree = "<group>"; };
 		B029006F6C1E502ECAB3121A /* PanelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PanelHeader.swift"; sourceTree = "<group>"; };
 		B037435DCB732FB951116C82 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IconButton.swift"; sourceTree = "<group>"; };
+		GTE000000000000000000001 /* GrowingTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingTextEditor.swift; sourceTree = "<group>"; };
 		B04E875F537AC051D62D8653 /* AppToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppToolbar.swift"; sourceTree = "<group>"; };
 		B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowConfigurator.swift"; sourceTree = "<group>"; };
 		B05134279C118A62C90B7732 /* ContrastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContrastTests.swift"; sourceTree = "<group>"; };
@@ -1059,6 +1069,9 @@
 		A00000000000000000000903 /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene.swift"; sourceTree = "<group>"; };
 		F20000000000000000000001 /* DemoScene+Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Popups.swift"; sourceTree = "<group>"; };
 		DS0000000000000000000001 /* DemoScene+Semantic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Semantic.swift"; sourceTree = "<group>"; };
+		QZ0000000000000000000005 /* DemoScene+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Git.swift"; sourceTree = "<group>"; };
+		QZ0000000000000000000003 /* DemoChatScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoChatScript.swift"; sourceTree = "<group>"; };
+		QZ0000000000000000000001 /* DemoScene+AI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+AI.swift"; sourceTree = "<group>"; };
 		F20000000000000000000003 /* DemoScene+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Docs.swift"; sourceTree = "<group>"; };
 		F20000000000000000000005 /* DemoScene+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Run.swift"; sourceTree = "<group>"; };
 		F20000000000000000000007 /* DemoScene+Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Lang.swift"; sourceTree = "<group>"; };
@@ -1467,6 +1480,8 @@
 		D011963E31E5B2B0818804D2 /* KeyCap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyCap.swift"; sourceTree = "<group>"; };
 		D04F0E17CAB9D0DA768572FB /* ShortcutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutsView.swift"; sourceTree = "<group>"; };
 		P70000000000000000000001 /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
+		SCC000000000000000000001 /* ShortcutColumns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutColumns.swift; sourceTree = "<group>"; };
+		SCC000000000000000000004 /* ShortcutColumnsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutColumnsTests.swift; sourceTree = "<group>"; };
 		MD95B3CCFD72E3222D2A170B /* DialogScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogScript.swift; sourceTree = "<group>"; };
 		MD3425B0D807D77E0413555A /* ShortcutAudit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutAudit.swift; sourceTree = "<group>"; };
 		MDA9B048EE42E4994E82168D /* KeyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRouter.swift; sourceTree = "<group>"; };
@@ -1584,6 +1599,8 @@
 		E6000000000000000000003C /* GenerateMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenerateMenu.swift"; sourceTree = "<group>"; };
 		E60000000000000000000022 /* FoldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldController.swift"; sourceTree = "<group>"; };
 		E60000000000000000000024 /* FoldLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldLayout.swift"; sourceTree = "<group>"; };
+		QZ0000000000000000000013 /* VisionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VisionLabel.swift"; sourceTree = "<group>"; };
+		QZ0000000000000000000011 /* DecoratedFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DecoratedFragment.swift"; sourceTree = "<group>"; };
 		E60000000000000000000026 /* FoldSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldSet.swift"; sourceTree = "<group>"; };
 		E60000000000000000000029 /* Buffers+File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Buffers+File.swift"; sourceTree = "<group>"; };
 		E6000000000000000000002B /* RideTextView+Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Clipboard.swift"; sourceTree = "<group>"; };
@@ -1689,7 +1706,7 @@
 		GIT00000000000000000005E /* AIInlineGhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineGhost.swift; sourceTree = "<group>"; };
 		GIT000000000000000000061 /* AIInlineLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineLine.swift; sourceTree = "<group>"; };
 		GIT000000000000000000064 /* AIInlineController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineController.swift; sourceTree = "<group>"; };
-		GIT000000000000000000066 /* GhostFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostFragment.swift; sourceTree = "<group>"; };
+		GIT000000000000000000066 /* GhostText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostText.swift; sourceTree = "<group>"; };
 		GIT000000000000000000068 /* AISuggestRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestRouter.swift; sourceTree = "<group>"; };
 		GIT00000000000000000006A /* AIInlineGhostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineGhostTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1749,6 +1766,7 @@
 				D0805A44393AFDF81FEFB357 /* AboutPanel.swift */,
 				D0C13ADBA32559E8EFF240EB /* ShortcutsPanel.swift */,
 				P70000000000000000000001 /* Shortcuts.swift */,
+				SCC000000000000000000001 /* ShortcutColumns.swift */,
 				MD95B3CCFD72E3222D2A170B /* DialogScript.swift */,
 				MD3425B0D807D77E0413555A /* ShortcutAudit.swift */,
 				MDA9B048EE42E4994E82168D /* KeyRouter.swift */,
@@ -1776,6 +1794,7 @@
 				B02A3458F9D381E22B936563 /* FileIcon.swift */,
 				B029006F6C1E502ECAB3121A /* PanelHeader.swift */,
 				B037435DCB732FB951116C82 /* IconButton.swift */,
+				GTE000000000000000000001 /* GrowingTextEditor.swift */,
 				B04E875F537AC051D62D8653 /* AppToolbar.swift */,
 				B0F13635D7E6AA7B55FAC6C7 /* WindowConfigurator.swift */,
 				B09832F616F69FF9D72097BD /* ThemeStore.swift */,
@@ -1910,6 +1929,7 @@
 				F14000000000000000000004 /* HierarchyModelTests.swift */,
 				P70000000000000000000004 /* ShortcutsManualTests.swift */,
 				MD41F1D77744077673F1EA67 /* ShortcutAuditTests.swift */,
+				SCC000000000000000000004 /* ShortcutColumnsTests.swift */,
 				MD0BE767C98EB94C63375BC3 /* KeyComboTests.swift */,
 				MD4BC74A781D032895E1A26E /* ShortcutsTableTests.swift */,
 				SU0000000000000000000008 /* SetupRowsTests.swift */,
@@ -2464,6 +2484,9 @@
 				A00000000000000000000903 /* DemoScene.swift */,
 				F20000000000000000000001 /* DemoScene+Popups.swift */,
 				DS0000000000000000000001 /* DemoScene+Semantic.swift */,
+				QZ0000000000000000000005 /* DemoScene+Git.swift */,
+				QZ0000000000000000000003 /* DemoChatScript.swift */,
+				QZ0000000000000000000001 /* DemoScene+AI.swift */,
 				F20000000000000000000003 /* DemoScene+Docs.swift */,
 				F20000000000000000000005 /* DemoScene+Run.swift */,
 				F20000000000000000000007 /* DemoScene+Lang.swift */,
@@ -2657,6 +2680,8 @@
 				E6000000000000000000003C /* GenerateMenu.swift */,
 				E60000000000000000000022 /* FoldController.swift */,
 				E60000000000000000000024 /* FoldLayout.swift */,
+				QZ0000000000000000000013 /* VisionLabel.swift */,
+				QZ0000000000000000000011 /* DecoratedFragment.swift */,
 				E60000000000000000000026 /* FoldSet.swift */,
 				E50000000000000000000005 /* LineOps+Move.swift */,
 				E50000000000000000000006 /* LineOps+Case.swift */,
@@ -2786,7 +2811,7 @@
 				GIT00000000000000000005E /* AIInlineGhost.swift */,
 				GIT000000000000000000061 /* AIInlineLine.swift */,
 				GIT000000000000000000064 /* AIInlineController.swift */,
-				GIT000000000000000000066 /* GhostFragment.swift */,
+				GIT000000000000000000066 /* GhostText.swift */,
 				GIT000000000000000000068 /* AISuggestRouter.swift */,
 			);
 			path = Inline;
@@ -3161,6 +3186,8 @@
 				S10000000000000000000022 /* UpdateController.swift in Sources */,
 				S10000000000000000000026 /* UpdateControllerTests.swift in Sources */,
 				P70000000000000000000003 /* Shortcuts.swift in Sources */,
+				SCC000000000000000000003 /* ShortcutColumns.swift in Sources */,
+				SCC000000000000000000005 /* ShortcutColumnsTests.swift in Sources */,
 				P70000000000000000000005 /* ShortcutsManualTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3172,7 +3199,7 @@
 				GIT00000000000000000005F /* AIInlineGhost.swift in Sources */,
 				GIT000000000000000000062 /* AIInlineLine.swift in Sources */,
 				GIT000000000000000000065 /* AIInlineController.swift in Sources */,
-				GIT000000000000000000067 /* GhostFragment.swift in Sources */,
+				GIT000000000000000000067 /* GhostText.swift in Sources */,
 				GIT000000000000000000069 /* AISuggestRouter.swift in Sources */,
 				GIT00000000000000000002E /* AIStreamDecoder.swift in Sources */,
 				GIT000000000000000000030 /* AIChatTurn.swift in Sources */,
@@ -3404,6 +3431,7 @@
 				D02B66BD78B1038B32B10A61 /* AboutPanel.swift in Sources */,
 				D06FC25E5C41405EA48FC089 /* ShortcutsPanel.swift in Sources */,
 				P70000000000000000000002 /* Shortcuts.swift in Sources */,
+				SCC000000000000000000002 /* ShortcutColumns.swift in Sources */,
 				D04525284BED8960C5AB24B7 /* ShortcutsView.swift in Sources */,
 				D08D4ACEF7E7A00DA95D8804 /* KeyCap.swift in Sources */,
 				C01CE21302F31AE7D5BD03E6 /* FindRows.swift in Sources */,
@@ -3461,6 +3489,8 @@
 				E6000000000000000000003D /* GenerateMenu.swift in Sources */,
 				E60000000000000000000023 /* FoldController.swift in Sources */,
 				E60000000000000000000025 /* FoldLayout.swift in Sources */,
+				QZ0000000000000000000014 /* VisionLabel.swift in Sources */,
+				QZ0000000000000000000012 /* DecoratedFragment.swift in Sources */,
 				E60000000000000000000027 /* FoldSet.swift in Sources */,
 				E6000000000000000000002A /* Buffers+File.swift in Sources */,
 				E6000000000000000000002C /* RideTextView+Clipboard.swift in Sources */,
@@ -3500,6 +3530,7 @@
 				B0F83C797749BB50FFC695BE /* FileIcon.swift in Sources */,
 				B080E440BBA2FD35445605BF /* PanelHeader.swift in Sources */,
 				B0D868FD11882CE22B2385F1 /* IconButton.swift in Sources */,
+				GTE000000000000000000002 /* GrowingTextEditor.swift in Sources */,
 				B0C984E623DFD6583B835F89 /* AppToolbar.swift in Sources */,
 				B0122CD04E20E9A0ECBA4306 /* WindowConfigurator.swift in Sources */,
 				B00CDD6593A362BDDAA742EF /* ThemeStore.swift in Sources */,
@@ -3515,6 +3546,9 @@
 				A00000000000000000000904 /* DemoScene.swift in Sources */,
 				F20000000000000000000002 /* DemoScene+Popups.swift in Sources */,
 				DS0000000000000000000002 /* DemoScene+Semantic.swift in Sources */,
+				QZ0000000000000000000006 /* DemoScene+Git.swift in Sources */,
+				QZ0000000000000000000004 /* DemoChatScript.swift in Sources */,
+				QZ0000000000000000000002 /* DemoScene+AI.swift in Sources */,
 				F20000000000000000000004 /* DemoScene+Docs.swift in Sources */,
 				F20000000000000000000006 /* DemoScene+Run.swift in Sources */,
 				F20000000000000000000008 /* DemoScene+Lang.swift in Sources */,

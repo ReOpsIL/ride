@@ -100,3 +100,8 @@
 - Side-by-side diff mode; word-level change marks inside modified lines
 - Self-test for commit, branch and push against a scratch repository instead of menu-coverage exemptions
 - Push and pull have no timeout; a credential helper that blocks keeps the panel busy until it returns
+
+# Panels (added 2026-10-06, AI/git visual review)
+
+- Changes and Usages panels open at a fixed split position (300 / 220) but their heights are not saved; the other bottom panels each carry a height through `Preferences`, `LayoutState` and `AppState+Layout`. Replace the per-panel fields with heights keyed by a bottom-panel enum so a new panel cannot ship without one.
+- The AI Chat transcript is blank before the first question; show the shortcuts (Explain ⌃⌘E, Add Selection ⌃⌘L) as an empty state.

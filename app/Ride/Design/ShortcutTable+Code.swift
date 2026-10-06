@@ -40,8 +40,8 @@ extension Shortcuts {
             ShortcutEntry("askai", "Ask AI from Comment", [.menu("Code › Ask AI from Comment…", "⌃?", .editor)]),
             ShortcutEntry("suggest", "Suggest with AI", [.menu("Code › Suggest with AI", "⌥\\", .editor)]),
             ShortcutEntry("aiaccept", "Accept AI suggestion / next word / dismiss", [
-                .editorKey("⇥"), .editorKey("⌥⇥"), .editorKey("⌘→"), .editorKey("esc"),
-            ], note: "Tab goes to the completion popup while it is open; ⌥⇥ always takes the AI suggestion"),
+                .editorKey("⌥⇥"), .editorKey("⌘→"), .editorKey("esc"),
+            ], note: "⇥ also accepts unless the completion popup is open, which keeps ⇥"),
             ShortcutEntry("explain", "Explain / Add Selection to Chat", [
                 .menu("Code › Explain", "⌃⌘E", .editor), .menu("Code › Add Selection to Chat", "⌃⌘L", .editor),
             ]),

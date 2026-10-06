@@ -13,6 +13,8 @@ enum DemoScene {
             || cppDebug(name, state: state)
             || welcome(name, state: state)
             || semantic(name, state: state)
+            || assistant(name, state: state)
+            || gitScene(name, state: state)
         if !handled {
             DemoLaunch.ready()
         }

@@ -47,6 +47,12 @@ final class AIChatStore: ObservableObject {
         }
     }
 
+    func restore(_ saved: [AIChatThread], current: UUID?) {
+        stop()
+        threads = saved
+        currentID = current ?? saved.first?.id
+    }
+
     func attach(_ attachments: [AIChatAttachment]) {
         for attachment in attachments where !pending.contains(attachment) {
             pending.append(attachment)

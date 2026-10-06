@@ -10,7 +10,7 @@ struct ShortcutsView: View {
                 .foregroundStyle(ts.ui.textPrimary)
             HStack(alignment: .top, spacing: Tokens.Space.xxl) {
                 ForEach(Array(Self.columns.enumerated()), id: \.offset) { _, column in
-                    VStack(alignment: .leading, spacing: Tokens.Space.s) {
+                    Grid(alignment: .leading, horizontalSpacing: Tokens.Space.l, verticalSpacing: Tokens.Space.xs) {
                         ForEach(column) { group in
                             section(group)
                         }
@@ -19,55 +19,46 @@ struct ShortcutsView: View {
             }
         }
         .padding(Tokens.Space.xxl)
+        .fixedSize()
         .background(ts.ui.bgRaised)
     }
 
     static var columns: [[ShortcutGroup]] {
-        let total = Shortcuts.groups.reduce(0) { $0 + $1.entries.count + 1 }
-        let target = (total + 2) / 3
-        var columns: [[ShortcutGroup]] = [[]]
-        var filled = 0
-        for group in Shortcuts.groups {
-            if filled >= target, columns.count < 3 {
-                columns.append([])
-                filled = 0
-            }
-            columns[columns.count - 1].append(group)
-            filled += group.entries.count + 1
-        }
-        return columns
+        ShortcutColumns.balance(Shortcuts.groups, into: 3)
     }
 
+    @ViewBuilder
     private func section(_ group: ShortcutGroup) -> some View {
-        VStack(alignment: .leading, spacing: Tokens.Space.xs) {
+        GridRow {
             Text(group.id)
                 .font(Tokens.ui(11, weight: .semibold))
                 .foregroundStyle(ts.ui.textTertiary)
-                .padding(.top, Tokens.Space.s)
-            ForEach(group.entries) { entry in
-                row(entry)
+                .padding(.top, Tokens.Space.m)
+                .gridCellColumns(2)
+        }
+        ForEach(group.entries) { entry in
+            GridRow {
+                Text(entry.name)
+                    .font(Tokens.ui(12))
+                    .foregroundStyle(ts.ui.textPrimary)
+                keys(entry)
             }
+            .frame(height: 20)
+            .help(entry.note ?? "")
         }
     }
 
-    private func row(_ entry: ShortcutEntry) -> some View {
-        HStack(spacing: Tokens.Space.l) {
-            Text(entry.name)
-                .font(Tokens.ui(12))
-                .foregroundStyle(ts.ui.textPrimary)
-                .frame(width: 200, alignment: .leading)
-            HStack(spacing: Tokens.Space.xs) {
-                ForEach(Array(entry.bindings.enumerated()), id: \.offset) { _, binding in
-                    KeyCap(key: binding.keys, size: 11)
-                }
-                if entry.note != nil {
-                    Image(systemName: "info.circle")
-                        .font(.system(size: 10))
-                        .foregroundStyle(ts.ui.textTertiary)
-                }
+    private func keys(_ entry: ShortcutEntry) -> some View {
+        HStack(spacing: Tokens.Space.xs) {
+            ForEach(Array(entry.bindings.enumerated()), id: \.offset) { _, binding in
+                KeyCap(key: binding.keys, size: 11)
+            }
+            if entry.note != nil {
+                Image(systemName: "info.circle")
+                    .font(.system(size: 10))
+                    .foregroundStyle(ts.ui.textTertiary)
             }
         }
-        .frame(height: 20)
-        .help(entry.note ?? "")
+        .fixedSize()
     }
 }

@@ -15,7 +15,7 @@ final class AIInlineController {
     func textChanged(document: BufferDocument, view: RideTextView, state: AppState, inserted: String) {
         if let ghost = view.inlineGhost {
             if let next = ghost.advanced(by: inserted), view.selectedRange() == NSRange(location: next.location, length: 0) {
-                show(next, in: view)
+                present(next, in: view)
                 return
             }
             hide(in: view)
@@ -65,7 +65,7 @@ final class AIInlineController {
         }
         insert(chunk, in: view)
         if let next = ghost.advanced(by: chunk) {
-            show(next, in: view)
+            present(next, in: view)
         } else {
             hide(in: view)
         }
@@ -92,7 +92,7 @@ final class AIInlineController {
         session.editSource = .user
     }
 
-    private func show(_ ghost: AIInlineGhost, in view: RideTextView) {
+    func present(_ ghost: AIInlineGhost, in view: RideTextView) {
         let old = view.inlineGhost
         view.inlineGhost = ghost
         view.refreshFragments(in: [old?.location, ghost.location].compactMap { $0 }.map { NSRange(location: $0, length: 0) })
@@ -147,7 +147,7 @@ final class AIInlineController {
             case .success(let suggestions):
                 let line = AIInlineLine.beforeCaret(view.string, caret: caret.location)
                 if let text = suggestions.first.flatMap({ AIInlineGhost.cleaned($0.text, lineBeforeCaret: line) }) {
-                    self.show(AIInlineGhost(anchor: caret.location, text: text), in: view)
+                    self.present(AIInlineGhost(anchor: caret.location, text: text), in: view)
                     AIActivity.shared.report("AI: suggestion (Tab accepts)")
                 } else {
                     AIActivity.shared.report("AI: no suggestion")

@@ -38,10 +38,12 @@ struct DetailColumn: View {
                 if state.showGit {
                     GitPanel(status: state.git, model: state.gitChanges)
                         .frame(minHeight: 160, idealHeight: 300, maxHeight: 640)
+                        .background(SplitPositioner(position: 300, fromEnd: true))
                 }
                 if state.showUsages {
                     UsagesPanel(model: state.usages)
                         .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)
+                        .background(SplitPositioner(position: 220, fromEnd: true))
                 }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)
