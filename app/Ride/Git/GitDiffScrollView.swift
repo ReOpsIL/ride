@@ -56,9 +56,10 @@ struct GitDiffScrollView: NSViewRepresentable {
         textView.textStorage?.setAttributedString(document.text)
         coordinator.gutter?.font = NSFont.monospacedDigitSystemFont(ofSize: CGFloat(max(fontSize - 2, 9)), weight: .regular)
         coordinator.gutter?.document = document
-        scroll.fitDocument()
         if fileChanged {
-            textView.scroll(.zero)
+            scroll.showFromStart()
+        } else {
+            scroll.fitDocument()
         }
     }
 
