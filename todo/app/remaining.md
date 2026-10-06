@@ -93,7 +93,7 @@
 
 # Git follow-ups (added 2026-10-06, see docs/product/git.md)
 
-- The Git app layer was written without a Swift toolchain in reach; build it in Xcode and run RideTests and the self-test before release
+- Run RideTests and the in-app self-test on the Git app layer (it builds and the diff view was checked by hand)
 - Diff gutter markers per buffer with revert hunk (plan/roadmap/level-up.md 2.0-1); needs the engine diff of buffer text against the index
 - Stage and unstage single hunks from the diff view
 - History, blame, stash, merge (2.0-2) and the three-pane conflict resolver (2.0-3); conflicted files only show `!` today
