@@ -18,6 +18,7 @@ final class GitDiffGutter: NSRulerView {
 
     override init(scrollView: NSScrollView?, orientation: NSRulerView.Orientation) {
         super.init(scrollView: scrollView, orientation: orientation)
+        clipsToBounds = true
         ruleThickness = thickness
     }
 
@@ -36,10 +37,11 @@ final class GitDiffGutter: NSRulerView {
 
     override func drawHashMarksAndLabels(in rect: NSRect) {
         let theme = ThemeStore.shared.theme
+        let dirty = bounds.intersection(rect)
         theme.editor.background.setFill()
-        rect.fill()
+        dirty.fill()
         theme.chrome.border.setFill()
-        NSRect(x: bounds.maxX - 1, y: rect.minY, width: 1, height: rect.height).fill()
+        NSRect(x: bounds.maxX - 1, y: dirty.minY, width: 1, height: dirty.height).fill()
         guard let document, let textView = clientView as? NSTextView,
               let layoutManager = textView.layoutManager, let container = textView.textContainer
         else {
