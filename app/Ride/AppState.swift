@@ -55,6 +55,9 @@ final class AppState: ObservableObject {
     @Published var showHierarchy = false {
         didSet { syncMenu() }
     }
+    @Published var showGit = false {
+        didSet { syncMenu(); gitPanelShown() }
+    }
     @Published var showSidebar = true {
         didSet { syncMenu(); scheduleWorkspaceSave() }
     }
@@ -88,6 +91,7 @@ final class AppState: ObservableObject {
     let projectFind = ProjectFindModel()
     let preview = PreviewModel()
     let git = GitStatusService()
+    let gitChanges = GitChangesModel()
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
     let runConfigEditor = RunConfigEditor()

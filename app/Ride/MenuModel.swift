@@ -23,6 +23,8 @@ final class MenuModel: ObservableObject {
     @Published var showTerminal = false
     @Published var showTests = false
     @Published var showUsages = false
+    @Published var showGit = false
+    @Published var hasRepo = false
     @Published var showAIPanel = false
     @Published var isRunning = false
     @Published var hasSplit = false
@@ -62,6 +64,8 @@ final class MenuModel: ObservableObject {
         set(\.showTerminal, state.showTerminal)
         set(\.showTests, state.showTests)
         set(\.showUsages, state.showUsages)
+        set(\.showGit, state.showGit)
+        set(\.hasRepo, state.git.repo != nil)
         set(\.showAIPanel, AIAssistant.shared.showPanel)
         set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)

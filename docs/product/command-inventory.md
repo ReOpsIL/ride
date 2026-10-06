@@ -2,7 +2,7 @@
 
 This is a snapshot of the working tree on 2026-09-27 (branch `main`, uncommitted changes included). It comes from static analysis only: every handler was traced through the source, and nothing was built or run.
 
-**Coverage since this snapshot.** Main-menu coverage is now enforced at runtime. The self-test step `menu coverage` (`app/Ride/Debug/SelfTestMenuCoverage.swift`) walks the live menu bar at the end of every suite. It fails when an item is neither claimed by a passing step (registry: `SelfTestCoverage+FileEdit.swift`, `+Code.swift`, `+Run.swift`) nor exempt with a reason (system-injected items only). Steps press the real `NSMenuItem` through `SelfTestMenu.perform`. `menu-coverage.txt` beside each self-test report is the current per-item list. The Coverage column in the tables below shows the state before that round; open gaps are in `todo/app/remaining.md` under "Menu coverage follow-ups".
+**Coverage since this snapshot.** Main-menu coverage is now enforced at runtime. The self-test step `menu coverage` (`app/Ride/Debug/SelfTestMenuCoverage.swift`) walks the live menu bar at the end of every suite. It fails when an item is neither claimed by a passing step (registry: `SelfTestCoverage+FileEdit.swift`, `+Code.swift`, `+Run.swift`, `+Git.swift`) nor exempt with a reason (system-injected items only). Steps press the real `NSMenuItem` through `SelfTestMenu.perform`. `menu-coverage.txt` beside each self-test report is the current per-item list. The Coverage column in the tables below shows the state before that round; open gaps are in `todo/app/remaining.md` under "Menu coverage follow-ups".
 
 **Legend**
 - **Coverage classes:**
@@ -20,7 +20,7 @@ This is a snapshot of the working tree on 2026-09-27 (branch `main`, uncommitted
 1. App menu, Help, File, Edit, and their sheets
 2. View and Navigate, with the overlays, Hierarchy, Usages, Outline, Preview, and Rename/Safe Delete
 3. Code and Build, with the Generate/Surround/Intention popups, Cheat Sheet, Completion, Docs/Peek, AI and Install Tools
-4. Run and Debug, with Run output, Run config, Tests, Debug panel, Evaluate, breakpoints, Terminal, Toolbar and Targets
+4. Run and Debug, with Run output, Run config, Tests, Debug panel, Evaluate, breakpoints, Terminal, Toolbar and Targets; then the Git menu and the Changes panel
 5. Editor keyboard and mouse, gutter, tabs, splits, status bar, notices, Welcome, confirm dialogs, and external entry points
 6. Project sidebar and tree, Problems, Find bar, Find/Replace in Project, and other controls
 7. Preferences
@@ -629,6 +629,34 @@ The toolbar has **no Run, Stop or Debug buttons**. Its items are Toggle Sidebar,
 | `Targets › project switcher` picker | — | `store.choose(root:)` | Switches the active sub-project, the same as the toolbar project toggles. Shown with 2 or more projects. | NONE | The active project also follows the focused editor file (`focus(file:)`), so a manual choice is overridden by the next file switch into another project. |
 | `Targets › profile picker` (Debug/Release/RelWithDebInfo, debug/release) | — | `$store.profile` | Sets `ProjectModelStore.profile`. It is only read by the ctest fallback (`build/<profile>`) and the Cargo debug binary path (`target/<profile>`). | NONE | ⚠ It does not reload or configure CMake targets, which stay on `build/Debug`, and it adds no `--release` for Cargo. Build and Run ignore it, and Cargo Release makes Debug look for `target/release/<name>`, which was never built. ⚠ There is no `onChange` call, so the menu enablement is not re-synced. The profile is not persisted in the workspace. |
 | `Targets › target row click` | — | `store.select(row)` | Selects the target (highlighted) and syncs the menu. The hover tooltip shows the build command. | SELFTEST: "target selection restore" (rust; via `selectTarget` → `projectModel.select`) | ⚠ It bypasses `state.selectTarget`, so `scheduleWorkspaceSave()` is not called. A target picked in the sidebar is not persisted, unlike the toolbar picker. |
+
+
+### Git menu (`Git/GitCommands.swift`, added 2026-10-06)
+
+| Command (path) | Shortcut | Handler | What it does | Coverage | Notes/⚠ |
+|---|---|---|---|---|---|
+| `Git › Changes` | ⌘0 | `toggleGit()` → `Git/AppState+Git.swift` | Toggles the Changes panel; showing it refreshes status, the diff and the branch list. Enabled with a workspace. | SELFTEST: "menu git changes toggle", "menu git changes restore" | |
+| `Git › Commit…` | ⌘K | `showGitCommit()` | Opens the Changes panel and focuses the commit message. Enabled inside a repository. | NONE | Exempt from menu coverage: it would commit into the repository under test. |
+| `Git › Push` | ⇧⌘K | `gitPush()` → `Git/AppState+GitOps.swift` → `engine.gitPush` | Pushes; without an upstream pushes `HEAD` to `origin` (or the first remote) and sets it. Notice with git's last line. | RUST: tests/git.rs::push_sets_the_upstream_and_pull_fast_forwards, push_without_a_remote_says_so | Exempt from menu coverage. |
+| `Git › Pull` | — | `gitPull()` → `engine.gitPull` | `pull --ff-only`. | RUST: tests/git.rs::push_sets_the_upstream_and_pull_fast_forwards | Exempt from menu coverage. |
+| `Git › Fetch` | — | `gitFetch()` → `engine.gitFetch` | `fetch --prune`. | NONE | Exempt from menu coverage. |
+| `Git › New Branch…` | — | `gitNewBranch()` → `TreePrompt.name` → `engine.gitCreateBranch(checkout: true)` | Prompts for a name, creates the branch and switches to it. | RUST: tests/git.rs::branches_create_switch_and_reject_bad_names | Exempt from menu coverage. |
+| `Git › Refresh Status` | — | `refreshGit()` | Reloads status now instead of waiting for the file watcher. | NONE | Exempt from menu coverage. |
+
+### Changes panel (`Git/GitPanel.swift`, `GitChangeList`, `GitChangeRow`, `GitCommitBox`, `GitDiffView`, `GitBranchMenu`)
+
+| Control | Handler | What it does | Coverage |
+|---|---|---|---|
+| Branch menu › New Branch… / Fetch / a branch | `gitNewBranch()` / `gitFetch()` / `gitCheckout(branch)` | Creates and switches, fetches, or switches to a local branch (`switch`) or a remote one (`switch --track`). | RUST: tests/git.rs::branches_create_switch_and_reject_bad_names |
+| Pull / Push buttons | `gitPull()` / `gitPush()` | Same as the menu items. | RUST (see menu) |
+| Refresh, close (×) | `refreshGit()` / `showGit = false` | | NONE |
+| Section Stage All / Unstage All | `gitStage(paths)` / `gitUnstage(paths)` | Stages every unstaged file or unstages every staged one. | RUST: tests/git.rs::stage_and_unstage_work_before_the_first_commit |
+| Row checkbox | `gitStage` / `gitUnstage` | Moves one file between sections. | RUST (as above) |
+| Row click / double-click | `selectGitChange` / `openGitChange` | Shows that side's diff / opens the file. | RUST: tests/git.rs::diffs_cover_unstaged_staged_and_untracked_sides |
+| Row menu › Open File, Stage/Unstage, Discard Changes…, Copy Path | `openGitChange`, `gitStage`/`gitUnstage`, `gitDiscard` (confirms), `TreeActions.copyPath` | Discard restores tracked files from the index and deletes untracked ones. | RUST: tests/git.rs::discard_restores_tracked_and_removes_untracked_files |
+| Amend checkbox | `gitAmendChanged()` | Loads the last message into an empty box. | RUST: tests/git.rs::commit_amend_and_last_message |
+| Commit / Commit All / Amend, … and Push | `gitCommit(push:)` | Commits the staged files (all files when none are staged), then pushes when asked; clears the box. | RUST: tests/git.rs::commit_amend_and_last_message |
+| Status bar branch segment | `toggleGit()` | Shows the branch (or `detached at <sha>`) with ↑ahead ↓behind and toggles the panel. | NONE |
 
 
 ---

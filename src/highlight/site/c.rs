@@ -111,10 +111,8 @@ fn directive(text: &str, at: usize) -> Option<SiteAt> {
     let after = text[word_end..at].trim_start();
     let (quoted, body) = if let Some(b) = after.strip_prefix('<') {
         (false, b)
-    } else if let Some(b) = after.strip_prefix('"') {
-        (true, b)
     } else {
-        return None;
+        (true, after.strip_prefix('"')?)
     };
     if body.contains(if quoted { '"' } else { '>' }) {
         return Some(SiteAt::none(at));

@@ -16,6 +16,8 @@ pub enum EngineError {
     Tool { message: String },
     #[error("debug: {message}")]
     Debug { message: String },
+    #[error("git: {message}")]
+    Git { message: String },
 }
 
 impl EngineError {
@@ -34,6 +36,12 @@ impl EngineError {
 
     pub fn debug(message: impl std::fmt::Display) -> Self {
         Self::Debug {
+            message: message.to_string(),
+        }
+    }
+
+    pub fn git(message: impl std::fmt::Display) -> Self {
+        Self::Git {
             message: message.to_string(),
         }
     }

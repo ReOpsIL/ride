@@ -90,6 +90,13 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 |---|---|---|---|
 | Check / Check Project | ⌥⌘B · ⌥⇧⌘B | app |  |
 
+## Git
+
+| Command | Keys | Scope | Notes |
+|---|---|---|---|
+| Changes Panel | ⌘0 | app |  |
+| Commit / Push | ⌘K · ⇧⌘K | app |  |
+
 ## Run
 
 | Command | Keys | Scope | Notes |

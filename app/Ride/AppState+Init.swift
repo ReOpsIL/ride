@@ -13,6 +13,9 @@ extension AppState {
         gitSink = git.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }
+        git.onChange = { [weak self] in
+            self?.gitStatusChanged()
+        }
         projectModel.onChange = { [weak self] in
             self?.syncMenu()
         }

@@ -47,7 +47,7 @@ struct ShortcutGroup: Identifiable {
 }
 
 enum Shortcuts {
-    static let groups: [ShortcutGroup] = fileEditView + navigateCode + runDebug
+    static let groups: [ShortcutGroup] = fileEditView + navigateCode + git + runDebug
 
     static var entries: [ShortcutEntry] {
         groups.flatMap(\.entries)

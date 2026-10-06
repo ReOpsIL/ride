@@ -35,6 +35,10 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: state.prefs.testsHeight, fromEnd: true))
                         .reportSize(.height) { testsHeight.wrappedValue = $0 }
                 }
+                if state.showGit {
+                    GitPanel(status: state.git, model: state.gitChanges)
+                        .frame(minHeight: 160, idealHeight: 300, maxHeight: 640)
+                }
                 if state.showUsages {
                     UsagesPanel(model: state.usages)
                         .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)

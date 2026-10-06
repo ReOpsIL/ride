@@ -6,6 +6,7 @@ mod docs;
 mod edit;
 mod editing;
 mod generate;
+mod git;
 mod hierarchy;
 mod index;
 mod intentions;
@@ -34,6 +35,10 @@ pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange, StatementBounds};
 pub use generate::{GenKind, GenOption};
+pub use git::{
+    GitBranch, GitChangeKind, GitDiffLine, GitDiffSide, GitFileChange, GitFileDiff, GitHunk,
+    GitLineKind, GitRepoStatus,
+};
 pub use hierarchy::{CalleeHit, TypeHierarchy, TypeNode};
 pub use index::{IndexState, IndexStatus, IndexStatusListener};
 pub use intentions::Intention;

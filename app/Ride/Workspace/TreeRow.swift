@@ -36,13 +36,18 @@ struct TreeRow: View {
                 .frame(width: 16)
             Text(node.name)
                 .font(Tokens.ui(12, weight: mark == .active ? .semibold : .regular))
-                .foregroundStyle(dimmed ? ts.ui.textTertiary : ts.ui.textPrimary)
+                .foregroundStyle(nameColor)
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer(minLength: Tokens.Space.xs)
-            if dirty {
+            if let change {
+                Text(change.letter)
+                    .font(Tokens.mono(10, weight: .semibold))
+                    .foregroundStyle(change.color(ts.ui))
+                    .help(change.label)
+            } else if dirtyDirectory {
                 Circle()
-                    .fill(ts.ui.warning.opacity(node.isDirectory ? 0.5 : 1))
+                    .fill(ts.ui.warning.opacity(0.5))
                     .frame(width: 6, height: 6)
             }
         }
@@ -62,12 +67,29 @@ struct TreeRow: View {
         node.name.hasPrefix(".") || node.name == "target"
     }
 
-    private var dirty: Bool {
-        guard let root = state.workspaceRoot else {
+    private var relative: String? {
+        state.workspaceRoot.map { WorkspaceFS.relativePath(root: $0, file: node.url) }
+    }
+
+    private var change: GitChangeKind? {
+        guard !node.isDirectory, let relative else {
+            return nil
+        }
+        return state.git.kind(relative: relative)
+    }
+
+    private var dirtyDirectory: Bool {
+        guard node.isDirectory, let relative else {
             return false
         }
-        let rel = WorkspaceFS.relativePath(root: root, file: node.url)
-        return state.git.isDirty(relative: rel, isDirectory: node.isDirectory)
+        return state.git.containsChange(directory: relative)
+    }
+
+    private var nameColor: Color {
+        if let change {
+            return change.color(ts.ui)
+        }
+        return dimmed ? ts.ui.textTertiary : ts.ui.textPrimary
     }
 
     private var rowFill: Color {

@@ -26,6 +26,8 @@ mod editing;
 mod edits;
 mod excerpt;
 mod generate;
+mod git;
+mod git_ops;
 mod header_hits;
 mod header_store;
 mod header_sweep;

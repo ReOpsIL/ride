@@ -99,6 +99,7 @@ extension AppState {
         expanded = []
         quickFiles = []
         git.clear()
+        gitChanges.reset()
         projectModel.clear()
         return true
     }

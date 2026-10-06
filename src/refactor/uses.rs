@@ -92,10 +92,12 @@ pub fn use_nodes<'t>(decl: &Declaration<'t>, text: &str, name: &str) -> Option<V
                         .utf8_text(text.as_bytes())
                         .is_ok_and(|t| names_inline_arg(t, name));
             }
-            "identifier" if is_named(node, text, name) && is_use(node) => {
-                if !shadowed(node, region, text, &is_name) {
-                    found.push(node);
-                }
+            "identifier"
+                if is_named(node, text, name)
+                    && is_use(node)
+                    && !shadowed(node, region, text, &is_name) =>
+            {
+                found.push(node);
             }
             _ => {}
         }

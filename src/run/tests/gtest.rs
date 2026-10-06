@@ -33,10 +33,8 @@ fn outcome(line: &str, running: &mut Option<(String, Vec<&str>)>) -> Option<Test
         (rest, TestStatus::Passed)
     } else if let Some(rest) = line.strip_prefix(FAILED) {
         (rest, TestStatus::Failed)
-    } else if let Some(rest) = line.strip_prefix(SKIPPED) {
-        (rest, TestStatus::Ignored)
     } else {
-        return None;
+        (line.strip_prefix(SKIPPED)?, TestStatus::Ignored)
     };
     let (full, duration_ms) = split_duration(rest.trim());
     let full = full.split_once(", where ").map_or(full, |(name, _)| name);

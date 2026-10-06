@@ -25,6 +25,7 @@
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | Semantic oracle: rust-analyzer and clangd sidecars for type-aware completion, never on the keystroke path | `docs/product/semantic-oracle.md` |
+| Git: changes panel, diff, stage, commit, push, pull, branches; engine `src/git/` over the `git` CLI | `docs/product/git.md` |
 | Tool lookup: the login-shell PATH resolved once, used for finding `cargo` and friends and passed to every child process | `docs/product/tool-lookup.md` |
 | Next features after 1.2: 1.3 understand and change code, 1.4 completion that knows types, 1.5 debugging depth and assembly | `plan/roadmap/next-1.3.md` |
 | Release 1.0 public cards: release train, onboarding, crash reports, `ride` command, C/C++ live verification, editor leftovers, site and manuals, hygiene gates | `plan/roadmap/release-1.0.md` |
@@ -51,6 +52,7 @@
 | `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline (with signature and doc), parse errors, completion sites (`site/`), caret contexts for the cheat sheet (`context/`), imports, call sites, Rust/C type tables and receiver typing, postfix receivers |
 | `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
 | `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), the cheat sheet lookup (`cheat.rs`), definitions, import edits, signature help, tools, manifest watch |
+| `src/git` | `git` CLI runner, porcelain v2 status, unified diff and branch parsers, stage / commit / branch / push / pull operations |
 | `src/wire` | Content-Length JSON framing and the response mailbox shared by the debug adapter and LSP clients |
 | `src/oracle` | language-server sidecars (rust-analyzer per Cargo root, clangd per compile-database project), background completion jobs for member, identifier and path sites, the facts cache the completion router reads |
 | `src/ffi` | UniFFI records, enums and listener traits |

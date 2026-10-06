@@ -50,6 +50,9 @@ struct RideApp: App {
             RunCommands(state: state, menu: menu)
             DebugCommands(state: state, menu: menu)
         }
+        .commands {
+            GitCommands(state: state, menu: menu)
+        }
         Settings {
             PreferencesView()
                 .environmentObject(state)
