@@ -4,7 +4,9 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     let panel: NSPanel
     private let layout = CompletionPopupLayout(frame: NSRect(origin: .zero, size: CompletionPopupLayout.initialSize))
     private let table = NSTableView()
-    private(set) var hits: [CompletionItem] = []
+    private(set) var hits: [CompletionItem] = [] {
+        didSet { table.reloadData() }
+    }
     private var prefix = ""
     private var selected = 0
     weak var textView: RideTextView?
@@ -48,17 +50,16 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
 
     func show(hits: [CompletionItem], prefix: String, search: PopupSearch, truncated: Bool, selectedName: String?, in view: RideTextView) {
-        self.hits = hits
         self.prefix = prefix
+        self.hits = hits
         textView = view
         selected = CompletionNarrowing.selection(in: hits, previous: selectedName) { $0.name }
         layout.showsDoc = hits.contains(where: CompletionRowStyle.hasDoc)
         layout.footer(truncated: truncated, search: search)
         layout.applyTheme()
         layout.searchBar.fill(search)
-        layout.configureScrolling(rows: hits.count)
-        table.reloadData()
         table.sizeLastColumnToFit()
+        layout.configureScrolling(rows: hits.count)
         if !hits.isEmpty {
             table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
             table.scrollRowToVisible(selected)
