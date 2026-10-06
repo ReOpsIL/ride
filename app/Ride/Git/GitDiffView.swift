@@ -13,17 +13,20 @@ struct GitDiffView: View {
         } else if let diff, diff.binary {
             placeholder("Binary file \(diff.path)")
         } else if let diff, !diff.hunks.isEmpty {
-            ScrollView([.vertical, .horizontal]) {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(rows) { row in
-                        switch row.content {
-                        case .hunk(let hunk): GitHunkHeader(hunk: hunk)
-                        case .line(let line): GitDiffLineRow(line: line)
+            GeometryReader { proxy in
+                ScrollView([.vertical, .horizontal]) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(rows) { row in
+                            switch row.content {
+                            case .hunk(let hunk): GitHunkHeader(hunk: hunk, width: proxy.size.width)
+                            case .line(let line): GitDiffLineRow(line: line, width: proxy.size.width)
+                            }
                         }
                     }
+                    .padding(.vertical, Tokens.Space.xs)
+                    .frame(minWidth: proxy.size.width, minHeight: proxy.size.height, alignment: .topLeading)
+                    .textSelection(.enabled)
                 }
-                .padding(.vertical, Tokens.Space.xs)
-                .textSelection(.enabled)
             }
             .background(ts.editorBackground)
         } else {
@@ -43,6 +46,7 @@ struct GitDiffView: View {
 struct GitHunkHeader: View {
     @ObservedObject private var ts = ThemeStore.shared
     let hunk: GitHunk
+    let width: CGFloat
 
     var body: some View {
         Text("@@ -\(hunk.oldStart),\(hunk.oldCount) +\(hunk.newStart),\(hunk.newCount) @@ \(hunk.header)")
@@ -50,7 +54,7 @@ struct GitHunkHeader: View {
             .foregroundStyle(ts.ui.info)
             .padding(.horizontal, Tokens.Space.m)
             .padding(.vertical, Tokens.Space.xxs)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minWidth: width, alignment: .leading)
             .background(ts.ui.info.opacity(0.08))
     }
 }
@@ -58,6 +62,7 @@ struct GitHunkHeader: View {
 struct GitDiffLineRow: View {
     @ObservedObject private var ts = ThemeStore.shared
     let line: GitDiffLine
+    let width: CGFloat
 
     var body: some View {
         HStack(spacing: 0) {
@@ -72,7 +77,7 @@ struct GitDiffLineRow: View {
             Spacer(minLength: Tokens.Space.l)
         }
         .font(Tokens.mono(11))
-        .frame(minHeight: 16)
+        .frame(minWidth: width, minHeight: 16, alignment: .leading)
         .background(tint?.opacity(0.14) ?? .clear)
     }
 
