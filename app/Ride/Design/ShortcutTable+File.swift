@@ -43,8 +43,8 @@ extension Shortcuts {
                 .menu("View › Project Sidebar", "⌘1"), .menu("Debug › Debug Panel", "⌘3"),
                 .menu("View › Run Output", "⌘4"), .menu("View › Tests", "⌘5"),
             ]),
-            ShortcutEntry("panels2", "Problems / Outline / AI", [
-                .menu("View › Problems", "⌘6"), .menu("View › Outline", "⌘7"), .menu("View › AI", "⌘8"),
+            ShortcutEntry("panels2", "Problems / Outline / AI Chat", [
+                .menu("View › Problems", "⌘6"), .menu("View › Outline", "⌘7"), .menu("View › AI Chat", "⌘8"),
             ]),
             ShortcutEntry("terminal", "Terminal", [.menu("View › Terminal", "⌥F12")]),
             ShortcutEntry("preview", "Toggle Markdown Preview", [.menu("View › Toggle Markdown Preview", "⇧⌘V")]),

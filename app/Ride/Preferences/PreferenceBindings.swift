@@ -31,6 +31,7 @@ struct PreferenceBindings {
                 state.updatePrefs {
                     if $0.aiProvider != value {
                         $0.aiModel = ""
+                        $0.assistant.chatModel = ""
                     }
                     $0.aiProvider = value
                 }

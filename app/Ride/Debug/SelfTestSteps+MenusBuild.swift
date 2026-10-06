@@ -24,7 +24,7 @@ extension SelfTestSteps {
             checkMenuStep("menu check project cargo", "Build › Check Project", state: state, e: e, stash: stash) {
                 root().map { CheckPlan.cargo(root: $0) }
             },
-        ] + toolsSheetSteps(state: state, e: e) + askAISteps(e: e, stash: stash)
+        ] + toolsSheetSteps(state: state, e: e) + askAISteps(e: e, stash: stash) + aiChatSteps(e: e)
     }
 
     private static func sheetWindow(_ e: SelfTestEditor) -> NSWindow? {
@@ -66,13 +66,14 @@ extension SelfTestSteps {
             askStep("menu ask ai without comment", e: e, prompt: "") {
                 e.place(on: MenuBlock.call)
             },
-            SelfTestStep(name: "ask ai send without key", wait: 0.5, until: { ai.error != nil }, timeout: 10, run: {
+            SelfTestStep(name: "ask ai send without key", wait: 0.5, until: { chatError() != nil }, timeout: 10, run: {
                 ai.prompt = "explain this"
                 DemoLaunch.after(0.5) { _ = SelfTestKey.commandEnter.sendToSheet(of: sheetWindow(e)) }
             }, check: {
-                e.expect(
-                    !ai.showPrompt && ai.showPanel && ai.question == "explain this" && (ai.error ?? "").contains("API key saved"),
-                    "prompt \(ai.showPrompt) panel \(ai.showPanel) error \(ai.error ?? "nil")"
+                let question = AIChatStore.shared.current?.messages.first?.text
+                return e.expect(
+                    !ai.showPrompt && ai.showPanel && question == "explain this" && (chatError() ?? "").contains("API key saved"),
+                    "prompt \(ai.showPrompt) panel \(ai.showPanel) question \(question ?? "nil") error \(chatError() ?? "nil")"
                 )
             }),
             SelfTestStep(name: "ask ai cleanup", run: {
@@ -80,6 +81,10 @@ extension SelfTestSteps {
                 MenuBlock.reset(e, stash)
             }, check: { e.expect(!ai.showPanel && e.lines.contains(MenuBlock.line), "panel \(ai.showPanel)") }),
         ]
+    }
+
+    private static func chatError() -> String? {
+        AIChatStore.shared.current?.messages.last?.error
     }
 
     private static func askStep(_ name: String, e: SelfTestEditor, prompt: String, prepare: @escaping () -> Void) -> SelfTestStep {

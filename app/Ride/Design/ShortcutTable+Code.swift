@@ -38,6 +38,9 @@ extension Shortcuts {
             ShortcutEntry("inline", "Inline Variable", [.menu("Code › Inline Variable", "⌃⌥N", .editor)]),
             ShortcutEntry("intentions", "Show Intention Actions", [.menu("Code › Show Intention Actions", "⌥↩", .editor)]),
             ShortcutEntry("askai", "Ask AI from Comment", [.menu("Code › Ask AI from Comment…", "⌃?", .editor)]),
+            ShortcutEntry("explain", "Explain / Add Selection to Chat", [
+                .menu("Code › Explain", "⌃⌘E", .editor), .menu("Code › Add Selection to Chat", "⌃⌘L", .editor),
+            ]),
             ShortcutEntry("surround", "Surround With", [.menu("Code › Surround With…", "⌥⌘T", .editor)]),
             ShortcutEntry("fold", "Fold / Unfold", [.menu("Code › Fold", "⌥⌘←", .editor), .menu("Code › Unfold", "⌥⌘→", .editor)]),
             ShortcutEntry("foldall", "Fold All / Unfold All", [.menu("Code › Fold All", "⌥⇧⌘←", .editor), .menu("Code › Unfold All", "⌥⇧⌘→", .editor)]),

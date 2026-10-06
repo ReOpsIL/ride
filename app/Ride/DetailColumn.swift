@@ -43,10 +43,6 @@ struct DetailColumn: View {
                     UsagesPanel(model: state.usages)
                         .frame(minHeight: 80, idealHeight: 220, maxHeight: 480)
                 }
-                if assistant.showPanel {
-                    AIAnswerPanel(assistant: assistant)
-                        .frame(minHeight: 80, idealHeight: 260, maxHeight: 600)
-                }
                 if debugPanel.visible {
                     DebugPanel(model: debugPanel)
                         .frame(minHeight: 320, idealHeight: state.prefs.debugHeight, maxHeight: 600)
@@ -85,6 +81,11 @@ struct DetailColumn: View {
                 HierarchyPanel()
                     .frame(width: state.prefs.hierarchyWidth)
             }
+            if assistant.showPanel {
+                SplitHandle(axis: .horizontal, value: chatWidth, range: 280...720, inverted: true)
+                AIChatPanel(store: AIChatStore.shared)
+                    .frame(width: state.prefs.assistant.chatWidth)
+            }
         }
     }
 
@@ -99,6 +100,13 @@ struct DetailColumn: View {
         Binding(
             get: { state.prefs.hierarchyWidth },
             set: { value in state.saveLayout { $0.hierarchyWidth = value } }
+        )
+    }
+
+    private var chatWidth: Binding<Double> {
+        Binding(
+            get: { state.prefs.assistant.chatWidth },
+            set: { value in state.saveLayout { $0.assistant.chatWidth = value } }
         )
     }
 

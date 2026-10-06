@@ -4,7 +4,7 @@ enum AnthropicMessages {
     static let endpoint = URL(string: "https://api.anthropic.com/v1/messages")!
     static let keyAccount = "anthropic"
     private static let effortModels = ["claude-opus-5", "claude-sonnet-5", "claude-fable", "claude-opus-4-6", "claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-4-6"]
-    private static let fallbackModels = ["claude-opus-5", "claude-fable"]
+    private static let fallbackModels = ["claude-opus-5", "claude-fable", "claude-sonnet-5-5"]
 
     static func request(system: String, user: String, kind: AIRequestKind, config: AIConfig) -> Result<URLRequest, AIError> {
         var request = URLRequest(url: endpoint)
@@ -28,15 +28,21 @@ enum AnthropicMessages {
             }
             body["output_config"] = output
         }
-        if fallbackModels.contains(where: config.model.hasPrefix) {
+        if usesFallbacks(config.model) {
             body["fallbacks"] = "default"
-            request.setValue("server-side-fallback-2026-07-01", forHTTPHeaderField: "anthropic-beta")
+            request.setValue(fallbackBeta, forHTTPHeaderField: "anthropic-beta")
         }
         guard let data = try? JSONSerialization.data(withJSONObject: body) else {
             return .failure(.malformed)
         }
         request.httpBody = data
         return .success(request)
+    }
+
+    static let fallbackBeta = "server-side-fallback-2026-07-01"
+
+    static func usesFallbacks(_ model: String) -> Bool {
+        fallbackModels.contains(where: model.hasPrefix)
     }
 
     static func text(in data: Data) -> String? {

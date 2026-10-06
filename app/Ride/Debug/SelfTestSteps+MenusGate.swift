@@ -4,7 +4,8 @@ enum CodeMenuPaths {
     static let editor = [
         "Code › Comment Line", "Code › Comment Block", "Code › Indent", "Code › Unindent",
         "Code › Auto-Indent Lines", "Code › Reformat Document", "Code › Reformat Selection",
-        "Code › Show Intention Actions", "Code › Ask AI from Comment…", "Code › Surround With…",
+        "Code › Show Intention Actions", "Code › Ask AI from Comment…", "Code › Explain", "Code › Explain File",
+        "Code › Add Selection to Chat", "Code › Surround With…",
         "Code › Fold", "Code › Unfold", "Code › Fold All", "Code › Unfold All",
         "Code › Trigger Completion", "Code › Quick Documentation", "Code › Quick Definition",
         "Code › External Documentation", "Code › Type Info",

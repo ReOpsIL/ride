@@ -24,6 +24,7 @@
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
+| AI chat panel and Explain: context packs, streaming, threads, code-block actions | `docs/product/ai-chat.md` |
 | AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed, JetBrains; engine context packs | `plan/ai/assistant.md` |
 | Semantic oracle: rust-analyzer and clangd sidecars for type-aware completion, never on the keystroke path | `docs/product/semantic-oracle.md` |
 | Git: changes panel, diff, stage, commit, push, pull, branches; engine `src/git/` over the `git` CLI | `docs/product/git.md` |

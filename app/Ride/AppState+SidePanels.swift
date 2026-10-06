@@ -12,6 +12,9 @@ extension AppState {
         if showHierarchy {
             width += prefs.hierarchyWidth + SplitHandle.width
         }
+        if AIAssistant.shared.showPanel {
+            width += prefs.assistant.chatWidth + SplitHandle.width
+        }
         return width
     }
 }

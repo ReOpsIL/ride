@@ -10,13 +10,9 @@ final class AIAssistant: ObservableObject {
         didSet { onPanelChange?() }
     }
     var onPanelChange: (() -> Void)?
-    @Published private(set) var question = ""
-    @Published private(set) var answer = ""
-    @Published private(set) var error: String?
     private weak var document: BufferDocument?
     private weak var view: RideTextView?
     private weak var state: AppState?
-    private var handle: AIRequestHandle?
 
     func askFromEditor(state: AppState) {
         guard let (view, document) = state.focusedEditor else {
@@ -39,34 +35,27 @@ final class AIAssistant: ObservableObject {
         guard !request.isEmpty, let document, let view, let state else {
             return
         }
-        let config = AIConfig(provider: state.prefs.aiProvider, model: state.prefs.aiModel, level: level)
-        let plan = AIContextBuilder.plan(document: document, view: view, state: state, level: config.level)
-        let selected = selection.isEmpty ? nil : selection
-        question = request
-        answer = ""
-        error = nil
+        let level = AIContextLevel(rawValue: level) ?? .function
+        let attachments = AIChatContext.selection(view: view, document: document, root: state.workspaceRoot)
+            + wider(level, document: document, view: view, state: state)
+        let store = AIChatStore.shared
+        store.newThread()
         showPanel = true
-        handle?.cancel()
-        handle = AIClient.ask({ (plan.load(), request, selected) }, config: config) { [weak self] result in
-            switch result {
-            case .success(let text):
-                self?.answer = text
-            case .failure(let failure):
-                self?.error = failure.message
+        store.send(request, config: state.prefs.aiChatConfig, attachments: attachments)
+    }
+
+    private func wider(_ level: AIContextLevel, document: BufferDocument, view: RideTextView, state: AppState) -> [AIChatAttachment] {
+        switch level {
+        case .block, .function:
+            return []
+        case .file:
+            return [AIChatContext.file(document: document, text: view.string, root: state.workspaceRoot)]
+        case .directory, .project:
+            let file = AIChatContext.file(document: document, text: view.string, root: state.workspaceRoot)
+            let extras = AIContextBuilder.plan(document: document, view: view, state: state, level: level).load().extras
+            return [file] + extras.map {
+                AIChatAttachment(kind: .file, path: $0.path, line: 1, text: $0.text, truncated: false)
             }
         }
-    }
-
-    func insertAnswer() {
-        guard let view, view.window != nil, !answer.isEmpty else {
-            return
-        }
-        view.window?.makeFirstResponder(view)
-        view.insertText(AIAnswerText.code(in: answer), replacementRange: view.selectedRange())
-    }
-
-    func copyAnswer() {
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(answer, forType: .string)
     }
 }

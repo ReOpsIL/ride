@@ -53,15 +53,19 @@ final class AIPromptTests: XCTestCase {
     func testDefaultModelIsTheFirstPresetOfEachProvider() {
         for provider in AIProvider.allCases {
             XCTAssertEqual(provider.defaultModel, provider.presets[0].id)
+            XCTAssertEqual(provider.defaultChatModel, provider.chatPresets[0].id)
             XCTAssertEqual(Set(provider.presets.map(\.id)).count, provider.presets.count)
         }
     }
 
     func testModelChoiceMapsStoredModelToPickerSelection() {
-        XCTAssertEqual(AIModelChoice.selection(model: "", provider: .anthropic, editingCustom: false), "claude-haiku-4-5")
-        XCTAssertEqual(AIModelChoice.selection(model: "claude-opus-5", provider: .anthropic, editingCustom: false), "claude-opus-5")
-        XCTAssertEqual(AIModelChoice.selection(model: "deepseek/deepseek-coder", provider: .openrouter, editingCustom: false), AIModelChoice.custom)
-        XCTAssertEqual(AIModelChoice.selection(model: "claude-opus-5", provider: .anthropic, editingCustom: true), AIModelChoice.custom)
+        let anthropic = AIProvider.anthropic.presets
+        XCTAssertEqual(AIModelChoice.selection(model: "", presets: anthropic, editingCustom: false), "claude-haiku-4-5")
+        XCTAssertEqual(AIModelChoice.selection(model: "claude-opus-5-5", presets: anthropic, editingCustom: false), "claude-opus-5-5")
+        XCTAssertEqual(AIModelChoice.selection(model: "claude-opus-5", presets: anthropic, editingCustom: false), AIModelChoice.custom)
+        XCTAssertEqual(AIModelChoice.selection(model: "deepseek/deepseek-coder", presets: AIProvider.openrouter.presets, editingCustom: false), AIModelChoice.custom)
+        XCTAssertEqual(AIModelChoice.selection(model: "claude-opus-5-5", presets: anthropic, editingCustom: true), AIModelChoice.custom)
+        XCTAssertEqual(AIModelChoice.selection(model: "", presets: AIProvider.anthropic.chatPresets, editingCustom: false), "claude-opus-5-5")
     }
 
     func testOutcomeText() {

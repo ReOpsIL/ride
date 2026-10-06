@@ -8,6 +8,7 @@ struct AISettingsPane: View {
     @FocusState private var focusedAccount: String?
     @State private var testResult = ""
     @State private var editingCustom = false
+    @State private var editingCustomChat = false
 
     var body: some View {
         Form {
@@ -41,6 +42,18 @@ struct AISettingsPane: View {
                         .font(Tokens.mono(12))
                 }
             }
+            Section("Chat and Explain") {
+                Picker("Model", selection: chatModelSelection) {
+                    ForEach(config.provider.chatPresets) { preset in
+                        Text(preset.title).tag(preset.id)
+                    }
+                    Text("Custom…").tag(AIModelChoice.custom)
+                }
+                if chatModelSelection.wrappedValue == AIModelChoice.custom {
+                    TextField("Model ID", text: chatModelText, prompt: Text(config.provider.defaultChatModel))
+                        .font(Tokens.mono(12))
+                }
+            }
             Section("Check") {
                 HStack {
                     Button("Test connection") { test() }
@@ -65,13 +78,32 @@ struct AISettingsPane: View {
 
     private var modelSelection: Binding<String> {
         Binding(
-            get: { AIModelChoice.selection(model: state.prefs.aiModel, provider: config.provider, editingCustom: editingCustom) },
+            get: { AIModelChoice.selection(model: state.prefs.aiModel, presets: config.provider.presets, editingCustom: editingCustom) },
             set: { value in
                 editingCustom = value == AIModelChoice.custom
                 if !editingCustom {
                     state.updatePrefs { $0.aiModel = value }
                 }
             }
+        )
+    }
+
+    private var chatModelSelection: Binding<String> {
+        Binding(
+            get: { AIModelChoice.selection(model: state.prefs.assistant.chatModel, presets: config.provider.chatPresets, editingCustom: editingCustomChat) },
+            set: { value in
+                editingCustomChat = value == AIModelChoice.custom
+                if !editingCustomChat {
+                    state.updatePrefs { $0.assistant.chatModel = value }
+                }
+            }
+        )
+    }
+
+    private var chatModelText: Binding<String> {
+        Binding(
+            get: { state.prefs.assistant.chatModel },
+            set: { value in state.updatePrefs { $0.assistant.chatModel = value } }
         )
     }
 
