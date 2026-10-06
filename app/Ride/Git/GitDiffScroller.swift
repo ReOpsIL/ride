@@ -27,7 +27,11 @@ final class GitDiffScroller: NSScrollView {
         }
         fitting = true
         defer { fitting = false }
-        let visible = contentSize
+        let insets = contentView.contentInsets
+        let visible = NSSize(
+            width: max(0, contentSize.width - insets.left - insets.right),
+            height: max(0, contentSize.height - insets.top - insets.bottom)
+        )
         if textView.minSize != visible {
             textView.minSize = visible
         }
@@ -35,7 +39,8 @@ final class GitDiffScroller: NSScrollView {
     }
 
     private func scrollHome() {
-        contentView.scroll(to: .zero)
+        let insets = contentView.contentInsets
+        contentView.scroll(to: NSPoint(x: -insets.left, y: -insets.top))
         reflectScrolledClipView(contentView)
     }
 }
