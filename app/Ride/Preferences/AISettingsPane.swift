@@ -13,7 +13,11 @@ struct AISettingsPane: View {
     var body: some View {
         Form {
             Section("AI suggestions") {
-                Toggle("Show AI suggestions in the completion popup", isOn: bind.bool(\.aiComplete))
+                Toggle("Suggest code with AI while typing", isOn: bind.bool(\.aiComplete))
+                Picker("Show suggestions", selection: inlineSelection) {
+                    Text("Inline, as ghost text (Tab accepts)").tag(true)
+                    Text("As rows in the completion popup").tag(false)
+                }
                 Picker("Context sent with each request", selection: bind.string(\.aiContext)) {
                     ForEach(AIContextLevel.allCases, id: \.rawValue) { level in
                         Text(level.title).tag(level.rawValue)
@@ -85,6 +89,13 @@ struct AISettingsPane: View {
                     state.updatePrefs { $0.aiModel = value }
                 }
             }
+        )
+    }
+
+    private var inlineSelection: Binding<Bool> {
+        Binding(
+            get: { state.prefs.assistant.inlineSuggestions },
+            set: { value in state.updatePrefs { $0.assistant.inlineSuggestions = value } }
         )
     }
 

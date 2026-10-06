@@ -912,6 +912,14 @@
 		GIT000000000000000000057 /* SelfTestSteps+AIChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000056 /* SelfTestSteps+AIChat.swift */; };
 		GIT000000000000000000059 /* AIChatPromptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000058 /* AIChatPromptTests.swift */; };
 		GIT00000000000000000005B /* AIChatLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000005A /* AIChatLocationTests.swift */; };
+		GIT00000000000000000005F /* AIInlineGhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000005E /* AIInlineGhost.swift */; };
+		GIT000000000000000000060 /* AIInlineGhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000005E /* AIInlineGhost.swift */; };
+		GIT000000000000000000062 /* AIInlineLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000061 /* AIInlineLine.swift */; };
+		GIT000000000000000000063 /* AIInlineLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000061 /* AIInlineLine.swift */; };
+		GIT000000000000000000065 /* AIInlineController.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000064 /* AIInlineController.swift */; };
+		GIT000000000000000000067 /* GhostFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000066 /* GhostFragment.swift */; };
+		GIT000000000000000000069 /* AISuggestRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000068 /* AISuggestRouter.swift */; };
+		GIT00000000000000000006B /* AIInlineGhostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000006A /* AIInlineGhostTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1678,6 +1686,12 @@
 		GIT000000000000000000056 /* SelfTestSteps+AIChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+AIChat.swift"; sourceTree = "<group>"; };
 		GIT000000000000000000058 /* AIChatPromptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatPromptTests.swift; sourceTree = "<group>"; };
 		GIT00000000000000000005A /* AIChatLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatLocationTests.swift; sourceTree = "<group>"; };
+		GIT00000000000000000005E /* AIInlineGhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineGhost.swift; sourceTree = "<group>"; };
+		GIT000000000000000000061 /* AIInlineLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineLine.swift; sourceTree = "<group>"; };
+		GIT000000000000000000064 /* AIInlineController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineController.swift; sourceTree = "<group>"; };
+		GIT000000000000000000066 /* GhostFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostFragment.swift; sourceTree = "<group>"; };
+		GIT000000000000000000068 /* AISuggestRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestRouter.swift; sourceTree = "<group>"; };
+		GIT00000000000000000006A /* AIInlineGhostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineGhostTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1857,6 +1871,7 @@
 				AA0000000000000000000045 /* AIPromptTests.swift */,
 				GIT000000000000000000058 /* AIChatPromptTests.swift */,
 				GIT00000000000000000005A /* AIChatLocationTests.swift */,
+				GIT00000000000000000006A /* AIInlineGhostTests.swift */,
 				AA0000000000000000000087 /* ProjectScaffoldTests.swift */,
 				AA0000000000000000000071 /* AICommentPromptTests.swift */,
 				F13000000000000000000007 /* UsageModelTests.swift */,
@@ -2351,6 +2366,7 @@
 		AA0000000000000000000021 /* AI */ = {
 			isa = PBXGroup;
 			children = (
+				GIT00000000000000000006C /* Inline */,
 				GIT00000000000000000005C /* Stream */,
 				GIT00000000000000000005D /* Chat */,
 				GIT000000000000000000051 /* AIProvider.swift */,
@@ -2764,6 +2780,18 @@
 			path = Chat;
 			sourceTree = "<group>";
 		};
+		GIT00000000000000000006C /* Inline */ = {
+			isa = PBXGroup;
+			children = (
+				GIT00000000000000000005E /* AIInlineGhost.swift */,
+				GIT000000000000000000061 /* AIInlineLine.swift */,
+				GIT000000000000000000064 /* AIInlineController.swift */,
+				GIT000000000000000000066 /* GhostFragment.swift */,
+				GIT000000000000000000068 /* AISuggestRouter.swift */,
+			);
+			path = Inline;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2877,6 +2905,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				GIT000000000000000000060 /* AIInlineGhost.swift in Sources */,
+				GIT000000000000000000063 /* AIInlineLine.swift in Sources */,
+				GIT00000000000000000006B /* AIInlineGhostTests.swift in Sources */,
 				GIT000000000000000000031 /* AIChatTurn.swift in Sources */,
 				GIT000000000000000000038 /* AIChatModel.swift in Sources */,
 				GIT00000000000000000003B /* AIChatPrompt.swift in Sources */,
@@ -3138,6 +3169,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				GIT00000000000000000005F /* AIInlineGhost.swift in Sources */,
+				GIT000000000000000000062 /* AIInlineLine.swift in Sources */,
+				GIT000000000000000000065 /* AIInlineController.swift in Sources */,
+				GIT000000000000000000067 /* GhostFragment.swift in Sources */,
+				GIT000000000000000000069 /* AISuggestRouter.swift in Sources */,
 				GIT00000000000000000002E /* AIStreamDecoder.swift in Sources */,
 				GIT000000000000000000030 /* AIChatTurn.swift in Sources */,
 				GIT000000000000000000033 /* AIStreamRequest.swift in Sources */,

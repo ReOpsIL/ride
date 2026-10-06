@@ -471,6 +471,7 @@ Engine order is: diagnostic fixes, then import/include, then underscore, missing
 
 | Command (path) | Shortcut | Handler | What it does | Coverage | Notes/⚠ |
 |---|---|---|---|---|---|
+| Code › Suggest with AI | ⌥\ | `suggestInline()` → `AIInlineController.trigger` | Requests an inline suggestion at the caret now, whatever the AI suggestions preference; the result is ghost text (⇥ / ⌥⇥ accept, ⌘→ one word, esc dismiss). | SELFTEST: "menu suggest with ai without key"; UNIT: AIInlineGhostTests | Needs the rest of the caret line to be blank. |
 | Code › Explain | ⌃⌘E | `explainSelection()` → `AIChatContext.selection` → `engine.aiContext` | New thread with the selection (or the item under the caret), its enclosing item and the definitions it uses, streaming an explanation. | SELFTEST: "menu explain without key"; RUST: tests/ai_context.rs | |
 | Code › Explain File | — | `explainFile()` | New thread with the whole file (60k characters, marked truncated beyond). | SELFTEST: "menu explain file without key" | |
 | Code › Add Selection to Chat | ⌃⌘L | `addSelectionToChat()` | Adds the selection pack as chips to the next message and focuses the chat input. | SELFTEST: "menu add selection to chat" | |

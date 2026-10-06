@@ -1,4 +1,4 @@
-# AI suggestions in the completion popup
+# AI code suggestions: inline ghost text or popup rows
 
 Off by default. Preferences › AI turns it on, picks the provider and the amount of context, and Preferences › Editor › Popups chooses which popups show at all (engine completions, AI suggestions, cheat sheet, signature help, hover documentation).
 
@@ -24,6 +24,16 @@ The model is a picker of presets per provider plus "Custom…" for any model ID.
 | Project | whole file | other open buffers, then source files under the workspace root (depth 4), 100k characters total |
 
 Prefix is clipped to the last 12k characters and suffix to the first 4k, on line boundaries; each extra file to its first 6k.
+
+## Inline ghost text (default)
+
+Preferences › AI › Show suggestions picks inline ghost text (default) or the popup rows below. Inline mode (`AI/Inline/`):
+
+- **When.** 300 ms after a typed insertion (any keystroke cancels the pending or in-flight request), or at once with Code › Suggest with AI (⌥\). A suggestion is requested and shown only when the rest of the caret line is blank, so ghost text never sits on top of real text.
+- **Request.** The same context plan as the popup, with `AIPrompt.inlineSystem` asking for exactly one suggestion that may run to the end of the statement or block. A reply that repeats what is already typed on the line is trimmed; trailing blank space is dropped.
+- **Drawing.** `RideTextView.inlineGhost` holds the anchor, the text and how much of it has been typed. The layout delegate returns a `GhostFragment` for the caret's paragraph: the first line is drawn after the caret in the tertiary text colour, further lines in the fragment's bottom margin, so the lines below move down (the same mechanism as code-vision labels). Only the old and new caret paragraphs are refreshed.
+- **Keys.** ⇥ accepts when the completion popup is closed (the popup keeps ⇥ while open); ⌥⇥ always accepts; ⌘→ accepts the next word, whitespace run or punctuation mark; esc dismisses. Accepting inserts as one undoable edit and does not open the completion popup.
+- **Typing through.** Typing characters that match the start of the ghost keeps it and shortens it; anything else, or moving the caret elsewhere, removes it and schedules a new request.
 
 ## Flow
 

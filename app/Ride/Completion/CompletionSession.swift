@@ -43,7 +43,7 @@ final class CompletionSession {
     func reset() {
         oracleWait = nil
         hide()
-        AICompletionSource.shared.cancel()
+        AISuggestRouter.cancel()
         snippet = nil
         SignatureHelpController.shared.hide()
         CheatSheetController.shared.close()
@@ -61,7 +61,7 @@ final class CompletionSession {
         case .user:
             keepSnippet(range: range, length: length)
         }
-        AICompletionSource.shared.textChanged(document: document, view: view, state: state, inserted: inserted)
+        AISuggestRouter.textChanged(document: document, view: view, state: state, inserted: inserted)
         let engineOn = document.hasCompletions && state.prefs.completions
         let line = CompletionList.lineBeforeCaret(view)
         if inserted.isEmpty {
@@ -79,7 +79,7 @@ final class CompletionSession {
     }
 
     func trigger(view: RideTextView) {
-        AICompletionSource.shared.trigger(view: view)
+        AISuggestRouter.trigger(view: view)
         guard let binding = view.hooks.binding?(), binding.document.hasCompletions else {
             return
         }

@@ -25,6 +25,7 @@ extension SelfTestCoverage {
         "Code › Inline Variable": ["menu inline variable", "c code menu gates"],
         "Code › Show Intention Actions": ["intention underscore", "intention constant"],
         "Code › Ask AI from Comment…": ["menu ask ai from comment", "ask ai escape", "menu ask ai without comment", "ask ai send without key"],
+        "Code › Suggest with AI": ["menu suggest with ai without key"],
         "Code › Explain": ["menu explain without key"],
         "Code › Explain File": ["menu explain file without key"],
         "Code › Add Selection to Chat": ["menu add selection to chat"],

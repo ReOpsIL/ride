@@ -1,6 +1,6 @@
 # AI assistant: inline completion, Explain, chat
 
-Status: started 2026-10-06. Builds on the shipped AI completion rows and Ask AI from Comment (`docs/product/ai-complete.md`) and on level-up 2.2 (`plan/roadmap/level-up.md`). KD-21 still holds: off by default, never in the keystroke path, every edit previewed and undoable.
+Status: AI-1 to AI-5 implemented 2026-10-06 (engine and RideTests-level logic tested; the app layer needs a build and hands-on check). Builds on the shipped AI completion rows and Ask AI from Comment (`docs/product/ai-complete.md`) and on level-up 2.2 (`plan/roadmap/level-up.md`). KD-21 still holds: off by default, never in the keystroke path, every edit previewed and undoable.
 
 ## What the leading tools do (research 2026-10-06)
 

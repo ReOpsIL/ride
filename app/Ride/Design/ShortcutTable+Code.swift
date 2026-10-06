@@ -38,6 +38,10 @@ extension Shortcuts {
             ShortcutEntry("inline", "Inline Variable", [.menu("Code › Inline Variable", "⌃⌥N", .editor)]),
             ShortcutEntry("intentions", "Show Intention Actions", [.menu("Code › Show Intention Actions", "⌥↩", .editor)]),
             ShortcutEntry("askai", "Ask AI from Comment", [.menu("Code › Ask AI from Comment…", "⌃?", .editor)]),
+            ShortcutEntry("suggest", "Suggest with AI", [.menu("Code › Suggest with AI", "⌥\\", .editor)]),
+            ShortcutEntry("aiaccept", "Accept AI suggestion / next word / dismiss", [
+                .editorKey("⇥"), .editorKey("⌥⇥"), .editorKey("⌘→"), .editorKey("esc"),
+            ], note: "Tab goes to the completion popup while it is open; ⌥⇥ always takes the AI suggestion"),
             ShortcutEntry("explain", "Explain / Add Selection to Chat", [
                 .menu("Code › Explain", "⌃⌘E", .editor), .menu("Code › Add Selection to Chat", "⌃⌘L", .editor),
             ]),

@@ -39,6 +39,7 @@ final class RideTextView: NSTextView {
     var hoverArea: NSTrackingArea?
     var selectionStack: [NSRange] = []
     var folds = FoldSet()
+    var inlineGhost: AIInlineGhost?
     let foldDelegate = FoldLayoutDelegate()
     private var currentLineUTF16 = NSRange(location: 0, length: 0)
 

@@ -15,6 +15,13 @@ extension SelfTestSteps {
                 let kinds = chat.pending.map(\.kind)
                 return e.expect(ai.showPanel && kinds.first == .selection, "panel \(ai.showPanel) chips \(kinds)")
             }),
+            SelfTestStep(name: "menu suggest with ai without key", wait: 0.5, until: { AIActivity.shared.note == "AI: failed" }, timeout: 10, run: {
+                e.activate()
+                e.place(on: MenuBlock.call, atEnd: true)
+                SelfTestMenu.perform("Code › Suggest with AI")
+            }, check: {
+                e.expect(AIActivity.shared.note == "AI: failed" && e.view?.inlineGhost == nil, "note \(AIActivity.shared.note ?? "nil")")
+            }),
             explainStep("menu explain without key", path: "Code › Explain", prompt: AppState.explainSelectionPrompt, e: e),
             explainStep("menu explain file without key", path: "Code › Explain File", prompt: AppState.explainFilePrompt, e: e),
             SelfTestStep(name: "ai chat cleanup", run: {

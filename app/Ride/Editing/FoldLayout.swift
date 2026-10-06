@@ -93,6 +93,9 @@ final class FoldLayoutDelegate: NSObject, NSTextLayoutManagerDelegate {
         if !view.folds.isEmpty, view.folds.hides(paragraph) {
             return HiddenFragment(textElement: textElement, range: range)
         }
+        if let ghost = view.ghostFragment(for: textElement, range: range, paragraph: paragraph) {
+            return ghost
+        }
         let foldHead = !view.folds.isEmpty && view.folds.startsFold(at: paragraph)
         if let line = view.visionLine(at: paragraph) {
             let fragment = VisionFragment(textElement: textElement, range: range)

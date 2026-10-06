@@ -48,6 +48,13 @@ extension AppState {
         startExplain(Self.explainFilePrompt, attachments: attachments)
     }
 
+    func suggestInline() {
+        guard let (view, _) = focusedEditor else {
+            return
+        }
+        AIInlineController.shared.trigger(view: view)
+    }
+
     func insertAtCaret(_ code: String) {
         guard let (view, _) = focusedEditor, view.window != nil else {
             return
