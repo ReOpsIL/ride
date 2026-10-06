@@ -230,6 +230,7 @@
 		GIT000000000000000000026 /* GitDiffTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000025 /* GitDiffTextView.swift */; };
 		GIT000000000000000000028 /* GitDiffGutter.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000027 /* GitDiffGutter.swift */; };
 		GIT00000000000000000002A /* GitDiffScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000029 /* GitDiffScrollView.swift */; };
+		GIT00000000000000000002C /* GitDiffScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000002B /* GitDiffScroller.swift */; };
 		GIT00000000000000000001A /* GitBranchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000019 /* GitBranchMenu.swift */; };
 		GIT00000000000000000001C /* GitCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001B /* GitCommands.swift */; };
 		GIT00000000000000000001E /* GitSyncLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001D /* GitSyncLabel.swift */; };
@@ -1059,6 +1060,7 @@
 		GIT000000000000000000025 /* GitDiffTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffTextView.swift; sourceTree = "<group>"; };
 		GIT000000000000000000027 /* GitDiffGutter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffGutter.swift; sourceTree = "<group>"; };
 		GIT000000000000000000029 /* GitDiffScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffScrollView.swift; sourceTree = "<group>"; };
+		GIT00000000000000000002B /* GitDiffScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffScroller.swift; sourceTree = "<group>"; };
 		GIT000000000000000000019 /* GitBranchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitBranchMenu.swift; sourceTree = "<group>"; };
 		GIT00000000000000000001B /* GitCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommands.swift; sourceTree = "<group>"; };
 		GIT00000000000000000001D /* GitSyncLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitSyncLabel.swift; sourceTree = "<group>"; };
@@ -2677,6 +2679,7 @@
 				GIT000000000000000000025 /* GitDiffTextView.swift */,
 				GIT000000000000000000027 /* GitDiffGutter.swift */,
 				GIT000000000000000000029 /* GitDiffScrollView.swift */,
+				GIT00000000000000000002B /* GitDiffScroller.swift */,
 				GIT000000000000000000019 /* GitBranchMenu.swift */,
 				GIT00000000000000000001B /* GitCommands.swift */,
 				GIT00000000000000000001D /* GitSyncLabel.swift */,
@@ -3416,6 +3419,7 @@
 				GIT000000000000000000026 /* GitDiffTextView.swift in Sources */,
 				GIT000000000000000000028 /* GitDiffGutter.swift in Sources */,
 				GIT00000000000000000002A /* GitDiffScrollView.swift in Sources */,
+				GIT00000000000000000002C /* GitDiffScroller.swift in Sources */,
 				GIT00000000000000000001A /* GitBranchMenu.swift in Sources */,
 				GIT00000000000000000001C /* GitCommands.swift in Sources */,
 				GIT00000000000000000001E /* GitSyncLabel.swift in Sources */,

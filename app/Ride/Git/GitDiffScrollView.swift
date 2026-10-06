@@ -21,9 +21,9 @@ struct GitDiffScrollView: NSViewRepresentable {
         Coordinator()
     }
 
-    func makeNSView(context: Context) -> NSScrollView {
+    func makeNSView(context: Context) -> GitDiffScroller {
         let textView = Self.makeTextView()
-        let scroll = NSScrollView()
+        let scroll = GitDiffScroller()
         scroll.hasVerticalScroller = true
         scroll.hasHorizontalScroller = true
         scroll.autohidesScrollers = true
@@ -39,7 +39,7 @@ struct GitDiffScrollView: NSViewRepresentable {
         return scroll
     }
 
-    func updateNSView(_ scroll: NSScrollView, context: Context) {
+    func updateNSView(_ scroll: GitDiffScroller, context: Context) {
         let theme = ThemeStore.shared.theme
         let shown = Shown(diff: diff, fontSize: fontSize, theme: theme.name)
         let coordinator = context.coordinator
@@ -56,6 +56,7 @@ struct GitDiffScrollView: NSViewRepresentable {
         textView.textStorage?.setAttributedString(document.text)
         coordinator.gutter?.font = NSFont.monospacedDigitSystemFont(ofSize: CGFloat(max(fontSize - 2, 9)), weight: .regular)
         coordinator.gutter?.document = document
+        scroll.fitDocument()
         if fileChanged {
             textView.scroll(.zero)
         }
@@ -79,7 +80,7 @@ struct GitDiffScrollView: NSViewRepresentable {
         textView.isVerticallyResizable = true
         textView.minSize = .zero
         textView.maxSize = NSSize(width: unbounded, height: unbounded)
-        textView.autoresizingMask = [.width, .height]
+        textView.autoresizingMask = []
         textView.textContainerInset = NSSize(width: 0, height: 4)
         return textView
     }
