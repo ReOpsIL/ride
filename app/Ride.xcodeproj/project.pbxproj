@@ -212,15 +212,37 @@
 		A00000000000000000000137 /* AppState+Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000136 /* AppState+Launch.swift */; };
 		A00000000000000000000139 /* CargoManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000138 /* CargoManifest.swift */; };
 		A0000000000000000000013A /* CargoManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000138 /* CargoManifest.swift */; };
-		A0000000000000000000013F /* GitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitStatus.swift */; };
-		A00000000000000000000140 /* GitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitStatus.swift */; };
+		A0000000000000000000013F /* GitPathMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitPathMap.swift */; };
+		A00000000000000000000140 /* GitPathMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000013E /* GitPathMap.swift */; };
 		A00000000000000000000142 /* GitStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000141 /* GitStatusService.swift */; };
+		GIT000000000000000000002 /* GitTreeMarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000001 /* GitTreeMarks.swift */; };
+		GIT000000000000000000004 /* GitChangeKind+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000003 /* GitChangeKind+Display.swift */; };
+		GIT000000000000000000006 /* GitChangesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000005 /* GitChangesModel.swift */; };
+		GIT000000000000000000008 /* GitErrorText.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000007 /* GitErrorText.swift */; };
+		GIT00000000000000000000A /* AppState+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000009 /* AppState+Git.swift */; };
+		GIT00000000000000000000C /* AppState+GitOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000B /* AppState+GitOps.swift */; };
+		GIT00000000000000000000E /* GitPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000D /* GitPanel.swift */; };
+		GIT000000000000000000010 /* GitChangeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000F /* GitChangeList.swift */; };
+		GIT000000000000000000012 /* GitChangeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000011 /* GitChangeRow.swift */; };
+		GIT000000000000000000014 /* GitCommitBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000013 /* GitCommitBox.swift */; };
+		GIT000000000000000000016 /* GitDiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000015 /* GitDiffView.swift */; };
+		GIT000000000000000000018 /* GitDiffDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000017 /* GitDiffDocument.swift */; };
+		GIT000000000000000000026 /* GitDiffTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000025 /* GitDiffTextView.swift */; };
+		GIT000000000000000000028 /* GitDiffGutter.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000027 /* GitDiffGutter.swift */; };
+		GIT00000000000000000002A /* GitDiffScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000029 /* GitDiffScrollView.swift */; };
+		GIT00000000000000000002C /* GitDiffScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000002B /* GitDiffScroller.swift */; };
+		GIT00000000000000000001A /* GitBranchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000019 /* GitBranchMenu.swift */; };
+		GIT00000000000000000001C /* GitCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001B /* GitCommands.swift */; };
+		GIT00000000000000000001E /* GitSyncLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001D /* GitSyncLabel.swift */; };
+		GIT000000000000000000020 /* ShortcutTable+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001F /* ShortcutTable+Git.swift */; };
+		GIT000000000000000000021 /* ShortcutTable+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000001F /* ShortcutTable+Git.swift */; };
+		GIT000000000000000000023 /* SelfTestCoverage+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000022 /* SelfTestCoverage+Git.swift */; };
 		A00000000000000000000144 /* light.json in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000143 /* light.json */; };
 		A00000000000000000000146 /* AppState+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000145 /* AppState+Watch.swift */; };
 		A00000000000000000000148 /* AppState+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000147 /* AppState+Theme.swift */; };
 		A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000149 /* DiagnosticRangeTests.swift */; };
 		A00000000000000000000909 /* BufferLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000908 /* BufferLanguageTests.swift */; };
-		A0000000000000000000014C /* GitStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014B /* GitStatusTests.swift */; };
+		A0000000000000000000014C /* GitPathMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014B /* GitPathMapTests.swift */; };
 		A0000000000000000000014E /* ManifestWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000014D /* ManifestWatchTests.swift */; };
 		A000000000000000000000C3 /* Utf16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C1 /* Utf16Tests.swift */; };
 		A000000000000000000000C4 /* QueryIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000000C2 /* QueryIdTests.swift */; };
@@ -1021,14 +1043,35 @@
 		MBE754D13F9E27F24AB0C74A /* AppState+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Format.swift"; sourceTree = "<group>"; };
 		A00000000000000000000136 /* AppState+Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Launch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000138 /* CargoManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CargoManifest.swift"; sourceTree = "<group>"; };
-		A0000000000000000000013E /* GitStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatus.swift"; sourceTree = "<group>"; };
+		A0000000000000000000013E /* GitPathMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitPathMap.swift"; sourceTree = "<group>"; };
 		A00000000000000000000141 /* GitStatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatusService.swift"; sourceTree = "<group>"; };
+		GIT000000000000000000001 /* GitTreeMarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitTreeMarks.swift; sourceTree = "<group>"; };
+		GIT000000000000000000003 /* GitChangeKind+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitChangeKind+Display.swift"; sourceTree = "<group>"; };
+		GIT000000000000000000005 /* GitChangesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitChangesModel.swift; sourceTree = "<group>"; };
+		GIT000000000000000000007 /* GitErrorText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitErrorText.swift; sourceTree = "<group>"; };
+		GIT000000000000000000009 /* AppState+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Git.swift"; sourceTree = "<group>"; };
+		GIT00000000000000000000B /* AppState+GitOps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+GitOps.swift"; sourceTree = "<group>"; };
+		GIT00000000000000000000D /* GitPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPanel.swift; sourceTree = "<group>"; };
+		GIT00000000000000000000F /* GitChangeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitChangeList.swift; sourceTree = "<group>"; };
+		GIT000000000000000000011 /* GitChangeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitChangeRow.swift; sourceTree = "<group>"; };
+		GIT000000000000000000013 /* GitCommitBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommitBox.swift; sourceTree = "<group>"; };
+		GIT000000000000000000015 /* GitDiffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffView.swift; sourceTree = "<group>"; };
+		GIT000000000000000000017 /* GitDiffDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffDocument.swift; sourceTree = "<group>"; };
+		GIT000000000000000000025 /* GitDiffTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffTextView.swift; sourceTree = "<group>"; };
+		GIT000000000000000000027 /* GitDiffGutter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffGutter.swift; sourceTree = "<group>"; };
+		GIT000000000000000000029 /* GitDiffScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffScrollView.swift; sourceTree = "<group>"; };
+		GIT00000000000000000002B /* GitDiffScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDiffScroller.swift; sourceTree = "<group>"; };
+		GIT000000000000000000019 /* GitBranchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitBranchMenu.swift; sourceTree = "<group>"; };
+		GIT00000000000000000001B /* GitCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommands.swift; sourceTree = "<group>"; };
+		GIT00000000000000000001D /* GitSyncLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitSyncLabel.swift; sourceTree = "<group>"; };
+		GIT00000000000000000001F /* ShortcutTable+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShortcutTable+Git.swift"; sourceTree = "<group>"; };
+		GIT000000000000000000022 /* SelfTestCoverage+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestCoverage+Git.swift"; sourceTree = "<group>"; };
 		A00000000000000000000143 /* light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "light.json"; sourceTree = "<group>"; };
 		A00000000000000000000145 /* AppState+Watch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Watch.swift"; sourceTree = "<group>"; };
 		A00000000000000000000147 /* AppState+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Theme.swift"; sourceTree = "<group>"; };
 		A00000000000000000000149 /* DiagnosticRangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiagnosticRangeTests.swift"; sourceTree = "<group>"; };
 		A00000000000000000000908 /* BufferLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BufferLanguageTests.swift"; sourceTree = "<group>"; };
-		A0000000000000000000014B /* GitStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitStatusTests.swift"; sourceTree = "<group>"; };
+		A0000000000000000000014B /* GitPathMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitPathMapTests.swift"; sourceTree = "<group>"; };
 		A0000000000000000000014D /* ManifestWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ManifestWatchTests.swift"; sourceTree = "<group>"; };
 		A000000000000000000000C0 /* RideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A000000000000000000000C1 /* Utf16Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utf16Tests.swift; sourceTree = "<group>"; };
@@ -1655,6 +1698,7 @@
 				MDA9B048EE42E4994E82168D /* KeyRouter.swift */,
 				MD197275924A7765511FDD2F /* KeyCombo+Event.swift */,
 				MD0064841C78E085CCD27C2D /* ShortcutTable+Run.swift */,
+				GIT00000000000000000001F /* ShortcutTable+Git.swift */,
 				MD724CA28A2E80251E98122A /* ShortcutTable+Code.swift */,
 				MD24F29B4A787522850D0283 /* ShortcutTable+File.swift */,
 				MD6098368096964C44353A3C /* KeyCombo.swift */,
@@ -1733,7 +1777,7 @@
 				C0CF3488416B3265CAAA5922 /* MatchHighlightTests.swift */,
 				B05134279C118A62C90B7732 /* ContrastTests.swift */,
 				A0000000000000000000014D /* ManifestWatchTests.swift */,
-				A0000000000000000000014B /* GitStatusTests.swift */,
+				A0000000000000000000014B /* GitPathMapTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
 				MD2A69A966E7F575C0242A79 /* DiagnosticTidyTests.swift */,
@@ -1858,6 +1902,7 @@
 				P8B000000000000000000003 /* DetailColumn.swift */,
 				A00000000000000000000053 /* StatusBar */,
 				A00000000000000000000054 /* Workspace */,
+				GIT000000000000000000024 /* Git */,
 				P20000000000000000000010 /* Project */,
 				Q10000000000000000000010 /* Run */,
 				S20000000000000000000020 /* Terminal */,
@@ -2055,8 +2100,6 @@
 				C7000000000000000000000B /* AppState+ActiveFile.swift */,
 				C70000000000000000000008 /* TreePath.swift */,
 				B0F6B2146E07964A6CC1FD1D /* SidebarView.swift */,
-				A00000000000000000000141 /* GitStatusService.swift */,
-				A0000000000000000000013E /* GitStatus.swift */,
 				A00000000000000000000138 /* CargoManifest.swift */,
 				F11000000000000000000001 /* WorkspaceState.swift */,
 				WS0000000000000000000181 /* LayoutState.swift */,
@@ -2460,6 +2503,7 @@
 				MB4A6E08CF79790D275F6745 /* SelfTestPopup.swift */,
 				CV30CF6CFB0241CB49679D02 /* SelfTestMenuCoverage.swift */,
 				CVC244CA98FE8E4CC074341B /* SelfTestCoverage+Run.swift */,
+				GIT000000000000000000022 /* SelfTestCoverage+Git.swift */,
 				CV9E636D1F98EE626F0C85AC /* SelfTestCoverage+Code.swift */,
 				CV1CDE3BAC16588F719F0E75 /* SelfTestCoverage+FileEdit.swift */,
 				CV7884AF0DE322E30C1F9076 /* SelfTestCoverage.swift */,
@@ -2613,6 +2657,34 @@
 				RP0000000000000000000010 /* AppState+Reports.swift */,
 			);
 			path = Reports;
+			sourceTree = "<group>";
+		};
+		GIT000000000000000000024 /* Git */ = {
+			isa = PBXGroup;
+			children = (
+				A0000000000000000000013E /* GitPathMap.swift */,
+				A00000000000000000000141 /* GitStatusService.swift */,
+				GIT000000000000000000001 /* GitTreeMarks.swift */,
+				GIT000000000000000000003 /* GitChangeKind+Display.swift */,
+				GIT000000000000000000005 /* GitChangesModel.swift */,
+				GIT000000000000000000007 /* GitErrorText.swift */,
+				GIT000000000000000000009 /* AppState+Git.swift */,
+				GIT00000000000000000000B /* AppState+GitOps.swift */,
+				GIT00000000000000000000D /* GitPanel.swift */,
+				GIT00000000000000000000F /* GitChangeList.swift */,
+				GIT000000000000000000011 /* GitChangeRow.swift */,
+				GIT000000000000000000013 /* GitCommitBox.swift */,
+				GIT000000000000000000015 /* GitDiffView.swift */,
+				GIT000000000000000000017 /* GitDiffDocument.swift */,
+				GIT000000000000000000025 /* GitDiffTextView.swift */,
+				GIT000000000000000000027 /* GitDiffGutter.swift */,
+				GIT000000000000000000029 /* GitDiffScrollView.swift */,
+				GIT00000000000000000002B /* GitDiffScroller.swift */,
+				GIT000000000000000000019 /* GitBranchMenu.swift */,
+				GIT00000000000000000001B /* GitCommands.swift */,
+				GIT00000000000000000001D /* GitSyncLabel.swift */,
+			);
+			path = Git;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2876,11 +2948,12 @@
 				A0000000000000000000090C /* BufferLanguage.swift in Sources */,
 				A0000000000000000000090F /* RangeShift.swift in Sources */,
 				A0000000000000000000013A /* CargoManifest.swift in Sources */,
-				A00000000000000000000140 /* GitStatus.swift in Sources */,
+				A00000000000000000000140 /* GitPathMap.swift in Sources */,
+				GIT000000000000000000021 /* ShortcutTable+Git.swift in Sources */,
 				A0000000000000000000014A /* DiagnosticRangeTests.swift in Sources */,
 				A00000000000000000000909 /* BufferLanguageTests.swift in Sources */,
 				A00000000000000000000911 /* RangeShiftTests.swift in Sources */,
-				A0000000000000000000014C /* GitStatusTests.swift in Sources */,
+				A0000000000000000000014C /* GitPathMapTests.swift in Sources */,
 				A0000000000000000000014E /* ManifestWatchTests.swift in Sources */,
 				P2000000000000000000001A /* ManifestWatch.swift in Sources */,
 				A00000000000000000000108 /* ProjectFind.swift in Sources */,
@@ -3329,8 +3402,29 @@
 				A00000000000000000000135 /* AppState+Check.swift in Sources */,
 				A00000000000000000000137 /* AppState+Launch.swift in Sources */,
 				A00000000000000000000139 /* CargoManifest.swift in Sources */,
-				A0000000000000000000013F /* GitStatus.swift in Sources */,
+				A0000000000000000000013F /* GitPathMap.swift in Sources */,
 				A00000000000000000000142 /* GitStatusService.swift in Sources */,
+				GIT000000000000000000002 /* GitTreeMarks.swift in Sources */,
+				GIT000000000000000000004 /* GitChangeKind+Display.swift in Sources */,
+				GIT000000000000000000006 /* GitChangesModel.swift in Sources */,
+				GIT000000000000000000008 /* GitErrorText.swift in Sources */,
+				GIT00000000000000000000A /* AppState+Git.swift in Sources */,
+				GIT00000000000000000000C /* AppState+GitOps.swift in Sources */,
+				GIT00000000000000000000E /* GitPanel.swift in Sources */,
+				GIT000000000000000000010 /* GitChangeList.swift in Sources */,
+				GIT000000000000000000012 /* GitChangeRow.swift in Sources */,
+				GIT000000000000000000014 /* GitCommitBox.swift in Sources */,
+				GIT000000000000000000016 /* GitDiffView.swift in Sources */,
+				GIT000000000000000000018 /* GitDiffDocument.swift in Sources */,
+				GIT000000000000000000026 /* GitDiffTextView.swift in Sources */,
+				GIT000000000000000000028 /* GitDiffGutter.swift in Sources */,
+				GIT00000000000000000002A /* GitDiffScrollView.swift in Sources */,
+				GIT00000000000000000002C /* GitDiffScroller.swift in Sources */,
+				GIT00000000000000000001A /* GitBranchMenu.swift in Sources */,
+				GIT00000000000000000001C /* GitCommands.swift in Sources */,
+				GIT00000000000000000001E /* GitSyncLabel.swift in Sources */,
+				GIT000000000000000000020 /* ShortcutTable+Git.swift in Sources */,
+				GIT000000000000000000023 /* SelfTestCoverage+Git.swift in Sources */,
 				A00000000000000000000146 /* AppState+Watch.swift in Sources */,
 				A00000000000000000000148 /* AppState+Theme.swift in Sources */,
 				A00000000000000000000101 /* HitNavigation.swift in Sources */,

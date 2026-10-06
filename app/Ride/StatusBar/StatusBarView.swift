@@ -8,7 +8,9 @@ struct StatusBarView: View {
     var body: some View {
         HStack(spacing: Tokens.Space.xxs) {
             if let branch = state.git.branch {
-                StatusSegment(icon: "arrow.triangle.branch", text: branch, help: "Git branch")
+                StatusSegment(icon: "arrow.triangle.branch", text: branch + GitSyncLabel.text(state.git.repo), help: "Git branch: show changes") {
+                    state.toggleGit()
+                }
             }
             StatusSegment(text: "Ln \(state.cursorLine), Col \(state.cursorColumn)", help: "Cursor position")
             StatusSegment(icon: pathIcon, text: state.relativePath, help: state.activeBuffer?.fileURL?.path ?? state.relativePath)

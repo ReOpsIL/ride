@@ -90,3 +90,13 @@
 # Parse error spans (2026-10-04)
 
 - `errors::collect` reports every ERROR node whole. One unclosed `(` makes tree-sitter wrap the entire file in an ERROR node, so the editor underlines the whole file with dotted red and the whole-file underline flips on and off as the bracket opens and closes. Report a narrow span instead (the ERROR node's unexpected leaf tokens, or its first line) and cover it in `tests/`.
+
+# Git follow-ups (added 2026-10-06, see docs/product/git.md)
+
+- Run RideTests and the in-app self-test on the Git app layer (it builds and the diff view was checked by hand)
+- Diff gutter markers per buffer with revert hunk (plan/roadmap/level-up.md 2.0-1); needs the engine diff of buffer text against the index
+- Stage and unstage single hunks from the diff view
+- History, blame, stash, merge (2.0-2) and the three-pane conflict resolver (2.0-3); conflicted files only show `!` today
+- Side-by-side diff mode; word-level change marks inside modified lines
+- Self-test for commit, branch and push against a scratch repository instead of menu-coverage exemptions
+- Push and pull have no timeout; a credential helper that blocks keeps the panel busy until it returns

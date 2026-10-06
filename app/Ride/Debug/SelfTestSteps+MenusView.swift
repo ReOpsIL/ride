@@ -11,6 +11,7 @@ extension SelfTestSteps {
             ("run output", "View › Run Output", { state.showRunOutput }),
             ("tests", "View › Tests", { state.showTests }),
             ("usages", "View › Usages", { state.showUsages }),
+            ("git changes", "Git › Changes", { state.showGit }),
             ("ai", "View › AI", { AIAssistant.shared.showPanel }),
         ]
         let editorOptions: [(String, String, () -> Bool, () -> Bool)] = [

@@ -12,6 +12,7 @@ mod extract;
 mod ffi;
 mod files;
 mod generate;
+pub mod git;
 mod highlight;
 pub mod includes;
 mod index;

@@ -12,7 +12,7 @@ struct WatchBatch: Equatable {
 enum WatchPaths {
     static let ignoredDirectories: Set<String> = ["target"]
     static let gitDirectory = ".git"
-    static let gitMarkers: Set<String> = ["HEAD", "refs", "packed-refs"]
+    static let gitMarkers: Set<String> = ["HEAD", "refs", "packed-refs", "index"]
 
     static func classify(_ paths: [String], root: URL) -> WatchBatch {
         var batch = WatchBatch(sources: [], gitChanged: false)

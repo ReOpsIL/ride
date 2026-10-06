@@ -34,10 +34,7 @@ fn ancestors(leaf: Node<'_>) -> impl Iterator<Item = Node<'_>> {
 pub fn path_segments(head: &str) -> (Vec<String>, usize) {
     let mut segments = Vec::new();
     let mut end = head.len();
-    loop {
-        let Some(rest) = head[..end].strip_suffix("::") else {
-            break;
-        };
+    while let Some(rest) = head[..end].strip_suffix("::") {
         let trimmed = rest.trim_end_matches(|c: char| is_word(c));
         let seg = &rest[trimmed.len()..];
         if seg.is_empty() {
