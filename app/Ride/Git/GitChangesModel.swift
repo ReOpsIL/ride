@@ -8,7 +8,6 @@ struct GitSelection: Equatable {
 final class GitChangesModel: ObservableObject {
     @Published var selection: GitSelection?
     @Published private(set) var diff: GitFileDiff?
-    @Published private(set) var diffRows: [GitDiffRow] = []
     @Published private(set) var diffError: String?
     @Published var message = ""
     @Published var amend = false
@@ -62,7 +61,6 @@ final class GitChangesModel: ObservableObject {
     private func show(_ diff: GitFileDiff?, error: String?) {
         if self.diff != diff {
             self.diff = diff
-            diffRows = diff.map(GitDiffRow.rows) ?? []
         }
         diffError = error
     }

@@ -22,21 +22,26 @@ const CMAKE_EXTS: &[&str] = &["cmake"];
 
 impl Lang {
     pub fn for_path(path: Option<&str>) -> Lang {
+        Self::recognized(path).unwrap_or(Lang::Rust)
+    }
+
+    pub fn recognized(path: Option<&str>) -> Option<Lang> {
         let name = file_name(path);
         if MAKE_NAMES.contains(&name.as_str()) {
-            return Lang::Make;
+            return Some(Lang::Make);
         }
         if CMAKE_NAMES.contains(&name.as_str()) {
-            return Lang::Cmake;
+            return Some(Lang::Cmake);
         }
         match extension(&name).as_deref() {
-            Some("md") | Some("markdown") => Lang::Markdown,
-            Some("toml") => Lang::Toml,
-            Some(e) if C_EXTS.contains(&e) => Lang::C,
-            Some(e) if CPP_EXTS.contains(&e) => Lang::Cpp,
-            Some(e) if MAKE_EXTS.contains(&e) => Lang::Make,
-            Some(e) if CMAKE_EXTS.contains(&e) => Lang::Cmake,
-            _ => Lang::Rust,
+            Some("md") | Some("markdown") => Some(Lang::Markdown),
+            Some("rs") => Some(Lang::Rust),
+            Some("toml") => Some(Lang::Toml),
+            Some(e) if C_EXTS.contains(&e) => Some(Lang::C),
+            Some(e) if CPP_EXTS.contains(&e) => Some(Lang::Cpp),
+            Some(e) if MAKE_EXTS.contains(&e) => Some(Lang::Make),
+            Some(e) if CMAKE_EXTS.contains(&e) => Some(Lang::Cmake),
+            _ => None,
         }
     }
 

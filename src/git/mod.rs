@@ -1,9 +1,12 @@
+mod blob;
 mod branch;
 mod branch_name;
 mod cli;
 mod commit;
 mod diff;
 mod diff_parse;
+mod diff_plan;
+mod line_spans;
 mod remote;
 mod repo;
 mod stage;

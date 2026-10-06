@@ -97,6 +97,6 @@
 - Diff gutter markers per buffer with revert hunk (plan/roadmap/level-up.md 2.0-1); needs the engine diff of buffer text against the index
 - Stage and unstage single hunks from the diff view
 - History, blame, stash, merge (2.0-2) and the three-pane conflict resolver (2.0-3); conflicted files only show `!` today
-- Side-by-side diff mode and syntax highlighting in the diff view through the engine highlighter
+- Side-by-side diff mode; word-level change marks inside modified lines
 - Self-test for commit, branch and push against a scratch repository instead of menu-coverage exemptions
 - Push and pull have no timeout; a credential helper that blocks keeps the panel busy until it returns

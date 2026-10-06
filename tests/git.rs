@@ -6,7 +6,9 @@ use ride_engine::git::{
     Git, branches, checkout, commit, create_branch, discard, file_diff, last_message, pull, push,
     stage, status, unstage,
 };
-use ride_engine::{GitChangeKind, GitDiffSide, GitFileChange, GitLineKind, GitRepoStatus};
+use ride_engine::{
+    CaptureKind, GitChangeKind, GitDiffSide, GitFileChange, GitLineKind, GitRepoStatus,
+};
 
 fn sh(dir: &Path, args: &[&str]) {
     let ok = Command::new("git")
@@ -174,4 +176,34 @@ fn push_without_a_remote_says_so() {
     let git = committed(dir.path());
     let err = push(&git).unwrap_err().to_string();
     assert!(err.contains("no remote"), "{err}");
+}
+
+#[test]
+fn diff_lines_carry_highlights_from_their_own_side() {
+    let dir = repo();
+    let git = committed(dir.path());
+    write(
+        dir.path(),
+        "src/main.rs",
+        "fn main() {\n    let two = 2;\n}\n",
+    );
+    write(dir.path(), "notes.txt", "fn not code\n");
+    let st = current(dir.path());
+    let diff = file_diff(&git, change(&st, "src/main.rs"), GitDiffSide::Unstaged).unwrap();
+    let lines = &diff.hunks[0].lines;
+    let added = lines.iter().find(|l| l.kind == GitLineKind::Added).unwrap();
+    assert!(added.spans.iter().any(|s| s.capture == CaptureKind::Keyword
+        && &added.text[s.start_byte as usize..s.end_byte as usize] == "let"));
+    let removed = lines
+        .iter()
+        .find(|l| l.kind == GitLineKind::Removed)
+        .unwrap();
+    assert!(
+        removed
+            .spans
+            .iter()
+            .any(|s| s.capture == CaptureKind::Function)
+    );
+    let plain = file_diff(&git, change(&st, "notes.txt"), GitDiffSide::Unstaged).unwrap();
+    assert!(plain.hunks[0].lines.iter().all(|l| l.spans.is_empty()));
 }

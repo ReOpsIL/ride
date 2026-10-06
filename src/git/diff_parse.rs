@@ -72,6 +72,7 @@ fn line(kind: GitLineKind, old: Option<u32>, new: Option<u32>, text: &str) -> Gi
         old_line: old,
         new_line: new,
         text: text.to_string(),
+        spans: Vec::new(),
     }
 }
 

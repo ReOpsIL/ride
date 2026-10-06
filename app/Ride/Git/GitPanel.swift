@@ -62,7 +62,7 @@ struct GitPanel: View {
                     GitCommitBox(repo: repo, model: model)
                 }
                 .frame(minWidth: 240, idealWidth: 340, maxWidth: .infinity)
-                GitDiffView(diff: model.diff, rows: model.diffRows, error: model.diffError, hasSelection: model.selection != nil)
+                GitDiffView(diff: model.diff, error: model.diffError, hasSelection: model.selection != nil)
                     .frame(minWidth: 240, maxWidth: .infinity)
             }
         } else {

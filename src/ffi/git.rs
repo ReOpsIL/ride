@@ -1,3 +1,5 @@
+use super::session::HighlightSpan;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, uniffi::Enum)]
 pub enum GitChangeKind {
     Modified,
@@ -48,6 +50,7 @@ pub struct GitDiffLine {
     pub old_line: Option<u32>,
     pub new_line: Option<u32>,
     pub text: String,
+    pub spans: Vec<HighlightSpan>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
