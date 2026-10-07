@@ -33,6 +33,7 @@
 | Release 1.0 public cards: release train, onboarding, crash reports, `ride` command, C/C++ live verification, editor leftovers, site and manuals, hygiene gates | `plan/roadmap/release-1.0.md` |
 | 1.3 close-out cards: data-safety fixes, engine prologue, refactorings, intentions, hierarchy, code vision, Safe Delete | `plan/roadmap/close-out-1.3.md` |
 | Level-up plan: full feature map, the five bets (ship 1.0, Git, semantic oracle, assistant, debugging depth), releases 1.3 close-out to 2.3, decisions KD-20 to KD-24 | `plan/roadmap/level-up.md` |
+| Progress plan 2026-10 (draft for review): state of every earlier plan, priorities P0 ship to P6 debugging, open decisions | `plan/roadmap/progress-2026-10.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
