@@ -7,6 +7,8 @@ final class BufferDocument: ObservableObject, Identifiable {
     let untitledIndex: Int?
     var text: String
     @Published var isDirty = false
+    @Published var showHtmlSource = false
+    @Published private(set) var htmlGeneration = 0
     @Published var outline: [OutlineRow] = [] {
         didSet { visionInputs &+= 1 }
     }
@@ -90,6 +92,7 @@ final class BufferDocument: ObservableObject, Identifiable {
         text = next
         highlights = []
         undo.manager.removeAllActions()
+        htmlGeneration += 1
     }
 
     func bind(_ textView: RideTextView) {

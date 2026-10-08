@@ -19,6 +19,7 @@
 | Feature inventory for running and debugging C, C++, Rust and assembly, with verification status | `docs/product/feature-inventory.md` |
 | Every menu item, popup, panel control, key binding and preference: what it does (traced to its handler) and which test covers it | `docs/product/command-inventory.md` |
 | Editor binding rules: hosts own documents, pending text and jumps are per document, focus follows the pane layout | `docs/product/editor-binding.md` |
+| HTML files render in the editor pane, source on a toggle, split beside other files | `docs/product/html-view.md` |
 | Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
 | AppKit view clipping: since macOS 14 a view that fills its dirty rect paints over its neighbours; the gutter clips | `docs/tui/appkit-view-clipping.md` |
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
