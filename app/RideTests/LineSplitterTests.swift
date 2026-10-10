@@ -42,4 +42,22 @@ final class LineSplitterTests: XCTestCase {
         var splitter = LineSplitter()
         XCTAssertEqual(splitter.take(Array("a\r\n".utf8)), ["a"])
     }
+
+    func testBareCarriageReturnSplitsProgressLines() {
+        var splitter = LineSplitter()
+        XCTAssertEqual(splitter.take(Array("Building\rCompiling\rDone\n".utf8)), ["Building", "Compiling", "Done"])
+    }
+
+    func testCarriageReturnHeldAcrossAFollowingNewline() {
+        var splitter = LineSplitter()
+        XCTAssertTrue(splitter.take(Array("a\r".utf8)).isEmpty)
+        XCTAssertEqual(splitter.take(Array("\nb\n".utf8)), ["a", "b"])
+    }
+
+    func testFlushEmitsATrailingCarriageReturnLine() {
+        var splitter = LineSplitter()
+        XCTAssertTrue(splitter.take(Array("Building\r".utf8)).isEmpty)
+        XCTAssertEqual(splitter.flush(), "Building")
+        XCTAssertNil(splitter.flush())
+    }
 }
