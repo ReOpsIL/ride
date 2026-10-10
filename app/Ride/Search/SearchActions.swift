@@ -2,6 +2,10 @@ import AppKit
 
 extension AppState {
     func toggleFind(replace: Bool = false) {
+        if let host = htmlFind() {
+            host.toggleFind(replace: replace)
+            return
+        }
         overlay = nil
         if showFind, replace, !showReplaceField {
             showReplaceField = true
@@ -15,6 +19,10 @@ extension AppState {
     }
 
     func useSelectionForFind() {
+        if let host = htmlFind() {
+            host.useSelection()
+            return
+        }
         guard let view = EditorPanes.shared.focusedView, view.selectedRange().length > 0 else {
             return
         }
@@ -28,10 +36,18 @@ extension AppState {
     }
 
     func findNext() {
+        if let host = htmlFind() {
+            host.find(backwards: false)
+            return
+        }
         find(backwards: false)
     }
 
     func findPrevious() {
+        if let host = htmlFind() {
+            host.find(backwards: true)
+            return
+        }
         find(backwards: true)
     }
 
@@ -65,6 +81,18 @@ extension AppState {
         EditorCommand.apply(EditResult.mapping(view.selectedRange(), through: changes), to: view)
         EditorPanes.shared.host(for: view)?.capture()
         findRange = nil
+    }
+
+    private func htmlFind() -> HtmlFindHost? {
+        let window = NSApp.keyWindow
+        let responder = window?.firstResponder
+        if let host = HtmlFindHost.focused(in: responder) {
+            return host
+        }
+        guard responder == nil || responder === window, let window else {
+            return nil
+        }
+        return HtmlFindHost.host(in: window, pane: paneLayout.focusedID)
     }
 
     private func isMatch(_ range: NSRange, in text: String) -> Bool {

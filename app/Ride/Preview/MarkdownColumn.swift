@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct HtmlColumn: View {
+struct MarkdownColumn: View {
     @ObservedObject var document: BufferDocument
     let paneID: UUID
     let focused: Bool
     @EnvironmentObject private var state: AppState
-    @ObservedObject private var ts = ThemeStore.shared
+    @ObservedObject private var themes = ThemeStore.shared
 
     var body: some View {
         VStack(spacing: 0) {
             if focused, state.showFind, document.showHtmlSource {
                 FindBar()
             }
-            PanelHeader(icon: "globe", title: document.displayName, badges: [badge]) {
+            PanelHeader(icon: "doc.richtext", title: document.displayName, badges: [badge]) {
                 IconButton(symbol: symbol, help: help) {
                     state.paneFocused(paneID)
                     document.showHtmlSource.toggle()
@@ -21,7 +21,7 @@ struct HtmlColumn: View {
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ts.editorBackground)
+        .background(themes.editorBackground)
     }
 
     @ViewBuilder
@@ -34,8 +34,9 @@ struct HtmlColumn: View {
                 document: document,
                 paneID: paneID,
                 focused: focused,
-                revision: "\(document.htmlGeneration)",
-                page: { document.text }
+                revision: "\(document.htmlGeneration)|\(themes.theme.name)",
+                page: { Self.page(document.text, themes.theme) },
+                renderSibling: { Self.sibling($0, $1, themes.theme) }
             ) {
                 state.paneFocused(paneID)
             }
@@ -52,6 +53,19 @@ struct HtmlColumn: View {
     }
 
     private var help: String {
-        document.showHtmlSource ? "Show Rendered HTML" : "Show HTML Source"
+        document.showHtmlSource ? "Show Rendered Markdown" : "Show Markdown Source"
+    }
+
+    private static func page(_ text: String, _ theme: Theme) -> String {
+        let body = RideEngineClient.shared.engine?.renderMarkdown(text: text) ?? ""
+        return PreviewTemplate.document(theme, body: body)
+    }
+
+    private static func sibling(_ name: String, _ data: Data, _ theme: Theme) -> String? {
+        guard MarkdownPage.matches(URL(fileURLWithPath: name)),
+              let text = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        return page(text, theme)
     }
 }

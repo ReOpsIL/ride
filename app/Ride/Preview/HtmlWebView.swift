@@ -4,39 +4,74 @@ import WebKit
 
 struct HtmlWebView: NSViewRepresentable {
     @ObservedObject var document: BufferDocument
+    let paneID: UUID
     let focused: Bool
+    let revision: String
+    let page: () -> String
+    var renderSibling: HtmlRender? = nil
     let onFocus: () -> Void
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onFocus: onFocus)
+    func makeCoordinator() -> HtmlWebCoordinator {
+        HtmlWebCoordinator(document: document, onFocus: onFocus)
     }
 
-    func makeNSView(context: Context) -> WKWebView {
-        let handler = HtmlSchemeHandler(root: root, name: name, page: document.text)
+    func makeNSView(context: Context) -> HtmlFindHost {
+        let handler = HtmlSchemeHandler(root: root, name: name, page: page(), render: renderSibling)
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(handler, forURLScheme: HtmlPage.scheme)
-        let view = HtmlSurface(frame: .zero, configuration: config)
-        view.onFocus = onFocus
-        view.navigationDelegate = context.coordinator
-        view.setValue(false, forKey: "drawsBackground")
+        let user = config.userContentController
+        user.addUserScript(WKUserScript(source: HtmlScroll.script, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        user.add(context.coordinator, name: HtmlScroll.channel)
+        let web = HtmlSurface(frame: .zero, configuration: config)
+        web.navigationDelegate = context.coordinator
+        web.setValue(false, forKey: "drawsBackground")
+        let host = HtmlFindHost(web: web)
+        host.onFocus = onFocus
         context.coordinator.handler = handler
-        return view
+        context.coordinator.host = host
+        return host
     }
 
-    func updateNSView(_ view: WKWebView, context: Context) {
+    func updateNSView(_ host: HtmlFindHost, context: Context) {
         let coordinator = context.coordinator
+        coordinator.document = document
         coordinator.onFocus = onFocus
-        (view as? HtmlSurface)?.onFocus = onFocus
+        coordinator.host = host
+        host.onFocus = onFocus
+        host.paneID = paneID
+        claim(host, coordinator)
         guard let handler = coordinator.handler else {
             return
         }
         let name = self.name
-        if coordinator.generation != document.htmlGeneration || coordinator.loadedName != name {
-            handler.update(page: document.text)
-            coordinator.generation = document.htmlGeneration
-            coordinator.loadedName = name
-            coordinator.load(view, named: name)
-            claim(view)
+        guard coordinator.revision != revision || coordinator.loadedName != name else {
+            return
+        }
+        handler.update(page: page(), render: renderSibling)
+        coordinator.revision = revision
+        coordinator.loadedName = name
+        coordinator.load(host.web, named: name)
+    }
+
+    static func dismantleNSView(_ host: HtmlFindHost, coordinator: HtmlWebCoordinator) {
+        host.onLayout = nil
+        host.web.configuration.userContentController.removeScriptMessageHandler(forName: HtmlScroll.channel)
+    }
+
+    private func claim(_ host: HtmlFindHost, _ coordinator: HtmlWebCoordinator) {
+        let became = focused && !coordinator.wasFocused
+        coordinator.wasFocused = focused
+        guard became else {
+            return
+        }
+        DispatchQueue.main.async {
+            guard let window = host.window else {
+                return
+            }
+            if HtmlFindHost.focused(in: window.firstResponder) === host {
+                return
+            }
+            window.makeFirstResponder(host.web)
         }
     }
 
@@ -46,81 +81,5 @@ struct HtmlWebView: NSViewRepresentable {
 
     private var root: URL {
         document.fileURL?.deletingLastPathComponent() ?? URL(fileURLWithPath: "/")
-    }
-
-    private func claim(_ view: WKWebView) {
-        guard focused else {
-            return
-        }
-        DispatchQueue.main.async {
-            view.window?.makeFirstResponder(view)
-        }
-    }
-}
-
-extension HtmlWebView {
-    final class Coordinator: NSObject, WKNavigationDelegate {
-        var handler: HtmlSchemeHandler?
-        var onFocus: () -> Void
-        var generation = -1
-        var loadedName = ""
-
-        init(onFocus: @escaping () -> Void) {
-            self.onFocus = onFocus
-        }
-
-        func load(_ view: WKWebView, named name: String) {
-            guard let url = HtmlPage.url(named: name) else {
-                return
-            }
-            view.load(URLRequest(url: url))
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor action: WKNavigationAction,
-            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-        ) {
-            switch HtmlPage.decide(Self.kind(action.navigationType), action.request.url) {
-            case .allow:
-                if action.targetFrame == nil, let url = action.request.url {
-                    webView.load(URLRequest(url: url))
-                    decisionHandler(.cancel)
-                    return
-                }
-                decisionHandler(.allow)
-            case let .open(url):
-                NSWorkspace.shared.open(url)
-                decisionHandler(.cancel)
-            case .block:
-                decisionHandler(.cancel)
-            }
-        }
-
-        private static func kind(_ type: WKNavigationType) -> HtmlNav {
-            switch type {
-            case .linkActivated:
-                return .link
-            case .formSubmitted, .formResubmitted:
-                return .form
-            default:
-                return .load
-            }
-        }
-    }
-}
-
-private final class HtmlSurface: WKWebView {
-    var onFocus: (() -> Void)?
-
-    override func mouseDown(with event: NSEvent) {
-        onFocus?()
-        super.mouseDown(with: event)
-    }
-
-    override func becomeFirstResponder() -> Bool {
-        onFocus?()
-        let became = super.becomeFirstResponder()
-        return became
     }
 }

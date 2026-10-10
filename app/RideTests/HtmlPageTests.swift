@@ -80,6 +80,33 @@ final class HtmlPageTests: XCTestCase {
         XCTAssertEqual(HtmlAsset.payload(root: root, name: "index.html", page: "LIVE", url: URL(string: "https://example.com/a.css")), .deny)
     }
 
+    func testSiblingRenderReplacesMarkdownBytes() throws {
+        let root = try makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        try Data("# Disk".utf8).write(to: root.appendingPathComponent("other.md"))
+        let url = URL(string: "ride-html://local/other.md")
+        let rendered = HtmlAsset.payload(root: root, name: "index.html", page: "LIVE", url: url) { name, data in
+            guard name == "other.md", let text = String(data: data, encoding: .utf8) else {
+                return nil
+            }
+            return "<p>\(text)</p>"
+        }
+        guard case let .bytes(data, mime, encoding) = rendered else {
+            return XCTFail("rendered")
+        }
+        let text = String(decoding: data, as: UTF8.self)
+        XCTAssertEqual(mime, "text/html")
+        XCTAssertEqual(encoding, "utf-8")
+        XCTAssertTrue(text.contains("<p># Disk</p>"))
+        XCTAssertTrue(text.contains("Content-Security-Policy"))
+        let raw = HtmlAsset.payload(root: root, name: "index.html", page: "LIVE", url: url) { _, _ in nil }
+        guard case let .bytes(rawData, rawMime, _) = raw else {
+            return XCTFail("raw")
+        }
+        XCTAssertEqual(String(decoding: rawData, as: UTF8.self), "# Disk")
+        XCTAssertNotEqual(rawMime, "text/html")
+    }
+
     func testHeadStampSkipsHeaderElements() {
         let stamped = HtmlPolicy.stamp("<HEAD lang=\"en\"><title>A</title></head><p>Hi</p>")
         XCTAssertTrue(stamped.contains("<HEAD lang=\"en\"><meta http-equiv=\"Content-Security-Policy\""))
@@ -106,7 +133,7 @@ final class HtmlPageTests: XCTestCase {
         let linked = "<!doctype html><head><link rel=\"stylesheet\" href=\"a.css\"></head><body><p id=\"t\">Styled</p></body>"
         let again = expectation(description: "reload")
         nav.done = again
-        handler.update(page: linked)
+        handler.update(page: linked, render: nil)
         view.reload()
         wait(for: [again], timeout: 5)
         XCTAssertNil(nav.error)

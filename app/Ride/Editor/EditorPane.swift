@@ -103,6 +103,8 @@ struct PaneColumn: View {
         VStack(spacing: 0) {
             if let buffer = state.buffer(pane.activeID), HtmlPage.matches(buffer.fileURL) {
                 HtmlColumn(document: buffer, paneID: pane.id, focused: focused)
+            } else if let buffer = state.buffer(pane.activeID), MarkdownPage.matches(buffer.fileURL) {
+                MarkdownColumn(document: buffer, paneID: pane.id, focused: focused)
             } else {
                 if focused, state.showFind {
                     FindBar()

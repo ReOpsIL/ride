@@ -118,7 +118,7 @@ C and C++ binaries take the same path: CMake builds the target, the breakpoint i
 
 ![Find in Project results for "counter" grouped by file](docs/images/ride-find.png)
 
-Markdown files get tree-sitter highlighting, a heading outline and a rendered preview with highlighted code fences. HTML files open rendered in the editor pane; the pane header switches that pane between the page and its source, so a split can keep Rust on one side and the page on the other.
+Markdown files get tree-sitter highlighting, a heading outline and a rendered preview with highlighted code fences. They also open rendered in the editor pane; the pane header switches that pane between the page and its source, so a split can keep Rust on one side and the page on the other. HTML files open rendered in the editor pane the same way.
 
 ![A markdown file next to its rendered preview](docs/images/ride-preview.png)
 

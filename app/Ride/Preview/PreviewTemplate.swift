@@ -16,6 +16,14 @@ enum PreviewTemplate {
     }
 
     static func page(_ theme: Theme) -> String {
+        frame(theme, head: "<meta http-equiv=\"Content-Security-Policy\" content=\"\(policy)\">", body: "")
+    }
+
+    static func document(_ theme: Theme, body: String) -> String {
+        frame(theme, head: "", body: body)
+    }
+
+    private static func frame(_ theme: Theme, head: String, body: String) -> String {
         let c = theme.chrome
         let syntax: [(String, NSColor)] = [
             ("keyword", theme.keyword), ("function", theme.function), ("type", theme.type),
@@ -28,7 +36,7 @@ enum PreviewTemplate {
         let tokens = syntax.map { ".tk-\($0.0){color:\(hex($0.1))}" }.joined()
         return """
         <!doctype html><html><head><meta charset="utf-8">
-        <meta http-equiv="Content-Security-Policy" content="\(policy)"><style>
+        \(head)<style>
         :root{color-scheme:\(theme.isDark ? "dark" : "light")}
         html,body{margin:0;background:\(hex(theme.editor.background));color:\(hex(c.textPrimary))}
         body{font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;-webkit-text-size-adjust:100%}
@@ -55,7 +63,7 @@ enum PreviewTemplate {
         del{color:\(hex(c.textTertiary))}
         .ride-line{display:block;height:0}
         \(tokens)
-        </style></head><body><main id="main"></main></body></html>
+        </style></head><body><main id="main">\(body)</main></body></html>
         """
     }
 

@@ -5,25 +5,33 @@ final class HtmlSchemeHandler: NSObject, WKURLSchemeHandler {
     let root: URL
     let name: String
     private var page: String
+    private var render: HtmlRender?
     private var halted = Set<ObjectIdentifier>()
     private let lock = NSLock()
 
-    init(root: URL, name: String, page: String) {
+    init(root: URL, name: String, page: String, render: HtmlRender? = nil) {
         self.root = root
         self.name = name
         self.page = page
+        self.render = render
     }
 
-    func update(page: String) {
+    func update(page: String, render: HtmlRender?) {
         lock.lock()
         self.page = page
+        self.render = render
         lock.unlock()
     }
 
     func webView(_ webView: WKWebView, start task: WKURLSchemeTask) {
-        let payload = HtmlAsset.payload(root: root, name: name, page: copyPage(), url: task.request.url)
+        let url = task.request.url
         DispatchQueue.main.async { [weak self] in
-            self?.deliver(task, payload)
+            guard let self else {
+                return
+            }
+            let shot = self.snapshot()
+            let payload = HtmlAsset.payload(root: self.root, name: self.name, page: shot.page, url: url, render: shot.render)
+            self.deliver(task, payload)
         }
     }
 
@@ -33,10 +41,10 @@ final class HtmlSchemeHandler: NSObject, WKURLSchemeHandler {
         lock.unlock()
     }
 
-    private func copyPage() -> String {
+    private func snapshot() -> (page: String, render: HtmlRender?) {
         lock.lock()
         defer { lock.unlock() }
-        return page
+        return (page, render)
     }
 
     private func halted(_ task: WKURLSchemeTask) -> Bool {
