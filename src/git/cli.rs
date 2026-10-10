@@ -1,8 +1,9 @@
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output, Stdio};
+use std::time::Duration;
 
 use crate::error::EngineError;
-use crate::process::run_piped;
+use crate::process::{IdleError, output_idle, run_piped};
 use crate::toolchain::{search_path, tool};
 
 const SUCCESS: &[i32] = &[0];
@@ -50,6 +51,18 @@ impl Git {
             .output()
             .map_err(|e| EngineError::git(format!("cannot run git: {e}")))?;
         finish(args, output, codes)
+    }
+
+    pub fn run_idle(&self, args: &[&str], idle: Duration) -> Result<Captured, EngineError> {
+        let mut cmd = self.command(args);
+        match output_idle(&mut cmd, idle) {
+            Ok(output) => finish(args, output, SUCCESS),
+            Err(IdleError::TimedOut) => Err(EngineError::git(format!(
+                "git {} timed out; a credential helper may be waiting for input",
+                args.first().copied().unwrap_or("git")
+            ))),
+            Err(IdleError::Io(err)) => Err(EngineError::git(format!("cannot run git: {err}"))),
+        }
     }
 
     pub fn run_with_input(&self, args: &[&str], input: &str) -> Result<Captured, EngineError> {

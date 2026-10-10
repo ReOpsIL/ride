@@ -40,18 +40,22 @@ enum WorkspaceFS {
         isDirectory ? url : url.deletingLastPathComponent()
     }
 
+    static func resolvedPath(_ url: URL) -> String {
+        url.standardizedFileURL.resolvingSymlinksInPath().path
+    }
+
     static func contains(root: URL?, file: URL) -> Bool {
         guard let root else {
             return false
         }
-        let rootPath = root.standardizedFileURL.path
-        let filePath = file.standardizedFileURL.path
+        let rootPath = resolvedPath(root)
+        let filePath = resolvedPath(file)
         return filePath == rootPath || filePath.hasPrefix(rootPath + "/")
     }
 
     static func relativePath(root: URL, file: URL) -> String {
-        let rootPath = root.standardizedFileURL.path
-        let filePath = file.standardizedFileURL.path
+        let rootPath = resolvedPath(root)
+        let filePath = resolvedPath(file)
         if filePath == rootPath {
             return "."
         }
@@ -59,6 +63,19 @@ enum WorkspaceFS {
             return String(filePath.dropFirst(rootPath.count + 1))
         }
         return file.lastPathComponent
+    }
+
+    static func spelled(inside root: URL, file: URL) -> URL {
+        guard contains(root: root, file: file) else {
+            return file.standardizedFileURL
+        }
+        let rel = relativePath(root: root, file: file)
+        if rel == "." {
+            return root.standardizedFileURL
+        }
+        return rel.split(separator: "/").reduce(root.standardizedFileURL) {
+            $0.appendingPathComponent(String($1))
+        }
     }
 }
 

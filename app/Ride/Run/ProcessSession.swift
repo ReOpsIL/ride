@@ -107,8 +107,9 @@ final class ProcessSession {
         }
         finished = true
         output.readabilityHandler = nil
-        if let tail = splitter.flush() {
-            onLines?([tail])
+        let tail = splitter.finish()
+        if !tail.isEmpty {
+            onLines?(tail)
         }
         onFinish?(status)
     }

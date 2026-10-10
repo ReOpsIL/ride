@@ -19,20 +19,11 @@
 
 # Run output (added 2026-09-20, dropped from 1.3-1e at merge)
 
-- `LineSplitter` treats only `\r\n` as a terminator, so a bare `\r` (cargo's progress lines) stays inside the line until the next `\n`; the 1.3-1e executor split on bare `\r` too. Land it as its own card with tests on captured cargo output.
 - Code vision "N usages" and Find Usages count every same-name identifier from the reference index, including the definition, a trait declaration and its impl (`record` reports 5 with both sample files indexed). Decide whether both should exclude definition sites once `RefKind` filtering (1.3-8a) is used by Find Usages.
 
 # Editor undo follow-ups (2026-09-20, from the undo flake fix)
 
 - `RenameApply.applyBackground` commits through `host.bind(doc)`, which assigns `textView.string` while the document is bound; that rewrite bypasses the edit path and leaves every NSTextView undo record on the stack pointing at ranges of the old text. Route it through `EditorHostView.replaceText` (or drop the records) so a background rename stays undoable.
-
-# Editor (added 2026-09-20, P-6 review)
-
-- `LineEndingMenu` in the status bar writes the global `prefs.lineEndings`; "Convert to LF" on one buffer changes every future save. Make it a per-buffer override with the preference as the default.
-
-# Debug paths (2026-09-20, from the breakpoint spelling fix)
-
-- A stopped frame's path arrives in the spelling the debug info holds (rustc resolves symlinks, clang keeps them), so under a symlinked workspace root `AppState.showStoppedLine` can open a second, read-only buffer for a file already open: `Buffers.buffer(for:)` matches `fileURL` exactly. Match an incoming debugger path to an open buffer through the resolved path, the way `source_path::same_file` does in the engine.
 
 # Search (added 2026-09-20, screenshot review)
 
@@ -54,7 +45,6 @@
 - Layout panel sizes live in both `Preferences` and `LayoutState` (defaults are now only in `LayoutState.defaults`); embedding `LayoutState` in `Preferences` needs flat coding to keep old prefs loading.
 - `HierarchyQuery.children` and `TestMarkers` still read sessions off `SessionService.read`.
 - Slow workspace reads (usages, hierarchy, definitions) can see edits made while they run and still show their results.
-- An auto-import is dropped when the user keeps typing before the engine replies.
 - Build diagnostics are not de-duplicated per build (`cargo test`/`--all-targets` compile the lib twice): `parse_cargo_line` is stateless per line, so dedupe in `BuildSession`/`DiagnosticStore`.
 - Cargo messages without a primary span (missing native library, some E-codes) are dropped; `Diagnostic.path` is required, so decide a Swift-side home for file-less diagnostics first.
 
@@ -87,10 +77,6 @@
 - C++ out-of-class definitions (`void Circle::area() {}`) do not carry an `OutlineItem.scope`, so they sit at top level instead of under their class.
 - Cheat sheet at member-access sites opens unrelated sections: after `"a.b".split('.').` (Rust) it lists Control flow, after `it->` (C++) Template utilities and traits. Seen in the `members` / `cppmembers` demo scenes; the demo disables the sheet there.
 
-# Parse error spans (2026-10-04)
-
-- `errors::collect` reports every ERROR node whole. One unclosed `(` makes tree-sitter wrap the entire file in an ERROR node, so the editor underlines the whole file with dotted red and the whole-file underline flips on and off as the bracket opens and closes. Report a narrow span instead (the ERROR node's unexpected leaf tokens, or its first line) and cover it in `tests/`.
-
 # Git follow-ups (added 2026-10-06, see docs/product/git.md)
 
 - Run RideTests and the in-app self-test on the Git app layer (it builds and the diff view was checked by hand)
@@ -99,9 +85,7 @@
 - History, blame, stash, merge (2.0-2) and the three-pane conflict resolver (2.0-3); conflicted files only show `!` today
 - Side-by-side diff mode; word-level change marks inside modified lines
 - Self-test for commit, branch and push against a scratch repository instead of menu-coverage exemptions
-- Push and pull have no timeout; a credential helper that blocks keeps the panel busy until it returns
 
 # Panels (added 2026-10-06, AI/git visual review)
 
 - Changes and Usages panels open at a fixed split position (300 / 220) but their heights are not saved; the other bottom panels each carry a height through `Preferences`, `LayoutState` and `AppState+Layout`. Replace the per-panel fields with heights keyed by a bottom-panel enum so a new panel cannot ship without one.
-- The AI Chat transcript is blank before the first question; show the shortcuts (Explain ⌃⌘E, Add Selection ⌃⌘L) as an empty state.

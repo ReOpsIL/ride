@@ -2,12 +2,16 @@ import Foundation
 
 extension SessionService {
     func importEdit(document: BufferDocument, importPath: String, done: @escaping (TextEdit) -> Void) {
-        read(document, delivery: .currentText, { engine, id in
-            engine.importEdit(sessionId: id, importPath: importPath)
-        }, then: { edit in
-            if let edit {
-                done(edit)
+        read(document, delivery: .always, { _, _ in () }, then: { [weak document] _ in
+            guard let document else {
+                return
             }
+            guard let edit = SessionService.shared.readNow(document, {
+                $0.importEdit(sessionId: $1, importPath: importPath)
+            }) ?? nil else {
+                return
+            }
+            done(edit)
         })
     }
 

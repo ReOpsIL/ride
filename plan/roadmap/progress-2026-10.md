@@ -1,6 +1,10 @@
 # Ride — Progress plan (2026-10-07): ship what exists, then finish the half-built bets
 
-Status: **draft for review, nothing started.** Supersedes the sequencing in `level-up.md` section 3 and section 6 KD-24; the card designs in `level-up.md`, `oracle-finish.md`, `plan/ai/assistant.md`, `release-1.0.md`, `close-out-1.3.md` and `next-1.3.md` stay valid where referenced.
+Status: **in progress.** The easy slice landed 2026-10-10, implemented with grok 4.7. S-1..S-3 still need signing, notarization and Sparkle secrets; do not tag. Next correctness is C-2, then C-1 and C-7. C-5 and C-8 stay larger. P2 still gates the rest of Git and AI Apply. Supersedes the sequencing in `level-up.md` section 3 and section 6 KD-24; the card designs in `level-up.md`, `oracle-finish.md`, `plan/ai/assistant.md`, `release-1.0.md`, `close-out-1.3.md` and `next-1.3.md` stay valid where referenced.
+
+Landed with that slice, outside the tables: `LineSplitter` completes a line on a bare `\r` and holds a trailing `\r` so a split `\r\n` does not become a blank line. Process exit drains that tail.
+
+Already in the tree before this pass, so the matching `todo/app/remaining.md` bullets were stale: per-buffer line endings (`LineEndingMenu` calls `buffer.useLineEnding`) and the AI chat empty state (`AIChatPage.placeholder`).
 
 ## 1. Where things stand
 
@@ -32,7 +36,7 @@ Nothing has reached a user. Every later tier is guesswork until someone other th
 | S-1 | Release secrets and a dry run | Signing certificate, notarization key, Sparkle EdDSA key into repo secrets (`release-1.0.md` P-1 lists the names); `release.sh --dry-run` and one tag on a throwaway fork or pre-release tag to prove `release.yml` end to end | 1 |
 | S-2 | Verify the unreleased features | Full gates on `main`: engine tests, RideTests, self-tests alone (Rust, C++, C, AI chat, Git coverage). Close the open Git item "run RideTests and the self-test on the Git app layer". Replace Git menu-coverage exemptions with a scratch-repo self-test for commit, branch and push (`todo/app` Git follow-ups) | 2 |
 | S-3 | Tag and publish | Decision D-1 below. Tag, let CI publish zip, dSYM, appcast; bump the cask; check Sparkle sees the update from the previous build | 1 |
-| S-4 | Push/pull timeout | A blocking credential helper hangs the Changes panel forever; bound it and surface the error. Small, user-visible, ships with the release | 0.5 |
+| S-4 | Push/pull timeout | **Landed 2026-10-10.** Push, pull and fetch stop when git is silent for 60 seconds (`src/process/idle.rs`, `Git::run_idle`). Any stdout or stderr resets the wait. The Changes panel shows the existing git-error notice. Other git commands stay unbounded | 0.5 |
 
 Exit: a stranger installs from the cask, and an installed copy receives the next build through Sparkle.
 
@@ -43,11 +47,11 @@ Selected from the two todo files for "silently wrong" or "data at risk", not pol
 | # | Item | Root cause (from todo) | Days |
 |---|---|---|---|
 | C-1 | Rename renames unrelated locals | `engine/rename.rs` buckets by per-file `in_definition_scope`; a `let record` beside `fn record` is renamed too. Filter by `RefKind` compatible with the definition's `ItemKind`, stamp `RenameFile` with the indexed hash. Also fixes the "N usages" over-count | 2 |
-| C-2 | Background rename is not undoable | `RenameApply.applyBackground` assigns `textView.string`; route through `EditorHostView.replaceText`. Becomes a consumer of the edit plan (B-1) if B-1 lands first | 1 |
-| C-3 | Whole-file parse-error underline flicker | `errors::collect` reports whole ERROR nodes; report the unexpected leaf tokens | 1 |
-| C-4 | Auto-import dropped when typing continues | The import edit is discarded if the buffer changed before the engine replies; apply it against the current text | 1 |
+| C-2 | Background rename is not undoable | Still open. A visible buffer already goes through `EditorCommand.apply`. The leftover is `applyBackground` calling `host.bind` when no host is bound, on the same `UndoManager` as the text view. Do not swap that bind for `replaceText` inside the undo callback; the session edit is applied twice. Becomes a consumer of the edit plan (B-1) if B-1 lands first | 1 |
+| C-3 | Whole-file parse-error underline flicker | **Landed 2026-10-10.** `errors::collect` caps each ERROR or MISSING node to its start row. `ParseErrorSpan` is unchanged. Covered by `a_parse_error_stays_on_its_first_line` | 1 |
+| C-4 | Auto-import dropped when typing continues | **Landed 2026-10-10.** `SessionService.importEdit` waits out earlier edits, then asks the engine again on the current replica. A nil edit is dropped | 1 |
 | C-5 | Multi-project diagnostics and run configs | `DiagnosticStore.build` is one slot; run configs keyed by target name only; dropped-root diagnostics linger. Key all three by project root | 2 |
-| C-6 | Debugger opens a second read-only buffer under symlinked roots | Match incoming frame paths through the resolved path like `source_path::same_file` | 0.5 |
+| C-6 | Debugger opens a second read-only buffer under symlinked roots | **Landed 2026-10-10.** `WorkspaceFS.resolvedPath` is what `contains`, `relativePath` and `buffer(for:)` compare. `showDebugLocation` re-spells the frame onto the workspace root. Covered by `NavigationTests.testSymlinkRootContainsTheRealFile` | 0.5 |
 | C-7 | Incremental reindex loses cross-crate glob re-exports | Return `None` from `delta` when a changed crate has cross-crate roots, or absorb them through `Deferred::targets` | 1 |
 | C-8 | Per-session locks | One `RwLock<Inner>` serialises every keystroke against every query. `Arc<Mutex<BufferSession>>` per session. Engine-only, can run beside app cards | 3 |
 
@@ -102,7 +106,7 @@ Unchanged from `level-up.md` 3.6. Suggested internal order by daily value: 2.3-1
 
 From `todo/engine/remaining.md` "Structure" and "Full review": Rust outline re-parses the whole buffer per edit; Markdown reparses from scratch per keystroke; bracket matching scans all strings and comments per caret move; three `use`-tree parsers; `InputEditFfi` trusted as sent; `caret_byte` pre- vs post-edit meaning; `Engine::read/write` infallible `Result`s; duplicated outline builders and declarator walkers. Per `AGENTS.md`, these are done when their module is opened for feature work, not as a separate release.
 
-Polish items (popup stack planner, outline nesting for Markdown and C++ out-of-class methods, per-buffer line endings, Find in Project grouped per line, bottom-panel heights keyed by an enum, AI chat empty state) are Tier-A filler between cards.
+Still filler between cards: popup stack planner, outline nesting for Markdown and C++ out-of-class methods, Find in Project grouped per line, bottom-panel heights keyed by an enum.
 
 ## 3. Decisions for review
 

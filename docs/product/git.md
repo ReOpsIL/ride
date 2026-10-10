@@ -6,7 +6,7 @@ Ride shows what changed, commits, pushes, pulls and switches or creates branches
 
 | Layer | Where | Responsibility |
 |---|---|---|
-| CLI runner | `src/git/cli.rs` | `Git::at(dir)` runs `git -C <dir>` with `core.quotepath=off`, `color.ui=false`, `GIT_TERMINAL_PROMPT=0` (never waits for a password), `GIT_OPTIONAL_LOCKS=0` (status never rewrites the index, so the file watcher cannot loop) and `LC_ALL=C`. A non-zero exit becomes `EngineError::Git` carrying git's own stdout and stderr. |
+| CLI runner | `src/git/cli.rs` | `Git::at(dir)` runs `git -C <dir>` with `core.quotepath=off`, `color.ui=false`, `GIT_TERMINAL_PROMPT=0` (git itself does not prompt; a credential helper can still block), `GIT_OPTIONAL_LOCKS=0` (status never rewrites the index, so the file watcher cannot loop) and `LC_ALL=C`. A non-zero exit becomes `EngineError::Git` carrying git's own stdout and stderr. |
 | Repository | `src/git/repo.rs` | `open` resolves `rev-parse --show-toplevel`, so a workspace inside a larger checkout works. Every operation runs at the top level and every path is relative to it. `status` returns `None` outside a repository. |
 | Parsers | `status_parse.rs`, `diff_parse.rs`, `branch.rs`, `line_spans.rs` | `status --porcelain=v2 --branch -z --untracked-files=all` into `GitRepoStatus`; one file's unified diff into hunks with old and new line numbers; `for-each-ref` into local and remote branches (symbolic `origin/HEAD` dropped). |
 | Operations | `stage.rs`, `commit.rs`, `branch.rs`, `branch_name.rs`, `remote.rs`, `diff.rs`, `diff_plan.rs`, `blob.rs` | See below. |
@@ -24,7 +24,7 @@ Ride shows what changed, commits, pushes, pulls and switches or creates branches
 - **Stage and unstage.** Stage is `add --all -- paths` (deletions included). Unstage is `restore --staged`, or `rm --cached` before the first commit.
 - **Discard** acts on the unstaged side only: tracked files are restored from the index, untracked files are deleted with `clean`. The app asks first and says when files will be deleted.
 - **Commit.** The message is fed on stdin (`commit --file=-`). With nothing staged the button reads Commit All and stages everything first. Amend with an empty message keeps the previous one (`--no-edit`); ticking Amend on an empty box loads the last message.
-- **Push** uses the upstream when one is set, else `push --set-upstream <origin or first remote> HEAD`. With no remote it fails with a message saying so. **Pull** is `--ff-only`, so a diverged branch is reported, never merged or rebased silently. **Fetch** prunes.
+- **Push** uses the upstream when one is set, else `push --set-upstream <origin or first remote> HEAD`. With no remote it fails with a message saying so. **Pull** is `--ff-only`, so a diverged branch is reported, never merged or rebased silently. **Fetch** prunes. Push, pull and fetch stop if git produces no output for 60 seconds, and the notice says a credential helper may be waiting. Any output resets that wait.
 - **Branches.** Names are validated before git sees them (`BranchName`: no leading `-`, then `check-ref-format --branch`). New Branch creates and switches (`switch --create`). Picking a remote branch runs `switch --track`, which creates the local tracking branch.
 - **Refresh.** Status reloads on workspace open, after every operation, when the file watcher sees a source change, and when `.git/HEAD`, `refs`, `packed-refs` or `index` change, so staging from a terminal shows up too.
 

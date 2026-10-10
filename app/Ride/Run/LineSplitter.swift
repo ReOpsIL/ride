@@ -7,28 +7,57 @@ struct LineSplitter {
 
     mutating func take(_ bytes: [UInt8]) -> [String] {
         pending.append(contentsOf: bytes)
-        guard let last = pending.lastIndex(of: 0x0A) else {
-            return []
-        }
-        let complete = Array(pending[..<last])
-        pending.removeSubrange(...last)
-        return Self.split(complete)
+        return drain(flushing: false)
+    }
+
+    mutating func finish() -> [String] {
+        drain(flushing: true)
     }
 
     mutating func flush() -> String? {
-        guard !pending.isEmpty else {
+        let lines = finish()
+        guard !lines.isEmpty else {
             return nil
         }
-        let rest = pending
-        pending = []
-        return Self.line(rest)
+        return lines.count == 1 ? lines[0] : lines.joined(separator: "\n")
     }
 
-    private static func split(_ bytes: [UInt8]) -> [String] {
-        bytes.split(separator: 0x0A, omittingEmptySubsequences: false).map { line(Array($0)) }
+    private mutating func drain(flushing: Bool) -> [String] {
+        var lines: [String] = []
+        var start = 0
+        var index = 0
+        while index < pending.count {
+            let byte = pending[index]
+            if byte == 0x0A {
+                lines.append(Self.text(Array(pending[start..<index])))
+                index += 1
+                start = index
+                continue
+            }
+            if byte == 0x0D {
+                let next = index + 1
+                if next == pending.count && !flushing {
+                    break
+                }
+                lines.append(Self.text(Array(pending[start..<index])))
+                index = next
+                if index < pending.count, pending[index] == 0x0A {
+                    index += 1
+                }
+                start = index
+                continue
+            }
+            index += 1
+        }
+        if flushing, start < pending.count {
+            lines.append(Self.text(Array(pending[start...])))
+            start = pending.count
+        }
+        pending.removeFirst(start)
+        return lines
     }
 
-    private static func line(_ bytes: [UInt8]) -> String {
+    private static func text(_ bytes: [UInt8]) -> String {
         var out = bytes
         if out.last == 0x0D {
             out.removeLast()

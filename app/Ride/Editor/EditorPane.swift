@@ -101,14 +101,20 @@ struct PaneColumn: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if focused, state.showFind {
-                FindBar()
-            }
-            if let buffer = state.buffer(pane.activeID) {
-                EditorPane(document: buffer, state: state, paneID: pane.id, focused: focused)
-                    .id(buffer.id)
+            if let buffer = state.buffer(pane.activeID), HtmlPage.matches(buffer.fileURL) {
+                HtmlColumn(document: buffer, paneID: pane.id, focused: focused)
+            } else if let buffer = state.buffer(pane.activeID), MarkdownPage.matches(buffer.fileURL) {
+                MarkdownColumn(document: buffer, paneID: pane.id, focused: focused)
             } else {
-                WelcomeView()
+                if focused, state.showFind {
+                    FindBar()
+                }
+                if let buffer = state.buffer(pane.activeID) {
+                    EditorPane(document: buffer, state: state, paneID: pane.id, focused: focused)
+                        .id(buffer.id)
+                } else {
+                    WelcomeView()
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
