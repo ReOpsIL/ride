@@ -1,6 +1,6 @@
 use ride_engine::{
-    BufferSession, ByteRange, CaptureKind, CompletionQuery, EngineConfig, InputEditFfi, QueryMode,
-    engine_start,
+    BufferSession, ByteRange, CaptureKind, CompletionQuery, EngineConfig, InputEditFfi, Lang,
+    QueryMode, engine_start,
 };
 
 fn insert_at(text: &str, byte: usize, inserted: &str) -> InputEditFfi {
@@ -207,6 +207,34 @@ fn parse_errors_are_full_list() {
     let (session, open) = BufferSession::open("fn (".into(), None).unwrap();
     assert!(!open.errors.is_empty());
     drop(session);
+}
+
+#[test]
+fn a_parse_error_stays_on_its_first_line() {
+    let rust = "(\nfn main() {}\nfn other() {}\n";
+    let (_, rust_open) = BufferSession::open(rust.into(), None).unwrap();
+    assert_eq!(error_text(rust, &rust_open.errors), ["("]);
+    let c = "(\nvoid main() {}\nvoid other() {}\n";
+    let (_, c_open) = BufferSession::open_lang(Lang::C, c.into(), None).unwrap();
+    assert_eq!(error_text(c, &c_open.errors), ["("]);
+    let inside = "int main() {\n    int x = (\n    int y = 1;\n}\n";
+    let (_, inside_open) = BufferSession::open_lang(Lang::C, inside.into(), None).unwrap();
+    let slices = error_text(inside, &inside_open.errors);
+    assert!(!slices.is_empty());
+    assert!(
+        slices
+            .iter()
+            .all(|slice| !slice.contains('\n') && !slice.contains("int y")),
+        "{slices:?}"
+    );
+}
+
+fn error_text<'a>(src: &'a str, errors: &[ride_engine::ParseErrorSpan]) -> Vec<&'a str> {
+    errors
+        .iter()
+        .map(|err| &src[err.start_byte as usize..err.end_byte as usize])
+        .filter(|slice| !slice.is_empty())
+        .collect()
 }
 
 #[test]
