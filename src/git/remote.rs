@@ -1,23 +1,31 @@
+use std::time::Duration;
+
 use crate::error::EngineError;
 
 use super::cli::Git;
 
+const REMOTE_IDLE: Duration = Duration::from_secs(60);
+
 pub fn push(git: &Git) -> Result<String, EngineError> {
     let out = if has_upstream(git) {
-        git.run(&["push"])?
+        git.run_idle(&["push"], REMOTE_IDLE)?
     } else {
         let remote = default_remote(git)?;
-        git.run(&["push", "--set-upstream", &remote, "HEAD"])?
+        git.run_idle(&["push", "--set-upstream", &remote, "HEAD"], REMOTE_IDLE)?
     };
     Ok(out.transcript())
 }
 
 pub fn pull(git: &Git) -> Result<String, EngineError> {
-    Ok(git.run(&["pull", "--ff-only"])?.transcript())
+    Ok(git
+        .run_idle(&["pull", "--ff-only"], REMOTE_IDLE)?
+        .transcript())
 }
 
 pub fn fetch(git: &Git) -> Result<String, EngineError> {
-    Ok(git.run(&["fetch", "--prune"])?.transcript())
+    Ok(git
+        .run_idle(&["fetch", "--prune"], REMOTE_IDLE)?
+        .transcript())
 }
 
 fn has_upstream(git: &Git) -> bool {
