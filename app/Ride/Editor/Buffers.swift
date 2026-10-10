@@ -8,7 +8,7 @@ extension AppState {
         let standard = url.standardizedFileURL
         CompletionSession.shared.reset()
         noteOpened(standard)
-        if activeBuffer?.fileURL != standard {
+        if activeBuffer?.fileURL.map(WorkspaceFS.resolvedPath) != WorkspaceFS.resolvedPath(standard) {
             recordLocation()
         }
         if let existing = buffer(for: standard) {
@@ -28,8 +28,8 @@ extension AppState {
     }
 
     func buffer(for url: URL) -> BufferDocument? {
-        let standard = url.standardizedFileURL
-        return buffers.first { $0.fileURL == standard }
+        let resolved = WorkspaceFS.resolvedPath(url)
+        return buffers.first { $0.fileURL.map(WorkspaceFS.resolvedPath) == resolved }
     }
 
     func newUntitled() {

@@ -12,11 +12,12 @@ extension AppState {
             HighlightApply.clearMarkedLine()
             return
         }
-        let url = URL(fileURLWithPath: path).standardizedFileURL
-        guard FileManager.default.fileExists(atPath: url.path) else {
+        let incoming = URL(fileURLWithPath: path).standardizedFileURL
+        guard FileManager.default.fileExists(atPath: incoming.path) else {
             HighlightApply.clearMarkedLine()
             return
         }
+        let url = workspaceRoot.map { WorkspaceFS.spelled(inside: $0, file: incoming) } ?? incoming
         openFile(url, at: .line(Int(line), mark: true), readOnly: !WorkspaceFS.contains(root: workspaceRoot, file: url))
     }
 }
