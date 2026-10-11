@@ -1,3 +1,7 @@
+use std::collections::HashSet;
+
+use crate::ffi::ItemKind;
+
 use super::crate_names::{root_of, same_crate};
 use super::external::External;
 use super::item::{ItemDoc, Visibility, join_path};
@@ -87,6 +91,105 @@ pub(super) fn mirror(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, path: &str
         doc.scope = host.scope;
     }
     doc
+}
+
+pub(super) fn descendants(
+    items: &[ItemDoc],
+    extra: &[ItemDoc],
+    external: &External,
+    re: &Reexport,
+    kind: ItemKind,
+    origin: &str,
+    alias: &str,
+) -> Globbed {
+    if !has_children(kind) {
+        return Globbed::default();
+    }
+    let prefix = format!("{origin}::");
+    let dest = join_path(&re.module_path, alias);
+    let mut gather = Gather::new(prefix);
+    if !gather.take_all(items.iter().chain(extra.iter())) {
+        return oversized(origin, re);
+    }
+    match external.under_prefix(origin, GLOB_LIMIT) {
+        None => return oversized(origin, re),
+        Some(remote) => {
+            if !gather.take_all(remote.into_iter()) {
+                return oversized(origin, re);
+            }
+        }
+    }
+    Globbed {
+        items: gather.finish(items, re, &dest),
+        oversized: None,
+    }
+}
+
+struct Gather {
+    prefix: String,
+    seen: HashSet<String>,
+    found: Vec<ItemDoc>,
+}
+
+impl Gather {
+    fn new(prefix: String) -> Self {
+        Self {
+            prefix,
+            seen: HashSet::new(),
+            found: Vec::new(),
+        }
+    }
+
+    fn take_all<'a>(&mut self, sources: impl Iterator<Item = &'a ItemDoc>) -> bool {
+        for src in sources {
+            if !self.take(src) {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn take(&mut self, src: &ItemDoc) -> bool {
+        if src.visibility != Visibility::Pub || !src.path.starts_with(&self.prefix) {
+            return true;
+        }
+        if !self.seen.insert(src.path.clone()) {
+            return true;
+        }
+        if self.found.len() == GLOB_LIMIT {
+            return false;
+        }
+        self.found.push(src.clone());
+        true
+    }
+
+    fn finish(self, items: &[ItemDoc], re: &Reexport, dest: &str) -> Vec<ItemDoc> {
+        let prefix_len = self.prefix.len();
+        self.found
+            .into_iter()
+            .map(|src| {
+                let rest = src.path[prefix_len..].to_string();
+                mirror(items, &src, re, &format!("{dest}::{rest}"))
+            })
+            .collect()
+    }
+}
+
+fn has_children(kind: ItemKind) -> bool {
+    matches!(
+        kind,
+        ItemKind::Mod | ItemKind::Struct | ItemKind::Enum | ItemKind::Union | ItemKind::Trait
+    )
+}
+
+fn oversized(origin: &str, re: &Reexport) -> Globbed {
+    Globbed {
+        items: Vec::new(),
+        oversized: Some(OversizedGlob {
+            target: origin.to_string(),
+            module: re.module_path.join("::"),
+        }),
+    }
 }
 
 fn rerooted(re: &Reexport, target: &str, path: &str) -> String {

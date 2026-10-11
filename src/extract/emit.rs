@@ -131,6 +131,26 @@ pub fn push_item(args: &mut EmitArgs<'_>, item: ItemDoc, owner: Option<&str>) {
             path: item.path.clone(),
             owner: owner.to_string(),
         });
+        if let Some(copy) = qualified(args.module_path, owner, &item) {
+            args.out.assoc.push(Assoc {
+                path: copy.path.clone(),
+                owner: owner.to_string(),
+            });
+            args.out.items.push(copy);
+        }
     }
     args.out.items.push(item);
+}
+
+fn qualified(module: &[String], owner: &str, item: &ItemDoc) -> Option<ItemDoc> {
+    if owner.contains("::") {
+        return None;
+    }
+    let path = format!("{}::{}", join_path(module, owner), item.name);
+    if path == item.path {
+        return None;
+    }
+    let mut copy = item.clone();
+    copy.path = path;
+    Some(copy)
 }

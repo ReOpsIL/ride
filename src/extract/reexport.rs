@@ -69,10 +69,12 @@ impl<'a> Resolver<'a> {
             match &re.kind {
                 ReexportKind::Glob { module } => self.expand(re, module),
                 ReexportKind::Named { target, alias } => {
-                    let extra = &self.applied.items;
-                    let found = self.index.find(extra, &re.module_path, target);
-                    match found.map(|src| remap(self.items, src, re, alias)) {
-                        Some(doc) => self.applied.items.push(doc),
+                    let staged = self
+                        .index
+                        .find(&self.applied.items, &re.module_path, target)
+                        .map(|src| staged_named(self.items, src, re, alias));
+                    match staged {
+                        Some(staged) => self.keep(re, alias, staged),
                         None => next.push(re),
                     }
                 }
@@ -92,13 +94,46 @@ impl<'a> Resolver<'a> {
     fn settle(&mut self, pending: Vec<&Reexport>) {
         for re in pending {
             if let ReexportKind::Named { target, alias } = &re.kind {
-                let doc = match self.external.get(&dealias(target, self.aliases)) {
-                    Some(src) => remap(self.items, src, re, alias),
-                    None => unresolved(self.items, re, alias),
-                };
-                self.applied.items.push(doc);
+                let staged = self
+                    .external
+                    .get(&dealias(target, self.aliases))
+                    .map(|src| staged_named(self.items, src, re, alias));
+                match staged {
+                    Some(staged) => self.keep(re, alias, staged),
+                    None => self.applied.items.push(unresolved(self.items, re, alias)),
+                }
             }
         }
+    }
+
+    fn keep(&mut self, re: &Reexport, alias: &str, staged: Staged) {
+        let Staged { kind, origin, doc } = staged;
+        self.applied.items.push(doc);
+        let tree = glob::descendants(
+            self.items,
+            &self.applied.items,
+            self.external,
+            re,
+            kind,
+            &origin,
+            alias,
+        );
+        self.applied.oversized_globs.extend(tree.oversized);
+        self.applied.items.extend(tree.items);
+    }
+}
+
+struct Staged {
+    kind: ItemKind,
+    origin: String,
+    doc: ItemDoc,
+}
+
+fn staged_named(items: &[ItemDoc], src: &ItemDoc, re: &Reexport, alias: &str) -> Staged {
+    Staged {
+        kind: src.item_kind,
+        origin: src.path.clone(),
+        doc: remap(items, src, re, alias),
     }
 }
 

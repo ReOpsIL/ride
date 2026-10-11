@@ -90,6 +90,23 @@ fn scoped_paths_list_children_and_associated_items() {
     let resp = complete(&engine, "/w/src/lib.rs", "fn f() { Foo::|");
     let n = names(&resp);
     assert!(n.contains(&"new"), "{n:?}");
+    let resp = complete(&engine, "/w/src/lib.rs", "fn f() { std::vec::|");
+    let n = names(&resp);
+    assert!(n.contains(&"Vec") && n.contains(&"raw"), "{n:?}");
+    let resp = complete(&engine, "/w/src/lib.rs", "fn f() { std::vec::raw::|");
+    assert!(names(&resp).contains(&"RawVec"), "{:?}", names(&resp));
+    let resp = complete(&engine, "/w/src/lib.rs", "fn f() { std::vec::Vec::|");
+    let n = names(&resp);
+    assert!(
+        n.contains(&"new") && n.contains(&"push") && n.contains(&"len"),
+        "{n:?}"
+    );
+    let resp = complete(&engine, "/w/src/lib.rs", "fn f() { std::option::Option::|");
+    let n = names(&resp);
+    assert!(n.contains(&"Some") && n.contains(&"None"), "{n:?}");
+    let resp = complete(&engine, "/w/src/lib.rs", "fn f() { std::Option::|");
+    let n = names(&resp);
+    assert!(n.contains(&"Some") && n.contains(&"None"), "{n:?}");
 }
 
 #[test]

@@ -246,6 +246,29 @@ fn std_collections_snapshot() {
 }
 
 #[test]
+fn pub_use_of_a_module_keeps_nested_items() {
+    let src = r#"
+        pub mod inner {
+            pub mod deep {
+                pub struct Leaf;
+                impl Leaf {
+                    pub fn grow() {}
+                }
+            }
+        }
+        pub use inner::deep;
+    "#;
+    let items = extract_source(src, &sample_ctx(), &["c".into()]).unwrap();
+    assert_eq!(item(&items, "c::deep").item_kind, ItemKind::Mod);
+    assert_eq!(item(&items, "c::deep::Leaf").item_kind, ItemKind::Struct);
+    assert_eq!(
+        item(&items, "c::deep::Leaf::grow").item_kind,
+        ItemKind::Method
+    );
+    assert_eq!(item(&items, "Leaf::grow").item_kind, ItemKind::Method);
+}
+
+#[test]
 fn pub_use_rewrites_path() {
     let src = r#"
         pub mod hash_map {

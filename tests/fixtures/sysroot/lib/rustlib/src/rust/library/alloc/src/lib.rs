@@ -10,4 +10,7 @@ pub mod vec {
             0
         }
     }
+    pub mod raw {
+        pub struct RawVec;
+    }
 }
