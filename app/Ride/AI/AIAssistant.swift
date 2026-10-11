@@ -36,7 +36,7 @@ final class AIAssistant: ObservableObject {
             return
         }
         let level = AIContextLevel(rawValue: level) ?? .function
-        let attachments = AIChatContext.selection(view: view, document: document, root: state.workspaceRoot)
+        let attachments = AIChatContext.pack(view: view, document: document, root: state.workspaceRoot)
             + wider(level, document: document, view: view, state: state)
         let store = AIChatStore.shared
         store.newThread()

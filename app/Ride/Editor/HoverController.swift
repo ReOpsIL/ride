@@ -11,6 +11,10 @@ final class HoverController {
     private var word: NSRange?
     private var shown: NSRange?
     private weak var view: RideTextView?
+    private var card: HoverContent?
+    private var rendered: QuickDoc?
+    private var anchor: NSRect = .zero
+    private var exitHide: DispatchWorkItem?
 
     private init() {
         lifecycle = CompletionLifecycle(panel: panel.panel) { [weak self] in
@@ -18,6 +22,9 @@ final class HoverController {
         }
         panel.onClick = { [weak self] in
             _ = self?.upgradeIfVisible()
+        }
+        panel.onMouseExit = { [weak self] in
+            self?.notePointerLeft()
         }
     }
 
@@ -38,19 +45,30 @@ final class HoverController {
     func mouseMoved(view: RideTextView, event: NSEvent) {
         let point = view.convert(event.locationInWindow, from: nil)
         let index = view.characterIndexForInsertion(at: point)
-        guard let range = IdentifierRange.at(view.string as NSString, index: index) else {
-            hide()
+        let range = IdentifierRange.at(view.string as NSString, index: index)
+        if panel.isVisible {
+            if staying(on: range) {
+                exitHide?.cancel()
+                exitHide = nil
+                if word != shown {
+                    timer?.cancel()
+                    timer = nil
+                    word = shown
+                }
+                return
+            }
+            armExit()
+            if let range, range != word {
+                schedule(view: view, range: range, after: Self.delay)
+            }
             return
         }
-        if range == shown, panel.isVisible {
+        guard let range else {
+            hide()
             return
         }
         if range == word {
             return
-        }
-        if panel.isVisible {
-            panel.hide()
-            shown = nil
         }
         schedule(view: view, range: range, after: Self.delay)
     }
@@ -66,10 +84,56 @@ final class HoverController {
     func hide() {
         timer?.cancel()
         timer = nil
+        exitHide?.cancel()
+        exitHide = nil
         word = nil
         shown = nil
         view = nil
+        card = nil
+        rendered = nil
+        anchor = .zero
         panel.hide()
+    }
+
+    func notePointerLeft() {
+        guard panel.isVisible else {
+            return
+        }
+        if staying(on: nil) {
+            exitHide?.cancel()
+            exitHide = nil
+            return
+        }
+        armExit()
+    }
+
+    private func staying(on range: NSRange?) -> Bool {
+        if let shown, range == shown { return true }
+        if panel.containsMouse() { return true }
+        return HoverReach.contains(mouse: NSEvent.mouseLocation, anchor: anchor, card: panel.screenFrame)
+    }
+
+    private func armExit() {
+        guard exitHide == nil else { return }
+        let work = DispatchWorkItem { [weak self] in self?.abandon() }
+        exitHide = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: work)
+    }
+
+    private func abandon() {
+        exitHide = nil
+        guard !staying(on: nil) else {
+            return
+        }
+        if word != shown, timer != nil {
+            panel.hide()
+            shown = nil
+            card = nil
+            rendered = nil
+            anchor = .zero
+            return
+        }
+        hide()
     }
 
     static func bounds(for view: NSTextView) -> NSRect {
@@ -115,15 +179,33 @@ final class HoverController {
     }
 
     private func showDefinition(view: RideTextView, range: NSRange) {
+        card = nil
+        rendered = nil
         view.hooks.definitions?(range.location) { [weak self, weak view] resp in
             guard let self, let view, self.word == range else {
                 return
             }
-            guard let content = HoverText.content(resp) else {
+            self.card = HoverText.content(resp)
+            self.publish(view: view, range: range)
+        }
+        guard let binding = view.hooks.binding?() else {
+            return
+        }
+        let byte = UInt32(Utf16.utf8Offset(in: view.string, utf16: range.location))
+        SessionService.shared.quickDoc(document: binding.document, cursorByte: byte) { [weak self, weak view] doc in
+            guard let self, let view, self.word == range else {
                 return
             }
-            self.show(content, view: view, range: range)
+            self.rendered = doc
+            self.publish(view: view, range: range)
         }
+    }
+
+    private func publish(view: RideTextView, range: NSRange) {
+        guard let content = HoverText.documented(card, rendered: rendered) else {
+            return
+        }
+        show(content, view: view, range: range)
     }
 
     private func show(_ content: HoverContent, view: RideTextView, range: NSRange) {
@@ -131,6 +213,7 @@ final class HoverController {
         let anchor = view.firstRect(forCharacterRange: range, actualRange: &actual)
         shown = range
         self.view = view
+        self.anchor = anchor
         panel.show(content, anchor: anchor, bounds: Self.bounds(for: view))
     }
 }

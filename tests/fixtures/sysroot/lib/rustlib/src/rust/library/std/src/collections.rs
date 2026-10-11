@@ -13,6 +13,13 @@ pub trait Hash {
 }
 pub fn hash_slice() {}
 pub fn free_std() {}
+
+/// Reads the file.
+///
+/// # Errors
+///
+/// Missing path.
+pub fn read_sample() {}
 impl HashMap {
     pub fn new() -> Self {
         HashMap

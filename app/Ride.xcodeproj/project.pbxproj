@@ -527,6 +527,13 @@
 		F14000000000000000000011 /* HierarchySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000010 /* HierarchySession.swift */; };
 		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
+		HDOC0000000000000000B001 /* HoverDocText.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A001 /* HoverDocText.swift */; };
+		HDOC0000000000000000C001 /* HoverDocText.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A001 /* HoverDocText.swift */; };
+		HDOC0000000000000000C002 /* HoverDocTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A002 /* HoverDocTextTests.swift */; };
+		HREACH00000000000000B001 /* HoverReach.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A001 /* HoverReach.swift */; };
+		HREACH00000000000000C001 /* HoverReach.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A001 /* HoverReach.swift */; };
+		HREACH00000000000000C002 /* HoverReachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A002 /* HoverReachTests.swift */; };
+		CDOC0000000000000000B001 /* CompletionDocLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDOC0000000000000000A001 /* CompletionDocLoad.swift */; };
 		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
 		A0000000000000000000011F /* FunctionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011E /* FunctionKeys.swift */; };
 		A00000000000000000000120 /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000015 /* Workspace.swift */; };
@@ -1494,6 +1501,11 @@
 		F14000000000000000000010 /* HierarchySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchySession.swift; sourceTree = "<group>"; };
 		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
+		HDOC0000000000000000A001 /* HoverDocText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverDocText.swift; sourceTree = "<group>"; };
+		HDOC0000000000000000A002 /* HoverDocTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverDocTextTests.swift; sourceTree = "<group>"; };
+		HREACH00000000000000A001 /* HoverReach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverReach.swift; sourceTree = "<group>"; };
+		HREACH00000000000000A002 /* HoverReachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverReachTests.swift; sourceTree = "<group>"; };
+		CDOC0000000000000000A001 /* CompletionDocLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionDocLoad.swift; sourceTree = "<group>"; };
 		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
 		A0000000000000000000011E /* FunctionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionKeys.swift; sourceTree = "<group>"; };
 		A00000000000000000000122 /* ProjectFindTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFindTests.swift; sourceTree = "<group>"; };
@@ -1938,6 +1950,8 @@
 				F13000000000000000000007 /* UsageModelTests.swift */,
 				CV0000000000000000000003 /* VisionLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
+				HDOC0000000000000000A002 /* HoverDocTextTests.swift */,
+				HREACH00000000000000A002 /* HoverReachTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				S10000000000000000000025 /* UpdateControllerTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
@@ -2284,6 +2298,8 @@
 				F10000000000000000000006 /* EditorHostView+Jump.swift */,
 				A00000000000000000000118 /* HoverController.swift */,
 				A0000000000000000000011A /* HoverText.swift */,
+				HDOC0000000000000000A001 /* HoverDocText.swift */,
+				HREACH00000000000000A001 /* HoverReach.swift */,
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
 				CV0000000000000000000004 /* RideTextView+Vision.swift */,
 				A0000000000000000000011E /* FunctionKeys.swift */,
@@ -2468,6 +2484,7 @@
 				E10000000000000000000016 /* SignatureHelpView.swift */,
 				C0E408E8B25CE1E947AA275E /* CompletionPopupLayout.swift */,
 				C09ADDA5838786CF3156310F /* CompletionDocCard.swift */,
+				CDOC0000000000000000A001 /* CompletionDocLoad.swift */,
 				C028435289634FBAFC90E7BC /* CompletionSelectionRow.swift */,
 				A00000000000000000000099 /* CompletionPopup.swift */,
 				A0000000000000000000009A /* CompletionSession.swift */,
@@ -3218,6 +3235,10 @@
 				F13000000000000000000008 /* UsageModelTests.swift in Sources */,
 				D19000000000000000000003 /* DocPage.swift in Sources */,
 				D1900000000000000000000D /* DocPageTests.swift in Sources */,
+				HDOC0000000000000000C001 /* HoverDocText.swift in Sources */,
+				HDOC0000000000000000C002 /* HoverDocTextTests.swift in Sources */,
+				HREACH00000000000000C001 /* HoverReach.swift in Sources */,
+				HREACH00000000000000C002 /* HoverReachTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -3505,6 +3526,7 @@
 				C05B9C9C5FD71EC0C10E28B6 /* PickerCard.swift in Sources */,
 				C08D75C106E023BF5870F00E /* CompletionPopupLayout.swift in Sources */,
 				C08C7528A17636D12649575C /* CompletionDocCard.swift in Sources */,
+				CDOC0000000000000000B001 /* CompletionDocLoad.swift in Sources */,
 				EA0000000000000000000002 /* ToolsModel.swift in Sources */,
 				EA0000000000000000000004 /* ToolInstaller.swift in Sources */,
 				EA0000000000000000000006 /* ToolsInstallView.swift in Sources */,
@@ -3727,6 +3749,8 @@
 				F10000000000000000000009 /* AppState+Panes.swift in Sources */,
 				A00000000000000000000119 /* HoverController.swift in Sources */,
 				A0000000000000000000011B /* HoverText.swift in Sources */,
+				HDOC0000000000000000B001 /* HoverDocText.swift in Sources */,
+				HREACH00000000000000B001 /* HoverReach.swift in Sources */,
 				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
 				CV0000000000000000000014 /* RideTextView+Vision.swift in Sources */,
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,

@@ -38,6 +38,42 @@ final class HtmlScrollTests: XCTestCase {
         XCTAssertTrue(host.isFindBarVisible, "responder \(responder)")
     }
 
+    func testFindJumpsToAnOffscreenMatch() throws {
+        let page = """
+        <!doctype html><head></head><body style="margin:0">\
+        <div style="height:5000px"></div><p id="hit">resolve-marker</p><div style="height:800px"></div>\
+        </body>
+        """
+        let web = HtmlSurface(frame: NSRect(x: 0, y: 0, width: 420, height: 280), configuration: WKWebViewConfiguration())
+        let host = HtmlFindHost(web: web)
+        host.frame = web.frame
+        let window = NSWindow(contentRect: host.frame, styleMask: [.titled], backing: .buffered, defer: false)
+        window.setFrameOrigin(NSPoint(x: -4000, y: -4000))
+        window.contentView = host
+        windows.append(window)
+        window.layoutIfNeeded()
+        host.layoutSubtreeIfNeeded()
+        XCTAssertEqual(web.value(forKey: "usePlatformFindUI") as? Bool, false)
+        let loaded = expectation(description: "load")
+        let nav = HtmlScrollLoad(done: loaded)
+        web.navigationDelegate = nav
+        nav.navigation = web.loadHTMLString(page, baseURL: nil)
+        wait(for: [loaded], timeout: 5)
+        XCTAssertNil(nav.error)
+        let tall = try number(script(web, "document.body.scrollHeight"))
+        XCTAssertGreaterThan(tall, 4000)
+        host.toggleFind(replace: false)
+        host.layoutSubtreeIfNeeded()
+        window.makeKey()
+        let field = try XCTUnwrap(searchField(in: host.findBarView))
+        XCTAssertTrue(window.makeFirstResponder(field))
+        field.stringValue = "resolve-marker"
+        NotificationCenter.default.post(name: NSControl.textDidChangeNotification, object: field)
+        let top = jump(host, web: web, window: window)
+        XCTAssertLessThan(top, 400, "top \(top) bar \(barText(in: host))")
+        XCTAssertGreaterThan(top, -80, "top \(top)")
+    }
+
     func testRestoreScriptUsesTheOffset() {
         XCTAssertTrue(HtmlScroll.restore(1800).contains("1800"))
         XCTAssertTrue(HtmlScroll.restore(-5).contains("scrollTo"))
@@ -60,6 +96,76 @@ final class HtmlScrollTests: XCTestCase {
         let second = try load(root: root, page: page, catcher: nil)
         let restored = try number(script(second, HtmlScroll.restore(y)))
         XCTAssertGreaterThan(restored, 2000)
+    }
+
+    private func jump(_ host: HtmlFindHost, web: WKWebView, window: NSWindow) -> Double {
+        let done = expectation(description: "jump")
+        var top = 5000.0
+        func poll(_ left: Int) {
+            if left == 16 || left == 8 {
+                host.find(backwards: false)
+                if let event = returnEvent(in: window) {
+                    window.sendEvent(event)
+                }
+            }
+            web.evaluateJavaScript("document.getElementById('hit').getBoundingClientRect().top") { result, _ in
+                top = (result as? NSNumber)?.doubleValue ?? top
+                if (top > -80 && top < 400) || left == 0 {
+                    done.fulfill()
+                    return
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    poll(left - 1)
+                }
+            }
+        }
+        poll(20)
+        wait(for: [done], timeout: 8)
+        return top
+    }
+
+    private func searchField(in view: NSView?) -> NSTextField? {
+        guard let view else {
+            return nil
+        }
+        if let field = view as? NSSearchField {
+            return field
+        }
+        for child in view.subviews {
+            if let field = searchField(in: child) {
+                return field
+            }
+        }
+        return nil
+    }
+
+    private func barText(in view: NSView) -> String {
+        var parts: [String] = []
+        if let field = view as? NSTextField {
+            parts.append(field.stringValue)
+        }
+        for child in view.subviews {
+            let text = barText(in: child)
+            if !text.isEmpty {
+                parts.append(text)
+            }
+        }
+        return parts.joined(separator: " | ")
+    }
+
+    private func returnEvent(in window: NSWindow) -> NSEvent? {
+        NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: window.windowNumber,
+            context: nil,
+            characters: "\r",
+            charactersIgnoringModifiers: "\r",
+            isARepeat: false,
+            keyCode: 36
+        )
     }
 
     private func findEvent(in window: NSWindow) -> NSEvent? {

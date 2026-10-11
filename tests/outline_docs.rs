@@ -199,6 +199,15 @@ fn quick(ext: &str, src: &str, needle: &str) -> QuickDoc {
 }
 
 #[test]
+fn quick_doc_keeps_sections_after_the_first_paragraph() {
+    let src = "/// Reads the file.\n///\n/// # Errors\n///\n/// Missing path.\n///\n/// ```\n/// read_to_string(\"a.txt\");\n/// ```\npub fn read_to_string() {}\nfn main() { read_to_string(); }\n";
+    let doc = quick("rs", src, "read_to_string();");
+    assert!(doc.html.contains("Reads the file"), "{}", doc.html);
+    assert!(doc.html.contains("Missing path"), "{}", doc.html);
+    assert!(doc.html.contains("read_to_string"), "{}", doc.html);
+}
+
+#[test]
 fn quick_doc_renders_fenced_example() {
     let doc = quick("rs", RUST_SRC, "Counter {");
     assert_eq!(doc.title, "Counter");

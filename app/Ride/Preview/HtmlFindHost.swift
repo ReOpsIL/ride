@@ -132,9 +132,15 @@ final class HtmlFindHost: NSScrollView {
     }
 
     private func bindFinder() {
+        handMatchesToThePage()
         finder.client = web
         finder.findBarContainer = self
         finder.isIncrementalSearchingEnabled = true
+    }
+
+    private func handMatchesToThePage() {
+        web.setValue(false, forKey: "usePlatformFindUI")
+        finder.incrementalSearchingShouldDimContentView = false
     }
 
     private func reveal() {

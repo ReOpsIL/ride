@@ -24,8 +24,8 @@ final class AppState: ObservableObject {
     }
     @Published var cursorLine = 1
     @Published var cursorColumn = 1
-    @Published var prefs = Preferences.defaults {
-        didSet { syncMenu(); RideEngineClient.shared.setSemantic(prefs.semanticCompletion) }
+    var prefs = Preferences.defaults {
+        didSet { publishPrefs() }
     }
     @Published var overlay: Overlay?
     @Published var showFind = false
@@ -103,6 +103,7 @@ final class AppState: ObservableObject {
     var cargoWork: DispatchWorkItem?
     var gitSink: AnyCancellable?
     var layoutSaveWork: DispatchWorkItem?
+    var prefsPublish: DispatchWorkItem?
     var persistLayout = true
     var restoringWorkspace = false
     let workspaceStore = WorkspaceStateStore()

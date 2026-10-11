@@ -100,6 +100,11 @@ fn a_method_in_a_chain_goes_to_its_trait_definition() {
         "{}",
         &doc.html[..doc.html.len().min(200)]
     );
+    assert!(
+        doc.html.contains("turbofish"),
+        "later section missing, len {}",
+        doc.html.len()
+    );
 }
 
 #[test]

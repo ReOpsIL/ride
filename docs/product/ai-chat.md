@@ -8,12 +8,12 @@ A side panel (View › AI Chat, ⌘8) holds conversations with the chat model. E
 
 | Part | What |
 |---|---|
-| Focus | The selection widened to whole lines. With no selection, Explain and the Selection chip use the innermost outline item at the caret, else the caret line |
+| Focus | The selection widened to whole lines. With no selection, the innermost outline item at the caret, else the caret line |
 | Enclosing | The innermost outline item that strictly contains the focus |
 | Definitions | For each distinct symbol the focus references (the reference extractor, `#include`s skipped), the first `quick_definition` hit that is not already inside the focus or enclosing item; up to 16 |
 | Budget | 24,000 characters shared in that order, cut on whole lines; a cut snippet carries `truncated`, which the prompt passes on so the model says what it could not see |
 
-The file chip sends the buffer text up to 60,000 characters. Paths are workspace-relative.
+The file chip sends the buffer text up to 60,000 characters. Paths are workspace-relative. Selection, Add Selection to Chat and Code › Explain attach only the focus. Ask AI from Comment attaches the focus, the enclosing item and the definitions.
 
 ## Requests
 
@@ -25,4 +25,4 @@ The transcript is one web view: user turns show their chips (links to the code),
 
 ## Explain
 
-Code › Explain (⌃⌘E) and Explain File start a new thread with the pack (or the file) and a fixed request: purpose, step-by-step behaviour, inputs, outputs, side effects and risks for a selection; role, main items and pitfalls for a file. Follow-ups continue the same thread.
+Code › Explain (⌃⌘E) starts a new thread with the selected lines and a fixed request: purpose, step-by-step behaviour, inputs, outputs, side effects and risks. Explain File sends the file and asks for its role, main items and pitfalls. Follow-ups continue the same thread.

@@ -25,7 +25,7 @@ extension RideTextView {
 
     override func mouseExited(with event: NSEvent) {
         super.mouseExited(with: event)
-        HoverController.shared.hide()
+        HoverController.shared.notePointerLeft()
     }
 
     override func mouseDown(with event: NSEvent) {

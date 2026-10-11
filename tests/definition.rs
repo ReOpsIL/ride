@@ -188,6 +188,22 @@ fn catalog_hit_name_byte_is_identifier() {
     );
 }
 
+#[test]
+fn catalog_quick_doc_includes_sections_after_the_first_paragraph() {
+    let (_dir, engine) = engine();
+    let src = "fn main() {\n    std::collections::read_sample();\n}\n";
+    let open = engine
+        .open_session("buf".into(), None, src.into(), None)
+        .unwrap();
+    let at = src.find("read_sample").expect("name") as u32 + 1;
+    let hit = &engine.find_definitions(open.session_id, at).hits[0];
+    assert_eq!(hit.name, "read_sample");
+    assert_eq!(hit.doc_paragraph, "Reads the file.");
+    let doc = engine.quick_doc(open.session_id, at).expect("quick_doc");
+    assert!(doc.html.contains("Reads the file"), "{}", doc.html);
+    assert!(doc.html.contains("Missing path"), "{}", doc.html);
+}
+
 fn demo_engine() -> (tempfile::TempDir, Arc<Engine>, PathBuf) {
     let dir = tempfile::tempdir().unwrap();
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/rust-demo");

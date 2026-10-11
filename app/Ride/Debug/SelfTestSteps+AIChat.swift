@@ -13,7 +13,7 @@ extension SelfTestSteps {
                 SelfTestMenu.perform("Code › Add Selection to Chat")
             }, check: {
                 let kinds = chat.pending.map(\.kind)
-                return e.expect(ai.showPanel && kinds.first == .selection, "panel \(ai.showPanel) chips \(kinds)")
+                return e.expect(ai.showPanel && kinds == [.selection], "panel \(ai.showPanel) chips \(kinds)")
             }),
             SelfTestStep(name: "menu suggest with ai without key", wait: 0.5, until: { AIActivity.shared.note == "AI: failed" }, timeout: 10, run: {
                 e.activate()
@@ -40,11 +40,12 @@ extension SelfTestSteps {
             SelfTestMenu.perform(path)
         }, check: {
             let messages = chat.current?.messages ?? []
-            let attached = messages.first?.attachments.isEmpty == false
+            let kinds = messages.first?.attachments.map(\.kind) ?? []
+            let expected: [AIChatAttachmentKind] = path.contains("File") ? [.file] : [.selection]
             let error = messages.last?.error ?? ""
             return e.expect(
-                messages.count == 2 && attached && error.contains("API key saved"),
-                "messages \(messages.count) attached \(attached) error '\(error)'"
+                messages.count == 2 && kinds == expected && error.contains("API key saved"),
+                "messages \(messages.count) chips \(kinds) error '\(error)'"
             )
         })
     }

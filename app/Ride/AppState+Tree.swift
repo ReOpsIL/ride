@@ -26,20 +26,36 @@ extension AppState {
     }
 
     func updatePrefs(_ edit: (inout Preferences) -> Void) {
+        var next = prefs
+        edit(&next)
+        next = next.clamped
+        guard next != prefs else {
+            return
+        }
         let before = prefs
-        edit(&prefs)
-        prefs = prefs.clamped
-        PreferencesStore.save(prefs)
+        prefs = next
+        PreferencesStore.save(next)
         scheduleWorkspaceSave()
-        if before.showHidden != prefs.showHidden {
+        if before.showHidden != next.showHidden {
             quickFiles = []
             reloadTree()
         }
-        if before.theme != prefs.theme {
+        if before.theme != next.theme {
             applyTheme()
-        } else if before.fontSize != prefs.fontSize {
+        } else if before.fontSize != next.fontSize {
             applyTerminalFont()
         }
+    }
+
+    func publishPrefs() {
+        syncMenu()
+        RideEngineClient.shared.setSemantic(prefs.semanticCompletion)
+        prefsPublish?.cancel()
+        let publish = DispatchWorkItem { [weak self] in
+            self?.objectWillChange.send()
+        }
+        prefsPublish = publish
+        DispatchQueue.main.async(execute: publish)
     }
 
     func reloadTree() {

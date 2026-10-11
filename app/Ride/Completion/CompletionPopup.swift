@@ -9,6 +9,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
     private var prefix = ""
     private var selected = 0
+    private let docs = CompletionDocLoad()
     weak var textView: RideTextView?
 
     override init() {
@@ -64,7 +65,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
             table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
             table.scrollRowToVisible(selected)
         }
-        layout.doc.fill(selectedHit)
+        refreshDoc()
         OverlayPanel.present(panel, frame: frame(in: view))
     }
 
@@ -81,6 +82,7 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
     }
 
     func hide() {
+        docs.cancel()
         panel.orderOut(nil)
         hits = []
     }
@@ -123,7 +125,17 @@ final class CompletionPopupController: NSObject, NSTableViewDataSource, NSTableV
         let row = table.selectedRow
         if row >= 0 {
             selected = row
-            layout.doc.fill(selectedHit)
+        }
+        if isVisible {
+            refreshDoc()
+        }
+    }
+
+    private func refreshDoc() {
+        let item = selectedHit
+        layout.doc.fill(item)
+        docs.start(item) { [weak self] text in
+            self?.layout.doc.showDoc(text)
         }
     }
 

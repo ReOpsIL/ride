@@ -5,6 +5,10 @@ enum AIChatContext {
     static let fileLimit = 60_000
 
     static func selection(view: RideTextView, document: BufferDocument, root: URL?) -> [AIChatAttachment] {
+        Array(pack(view: view, document: document, root: root).prefix(1))
+    }
+
+    static func pack(view: RideTextView, document: BufferDocument, root: URL?) -> [AIChatAttachment] {
         let text = view.string
         var range = view.selectedRange()
         if range.length == 0 {
@@ -12,19 +16,19 @@ enum AIChatContext {
         }
         let start = UInt32(Utf16.utf8Offset(in: text, utf16: range.location))
         let end = UInt32(Utf16.utf8Offset(in: text, utf16: NSMaxRange(range)))
-        let pack = SessionService.shared.readNow(document) { engine, id in
+        let built = SessionService.shared.readNow(document) { engine, id in
             engine.aiContext(sessionId: id, startByte: start, endByte: end, budgetChars: budget)
         } ?? nil
-        guard let pack else {
+        guard let built else {
             let snippet = (text as NSString).substring(with: range)
             let line = (text as NSString).substring(to: range.location).components(separatedBy: "\n").count
             return [AIChatAttachment(kind: .selection, path: path(document, root: root), line: line, text: snippet, truncated: false)]
         }
-        var out = [attachment(pack.focus, kind: .selection, root: root, fallback: path(document, root: root))]
-        if let enclosing = pack.enclosing {
+        var out = [attachment(built.focus, kind: .selection, root: root, fallback: path(document, root: root))]
+        if let enclosing = built.enclosing {
             out.append(attachment(enclosing, kind: .enclosing, root: root, fallback: path(document, root: root)))
         }
-        out += pack.related.map { attachment($0, kind: .definition, root: root, fallback: path(document, root: root)) }
+        out += built.related.map { attachment($0, kind: .definition, root: root, fallback: path(document, root: root)) }
         return out
     }
 

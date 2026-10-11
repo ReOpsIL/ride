@@ -21,7 +21,7 @@ struct AIChatComposer: View {
             .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.s).stroke(ts.ui.border))
             HStack(spacing: Tokens.Space.s) {
                 Button("Selection") { state.addSelectionToChat() }
-                    .help(Shortcuts.help("Add the selection and its definitions", "Code › Add Selection to Chat"))
+                    .help(Shortcuts.help("Add the selected lines", "Code › Add Selection to Chat"))
                 Button("File") { state.addFileToChat() }
                     .help("Attach the whole current file")
                 Spacer(minLength: 0)
