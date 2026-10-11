@@ -26,6 +26,7 @@ final class MenuModel: ObservableObject {
     @Published var showGit = false
     @Published var hasRepo = false
     @Published var showAIPanel = false
+    @Published var showWorkspaceMap = false
     @Published var isRunning = false
     @Published var hasSplit = false
     @Published var selectedTarget: String?
@@ -67,6 +68,7 @@ final class MenuModel: ObservableObject {
         set(\.showGit, state.showGit)
         set(\.hasRepo, state.git.repo != nil)
         set(\.showAIPanel, AIAssistant.shared.showPanel)
+        set(\.showWorkspaceMap, state.showWorkspaceMap)
         set(\.isRunning, state.runOutput.isRunning)
         set(\.hasSplit, state.splitLayout.isSplit)
         set(\.selectedTarget, state.projectModel.selected?.name)

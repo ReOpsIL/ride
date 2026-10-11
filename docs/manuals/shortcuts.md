@@ -36,6 +36,7 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 |---|---|---|---|
 | Sidebar / Debug / Run / Tests | ⌘1 · ⌘3 · ⌘4 · ⌘5 | app |  |
 | Problems / Outline / AI Chat | ⌘6 · ⌘7 · ⌘8 | app |  |
+| Workspace Map | ⌘9 | app |  |
 | Terminal | ⌥F12 | app |  |
 | Toggle Markdown Preview | ⇧⌘V | app |  |
 | Zoom In / Out / Actual Size | ⌘= · ⌘− · ⌃⌘0 | app |  |

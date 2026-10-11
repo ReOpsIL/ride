@@ -19,6 +19,8 @@ struct ViewCommands: Commands {
             Toggle("Usages", isOn: Binding(get: { menu.showUsages }, set: { _ in state.toggleUsages() }))
             Toggle("AI Chat", isOn: Binding(get: { menu.showAIPanel }, set: { _ in AIAssistant.shared.showPanel.toggle() }))
                 .keyboardShortcut("8", modifiers: .command)
+            Toggle("Workspace Map", isOn: Binding(get: { menu.showWorkspaceMap }, set: { _ in state.toggleWorkspaceMap() }))
+                .keyboardShortcut("9", modifiers: .command)
             Toggle("Terminal", isOn: Binding(get: { menu.showTerminal }, set: { _ in state.toggleTerminal() }))
                 .keyboardShortcut(FunctionKeys.f12, modifiers: .option)
             Button("Toggle Markdown Preview") { state.togglePreview() }

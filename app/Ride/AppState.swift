@@ -55,6 +55,10 @@ final class AppState: ObservableObject {
     @Published var showHierarchy = false {
         didSet { syncMenu() }
     }
+    @Published var showWorkspaceMap = false {
+        didSet { syncMenu() }
+    }
+    let workspaceMap = MapSession()
     @Published var showGit = false {
         didSet { syncMenu(); gitPanelShown() }
     }

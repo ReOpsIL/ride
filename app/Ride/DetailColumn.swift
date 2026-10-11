@@ -66,8 +66,13 @@ struct DetailColumn: View {
 
     private var editorRow: some View {
         HStack(spacing: 0) {
-            editor
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ZStack {
+                editor
+                if state.showWorkspaceMap {
+                    MapSurface()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             if state.previewVisible {
                 SplitHandle(axis: .horizontal, value: previewWidth, range: 260...900, inverted: true)
                 PreviewPane()

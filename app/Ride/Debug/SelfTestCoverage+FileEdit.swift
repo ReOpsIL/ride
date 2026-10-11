@@ -62,6 +62,7 @@ extension SelfTestCoverage {
         "View › Tests": ["menu tests toggle", "menu tests restore"],
         "View › Usages": ["menu usages toggle", "menu usages restore"],
         "View › AI Chat": ["menu ai toggle", "menu ai restore"],
+        "View › Workspace Map": ["menu workspace map toggle", "menu workspace map restore"],
         "View › Terminal": ["menu terminal toggle", "menu terminal restore"],
         "View › Toggle Markdown Preview": ["menu markdown preview", "menu markdown preview close"],
         "View › Zoom In": ["menu zoom in"],

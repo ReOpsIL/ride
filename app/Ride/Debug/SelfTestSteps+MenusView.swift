@@ -13,6 +13,7 @@ extension SelfTestSteps {
             ("usages", "View › Usages", { state.showUsages }),
             ("git changes", "Git › Changes", { state.showGit }),
             ("ai", "View › AI Chat", { AIAssistant.shared.showPanel }),
+            ("workspace map", "View › Workspace Map", { state.showWorkspaceMap }),
         ]
         let editorOptions: [(String, String, () -> Bool, () -> Bool)] = [
             ("line numbers", "View › Line Numbers", { state.prefs.lineNumbers }, { true }),

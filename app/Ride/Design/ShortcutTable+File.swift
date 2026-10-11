@@ -46,6 +46,7 @@ extension Shortcuts {
             ShortcutEntry("panels2", "Problems / Outline / AI Chat", [
                 .menu("View › Problems", "⌘6"), .menu("View › Outline", "⌘7"), .menu("View › AI Chat", "⌘8"),
             ]),
+            ShortcutEntry("map", "Workspace Map", [.menu("View › Workspace Map", "⌘9")]),
             ShortcutEntry("terminal", "Terminal", [.menu("View › Terminal", "⌥F12")]),
             ShortcutEntry("preview", "Toggle Markdown Preview", [.menu("View › Toggle Markdown Preview", "⇧⌘V")]),
             ShortcutEntry("zoom", "Zoom In / Out / Actual Size", [

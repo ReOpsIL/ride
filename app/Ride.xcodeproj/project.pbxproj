@@ -270,6 +270,42 @@
 		H7ML0000000000000000B00D /* MarkdownPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A00D /* MarkdownPage.swift */; };
 		H7ML0000000000000000B00E /* MarkdownColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A00E /* MarkdownColumn.swift */; };
 		H7ML0000000000000000C001 /* HtmlPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A001 /* HtmlPage.swift */; };
+		WMAP0000000000000000B001 /* MapGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A001 /* MapGraph.swift */; };
+		WMAP0000000000000000B002 /* MapLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A002 /* MapLayout.swift */; };
+		WMAP0000000000000000B020 /* MapSpread.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A020 /* MapSpread.swift */; };
+		WMAP0000000000000000B021 /* MapFruchterman.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A021 /* MapFruchterman.swift */; };
+		WMAP0000000000000000B022 /* MapStress.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A022 /* MapStress.swift */; };
+		WMAP0000000000000000B003 /* MapViewport.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A003 /* MapViewport.swift */; };
+		WMAP0000000000000000B004 /* MapIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A004 /* MapIO.swift */; };
+		WMAP0000000000000000B005 /* MapCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A005 /* MapCursor.swift */; };
+		WMAP0000000000000000B006 /* MapSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A006 /* MapSource.swift */; };
+		WMAP0000000000000000B007 /* MapCargo.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A007 /* MapCargo.swift */; };
+		WMAP0000000000000000B008 /* MapRust.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A008 /* MapRust.swift */; };
+		WMAP0000000000000000B009 /* MapTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A009 /* MapTree.swift */; };
+		WMAP0000000000000000B010 /* MapScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A010 /* MapScan.swift */; };
+		WMAP0000000000000000B011 /* MapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A011 /* MapSession.swift */; };
+		WMAP0000000000000000B012 /* MapGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A012 /* MapGrid.swift */; };
+		WMAP0000000000000000B013 /* MapEdges.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A013 /* MapEdges.swift */; };
+		WMAP0000000000000000B014 /* MapCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A014 /* MapCard.swift */; };
+		WMAP0000000000000000B015 /* MapMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A015 /* MapMonitor.swift */; };
+		WMAP0000000000000000B016 /* MapCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A016 /* MapCanvas.swift */; };
+		WMAP0000000000000000B017 /* MapSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A017 /* MapSurface.swift */; };
+		WMAP0000000000000000B018 /* AppState+Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A018 /* AppState+Map.swift */; };
+		WMAP0000000000000000C001 /* MapGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A001 /* MapGraph.swift */; };
+		WMAP0000000000000000C002 /* MapLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A002 /* MapLayout.swift */; };
+		WMAP0000000000000000C020 /* MapSpread.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A020 /* MapSpread.swift */; };
+		WMAP0000000000000000C021 /* MapFruchterman.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A021 /* MapFruchterman.swift */; };
+		WMAP0000000000000000C022 /* MapStress.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A022 /* MapStress.swift */; };
+		WMAP0000000000000000C003 /* MapViewport.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A003 /* MapViewport.swift */; };
+		WMAP0000000000000000C004 /* MapIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A004 /* MapIO.swift */; };
+		WMAP0000000000000000C005 /* MapCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A005 /* MapCursor.swift */; };
+		WMAP0000000000000000C006 /* MapSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A006 /* MapSource.swift */; };
+		WMAP0000000000000000C007 /* MapCargo.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A007 /* MapCargo.swift */; };
+		WMAP0000000000000000C008 /* MapRust.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A008 /* MapRust.swift */; };
+		WMAP0000000000000000C009 /* MapTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A009 /* MapTree.swift */; };
+		WMAP0000000000000000C010 /* MapScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A010 /* MapScan.swift */; };
+		WMAP0000000000000000C011 /* MapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A011 /* MapSession.swift */; };
+		WMAP0000000000000000C019 /* MapScanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A019 /* MapScanTests.swift */; };
 		H7ML0000000000000000C002 /* HtmlAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A002 /* HtmlAsset.swift */; };
 		H7ML0000000000000000C003 /* HtmlPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A003 /* HtmlPolicy.swift */; };
 		H7ML0000000000000000C004 /* HtmlPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A007 /* HtmlPageTests.swift */; };
@@ -1242,6 +1278,28 @@
 		B1000000000000000000005A /* MarkdownPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownPreview.swift"; sourceTree = "<group>"; };
 		B1000000000000000000006A /* PreviewPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewPane.swift"; sourceTree = "<group>"; };
 		H7ML0000000000000000A001 /* HtmlPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlPage.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A001 /* MapGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGraph.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A002 /* MapLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayout.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A020 /* MapSpread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSpread.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A021 /* MapFruchterman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFruchterman.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A022 /* MapStress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStress.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A003 /* MapViewport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewport.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A004 /* MapIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapIO.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A005 /* MapCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCursor.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A006 /* MapSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSource.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A007 /* MapCargo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCargo.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A008 /* MapRust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRust.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A009 /* MapTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTree.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A010 /* MapScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapScan.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A011 /* MapSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSession.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A012 /* MapGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGrid.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A013 /* MapEdges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEdges.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A014 /* MapCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCard.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A015 /* MapMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapMonitor.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A016 /* MapCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCanvas.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A017 /* MapSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSurface.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A018 /* AppState+Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Map.swift"; sourceTree = "<group>"; };
+		WMAP0000000000000000A019 /* MapScanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapScanTests.swift; sourceTree = "<group>"; };
 		H7ML0000000000000000A002 /* HtmlAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlAsset.swift; sourceTree = "<group>"; };
 		H7ML0000000000000000A003 /* HtmlPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlPolicy.swift; sourceTree = "<group>"; };
 		H7ML0000000000000000A004 /* HtmlScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlScheme.swift; sourceTree = "<group>"; };
@@ -1917,6 +1975,7 @@
 				F1100000000000000000000B /* WorkspaceStateStoreTests.swift */,
 				A00000000000000000000908 /* BufferLanguageTests.swift */,
 				H7ML0000000000000000A007 /* HtmlPageTests.swift */,
+				WMAP0000000000000000A019 /* MapScanTests.swift */,
 				H7ML0000000000000000A00F /* MarkdownPageTests.swift */,
 				H7ML0000000000000000A00B /* HtmlScrollTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
@@ -2044,6 +2103,7 @@
 				T20000000000000000000100 /* Tests */,
 				F13000000000000000000100 /* Usages */,
 				F14000000000000000000100 /* Hierarchy */,
+				WMAP0000000000000000G001 /* Map */,
 				F1E0000000000000000000A0 /* Rename */,
 				A00000000000000000000055 /* Editor */,
 				A00000000000000000000056 /* Search */,
@@ -2684,6 +2744,34 @@
 			path = Debug;
 			sourceTree = "<group>";
 		};
+		WMAP0000000000000000G001 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				WMAP0000000000000000A001 /* MapGraph.swift */,
+				WMAP0000000000000000A002 /* MapLayout.swift */,
+				WMAP0000000000000000A020 /* MapSpread.swift */,
+				WMAP0000000000000000A021 /* MapFruchterman.swift */,
+				WMAP0000000000000000A022 /* MapStress.swift */,
+				WMAP0000000000000000A003 /* MapViewport.swift */,
+				WMAP0000000000000000A004 /* MapIO.swift */,
+				WMAP0000000000000000A005 /* MapCursor.swift */,
+				WMAP0000000000000000A006 /* MapSource.swift */,
+				WMAP0000000000000000A007 /* MapCargo.swift */,
+				WMAP0000000000000000A008 /* MapRust.swift */,
+				WMAP0000000000000000A009 /* MapTree.swift */,
+				WMAP0000000000000000A010 /* MapScan.swift */,
+				WMAP0000000000000000A011 /* MapSession.swift */,
+				WMAP0000000000000000A012 /* MapGrid.swift */,
+				WMAP0000000000000000A013 /* MapEdges.swift */,
+				WMAP0000000000000000A014 /* MapCard.swift */,
+				WMAP0000000000000000A015 /* MapMonitor.swift */,
+				WMAP0000000000000000A016 /* MapCanvas.swift */,
+				WMAP0000000000000000A017 /* MapSurface.swift */,
+				WMAP0000000000000000A018 /* AppState+Map.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
 		B1000000000000000000009A /* Preview */ = {
 			isa = PBXGroup;
 			children = (
@@ -3250,6 +3338,21 @@
 				B1000000000000000000002C /* HeadingLevel.swift in Sources */,
 				B1000000000000000000008B /* HeadingLevelTests.swift in Sources */,
 				H7ML0000000000000000C001 /* HtmlPage.swift in Sources */,
+				WMAP0000000000000000C001 /* MapGraph.swift in Sources */,
+				WMAP0000000000000000C002 /* MapLayout.swift in Sources */,
+				WMAP0000000000000000C020 /* MapSpread.swift in Sources */,
+				WMAP0000000000000000C021 /* MapFruchterman.swift in Sources */,
+				WMAP0000000000000000C022 /* MapStress.swift in Sources */,
+				WMAP0000000000000000C003 /* MapViewport.swift in Sources */,
+				WMAP0000000000000000C004 /* MapIO.swift in Sources */,
+				WMAP0000000000000000C005 /* MapCursor.swift in Sources */,
+				WMAP0000000000000000C006 /* MapSource.swift in Sources */,
+				WMAP0000000000000000C007 /* MapCargo.swift in Sources */,
+				WMAP0000000000000000C008 /* MapRust.swift in Sources */,
+				WMAP0000000000000000C009 /* MapTree.swift in Sources */,
+				WMAP0000000000000000C010 /* MapScan.swift in Sources */,
+				WMAP0000000000000000C011 /* MapSession.swift in Sources */,
+				WMAP0000000000000000C019 /* MapScanTests.swift in Sources */,
 				H7ML0000000000000000C002 /* HtmlAsset.swift in Sources */,
 				H7ML0000000000000000C003 /* HtmlPolicy.swift in Sources */,
 				H7ML0000000000000000C004 /* HtmlPageTests.swift in Sources */,
@@ -3915,6 +4018,27 @@
 				B1000000000000000000005B /* MarkdownPreview.swift in Sources */,
 				B1000000000000000000006B /* PreviewPane.swift in Sources */,
 				H7ML0000000000000000B001 /* HtmlPage.swift in Sources */,
+				WMAP0000000000000000B001 /* MapGraph.swift in Sources */,
+				WMAP0000000000000000B002 /* MapLayout.swift in Sources */,
+				WMAP0000000000000000B020 /* MapSpread.swift in Sources */,
+				WMAP0000000000000000B021 /* MapFruchterman.swift in Sources */,
+				WMAP0000000000000000B022 /* MapStress.swift in Sources */,
+				WMAP0000000000000000B003 /* MapViewport.swift in Sources */,
+				WMAP0000000000000000B004 /* MapIO.swift in Sources */,
+				WMAP0000000000000000B005 /* MapCursor.swift in Sources */,
+				WMAP0000000000000000B006 /* MapSource.swift in Sources */,
+				WMAP0000000000000000B007 /* MapCargo.swift in Sources */,
+				WMAP0000000000000000B008 /* MapRust.swift in Sources */,
+				WMAP0000000000000000B009 /* MapTree.swift in Sources */,
+				WMAP0000000000000000B010 /* MapScan.swift in Sources */,
+				WMAP0000000000000000B011 /* MapSession.swift in Sources */,
+				WMAP0000000000000000B012 /* MapGrid.swift in Sources */,
+				WMAP0000000000000000B013 /* MapEdges.swift in Sources */,
+				WMAP0000000000000000B014 /* MapCard.swift in Sources */,
+				WMAP0000000000000000B015 /* MapMonitor.swift in Sources */,
+				WMAP0000000000000000B016 /* MapCanvas.swift in Sources */,
+				WMAP0000000000000000B017 /* MapSurface.swift in Sources */,
+				WMAP0000000000000000B018 /* AppState+Map.swift in Sources */,
 				H7ML0000000000000000B002 /* HtmlAsset.swift in Sources */,
 				H7ML0000000000000000B003 /* HtmlPolicy.swift in Sources */,
 				H7ML0000000000000000B004 /* HtmlScheme.swift in Sources */,
