@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ride 2027 — the team reads what the agents wrote</title>
+<style>
+  :root {
+    --bg: #191B1F;
+    --raised: #22252A;
+    --overlay: #26292F;
+    --editor: #1E2024;
+    --border: rgba(255,255,255,.08);
+    --text: #E6E8EC;
+    --secondary: #A0A6B0;
+    --tertiary: #6B7280;
+    --accent: #4C8DFF;
+    --error: #F16A6A;
+    --warning: #E5B94A;
+    --info: #5AA9FF;
+    --success: #58C27D;
+    --sel: rgba(76,141,255,.28);
+    --kw: #C586C0;
+    --fn: #DCDCAA;
+    --ty: #4EC9B0;
+    --str: #CE9178;
+    --cmt: #6A9955;
+    --num: #B5CEA8;
+    --page: #0c0e12;
+    --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--page); color: var(--text); font-family: var(--ui); }
+  body { min-height: 100%; }
+  button, a { font-family: inherit; }
+  .deck { display: grid; grid-template-columns: 232px 1fr; min-height: 100%; }
+  .rail::-webkit-scrollbar { height: 8px; width: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: #3a3f48; border-radius: 4px; }
+  .rail::-webkit-scrollbar-track { background: transparent; }
+  .rail {
+    position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto;
+    padding: 22px 14px 28px; border-right: 1px solid var(--border); background: #101216;
+  }
+  .brand { font-size: 13px; letter-spacing: .04em; color: var(--secondary); margin: 0 8px 4px; }
+  .brand b { color: var(--text); font-weight: 600; }
+  .brand-sub { margin: 0 8px 18px; color: var(--tertiary); font-size: 12px; }
+  .rail button {
+    display: grid; grid-template-columns: 22px 1fr; gap: 8px; width: 100%;
+    text-align: left; background: transparent; color: var(--secondary);
+    border: 0; border-radius: 8px; padding: 7px 8px; cursor: pointer; font-size: 13px;
+  }
+  .rail button[aria-current="true"] { background: var(--sel); color: var(--text); }
+  .rail button:hover { background: rgba(255,255,255,.05); color: var(--text); }
+  .rail .n { color: var(--tertiary); font-variant-numeric: tabular-nums; }
+  .rail .ph { display: block; color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  .rail button[aria-current="true"] .ph { color: var(--accent); }
+  .stage { padding: 28px 36px 48px; max-width: 1180px; }
+  .kicker { margin: 0 0 6px; color: var(--accent); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { margin: 0 0 8px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .lede { margin: 0 0 18px; max-width: 68ch; color: var(--secondary); font-size: 16px; line-height: 1.45; }
+  .win {
+    background: var(--bg); border: 1px solid rgba(255,255,255,.12); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.35); min-height: 560px;
+    display: flex; flex-direction: column;
+  }
+  .titlebar {
+    height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    background: #14161a; border-bottom: 1px solid var(--border); flex: none;
+  }
+  .lights { display: flex; gap: 6px; }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; }
+  .lights i:nth-child(3) { background: #28c840; }
+  .titlebar .name { margin-left: 8px; font-size: 12px; color: var(--secondary); }
+  .titlebar .grow { flex: 1; }
+  .tb { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--border); color: var(--tertiary); font-size: 11px; display: grid; place-items: center; }
+  .body { display: flex; min-height: 0; flex: 1; }
+  .tree { width: 196px; flex: none; background: var(--bg); border-right: 1px solid var(--border); padding: 8px 0; font-size: 12px; }
+  .tree .root { display: flex; align-items: center; gap: 6px; padding: 4px 12px 8px; color: var(--text); font-weight: 600; }
+  .tree .row { display: flex; align-items: center; gap: 6px; padding: 3px 12px 3px 22px; color: var(--secondary); }
+  .tree .row.on { background: #3a6fbf; color: white; }
+  .tree .row .tag { margin-left: auto; font-size: 10px; color: var(--warning); }
+  .tree .row.on .tag { color: #ffe3a3; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--editor); }
+  .tabs { display: flex; gap: 0; background: var(--bg); border-bottom: 1px solid var(--border); height: 32px; flex: none; }
+  .tab { padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--secondary); border-right: 1px solid var(--border); }
+  .tab.on { background: var(--editor); color: var(--text); }
+  .code { padding: 8px 0 12px; font-family: var(--mono); font-size: 12px; line-height: 1.55; overflow: auto; }
+  .code .lnrow { display: grid; grid-template-columns: 42px 14px 1fr; }
+  .code .ln { color: var(--tertiary); text-align: right; padding-right: 8px; }
+  .code .g { display: flex; align-items: center; justify-content: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.suspect { background: var(--warning); }
+  .dot.question { background: var(--info); }
+  .dot.verified { background: var(--success); }
+  .dot.stale { background: transparent; border: 1.5px solid var(--tertiary); }
+  .cur { background: rgba(255,255,255,.04); }
+  .stop { background: rgba(76,141,255,.16); box-shadow: inset 2px 0 0 var(--accent); }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .ty { color: var(--ty); }
+  .str { color: var(--str); } .cmt { color: var(--cmt); } .num { color: var(--num); }
+  .side { width: 320px; flex: none; background: var(--bg); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+  .side h2, .panel h2 {
+    margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  .side h2 span, .panel h2 span { color: var(--tertiary); font-weight: 400; }
+  .seg { margin-left: auto; display: flex; background: var(--overlay); border-radius: 6px; padding: 2px; }
+  .seg b, .seg em {
+    font-style: normal; font-weight: 500; font-size: 11px; padding: 2px 7px; border-radius: 4px; color: var(--secondary);
+  }
+  .seg b { background: var(--accent); color: white; }
+  .status {
+    height: 26px; flex: none; display: flex; align-items: center; gap: 14px;
+    padding: 0 12px; background: #14161a; border-top: 1px solid var(--border);
+    color: var(--tertiary); font-size: 11px;
+  }
+  .status .grow { flex: 1; }
+  .panel { background: var(--raised); border-top: 1px solid var(--border); }
+  .counts { display: flex; gap: 14px; padding: 8px 12px; font-size: 12px; color: var(--secondary); border-bottom: 1px solid var(--border); }
+  .counts b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .counts .v { color: var(--success); } .counts .s { color: var(--warning); } .counts .u { color: var(--text); }
+  .sym { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sym th { text-align: left; font-weight: 500; color: var(--tertiary); padding: 4px 8px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+  .sym td { padding: 5px 8px; border-top: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+  .sym tr.on td { background: var(--sel); }
+  .sym .symname { color: var(--text); }
+  .sym .path { color: var(--tertiary); font-family: var(--mono); font-size: 11px; }
+  .pill { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 99px; border: 1px solid var(--border); color: var(--secondary); margin-right: 4px; }
+  .pill.bad { color: var(--warning); border-color: rgba(229,185,74,.45); }
+  .pill.hot { color: var(--error); border-color: rgba(241,106,106,.4); }
+  .pill.ok { color: var(--success); border-color: rgba(88,194,125,.4); }
+  .pill.info { color: var(--info); border-color: rgba(90,169,255,.45); }
+  .pill.dim { color: var(--tertiary); }
+  .diff { font-family: var(--mono); font-size: 12px; line-height: 1.55; padding: 8px 0; }
+  .diff .d { display: grid; grid-template-columns: 28px 1fr; }
+  .diff .d span:last-child { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .diff .del { background: rgba(241,106,106,.16); }
+  .diff .add { background: rgba(88,194,125,.16); }
+  .diff .meta { color: var(--info); padding: 4px 10px; white-space: normal; }
+  .dossier { padding: 10px 12px 16px; font-size: 12px; line-height: 1.45; overflow: auto; }
+  .dossier .sig { font-family: var(--mono); font-size: 12px; background: var(--editor); padding: 8px 10px; border-radius: 6px; margin: 8px 0; }
+  .dossier h3 { margin: 12px 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--tertiary); font-weight: 600; }
+  .dossier ul { margin: 0; padding: 0; list-style: none; }
+  .dossier li { padding: 2px 0; color: var(--secondary); }
+  .dossier li b { color: var(--fn); font-weight: 500; }
+  .note {
+    background: var(--editor); border-radius: 6px; padding: 8px 10px; color: var(--secondary); margin-top: 6px;
+  }
+  .note .st { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .note.fresh .st { color: var(--success); }
+  .note.stale .st { color: var(--warning); }
+  .note.miss .st { color: var(--tertiary); }
+  .btn {
+    display: inline-block; margin-top: 8px; background: var(--overlay); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px;
+  }
+  .map { position: relative; flex: none; height: 470px; background:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--editor); }
+  .map svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .card {
+    position: absolute; width: 180px; height: 84px; z-index: 1;
+    background: var(--raised); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px; padding: 8px 10px; box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  }
+  .card .k { font-size: 10px; color: var(--tertiary); text-transform: uppercase; letter-spacing: .05em; }
+  .card .t { font-size: 13px; margin-top: 2px; }
+  .card .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .crumb { position: absolute; top: 10px; left: 12px; font-size: 12px; color: var(--secondary); }
+  .crumb b { color: var(--text); font-weight: 500; }
+  .shot { width: 210px; background: #0e1116; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 6px; }
+  .shot .bar { background: #1a1e27; color: var(--secondary); font-size: 10px; padding: 4px 8px; }
+  .shot .r { display: flex; justify-content: space-between; padding: 6px 8px; font-family: var(--mono); font-size: 11px; border-top: 1px solid var(--border); }
+  .shot .clip { color: var(--error); background: rgba(241,106,106,.15); padding: 0 3px; border-radius: 3px; }
+  .local {
+    margin: 10px 12px; border: 1px dashed rgba(255,255,255,.2); border-radius: 8px; padding: 8px 10px; color: var(--secondary); font-size: 12px;
+  }
+  .local .st { color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .hunt li { display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .frames .fr { display: flex; justify-content: space-between; padding: 4px 12px; font-size: 12px; color: var(--secondary); }
+  .frames .fr.on { background: var(--sel); color: var(--text); }
+  .frames .fr em { font-style: normal; color: var(--tertiary); font-family: var(--mono); font-size: 11px; }
+  .qs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+  .q { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-height: 140px; }
+  .q .num { color: var(--accent); font-size: 12px; letter-spacing: .08em; }
+  .q p { margin: 8px 0 0; font-size: 16px; line-height: 1.35; }
+  .morning { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: center; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .fact { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .fact h3 { margin: 0 0 8px; font-size: 13px; }
+  .fact li { margin: 4px 0; color: var(--secondary); font-size: 13px; }
+  .caption { margin: 14px 0 0; color: var(--secondary); font-size: 15px; line-height: 1.45; max-width: 78ch; }
+  .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .points div { background: #14161a; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--secondary); line-height: 1.35; }
+  .points strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 3px; }
+  .pager { display: flex; gap: 8px; margin-top: 16px; }
+  .pager button {
+    background: var(--raised); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px; cursor: pointer; font-size: 13px;
+  }
+  .pager button:disabled { opacity: .35; cursor: default; }
+  .hint { margin-left: auto; color: var(--tertiary); font-size: 12px; align-self: center; }
+  [hidden] { display: none !important; }
+  @media (max-width: 980px) {
+    .deck { grid-template-columns: 1fr; }
+    .deck > nav, .deck > main, .stage, .win, .body, .main, .side, .panel { min-width: 0; max-width: 100%; }
+    .rail { width: 100%; }
+    .panel { overflow-x: auto; }
+    .rail { position: relative; height: auto; display: flex; gap: 4px; overflow: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    .brand, .brand-sub { display: none; }
+    .rail button { width: auto; white-space: nowrap; grid-template-columns: auto auto; }
+    .rail .ph { display: none; }
+    .stage { padding: 18px 14px 32px; max-width: none; }
+    .morning, .qs, .points, .facts { grid-template-columns: 1fr; }
+    .tree { display: none; }
+    .body { flex-direction: column; }
+    .side { width: auto; border-left: 0; border-top: 1px solid var(--border); }
+    .win { min-height: 0; }
+    .sym { display: block; overflow-x: auto; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+  <nav class="rail" aria-label="Scenes">
+    <p class="brand"><b>Ride</b> · 2027</p>
+    <p class="brand-sub">One morning on an agent branch.</p>
+    <button data-go="morning" aria-current="true"><span class="n">1</span><span>The morning<span class="ph">the job</span></span></button>
+    <button data-go="files"><span class="n">2</span><span>Files<span class="ph">the IDE you have</span></span></button>
+    <button data-go="symbols"><span class="n">3</span><span>Symbols<span class="ph">S1 · the front door</span></span></button>
+    <button data-go="dossier"><span class="n">4</span><span>Dossier<span class="ph">S2 · facts only</span></span></button>
+    <button data-go="note"><span class="n">5</span><span>A stale note<span class="ph">S2 · explain</span></span></button>
+    <button data-go="map"><span class="n">6</span><span>The map<span class="ph">S2 · the workspace</span></span></button>
+    <button data-go="marks"><span class="n">7</span><span>Shared marks<span class="ph">S3 · the team</span></span></button>
+    <button data-go="hunt"><span class="n">8</span><span>A red test<span class="ph">S4 · functional</span></span></button>
+    <button data-go="stop"><span class="n">9</span><span>A debug stop<span class="ph">S4 · logical</span></span></button>
+    <button data-go="visual"><span class="n">10</span><span>A visual bug<span class="ph">S4 · evidence</span></span></button>
+    <button data-go="stays"><span class="n">11</span><span>The IDE stays<span class="ph">what we keep</span></span></button>
+  </nav>
+  <main>
+    <section class="stage" data-scene="morning">
+      <p class="kicker">Tuesday 8:40 · ledger</p>
+      <div class="morning">
+        <div>
+          <h1>The agents wrote the night. The team has to trust the morning.</h1>
+          <p class="lede">An agent pushed 6,200 lines onto <b>ledger</b>. Nobody on the team typed them. Ada opens the repo in Ride. The editor, the debugger, and the tests are the same tools as yesterday. She still has to answer three questions before she trusts the branch.</p>
+        </div>
+        <div class="qs">
+          <div class="q"><div class="num">01</div><p>What is this program now?</p></div>
+          <div class="q"><div class="num">02</div><p>What just changed, and what have we actually checked?</p></div>
+          <div class="q"><div class="num">03</div><p>Where is the bug — functional, logical, or visual?</p></div>
+        </div>
+      </div>
+      <p class="caption">The screens after this one are the support layer from <code>plan/roadmap/support-2027.md</code>. The classical IDE stays underneath every one of them. Use the scenes on the left, or the arrow keys.</p>
+      <div class="pager"><button data-dir="1">Start with the files she already has</button><span class="hint">→</span></div>
+    </section>
+
+    <section class="stage" data-scene="files" hidden>
+      <p class="kicker">Already shipped · Changes</p>
+      <h1>Forty files, one true diff, no decision in sight.</h1>
+      <p class="lede">This is Ride today. The Changes panel, the tree badges, and a unified diff are enough to commit her own edit. They are the wrong size for a night of agent output.</p>
+      <div class="win" aria-label="Ride showing the file changes panel">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div><div class="grow"></div><div class="tb">⌘</div></div>
+        <div class="body">
+          <aside class="tree">
+            <div class="root">ledger</div>
+            <div class="row">src</div>
+            <div class="row">parse.rs <span class="tag">M</span></div>
+            <div class="row on">apply.rs <span class="tag">M</span></div>
+            <div class="row">fold.rs <span class="tag">M</span></div>
+            <div class="row">paint.rs <span class="tag">M</span></div>
+            <div class="row">commit.rs <span class="tag">M</span></div>
+            <div class="row">decode.rs <span class="tag">D</span></div>
+            <div class="row">README.md <span class="tag">M</span></div>
+          </aside>
+          <div class="main">
+            <div class="tabs"><div class="tab on">apply.rs</div></div>
+            <div class="code">
+              <div class="lnrow cur"><span class="ln">40</span><span class="g"></span><span><span class="kw">pub fn</span> <span class="fn">apply</span>(batch: &amp;<span class="ty">Batch</span>) -&gt; <span class="ty">u32</span> {</span></div>
+              <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>    <span class="kw">let</span> entries = batch.entries();</span></div>
+              <div class="lnrow"><span class="ln">42</span><span class="g"></span><span>    <span class="fn">fold_entries</span>(entries)</span></div>
+              <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>}</span></div>
+            </div>
+            <div class="panel">
+              <h2>Changes <span>40 files</span><span class="seg"><b>Files</b><em>Symbols</em></span></h2>
+              <div class="body" style="min-height: 210px;">
+                <div style="width: 240px; border-right: 1px solid var(--border); font-size: 12px;">
+                  <div class="row" style="padding:8px 12px;color:var(--tertiary)">CHANGES 40</div>
+                  <div class="row on" style="margin:0 8px;border-radius:6px">apply.rs <span class="tag">M</span></div>
+                  <div class="row">parse.rs <span class="tag">M</span></div>
+                  <div class="row">fold.rs <span class="tag">M</span></div>
+                  <div class="row">paint.rs <span class="tag">M</span></div>
+                  <div class="row">commit.rs <span class="tag">M</span></div>
+                  <div class="row" style="color:var(--tertiary)">32 more files</div>
+                </div>
+                <div class="diff" style="flex:1">
+                  <div class="meta">@@ apply.rs @@</div>
+                  <div class="d del"><span>−</span><span>fold_entries(entries).<span class="fn">saturating_add</span>(1)</span></div>
+                  <div class="d add"><span>+</span><span><span class="kw">let</span> raw = entries.<span class="fn">as_ptr</span>();</span></div>
+                  <div class="d add"><span>+</span><span><span class="kw">unsafe</span> { <span class="fn">fold_entries</span>(raw, entries.len()) }</span></div>
+                  <div class="d del"><span>−</span><span>batch.note.push(<span class="str">"ok"</span>);</span></div>
+                  <div class="d add"><span>+</span><span><span class="cmt">// agent: skip the note on the fast path</span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>agent/ingest</span><span>Ln 40</span><span class="grow"></span><span>ready</span></div>
+      </div>
+      <p class="caption">The hunks are real. <code>unsafe</code> landed inside <code>apply</code>. A file list cannot say which symbols changed signature, which ones a test mentions, or which ones anyone has checked.</p>
+      <div class="points">
+        <div><strong>Keep this view</strong>Files stays the segment she uses for her own commit.</div>
+        <div><strong>The unit is wrong</strong>A 400-line file hides one signature change and twelve untouched functions.</div>
+        <div><strong>No memory</strong>Nothing here records that Mira already doubted <code>fold_entries</code>.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Read it as symbols</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="symbols" hidden>
+      <p class="kicker">S1 · Review inbox</p>
+      <h1>The same panel, read as symbols.</h1>
+      <p class="lede">Ride parses the old blob and the new text, hangs each hunk on the innermost item, and lists those items. The header is the team's progress against <code>origin/main</code>.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div><div class="grow"></div></div>
+        <div class="body">
+          <aside class="tree">
+            <div class="root">ledger</div>
+            <div class="row">src</div>
+            <div class="row on">parse.rs <span class="tag">M</span></div>
+            <div class="row">apply.rs <span class="tag">M</span></div>
+            <div class="row">fold.rs <span class="tag">M</span></div>
+            <div class="row">paint.rs <span class="tag">M</span></div>
+          </aside>
+          <div class="main">
+            <div class="panel" style="border-top:0; flex:1; display:flex; flex-direction:column;">
+              <h2>Changes <span>against origin/main</span><span class="seg"><em>Files</em><b>Symbols</b></span></h2>
+              <div class="counts">
+                <span><b>14</b> changed</span>
+                <span class="v"><b>2</b> verified</span>
+                <span class="s"><b>3</b> suspect</span>
+                <span class="u"><b>9</b> unexplained</span>
+              </div>
+              <table class="sym">
+                <thead><tr><th>Symbol</th><th>Change</th><th>Checks</th><th>Mark</th></tr></thead>
+                <tbody>
+                  <tr class="on"><td><div class="symname">parse</div><div class="path">src/parse.rs:40</div></td><td>signature</td><td><span class="pill bad">public signature</span><span class="pill">test mentions</span></td><td><span class="pill bad">suspect · dov</span></td></tr>
+                  <tr><td><div class="symname">apply</div><div class="path">src/apply.rs:40</div></td><td>body</td><td><span class="pill hot">unsafe</span></td><td><span class="pill dim">no note</span></td></tr>
+                  <tr><td><div class="symname">fold_entries</div><div class="path">src/fold.rs:22</div></td><td>body</td><td></td><td><span class="pill info">question · Mira</span></td></tr>
+                  <tr><td><div class="symname">balance</div><div class="path">src/fold.rs:60</div></td><td>body</td><td></td><td><span class="pill dim">verified · stale · Ada</span></td></tr>
+                  <tr><td><div class="symname">amount</div><div class="path">src/money.rs:8</div></td><td>body</td><td></td><td><span class="pill ok">verified · dov</span></td></tr>
+                  <tr><td><div class="symname">paint_row</div><div class="path">src/paint.rs:18</div></td><td>body</td><td></td><td><span class="pill dim">no note</span></td></tr>
+                  <tr><td><div class="symname">commit_batch</div><div class="path">src/commit.rs:11</div></td><td>body</td><td><span class="pill bad">no test mentions</span></td><td><span class="pill bad">suspect · dov</span></td></tr>
+                  <tr><td><div class="symname">decode_frame</div><div class="path">src/decode.rs</div></td><td>removed</td><td><span class="pill hot">item removed</span></td><td></td></tr>
+                  <tr><td><div class="symname">README.md</div><div class="path">file</div></td><td>file hunk</td><td><span class="pill dim">no outline</span></td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>parse <span>signature edited</span></h2>
+            <div class="diff">
+              <div class="meta">src/parse.rs · callers: ingest, empty_header_is_rejected</div>
+              <div class="d del"><span>−</span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>)<br>-&gt; <span class="ty">Header</span></span></div>
+              <div class="d add"><span>+</span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>)<br>-&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt;</span></div>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>agent/ingest</span><span class="grow"></span><span>14 symbols · 2 verified on this text</span></div>
+      </div>
+      <p class="caption"><code>balance</code> was verified by Ada, then the agent edited it, so the mark is stale and does not count. <code>amount</code> still matches its hash, so it does. <code>README.md</code> stays a file hunk. Each check is its own pill. There is no score hiding them.</p>
+      <div class="points">
+        <div><strong>14 / 2 / 3 / 9</strong>Changed, verified on the current hash, suspect, unexplained.</div>
+        <div><strong>Five change kinds</strong>Body, signature, added, removed, moved. Plus a file hunk.</div>
+        <div><strong>Hint, labelled as one</strong>"Test mentions" means the name occurs in a test. It is not coverage.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Open the dossier</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="dossier" hidden>
+      <p class="kicker">S2 · Dossier · model off</p>
+      <h1>The symbol explains itself before anyone asks a model.</h1>
+      <p class="lede">Ada puts the caret on <code>parse</code>. The dossier is signature, callers, callees, the change, and the marks. All of that comes from the engine. The note is missing, and the panel says so.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — parse.rs</div></div>
+        <div class="body">
+          <aside class="tree"><div class="root">ledger</div><div class="row on">parse.rs</div><div class="row">apply.rs</div><div class="row">fold.rs</div></aside>
+          <div class="main">
+            <div class="tabs"><div class="tab on">parse.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">36</span><span class="g"></span><span><span class="cmt">/// Split a frame into a header and its entries.</span></span></div>
+              <div class="lnrow cur"><span class="ln">40</span><span class="g"><i class="dot suspect"></i></span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt; {</span></div>
+              <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>    <span class="kw">let</span> header = <span class="fn">Header::from_parts</span>(input)?;</span></div>
+              <div class="lnrow"><span class="ln">42</span><span class="g"></span><span>    <span class="fn">reject_empty</span>(&amp;header)?;</span></div>
+              <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>    <span class="kw">Ok</span>(header)</span></div>
+              <div class="lnrow"><span class="ln">44</span><span class="g"></span><span>}</span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Dossier <span>parse</span></h2>
+            <div class="dossier">
+              <div class="sig"><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>)<br>-&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt;</div>
+              <div class="path">src/parse.rs:40</div>
+              <h3>Callers</h3>
+              <ul><li><b>ingest</b> · src/ingest.rs:14</li><li><b>empty_header_is_rejected</b> · tests/parse.rs:8</li></ul>
+              <h3>Callees</h3>
+              <ul><li><b>Header::from_parts</b></li><li><b>reject_empty</b></li></ul>
+              <h3>Change since origin/main</h3>
+              <ul><li>Signature edited · public signature</li></ul>
+              <h3>Note</h3>
+              <div class="note miss"><div class="st">Missing</div>No note stored for this text. Facts above are from the index.</div>
+              <div class="btn">Generate note</div>
+              <h3>Marks</h3>
+              <ul><li><span class="pill bad">suspect</span> rejects an empty header the tests never send · dov</li></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>agent/ingest</span><span>Ln 40</span><span class="grow"></span><span>AI off · dossier is live</span></div>
+      </div>
+      <p class="caption">The amber dot in the gutter is dov's suspect mark. Generate note is optional. With no API key, this panel is already the explanation.</p>
+      <div class="points">
+        <div><strong>Engine facts</strong>Signature, callers, callees, the symbol change.</div>
+        <div><strong>Model narrates later</strong>It does not invent the call edge.</div>
+        <div><strong>The mark is already here</strong>Written yesterday, committed in the repo.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Generate the note</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="note" hidden>
+      <p class="kicker">S2 · Pinned note</p>
+      <h1>The note remembers the text it was written about.</h1>
+      <p class="lede">Generate asks the context pack Ride already builds: the item, its surroundings, the definitions it references. The answer is stored with a hash of the item. Someone pulls again. The body moves. The note stays on screen and is labelled stale.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — parse.rs · after a second pull</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">parse.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">40</span><span class="g"><i class="dot suspect"></i></span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt; {</span></div>
+              <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>    <span class="kw">let</span> header = <span class="fn">Header::from_parts</span>(input)?;</span></div>
+              <div class="lnrow cur"><span class="ln">42</span><span class="g"></span><span>    <span class="kw">if</span> header.kind == <span class="ty">Kind</span>::Quiet { <span class="kw">return</span> <span class="fn">Ok</span>(header); }</span></div>
+              <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>    <span class="fn">reject_empty</span>(&amp;header)?;</span></div>
+              <div class="lnrow"><span class="ln">44</span><span class="g"></span><span>    <span class="kw">Ok</span>(header)</span></div>
+            </div>
+          </div>
+          <aside class="side" style="width:380px">
+            <h2>Dossier <span>parse</span></h2>
+            <div class="dossier">
+              <h3>Note</h3>
+              <div class="note stale">
+                <div class="st">Stale · hash no longer matches</div>
+                <b style="color:var(--text)">Purpose.</b> Split a frame into a header and entries.<br>
+                <b style="color:var(--text)">Behaviour.</b> Build a header, reject an empty one, return it.<br>
+                <b style="color:var(--text)">Side effects.</b> None.<br>
+                <b style="color:var(--text)">Risks.</b> Callers that matched on Header now match on Result.
+              </div>
+              <div class="btn">Regenerate</div>
+              <p style="color:var(--tertiary);margin:8px 0 0">The new <span class="fn">Quiet</span> branch is not in this note. The note is still shown.</p>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>hash a1c4 → 9e02</span><span class="grow"></span><span>note kept · labelled stale</span></div>
+      </div>
+      <p class="caption">A fresh-looking paragraph about yesterday's function is worse than no paragraph. Stale is a state, not a refresh. Regenerating is a deliberate action.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Look at the whole crate</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="map" hidden>
+      <p class="kicker">S2 · Workspace map · ⌘9</p>
+      <h1>The shape of the crate, with the work painted on it.</h1>
+      <p class="lede">The map already draws modules from the source. Call edges come from the same reference index as Call Hierarchy. Badges are the changes and the marks. The model is not asked to draw this.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">Workspace Map</div></div>
+        <div class="map" aria-label="Workspace map of ledger with badges and call edges">
+          <div class="crumb">ledger  /  <b>src</b></div>
+          <svg aria-hidden="true">
+            <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#5AA9FF"/></marker></defs>
+            <line x1="220" y1="112" x2="274" y2="112" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="220" y1="242" x2="274" y2="242" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="464" y1="242" x2="534" y2="242" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="190" y1="372" x2="534" y2="276" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+          </svg>
+          <div class="card" style="left:36px;top:70px"><div class="k">fn · ingest.rs</div><div class="t">ingest</div><div class="badges"><span class="pill dim">unchanged</span></div></div>
+          <div class="card" style="left:280px;top:70px"><div class="k">fn · parse.rs</div><div class="t">parse</div><div class="badges"><span class="pill bad">signature</span><span class="pill bad">1 suspect</span></div></div>
+          <div class="card" style="left:36px;top:200px"><div class="k">fn · apply.rs</div><div class="t">apply</div><div class="badges"><span class="pill hot">unsafe</span><span class="pill">body</span></div></div>
+          <div class="card" style="left:280px;top:200px"><div class="k">fn · fold.rs</div><div class="t">fold_entries</div><div class="badges"><span class="pill info">1 question</span></div></div>
+          <div class="card" style="left:540px;top:200px"><div class="k">fn · fold.rs</div><div class="t">balance</div><div class="badges"><span class="pill dim">verified stale</span></div></div>
+          <div class="card" style="left:36px;top:330px"><div class="k">fn · paint.rs</div><div class="t">paint_row</div><div class="badges"><span class="pill">body</span><span class="pill dim">no note</span></div></div>
+        </div>
+        <div class="status"><span>⌘9</span><span>call edges from the reference index</span><span class="grow"></span><span>double-click opens the inner graph</span></div>
+      </div>
+      <p class="caption">A badge is a count. Clicking it lists the symbols. The arrow on a card still opens the file. <code>ingest</code> did not change, and that is useful: it is why <code>parse</code>'s new <code>Result</code> matters.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">What the team shares</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="marks" hidden>
+      <p class="kicker">S3 · .ride/follow.toml</p>
+      <h1>Judgment is a file. The hunt stays on this Mac.</h1>
+      <p class="lede">Mira clones the same repo and sees dov's suspect, because it is committed. She does not see Ada's debug watches. Those sit in the local trail and can be cited by a mark.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — Mira's Mac, same commit</div></div>
+        <div class="body">
+          <aside class="tree">
+            <div class="root">ledger</div>
+            <div class="row">.ride</div>
+            <div class="row on">follow.toml</div>
+            <div class="row">src</div>
+            <div class="row">parse.rs</div>
+          </aside>
+          <div class="main">
+            <div class="tabs"><div class="tab on">.ride/follow.toml</div><div class="tab">parse.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">1</span><span class="g"></span><span><span class="kw">[[mark]]</span></span></div>
+              <div class="lnrow"><span class="ln">2</span><span class="g"></span><span>path = <span class="str">"src/parse.rs"</span></span></div>
+              <div class="lnrow"><span class="ln">3</span><span class="g"></span><span>symbol = <span class="str">"parse"</span></span></div>
+              <div class="lnrow"><span class="ln">4</span><span class="g"></span><span>kind = <span class="str">"suspect"</span></span></div>
+              <div class="lnrow"><span class="ln">5</span><span class="g"></span><span>note = <span class="str">"rejects an empty header the tests never send"</span></span></div>
+              <div class="lnrow"><span class="ln">6</span><span class="g"></span><span>basis = <span class="str">"9e02"</span></span></div>
+              <div class="lnrow"><span class="ln">7</span><span class="g"></span><span>author = <span class="str">"dov"</span></span></div>
+              <div class="lnrow"><span class="ln">8</span><span class="g"></span><span>at = <span class="str">"2027-01-14T09:12:00Z"</span></span></div>
+              <div class="lnrow"><span class="ln">9</span><span class="g"></span><span></span></div>
+              <div class="lnrow"><span class="ln">10</span><span class="g"></span><span><span class="kw">[[mark]]</span></span></div>
+              <div class="lnrow"><span class="ln">11</span><span class="g"></span><span>symbol = <span class="str">"fold_entries"</span></span></div>
+              <div class="lnrow"><span class="ln">12</span><span class="g"></span><span>kind = <span class="str">"question"</span></span></div>
+              <div class="lnrow"><span class="ln">13</span><span class="g"></span><span>note = <span class="str">"why does a quiet batch skip the empty check?"</span></span></div>
+              <div class="lnrow"><span class="ln">14</span><span class="g"></span><span>author = <span class="str">"Mira"</span></span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>On parse.rs</h2>
+            <div class="dossier">
+              <div class="lnrow" style="font-family:var(--mono);font-size:12px"><span class="g"><i class="dot suspect"></i></span><span style="margin-left:8px"><span class="kw">pub fn</span> <span class="fn">parse</span>…</span></div>
+              <p>The gutter dot is the same mark. Clicking it opens the dossier.</p>
+            </div>
+            <div class="local">
+              <div class="st">Trail · this Mac only · not in the repo</div>
+              <p>Test <b style="color:var(--text)">balances_match</b> failed · 08:12</p>
+              <p>Stop in <b style="color:var(--fn)">fold_entries</b> · acc = 19 · Ada's watches</p>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>follow.toml is plain toml</span><span class="grow"></span><span>a human can diff it</span></div>
+      </div>
+      <p class="caption">Three kinds of mark: suspect, question, verified. Each stores the hash of the item. When the item changes, the mark remains in the list and renders stale until someone renews it or drops it.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">A test fails</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="hunt" hidden>
+      <p class="kicker">S4 · Functional bug</p>
+      <h1>The red test opens a short list, not the whole branch.</h1>
+      <p class="lede"><code>balances_match</code> fails. The hunt is the symbols that test reaches, intersected with the symbols that changed. <code>parse</code> changed too. It is not on this path, so it is not in the list.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — Tests</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">apply.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">40</span><span class="g"></span><span><span class="kw">pub fn</span> <span class="fn">apply</span>(batch: &amp;<span class="ty">Batch</span>) -&gt; <span class="ty">u32</span> {</span></div>
+              <div class="lnrow cur"><span class="ln">44</span><span class="g"></span><span>    <span class="kw">unsafe</span> { <span class="fn">fold_entries</span>(raw, entries.len()) }</span></div>
+              <div class="lnrow"><span class="ln">45</span><span class="g"></span><span>}</span></div>
+            </div>
+            <div class="panel">
+              <h2>Tests <span>1 failed</span></h2>
+              <div class="dossier">
+                <div><span class="pill hot">failed</span> balances_match · expected 22, got 19</div>
+                <div class="btn">Rerun failed</div>
+                <div class="btn">Hunt this failure</div>
+              </div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Hunt <span>balances_match</span></h2>
+            <div class="dossier">
+              <p style="margin-top:0;color:var(--tertiary)">Reached by the test, and changed since origin/main</p>
+              <ul class="hunt">
+                <li><span class="pill hot">unsafe</span><div><b>apply</b><div class="path">body edited · no note</div></div></li>
+                <li><span class="pill info">question</span><div><b>fold_entries</b><div class="path">body edited · Mira</div></div></li>
+                <li><span class="pill dim">stale</span><div><b>balance</b><div class="path">body edited · Ada's verified mark</div></div></li>
+              </ul>
+              <div class="btn">Mark suspect</div>
+              <div class="btn">Open dossier</div>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>cargo test balances_match</span><span class="grow"></span><span>3 suspects · parse excluded</span></div>
+      </div>
+      <p class="caption">Run and debug stay the commands she already has. The hunt is the reading of their result. The same list will open from a debug stop.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Stop inside it</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="stop" hidden>
+      <p class="kicker">S4 · Logical bug</p>
+      <h1>The stop records what she saw, then joins the hunt.</h1>
+      <p class="lede">She steps into <code>fold_entries</code>. The frames on the stack meet the symbol changes. The watches go to the local trail. A mark can cite that entry. The watches themselves are never committed.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — debugging</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">fold.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">20</span><span class="g"></span><span><span class="kw">fn</span> <span class="fn">fold_entries</span>(raw: *<span class="kw">const</span> <span class="ty">Entry</span>, n: <span class="ty">usize</span>) -&gt; <span class="ty">u32</span> {</span></div>
+              <div class="lnrow stop"><span class="ln">22</span><span class="g"><i class="dot question"></i></span><span>    <span class="kw">let</span> acc = <span class="fn">balance</span>(raw, n);</span></div>
+              <div class="lnrow"><span class="ln">23</span><span class="g"></span><span>    acc</span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Debug <span>stopped</span></h2>
+            <div class="frames">
+              <div class="fr"><span>balances_match</span><em>tests/ledger.rs:120</em></div>
+              <div class="fr"><span>apply</span><em>src/apply.rs:44</em></div>
+              <div class="fr on"><span>fold_entries</span><em>src/fold.rs:22</em></div>
+            </div>
+            <div class="dossier">
+              <h3>Watches</h3>
+              <ul><li>entries.len = <b>3</b></li><li>acc = <b>19</b></li></ul>
+              <div class="btn">Record stop</div>
+              <h3>Hunt from these frames</h3>
+              <ul>
+                <li><b>fold_entries</b> · this frame · question</li>
+                <li><b>apply</b> · caller · unsafe</li>
+                <li><b>balance</b> · callee · stale verified</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>lldb · fold_entries</span><span class="grow"></span><span>trail entry stays local</span></div>
+      </div>
+      <p class="caption">The logical bug is the one no test named correctly: a quiet batch skips a check, the total comes out 19, and Mira's question was already on the function. The stop makes that visible next to the code.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">The row looks wrong</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="visual" hidden>
+      <p class="kicker">S4 · Visual bug</p>
+      <h1>A picture pinned to the function that paints it.</h1>
+      <p class="lede">The cents are cut off. Ada drops the screenshot on <code>paint_row</code>. It shows in the dossier with one sentence. The map badges the card. Ride does not diff the pixels. The preview she already has for Markdown and HTML is untouched.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — paint.rs</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">paint.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">18</span><span class="g"></span><span><span class="kw">fn</span> <span class="fn">paint_row</span>(row: &amp;<span class="ty">Row</span>, amount: <span class="ty">u32</span>) {</span></div>
+              <div class="lnrow cur"><span class="ln">21</span><span class="g"></span><span>    row.set_text(&amp;<span class="fn">format!</span>(<span class="str">"{}"</span>, amount / 100));</span></div>
+              <div class="lnrow"><span class="ln">22</span><span class="g"></span><span>}</span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Dossier <span>paint_row</span></h2>
+            <div class="dossier">
+              <h3>Change</h3>
+              <ul><li>Body edited · no fresh note</li></ul>
+              <h3>Visual note · local trail</h3>
+              <div class="shot">
+                <div class="bar">Ledger</div>
+                <div class="r"><span>Coffee</span><span class="clip">12.5</span></div>
+                <div class="r"><span>Rent</span><span>1,200.00</span></div>
+              </div>
+              <div class="note" style="margin-top:8px">The cents are cut off when the row is narrow. · Ada</div>
+              <h3>Callers also changed</h3>
+              <ul><li>none · <b>paint_list</b> is unchanged</li></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>image stored beside the trail</span><span class="grow"></span><span>map badge on paint_row</span></div>
+      </div>
+      <p class="caption">Evidence sits on the symbol, beside the line that formats the amount. Finding the bug is still reading and running. The picture is so the next person does not have to rediscover the crop.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Back to the editor</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="stays" hidden>
+      <p class="kicker">The floor</p>
+      <h1>She goes back to the buffer. Completion is still the catalog.</h1>
+      <p class="lede">The support layer is a way of reading the workspace and following the work. It jumps into the editor, the test, and the breakpoint. It does not replace them.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — money.rs</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">money.rs</div></div>
+            <div class="code" style="position:relative;min-height:220px;overflow:visible">
+              <div class="lnrow"><span class="ln">8</span><span class="g"><i class="dot verified"></i></span><span><span class="kw">pub fn</span> <span class="fn">amount</span>(cents: <span class="ty">u32</span>) -&gt; <span class="ty">String</span> {</span></div>
+              <div class="lnrow cur"><span class="ln">9</span><span class="g"></span><span>    <span class="fn">format!</span>(<span class="str">"{:.2}"</span>, cents <span class="kw">as</span> <span class="ty">f64</span> / <span class="num">100.0</span>)</span></div>
+              <div class="lnrow"><span class="ln">10</span><span class="g"></span><span>}</span></div>
+              <div style="position:absolute;left:78px;top:64px;background:#2a2e36;border:1px solid rgba(255,255,255,.16);border-radius:8px;width:280px;box-shadow:0 12px 30px rgba(0,0,0,.45);z-index:2">
+                <div style="padding:6px 10px;font-family:var(--mono);font-size:12px;background:var(--sel)">format! <span style="color:var(--tertiary);margin-left:8px">std</span></div>
+                <div style="padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--secondary)">Format <span style="color:var(--tertiary);margin-left:8px">core::fmt</span></div>
+                <div style="padding:6px 10px;font-size:11px;color:var(--cmt);border-top:1px solid var(--border)">cheat sheet · formatting</div>
+              </div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Still in this window</h2>
+            <div class="dossier">
+              <ul>
+                <li>Completion from the on-disk catalog</li>
+                <li>Cheat sheet at the caret</li>
+                <li>Rename, intentions, usages</li>
+                <li>cargo and clang checks</li>
+                <li>Run, tests, lldb</li>
+                <li>Files segment of Changes</li>
+              </ul>
+              <h3>Added for the team</h3>
+              <ul>
+                <li>S1 · symbol diff and the count</li>
+                <li>S2 · dossier, stale note, map badges</li>
+                <li>S3 · follow.toml and the local trail</li>
+                <li>S4 · one hunt, from test, stop, or picture</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>Ln 9</span><span class="grow"></span><span>keystroke path has no model</span></div>
+      </div>
+      <div class="facts">
+        <div class="fact">
+          <h3>The morning, closed</h3>
+          <ul>
+            <li>14 symbols changed, 2 verified on this text, 3 suspects, 9 still unexplained.</li>
+            <li>The unexplained count is the work left. It is visible on the map and in the inbox.</li>
+            <li>Mira opens the same clone and sees the marks. She starts from 2, not from zero.</li>
+          </ul>
+        </div>
+        <div class="fact">
+          <h3>Left alone</h3>
+          <ul>
+            <li>No second agent. Ride receives the branch.</li>
+            <li>No ticket tracker and no shared server.</li>
+            <li>No pixel-diff lab.</li>
+            <li>No model on the keystroke path.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-go-first="morning">Replay the morning</button></div>
+    </section>
+  </main>
+</div>
+<script>
+(function () {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  var order = ["morning","files","symbols","dossier","note","map","marks","hunt","stop","visual","stays"];
+  var stages = Array.prototype.slice.call(document.querySelectorAll("[data-scene]"));
+  var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-go]"));
+  function show(id) {
+    if (order.indexOf(id) < 0) id = order[0];
+    stages.forEach(function (s) { s.hidden = s.getAttribute("data-scene") !== id; });
+    buttons.forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-go") === id ? "true" : "false"); });
+    var current = document.querySelector('[data-go="' + id + '"]');
+    if (current && current.parentElement) {
+      var rail = current.parentElement;
+      var top = current.offsetTop - rail.clientHeight / 2;
+      if (top < 0) top = 0;
+      rail.scrollTop = top;
+    }
+    window.scrollTo(0, 0);
+    history.replaceState(null, "", "#" + id);
+  }
+  function step(delta) {
+    var id = (location.hash || "#morning").slice(1);
+    var i = order.indexOf(id);
+    if (i < 0) i = 0;
+    var next = order[Math.max(0, Math.min(order.length - 1, i + delta))];
+    show(next);
+  }
+  buttons.forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-go")); }); });
+  document.querySelectorAll("[data-dir]").forEach(function (b) {
+    b.addEventListener("click", function () { step(Number(b.getAttribute("data-dir"))); });
+  });
+  document.querySelectorAll("[data-go-first]").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.getAttribute("data-go-first")); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+    var tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+  show((location.hash || "#morning").slice(1));
+})();
+</script>
+</body>
+</html>

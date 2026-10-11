@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ride 2027 v2 — the team reads what the agents wrote</title>
+<style>
+  :root {
+    --bg: #191B1F;
+    --raised: #22252A;
+    --overlay: #26292F;
+    --editor: #1E2024;
+    --border: rgba(255,255,255,.08);
+    --text: #E6E8EC;
+    --secondary: #A0A6B0;
+    --tertiary: #6B7280;
+    --accent: #4C8DFF;
+    --error: #F16A6A;
+    --warning: #E5B94A;
+    --info: #5AA9FF;
+    --success: #58C27D;
+    --sel: rgba(76,141,255,.28);
+    --kw: #C586C0;
+    --fn: #DCDCAA;
+    --ty: #4EC9B0;
+    --str: #CE9178;
+    --cmt: #6A9955;
+    --num: #B5CEA8;
+    --page: #0c0e12;
+    --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--page); color: var(--text); font-family: var(--ui); }
+  body { min-height: 100%; }
+  button, a { font-family: inherit; }
+  .deck { display: grid; grid-template-columns: 232px 1fr; min-height: 100%; }
+  .rail::-webkit-scrollbar { height: 8px; width: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: #3a3f48; border-radius: 4px; }
+  .rail::-webkit-scrollbar-track { background: transparent; }
+  .rail {
+    position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto;
+    padding: 22px 14px 28px; border-right: 1px solid var(--border); background: #101216;
+  }
+  .brand { font-size: 13px; letter-spacing: .04em; color: var(--secondary); margin: 0 8px 4px; }
+  .brand b { color: var(--text); font-weight: 600; }
+  .brand-sub { margin: 0 8px 18px; color: var(--tertiary); font-size: 12px; }
+  .rail button {
+    display: grid; grid-template-columns: 22px 1fr; gap: 8px; width: 100%;
+    text-align: left; background: transparent; color: var(--secondary);
+    border: 0; border-radius: 8px; padding: 7px 8px; cursor: pointer; font-size: 13px;
+  }
+  .rail button[aria-current="true"] { background: var(--sel); color: var(--text); }
+  .rail button:hover { background: rgba(255,255,255,.05); color: var(--text); }
+  .rail .n { color: var(--tertiary); font-variant-numeric: tabular-nums; }
+  .rail .ph { display: block; color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  .rail button[aria-current="true"] .ph { color: var(--accent); }
+  .stage { padding: 28px 36px 48px; max-width: 1180px; }
+  .kicker { margin: 0 0 6px; color: var(--accent); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { margin: 0 0 8px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .lede { margin: 0 0 18px; max-width: 68ch; color: var(--secondary); font-size: 16px; line-height: 1.45; }
+  .win {
+    background: var(--bg); border: 1px solid rgba(255,255,255,.12); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.35); min-height: 560px;
+    display: flex; flex-direction: column;
+  }
+  .titlebar {
+    height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    background: #14161a; border-bottom: 1px solid var(--border); flex: none;
+  }
+  .lights { display: flex; gap: 6px; }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; }
+  .lights i:nth-child(3) { background: #28c840; }
+  .titlebar .name { margin-left: 8px; font-size: 12px; color: var(--secondary); }
+  .titlebar .grow { flex: 1; }
+  .tb { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--border); color: var(--tertiary); font-size: 11px; display: grid; place-items: center; }
+  .body { display: flex; min-height: 0; flex: 1; }
+  .tree { width: 196px; flex: none; background: var(--bg); border-right: 1px solid var(--border); padding: 8px 0; font-size: 12px; }
+  .tree .root { display: flex; align-items: center; gap: 6px; padding: 4px 12px 8px; color: var(--text); font-weight: 600; }
+  .tree .row { display: flex; align-items: center; gap: 6px; padding: 3px 12px 3px 22px; color: var(--secondary); }
+  .tree .row.on { background: #3a6fbf; color: white; }
+  .tree .row .tag { margin-left: auto; font-size: 10px; color: var(--warning); }
+  .tree .row.on .tag { color: #ffe3a3; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--editor); }
+  .tabs { display: flex; gap: 0; background: var(--bg); border-bottom: 1px solid var(--border); height: 32px; flex: none; }
+  .tab { padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--secondary); border-right: 1px solid var(--border); }
+  .tab.on { background: var(--editor); color: var(--text); }
+  .code { padding: 8px 0 12px; font-family: var(--mono); font-size: 12px; line-height: 1.55; overflow: auto; }
+  .code .lnrow { display: grid; grid-template-columns: 42px 14px 1fr; }
+  .code .ln { color: var(--tertiary); text-align: right; padding-right: 8px; }
+  .code .g { display: flex; align-items: center; justify-content: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.suspect { background: var(--warning); }
+  .dot.question { background: var(--info); }
+  .dot.verified { background: var(--success); }
+  .dot.stale { background: transparent; border: 1.5px solid var(--tertiary); }
+  .cur { background: rgba(255,255,255,.04); }
+  .stop { background: rgba(76,141,255,.16); box-shadow: inset 2px 0 0 var(--accent); }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .ty { color: var(--ty); }
+  .str { color: var(--str); } .cmt { color: var(--cmt); } .num { color: var(--num); }
+  .side { width: 320px; flex: none; background: var(--bg); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+  .side h2, .panel h2 {
+    margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  .side h2 span, .panel h2 span { color: var(--tertiary); font-weight: 400; }
+  .seg { margin-left: auto; display: flex; background: var(--overlay); border-radius: 6px; padding: 2px; }
+  .seg b, .seg em {
+    font-style: normal; font-weight: 500; font-size: 11px; padding: 2px 7px; border-radius: 4px; color: var(--secondary);
+  }
+  .seg b { background: var(--accent); color: white; }
+  .status {
+    height: 26px; flex: none; display: flex; align-items: center; gap: 14px;
+    padding: 0 12px; background: #14161a; border-top: 1px solid var(--border);
+    color: var(--tertiary); font-size: 11px;
+  }
+  .status .grow { flex: 1; }
+  .panel { background: var(--raised); border-top: 1px solid var(--border); }
+  .counts { display: flex; gap: 14px; padding: 8px 12px; font-size: 12px; color: var(--secondary); border-bottom: 1px solid var(--border); }
+  .counts b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .counts .v { color: var(--success); } .counts .s { color: var(--warning); } .counts .u { color: var(--text); }
+  .sym { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sym th { text-align: left; font-weight: 500; color: var(--tertiary); padding: 4px 8px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+  .sym td { padding: 5px 8px; border-top: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+  .sym tr.on td { background: var(--sel); }
+  .sym .symname { color: var(--text); }
+  .sym .path { color: var(--tertiary); font-family: var(--mono); font-size: 11px; }
+  .pill { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 99px; border: 1px solid var(--border); color: var(--secondary); margin-right: 4px; }
+  .pill.bad { color: var(--warning); border-color: rgba(229,185,74,.45); }
+  .pill.hot { color: var(--error); border-color: rgba(241,106,106,.4); }
+  .pill.ok { color: var(--success); border-color: rgba(88,194,125,.4); }
+  .pill.info { color: var(--info); border-color: rgba(90,169,255,.45); }
+  .pill.dim { color: var(--tertiary); }
+  .diff { font-family: var(--mono); font-size: 12px; line-height: 1.55; padding: 8px 0; }
+  .diff .d { display: grid; grid-template-columns: 28px 1fr; }
+  .diff .d span:last-child { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .diff .del { background: rgba(241,106,106,.16); }
+  .diff .add { background: rgba(88,194,125,.16); }
+  .diff .meta { color: var(--info); padding: 4px 10px; white-space: normal; }
+  .dossier { padding: 10px 12px 16px; font-size: 12px; line-height: 1.45; overflow: auto; }
+  .dossier .sig { font-family: var(--mono); font-size: 12px; background: var(--editor); padding: 8px 10px; border-radius: 6px; margin: 8px 0; }
+  .dossier h3 { margin: 12px 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--tertiary); font-weight: 600; }
+  .dossier ul { margin: 0; padding: 0; list-style: none; }
+  .dossier li { padding: 2px 0; color: var(--secondary); }
+  .dossier li b { color: var(--fn); font-weight: 500; }
+  .note {
+    background: var(--editor); border-radius: 6px; padding: 8px 10px; color: var(--secondary); margin-top: 6px;
+  }
+  .note .st { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .note.fresh .st { color: var(--success); }
+  .note.stale .st { color: var(--warning); }
+  .note.miss .st { color: var(--tertiary); }
+  .btn {
+    display: inline-block; margin-top: 8px; background: var(--overlay); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px;
+  }
+  .map { position: relative; flex: none; height: 470px; background:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--editor); }
+  .map svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .card {
+    position: absolute; width: 180px; height: 84px; z-index: 1;
+    background: var(--raised); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px; padding: 8px 10px; box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  }
+  .card .k { font-size: 10px; color: var(--tertiary); text-transform: uppercase; letter-spacing: .05em; }
+  .card .t { font-size: 13px; margin-top: 2px; }
+  .card .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .crumb { position: absolute; top: 10px; left: 12px; font-size: 12px; color: var(--secondary); }
+  .crumb b { color: var(--text); font-weight: 500; }
+  .shot { width: 210px; background: #0e1116; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 6px; }
+  .shot .bar { background: #1a1e27; color: var(--secondary); font-size: 10px; padding: 4px 8px; }
+  .shot .r { display: flex; justify-content: space-between; padding: 6px 8px; font-family: var(--mono); font-size: 11px; border-top: 1px solid var(--border); }
+  .shot .clip { color: var(--error); background: rgba(241,106,106,.15); padding: 0 3px; border-radius: 3px; }
+  .local {
+    margin: 10px 12px; border: 1px dashed rgba(255,255,255,.2); border-radius: 8px; padding: 8px 10px; color: var(--secondary); font-size: 12px;
+  }
+  .local .st { color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .hunt li { display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .frames .fr { display: flex; justify-content: space-between; padding: 4px 12px; font-size: 12px; color: var(--secondary); }
+  .frames .fr.on { background: var(--sel); color: var(--text); }
+  .frames .fr em { font-style: normal; color: var(--tertiary); font-family: var(--mono); font-size: 11px; }
+  .qs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+  .q { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-height: 140px; }
+  .q .num { color: var(--accent); font-size: 12px; letter-spacing: .08em; }
+  .q p { margin: 8px 0 0; font-size: 16px; line-height: 1.35; }
+  .morning { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: center; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .fact { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .fact h3 { margin: 0 0 8px; font-size: 13px; }
+  .fact li { margin: 4px 0; color: var(--secondary); font-size: 13px; }
+  .caption { margin: 14px 0 0; color: var(--secondary); font-size: 15px; line-height: 1.45; max-width: 78ch; }
+  .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .points div { background: #14161a; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--secondary); line-height: 1.35; }
+  .points strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 3px; }
+  .pager { display: flex; gap: 8px; margin-top: 16px; }
+  .pager button {
+    background: var(--raised); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px; cursor: pointer; font-size: 13px;
+  }
+  .pager button:disabled { opacity: .35; cursor: default; }
+  .hint { margin-left: auto; color: var(--tertiary); font-size: 12px; align-self: center; }
+  [hidden] { display: none !important; }
+  @media (max-width: 980px) {
+    .deck { grid-template-columns: 1fr; }
+    .deck > nav, .deck > main, .stage, .win, .body, .main, .side, .panel { min-width: 0; max-width: 100%; }
+    .rail { width: 100%; }
+    .panel { overflow-x: auto; }
+    .rail { position: relative; height: auto; display: flex; gap: 4px; overflow: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    .brand, .brand-sub { display: none; }
+    .rail button { width: auto; white-space: nowrap; grid-template-columns: auto auto; }
+    .rail .ph { display: none; }
+    .stage { padding: 18px 14px 32px; max-width: none; }
+    .morning, .qs, .points, .facts { grid-template-columns: 1fr; }
+    .tree { display: none; }
+    .body { flex-direction: column; }
+    .side { width: auto; border-left: 0; border-top: 1px solid var(--border); }
+    .win { min-height: 0; }
+    .sym { display: block; overflow-x: auto; }
+    h1 { font-size: 22px; }
+  }
+  .card { height: 96px; }
+  .meter { height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); margin-top: 7px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--warning); }
+  .grp td { background: #1b1e23; color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; padding: 6px 8px; }
+  .grp td b { color: var(--text); font-weight: 600; }
+  .grp td .r { float: right; text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .chev { display: inline-block; width: 14px; color: var(--tertiary); }
+  .sym tr.sub td { color: var(--secondary); }
+  .sym tr.sub td:first-child { padding-left: 26px; }
+  .proof { margin: 10px 12px; border: 1px solid rgba(88,194,125,.35); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--secondary); line-height: 1.45; }
+  .proof .st, .warnbox .st { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .proof .st { color: var(--success); }
+  .warnbox { margin: 10px 12px; border: 1px solid rgba(229,185,74,.4); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--secondary); line-height: 1.45; }
+  .warnbox .st { color: var(--warning); }
+  .claim { border: 1px dashed rgba(255,255,255,.25); border-radius: 6px; padding: 6px 8px; color: var(--secondary); font-style: italic; margin-top: 6px; }
+  .claim .who { font-style: normal; font-size: 10px; color: var(--tertiary); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 2px; }
+  .sortkey { margin-left: auto; color: var(--tertiary); font-size: 11px; font-weight: 400; }
+  .counts .qn { color: var(--info); }
+  .counts .n { color: var(--text); }
+  .counts .grow { flex: 1; }
+  .counts .act { color: var(--tertiary); }
+  .btn.pri { background: var(--accent); border-color: var(--accent); color: white; }
+  .btn + .btn { margin-left: 4px; }
+  .rel { position: relative; }
+  .sheet {
+    position: absolute; top: 46px; left: 60px; right: 60px; bottom: 34px; z-index: 3;
+    background: #1c1f25; border: 1px solid rgba(255,255,255,.18); border-radius: 10px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.6); display: flex; flex-direction: column;
+  }
+  .sheet h2 { margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .sheet h2 span { color: var(--tertiary); font-weight: 400; }
+  .sheet .foot { margin-top: auto; padding: 8px 14px; border-top: 1px solid var(--border); display: flex; gap: 6px; align-items: center; color: var(--tertiary); font-size: 11px; }
+  .sheet .foot .btn { margin-top: 0; }
+  .md { font-family: var(--mono); font-size: 12px; line-height: 1.6; padding: 12px 16px; color: var(--secondary); white-space: pre-wrap; overflow: auto; margin: 0; }
+  .md .h { color: var(--text); font-weight: 600; }
+  .md .c { color: var(--info); }
+  .dimmed { opacity: .35; filter: saturate(.6); }
+  .editline { margin-top: 6px; border: 1px solid var(--accent); border-radius: 6px; padding: 6px 8px; font-family: var(--mono); font-size: 11px; background: var(--editor); color: var(--text); }
+  .editline::after { content: ""; display: inline-block; width: 1px; height: 12px; background: var(--accent); margin-left: 2px; vertical-align: -2px; }
+  .label { font-size: 10px; color: var(--tertiary); letter-spacing: .06em; text-transform: uppercase; margin-top: 10px; }
+  .ba { display: grid; grid-template-columns: 1fr 1fr; flex: 1; min-height: 0; }
+  .ba > div { display: flex; flex-direction: column; min-width: 0; }
+  .ba > div + div { border-left: 1px solid var(--border); }
+  .ba .hd { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--tertiary); background: var(--bg); }
+  .ba .hd b { color: var(--text); font-weight: 500; }
+  .reply { margin: 6px 0 0 14px; border-left: 2px solid rgba(255,255,255,.12); padding-left: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--secondary); padding: 8px 12px; border-top: 1px solid var(--border); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .tline { display: flex; gap: 0; margin: 12px 0 0; font-size: 12px; color: var(--secondary); }
+  .tline div { flex: 1; border-top: 2px solid #3a3f48; padding: 8px 8px 0 0; position: relative; }
+  .tline div::before { content: ""; position: absolute; top: -6px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #3a3f48; }
+  .tline div.g::before { background: var(--success); }
+  .tline div.r::before { background: var(--error); }
+  .tline div.y::before { background: var(--warning); }
+  .tline b { color: var(--text); font-weight: 500; display: block; font-family: var(--mono); font-size: 11px; }
+  .phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; }
+  .phases div { background: var(--raised); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--secondary); line-height: 1.4; }
+  .phases div.first { border-color: rgba(76,141,255,.6); box-shadow: inset 0 0 0 1px rgba(76,141,255,.25); }
+  .phases strong { display: block; color: var(--text); font-size: 13px; margin-bottom: 4px; }
+  .phases em { font-style: normal; color: var(--tertiary); display: block; margin-top: 6px; font-size: 11px; }
+  .cast { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .cast div { background: #14161a; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--secondary); line-height: 1.35; }
+  .cast strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .night { display: flex; gap: 18px; margin-top: 14px; font-variant-numeric: tabular-nums; }
+  .night div { background: var(--raised); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+  .night b { display: block; font-size: 22px; font-weight: 600; color: var(--text); }
+  .night span { font-size: 12px; color: var(--tertiary); }
+  .new-badge { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(76,141,255,.5); border-radius: 4px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; }
+  @media (max-width: 980px) {
+    .phases, .cast, .ba { grid-template-columns: 1fr; }
+    .night { flex-wrap: wrap; }
+    .sheet { position: relative; inset: auto; margin: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+  <nav class="rail" aria-label="Scenes">
+    <p class="brand"><b>Ride</b> · 2027 · v2</p>
+    <p class="brand-sub">One night of agent output, and the morning after.</p>
+    <button data-go="morning" aria-current="true"><span class="n">1</span><span>The night shift<span class="ph">the job</span></span></button>
+    <button data-go="files"><span class="n">2</span><span>Files<span class="ph">the IDE you have</span></span></button>
+    <button data-go="triage"><span class="n">3</span><span>Triage<span class="ph">S1 · proved, not guessed</span></span></button>
+    <button data-go="order"><span class="n">4</span><span>Where to start<span class="ph">S1 · review order</span></span></button>
+    <button data-go="dossier"><span class="n">5</span><span>Dossier<span class="ph">S2 · facts only</span></span></button>
+    <button data-go="note"><span class="n">6</span><span>A note that survives fmt<span class="ph">S2 · shape hash</span></span></button>
+    <button data-go="map"><span class="n">7</span><span>The map<span class="ph">S2 · the workspace</span></span></button>
+    <button data-go="marks"><span class="n">8</span><span>Marks per author<span class="ph">S3 · the team</span></span></button>
+    <button data-go="hunt"><span class="n">9</span><span>A red test<span class="ph">S4 · since last green</span></span></button>
+    <button data-go="stop"><span class="n">10</span><span>A debug stop<span class="ph">S4 · cite, don't link</span></span></button>
+    <button data-go="visual"><span class="n">11</span><span>A visual bug<span class="ph">S4 · evidence</span></span></button>
+    <button data-go="handoff"><span class="n">12</span><span>Hand it back<span class="ph">S5 · the brief</span></span></button>
+    <button data-go="push"><span class="n">13</span><span>The second push<span class="ph">S3 · since verified</span></span></button>
+    <button data-go="stays"><span class="n">14</span><span>The IDE stays<span class="ph">phases · limits</span></span></button>
+  </nav>
+  <main>
+
+    <section class="stage" data-scene="morning">
+      <p class="kicker">Tuesday 8:40 · ledger · agent/ingest</p>
+      <div class="morning">
+        <div>
+          <h1>The agent worked the night. The team has to trust the morning.</h1>
+          <p class="lede">An agent pushed three commits onto <b>agent/ingest</b>. Nobody on the team typed them. Ada opens the repo in Ride. The editor, the debugger and the tests are yesterday's tools. Before she merges, she has four questions to answer.</p>
+        </div>
+        <div class="qs" style="grid-template-columns:1fr 1fr">
+          <div class="q" style="min-height:110px"><div class="num">01</div><p>What is this program now?</p></div>
+          <div class="q" style="min-height:110px"><div class="num">02</div><p>What changed, and which of it changes behaviour?</p></div>
+          <div class="q" style="min-height:110px"><div class="num">03</div><p>What have we checked, and what is still open?</p></div>
+          <div class="q" style="min-height:110px"><div class="num">04</div><p>Where is the bug, and who fixes it?</p></div>
+        </div>
+      </div>
+      <div class="night">
+        <div><b>3</b><span>agent commits</span></div>
+        <div><b>40</b><span>files</span></div>
+        <div><b>6,200</b><span>lines</span></div>
+        <div><b>152</b><span>symbol changes</span></div>
+        <div><b>55</b><span>that change behaviour</span></div>
+      </div>
+      <div class="cast">
+        <div><strong>Ada</strong>Reviews this branch this morning.</div>
+        <div><strong>dov</strong>Looked at it last night. Left two suspects.</div>
+        <div><strong>Mira</strong>Asked one question last night. Joins after lunch on her own Mac.</div>
+        <div><strong>night-agent</strong>Wrote the branch. Will get the brief back.</div>
+      </div>
+      <p class="caption">This is v2 of <code>plan/roadmap/support-2027.md</code>. What v2 adds is marked <span class="new-badge">v2</span> on each screen. The classical IDE stays underneath every one of them. Use the scenes on the left, or the arrow keys.</p>
+      <div class="pager"><button data-dir="1">Start with what she has today</button><span class="hint">→</span></div>
+    </section>
+
+    <section class="stage" data-scene="files" hidden>
+      <p class="kicker">Already shipped · Changes</p>
+      <h1>Forty files and a true diff. No place to start.</h1>
+      <p class="lede">This is Ride today. The Changes panel, tree badges and a unified diff are the right size for her own commit. For a night of agent output they are the wrong unit, and most of what they show is noise.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div><div class="grow"></div></div>
+        <div class="body">
+          <aside class="tree">
+            <div class="root">ledger</div>
+            <div class="row">src</div>
+            <div class="row">parse.rs <span class="tag">M</span></div>
+            <div class="row on">fold.rs <span class="tag">M</span></div>
+            <div class="row">apply.rs <span class="tag">M</span></div>
+            <div class="row">paint.rs <span class="tag">M</span></div>
+            <div class="row">money.rs <span class="tag">M</span></div>
+            <div class="row">commit.rs <span class="tag">M</span></div>
+            <div class="row">decode.rs <span class="tag">D</span></div>
+            <div class="row">README.md <span class="tag">M</span></div>
+          </aside>
+          <div class="main">
+            <div class="panel" style="border-top:0;flex:1">
+              <h2>Changes <span>40 files</span><span class="seg"><b>Files</b><em>Symbols</em></span></h2>
+              <div class="body" style="min-height:330px">
+                <div style="width:220px;border-right:1px solid var(--border);font-size:12px">
+                  <div class="row" style="padding:8px 12px;color:var(--tertiary)">CHANGES 40</div>
+                  <div class="row on" style="margin:0 8px;border-radius:6px">fold.rs <span class="tag">M</span></div>
+                  <div class="row">parse.rs <span class="tag">M</span></div>
+                  <div class="row">apply.rs <span class="tag">M</span></div>
+                  <div class="row">paint.rs <span class="tag">M</span></div>
+                  <div class="row">money.rs <span class="tag">M</span></div>
+                  <div class="row" style="color:var(--tertiary)">35 more files</div>
+                </div>
+                <div class="diff" style="flex:1">
+                  <div class="meta">@@ -14,9 +14,11 @@ fold.rs</div>
+                  <div class="d del"><span>−</span><span><span class="kw">pub fn</span> <span class="fn">total</span>(xs:&amp;[<span class="ty">Entry</span>])-&gt;<span class="ty">u32</span>{xs.iter().map(|e|e.cents).sum()}</span></div>
+                  <div class="d add"><span>+</span><span><span class="kw">pub fn</span> <span class="fn">total</span>(xs: &amp;[<span class="ty">Entry</span>]) -&gt; <span class="ty">u32</span> {</span></div>
+                  <div class="d add"><span>+</span><span>    xs.iter().map(|e| e.cents).sum()</span></div>
+                  <div class="d add"><span>+</span><span>}</span></div>
+                  <div class="meta">@@ -20,6 +22,8 @@ fold.rs</div>
+                  <div class="d"><span> </span><span><span class="kw">fn</span> <span class="fn">fold_entries</span>(raw: *<span class="kw">const</span> <span class="ty">Entry</span>, n: <span class="ty">usize</span>) -&gt; <span class="ty">u32</span> {</span></div>
+                  <div class="d add"><span>+</span><span>    <span class="kw">if</span> <span class="fn">is_quiet</span>(raw, n) { <span class="kw">return</span> <span class="fn">balance</span>(raw, n); }</span></div>
+                  <div class="d add"><span>+</span><span>    <span class="fn">reject_empty</span>(raw, n);</span></div>
+                  <div class="d"><span> </span><span>    <span class="kw">let</span> acc = <span class="fn">balance</span>(raw, n);</span></div>
+                  <div class="meta">@@ -61,7 +65,7 @@ fold.rs</div>
+                  <div class="d del"><span>−</span><span><span class="kw">fn</span> <span class="fn">sum_cents</span>(xs: &amp;[<span class="ty">Entry</span>]) -&gt; <span class="ty">u32</span> {</span></div>
+                  <div class="d add"><span>+</span><span><span class="kw">fn</span> <span class="fn">cents_total</span>(xs: &amp;[<span class="ty">Entry</span>]) -&gt; <span class="ty">u32</span> {</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>agent/ingest</span><span class="grow"></span><span>40 files · 6,200 lines</span></div>
+      </div>
+      <p class="caption">Three hunks in one file. The first is a formatter. The third is a rename. Only the middle one changes what the program does. The file list weighs them the same.</p>
+      <div class="points">
+        <div><strong>Keep this view</strong>Files stays the segment for her own commit.</div>
+        <div><strong>Wrong unit</strong>A 400-line file hides one real change among reformatted neighbours.</div>
+        <div><strong>No memory</strong>Nothing here shows that dov already doubted <code>parse</code>.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Read it as symbols</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="triage" hidden>
+      <p class="kicker">S1 · Symbols segment · triage <span class="new-badge">v2</span></p>
+      <h1>97 of 152 changes are proved not to change behaviour.</h1>
+      <p class="lede">Ride parses the old blob and the new text, hangs each hunk on the innermost item, and then tries to prove the change mechanical. A formatter, a move, a clean rename: the tokens say so. What it cannot prove, it does not claim.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div><div class="grow"></div></div>
+        <div class="body">
+          <div class="main">
+            <div class="panel" style="border-top:0;flex:1">
+              <h2>Changes <span>against origin/main</span><span class="seg"><em>Files</em><b>Symbols</b></span></h2>
+              <div class="counts"><span class="n"><b>55</b> need eyes</span><span class="act">97 equivalent · collapsed</span></div>
+              <table class="sym">
+                <thead><tr><th>Item</th><th>Change</th><th>Why grouped here</th></tr></thead>
+                <tbody>
+                  <tr class="grp"><td colspan="3"><span class="chev">▸</span><b>Behaviour · 46</b><span class="r">the review list</span></td></tr>
+                  <tr class="grp"><td colspan="3"><span class="chev">▸</span><b>Light · 9</b><span class="r">docs 5 · imports 4 · still needs eyes</span></td></tr>
+                  <tr class="grp"><td colspan="3"><span class="chev">▾</span><b>Equivalent · 97</b><span class="r">never counted as needing eyes</span></td></tr>
+                  <tr class="sub"><td>Formatting · 64</td><td>body</td><td>shape hash equal</td></tr>
+                  <tr class="sub on"><td><span class="symname">fold::total</span> <span class="path">src/fold.rs:14</span></td><td>body</td><td><span class="pill ok">tokens identical</span></td></tr>
+                  <tr class="sub"><td>Moved · 19</td><td>moved</td><td>removed + added, same shape hash</td></tr>
+                  <tr class="sub"><td><span class="symname">money::Cents</span> <span class="path">src/fold.rs → src/money.rs</span></td><td>moved</td><td><span class="pill ok">same hash 3f1a</span></td></tr>
+                  <tr class="sub"><td>Renamed · 14</td><td>renamed</td><td>only <code>X → Y</code> differs, every reference moved</td></tr>
+                  <tr class="sub"><td><span class="symname">fold::cents_total</span> <span class="path">src/fold.rs:65</span></td><td>renamed</td><td><span class="pill ok">sum_cents → cents_total · 6 refs</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>fold::total <span>formatting</span></h2>
+            <div class="diff">
+              <div class="d del"><span>−</span><span>xs.iter().map(|e|e.cents).sum()</span></div>
+              <div class="d add"><span>+</span><span>xs.iter().map(|e| e.cents).sum()</span></div>
+            </div>
+            <div class="proof">
+              <div class="st">Proved equivalent</div>
+              Leaf tokens old and new: 23 and 23, all equal. Whitespace and plain comments are not tokens. Doc comments are.
+            </div>
+            <div class="warnbox">
+              <div class="st">Not claimed</div>
+              Import changes stay in Light. A new trait in scope can change which method a call resolves to.
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>agent/ingest</span><span class="grow"></span><span>152 symbol changes · 97 proved · 55 need eyes</span></div>
+      </div>
+      <p class="caption">The rule is one-sided: a false "equivalent" would hide a behaviour change, so any doubt sends the row to the review list. A mutation test changes one token in 200 items, and every one has to leave this group before triage ships.</p>
+      <div class="points">
+        <div><strong>Shape hash</strong>Tree-sitter leaf tokens of the item. <code>cargo fmt</code> cannot change it. A literal can.</div>
+        <div><strong>Three proofs</strong>Formatting, moved, renamed. Nothing else is "equivalent".</div>
+        <div><strong>Never hidden</strong>The group opens to every row. One click shows what was collapsed.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Open the review list</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="order" hidden>
+      <p class="kicker">S1 · Review order · 10:15 <span class="new-badge">v2</span></p>
+      <h1>The list starts where the checks are.</h1>
+      <p class="lede">Behaviour rows are sorted by how many structural checks they light, then by how many callers they have. The sort key is written in the header. Each check is its own pill. There is no score hiding them.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div><div class="grow"></div></div>
+        <div class="body">
+          <div class="main">
+            <div class="panel" style="border-top:0;flex:1">
+              <h2>Behaviour · 46 <span class="sortkey">sorted by checks, then callers</span></h2>
+              <div class="counts">
+                <span class="n"><b>55</b> need eyes</span>
+                <span class="v"><b>12</b> verified</span>
+                <span class="s"><b>2</b> suspect</span>
+                <span class="qn"><b>1</b> question</span>
+                <span class="u"><b>40</b> unchecked</span>
+              </div>
+              <table class="sym">
+                <thead><tr><th>Item</th><th>Change</th><th>Checks</th><th>Callers</th><th>Mark</th></tr></thead>
+                <tbody>
+                  <tr><td><div class="symname">apply::apply</div><div class="path">src/apply.rs:40</div></td><td>body</td><td><span class="pill hot">unsafe / FFI</span><span class="pill bad">new panic path</span></td><td>4</td><td><span class="pill dim">unchecked</span></td></tr>
+                  <tr class="on"><td><div class="symname">parse::parse</div><div class="path">src/parse.rs:40</div></td><td>signature</td><td><span class="pill bad">public signature</span></td><td>7</td><td><span class="pill bad">suspect · dov</span></td></tr>
+                  <tr><td><div class="symname">tests::balances_match</div><div class="path">tests/ledger.rs:120</div></td><td>body</td><td><span class="pill hot">test weakened</span></td><td>–</td><td><span class="pill dim">unchecked</span></td></tr>
+                  <tr><td><div class="symname">decode::decode_frame</div><div class="path">src/decode.rs</div></td><td>removed</td><td><span class="pill bad">removed</span></td><td>0</td><td><span class="pill ok">verified · Ada</span></td></tr>
+                  <tr><td><div class="symname">commit::commit_batch</div><div class="path">src/commit.rs:11</div></td><td>body</td><td><span class="pill bad">no test reaches</span></td><td>2</td><td><span class="pill bad">suspect · dov</span></td></tr>
+                  <tr><td><div class="symname">fold::fold_entries</div><div class="path">src/fold.rs:20</div></td><td>body</td><td></td><td>3</td><td><span class="pill info">question · Mira</span></td></tr>
+                  <tr><td><div class="symname">fold::Ledger::balance</div><div class="path">src/fold.rs:60</div></td><td>body</td><td></td><td>3</td><td><span class="pill dim">verified · stale · Ada</span></td></tr>
+                  <tr><td><div class="symname">paint::paint_row</div><div class="path">src/paint.rs:18</div></td><td>body</td><td></td><td>1</td><td><span class="pill dim">unchecked</span></td></tr>
+                  <tr><td colspan="5" class="path" style="color:var(--tertiary)">38 more · then Light · 9</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>parse::parse <span>signature edited</span></h2>
+            <div class="diff">
+              <div class="d del"><span>−</span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Header</span></span></div>
+              <div class="d add"><span>+</span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt;</span></div>
+            </div>
+            <div class="dossier">
+              <h3>Author's words <span class="new-badge">v2</span></h3>
+              <div class="claim"><span class="who">night-agent · commit 1c0e7a2 · a claim</span>refactor(parse): return Result, no behaviour change</div>
+              <h3>Engine</h3>
+              <ul><li><span class="pill bad">public signature</span> 7 callers now match on <span class="ty">Result</span></li></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>agent/ingest</span><span class="grow"></span><span>55 need eyes · 12 verified on this text</span></div>
+      </div>
+      <p class="caption">The agent says "no behaviour change". The engine says the public signature moved and seven callers had to follow. Both are on screen, and only one of them sets a check. <code>balances_match</code> lost an assertion overnight, so it lights <b>test weakened</b>: the cheapest way for an agent to turn a test green.</p>
+      <div class="points">
+        <div><strong>55 / 12 / 2 / 1 / 40</strong>Need eyes, verified on the current hash, suspect, open question, unchecked.</div>
+        <div><strong>The count moves with AI off</strong>v1 counted "unexplained". A missing note is a column now, not work left.</div>
+        <div><strong>Claims are labelled</strong>Commit subjects show as the author's words. They never set a check or a count.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Open the dossier</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="dossier" hidden>
+      <p class="kicker">S2 · Dossier · model off</p>
+      <h1>The item explains itself before anyone asks a model.</h1>
+      <p class="lede">Ada puts the caret on <code>parse</code>. Signature, callers, callees, the tests that reach it, what changed and who doubted it. All from the index and git. The note is missing, and the panel says so.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — parse.rs</div></div>
+        <div class="body">
+          <aside class="tree"><div class="root">ledger</div><div class="row on">parse.rs</div><div class="row">apply.rs</div><div class="row">fold.rs</div><div class="row">ingest.rs</div></aside>
+          <div class="main">
+            <div class="tabs"><div class="tab on">parse.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">38</span><span class="g"></span><span><span class="cmt">/// Split a frame into a header and its entries.</span></span></div>
+              <div class="lnrow cur"><span class="ln">40</span><span class="g"><i class="dot suspect"></i></span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt; {</span></div>
+              <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>    <span class="kw">let</span> header = <span class="ty">Header</span>::<span class="fn">from_parts</span>(input)?;</span></div>
+              <div class="lnrow"><span class="ln">42</span><span class="g"></span><span>    <span class="fn">reject_empty</span>(&amp;header)?;</span></div>
+              <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>    <span class="kw">Ok</span>(header)</span></div>
+              <div class="lnrow"><span class="ln">44</span><span class="g"></span><span>}</span></div>
+            </div>
+          </div>
+          <aside class="side" style="width:360px">
+            <h2>Dossier <span>parse::parse · fn</span></h2>
+            <div class="dossier">
+              <div class="sig"><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>)<br>-&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt;</div>
+              <h3>Callers · 7</h3>
+              <ul><li><b>ingest::ingest</b> · src/ingest.rs:14</li><li><b>replay::replay</b> · src/replay.rs:31 <span class="pill dim">oracle</span></li><li style="color:var(--tertiary)">5 more</li></ul>
+              <h3>Callees</h3>
+              <ul><li><b>Header::from_parts</b>, <b>reject_empty</b></li></ul>
+              <h3>Reached by tests · static <span class="new-badge">v2</span></h3>
+              <ul><li><b>empty_header_is_rejected</b> · depth 1</li><li><b>balances_match</b> · depth 2 via ingest</li></ul>
+              <h3>Change since origin/main</h3>
+              <ul><li>Signature edited · <span class="pill bad">public signature</span></li><li class="claim" style="margin-top:4px"><span class="who">author's words · 1c0e7a2</span>refactor(parse): return Result, no behaviour change</li></ul>
+              <h3>Note</h3>
+              <div class="note miss"><div class="st">Missing</div>Nothing above came from a model.</div>
+              <div class="btn">Generate note</div>
+              <h3>Marks</h3>
+              <ul><li><span class="pill bad">suspect · dov · fresh</span> rejects an empty header the tests never send</li></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>agent/ingest</span><span>Ln 40</span><span class="grow"></span><span>AI off · dossier is live</span></div>
+      </div>
+      <p class="caption">"Reached by tests" walks callers in the reference index up to <code>#[test]</code> functions, so <code>balances_match</code> shows even though it never names <code>parse</code>. It is labelled static because it is not coverage. Callers the index could not resolve come from rust-analyzer when it runs, and say so.</p>
+      <div class="points">
+        <div><strong>Engine facts</strong>Signature, callers, callees, reach, the change.</div>
+        <div><strong>v1 matched test names</strong>That missed tests that reach through a helper.</div>
+        <div><strong>dov's mark is fresh</strong>Its basis matches the shape hash of today's text.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Generate the note</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="note" hidden>
+      <p class="kicker">S2 · Note · shape hash <span class="new-badge">v2</span></p>
+      <h1>The agent reformats the file. The note stays fresh.</h1>
+      <p class="lede">Generate asks the context pack Ride already builds, and caches the answer under the item id and its shape hash. At 10:40 the agent pushes a <code>cargo fmt</code>. In v1 that staled every note and every verified mark on the branch. Here the tokens are the same, so nothing moves.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — parse.rs · after the fmt push</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="ba">
+              <div>
+                <div class="hd"><b>Before</b> 4f2a9c1 · shape 9e02c1</div>
+                <div class="code">
+                  <div class="lnrow"><span class="ln">40</span><span class="g"><i class="dot suspect"></i></span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input:&amp;<span class="ty">str</span>)-&gt;<span class="ty">Result</span>&lt;<span class="ty">Header</span>,<span class="ty">ParseError</span>&gt;{</span></div>
+                  <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>  <span class="kw">let</span> header=<span class="ty">Header</span>::<span class="fn">from_parts</span>(input)?; <span class="cmt">// split</span></span></div>
+                  <div class="lnrow"><span class="ln">42</span><span class="g"></span><span>  <span class="fn">reject_empty</span>(&amp;header)?; <span class="kw">Ok</span>(header)</span></div>
+                  <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>}</span></div>
+                </div>
+              </div>
+              <div>
+                <div class="hd"><b>After</b> 5b7d310 · shape 9e02c1</div>
+                <div class="code">
+                  <div class="lnrow"><span class="ln">40</span><span class="g"><i class="dot suspect"></i></span><span><span class="kw">pub fn</span> <span class="fn">parse</span>(input: &amp;<span class="ty">str</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">Header</span>, <span class="ty">ParseError</span>&gt; {</span></div>
+                  <div class="lnrow"><span class="ln">41</span><span class="g"></span><span>    <span class="kw">let</span> header = <span class="ty">Header</span>::<span class="fn">from_parts</span>(input)?;</span></div>
+                  <div class="lnrow"><span class="ln">42</span><span class="g"></span><span>    <span class="fn">reject_empty</span>(&amp;header)?;</span></div>
+                  <div class="lnrow"><span class="ln">43</span><span class="g"></span><span>    <span class="kw">Ok</span>(header)</span></div>
+                  <div class="lnrow"><span class="ln">44</span><span class="g"></span><span>}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside class="side" style="width:360px">
+            <h2>Dossier <span>parse::parse</span></h2>
+            <div class="dossier">
+              <h3>Note</h3>
+              <div class="note fresh">
+                <div class="st">Fresh · shape 9e02c1 · local</div>
+                <b style="color:var(--text)">Purpose.</b> Split a frame into a header and entries.<br>
+                <b style="color:var(--text)">Behaviour.</b> Build a header, reject an empty one, return it.<br>
+                <b style="color:var(--text)">Side effects.</b> None.<br>
+                <b style="color:var(--text)">Risks.</b> Callers that matched on <span class="ty">Header</span> now match on <span class="ty">Result</span>.
+              </div>
+              <div class="btn">Share note</div><div class="btn">Regenerate</div>
+              <h3>Marks</h3>
+              <ul><li><span class="pill bad">suspect · dov · still fresh</span></li></ul>
+              <p style="color:var(--tertiary);margin:10px 0 0">Whitespace and the <code>// split</code> comment are not tokens. Change one literal and this note turns stale, stays on screen, and says so.</p>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>shape 9e02c1 → 9e02c1</span><span class="grow"></span><span>0 notes staled · 0 marks staled</span></div>
+      </div>
+      <p class="caption">The note lives on this Mac until Ada presses Share note. Then it goes into her follow file, and Mira opens the same reading without paying for another call.</p>
+      <div class="points">
+        <div><strong>Tokens, not text</strong>Formatter and comment churn cannot erase the team's work.</div>
+        <div><strong>Doc comments count</strong>They are the contract, and doctests run them.</div>
+        <div><strong>Local, then shared</strong>v1 never said where a note lived. Now it is explicit.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Look at the whole crate</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="map" hidden>
+      <p class="kicker">S2 · Workspace map · ⌘9</p>
+      <h1>The shape of the crate, with the work left painted on it.</h1>
+      <p class="lede">The map already draws modules from the source. Call edges come from the same reference index as Call Hierarchy. Each module card shows what is left in it: the bar is the unchecked share, the pills are the marks. The model does not draw this.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">Workspace Map</div></div>
+        <div class="map" aria-label="Workspace map of ledger with badges and call edges">
+          <div class="crumb">ledger  /  <b>src</b></div>
+          <svg aria-hidden="true">
+            <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#5AA9FF"/></marker></defs>
+            <line x1="216" y1="104" x2="286" y2="104" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="216" y1="130" x2="286" y2="220" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="216" y1="258" x2="286" y2="258" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="470" y1="258" x2="540" y2="258" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="724" y1="258" x2="794" y2="258" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+            <line x1="724" y1="386" x2="800" y2="306" stroke="#5AA9FF" stroke-width="1.5" marker-end="url(#ah)"/>
+          </svg>
+          <div class="card" style="left:36px;top:56px"><div class="k">mod · 2 changed</div><div class="t">ingest</div><div class="badges"><span class="pill ok">all verified</span></div><div class="meter"><i style="width:0%"></i></div></div>
+          <div class="card" style="left:290px;top:56px"><div class="k">mod · 5 changed</div><div class="t">parse</div><div class="badges"><span class="pill bad">1 suspect</span><span class="pill">2 unchecked</span></div><div class="meter"><i style="width:40%"></i></div></div>
+          <div class="card" style="left:36px;top:210px"><div class="k">mod · 6 changed</div><div class="t">commit</div><div class="badges"><span class="pill bad">1 suspect</span><span class="pill">5 unchecked</span></div><div class="meter"><i style="width:83%"></i></div></div>
+          <div class="card" style="left:290px;top:210px"><div class="k">mod · 9 changed</div><div class="t">apply</div><div class="badges"><span class="pill hot">unsafe</span><span class="pill">8 unchecked</span></div><div class="meter"><i style="width:89%"></i></div></div>
+          <div class="card" style="left:544px;top:210px"><div class="k">mod · 11 changed</div><div class="t">fold</div><div class="badges"><span class="pill info">1 question</span><span class="pill dim">1 stale</span><span class="pill hot">failing test</span></div><div class="meter"><i style="width:64%"></i></div></div>
+          <div class="card" style="left:798px;top:210px"><div class="k">mod · 3 changed</div><div class="t">money</div><div class="badges"><span class="pill ok">all verified</span></div><div class="meter"><i style="width:0%"></i></div></div>
+          <div class="card" style="left:544px;top:338px"><div class="k">mod · 4 changed</div><div class="t">paint</div><div class="badges"><span class="pill">4 unchecked</span></div><div class="meter"><i style="width:100%"></i></div></div>
+        </div>
+        <div class="status"><span>⌘9</span><span>call edges from the reference index</span><span class="grow"></span><span>bar = unchecked share · double-click opens the module</span></div>
+      </div>
+      <p class="caption">Counts here are behaviour changes only. The 97 equivalent ones do not paint a card. A badge is a count, and clicking it lists the items. <code>apply</code> and <code>paint</code> are where the afternoon goes.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">What the team shares</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="marks" hidden>
+      <p class="kicker">S3 · .ride/follow/ · one file per author <span class="new-badge">v2</span></p>
+      <h1>Judgment is a file per person. Nobody merges anyone else's.</h1>
+      <p class="lede">Mira opens the repo after lunch and sees dov's suspects and Ada's verified marks, because they are committed. Her own question from last night is in her own file. Each person writes only their own file, so two reviewers on two branches never conflict. Ride reads the union.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — Mira's Mac, same commit</div></div>
+        <div class="body">
+          <aside class="tree">
+            <div class="root">ledger</div>
+            <div class="row">.ride</div>
+            <div class="row" style="padding-left:34px">follow</div>
+            <div class="row" style="padding-left:46px">ada.toml</div>
+            <div class="row" style="padding-left:46px">dov.toml</div>
+            <div class="row on" style="padding-left:46px">mira.toml</div>
+            <div class="row" style="padding-left:34px">evidence</div>
+            <div class="row">src</div>
+          </aside>
+          <div class="main">
+            <div class="tabs"><div class="tab on">.ride/follow/mira.toml</div><div class="tab">fold.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">1</span><span class="g"></span><span><span class="kw">[author]</span></span></div>
+              <div class="lnrow"><span class="ln">2</span><span class="g"></span><span>name = <span class="str">"Mira"</span></span></div>
+              <div class="lnrow"><span class="ln">3</span><span class="g"></span><span>agent = <span class="kw">false</span></span></div>
+              <div class="lnrow"><span class="ln">4</span><span class="g"></span><span></span></div>
+              <div class="lnrow"><span class="ln">5</span><span class="g"></span><span><span class="kw">[[mark]]</span></span></div>
+              <div class="lnrow"><span class="ln">6</span><span class="g"></span><span>id = <span class="str">"m7k2q"</span></span></div>
+              <div class="lnrow"><span class="ln">7</span><span class="g"></span><span>path = <span class="str">"src/fold.rs"</span></span></div>
+              <div class="lnrow"><span class="ln">8</span><span class="g"></span><span>item = <span class="str">"fold::fold_entries"</span></span></div>
+              <div class="lnrow"><span class="ln">9</span><span class="g"></span><span>kind = <span class="str">"fn"</span></span></div>
+              <div class="lnrow"><span class="ln">10</span><span class="g"></span><span>mark = <span class="str">"question"</span></span></div>
+              <div class="lnrow"><span class="ln">11</span><span class="g"></span><span>note = <span class="str">"why does a quiet batch skip the empty check?"</span></span></div>
+              <div class="lnrow"><span class="ln">12</span><span class="g"></span><span>basis = <span class="str">"b41f07"</span>         <span class="cmt"># shape hash</span></span></div>
+              <div class="lnrow"><span class="ln">13</span><span class="g"></span><span>commit = <span class="str">"4f2a9c1"</span>       <span class="cmt"># for "since verified"</span></span></div>
+              <div class="lnrow"><span class="ln">14</span><span class="g"></span><span>at = <span class="str">"2027-01-13T22:40:00Z"</span></span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>States Ride derives <span>never stored</span></h2>
+            <div class="dossier">
+              <ul>
+                <li><i class="dot verified" style="display:inline-block;margin-right:6px"></i><b style="color:var(--text)">fresh</b> · basis equals today's shape</li>
+                <li><i class="dot stale" style="display:inline-block;margin-right:6px"></i><b style="color:var(--text)">stale</b> · item changed. Opens since verified</li>
+                <li><i class="dot verified" style="display:inline-block;margin-right:6px;outline:1.5px dashed var(--warning);outline-offset:1px"></i><b style="color:var(--text)">callee changed</b> · still verified, a callee moved since</li>
+                <li><span class="pill">moved</span> followed to a new id by shape hash</li>
+                <li><span class="pill dim">orphan</span> no item matches. Listed until dropped</li>
+              </ul>
+              <h3>On fold.rs</h3>
+              <div style="font-family:var(--mono);font-size:12px"><i class="dot question" style="display:inline-block;margin-right:8px"></i><span class="kw">fn</span> <span class="fn">fold_entries</span>…</div>
+              <p style="margin:6px 0 0">The gutter dot is the same mark. Clicking it opens the dossier.</p>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>author from git config user.name</span><span class="grow"></span><span>entries sorted by id · plain TOML a human can diff</span></div>
+      </div>
+      <p class="caption">v1's <code>symbol = "parse"</code> was ambiguous and broke on a move. Now a mark names the qualified item and its kind, and when the agent moves a function to another file, the mark follows it by shape hash.</p>
+      <div class="points">
+        <div><strong>suspect · question · verified</strong>Plus <code>answer</code> with <code>re = "id"</code>, and <code>note</code> for a shared note.</div>
+        <div><strong>Callee changed</strong>Ada verified <code>apply</code>. If <code>fold_entries</code> changes later, her mark stays and shows the hint.</div>
+        <div><strong><code>.ride/</code> is not reviewed</strong>The follow files never show up in the Symbols list.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">A test fails</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="hunt" hidden>
+      <p class="kicker">S4 · Functional bug · since last green <span class="new-badge">v2</span></p>
+      <h1>The red test opens three rows, not fifty-five.</h1>
+      <p class="lede"><code>balances_match</code> fails. Ada ran it green at <code>7d3e01a</code> when she pulled at 07:55, before the agent's last commit, and her trail remembers. So the hunt is the items the test reaches, intersected with what changed after that. <code>parse</code> is reached too, but it changed before the last green run, so it is not a candidate.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — Tests</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="dossier" style="padding:12px 14px 4px">
+              <div class="label" style="margin-top:0">This branch, from the local trail</div>
+              <div class="tline">
+                <div class="g"><b>8b10e2d</b>origin/main</div>
+                <div class="y"><b>1c0e7a2</b>parse → Result</div>
+                <div class="g"><b>7d3e01a</b>balances_match green</div>
+                <div class="y"><b>4f2a9c1</b>quiet fast path</div>
+                <div class="r"><b>5b7d310</b>red now</div>
+              </div>
+            </div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">40</span><span class="g"></span><span><span class="kw">pub fn</span> <span class="fn">apply</span>(batch: &amp;<span class="ty">Batch</span>) -&gt; <span class="ty">u32</span> {</span></div>
+              <div class="lnrow cur"><span class="ln">44</span><span class="g"></span><span>    <span class="kw">unsafe</span> { <span class="fn">fold_entries</span>(raw, entries.<span class="fn">len</span>()) }</span></div>
+              <div class="lnrow"><span class="ln">45</span><span class="g"></span><span>}</span></div>
+            </div>
+            <div class="panel">
+              <h2>Tests <span>1 failed</span></h2>
+              <div class="dossier">
+                <div><span class="pill hot">failed</span> balances_match · expected 22, got 19</div>
+                <div class="btn">Rerun failed</div><div class="btn">Debug test</div><div class="btn pri">Hunt this failure</div>
+              </div>
+            </div>
+          </div>
+          <aside class="side">
+            <h2>Hunt <span>balances_match · since 7d3e01a</span></h2>
+            <div class="dossier">
+              <p style="margin-top:0;color:var(--tertiary)">Reached by the test and changed since it was last green. Ranked: lit checks, open marks, distance.</p>
+              <ul class="hunt">
+                <li><span class="pill hot">unsafe</span><div><b>apply::apply</b><div class="path">depth 1 · body · unchecked</div></div></li>
+                <li><span class="pill info">question</span><div><b>fold::fold_entries</b><div class="path">depth 2 · body · Mira</div></div></li>
+                <li><span class="pill dim">stale</span><div><b>fold::Ledger::balance</b><div class="path">depth 3 · body · Ada's verified</div></div></li>
+              </ul>
+              <p style="color:var(--tertiary);margin:8px 0 0">Excluded: <b style="color:var(--secondary)">parse::parse</b> · changed in 1c0e7a2, before the last green run.</p>
+              <div class="btn">Mark suspect</div><div class="btn">Open dossier</div>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>cargo test balances_match</span><span class="grow"></span><span>3 candidates · 1 excluded by last green</span></div>
+      </div>
+      <p class="caption">v1 intersected with everything since the merge-base, which here would be every reached change on the branch. The trail's memory of the last green run is what makes the list short. When there is no green run on record, the merge-base is the fallback, and the header says which base it used.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Stop inside it</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="stop" hidden>
+      <p class="kicker">S4 · Logical bug · Cite <span class="new-badge">v2</span></p>
+      <h1>She saw it return 19. The team gets that line, not a link to her Mac.</h1>
+      <p class="lede">She steps into <code>fold_entries</code>. The stop goes to the local trail with its frames and watches. When she marks the item suspect, Cite writes one summary line into the mark, and she edits it before it is saved. In v1 the mark pointed at a trail entry nobody else could open.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — debugging</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">fold.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">20</span><span class="g"><i class="dot question"></i></span><span><span class="kw">fn</span> <span class="fn">fold_entries</span>(raw: *<span class="kw">const</span> <span class="ty">Entry</span>, n: <span class="ty">usize</span>) -&gt; <span class="ty">u32</span> {</span></div>
+              <div class="lnrow stop"><span class="ln">21</span><span class="g"></span><span>    <span class="kw">if</span> <span class="fn">is_quiet</span>(raw, n) { <span class="kw">return</span> <span class="fn">balance</span>(raw, n); }</span></div>
+              <div class="lnrow"><span class="ln">22</span><span class="g"></span><span>    <span class="fn">reject_empty</span>(raw, n);</span></div>
+              <div class="lnrow"><span class="ln">23</span><span class="g"></span><span>    <span class="kw">let</span> acc = <span class="fn">balance</span>(raw, n);</span></div>
+              <div class="lnrow"><span class="ln">24</span><span class="g"></span><span>    acc</span></div>
+              <div class="lnrow"><span class="ln">25</span><span class="g"></span><span>}</span></div>
+            </div>
+            <div class="panel">
+              <h2>Debug <span>stopped · fold.rs:21</span></h2>
+              <div class="frames">
+                <div class="fr"><span>balances_match</span><em>tests/ledger.rs:120</em></div>
+                <div class="fr"><span>apply</span><em>src/apply.rs:44</em></div>
+                <div class="fr on"><span>fold_entries</span><em>src/fold.rs:21</em></div>
+              </div>
+              <div class="dossier" style="padding-top:4px">
+                <ul><li>n = <b>3</b> · quiet = <b>true</b> · balance(raw, n) = <b>19</b></li></ul>
+                <div class="btn">Record stop</div><div class="btn">Hunt from these frames</div>
+              </div>
+            </div>
+          </div>
+          <aside class="side" style="width:360px">
+            <h2>Mark suspect <span>fold::fold_entries</span></h2>
+            <div class="dossier">
+              <div class="label" style="margin-top:0">Note</div>
+              <div class="editline">a quiet batch returns before reject_empty</div>
+              <div class="label">Cited from the trail · editable, then written</div>
+              <div class="editline" style="border-color:rgba(255,255,255,.2)">stop at fold.rs:21, quiet = true, n = 3, returns 19, expected 22</div>
+              <div class="btn pri">Save to ada.toml</div><div class="btn">Cancel</div>
+              <div class="local" style="margin:14px 0 0">
+                <div class="st">Trail · this Mac only</div>
+                <p style="margin:4px 0">Stop · fold.rs:21 · 3 frames · 4 watches</p>
+                <p style="margin:4px 0">Test balances_match failed · 5b7d310 · 10:52</p>
+                <p style="margin:4px 0">Test balances_match passed · 7d3e01a · 07:58</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>lldb · fold_entries</span><span class="grow"></span><span>full watches stay local · one line is shared</span></div>
+      </div>
+      <p class="caption">This is the logical bug: a quiet batch takes an early return, skips <code>reject_empty</code>, and the total comes out 19. Mira's question was already on this function. Now Ada's suspect sits beside it with what she saw.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">The row looks wrong</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="visual" hidden>
+      <p class="kicker">S4 · Visual bug · Share <span class="new-badge">v2</span></p>
+      <h1>A picture pinned to the function that paints it.</h1>
+      <p class="lede">The cents are gone: <code>12.50</code> shows as <code>12</code>. Ada drops the screenshot on <code>paint_row</code>. It stays on her Mac until she presses Share, which copies it to <code>.ride/evidence/</code> and writes a mark that names the file. v1 said both "local" and "shared". Now Share is the switch.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — paint.rs</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">paint.rs</div></div>
+            <div class="code">
+              <div class="lnrow"><span class="ln">18</span><span class="g"></span><span><span class="kw">fn</span> <span class="fn">paint_row</span>(row: &amp;<span class="ty">Row</span>, cents: <span class="ty">u32</span>) {</span></div>
+              <div class="lnrow"><span class="ln">19</span><span class="g"></span><span>    row.<span class="fn">set_label</span>(&amp;row.name);</span></div>
+              <div class="lnrow cur"><span class="ln">21</span><span class="g"><i class="dot suspect"></i></span><span>    row.<span class="fn">set_text</span>(&amp;<span class="fn">format!</span>(<span class="str">"{}"</span>, cents / <span class="num">100</span>));</span></div>
+              <div class="lnrow"><span class="ln">22</span><span class="g"></span><span>}</span></div>
+            </div>
+          </div>
+          <aside class="side" style="width:360px">
+            <h2>Dossier <span>paint::paint_row</span></h2>
+            <div class="dossier">
+              <h3>Change</h3>
+              <ul><li>Body edited · <span class="pill bad">no test reaches</span></li></ul>
+              <h3>Evidence</h3>
+              <div class="shot">
+                <div class="bar">Ledger</div>
+                <div class="r"><span>Coffee</span><span class="clip">12</span></div>
+                <div class="r"><span>Rent</span><span class="clip">1,200</span></div>
+              </div>
+              <div class="note" style="margin-top:8px">Cents are gone: 12.50 shows as 12. · Ada</div>
+              <div class="btn pri">Share</div><div class="btn">Keep local</div>
+              <p style="color:var(--tertiary);margin:8px 0 0">Share writes <code>.ride/evidence/c2a9-1.png</code> and a suspect in ada.toml that names it.</p>
+              <h3>Callers that also changed</h3>
+              <ul><li>none · <b>paint_list</b> is unchanged</li></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>evidence · local until shared</span><span class="grow"></span><span>map badge on paint</span></div>
+      </div>
+      <p class="caption">The integer division on line 21 is the bug, and now the picture sits beside it. No test reaches <code>paint_row</code>, which is why this was a picture and not a red test. Ride does not diff pixels.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">Hand it back</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="handoff" hidden>
+      <p class="kicker">S5 · Copy agent brief · 12:30 <span class="new-badge">v2</span></p>
+      <h1>The open items leave Ride as text the agent can act on.</h1>
+      <p class="lede">The fix is the agent's job. Ride does not run agents. It writes a brief, plain markdown on the clipboard, built from the marks, the cited lines and the failing output. Ada pastes it into the agent she already uses. A second button writes the same items as a pull request summary.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest</div></div>
+        <div class="body rel">
+          <div class="main dimmed">
+            <div class="panel" style="border-top:0;flex:1">
+              <h2>Behaviour · 46 <span class="seg"><em>Files</em><b>Symbols</b></span></h2>
+              <div class="counts">
+                <span class="n"><b>55</b> need eyes</span><span class="v"><b>38</b> verified</span><span class="s"><b>4</b> suspect</span><span class="qn"><b>2</b> question</span><span class="u"><b>11</b> unchecked</span>
+                <span class="grow"></span><span class="act">Copy review summary</span><span class="act" style="color:var(--accent)">Copy agent brief</span>
+              </div>
+              <div style="height:360px"></div>
+            </div>
+          </div>
+          <div class="sheet">
+            <h2>Agent brief <span>markdown · 4 suspects · 2 questions · 1 failing test</span></h2>
+<pre class="md"><span class="h"># Review of agent/ingest at 5b7d310</span>
+Base origin/main 8b10e2d. 55 behaviour changes, 38 verified.
+
+<span class="h">## Failing</span>
+- balances_match (tests/ledger.rs:120): expected 22, got 19.
+  Last green at 7d3e01a.
+
+<span class="h">## Suspects</span>
+- <span class="c">[m3x8d]</span> src/fold.rs `fold::fold_entries` (Ada)
+  a quiet batch returns before reject_empty
+  stop at fold.rs:21, quiet = true, n = 3, returns 19, expected 22
+- <span class="c">[m9p1a]</span> src/paint.rs `paint::paint_row` (Ada)
+  cents are gone: 12.50 shows as 12 · .ride/evidence/c2a9-1.png
+- <span class="c">[m2q7r]</span> src/parse.rs `parse::parse` (dov)
+  rejects an empty header the tests never send
+- <span class="c">[m5c0t]</span> src/commit.rs `commit::commit_batch` (dov) …
+
+<span class="h">## Questions</span>
+- <span class="c">[m7k2q]</span> src/fold.rs `fold::fold_entries` (Mira)
+  why does a quiet batch skip the empty check?
+- <span class="c">[m4h6w]</span> src/paint.rs `paint::paint_header` (Ada)
+  should the total follow the user's locale?
+
+<span class="h">## How to answer</span>
+Write .ride/follow/night-agent.toml with agent = true.
+One [[mark]] per reply: mark = "answer", re = "&lt;id&gt;".
+Format: docs/sessions/follow-format.md</pre>
+            <div class="foot"><span>copied to clipboard</span><span style="flex:1"></span><span class="btn">Copy review summary</span><span class="btn pri">Done</span></div>
+          </div>
+        </div>
+        <div class="status"><span>12:30 · end of the morning</span><span class="grow"></span><span>55 · 38 verified · 4 suspect · 2 question · 11 unchecked</span></div>
+      </div>
+      <p class="caption">The follow files are part of the repo, so the agent can also read them directly on its next run. Its answers come back in its own file, marked <code>agent = true</code>. Nothing in this brief needs Ride to read.</p>
+      <div class="points">
+        <div><strong>Ride does not run agents</strong>No second runtime, no tools loop. It hands over text.</div>
+        <div><strong>Ids tie it together</strong>Every open item carries its mark id. Replies use <code>re</code>.</div>
+        <div><strong>11 unchecked</strong>Mira picks those up after lunch. She starts from 38, not from zero.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">The agent pushes again</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="push" hidden>
+      <p class="kicker">S3 · Wednesday 8:40 · the second push <span class="new-badge">v2</span></p>
+      <h1>Re-review reads only what moved since you checked.</h1>
+      <p class="lede">The agent answered the brief overnight and pushed. Ada's 38 verified marks did not reset. The three on items the agent touched are stale and come first. Since verified diffs each one from the commit where she checked it, so she reads the two new lines, not the whole function.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="name">ledger — agent/ingest · after the second push</div></div>
+        <div class="body">
+          <div class="main">
+            <div class="panel" style="border-top:0;flex:1">
+              <h2>Symbols <span>stale first</span><span class="seg"><em>Files</em><b>Symbols</b></span></h2>
+              <div class="counts">
+                <span class="n"><b>57</b> need eyes</span><span class="v"><b>35</b> verified</span><span class="s"><b>4</b> suspect</span><span class="qn"><b>2</b> question</span><span class="u"><b>16</b> unchecked</span>
+              </div>
+              <table class="sym">
+                <thead><tr><th>Item</th><th>Mark</th><th>Since</th></tr></thead>
+                <tbody>
+                  <tr class="grp"><td colspan="3"><span class="chev">▾</span><b>Stale · 3</b><span class="r">verified, then changed</span></td></tr>
+                  <tr class="on"><td><div class="symname">apply::apply</div><div class="path">src/apply.rs:40</div></td><td><span class="pill dim">verified · stale · Ada</span></td><td class="path">5b7d310 → e81b0d4</td></tr>
+                  <tr><td><div class="symname">fold::Ledger::balance</div><div class="path">src/fold.rs:60</div></td><td><span class="pill dim">verified · stale · Ada</span></td><td class="path">5b7d310 → e81b0d4</td></tr>
+                  <tr><td><div class="symname">commit::flush</div><div class="path">src/commit.rs:40</div></td><td><span class="pill dim">verified · stale · Ada</span></td><td class="path">5b7d310 → e81b0d4</td></tr>
+                  <tr class="grp"><td colspan="3"><span class="chev">▾</span><b>Answered · 1</b><span class="r">waiting for the asker</span></td></tr>
+                  <tr><td><div class="symname">fold::fold_entries</div><div class="path">src/fold.rs:20</div></td><td><span class="pill info">question · Mira</span></td><td class="path">1 agent answer</td></tr>
+                  <tr class="grp"><td colspan="3"><span class="chev">▸</span><b>New · 2</b>  <b style="margin-left:14px">Unchecked · 11</b><span class="r">verified and fresh · 35, nothing to redo</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <aside class="side" style="width:380px">
+            <h2>Since verified <span>apply::apply · by Ada at 5b7d310</span></h2>
+            <div class="diff">
+              <div class="d"><span> </span><span>    <span class="kw">let</span> raw = entries.<span class="fn">as_ptr</span>();</span></div>
+              <div class="d add"><span>+</span><span>    <span class="kw">if</span> entries.<span class="fn">is_empty</span>() { <span class="kw">return</span> <span class="num">0</span>; }</span></div>
+              <div class="d del"><span>−</span><span>    <span class="kw">unsafe</span> { <span class="fn">fold_entries</span>(raw, entries.<span class="fn">len</span>()) }</span></div>
+              <div class="d add"><span>+</span><span>    <span class="kw">unsafe</span> { <span class="fn">fold_entries</span>(raw, entries.<span class="fn">len</span>()) }.<span class="fn">max</span>(<span class="num">0</span>)</span></div>
+            </div>
+            <div class="dossier" style="padding-top:0">
+              <div class="btn pri">Verify again</div><div class="btn">Mark suspect</div>
+              <h3>Mira's question · fold_entries</h3>
+              <div style="color:var(--secondary)">why does a quiet batch skip the empty check?</div>
+              <div class="reply">
+                <div class="claim"><span class="who">night-agent · agent = true · a claim</span>Quiet batches are heartbeats with no entries. The early return was meant to skip folding, not the check. Fixed in e81b0d4: quiet returns 0 before folding.</div>
+                <div class="btn">Accept answer</div><div class="btn">Reply</div>
+              </div>
+              <p style="color:var(--tertiary);margin:10px 0 0">Only Mira can accept. Ada's suspect on <code>fold_entries</code> stays open until someone verifies the new text.</p>
+            </div>
+          </aside>
+        </div>
+        <div class="status"><span>e81b0d4 · 6 items changed by the agent</span><span class="grow"></span><span>35 fresh verified marks carried over</span></div>
+      </div>
+      <p class="caption"><code>.max(0)</code> on a <code>u32</code> does nothing, and Ada will say so. The point is that she sees it in four lines instead of rereading the branch. An agent's answer is shown as a claim. It closes nothing on its own.</p>
+      <div class="points">
+        <div><strong>Mark stores its commit</strong>That is what makes since verified possible.</div>
+        <div><strong>Fresh marks carry over</strong>35 of 38 still match their shape hash. They still count.</div>
+        <div><strong>Base picker</strong>"Since my last pass" shows only what moved after Tuesday's recorded pass.</div>
+      </div>
+      <div class="pager"><button data-dir="-1">Back</button><button data-dir="1">What stays, and the order of work</button><span class="hint">← →</span></div>
+    </section>
+
+    <section class="stage" data-scene="stays" hidden>
+      <p class="kicker">The floor · the phases</p>
+      <h1>She goes back to the buffer. Completion is still the catalog.</h1>
+      <p class="lede">The support layer is a way of reading the workspace, following the work, and handing it back. It jumps into the editor, the test and the breakpoint. It does not replace them, and nothing in the October plan is cut to make room.</p>
+      <div class="phases">
+        <div class="first"><strong>First slice · ~3 wk</strong>Symbol diff, shape hash and equivalence, the Symbols segment, per-author marks.<em>Proves the two risky ideas.</em></div>
+        <div><strong>S1 · read a change</strong>Symbol diff, triage, checks, inbox, count.<em>16 days</em></div>
+        <div><strong>S2 · explain</strong>Dossier, static test reach, author's words, call edges, badges, note.<em>16 days</em></div>
+        <div><strong>S3 · follow up</strong>Marks files, gutter, derived states, since verified, trail.<em>13 days</em></div>
+        <div><strong>S4 + S5 · hunt, hand off</strong>Three hunt starts, evidence, summary, brief, agent answers.<em>13 days</em></div>
+      </div>
+      <div class="facts" style="margin-top:12px">
+        <div class="fact">
+          <h3>Still in this window</h3>
+          <ul>
+            <li>Completion from the on-disk catalog, cheat sheets</li>
+            <li>Rename, intentions, usages, hierarchy</li>
+            <li>cargo and clang checks, the oracle</li>
+            <li>Run, tests, lldb · the Files segment of Changes</li>
+            <li>No model on the keystroke path (KD-21)</li>
+          </ul>
+        </div>
+        <div class="fact">
+          <h3>Measured before it ships</h3>
+          <ul>
+            <li>Zero false equivalence on the mutation suite</li>
+            <li><code>cargo fmt</code> over a branch stales zero marks</li>
+            <li>200 changed files in under 1 s warm</li>
+            <li>Seeded bugs land in the hunt's top three</li>
+            <li>Triage share recorded on three real agent branches</li>
+          </ul>
+        </div>
+        <div class="fact">
+          <h3>Left alone</h3>
+          <ul>
+            <li>No second agent runtime. Ride hands over text.</li>
+            <li>No ticket tracker, accounts or shared server.</li>
+            <li>No pixel diff and no coverage instrumentation.</li>
+            <li>No embeddings deciding what is related.</li>
+          </ul>
+        </div>
+        <div class="fact">
+          <h3>What v2 changed from v1</h3>
+          <ul>
+            <li>Shape hash instead of text hash · equivalence triage</li>
+            <li>Review order · test weakened check · author's words</li>
+            <li>One follow file per author · Cite instead of link</li>
+            <li>Since last green · since verified · the agent brief</li>
+          </ul>
+        </div>
+      </div>
+      <p class="caption">Full plan, with the review table R-1 to R-17, sizes and risks: <code>plan/roadmap/support-2027-v2.md</code>. The v1 plan and deck are unchanged beside it.</p>
+      <div class="pager"><button data-dir="-1">Back</button><button data-go-first="morning">Replay the morning</button></div>
+    </section>
+  </main>
+</div>
+<script>
+(function () {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  var order = Array.prototype.map.call(document.querySelectorAll(".rail [data-go]"), function (b) { return b.getAttribute("data-go"); });
+  var stages = Array.prototype.slice.call(document.querySelectorAll("[data-scene]"));
+  var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-go]"));
+  function show(id) {
+    if (order.indexOf(id) < 0) id = order[0];
+    stages.forEach(function (s) { s.hidden = s.getAttribute("data-scene") !== id; });
+    buttons.forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-go") === id ? "true" : "false"); });
+    var current = document.querySelector('[data-go="' + id + '"]');
+    if (current && current.parentElement) {
+      var rail = current.parentElement;
+      var top = current.offsetTop - rail.clientHeight / 2;
+      if (top < 0) top = 0;
+      rail.scrollTop = top;
+    }
+    window.scrollTo(0, 0);
+    history.replaceState(null, "", "#" + id);
+  }
+  function step(delta) {
+    var id = (location.hash || "#morning").slice(1);
+    var i = order.indexOf(id);
+    if (i < 0) i = 0;
+    var next = order[Math.max(0, Math.min(order.length - 1, i + delta))];
+    show(next);
+  }
+  buttons.forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-go")); }); });
+  document.querySelectorAll("[data-dir]").forEach(function (b) {
+    b.addEventListener("click", function () { step(Number(b.getAttribute("data-dir"))); });
+  });
+  document.querySelectorAll("[data-go-first]").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.getAttribute("data-go-first")); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+    var tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+  show((location.hash || "#morning").slice(1));
+})();
+</script>
+</body>
+</html>

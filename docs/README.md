@@ -37,6 +37,10 @@
 | 1.3 close-out cards: data-safety fixes, engine prologue, refactorings, intentions, hierarchy, code vision, Safe Delete | `plan/roadmap/close-out-1.3.md` |
 | Level-up plan: full feature map, the five bets (ship 1.0, Git, semantic oracle, assistant, debugging depth), releases 1.3 close-out to 2.3, decisions KD-20 to KD-24 | `plan/roadmap/level-up.md` |
 | Progress plan 2026-10 (draft for review): state of every earlier plan, priorities P0 ship to P6 debugging, open decisions | `plan/roadmap/progress-2026-10.md` |
+| Support plan 2027: explainability of the workspace and follow-up of AI-authored changes, on top of the classical IDE | `plan/roadmap/support-2027.md` |
+| Support plan 2027, as mock screens: one morning on an agent branch | `docs/product/support-2027.html` |
+| Support plan 2027 v2 (revision for review): shape hash, equivalence triage, per-author marks, hunt since last green, agent hand-off | `plan/roadmap/support-2027-v2.md` |
+| Support plan 2027 v2, as mock screens: the night shift and the second push | `docs/product/support-2027-v2.html` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
