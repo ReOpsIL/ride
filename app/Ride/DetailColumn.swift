@@ -36,7 +36,7 @@ struct DetailColumn: View {
                         .reportSize(.height) { testsHeight.wrappedValue = $0 }
                 }
                 if state.showGit {
-                    GitPanel(status: state.git, model: state.gitChanges)
+                    GitPanel(status: state.git, model: state.gitChanges, review: state.review)
                         .frame(minHeight: 160, idealHeight: 300, maxHeight: 640)
                         .background(SplitPositioner(position: 300, fromEnd: true))
                 }

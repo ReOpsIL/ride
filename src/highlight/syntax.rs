@@ -11,6 +11,7 @@ use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::context::Context;
 use super::includes::IncludeRef;
+use super::leaves::Leaf;
 use super::members::Access;
 use super::site::SiteAt;
 use super::types::TypeTable;
@@ -35,6 +36,12 @@ pub trait Syntax: Send + Sync {
     fn edit(&mut self, edit: &InputEdit, text: &str) -> Result<Vec<ByteRange>, EngineError>;
     fn highlights(&self, text: &str, ranges: &[ByteRange]) -> Vec<HighlightSpan>;
     fn outline(&self, text: &str) -> Vec<OutlineItem>;
+    fn leaves(&self, _text: &str) -> Vec<Leaf> {
+        Vec::new()
+    }
+    fn hidden_items(&self, _text: &str, _have: &[OutlineItem]) -> Vec<OutlineItem> {
+        Vec::new()
+    }
     fn errors(&self) -> Vec<ParseErrorSpan>;
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;

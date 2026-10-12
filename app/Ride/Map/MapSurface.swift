@@ -35,7 +35,10 @@ private struct MapPage: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ts.ui.bgBase)
-        .onAppear { state.reloadWorkspaceMap(force: false) }
+        .onAppear {
+            state.reloadWorkspaceMap(force: false)
+            state.review.reload(root: state.git.root, always: true)
+        }
         .onChange(of: state.workspaceRoot) { _, _ in
             state.reloadWorkspaceMap(force: true)
         }

@@ -13,6 +13,10 @@ pub fn read(git: &Git, source: Source, path: &str) -> Option<String> {
     }
 }
 
+pub fn at(git: &Git, rev: &str, path: &str) -> Option<String> {
+    show(git, &format!("{rev}:{path}"))
+}
+
 fn show(git: &Git, object: &str) -> Option<String> {
     git.run(&["show", "--no-textconv", object])
         .ok()

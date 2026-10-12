@@ -18,6 +18,7 @@ mod query;
 mod refactor;
 mod refs;
 mod rename;
+mod review;
 mod run;
 mod session;
 mod symbol;
@@ -54,6 +55,7 @@ pub use query::{
 pub use refactor::ExtractPlan;
 pub use refs::{UsageHit, UsagesResponse};
 pub use rename::{RenameFile, RenamePlan};
+pub use review::{ReviewDossier, ReviewHunt, ReviewInbox, ReviewMark, ReviewMarkLine, ReviewRow};
 pub use run::{RecompileCommand, SingleRun};
 pub use session::{
     ByteRange, HighlightSpan, InputEditFfi, OutlineItem, OutlineScope, ParseErrorSpan, SessionOpen,

@@ -45,6 +45,7 @@ struct MapCard: View {
                 .font(.system(size: 13 * scale, weight: .semibold))
                 .foregroundStyle(ts.ui.textPrimary)
                 .lineLimit(2)
+            ReviewMapMarks(node: node, scale: scale)
             Spacer(minLength: 0)
         }
         .padding(10 * scale)

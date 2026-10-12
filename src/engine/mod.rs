@@ -62,6 +62,8 @@ mod refactor;
 mod refs;
 mod rel_path;
 mod rename;
+mod review;
+mod review_map;
 mod run;
 mod rust_members;
 mod safe_delete;

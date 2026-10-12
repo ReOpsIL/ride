@@ -1,11 +1,29 @@
 import SwiftUI
 
 struct DebugFramesList: View {
+    @EnvironmentObject private var state: AppState
     @ObservedObject var model: DebugPanelModel
     @ObservedObject private var ts = ThemeStore.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: Tokens.Space.s) {
+                Button("Record stop") {
+                    ReviewTrail.stop(frames: model.frames, watches: model.watches)
+                }
+                .disabled(model.frames.isEmpty)
+                Button("Hunt from these frames") {
+                    state.review.hunt(frames: model.frames.map(\.name))
+                    state.showGit = true
+                    state.review.reload(root: state.git.root)
+                }
+                .disabled(model.frames.isEmpty)
+            }
+            .buttonStyle(.plain)
+            .font(Tokens.ui(10, weight: .semibold))
+            .foregroundStyle(ts.ui.accent)
+            .padding(.horizontal, Tokens.Space.m)
+            .padding(.top, Tokens.Space.xs)
             Picker("", selection: threadBinding) {
                 ForEach(model.threads, id: \.id) { thread in
                     Text("\(thread.name) · \(thread.id)").tag(thread.id)

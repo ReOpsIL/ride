@@ -34,6 +34,7 @@ extension AppState {
         if let root = git.root {
             gitChanges.loadBranches(root: root)
         }
+        review.reload(root: git.root, always: showWorkspaceMap)
     }
 
     func selectGitChange(_ change: GitFileChange, side: GitDiffSide) {

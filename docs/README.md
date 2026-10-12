@@ -31,6 +31,7 @@
 | AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed, JetBrains; engine context packs | `plan/ai/assistant.md` |
 | Semantic oracle: rust-analyzer and clangd sidecars for type-aware completion, never on the keystroke path | `docs/product/semantic-oracle.md` |
 | Git: changes panel, diff, stage, commit, push, pull, branches; engine `src/git/` over the `git` CLI | `docs/product/git.md` |
+| Follow files: one committed `.ride/follow/<author>.toml` per author, the mark schema an agent answers in | `docs/sessions/follow-format.md` |
 | Tool lookup: the login-shell PATH resolved once, used for finding `cargo` and friends and passed to every child process | `docs/product/tool-lookup.md` |
 | Next features after 1.2: 1.3 understand and change code, 1.4 completion that knows types, 1.5 debugging depth and assembly | `plan/roadmap/next-1.3.md` |
 | Release 1.0 public cards: release train, onboarding, crash reports, `ride` command, C/C++ live verification, editor leftovers, site and manuals, hygiene gates | `plan/roadmap/release-1.0.md` |
@@ -39,7 +40,8 @@
 | Progress plan 2026-10 (draft for review): state of every earlier plan, priorities P0 ship to P6 debugging, open decisions | `plan/roadmap/progress-2026-10.md` |
 | Support plan 2027: explainability of the workspace and follow-up of AI-authored changes, on top of the classical IDE | `plan/roadmap/support-2027.md` |
 | Support plan 2027, as mock screens: one morning on an agent branch | `docs/product/support-2027.html` |
-| Support plan 2027 v2 (revision for review): shape hash, equivalence triage, per-author marks, hunt since last green, agent hand-off | `plan/roadmap/support-2027-v2.md` |
+| Support plan 2027 v2 (revision for review): shape hash, equivalence triage, per-author marks, hunt since last green, agent hand-off. Holds in §0.1 | `plan/roadmap/support-2027-v2.md` |
+| Support plan 2027 v2, build order: what is scheduled after the holds | `plan/roadmap/support-2027-v2-build.md` |
 | Support plan 2027 v2, as mock screens: the night shift and the second push | `docs/product/support-2027-v2.html` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
@@ -62,7 +64,10 @@
 | `src/highlight` | buffer sessions over a `Syntax` trait: a generic tree-sitter `TreeSyntax` driven by a per-language `Grammar` (Rust, C, C++ under `grammar/`, queries under `queries/<lang>/`) and Markdown (tree-sitter-md block + inline, code fences re-parsed per language); highlight deltas, outline (with signature and doc), parse errors, completion sites (`site/`), caret contexts for the cheat sheet (`context/`), imports, call sites, Rust/C type tables and receiver typing, postfix receivers |
 | `src/check` | `cargo check` JSON diagnostics, `clang -fsyntax-only` diagnostics driven by `compile_commands.json`, rustfmt and clang-format |
 | `src/engine` | in-process `Engine`: sessions, the completion router (`query.rs`) and its per-site sources (`identifier`, `access`, `rust_members`, `paths`, `includes`, `lists`, `postfix`, `snippets`, `merge`), the cheat sheet lookup (`cheat.rs`), definitions, import edits, signature help, tools, manifest watch |
-| `src/git` | `git` CLI runner, porcelain v2 status, unified diff and branch parsers, stage / commit / branch / push / pull operations |
+| `src/git` | `git` CLI runner, porcelain v2 status, unified diff and branch parsers, stage / commit / branch / push / pull operations, merge-base |
+| `src/review` | Symbol diff against that base: shape hash, formatting and unique-move equivalence, checks, inbox order, dossier, hand-off, hunt |
+| `src/follow` | Per-author marks in `.ride/follow/<author>.toml` |
+| `src/trail` | Local append-only trail of test results and debug stops, under Application Support |
 | `src/ai` | context packs for AI requests: focus widened to whole lines, enclosing outline item, definitions of referenced symbols, character budget |
 | `src/wire` | Content-Length JSON framing and the response mailbox shared by the debug adapter and LSP clients |
 | `src/oracle` | language-server sidecars (rust-analyzer per Cargo root, clangd per compile-database project), background completion jobs for member, identifier and path sites, the facts cache the completion router reads |

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-10-11 |
-| Status | Proposed. Revision of `plan/roadmap/support-2027.md`, which stays as written for comparison |
+| Status | Proposed. Holds in §0.1 are not to be built. The build order is `plan/roadmap/support-2027-v2-build.md` |
 | Sits beside | `plan/roadmap/progress-2026-10.md` (the floor), `plan/roadmap/level-up.md` (the IDE bets) |
 | Horizon | A native Mac IDE whose second job is explainability of the workspace and follow-up of the work |
 | Presentation | `docs/product/support-2027-v2.html` — one night of agent output and the morning after, as mock screens |
@@ -31,6 +31,30 @@ v1 has the right shape: engine facts first, the model narrates, judgment is a fi
 | R-15 | No view of what the agent said it did | The reviewer cannot compare intent with effect | The dossier lists the commit subjects that touched the item, labelled **author's words** (§4.4) |
 | R-16 | Structural checks do not cover agents gaming tests | An agent that loosens an assertion to go green is the cheapest bug to ship | New check: **test weakened** (assertion count dropped, `#[ignore]` or `should_panic` added) (§4.2) |
 | R-17 | No sizes, no first slice, no success measure | Hard to schedule against the October floor | Sizes per card, a first slice, measures, risks (§8–§10) |
+
+## 0.1 Holds
+
+Reviewed against the tree on 2026-10-11. The reference index records a call by the bare name and the enclosing item's bare name (`src/refs/record.rs`). It does not record an item id. Diagnostics are a `cargo` or `clang` run of the working tree. The oracle server has diagnostics disabled. These holds follow from that. The build plan does not schedule them.
+
+| # | Held | Why it is not a proof here |
+|---|---|---|
+| H-1 | Cross-file rename equivalence (§4.2) | "Every reference to `X` moved to `Y`" is false for a common name. Inside the diff it misses callers that still use the old name. Across the index, unrelated calls share the name, so the proof never fires or fires wrong. D-3: a false equivalent is the worst failure. Formatting and a unique move stay |
+| H-2 | Static reach to depth 4, and the pill "no test reaches" (§4.2, §4.4, §5) | A walk from `balance` by name gathers every function that calls anything named `balance`. On a real crate that invents tests and misses the real one. `samples/rust-demo` would pass only because its names are unique |
+| H-3 | "Callee changed since" (§4.6) | It needs the callee's shape at `commit` and now, for the same item. A name match lights the hint when a different `new` changed, on a mark the team was told was fresh |
+| H-4 | The pill "new diagnostic" (§4.2) | Knowing a diagnostic is new means compiling the base revision. That is a second build, and it does not fit the inbox budget. Problems already lists what fails now |
+| H-5 | "A comparison literal changed alongside the code it tests" (§4.2) | Alongside is undefined. A test updated to expect the new value lights it every time, so the pill becomes noise. The rest of test-weakened stays: assertion-macro count dropped, `#[ignore]` added, `should_panic` added |
+| H-6 | Index-by-literal as a panic path (§4.2) | The grammar cannot see that `slice[i]` panics and `slice.get(i)` does not. Count `unwrap`, `expect`, `panic!`, `unreachable!` only |
+| H-7 | `src/follow/migrate.rs` (§7) | v1 never shipped. There is no `.ride/follow.toml` to migrate |
+| H-8 | Hunt measure "faulty item in the top three" (§9) | It depends on H-2. The gate that matches the walk we can do is in the build plan |
+
+Narrowed, and still built:
+
+- Rust doc comments count in the shape hash. C and C++ comments all drop. A reworded banner in a header must not stale a mark. C++ has no doctest contract.
+- The item id is the file, the chain of enclosing outline names by span, and the kind. Two items that share that chain append the outline signature. It is not a type-checked path.
+- The renamed change kind is not produced. A name token change stays a body or signature edit and needs eyes.
+- Last green is labelled "on this Mac". Otherwise the base is the merge-base.
+- Mark ids are time-prefixed, so sorting the file appends. A random id reshuffles the toml on every write.
+- Author comes from `git config user.name`, with path separators stripped. An empty name does not write a file.
 
 ## 1. The job
 
@@ -99,7 +123,7 @@ Each change is then triaged into one of three groups:
 
 | Group | Rule | Shown |
 |---|---|---|
-| Equivalent | Formatting: shape hash equal. Moved: removed and added with the same shape hash. Renamed: token streams differ only where old is `X` and new is `Y`, for one consistent pair, and every reference to `X` in the change moved to `Y` | Collapsed, with counts per rule. Opens to the list. Never counted as needing eyes |
+| Equivalent | Formatting: shape hash equal. Moved: removed and added with the same shape hash, and no other item shares it. Rename across files is H-1 and is not built | Collapsed, with counts per rule. Opens to the list. Never counted as needing eyes |
 | Light | Doc-only (only doc comment tokens differ). Import-only (only `use` / `#include` items). Test-only items with no lit checks | Collapsed under needs eyes, listed last. Imports are not equivalent: a new trait in scope changes method resolution |
 | Behaviour | Everything else | The review list |
 
@@ -110,10 +134,10 @@ The structural checks (D-8), each a pill:
 | public signature | a `pub` item or a header declaration changed signature |
 | added / removed | item added or removed, not as part of a proved move |
 | unsafe / FFI | `unsafe`, `extern`, raw pointer, `transmute`, or a C cast touched inside the item |
-| no test reaches | static reach (§4.4) finds no test within depth 4 |
-| new diagnostic | the live check reports a diagnostic inside the item that the base did not |
-| test weakened | in a test: assertion macro count dropped, `#[ignore]` or `should_panic` added, or a comparison literal changed alongside the code it tests |
-| new panic path | `unwrap`, `expect`, `panic!`, `unreachable!`, index-by-literal count rose |
+| no test reaches | Held, H-2. Not a pill |
+| new diagnostic | Held, H-4. Not a pill. Problems already shows the working tree |
+| test weakened | in a test: assertion macro count dropped, `#[ignore]` or `should_panic` added. The comparison-literal clause is H-5 and is not built |
+| new panic path | `unwrap`, `expect`, `panic!`, `unreachable!` count rose. Index-by-literal is H-6 and is not built |
 
 ### 4.3 Review inbox
 
@@ -139,7 +163,7 @@ The dossier panel for the item under the caret, all from the engine:
 
 - signature, doc, file, line, item id
 - callers and callees from the reference index; the oracle fills names the index could not resolve, labelled
-- **reached by tests (static)**: test functions that reach the item through callers within depth 4, nearest first. Name mention when static reach finds none, labelled as a mention
+- callers and callees by name, labelled by name. A depth-4 walk to tests is H-2 and is not shown. A name that appears in a test is a mention, labelled as a mention, and it is not a coverage pill
 - the symbol change, its triage group and lit checks
 - **author's words**: subjects of the commits in base..HEAD whose hunks touch the item, newest first
 - the note and its state
@@ -178,7 +202,7 @@ States Ride derives, never stores:
 |---|---|
 | fresh | `basis` equals the current shape hash |
 | stale | the item exists and `basis` differs. Still listed. Opens since-verified |
-| callee changed | verified and fresh, but a callee's shape hash changed after `at`. A hint, not an invalidation |
+| callee changed | Held, H-3. Not derived |
 | moved | followed to a new id by shape hash |
 | orphan | no item matches. Listed under Orphans until dropped |
 
@@ -216,9 +240,9 @@ One list, three starts.
 
 | Start | Base | Candidates |
 |---|---|---|
-| A failing test | the last commit where the trail saw this test green, else the merge-base | items the test reaches statically within depth 4, intersected with behaviour changes since the base |
-| A debug stop | the merge-base | frames on the stack, their direct callees, intersected with behaviour changes. Watches go to the trail |
-| A visual note | the merge-base | the item it was pinned to, its callers to depth 2, intersected with behaviour changes |
+| A failing test | the last commit where this Mac's trail saw this test green, else the merge-base | call names inside that test's own body, intersected with behaviour changes since the base. A depth-4 walk is H-2 |
+| A debug stop | the merge-base | frames on the stack, and the call names inside the stopped function, intersected with behaviour changes. Watches go to the trail |
+| A visual note | the merge-base | the item it was pinned to, and the call names inside it, intersected with behaviour changes |
 
 Rank: on the stack, then lit checks, then an open suspect or question, then distance from the test. Each row jumps to the item, shows the dossier, and offers Mark suspect, Mark verified, Cite, Explain. Run and debug stay the existing commands.
 
@@ -246,10 +270,10 @@ Small modules, engine first. Each row is one responsibility.
 | | `src/review/hunk_assign.rs` | Hunks to innermost items |
 | | `src/review/equivalence.rs` | Formatting, move, rename proofs |
 | | `src/review/checks/` | One file per structural check, behind one `Check` trait |
-| | `src/review/test_reach.rs` | Callers walk to test functions |
+| | `src/review/test_reach.rs` | Not built. H-2 |
 | | `src/review/order.rs` | Sort key and grouping |
 | | `src/review/inbox.rs` | Orchestration only, cached by (old oid, new oid) |
-| | `src/follow/{mark,marks_file,union,state,migrate}.rs` | Types, TOML I/O, per-author union, derived states, move following |
+| | `src/follow/{mark,marks_file,union,state}.rs` | Types, TOML I/O, per-author union, derived states, move following. `migrate` is H-7 and is not built |
 | | `src/trail/{entry,store}.rs` | Entries and the JSON-lines store |
 | | `src/handoff/{summary,brief}.rs` | Markdown out |
 | | `src/git/merge_base.rs`, `src/git/log_range.rs` | Base and per-commit touch for author's words |
@@ -279,7 +303,7 @@ Read a branch as symbols, collapse formatting and moves, mark items in per-autho
 | # | Card | Done when | Days |
 |---|---|---|---|
 | S2-1 | Dossier | Signature, callers, callees, change, checks with AI off | 3 |
-| S2-2 | Static test reach | On `samples/rust-demo`, a test that calls a helper that calls `record` is listed for `record` | 2 |
+| S2-2 | Static test reach | Held, H-2. Not a card | 0 |
 | S2-3 | Author's words | Commit subjects per item over base..HEAD, labelled | 2 |
 | S2-4 | Call edges on the map | A self-test finds the two callers of `record` on `samples/rust-demo` | 4 |
 | S2-5 | Map badges | Needs eyes, suspect, question, evidence, failing test. Refresh recomputes | 2 |
@@ -291,7 +315,7 @@ Read a branch as symbols, collapse formatting and moves, mark items in per-autho
 |---|---|---|---|
 | S3-1 | Marks files | Per-author TOML round-trips, union read, ids stable, sorted output, `docs/sessions/follow-format.md` written | 3 |
 | S3-2 | Gutter and map | A mark paints in the gutter and on the card. Click opens the dossier | 2 |
-| S3-3 | Derived states | Fresh, stale, callee changed, moved, orphan, each with a fixture | 2 |
+| S3-3 | Derived states | Fresh, stale, moved, orphan, each with a fixture. Callee-changed is H-3 | 2 |
 | S3-4 | Since verified | A stale mark opens the item diff from its `commit` to now | 3 |
 | S3-5 | Trail | Test runs and stops append. Cite writes an editable summary line. Nothing from the trail lands in the repo | 3 |
 
@@ -299,7 +323,7 @@ Read a branch as symbols, collapse formatting and moves, mark items in per-autho
 
 | # | Card | Done when | Days |
 |---|---|---|---|
-| S4-1 | Hunt from a failure | Base is last green from the trail. An item changed before last green is not listed | 3 |
+| S4-1 | Hunt from a failure | Base is last green on this Mac. Candidates are call names in the failing test's body. An item changed before last green is not listed | 3 |
 | S4-2 | Hunt from a stop | Record stop on the debug panel opens the same list from its frames | 2 |
 | S4-3 | Evidence | Drop an image on an item: local note, dossier, map badge. Share copies it to `.ride/evidence/` with a mark | 3 |
 
@@ -331,7 +355,7 @@ Total about 58 days, roughly twelve weeks of one engineer, the first slice inclu
 | Formatter churn | `cargo fmt` and `clang-format` over a branch stale zero marks and zero notes |
 | Inbox latency | 200 changed files: under 1 s warm, under 3 s cold, on the dev Mac |
 | Triage share | Recorded on three real agent branches. If under 20% collapse, the equivalent group shrinks to formatting only and the cards are resized |
-| Hunt precision | On seeded bugs in `samples/rust-demo`, the faulty item is in the top three rows |
+| Hunt precision | Held as a gate, H-8. The gate that is built: a changed name the failing test itself calls is listed, and an item changed before last green is not |
 
 ## 10. Risks
 

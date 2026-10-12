@@ -100,6 +100,7 @@ extension AppState {
         quickFiles = []
         git.clear()
         gitChanges.reset()
+        review.reset()
         projectModel.clear()
         return true
     }

@@ -96,6 +96,7 @@ final class AppState: ObservableObject {
     let preview = PreviewModel()
     let git = GitStatusService()
     let gitChanges = GitChangesModel()
+    let review = ReviewModel()
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
     let runConfigEditor = RunConfigEditor()

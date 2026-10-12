@@ -226,6 +226,19 @@
 		GIT00000000000000000000A /* AppState+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000009 /* AppState+Git.swift */; };
 		GIT00000000000000000000C /* AppState+GitOps.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000B /* AppState+GitOps.swift */; };
 		GIT00000000000000000000E /* GitPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000D /* GitPanel.swift */; };
+		REV0000000000000000000B1 /* ReviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A1 /* ReviewModel.swift */; };
+		REV0000000000000000000B2 /* ReviewKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A2 /* ReviewKey.swift */; };
+		REV0000000000000000000B3 /* ReviewActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A3 /* ReviewActions.swift */; };
+		REV0000000000000000000B4 /* ReviewNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A4 /* ReviewNote.swift */; };
+		REV0000000000000000000B5 /* ReviewEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A5 /* ReviewEvidence.swift */; };
+		REV0000000000000000000B6 /* ReviewTrail.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A6 /* ReviewTrail.swift */; };
+		REV0000000000000000000B7 /* ReviewCounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A7 /* ReviewCounts.swift */; };
+		REV0000000000000000000B8 /* ReviewRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A8 /* ReviewRowView.swift */; };
+		REV0000000000000000000B9 /* ReviewList.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000A9 /* ReviewList.swift */; };
+		REV0000000000000000000BA /* ReviewDossier.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000AA /* ReviewDossier.swift */; };
+		REV0000000000000000000BB /* ReviewShotBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000AB /* ReviewShotBox.swift */; };
+		REV0000000000000000000BC /* ReviewMapMarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000AC /* ReviewMapMarks.swift */; };
+		REV0000000000000000000BD /* AppState+Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = REV0000000000000000000AD /* AppState+Review.swift */; };
 		GIT000000000000000000010 /* GitChangeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000000F /* GitChangeList.swift */; };
 		GIT000000000000000000012 /* GitChangeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000011 /* GitChangeRow.swift */; };
 		GIT000000000000000000014 /* GitCommitBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000013 /* GitCommitBox.swift */; };
@@ -1163,6 +1176,19 @@
 		GIT000000000000000000009 /* AppState+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Git.swift"; sourceTree = "<group>"; };
 		GIT00000000000000000000B /* AppState+GitOps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+GitOps.swift"; sourceTree = "<group>"; };
 		GIT00000000000000000000D /* GitPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPanel.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A1 /* ReviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewModel.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A2 /* ReviewKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewKey.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A3 /* ReviewActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewActions.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A4 /* ReviewNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewNote.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A5 /* ReviewEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewEvidence.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A6 /* ReviewTrail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewTrail.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A7 /* ReviewCounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCounts.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A8 /* ReviewRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRowView.swift; sourceTree = "<group>"; };
+		REV0000000000000000000A9 /* ReviewList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewList.swift; sourceTree = "<group>"; };
+		REV0000000000000000000AA /* ReviewDossier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDossier.swift; sourceTree = "<group>"; };
+		REV0000000000000000000AB /* ReviewShotBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewShotBox.swift; sourceTree = "<group>"; };
+		REV0000000000000000000AC /* ReviewMapMarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewMapMarks.swift; sourceTree = "<group>"; };
+		REV0000000000000000000AD /* AppState+Review.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Review.swift"; sourceTree = "<group>"; };
 		GIT00000000000000000000F /* GitChangeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitChangeList.swift; sourceTree = "<group>"; };
 		GIT000000000000000000011 /* GitChangeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitChangeRow.swift; sourceTree = "<group>"; };
 		GIT000000000000000000013 /* GitCommitBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommitBox.swift; sourceTree = "<group>"; };
@@ -2097,6 +2123,7 @@
 				A00000000000000000000053 /* StatusBar */,
 				A00000000000000000000054 /* Workspace */,
 				GIT000000000000000000024 /* Git */,
+				REV0000000000000000000C1 /* Review */,
 				P20000000000000000000010 /* Project */,
 				Q10000000000000000000010 /* Run */,
 				S20000000000000000000020 /* Terminal */,
@@ -2932,6 +2959,26 @@
 				GIT00000000000000000001D /* GitSyncLabel.swift */,
 			);
 			path = Git;
+			sourceTree = "<group>";
+		};
+		REV0000000000000000000C1 /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				REV0000000000000000000A1 /* ReviewModel.swift */,
+				REV0000000000000000000A2 /* ReviewKey.swift */,
+				REV0000000000000000000A3 /* ReviewActions.swift */,
+				REV0000000000000000000A4 /* ReviewNote.swift */,
+				REV0000000000000000000A5 /* ReviewEvidence.swift */,
+				REV0000000000000000000A6 /* ReviewTrail.swift */,
+				REV0000000000000000000A7 /* ReviewCounts.swift */,
+				REV0000000000000000000A8 /* ReviewRowView.swift */,
+				REV0000000000000000000A9 /* ReviewList.swift */,
+				REV0000000000000000000AA /* ReviewDossier.swift */,
+				REV0000000000000000000AB /* ReviewShotBox.swift */,
+				REV0000000000000000000AC /* ReviewMapMarks.swift */,
+				REV0000000000000000000AD /* AppState+Review.swift */,
+			);
+			path = Review;
 			sourceTree = "<group>";
 		};
 		GIT00000000000000000005C /* Stream */ = {
@@ -3774,6 +3821,19 @@
 				GIT00000000000000000000A /* AppState+Git.swift in Sources */,
 				GIT00000000000000000000C /* AppState+GitOps.swift in Sources */,
 				GIT00000000000000000000E /* GitPanel.swift in Sources */,
+				REV0000000000000000000B1 /* ReviewModel.swift in Sources */,
+				REV0000000000000000000B2 /* ReviewKey.swift in Sources */,
+				REV0000000000000000000B3 /* ReviewActions.swift in Sources */,
+				REV0000000000000000000B4 /* ReviewNote.swift in Sources */,
+				REV0000000000000000000B5 /* ReviewEvidence.swift in Sources */,
+				REV0000000000000000000B6 /* ReviewTrail.swift in Sources */,
+				REV0000000000000000000B7 /* ReviewCounts.swift in Sources */,
+				REV0000000000000000000B8 /* ReviewRowView.swift in Sources */,
+				REV0000000000000000000B9 /* ReviewList.swift in Sources */,
+				REV0000000000000000000BA /* ReviewDossier.swift in Sources */,
+				REV0000000000000000000BB /* ReviewShotBox.swift in Sources */,
+				REV0000000000000000000BC /* ReviewMapMarks.swift in Sources */,
+				REV0000000000000000000BD /* AppState+Review.swift in Sources */,
 				GIT000000000000000000010 /* GitChangeList.swift in Sources */,
 				GIT000000000000000000012 /* GitChangeRow.swift in Sources */,
 				GIT000000000000000000014 /* GitCommitBox.swift in Sources */,

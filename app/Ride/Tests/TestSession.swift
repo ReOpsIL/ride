@@ -49,6 +49,7 @@ final class TestSession {
         }
         let outcome = state.finish(runId: runId, status: status)
         publish()
+        ReviewTrail.tests(TestRunStore.shared.tree.rows)
         TestRunStore.shared.finish(label(outcome, status: status))
     }
 

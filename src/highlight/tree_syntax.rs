@@ -60,6 +60,20 @@ impl Syntax for TreeSyntax {
             .unwrap_or_default()
     }
 
+    fn leaves(&self, text: &str) -> Vec<super::leaves::Leaf> {
+        self.tree
+            .as_ref()
+            .map(|t| super::leaves::collect(t, text))
+            .unwrap_or_default()
+    }
+
+    fn hidden_items(&self, text: &str, have: &[OutlineItem]) -> Vec<OutlineItem> {
+        self.tree
+            .as_ref()
+            .map(|tree| super::test_items::missing(tree, text, have))
+            .unwrap_or_default()
+    }
+
     fn errors(&self) -> Vec<ParseErrorSpan> {
         self.tree
             .as_ref()

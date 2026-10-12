@@ -15,6 +15,7 @@ enum DemoScene {
             || semantic(name, state: state)
             || assistant(name, state: state)
             || gitScene(name, state: state)
+            || reviewScene(name, state: state)
         if !handled {
             DemoLaunch.ready()
         }
