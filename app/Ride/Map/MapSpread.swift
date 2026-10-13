@@ -4,11 +4,13 @@ import Foundation
 enum MapArrange: Equatable {
     case fruchtermanReingold
     case kamadaKawai
+    case sugiyama
 
     func apply(_ graph: MapGraph) -> MapGraph {
         switch self {
         case .fruchtermanReingold: MapFruchterman.apply(graph)
         case .kamadaKawai: MapStress.apply(graph)
+        case .sugiyama: MapSugiyama.apply(graph)
         }
     }
 }

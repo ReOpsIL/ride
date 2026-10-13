@@ -288,6 +288,8 @@
 		WMAP0000000000000000B020 /* MapSpread.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A020 /* MapSpread.swift */; };
 		WMAP0000000000000000B021 /* MapFruchterman.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A021 /* MapFruchterman.swift */; };
 		WMAP0000000000000000B022 /* MapStress.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A022 /* MapStress.swift */; };
+		WMAP0000000000000000B023 /* MapSugiyama.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A023 /* MapSugiyama.swift */; };
+		WMAP0000000000000000B024 /* MapSugiyamaPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A024 /* MapSugiyamaPlace.swift */; };
 		WMAP0000000000000000B003 /* MapViewport.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A003 /* MapViewport.swift */; };
 		WMAP0000000000000000B004 /* MapIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A004 /* MapIO.swift */; };
 		WMAP0000000000000000B005 /* MapCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A005 /* MapCursor.swift */; };
@@ -309,6 +311,8 @@
 		WMAP0000000000000000C020 /* MapSpread.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A020 /* MapSpread.swift */; };
 		WMAP0000000000000000C021 /* MapFruchterman.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A021 /* MapFruchterman.swift */; };
 		WMAP0000000000000000C022 /* MapStress.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A022 /* MapStress.swift */; };
+		WMAP0000000000000000C023 /* MapSugiyama.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A023 /* MapSugiyama.swift */; };
+		WMAP0000000000000000C024 /* MapSugiyamaPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A024 /* MapSugiyamaPlace.swift */; };
 		WMAP0000000000000000C003 /* MapViewport.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A003 /* MapViewport.swift */; };
 		WMAP0000000000000000C004 /* MapIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A004 /* MapIO.swift */; };
 		WMAP0000000000000000C005 /* MapCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A005 /* MapCursor.swift */; };
@@ -1309,6 +1313,8 @@
 		WMAP0000000000000000A020 /* MapSpread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSpread.swift; sourceTree = "<group>"; };
 		WMAP0000000000000000A021 /* MapFruchterman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFruchterman.swift; sourceTree = "<group>"; };
 		WMAP0000000000000000A022 /* MapStress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStress.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A023 /* MapSugiyama.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSugiyama.swift; sourceTree = "<group>"; };
+		WMAP0000000000000000A024 /* MapSugiyamaPlace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSugiyamaPlace.swift; sourceTree = "<group>"; };
 		WMAP0000000000000000A003 /* MapViewport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewport.swift; sourceTree = "<group>"; };
 		WMAP0000000000000000A004 /* MapIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapIO.swift; sourceTree = "<group>"; };
 		WMAP0000000000000000A005 /* MapCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCursor.swift; sourceTree = "<group>"; };
@@ -2779,6 +2785,8 @@
 				WMAP0000000000000000A020 /* MapSpread.swift */,
 				WMAP0000000000000000A021 /* MapFruchterman.swift */,
 				WMAP0000000000000000A022 /* MapStress.swift */,
+				WMAP0000000000000000A023 /* MapSugiyama.swift */,
+				WMAP0000000000000000A024 /* MapSugiyamaPlace.swift */,
 				WMAP0000000000000000A003 /* MapViewport.swift */,
 				WMAP0000000000000000A004 /* MapIO.swift */,
 				WMAP0000000000000000A005 /* MapCursor.swift */,
@@ -3390,6 +3398,8 @@
 				WMAP0000000000000000C020 /* MapSpread.swift in Sources */,
 				WMAP0000000000000000C021 /* MapFruchterman.swift in Sources */,
 				WMAP0000000000000000C022 /* MapStress.swift in Sources */,
+				WMAP0000000000000000C023 /* MapSugiyama.swift in Sources */,
+				WMAP0000000000000000C024 /* MapSugiyamaPlace.swift in Sources */,
 				WMAP0000000000000000C003 /* MapViewport.swift in Sources */,
 				WMAP0000000000000000C004 /* MapIO.swift in Sources */,
 				WMAP0000000000000000C005 /* MapCursor.swift in Sources */,
@@ -4083,6 +4093,8 @@
 				WMAP0000000000000000B020 /* MapSpread.swift in Sources */,
 				WMAP0000000000000000B021 /* MapFruchterman.swift in Sources */,
 				WMAP0000000000000000B022 /* MapStress.swift in Sources */,
+				WMAP0000000000000000B023 /* MapSugiyama.swift in Sources */,
+				WMAP0000000000000000B024 /* MapSugiyamaPlace.swift in Sources */,
 				WMAP0000000000000000B003 /* MapViewport.swift in Sources */,
 				WMAP0000000000000000B004 /* MapIO.swift in Sources */,
 				WMAP0000000000000000B005 /* MapCursor.swift in Sources */,

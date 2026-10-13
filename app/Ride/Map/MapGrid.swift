@@ -72,6 +72,7 @@ struct MapArrangeChrome: View {
         VStack(alignment: .trailing, spacing: 4) {
             button(.fruchtermanReingold, "Fruchterman–Reingold", "Lay out with Fruchterman–Reingold")
             button(.kamadaKawai, "Kamada–Kawai", "Lay out with stress majorization (Kamada–Kawai)")
+            button(.sugiyama, "Sugiyama", "Lay out in layers (Sugiyama)")
         }
         .padding(8)
         .background(.ultraThinMaterial)

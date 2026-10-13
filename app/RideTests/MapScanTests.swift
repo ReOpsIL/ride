@@ -177,7 +177,7 @@ final class MapScanTests: XCTestCase {
             MapEdge(from: "n\($0)", to: "n\(($0 + 1) % 8)", kind: .uses)
         }
         let graph = MapGraph(title: "ring", nodes: nodes, edges: edges)
-        for kind in [MapArrange.fruchtermanReingold, .kamadaKawai] {
+        for kind in [MapArrange.fruchtermanReingold, .kamadaKawai, .sugiyama] {
             let laid = kind.apply(graph)
             XCTAssertEqual(kind.apply(graph), laid)
             XCTAssertEqual(laid.nodes.map(\.id), graph.nodes.map(\.id))
@@ -199,7 +199,7 @@ final class MapScanTests: XCTestCase {
             MapEdge(from: "c\($0)", to: "c\(($0 + 1) % core)", kind: .uses)
         }
         let graph = MapGraph(title: "mix", nodes: nodes, edges: edges)
-        for kind in [MapArrange.fruchtermanReingold, .kamadaKawai] {
+        for kind in [MapArrange.fruchtermanReingold, .kamadaKawai, .sugiyama] {
             let laid = kind.apply(graph)
             assertCardsApart(laid)
             XCTAssertLessThan(span(laid.nodes[0], laid.nodes[1]), MapSpread.length * 2)
@@ -229,6 +229,63 @@ final class MapScanTests: XCTestCase {
         XCTAssertEqual(session.layoutNonce, 1)
         XCTAssertEqual(session.graph, expected)
         XCTAssertEqual(session.graph.node("a")?.nested, inner.laidOut())
+    }
+
+    func testSugiyamaStacksADependencyDiamond() throws {
+        let nodes = ["a", "b", "c", "d"].map {
+            MapNode(id: $0, title: $0, detail: "mod", kind: .module)
+        }
+        let edges = [
+            MapEdge(from: "a", to: "b", kind: .depends),
+            MapEdge(from: "a", to: "c", kind: .depends),
+            MapEdge(from: "b", to: "d", kind: .depends),
+            MapEdge(from: "c", to: "d", kind: .depends),
+        ]
+        let graph = MapGraph(title: "diamond", nodes: nodes, edges: edges)
+        let session = MapSession()
+        session.show(graph)
+        session.arrange(.sugiyama)
+        XCTAssertEqual(session.arrangement, .sugiyama)
+        let laid = session.graph
+        XCTAssertEqual(MapArrange.sugiyama.apply(graph), laid)
+        assertCardsApart(laid)
+        let top = try node(laid, "a")
+        let left = try node(laid, "b")
+        let right = try node(laid, "c")
+        let bottom = try node(laid, "d")
+        XCTAssertLessThan(top.y, left.y)
+        XCTAssertLessThan(top.y, right.y)
+        XCTAssertEqual(left.y, right.y, accuracy: 0.5)
+        XCTAssertLessThan(left.y, bottom.y)
+        XCTAssertGreaterThan(abs(left.x - right.x), MapMetrics.nodeSize.width)
+    }
+
+    func testSugiyamaOrdersLayersToCutCrossings() throws {
+        let nodes = ["r", "a", "b", "c", "d"].map {
+            MapNode(id: $0, title: $0, detail: "mod", kind: .module)
+        }
+        let edges = [
+            MapEdge(from: "r", to: "a", kind: .depends),
+            MapEdge(from: "r", to: "b", kind: .depends),
+            MapEdge(from: "a", to: "d", kind: .depends),
+            MapEdge(from: "b", to: "c", kind: .depends),
+        ]
+        let laid = MapArrange.sugiyama.apply(MapGraph(title: "cross", nodes: nodes, edges: edges))
+        assertCardsApart(laid)
+        let root = try node(laid, "r")
+        let sourceA = try node(laid, "a")
+        let sourceB = try node(laid, "b")
+        let targetC = try node(laid, "c")
+        let targetD = try node(laid, "d")
+        XCTAssertLessThan(root.y, sourceA.y)
+        XCTAssertEqual(sourceA.y, sourceB.y, accuracy: 0.5)
+        XCTAssertEqual(targetC.y, targetD.y, accuracy: 0.5)
+        XCTAssertLessThan(sourceA.y, targetC.y)
+        if sourceA.x <= sourceB.x {
+            XCTAssertLessThanOrEqual(targetD.x, targetC.x)
+        } else {
+            XCTAssertLessThanOrEqual(targetC.x, targetD.x)
+        }
     }
 
     func testShiftClickBuildsAGroupAndDragMovesIt() throws {
