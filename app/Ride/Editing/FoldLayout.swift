@@ -55,7 +55,8 @@ final class FoldLayoutDelegate: NSObject, NSTextLayoutManagerDelegate {
             range: range,
             vision: vision,
             foldMark: !view.folds.isEmpty && view.folds.startsFold(at: paragraph),
-            ghost: view.ghostText(at: paragraph)
+            ghost: view.ghostText(at: paragraph),
+            overlay: view.overlayRows(at: paragraph)
         )
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 
 extension AppState {
     func openDiagnostic(_ diag: Diagnostic) {
-        jumpToDiagnostic(path: diag.path, byteStart: diag.byteStart)
+        jumpToDiagnostic(path: diag.primary.path, byteStart: diag.primary.byteStart)
     }
 
     func openDiagnostic(_ diag: StoredDiagnostic) {

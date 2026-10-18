@@ -16,6 +16,7 @@ final class MenuModel: ObservableObject {
     @Published var indentGuides = true
     @Published var lineNumbers = true
     @Published var codeVision = true
+    @Published var diagnosticOverlay = DiagnosticOverlayMode.caret
     @Published var showSidebar = true
     @Published var outlinePanel = true
     @Published var showProblems = false
@@ -58,6 +59,7 @@ final class MenuModel: ObservableObject {
         set(\.indentGuides, state.prefs.indentGuides)
         set(\.lineNumbers, state.prefs.lineNumbers)
         set(\.codeVision, state.prefs.codeVision)
+        set(\.diagnosticOverlay, state.prefs.diagnosticOverlay)
         set(\.showSidebar, state.showSidebar)
         set(\.outlinePanel, state.prefs.outlinePanel)
         set(\.showProblems, state.showProblems)

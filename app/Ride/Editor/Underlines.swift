@@ -8,6 +8,8 @@ struct DiagnosticUnderline {
 enum Underlines {
     static let diagnosticStyle = NSUnderlineStyle.thick.union(.patternDot).rawValue
     static let parseStyle = NSUnderlineStyle.single.union(.patternDot).rawValue
+    static let secondaryStyle = NSUnderlineStyle.single.rawValue
+    static let noteStyle = NSUnderlineStyle.single.union(.patternDash).rawValue
 
     static func shift(document: BufferDocument, replacing edit: NSRange, with length: Int) {
         document.parseUnderlines = RangeShift.shifted(document.parseUnderlines, replacing: edit, with: length)
@@ -21,15 +23,17 @@ enum Underlines {
     static func apply(document: BufferDocument, view: RideTextView, parseErrors: [ParseErrorSpan]?) {
         let text = view.string
         let length = (text as NSString).length
-        let previous = document.parseUnderlines + document.diagnosticUnderlines.map(\.range)
+        let overlayBefore = view.overlayMarkRanges()
+        let stamps = view.overlayStamps()
+        let gutter = view.overlayGutterToken()
+        adopt(document, text: text, length: length)
+        view.prepareOverlay()
+        view.applyOverlayLayout(from: stamps, gutter: gutter)
+        let previous = document.parseUnderlines + document.diagnosticUnderlines.map(\.range) + overlayBefore
         if let parseErrors {
             document.parseUnderlines = parseRanges(parseErrors, text: text, length: length)
         }
-        if document.diagnosticsVersion != CheckService.shared.version {
-            document.diagnosticsVersion = CheckService.shared.version
-            document.diagnosticUnderlines = diagnosticRanges(document: document, text: text, length: length)
-        }
-        let marks = self.marks(document, length: length)
+        let marks = self.marks(document, length: length) + view.overlayMarks(length: length)
         view.editStyles { storage in
             for old in previous.map({ RangeShift.clamp($0, length: storage.length) }) where old.length > 0 && !marks.contains(where: { $0.range == old }) {
                 UnderlineMark.clear(old, in: storage)
@@ -38,6 +42,7 @@ enum Underlines {
                 mark.apply(to: storage)
             }
         }
+        view.notePaintedOverlay(length: length)
         view.lines.refresh(text as NSString)
         (view.enclosingScrollView?.superview as? EditorHostView)?.gutter.diagnosticLines = gutterLines(document, view: view)
         view.needsDisplay = true
@@ -46,6 +51,26 @@ enum Underlines {
     static func color(_ level: DiagnosticLevel) -> NSColor {
         let chrome = ThemeStore.shared.chrome
         return level == .error ? chrome.error : chrome.warning
+    }
+
+    private static func adopt(_ document: BufferDocument, text: String, length: Int) {
+        let version = CheckService.shared.version
+        guard document.diagnosticsVersion != version || document.overlay.version != version else {
+            return
+        }
+        if document.diagnosticsVersion != version {
+            document.diagnosticsVersion = version
+            document.diagnosticUnderlines = diagnosticRanges(document: document, text: text, length: length)
+        }
+        guard document.overlay.version != version else {
+            return
+        }
+        guard let path = document.fileURL?.path else {
+            document.overlay.reload(version: version, diagnostics: [])
+            return
+        }
+        let mine = CheckService.shared.snapshot.filter { $0.path == path }
+        document.overlay.reload(version: version, diagnostics: mine)
     }
 
     private static func marks(_ document: BufferDocument, length: Int) -> [UnderlineMark] {
@@ -73,13 +98,13 @@ enum Underlines {
         guard let path = document.fileURL?.path else {
             return []
         }
-        let mine = CheckService.shared.diagnostics.filter { $0.path == path }
+        let mine = CheckService.shared.diagnostics.filter { $0.primary.path == path }
         if mine.isEmpty {
             return []
         }
         let map = Utf16Map(text)
         return mine.compactMap { diag in
-            DiagnosticRange.nsRange(map: map, length: length, byteStart: diag.byteStart, byteEnd: diag.byteEnd)
+            DiagnosticRange.nsRange(map: map, length: length, byteStart: diag.primary.byteStart, byteEnd: diag.primary.byteEnd)
                 .map { DiagnosticUnderline(range: $0, level: diag.level) }
         }
     }

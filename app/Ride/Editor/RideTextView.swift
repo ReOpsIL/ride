@@ -41,6 +41,8 @@ final class RideTextView: NSTextView {
     var folds = FoldSet()
     var inlineGhost: AIInlineGhost?
     let foldDelegate = FoldLayoutDelegate()
+    let overlayCache = OverlayCache()
+    var overlayMode = DiagnosticOverlayMode.caret
     private var currentLineUTF16 = NSRange(location: 0, length: 0)
 
     override init(frame frameRect: NSRect, textContainer container: NSTextContainer?) {

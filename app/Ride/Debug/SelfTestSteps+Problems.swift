@@ -10,8 +10,8 @@ extension SelfTestSteps {
             SelfTestStep(name: "problems filters", run: {
                 state.showProblems = true
                 CheckService.shared.replaceBuild([
-                    Diagnostic(path: path, byteStart: 0, byteEnd: 3, line: 1, column: 1, level: .error, message: "ride probe error", code: nil, fixes: []),
-                    Diagnostic(path: path, byteStart: 4, byteEnd: 8, line: 1, column: 5, level: .warning, message: "ride probe warning", code: nil, fixes: []),
+                    probe(path, 0, 3, 1, 1, .error, "ride probe error"),
+                    probe(path, 4, 8, 1, 5, .warning, "ride probe warning"),
                 ])
                 model.filter.showErrors = false
             }, check: {
@@ -36,5 +36,34 @@ extension SelfTestSteps {
                 return e.expect(kept && e.caretLine == 1, "selection kept \(kept) caret \(e.caretLine)")
             }),
         ]
+    }
+
+    private static func probe(
+        _ path: String,
+        _ byteStart: UInt32,
+        _ byteEnd: UInt32,
+        _ line: UInt32,
+        _ column: UInt32,
+        _ level: DiagnosticLevel,
+        _ message: String
+    ) -> Diagnostic {
+        Diagnostic(
+            level: level,
+            message: message,
+            code: nil,
+            primary: DiagnosticLabel(
+                path: path,
+                byteStart: byteStart,
+                byteEnd: byteEnd,
+                lineStart: line,
+                lineEnd: line,
+                column: column,
+                text: nil,
+                macroName: nil
+            ),
+            secondary: [],
+            notes: [],
+            fixes: []
+        )
     }
 }

@@ -19,6 +19,7 @@ final class BufferDocument: ObservableObject, Identifiable {
     var parseUnderlines: [NSRange] = []
     var diagnosticUnderlines: [DiagnosticUnderline] = []
     var diagnosticsVersion: UInt64 = 0
+    var overlay = OverlayStore()
     var highlights: [HighlightSpan] = []
     var visibleWork: DispatchWorkItem?
     @Published var isReadOnly = false

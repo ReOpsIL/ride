@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 567" width="1100" height="567" role="img" aria-label="Diagnostic overlay mock: E0382 drawn on the code">
+<defs><style>.m{font-family:Menlo,"SF Mono",ui-monospace,monospace;font-size:13px}.c{font-family:Menlo,"SF Mono",ui-monospace,monospace;font-size:11px}.u{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:12px}</style><pattern id="wave" width="6" height="4" patternUnits="userSpaceOnUse"><path d="M0 3 Q1.5 0 3 3 T6 3" fill="none" stroke="#F16A6A" stroke-width="1.3"/></pattern></defs>
+<rect x="0" y="0" width="1100" height="567" fill="#0c0e12"/>
+<rect x="20" y="20" width="1060" height="467" rx="12" fill="#191B1F" stroke="#33363d"/>
+<path d="M20 32 a12 12 0 0 1 12 -12 h1036 a12 12 0 0 1 12 12 v24 h-1060 z" fill="#14161a"/>
+<circle cx="38" cy="38" r="5.5" fill="#ff5f57"/>
+<circle cx="56" cy="38" r="5.5" fill="#febc2e"/>
+<circle cx="74" cy="38" r="5.5" fill="#28c840"/>
+<text class="u" x="102" y="42" fill="#A0A6B0">sample — src/main.rs</text>
+<rect x="20" y="56" width="1060" height="30" fill="#191B1F"/>
+<rect x="20" y="56" width="96" height="30" fill="#1E2024"/>
+<text class="u" x="34" y="75" fill="#E6E8EC">main.rs</text>
+<line x1="20" y1="56" x2="1080" y2="56" stroke="#2a2d33"/>
+<line x1="20" y1="86" x2="1080" y2="86" stroke="#2a2d33"/>
+<rect x="20" y="86" width="1060" height="377" fill="#1E2024"/>
+<text class="m" x="64" y="111" text-anchor="end" fill="#6B7280">3</text>
+<text class="m" x="98.0" y="111" fill="#C586C0" xml:space="preserve">fn</text>
+<text class="m" x="121.5" y="111" fill="#DCDCAA" xml:space="preserve">main</text>
+<text class="m" x="152.8" y="111" fill="#E6E8EC" xml:space="preserve">() {</text>
+<text class="m" x="64" y="132" text-anchor="end" fill="#6B7280">4</text>
+<text class="m" x="129.3" y="132" fill="#C586C0" xml:space="preserve">let</text>
+<text class="m" x="152.8" y="132" fill="#E6E8EC" xml:space="preserve"> text = </text>
+<text class="m" x="215.4" y="132" fill="#4EC9B0" xml:space="preserve">String</text>
+<text class="m" x="262.4" y="132" fill="#E6E8EC" xml:space="preserve">::</text>
+<text class="m" x="278.1" y="132" fill="#DCDCAA" xml:space="preserve">from</text>
+<text class="m" x="309.4" y="132" fill="#E6E8EC" xml:space="preserve">(</text>
+<text class="m" x="317.2" y="132" fill="#CE9178" xml:space="preserve">&quot;a,1\nb,2&quot;</text>
+<text class="m" x="395.5" y="132" fill="#E6E8EC" xml:space="preserve">);</text>
+<text class="m" x="64" y="153" text-anchor="end" fill="#6B7280">5</text>
+<rect x="160.6" y="140" width="31.3" height="17" rx="2" fill="rgba(90,169,255,.10)"/>
+<line x1="160.6" y1="157" x2="192.0" y2="157" stroke="#5AA9FF" stroke-width="2"/>
+<circle cx="80" cy="148.5" r="7" fill="#5AA9FF" fill-opacity=".22"/>
+<text class="c" x="80" y="152.5" text-anchor="middle" fill="#5AA9FF" font-weight="700">1</text>
+<text class="m" x="129.3" y="153" fill="#C586C0" xml:space="preserve">let</text>
+<text class="m" x="152.8" y="153" fill="#E6E8EC" xml:space="preserve"> rows: </text>
+<text class="m" x="207.6" y="153" fill="#4EC9B0" xml:space="preserve">Vec</text>
+<text class="m" x="231.1" y="153" fill="#E6E8EC" xml:space="preserve">&lt;&amp;</text>
+<text class="m" x="246.8" y="153" fill="#4EC9B0" xml:space="preserve">str</text>
+<text class="m" x="270.3" y="153" fill="#E6E8EC" xml:space="preserve">&gt; = text.</text>
+<text class="m" x="340.7" y="153" fill="#DCDCAA" xml:space="preserve">lines</text>
+<text class="m" x="379.9" y="153" fill="#E6E8EC" xml:space="preserve">().</text>
+<text class="m" x="403.4" y="153" fill="#DCDCAA" xml:space="preserve">collect</text>
+<text class="m" x="458.2" y="153" fill="#E6E8EC" xml:space="preserve">();</text>
+<path d="M164.64 161 l3 -4 l3 4" fill="rgba(90,169,255,.18)"/>
+<rect x="157.64" y="161" width="611.8" height="17" rx="5" fill="rgba(90,169,255,.18)"/>
+<text class="c" x="165.64" y="173" fill="#cfe5ff">move occurs because `rows` has type `Vec&lt;&amp;str&gt;`, which does not implement the `Copy` trait</text>
+<text class="m" x="64" y="195" text-anchor="end" fill="#6B7280">6</text>
+<rect x="317.2" y="182" width="31.3" height="17" rx="2" fill="rgba(90,169,255,.10)"/>
+<line x1="317.2" y1="199" x2="348.6" y2="199" stroke="#5AA9FF" stroke-width="2"/>
+<circle cx="80" cy="190.5" r="7" fill="#5AA9FF" fill-opacity=".22"/>
+<text class="c" x="80" y="194.5" text-anchor="middle" fill="#5AA9FF" font-weight="700">2</text>
+<text class="m" x="129.3" y="195" fill="#C586C0" xml:space="preserve">let</text>
+<text class="m" x="152.8" y="195" fill="#E6E8EC" xml:space="preserve"> totals = </text>
+<text class="m" x="231.1" y="195" fill="#DCDCAA" xml:space="preserve">sum_by_key</text>
+<text class="m" x="309.4" y="195" fill="#E6E8EC" xml:space="preserve">(rows);</text>
+<path d="M321.24 203 l3 -4 l3 4" fill="rgba(90,169,255,.18)"/>
+<rect x="314.24" y="203" width="121.9" height="17" rx="5" fill="rgba(90,169,255,.18)"/>
+<text class="c" x="322.24" y="215" fill="#cfe5ff">value moved here</text>
+<rect x="20" y="222" width="1060" height="21" fill="rgba(255,255,255,.045)"/>
+<text class="m" x="64" y="237" text-anchor="end" fill="#6B7280">7</text>
+<rect x="356.4" y="239" width="31.3" height="4" fill="url(#wave)"/>
+<circle cx="80" cy="232.5" r="7" fill="#F16A6A" fill-opacity=".22"/>
+<text class="c" x="80" y="236.5" text-anchor="middle" fill="#F16A6A" font-weight="700">3</text>
+<text class="m" x="129.3" y="237" fill="#4FC1FF" xml:space="preserve">println!</text>
+<text class="m" x="192.0" y="237" fill="#E6E8EC" xml:space="preserve">(</text>
+<text class="m" x="199.8" y="237" fill="#CE9178" xml:space="preserve">&quot;{} rows, {} keys&quot;</text>
+<text class="m" x="340.7" y="237" fill="#E6E8EC" xml:space="preserve">, rows.</text>
+<text class="m" x="395.5" y="237" fill="#DCDCAA" xml:space="preserve">len</text>
+<text class="m" x="419.0" y="237" fill="#E6E8EC" xml:space="preserve">(), totals.</text>
+<text class="m" x="505.2" y="237" fill="#DCDCAA" xml:space="preserve">len</text>
+<text class="m" x="528.6" y="237" fill="#E6E8EC" xml:space="preserve">());</text>
+<path d="M360.39 245 l3 -4 l3 4" fill="rgba(241,106,106,.22)"/>
+<rect x="353.39" y="245" width="214.6" height="17" rx="5" fill="rgba(241,106,106,.22)"/>
+<text class="c" x="361.39" y="257" fill="#ffd0d0">value borrowed here after move</text>
+<text class="c" x="129.3" y="279" fill="#9AA3B2" font-weight="700">note:</text>
+<text class="c" x="169.0" y="279" fill="#A0A6B0">consider changing this parameter type in function `sum_by_key` to borrow instead if owning the value isn&#x27;t necessary</text>
+<text class="c" x="949.0" y="279" fill="#4C8DFF">↓ line 10</text>
+<text class="c" x="129.3" y="300" fill="#58C27D" font-weight="700">help:</text>
+<text class="c" x="169.0" y="300" fill="#A0A6B0">consider cloning the value if the performance cost is acceptable</text>
+<rect x="604.7" y="287" width="161.6" height="18" rx="5" fill="rgba(88,194,125,.16)" stroke="rgba(88,194,125,.55)"/>
+<text class="c" x="612.7" y="300" fill="#c9f2d6">Fix · add .clone()  ⌥↩</text>
+<text class="m" x="64" y="321" text-anchor="end" fill="#6B7280">8</text>
+<text class="m" x="98.0" y="321" fill="#E6E8EC" xml:space="preserve">}</text>
+<text class="m" x="64" y="342" text-anchor="end" fill="#6B7280">9</text>
+<text class="m" x="64" y="363" text-anchor="end" fill="#6B7280">10</text>
+<line x1="121.5" y1="367" x2="199.8" y2="367" stroke="#9AA3B2" stroke-width="1.5" stroke-dasharray="3 2"/>
+<line x1="254.6" y1="367" x2="325.1" y2="367" stroke="#9AA3B2" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text class="m" x="98.0" y="363" fill="#C586C0" xml:space="preserve">fn</text>
+<text class="m" x="121.5" y="363" fill="#DCDCAA" xml:space="preserve">sum_by_key</text>
+<text class="m" x="199.8" y="363" fill="#E6E8EC" xml:space="preserve">(rows: </text>
+<text class="m" x="254.6" y="363" fill="#4EC9B0" xml:space="preserve">Vec</text>
+<text class="m" x="278.1" y="363" fill="#E6E8EC" xml:space="preserve">&lt;&amp;</text>
+<text class="m" x="293.8" y="363" fill="#4EC9B0" xml:space="preserve">str</text>
+<text class="m" x="317.2" y="363" fill="#E6E8EC" xml:space="preserve">&gt;) -&gt; </text>
+<text class="m" x="364.2" y="363" fill="#4EC9B0" xml:space="preserve">HashMap</text>
+<text class="m" x="419.0" y="363" fill="#E6E8EC" xml:space="preserve">&lt;</text>
+<text class="m" x="426.9" y="363" fill="#4EC9B0" xml:space="preserve">String</text>
+<text class="m" x="473.8" y="363" fill="#E6E8EC" xml:space="preserve">, </text>
+<text class="m" x="489.5" y="363" fill="#4EC9B0" xml:space="preserve">f64</text>
+<text class="m" x="513.0" y="363" fill="#E6E8EC" xml:space="preserve">&gt; {</text>
+<path d="M125.49000000000001 371 l3 -4 l3 4" fill="rgba(154,163,178,.14)"/>
+<rect x="118.49000000000001" y="371" width="121.9" height="17" rx="5" fill="rgba(154,163,178,.14)"/>
+<text class="c" x="126.49000000000001" y="383" fill="#c3c9d3">in this function</text>
+<path d="M258.6 371 l3 -4 l3 4" fill="rgba(154,163,178,.14)"/>
+<rect x="251.6" y="371" width="300.7" height="17" rx="5" fill="rgba(154,163,178,.14)"/>
+<text class="c" x="259.6" y="383" fill="#c3c9d3">this parameter takes ownership of the value</text>
+<text class="m" x="64" y="405" text-anchor="end" fill="#6B7280">11</text>
+<text class="m" x="129.3" y="405" fill="#C586C0" xml:space="preserve">let mut</text>
+<text class="m" x="184.1" y="405" fill="#E6E8EC" xml:space="preserve"> totals = </text>
+<text class="m" x="262.4" y="405" fill="#4EC9B0" xml:space="preserve">HashMap</text>
+<text class="m" x="317.2" y="405" fill="#E6E8EC" xml:space="preserve">::</text>
+<text class="m" x="332.9" y="405" fill="#DCDCAA" xml:space="preserve">new</text>
+<text class="m" x="356.4" y="405" fill="#E6E8EC" xml:space="preserve">();</text>
+<text class="m" x="64" y="426" text-anchor="end" fill="#6B7280">12</text>
+<text class="m" x="129.3" y="426" fill="#C586C0" xml:space="preserve">for</text>
+<text class="m" x="152.8" y="426" fill="#E6E8EC" xml:space="preserve"> row </text>
+<text class="m" x="192.0" y="426" fill="#C586C0" xml:space="preserve">in</text>
+<text class="m" x="207.6" y="426" fill="#E6E8EC" xml:space="preserve"> rows {</text>
+<text class="m" x="64" y="447" text-anchor="end" fill="#6B7280">13</text>
+<text class="m" x="98.0" y="447" fill="#E6E8EC" xml:space="preserve">        …</text>
+<path d="M20 463 h1060 v12 a12 12 0 0 1 -12 12 h-1036 a12 12 0 0 1 -12 -12 z" fill="#14161a"/>
+<line x1="20" y1="463" x2="1080" y2="463" stroke="#2a2d33"/>
+<circle cx="36" cy="475" r="4" fill="#F16A6A"/>
+<text class="u" x="46" y="479" font-size="11" fill="#F16A6A">1 error</text>
+<text class="u" x="100" y="479" font-size="11" fill="#6B7280">E0382 borrow of moved value: `rows` · cargo check · live</text>
+<text class="u" x="1066" y="479" font-size="11" text-anchor="end" fill="#6B7280">Diagnostic overlay · At caret</text>
+<rect x="24" y="505" width="12" height="12" rx="3" fill="#5AA9FF" fill-opacity=".85"/>
+<text class="u" x="42" y="515" fill="#A0A6B0">secondary span, numbered in source order</text>
+<rect x="384" y="505" width="12" height="12" rx="3" fill="#F16A6A" fill-opacity=".85"/>
+<text class="u" x="402" y="515" fill="#A0A6B0">primary span, the error itself</text>
+<rect x="24" y="527" width="12" height="12" rx="3" fill="#9AA3B2" fill-opacity=".85"/>
+<text class="u" x="42" y="537" fill="#A0A6B0">span named by a note, not numbered</text>
+<rect x="384" y="527" width="12" height="12" rx="3" fill="#58C27D" fill-opacity=".85"/>
+<text class="u" x="402" y="537" fill="#A0A6B0">help with an applicable fix</text>
+</svg>

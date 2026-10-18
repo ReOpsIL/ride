@@ -52,6 +52,11 @@ struct EditorSettings: View {
                 Toggle("Indent guides", isOn: bind.bool(\.indentGuides))
                 Toggle("Visible whitespace", isOn: bind.bool(\.visibleWhitespace))
                 Toggle("Code vision", isOn: bind.bool(\.codeVision))
+                Picker("Diagnostic overlay", selection: bind.mode(\.diagnosticOverlay)) {
+                    Text("Off").tag(DiagnosticOverlayMode.off)
+                    Text("At Caret").tag(DiagnosticOverlayMode.caret)
+                    Text("All in File").tag(DiagnosticOverlayMode.all)
+                }
             }
         }
         .formStyle(.grouped)

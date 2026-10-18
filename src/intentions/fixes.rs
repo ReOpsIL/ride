@@ -12,8 +12,9 @@ pub fn drafts(diagnostics: &[Diagnostic], caret: u32, line: u32) -> Vec<Draft> {
 }
 
 fn covers(diagnostic: &Diagnostic, caret: u32, line: u32) -> bool {
-    if diagnostic.byte_end > diagnostic.byte_start {
-        return caret >= diagnostic.byte_start && caret <= diagnostic.byte_end;
+    let primary = &diagnostic.primary;
+    if primary.byte_end > primary.byte_start {
+        return caret >= primary.byte_start && caret <= primary.byte_end;
     }
-    diagnostic.line == line
+    primary.line_start == line
 }

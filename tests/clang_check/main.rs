@@ -2,9 +2,13 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use ride_engine::{
-    CheckResult, Diagnostic, DiagnosticLevel, Lang, merge_indexed, parse_clang,
-    run_check_c_project, run_clang_check, sources_including, tool_path,
+    CheckResult, DiagnosticLevel, Lang, merge_indexed, parse_clang, run_check_c_project,
+    run_clang_check, sources_including, tool_path,
 };
+
+mod diag;
+
+use diag::{ends, error_on, span};
 
 fn scratch(name: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("ride-clang-{}-{name}", std::process::id()));
@@ -65,15 +69,15 @@ fn parses_clang_lines_with_ranges_codes_and_notes() {
     assert_eq!(warn.level, DiagnosticLevel::Warning);
     assert_eq!(warn.code.as_deref(), Some("-Wunused-variable"));
     assert_eq!(warn.message, "unused variable 'unused'");
-    assert_eq!((warn.line, warn.column), (2, 7));
-    assert_eq!((warn.byte_start, warn.byte_end), (20, 26));
+    assert_eq!((warn.primary.line_start, warn.primary.column), (2, 7));
+    assert_eq!((warn.primary.byte_start, warn.primary.byte_end), (20, 26));
     let err = &diags[1];
     assert_eq!(err.level, DiagnosticLevel::Error);
     assert_eq!(err.code, None);
-    assert_eq!((err.byte_start, err.byte_end), (41, 42));
-    assert_eq!(err.path, path.to_string());
+    assert_eq!((err.primary.byte_start, err.primary.byte_end), (41, 42));
+    assert_eq!(err.primary.path, path.to_string());
     assert_eq!(diags[2].level, DiagnosticLevel::Note);
-    assert_eq!((diags[2].byte_start, diags[2].byte_end), (41, 41));
+    assert_eq!(span(&diags[2]), (41, 41));
 }
 
 #[test]
@@ -89,7 +93,7 @@ fn warnings_carry_their_flag_as_code() {
     let warn = &result.diagnostics[0];
     assert_eq!(warn.level, DiagnosticLevel::Warning);
     assert_eq!(warn.code.as_deref(), Some("-Wunused-variable"));
-    assert_eq!((warn.byte_start, warn.byte_end), (21, 22));
+    assert_eq!((warn.primary.byte_start, warn.primary.byte_end), (21, 22));
 }
 
 #[test]
@@ -107,8 +111,8 @@ fn runs_clang_on_a_c_file_without_a_database() {
         .iter()
         .find(|d| d.level == DiagnosticLevel::Error)
         .unwrap();
-    assert_eq!((err.line, err.column), (1, 32));
-    assert_eq!((err.byte_start, err.byte_end), (31, 32));
+    assert_eq!((err.primary.line_start, err.primary.column), (1, 32));
+    assert_eq!((err.primary.byte_start, err.primary.byte_end), (31, 32));
     assert!(err.message.contains("undeclared identifier 'y'"), "{err:?}");
 }
 
@@ -130,7 +134,7 @@ fn runs_clang_on_a_cpp_file_with_std_headers() {
         result
             .diagnostics
             .iter()
-            .any(|d| d.line == 2 && d.level == DiagnosticLevel::Error)
+            .any(|d| d.primary.line_start == 2 && d.level == DiagnosticLevel::Error)
     );
 }
 
@@ -214,8 +218,7 @@ fn editing_cpp_demo_header_yields_diagnostic_from_including_source() {
     assert!(!result.success);
     assert!(
         result.diagnostics.iter().any(|d| {
-            d.level == DiagnosticLevel::Error
-                && (d.path.ends_with("shapes.hpp") || d.path.ends_with("shapes.cpp"))
+            d.level == DiagnosticLevel::Error && (ends(d, "shapes.hpp") || ends(d, "shapes.cpp"))
         }),
         "{:?}",
         result.diagnostics
@@ -304,17 +307,7 @@ fn clang_reports_its_own_spelling_fix() {
 fn indexed_check(path: &str, tail: &str) -> CheckResult {
     CheckResult {
         success: false,
-        diagnostics: vec![Diagnostic {
-            path: path.into(),
-            byte_start: 0,
-            byte_end: 1,
-            line: 1,
-            column: 1,
-            level: DiagnosticLevel::Error,
-            message: path.into(),
-            code: None,
-            fixes: Vec::new(),
-        }],
+        diagnostics: vec![error_on(path)],
         stderr_tail: tail.into(),
     }
 }
@@ -333,7 +326,7 @@ fn shuffled_job_order_yields_the_same_project_check() {
         first
             .diagnostics
             .iter()
-            .map(|d| d.path.as_str())
+            .map(|d| d.primary.path.as_str())
             .collect::<Vec<_>>(),
         ["a.c", "b.c", "c.c"]
     );
@@ -360,7 +353,7 @@ fn missing_database_reports_the_error_from_the_header() {
     fs::write(&hdr, "#if !defined(VALUE)\n#error missing VALUE\n#endif\n").unwrap();
     let result = run_clang_check(&hdr).unwrap();
     assert!(!result.success);
-    assert_eq!(result.diagnostics[0].line, 2);
+    assert_eq!(result.diagnostics[0].primary.line_start, 2);
     assert_eq!(result.diagnostics[0].message, "missing VALUE");
 }
 
@@ -412,7 +405,7 @@ fn project_check_keeps_diagnostics_when_one_file_fails() {
     let result = run_check_c_project(&dir).unwrap();
     assert!(!result.success);
     assert!(
-        result.diagnostics.iter().any(|d| d.path.ends_with("ok.c")),
+        result.diagnostics.iter().any(|d| ends(d, "ok.c")),
         "{:?}",
         result.diagnostics
     );
@@ -428,7 +421,7 @@ fn clang_paths_with_parent_segments_are_normalized() {
     let base = Path::new("/work/proj");
     let got = parse_clang("build/../include/x.h:3:4: error: boom\n", base);
     assert_eq!(got.len(), 1, "{got:?}");
-    assert_eq!(got[0].path, "/work/proj/include/x.h");
+    assert_eq!(got[0].primary.path, "/work/proj/include/x.h");
     let got = parse_clang("/work/proj/./src/../lib/y.c:1:1: warning: w\n", base);
-    assert_eq!(got[0].path, "/work/proj/lib/y.c");
+    assert_eq!(got[0].primary.path, "/work/proj/lib/y.c");
 }

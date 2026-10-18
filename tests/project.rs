@@ -150,7 +150,9 @@ fn check_of_a_nested_crate_reports_paths_inside_that_crate() {
         .find(|d| d.level == ride_engine::DiagnosticLevel::Error)
         .expect("type error reported");
     assert_eq!(
-        std::path::Path::new(&error.path).canonicalize().unwrap(),
+        std::path::Path::new(&error.primary.path)
+            .canonicalize()
+            .unwrap(),
         lesson.join("src/main.rs").canonicalize().unwrap()
     );
 }

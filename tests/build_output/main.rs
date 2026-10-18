@@ -3,6 +3,10 @@ use std::sync::Arc;
 
 use ride_engine::{DiagnosticLevel, Engine, EngineConfig, engine_start};
 
+mod diag;
+
+use diag::{byte_of, loc, src};
+
 fn fixture(name: &str) -> String {
     std::fs::read_to_string(fixtures().join(name)).unwrap()
 }
@@ -35,15 +39,15 @@ fn cargo_error_line_yields_one_primary_diagnostic() {
     let diags = engine.parse_cargo_line(fixture("cargo-error.json"), root.display().to_string());
     assert_eq!(diags.len(), 1);
     assert_eq!(
-        diags[0].path,
+        diags[0].primary.path,
         root.join("src/main.rs").display().to_string()
     );
     assert_eq!(diags[0].level, DiagnosticLevel::Error);
     assert_eq!(diags[0].code.as_deref(), Some("E0308"));
     assert_eq!(diags[0].message, "mismatched types");
-    assert_eq!(diags[0].line, 3);
-    assert_eq!(diags[0].column, 18);
-    assert!(diags[0].byte_end > diags[0].byte_start);
+    assert_eq!(diags[0].primary.line_start, 3);
+    assert_eq!(diags[0].primary.column, 18);
+    assert!(diags[0].primary.byte_end > diags[0].primary.byte_start);
 }
 
 #[test]
@@ -54,7 +58,7 @@ fn cargo_warning_line_carries_the_lint_name() {
     assert_eq!(diags[0].level, DiagnosticLevel::Warning);
     assert_eq!(diags[0].code.as_deref(), Some("unused_variables"));
     assert!(diags[0].message.contains("unused variable"));
-    assert_eq!(diags[0].line, 2);
+    assert_eq!(diags[0].primary.line_start, 2);
 }
 
 #[test]
@@ -96,14 +100,14 @@ fn clang_output_yields_warning_error_and_note() {
             DiagnosticLevel::Note
         ]
     );
-    assert!(diags.iter().all(|d| d.path == source.display().to_string()));
+    assert!(diags.iter().all(|d| src(d) == source.display().to_string()));
     assert_eq!(diags[0].code.as_deref(), Some("-Wunused-variable"));
     assert_eq!(diags[0].message, "unused variable 'unused_local'");
     assert_eq!(diags[1].message, "redefinition of 'twice'");
-    assert_eq!((diags[1].line, diags[1].column), (7, 12));
+    assert_eq!(loc(&diags[1]), (7, 12));
     assert_eq!(diags[2].message, "previous definition is here");
-    assert_eq!(diags[2].line, 6);
-    assert_eq!(byte_of(&source, 7, 12), diags[1].byte_start);
+    assert_eq!(diags[2].primary.line_start, 6);
+    assert_eq!(byte_of(&source, 7, 12), diags[1].primary.byte_start);
 }
 
 #[test]
@@ -125,19 +129,9 @@ fn clang_relative_paths_resolve_against_the_base_dir() {
         fixtures().display().to_string(),
     );
     assert_eq!(diags.len(), 3);
-    assert!(diags.iter().all(|d| d.path == source.display().to_string()));
-    assert_eq!(byte_of(&source, 7, 12), diags[1].byte_start);
+    assert!(diags.iter().all(|d| src(d) == source.display().to_string()));
+    assert_eq!(byte_of(&source, 7, 12), diags[1].primary.byte_start);
     assert_eq!(diags[0].message, "unused variable 'unused_local'");
-}
-
-fn byte_of(path: &Path, line: u32, column: u32) -> u32 {
-    let text = std::fs::read_to_string(path).unwrap();
-    let start: u32 = text
-        .split_inclusive('\n')
-        .take(line as usize - 1)
-        .map(|l| l.len() as u32)
-        .sum();
-    start + column - 1
 }
 
 #[test]
@@ -149,13 +143,13 @@ fn member_crate_diagnostics_resolve_against_the_workspace_root() {
     let diags = engine.parse_cargo_line(fixture("cargo-error.json"), member.display().to_string());
     assert_eq!(diags.len(), 1);
     assert_eq!(
-        diags[0].path,
+        diags[0].primary.path,
         Path::new(&info.workspace_root)
             .join("src/main.rs")
             .display()
             .to_string()
     );
-    assert!(!diags[0].path.starts_with(&member.display().to_string()));
+    assert!(!src(&diags[0]).starts_with(&member.display().to_string()));
 }
 
 #[test]
@@ -177,7 +171,7 @@ fn nested_crate_diagnostics_resolve_against_the_nested_crate() {
     assert_eq!(diags.len(), 1);
     let expected = lesson.canonicalize().unwrap().join("src/main.rs");
     assert_eq!(
-        Path::new(&diags[0].path)
+        Path::new(&diags[0].primary.path)
             .canonicalize()
             .ok()
             .unwrap_or_default(),

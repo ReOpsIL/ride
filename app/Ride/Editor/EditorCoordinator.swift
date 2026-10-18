@@ -70,6 +70,9 @@ extension EditorPane {
             let released = view.folds.textChanged(range: pending.range, insertedLength: pending.inserted.utf16.count)
             view.refreshFragments(in: released)
             Underlines.shift(document: document, replacing: pending.range, with: pending.inserted.utf16.count)
+            document.overlay.shift(before: pending.before, range: pending.range, inserted: pending.inserted)
+            view.shiftOverlayPaint(replacing: pending.range, with: pending.inserted.utf16.count)
+            view.relayoutOverlay()
             HighlightShift.apply(document: document, edit: ByteEdit(edit))
             shiftBreakpoints(pending)
             SessionService.shared.applyEdit(document: document, view: view, edit: edit, inserted: pending.inserted)
@@ -107,6 +110,7 @@ extension EditorPane {
                     view.setSelectedRange(NSRange(location: view.folds.clampCaret(caret.location), length: 0))
                     return
                 }
+                view.refreshOverlay()
                 BracketHighlight.update(document: document, view: view)
                 publishCursor(view)
                 CompletionSession.shared.selectionChanged(view: view)

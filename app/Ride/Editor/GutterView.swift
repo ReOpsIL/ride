@@ -153,7 +153,25 @@ final class GutterView: NSView {
         if showsNumbers {
             drawNumber(lineNo, at: dest, attrs: attributes)
         }
-        if let textView, textView.folds.isFoldStart(line: lineNo) {
+        drawMarks(lineNo, at: dest, theme: theme)
+        if runMarkers[lineNo] != nil {
+            drawRunMarker(at: dest, color: theme.chrome.accent)
+        }
+    }
+
+    private func drawMarks(_ lineNo: Int, at dest: NSRect, theme: Theme) {
+        let numbers = textView?.overlayNumbers(on: lineNo) ?? []
+        if let textView {
+            GutterOverlay.drawBrackets(textView.overlayBrackets(on: lineNo), line: lineNo, at: dest)
+        }
+        if !numbers.isEmpty {
+            GutterOverlay.drawNumbers(numbers, at: dest)
+            return
+        }
+        guard let textView else {
+            return
+        }
+        if textView.folds.isFoldStart(line: lineNo) {
             let collapsed = textView.lineRange(lineNo).map(textView.folds.startsFold(at:)) ?? false
             drawChevron(collapsed: collapsed, at: dest, color: collapsed ? theme.chrome.accent : theme.editor.gutterText)
         } else if let level = diagnosticLines[lineNo] {
@@ -162,9 +180,6 @@ final class GutterView: NSView {
             NSBezierPath(ovalIn: NSRect(x: Self.markerColumn + 5, y: dest.midY - 3, width: 6, height: 6)).fill()
         } else if intentionLines.contains(lineNo) {
             drawBulb(at: dest, color: theme.chrome.accent)
-        }
-        if runMarkers[lineNo] != nil {
-            drawRunMarker(at: dest, color: theme.chrome.accent)
         }
     }
 }
