@@ -1,6 +1,7 @@
 mod ai;
 mod cheat;
 mod check;
+mod check_labels;
 mod config;
 mod debug;
 mod docs;
@@ -29,6 +30,7 @@ mod workspace;
 pub use ai::{AiContext, AiSnippet};
 pub use cheat::{CheatEntry, CheatSection, CheatSheetResponse};
 pub use check::{CheckResult, Diagnostic, DiagnosticFix, DiagnosticLevel};
+pub use check_labels::{DiagnosticLabel, DiagnosticNote};
 pub use config::EngineConfig;
 pub use debug::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,

@@ -6,7 +6,7 @@ enum IntentionActions {
             return []
         }
         return CheckService.shared.diagnostics.filter {
-            URL(fileURLWithPath: $0.path).standardizedFileURL.path == path
+            URL(fileURLWithPath: $0.primary.path).standardizedFileURL.path == path
         }
     }
 

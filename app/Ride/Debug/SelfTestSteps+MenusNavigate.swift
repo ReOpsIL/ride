@@ -77,14 +77,21 @@ extension SelfTestSteps {
         let byte = UInt32(Utf16.utf8Offset(in: text, utf16: utf16))
         let line = UInt32(c.lineOf("fn menu_probe_unused"))
         let diagnostic = Diagnostic(
-            path: path,
-            byteStart: byte,
-            byteEnd: byte + 2,
-            line: line,
-            column: 1,
             level: .warning,
             message: "menu probe warning",
             code: nil,
+            primary: DiagnosticLabel(
+                path: path,
+                byteStart: byte,
+                byteEnd: byte + 2,
+                lineStart: line,
+                lineEnd: line,
+                column: 1,
+                text: nil,
+                macroName: nil
+            ),
+            secondary: [],
+            notes: [],
             fixes: []
         )
         CheckService.shared.replaceBuild([diagnostic])

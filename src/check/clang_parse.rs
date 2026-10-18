@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use crate::abspath::absolute;
-use crate::ffi::{Diagnostic, DiagnosticFix, DiagnosticLevel};
+use crate::ffi::{Diagnostic, DiagnosticFix, DiagnosticLabel, DiagnosticLevel};
 
 use super::clang_fixit;
 use super::dedup::Seen;
@@ -45,7 +45,9 @@ fn collect(
         if let Some(fixit) = clang_fixit::parse(line, base, &mut offsets) {
             attach(&mut out, &remap(fixit.path, live), fixit.fix);
         } else if let Some(mut d) = parse_line(line, base, &mut offsets) {
-            d.path = remap(PathBuf::from(d.path), live).display().to_string();
+            d.primary.path = remap(PathBuf::from(&d.primary.path), live)
+                .display()
+                .to_string();
             if seen.accepts(&d) {
                 out.push(d);
             }
@@ -56,7 +58,7 @@ fn collect(
 
 fn attach(out: &mut [Diagnostic], path: &Path, fix: DiagnosticFix) {
     let path = path.display().to_string();
-    if let Some(d) = out.iter_mut().rev().find(|d| d.path == path) {
+    if let Some(d) = out.iter_mut().rev().find(|d| d.primary.path == path) {
         d.fixes.push(fix);
     }
 }
@@ -87,16 +89,27 @@ fn parse_line(line: &str, base: &Path, offsets: &mut LineOffsets) -> Option<Diag
         .unwrap_or(byte_start)
         .max(byte_start);
     Some(Diagnostic {
-        path: loc.path.display().to_string(),
-        byte_start,
-        byte_end,
-        line: loc.line,
-        column: loc.column,
         level,
         message: message.to_string(),
         code,
+        primary: primary_label(&loc, byte_start, byte_end),
+        secondary: Vec::new(),
+        notes: Vec::new(),
         fixes: Vec::new(),
     })
+}
+
+fn primary_label(loc: &Location, byte_start: u32, byte_end: u32) -> DiagnosticLabel {
+    DiagnosticLabel {
+        path: loc.path.display().to_string(),
+        byte_start,
+        byte_end,
+        line_start: loc.line,
+        line_end: loc.end.map(|(line, _)| line).unwrap_or(loc.line),
+        column: loc.column,
+        text: None,
+        macro_name: None,
+    }
 }
 
 fn location(loc: &str) -> Option<Location> {

@@ -12,16 +12,44 @@ enum CheckConvert {
             return nil
         }
         return StoredDiagnostic(
-            path: diag.path,
-            byteStart: diag.byteStart,
-            byteEnd: diag.byteEnd,
-            line: diag.line,
-            column: diag.column,
+            primary: stored(diag.primary),
             level: level,
             message: diag.message,
             code: diag.code,
-            fixes: diag.fixes.map(stored)
+            fixes: diag.fixes.map(stored),
+            secondary: diag.secondary.map(stored),
+            notes: diag.notes.map(stored)
         )
+    }
+
+    static func stored(_ label: DiagnosticLabel) -> StoredLabel {
+        StoredLabel(
+            path: label.path,
+            byteStart: label.byteStart,
+            byteEnd: label.byteEnd,
+            lineStart: label.lineStart,
+            lineEnd: label.lineEnd,
+            column: label.column,
+            text: label.text,
+            macroName: label.macroName
+        )
+    }
+
+    static func stored(_ note: DiagnosticNote) -> StoredNote {
+        StoredNote(level: stored(note.level), message: note.message, labels: note.labels.map(stored))
+    }
+
+    static func stored(_ level: DiagnosticLevel) -> StoredNoteLevel {
+        switch level {
+        case .error:
+            .error
+        case .warning:
+            .warning
+        case .note:
+            .note
+        case .help:
+            .help
+        }
     }
 
     static func stored(_ fix: DiagnosticFix) -> StoredFix {
@@ -52,16 +80,44 @@ enum CheckConvert {
 
     static func ffi(_ item: StoredDiagnostic) -> Diagnostic {
         Diagnostic(
-            path: item.path,
-            byteStart: item.byteStart,
-            byteEnd: item.byteEnd,
-            line: item.line,
-            column: item.column,
             level: item.level == .error ? .error : .warning,
             message: item.message,
             code: item.code,
+            primary: ffi(item.primary),
+            secondary: item.secondary.map(ffi),
+            notes: item.notes.map(ffi),
             fixes: item.fixes.map(ffi)
         )
+    }
+
+    static func ffi(_ label: StoredLabel) -> DiagnosticLabel {
+        DiagnosticLabel(
+            path: label.path,
+            byteStart: label.byteStart,
+            byteEnd: label.byteEnd,
+            lineStart: label.lineStart,
+            lineEnd: label.lineEnd,
+            column: label.column,
+            text: label.text,
+            macroName: label.macroName
+        )
+    }
+
+    static func ffi(_ note: StoredNote) -> DiagnosticNote {
+        DiagnosticNote(level: ffi(note.level), message: note.message, labels: note.labels.map(ffi))
+    }
+
+    static func ffi(_ level: StoredNoteLevel) -> DiagnosticLevel {
+        switch level {
+        case .error:
+            .error
+        case .warning:
+            .warning
+        case .note:
+            .note
+        case .help:
+            .help
+        }
     }
 
     static func lastLine(_ text: String) -> String? {

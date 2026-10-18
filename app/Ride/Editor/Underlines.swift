@@ -73,13 +73,13 @@ enum Underlines {
         guard let path = document.fileURL?.path else {
             return []
         }
-        let mine = CheckService.shared.diagnostics.filter { $0.path == path }
+        let mine = CheckService.shared.diagnostics.filter { $0.primary.path == path }
         if mine.isEmpty {
             return []
         }
         let map = Utf16Map(text)
         return mine.compactMap { diag in
-            DiagnosticRange.nsRange(map: map, length: length, byteStart: diag.byteStart, byteEnd: diag.byteEnd)
+            DiagnosticRange.nsRange(map: map, length: length, byteStart: diag.primary.byteStart, byteEnd: diag.primary.byteEnd)
                 .map { DiagnosticUnderline(range: $0, level: diag.level) }
         }
     }

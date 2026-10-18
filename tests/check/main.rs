@@ -6,11 +6,11 @@ use ride_engine::{
     parse_lines, run_check, tool_path,
 };
 
-static ENV_LOCK: Mutex<()> = Mutex::new(());
+mod diag;
 
-fn fixtures() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
-}
+use diag::{fixtures, src};
+
+static ENV_LOCK: Mutex<()> = Mutex::new(());
 
 const LINES: &str = r#"{"reason":"compiler-artifact","target":{"name":"x"}}
 {"reason":"compiler-message","message":{"message":"mismatched types","code":{"code":"E0308"},"level":"error","spans":[{"file_name":"src/main.rs","byte_start":40,"byte_end":45,"line_start":3,"line_end":3,"column_start":13,"column_end":18,"is_primary":true},{"file_name":"src/main.rs","byte_start":10,"byte_end":12,"line_start":1,"line_end":1,"column_start":1,"column_end":3,"is_primary":false}],"children":[]}}
@@ -64,12 +64,12 @@ fn diagnostics_without_children_have_no_fixes() {
 fn parses_primary_spans_only() {
     let diags = parse_lines(Path::new("/proj"), LINES);
     assert_eq!(diags.len(), 2);
-    assert_eq!(diags[0].path, "/proj/src/main.rs");
-    assert_eq!(diags[0].byte_start, 40);
-    assert_eq!(diags[0].line, 3);
+    assert_eq!(diags[0].primary.path, "/proj/src/main.rs");
+    assert_eq!(diags[0].primary.byte_start, 40);
+    assert_eq!(diags[0].primary.line_start, 3);
     assert_eq!(diags[0].level, DiagnosticLevel::Error);
     assert_eq!(diags[0].code.as_deref(), Some("E0308"));
-    assert_eq!(diags[1].path, "/abs/lib.rs");
+    assert_eq!(diags[1].primary.path, "/abs/lib.rs");
     assert_eq!(diags[1].level, DiagnosticLevel::Warning);
     assert!(diags[1].code.is_none());
 }
@@ -96,14 +96,14 @@ fn live_c_check_maps_stdin_error_to_the_real_path_without_touching_disk() {
         .iter()
         .find(|d| d.level == DiagnosticLevel::Error)
         .unwrap_or_else(|| panic!("no error diagnostic: {:?}", result.diagnostics));
-    assert_eq!(err.line, 23, "{err:?}");
+    assert_eq!(err.primary.line_start, 23, "{err:?}");
     assert!(
         err.message.contains("ride_live_undeclared"),
         "{}",
         err.message
     );
-    assert_eq!(err.path, file.display().to_string(), "{err:?}");
-    assert!(!err.path.contains("<stdin>"), "{}", err.path);
+    assert_eq!(src(err), file.display().to_string(), "{err:?}");
+    assert!(!src(err).contains("<stdin>"), "{}", src(err));
 
     assert_eq!(std::fs::read_to_string(&file).unwrap(), disk);
 }

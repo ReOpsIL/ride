@@ -878,9 +878,11 @@
 		MDT2F42B1B460BB662BE827C /* TreeFileOpsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD2F42B1B460BB662BE827CE /* TreeFileOpsTests.swift */; };
 		MDT6E863487172778C9B5BA0 /* TreeKeysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD6E863487172778C9B5BA04 /* TreeKeysTests.swift */; };
 		A00000000000000000000186 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
+		D01A00000000000000000002 /* StoredLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A00000000000000000001 /* StoredLabel.swift */; };
 		MDA9485B877F2277C3E81F88 /* ProblemsFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD9485B877F2277C3E81F888 /* ProblemsFilter.swift */; };
 		MDT9485B877F2277C3E81F88 /* ProblemsFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD9485B877F2277C3E81F888 /* ProblemsFilter.swift */; };
 		A00000000000000000000187 /* DiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000185 /* DiagnosticStore.swift */; };
+		D01A00000000000000000003 /* StoredLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01A00000000000000000001 /* StoredLabel.swift */; };
 		A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000188 /* DiagnosticStoreTests.swift */; };
 		MDT2A69A966E7F575C0242A7 /* DiagnosticTidyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD2A69A966E7F575C0242A79 /* DiagnosticTidyTests.swift */; };
 		MBTE1102E5FCE37C7A6694CA /* CheckPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBE1102E5FCE37C7A6694CA2 /* CheckPlanTests.swift */; };
@@ -1455,6 +1457,7 @@
 		MD2F42B1B460BB662BE827CE /* TreeFileOpsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeFileOpsTests.swift; sourceTree = "<group>"; };
 		MD6E863487172778C9B5BA04 /* TreeKeysTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeKeysTests.swift; sourceTree = "<group>"; };
 		A00000000000000000000185 /* DiagnosticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStore.swift; sourceTree = "<group>"; };
+		D01A00000000000000000001 /* StoredLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredLabel.swift; sourceTree = "<group>"; };
 		MD9485B877F2277C3E81F888 /* ProblemsFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemsFilter.swift; sourceTree = "<group>"; };
 		A00000000000000000000188 /* DiagnosticStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticStoreTests.swift; sourceTree = "<group>"; };
 		MD2A69A966E7F575C0242A79 /* DiagnosticTidyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticTidyTests.swift; sourceTree = "<group>"; };
@@ -2604,6 +2607,7 @@
 				MDAAB508D6C1A4E4F48D93BD /* ProblemsPanelModel.swift */,
 				E60000000000000000000124 /* ProblemFixes.swift */,
 				A00000000000000000000185 /* DiagnosticStore.swift */,
+				D01A00000000000000000001 /* StoredLabel.swift */,
 				MD9485B877F2277C3E81F888 /* ProblemsFilter.swift */,
 				FEE0000000000000000000A5 /* DiagnosticDocLink.swift */,
 				FEE0000000000000000000A6 /* ClangTidyParse.swift */,
@@ -3291,6 +3295,7 @@
 				B03A2E7EF5A1A1B68C777E55 /* ContrastTests.swift in Sources */,
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
+				D01A00000000000000000003 /* StoredLabel.swift in Sources */,
 				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
 				FEE0000000000000000000C5 /* DiagnosticDocLink.swift in Sources */,
 				FEE0000000000000000000C6 /* ClangTidyParse.swift in Sources */,
@@ -3812,6 +3817,7 @@
 				A00000000000000000000130 /* ProblemsPanel.swift in Sources */,
 				E60000000000000000000125 /* ProblemFixes.swift in Sources */,
 				A00000000000000000000186 /* DiagnosticStore.swift in Sources */,
+				D01A00000000000000000002 /* StoredLabel.swift in Sources */,
 				FEE0000000000000000000B1 /* AppState+LiveCheck.swift in Sources */,
 				FEE0000000000000000000B2 /* CheckService+Live.swift in Sources */,
 				FEE0000000000000000000B3 /* ClangTidyService.swift in Sources */,

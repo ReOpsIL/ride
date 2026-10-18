@@ -4,6 +4,7 @@ use std::process::ExitCode;
 use clap::{Parser, Subcommand};
 
 mod cheat;
+mod check;
 mod complete;
 mod cursor;
 mod index;
@@ -62,6 +63,13 @@ enum Command {
     },
     Status,
     Tools,
+    Check {
+        root: PathBuf,
+        #[arg(long)]
+        clippy: bool,
+        #[arg(long)]
+        file: Option<PathBuf>,
+    },
 }
 
 fn main() -> ExitCode {
@@ -101,6 +109,7 @@ fn main() -> ExitCode {
             index::tools();
             ExitCode::SUCCESS
         }
+        Command::Check { root, clippy, file } => check::run(root, clippy, file),
     }
 }
 

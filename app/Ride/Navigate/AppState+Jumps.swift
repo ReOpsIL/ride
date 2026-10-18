@@ -10,9 +10,9 @@ extension AppState {
         let byte = EditorPanes.shared.focusedView.map { UInt32(Utf16.utf8Offset(in: $0.string, utf16: $0.selectedRange().location)) } ?? 0
         let index: Int
         if delta > 0 {
-            index = all.firstIndex { ($0.path, $0.byteStart) > (path, byte) } ?? 0
+            index = all.firstIndex { ($0.primary.path, $0.primary.byteStart) > (path, byte) } ?? 0
         } else {
-            index = all.lastIndex { ($0.path, $0.byteStart) < (path, byte) } ?? all.count - 1
+            index = all.lastIndex { ($0.primary.path, $0.primary.byteStart) < (path, byte) } ?? all.count - 1
         }
         recordLocation()
         openDiagnostic(all[index])

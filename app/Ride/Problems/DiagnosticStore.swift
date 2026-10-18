@@ -24,16 +24,57 @@ struct StoredFix: Equatable, Hashable {
 }
 
 struct StoredDiagnostic: Equatable, Hashable {
-    var path: String
-    var byteStart: UInt32
-    var byteEnd: UInt32
-    var line: UInt32
-    var column: UInt32
+    var primary: StoredLabel
     var level: ProblemLevel
     var message: String
     var code: String?
     var fixes: [StoredFix] = []
     var origin: DiagnosticOrigin = .check
+    var secondary: [StoredLabel] = []
+    var notes: [StoredNote] = []
+
+    var path: String { primary.path }
+    var byteStart: UInt32 { primary.byteStart }
+    var byteEnd: UInt32 { primary.byteEnd }
+    var line: UInt32 { primary.lineStart }
+    var column: UInt32 { primary.column }
+}
+
+extension StoredDiagnostic {
+    init(
+        path: String,
+        byteStart: UInt32,
+        byteEnd: UInt32,
+        line: UInt32,
+        column: UInt32,
+        level: ProblemLevel,
+        message: String,
+        code: String?,
+        fixes: [StoredFix] = [],
+        origin: DiagnosticOrigin = .check,
+        secondary: [StoredLabel] = [],
+        notes: [StoredNote] = []
+    ) {
+        self.init(
+            primary: StoredLabel(
+                path: path,
+                byteStart: byteStart,
+                byteEnd: byteEnd,
+                lineStart: line,
+                lineEnd: line,
+                column: column,
+                text: nil,
+                macroName: nil
+            ),
+            level: level,
+            message: message,
+            code: code,
+            fixes: fixes,
+            origin: origin,
+            secondary: secondary,
+            notes: notes
+        )
+    }
 }
 
 struct DiagnosticStore {

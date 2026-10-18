@@ -1,9 +1,10 @@
 use std::path::{Path, PathBuf};
 
-use ride_engine::{
-    Diagnostic, DiagnosticFix, DiagnosticLevel, Engine, EngineConfig, Intention, TextEdit,
-    engine_start, write_index,
-};
+use ride_engine::{Engine, EngineConfig, Intention, TextEdit, engine_start, write_index};
+
+mod diag;
+
+use diag::diagnostic;
 
 fn sample(name: &str) -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -65,23 +66,6 @@ fn applied(text: &str, intention: &Intention) -> String {
         out.replace_range(edit.start_byte as usize..edit.end_byte as usize, &edit.text);
     }
     out
-}
-
-fn diagnostic(path: &str, start: u32, end: u32, edit: TextEdit) -> Diagnostic {
-    Diagnostic {
-        path: path.into(),
-        byte_start: start,
-        byte_end: end,
-        line: 1,
-        column: 1,
-        level: DiagnosticLevel::Warning,
-        message: "unused import".into(),
-        code: None,
-        fixes: vec![DiagnosticFix {
-            title: "remove the unused import".into(),
-            edits: vec![edit],
-        }],
-    }
 }
 
 #[test]
