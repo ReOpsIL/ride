@@ -19,6 +19,9 @@ final class DecoratedFragment: NSTextLayoutFragment {
         if let ghost {
             bounds = ghost.surface(bounds, in: self)
         }
+        if let overlay {
+            bounds = overlay.surface(bounds, in: self)
+        }
         bounds.size.height = max(bounds.height, layoutFragmentFrame.height)
         return bounds
     }

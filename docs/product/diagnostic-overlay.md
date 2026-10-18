@@ -77,7 +77,7 @@ A diagnostic with one labelled span shows no numbers.
 4. On a line that also shows ghost text, the ghost rows come first and the label rows follow.
 5. Code vision rows stay above the line (`topMargin`) and are unaffected.
 6. A span inside a folded region attaches its chip to the fold's visible line, and its gutter number shows on that line.
-7. A chip wider than the visible text area is truncated with an ellipsis. Its full text is a tooltip.
+7. Chips and note rows are drawn at full length and never truncated. The line's drawing surface widens to fit them, the way ghost text widens it, so a label longer than its code line is not clipped.
 8. Each split pane lays out its own overlay. The active diagnostic follows each pane's caret.
 
 ## 6. Freshness

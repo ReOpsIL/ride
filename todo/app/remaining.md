@@ -89,3 +89,7 @@
 # Panels (added 2026-10-06, AI/git visual review)
 
 - Changes and Usages panels open at a fixed split position (300 / 220) but their heights are not saved; the other bottom panels each carry a height through `Preferences`, `LayoutState` and `AppState+Layout`. Replace the per-panel fields with heights keyed by a bottom-panel enum so a new panel cannot ship without one.
+
+# Diagnostic path spelling (2026-10-18, found while running the diagnostic overlay)
+
+- A workspace under a symlinked folder (`/tmp`, `/var/folders`, any symlink) shows no diagnostic underlines, gutter dots or overlay, while the Problems panel lists the diagnostics. `AppState+Workspace.swift` sets `workspaceRoot = url.standardizedFileURL`, which turns `/private/tmp/x` into `/tmp/x`, so documents carry the `/tmp` spelling. cargo reports the resolved path (`/private/tmp/x/src/…`). `Underlines.diagnosticRanges` and `document.overlay` reload compare the two strings exactly. `IntentionActions` standardizes both sides, so its bulb still appears. Pick one canonical spelling for diagnostic paths at the boundary (`CheckConvert`, or the engine's `absolute_string`) and compare documents through it, the way the debugger re-spells frames onto the workspace root (`docs/product/debug-source-paths.md`).
