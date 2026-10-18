@@ -39,6 +39,11 @@ struct ViewCommands: Commands {
             Toggle("Show Whitespace", isOn: Binding(get: { menu.visibleWhitespace }, set: { _ in state.toggleWhitespace() }))
             Toggle("Indent Guides", isOn: Binding(get: { menu.indentGuides }, set: { _ in state.toggleIndentGuides() }))
             Toggle("Code Vision", isOn: Binding(get: { menu.codeVision }, set: { _ in state.toggleCodeVision() }))
+            Menu("Diagnostic Overlay") {
+                Toggle("Off", isOn: diagnosticOverlay(.off))
+                Toggle("At Caret", isOn: diagnosticOverlay(.caret))
+                Toggle("All in File", isOn: diagnosticOverlay(.all))
+            }
             Divider()
             Button("Open in Split") { state.openInSplit() }
                 .disabled(!menu.hasEditor)
@@ -48,5 +53,16 @@ struct ViewCommands: Commands {
             Button("Close Split") { state.closeSplit() }
                 .disabled(!menu.hasSplit)
         }
+    }
+
+    private func diagnosticOverlay(_ mode: DiagnosticOverlayMode) -> Binding<Bool> {
+        Binding(
+            get: { menu.diagnosticOverlay == mode },
+            set: { on in
+                if on {
+                    state.setDiagnosticOverlay(mode)
+                }
+            }
+        )
     }
 }

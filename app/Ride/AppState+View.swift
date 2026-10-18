@@ -32,6 +32,10 @@ extension AppState {
         updatePrefs { $0.codeVision.toggle() }
     }
 
+    func setDiagnosticOverlay(_ mode: DiagnosticOverlayMode) {
+        updatePrefs { $0.diagnosticOverlay = mode }
+    }
+
     func checkTools() {
         guard prefs.askMissingTools else {
             return

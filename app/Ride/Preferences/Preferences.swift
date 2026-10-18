@@ -29,6 +29,7 @@ struct Preferences: Codable, Equatable {
     var signatureHelp: Bool
     var hoverDocs: Bool
     var codeVision: Bool
+    var diagnosticOverlay: DiagnosticOverlayMode
     var aiComplete: Bool
     var aiProvider: String
     var aiModel: String
@@ -87,6 +88,7 @@ struct Preferences: Codable, Equatable {
         signatureHelp: Bool = true,
         hoverDocs: Bool = true,
         codeVision: Bool = true,
+        diagnosticOverlay: DiagnosticOverlayMode = .caret,
         aiComplete: Bool = false,
         aiProvider: String = "anthropic",
         aiModel: String = "",
@@ -124,6 +126,7 @@ struct Preferences: Codable, Equatable {
         self.signatureHelp = signatureHelp
         self.hoverDocs = hoverDocs
         self.codeVision = codeVision
+        self.diagnosticOverlay = diagnosticOverlay
         self.aiComplete = aiComplete
         self.aiProvider = aiProvider
         self.aiModel = aiModel
@@ -134,67 +137,4 @@ struct Preferences: Codable, Equatable {
         self.assistant = assistant
     }
 
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        let d = Preferences.defaults
-        theme = try c.decodeIfPresent(String.self, forKey: .theme) ?? d.theme
-        fontSize = try c.decodeIfPresent(Int.self, forKey: .fontSize) ?? d.fontSize
-        tabWidth = try c.decodeIfPresent(Int.self, forKey: .tabWidth) ?? d.tabWidth
-        autoSave = try c.decodeIfPresent(Bool.self, forKey: .autoSave) ?? d.autoSave
-        completions = try c.decodeIfPresent(Bool.self, forKey: .completions) ?? d.completions
-        cheatSheet = try c.decodeIfPresent(Bool.self, forKey: .cheatSheet) ?? d.cheatSheet
-        softWrap = try c.decodeIfPresent(Bool.self, forKey: .softWrap) ?? d.softWrap
-        askMissingTools = try c.decodeIfPresent(Bool.self, forKey: .askMissingTools) ?? d.askMissingTools
-        outlinePanel = try c.decodeIfPresent(Bool.self, forKey: .outlinePanel) ?? d.outlinePanel
-        visibleWhitespace = try c.decodeIfPresent(Bool.self, forKey: .visibleWhitespace) ?? d.visibleWhitespace
-        showHidden = try c.decodeIfPresent(Bool.self, forKey: .showHidden) ?? d.showHidden
-        checkOnSave = try c.decodeIfPresent(Bool.self, forKey: .checkOnSave) ?? d.checkOnSave
-        useClippy = try c.decodeIfPresent(Bool.self, forKey: .useClippy) ?? d.useClippy
-        formatOnSave = try c.decodeIfPresent(Bool.self, forKey: .formatOnSave) ?? d.formatOnSave
-        indentGuides = try c.decodeIfPresent(Bool.self, forKey: .indentGuides) ?? d.indentGuides
-        lineNumbers = try c.decodeIfPresent(Bool.self, forKey: .lineNumbers) ?? d.lineNumbers
-        sidebarWidth = try c.decodeIfPresent(Double.self, forKey: .sidebarWidth) ?? d.sidebarWidth
-        outlineWidth = try c.decodeIfPresent(Double.self, forKey: .outlineWidth) ?? d.outlineWidth
-        hierarchyWidth = try c.decodeIfPresent(Double.self, forKey: .hierarchyWidth) ?? d.hierarchyWidth
-        problemsHeight = try c.decodeIfPresent(Double.self, forKey: .problemsHeight) ?? d.problemsHeight
-        runOutputHeight = try c.decodeIfPresent(Double.self, forKey: .runOutputHeight) ?? d.runOutputHeight
-        terminalHeight = try c.decodeIfPresent(Double.self, forKey: .terminalHeight) ?? d.terminalHeight
-        testsHeight = try c.decodeIfPresent(Double.self, forKey: .testsHeight) ?? d.testsHeight
-        debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
-        previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
-        signatureHelp = try c.decodeIfPresent(Bool.self, forKey: .signatureHelp) ?? d.signatureHelp
-        hoverDocs = try c.decodeIfPresent(Bool.self, forKey: .hoverDocs) ?? d.hoverDocs
-        codeVision = try c.decodeIfPresent(Bool.self, forKey: .codeVision) ?? d.codeVision
-        aiComplete = try c.decodeIfPresent(Bool.self, forKey: .aiComplete) ?? d.aiComplete
-        aiProvider = try c.decodeIfPresent(String.self, forKey: .aiProvider) ?? d.aiProvider
-        aiModel = try c.decodeIfPresent(String.self, forKey: .aiModel) ?? d.aiModel
-        aiContext = try c.decodeIfPresent(String.self, forKey: .aiContext) ?? d.aiContext
-        reportsAcknowledged = try c.decodeIfPresent(Double.self, forKey: .reportsAcknowledged) ?? d.reportsAcknowledged
-        lineEndings = try c.decodeIfPresent(String.self, forKey: .lineEndings) ?? d.lineEndings
-        semanticCompletion = try c.decodeIfPresent(Bool.self, forKey: .semanticCompletion) ?? d.semanticCompletion
-        assistant = try c.decodeIfPresent(AssistantPreferences.self, forKey: .assistant) ?? d.assistant
-    }
-
-    var clamped: Preferences {
-        var next = self
-        next.fontSize = min(Self.fontSizes.upperBound, max(Self.fontSizes.lowerBound, fontSize))
-        next.tabWidth = min(8, max(2, tabWidth))
-        next.sidebarWidth = min(420, max(180, sidebarWidth))
-        next.outlineWidth = min(420, max(160, outlineWidth))
-        next.hierarchyWidth = min(420, max(160, hierarchyWidth))
-        next.problemsHeight = min(480, max(80, problemsHeight))
-        next.runOutputHeight = min(480, max(80, runOutputHeight))
-        next.terminalHeight = min(480, max(80, terminalHeight))
-        next.testsHeight = min(480, max(80, testsHeight))
-        next.debugHeight = min(600, max(320, debugHeight))
-        next.previewWidth = min(900, max(260, previewWidth))
-        next.reportsAcknowledged = max(0, reportsAcknowledged)
-        if next.theme != "light" {
-            next.theme = "dark"
-        }
-        if next.lineEndings != LineEndings.lf {
-            next.lineEndings = LineEndings.keep
-        }
-        return next
-    }
 }

@@ -44,6 +44,10 @@ extension RideTextView {
     }
 
     func applyPrefs(_ prefs: Preferences) {
+        if overlayMode != prefs.diagnosticOverlay {
+            overlayMode = prefs.diagnosticOverlay
+            refreshOverlay()
+        }
         if showIndentGuides != prefs.indentGuides || showWhitespace != prefs.visibleWhitespace {
             showIndentGuides = prefs.indentGuides
             showWhitespace = prefs.visibleWhitespace

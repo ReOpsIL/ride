@@ -166,6 +166,9 @@ The SwiftUI pickers (Quick Open, Recent Files, Go to Line, both Symbol pickers) 
 | View › Show Whitespace | — | `toggleWhitespace()` | Flips `prefs.visibleWhitespace`. | NONE | |
 | View › Indent Guides | — | `toggleIndentGuides()` | Flips `prefs.indentGuides`. | NONE | |
 | View › Code Vision | — | `toggleCodeVision()` | Flips `prefs.codeVision`, which controls the inline usage-count labels. | NONE | "code vision" tests the labels, not the toggle. demo: "codevision" |
+| View › Diagnostic Overlay › Off | — | `setDiagnosticOverlay(.off)` | Sets `prefs.diagnosticOverlay` to off. The editor keeps primary underlines and gutter dots and draws no label chips. | NONE | No shortcut: the inventory has no free chord. Unclaimed until DO-3. |
+| View › Diagnostic Overlay › At Caret | — | `setDiagnosticOverlay(.caret)` | Sets the mode to at caret (the default). The diagnostic under the caret is drawn on the code. | NONE | Unclaimed until DO-3. |
+| View › Diagnostic Overlay › All in File | — | `setDiagnosticOverlay(.all)` | Draws every diagnostic in the open file. | NONE | Unclaimed until DO-3. |
 | View › Open in Split | — | `openInSplit()` → `AppState+Panes.swift` | If there is no split, it opens a right pane and moves the active tab into it. If already split, it moves the active tab to the other pane. Disabled `!hasEditor`. | SELFTEST: "split header source" (rust; `openInSplit(other.id)` with an explicit id); UNIT: PaneLayoutTests.testMoveTakesTabToOtherPane, PaneLayoutTests.testOpenRemovesTabFromOtherPanes | It moves the tab rather than duplicating it, so the source pane can end up empty. demo: "split" |
 | View › Toggle Split | ⌘\ | `toggleSplit()` | If split, calls `closeSplit()`. Otherwise `openSplit()` adds an empty, focused right pane. Disabled only when there is no editor and no split. | UNIT: SplitLayoutTests.testToggleOpensHorizontalThenReturnsToSingle, PaneLayoutTests.testClosePaneKeepsLastPane | "split header source" calls it only in a fallback branch that the rust fixture doesn't reach, because other buffers are open. |
 | View › Close Split | — | `closeSplit()` | Closes `panes[1]` whichever pane is focused, merges its tabs into the left pane and refocuses the editor. Disabled `!hasSplit`. | SELFTEST: "breakpoint shift settle" (rust; asserts 1 pane); UNIT: PaneLayoutTests.testClosePaneMergesTabsIntoNeighbour, SplitLayoutTests.testCloseRightPaneFocusesLeft | Also called as cleanup in "move statement open". |
@@ -885,7 +888,7 @@ A sweep of the whole app for `Button(`, `Toggle(`, `Picker(`, `IconButton(`, `.o
 
 ## Preferences
 
-Settings window: `Settings { PreferencesView() }` in `RideApp.swift` (standard `Ride › Settings…` ⌘,). Four tabs: General, Editor, Tools, AI. Every control writes through `PreferenceBindings` → `state.updatePrefs` (`AppState+Tree.swift`), which clamps (`Preferences.clamped`), saves `~/Library/Application Support/Ride/preferences.json` (skipped in demo), schedules a workspace save, reloads the tree when `showHidden` changes and calls `applyTheme()` when `theme` changes. Editors pick up changes through `EditorPane.updateNSView` → `EditorHostView.applyPrefs` → `RideTextView.applyPrefs`. `MenuModel.sync` mirrors softWrap, visibleWhitespace, indentGuides, lineNumbers, codeVision, outlinePanel. MenuModel's initial values match `Preferences.defaults` for all six, and `sync` overwrites them anyway.
+Settings window: `Settings { PreferencesView() }` in `RideApp.swift` (standard `Ride › Settings…` ⌘,). Four tabs: General, Editor, Tools, AI. Every control writes through `PreferenceBindings` → `state.updatePrefs` (`AppState+Tree.swift`), which clamps (`Preferences.clamped`), saves `~/Library/Application Support/Ride/preferences.json` (skipped in demo), schedules a workspace save, reloads the tree when `showHidden` changes and calls `applyTheme()` when `theme` changes. Editors pick up changes through `EditorPane.updateNSView` → `EditorHostView.applyPrefs` → `RideTextView.applyPrefs`. `MenuModel.sync` mirrors softWrap, visibleWhitespace, indentGuides, lineNumbers, codeVision, diagnosticOverlay, outlinePanel. MenuModel's initial values match `Preferences.defaults` for all six, and `sync` overwrites them anyway.
 
 ### General
 
@@ -913,6 +916,7 @@ Settings window: `Settings { PreferencesView() }` in `RideApp.swift` (standard `
 | Editor › Display › Indent guides | `indentGuides` | true | Toggle | `RideTextView.showIndentGuides` → redraw. Also `View › Indent Guides`. | NONE | |
 | Editor › Display › Visible whitespace | `visibleWhitespace` | false | Toggle | Mirrored to `MenuModel.visibleWhitespace` only. Nothing in the editor reads it. Also `View › Show Whitespace`. | NONE | ⚠ Dead setting. It is stored and toggled from both Settings and the View menu (the checkmark flips), but the editor never renders whitespace. |
 | Editor › Display › Code vision | `codeVision` | true | Toggle | `RideTextView.applyCodeVision` (usage-count labels above declarations). Also `View › Code Vision`. | NONE | SELFTEST "code vision" (rust) checks the feature only in its default-on state and never flips the pref. |
+| Editor › Display › Diagnostic overlay | `diagnosticOverlay` | caret | Picker: Off, At Caret, All in File | `RideTextView.applyPrefs` stores the mode and relayouts the overlay. Also View › Diagnostic Overlay. | NONE | Decoded with `decodeIfPresent`; a missing key stays at caret. No shortcut. |
 
 ### Tools
 
@@ -1047,6 +1051,9 @@ General gaps: no unit test covers `Preferences` decoding (missing keys → defau
 - View › Show Whitespace
 - View › Indent Guides
 - View › Code Vision
+- View › Diagnostic Overlay › Off
+- View › Diagnostic Overlay › At Caret
+- View › Diagnostic Overlay › All in File
 - Navigate › Open Quickly…
 - Navigate › Recent Files…
 - Navigate › Last Edit Location

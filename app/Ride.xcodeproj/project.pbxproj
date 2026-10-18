@@ -1015,6 +1015,30 @@
 		GIT000000000000000000067 /* GhostText.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000066 /* GhostText.swift */; };
 		GIT000000000000000000069 /* AISuggestRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT000000000000000000068 /* AISuggestRouter.swift */; };
 		GIT00000000000000000006B /* AIInlineGhostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GIT00000000000000000006A /* AIInlineGhostTests.swift */; };
+		D2B000000000000000000001 /* OverlayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000001 /* OverlayMode.swift */; };
+		D2B000000000000000000002 /* OverlaySelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000002 /* OverlaySelection.swift */; };
+		D2B000000000000000000003 /* OverlayLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000003 /* OverlayLayout.swift */; };
+		D2B000000000000000000004 /* OverlayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000004 /* OverlayModel.swift */; };
+		D2B000000000000000000005 /* OverlayShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000005 /* OverlayShift.swift */; };
+		D2B000000000000000000006 /* OverlayRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000006 /* OverlayRows.swift */; };
+		D2B000000000000000000007 /* RideTextView+Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000007 /* RideTextView+Overlay.swift */; };
+		D2B000000000000000000008 /* GutterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000008 /* GutterOverlay.swift */; };
+		D2B000000000000000000009 /* Preferences+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000009 /* Preferences+Decode.swift */; };
+		D2B00000000000000000000A /* Preferences+Clamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000A /* Preferences+Clamp.swift */; };
+		D2B00000000000000000000B /* OverlayCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000B /* OverlayCache.swift */; };
+		D2B00000000000000000000C /* RideTextView+OverlayMarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000010 /* RideTextView+OverlayMarks.swift */; };
+		D2B00000000000000000000E /* RideTextView+OverlayPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000013 /* RideTextView+OverlayPlace.swift */; };
+		D2B000000000000000000011 /* OverlayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000001 /* OverlayMode.swift */; };
+		D2B000000000000000000012 /* OverlaySelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000002 /* OverlaySelection.swift */; };
+		D2B000000000000000000013 /* OverlayLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000003 /* OverlayLayout.swift */; };
+		D2B000000000000000000014 /* OverlayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000004 /* OverlayModel.swift */; };
+		D2B000000000000000000015 /* OverlayShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000005 /* OverlayShift.swift */; };
+		D2B000000000000000000016 /* DiagnosticOverlayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000D /* DiagnosticOverlayTests.swift */; };
+		D2B000000000000000000017 /* OverlayModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000E /* OverlayModelTests.swift */; };
+		D2B000000000000000000018 /* OverlaySourceMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000F /* OverlaySourceMap.swift */; };
+		D2B00000000000000000000D /* OverlayStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000011 /* OverlayStore.swift */; };
+		D2B000000000000000000019 /* OverlayStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000011 /* OverlayStore.swift */; };
+		D2B00000000000000000001A /* OverlayStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000012 /* OverlayStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1853,6 +1877,24 @@
 		GIT000000000000000000066 /* GhostText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostText.swift; sourceTree = "<group>"; };
 		GIT000000000000000000068 /* AISuggestRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestRouter.swift; sourceTree = "<group>"; };
 		GIT00000000000000000006A /* AIInlineGhostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInlineGhostTests.swift; sourceTree = "<group>"; };
+		D2F000000000000000000001 /* OverlayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMode.swift; sourceTree = "<group>"; };
+		D2F000000000000000000002 /* OverlaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySelection.swift; sourceTree = "<group>"; };
+		D2F000000000000000000003 /* OverlayLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLayout.swift; sourceTree = "<group>"; };
+		D2F000000000000000000004 /* OverlayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayModel.swift; sourceTree = "<group>"; };
+		D2F000000000000000000005 /* OverlayShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayShift.swift; sourceTree = "<group>"; };
+		D2F000000000000000000006 /* OverlayRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayRows.swift; sourceTree = "<group>"; };
+		D2F000000000000000000007 /* RideTextView+Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Overlay.swift"; sourceTree = "<group>"; };
+		D2F000000000000000000008 /* GutterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterOverlay.swift; sourceTree = "<group>"; };
+		D2F000000000000000000009 /* Preferences+Decode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preferences+Decode.swift"; sourceTree = "<group>"; };
+		D2F00000000000000000000A /* Preferences+Clamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preferences+Clamp.swift"; sourceTree = "<group>"; };
+		D2F00000000000000000000B /* OverlayCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayCache.swift; sourceTree = "<group>"; };
+		D2F00000000000000000000D /* DiagnosticOverlayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticOverlayTests.swift; sourceTree = "<group>"; };
+		D2F00000000000000000000E /* OverlayModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayModelTests.swift; sourceTree = "<group>"; };
+		D2F00000000000000000000F /* OverlaySourceMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySourceMap.swift; sourceTree = "<group>"; };
+		D2F000000000000000000010 /* RideTextView+OverlayMarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+OverlayMarks.swift"; sourceTree = "<group>"; };
+		D2F000000000000000000013 /* RideTextView+OverlayPlace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+OverlayPlace.swift"; sourceTree = "<group>"; };
+		D2F000000000000000000011 /* OverlayStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayStore.swift; sourceTree = "<group>"; };
+		D2F000000000000000000012 /* OverlayStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1999,6 +2041,10 @@
 				A0000000000000000000014B /* GitPathMapTests.swift */,
 				A00000000000000000000149 /* DiagnosticRangeTests.swift */,
 				A00000000000000000000188 /* DiagnosticStoreTests.swift */,
+				D2F00000000000000000000D /* DiagnosticOverlayTests.swift */,
+				D2F00000000000000000000E /* OverlayModelTests.swift */,
+				D2F00000000000000000000F /* OverlaySourceMap.swift */,
+				D2F000000000000000000012 /* OverlayStoreTests.swift */,
 				MD2A69A966E7F575C0242A79 /* DiagnosticTidyTests.swift */,
 				MBE1102E5FCE37C7A6694CA2 /* CheckPlanTests.swift */,
 				MB7C0FA26CC2234970848AB0 /* CodeMenuGatesTests.swift */,
@@ -2142,6 +2188,7 @@
 				WMAP0000000000000000G001 /* Map */,
 				F1E0000000000000000000A0 /* Rename */,
 				A00000000000000000000055 /* Editor */,
+				D2F00000000000000000000C /* Overlay */,
 				A00000000000000000000056 /* Search */,
 				A00000000000000000000057 /* Preferences */,
 				A00000000000000000000058 /* Themes */,
@@ -2355,6 +2402,21 @@
 			path = Workspace;
 			sourceTree = "<group>";
 		};
+		D2F00000000000000000000C /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				D2F00000000000000000000B /* OverlayCache.swift */,
+				D2F000000000000000000003 /* OverlayLayout.swift */,
+				D2F000000000000000000004 /* OverlayModel.swift */,
+				D2F000000000000000000001 /* OverlayMode.swift */,
+				D2F000000000000000000006 /* OverlayRows.swift */,
+				D2F000000000000000000002 /* OverlaySelection.swift */,
+				D2F000000000000000000005 /* OverlayShift.swift */,
+				D2F000000000000000000011 /* OverlayStore.swift */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
 		A00000000000000000000055 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
@@ -2401,6 +2463,10 @@
 				A0000000000000000000011E /* FunctionKeys.swift */,
 				D400000000000000000000AF /* GutterGlyphs.swift */,
 				E60000000000000000000128 /* GutterLines.swift */,
+				D2F000000000000000000008 /* GutterOverlay.swift */,
+				D2F000000000000000000007 /* RideTextView+Overlay.swift */,
+				D2F000000000000000000010 /* RideTextView+OverlayMarks.swift */,
+				D2F000000000000000000013 /* RideTextView+OverlayPlace.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
 				A0000000000000000000001A /* RideTextView.swift */,
 				E500000000000000000000E0 /* RideTextView+Undo.swift */,
@@ -2475,6 +2541,8 @@
 				GIT000000000000000000054 /* AssistantPreferences.swift */,
 				0AC1E0000000000000000003 /* OracleSettingsRow.swift */,
 				A00000000000000000000064 /* Preferences.swift */,
+				D2F00000000000000000000A /* Preferences+Clamp.swift */,
+				D2F000000000000000000009 /* Preferences+Decode.swift */,
 				AA0000000000000000000043 /* AISettingsPane.swift */,
 				AA0000000000000000000041 /* PreferencesStore.swift */,
 				A00000000000000000000065 /* PreferencesView.swift */,
@@ -3296,6 +3364,16 @@
 				A0000000000000000000012A /* DiagnosticRange.swift in Sources */,
 				A00000000000000000000187 /* DiagnosticStore.swift in Sources */,
 				D01A00000000000000000003 /* StoredLabel.swift in Sources */,
+				D2B000000000000000000011 /* OverlayMode.swift in Sources */,
+				D2B000000000000000000012 /* OverlaySelection.swift in Sources */,
+				D2B000000000000000000013 /* OverlayLayout.swift in Sources */,
+				D2B000000000000000000014 /* OverlayModel.swift in Sources */,
+				D2B000000000000000000015 /* OverlayShift.swift in Sources */,
+				D2B000000000000000000016 /* DiagnosticOverlayTests.swift in Sources */,
+				D2B000000000000000000017 /* OverlayModelTests.swift in Sources */,
+				D2B000000000000000000018 /* OverlaySourceMap.swift in Sources */,
+				D2B000000000000000000019 /* OverlayStore.swift in Sources */,
+				D2B00000000000000000001A /* OverlayStoreTests.swift in Sources */,
 				A00000000000000000000189 /* DiagnosticStoreTests.swift in Sources */,
 				FEE0000000000000000000C5 /* DiagnosticDocLink.swift in Sources */,
 				FEE0000000000000000000C6 /* ClangTidyParse.swift in Sources */,
@@ -4072,6 +4150,20 @@
 				BF0000000000000000000015 /* Buffers+SavePanel.swift in Sources */,
 				BF0000000000000000000013 /* PendingDelivery.swift in Sources */,
 				A0000000000000000000002D /* GutterView.swift in Sources */,
+				D2B000000000000000000001 /* OverlayMode.swift in Sources */,
+				D2B000000000000000000002 /* OverlaySelection.swift in Sources */,
+				D2B000000000000000000003 /* OverlayLayout.swift in Sources */,
+				D2B000000000000000000004 /* OverlayModel.swift in Sources */,
+				D2B000000000000000000005 /* OverlayShift.swift in Sources */,
+				D2B000000000000000000006 /* OverlayRows.swift in Sources */,
+				D2B000000000000000000007 /* RideTextView+Overlay.swift in Sources */,
+				D2B000000000000000000008 /* GutterOverlay.swift in Sources */,
+				D2B000000000000000000009 /* Preferences+Decode.swift in Sources */,
+				D2B00000000000000000000A /* Preferences+Clamp.swift in Sources */,
+				D2B00000000000000000000B /* OverlayCache.swift in Sources */,
+				D2B00000000000000000000D /* OverlayStore.swift in Sources */,
+				D2B00000000000000000000C /* RideTextView+OverlayMarks.swift in Sources */,
+				D2B00000000000000000000E /* RideTextView+OverlayPlace.swift in Sources */,
 				A0000000000000000000002E /* TabStrip.swift in Sources */,
 				A0000000000000000000002F /* Buffers.swift in Sources */,
 				A00000000000000000000907 /* SaveLanguagePicker.swift in Sources */,

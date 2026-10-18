@@ -17,6 +17,13 @@ struct PreferenceBindings {
         )
     }
 
+    func mode(_ key: WritableKeyPath<Preferences, DiagnosticOverlayMode>) -> Binding<DiagnosticOverlayMode> {
+        Binding(
+            get: { state.prefs[keyPath: key] },
+            set: { value in state.updatePrefs { $0[keyPath: key] = value } }
+        )
+    }
+
     func string(_ key: WritableKeyPath<Preferences, String>) -> Binding<String> {
         Binding(
             get: { state.prefs[keyPath: key] },
