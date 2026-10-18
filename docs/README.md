@@ -25,6 +25,8 @@
 | Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
 | AppKit view clipping: since macOS 14 a view that fills its dirty rect paints over its neighbours; the gutter clips | `docs/tui/appkit-view-clipping.md` |
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
+| Diagnostic overlay: every labelled span of a compiler message drawn on the code, gutter order, notes, fixes, freshness rules | `docs/product/diagnostic-overlay.md` |
+| Diagnostic overlay executor cards DO-1 to DO-3 | `plan/roadmap/diagnostic-overlay-cards.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | AI chat panel and Explain: context packs, streaming, threads, code-block actions | `docs/product/ai-chat.md` |
@@ -46,6 +48,7 @@
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
+| Diagnostic overlay follow-ups | `todo/app/diagnostic-overlay.md` |
 
 ## Engine layout
 
