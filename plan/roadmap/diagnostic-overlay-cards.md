@@ -61,6 +61,7 @@ Spec: `docs/product/diagnostic-overlay.md` (binding). Mock: `docs/images/diagnos
 - Esc while an overlay is active and no popup is open hides it until the caret leaves the diagnostic's lines.
 - Selecting a Problems row makes that diagnostic active in its editor, whatever the mode, until the caret moves off its lines.
 - Self-test steps at the end of the Rust step array, on the fresh copy of `samples/rust-demo`: inject the mock's use-after-move into `src/main.rs` after `fn main() {`, save, wait for the check, put the caret on the primary span and assert three gutter numbers and the chips' texts; click the "value moved here" chip and assert the caret moved; type inside the secondary span and assert the overlay is gone; switch the View submenu to All in File and Off and assert. Claim the new menu items for the coverage gate.
+- A demo scene `overlay`, in the pattern of `DemoScene+Diagnose.swift`: on the rust-demo copy it injects the same use-after-move, waits for the check, places the caret on the primary span with the mode At Caret, and settles. Add `"overlay rust-demo"` to the SCENES list in `scripts/screenshots.sh`. Do not run `screenshots.sh`; the reviewer captures the scene and compares it with the mock.
 
 **Acceptance.** All gates, plus the Rust self-test run alone on a fresh copy, with PASS and FAIL counts and every FAIL line in the hand-back.
 
