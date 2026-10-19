@@ -30,7 +30,7 @@ struct NavigateCommands: Commands {
             Button("Go to Symbol in Project…") { state.toggleSymbolPicker() }
                 .keyboardShortcut("o", modifiers: [.command, .option, .shift])
             Button("Go to Definition") { state.goToDefinition() }
-                .keyboardShortcut(FunctionKeys.f12, modifiers: [])
+                .keyboardShortcut("j", modifiers: [.control, .command])
             Button("Switch Header / Source") { state.switchHeaderSource() }
                 .keyboardShortcut(FunctionKeys.f10, modifiers: [])
             Button("Find Usages") { state.findUsages() }

@@ -20,7 +20,7 @@ Arrow keys or a click select a row and the preview pane shows the complete examp
 
 ## Editing
 
-`⌃J` (or F1) on an identifier opens a card with its signature and documentation. F12 jumps to the definition in the buffer, a crate on disk or an included header.
+`⌃J` (or F1) on an identifier opens a card with its signature and documentation. ⌃⌘J jumps to the definition in the buffer, a crate on disk or an included header.
 
 ![Documentation card over HashMap showing the struct signature and documentation](docs/images/ride-hover.png)
 

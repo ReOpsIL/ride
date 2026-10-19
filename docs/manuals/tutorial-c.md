@@ -25,7 +25,7 @@ Type `rect_` or `buffer_` anywhere; hits from `geometry.h` and `util.h` show wit
 
 ## Go to definition and diagnostics
 
-`F12` (or ⌘-click) on `rect_area`, `rect_t`, `MAX_SHAPES` (two includes deep, in `config.h`) or `buffer_new`.
+`⌃⌘J` (or ⌘-click) on `rect_area`, `rect_t`, `MAX_SHAPES` (two includes deep, in `config.h`) or `buffer_new`.
 
 Save `src/main.c`, or press `⌘B`, to run `clang -fsyntax-only` with the compile database flags. Add `int unused = 1;` in `main` for a warning, or drop a semicolon for an error, then look at the Problems panel (`⌘6`).
 

@@ -22,7 +22,7 @@ The cheat sheet has its own search bar: click it (or press `⌘F` when the sheet
 
 ## Navigation
 
-In `src/main.rs`, put the caret on `Counter` and press `⌃J` for its signature and documentation. The card scrolls when the comment is long. Press `⌃J` again for the whole doc block. `F12` jumps to the definition in `src/util.rs`. `⌘Y` peeks the definition without leaving the file.
+In `src/main.rs`, put the caret on `Counter` and press `⌃J` for its signature and documentation. The card scrolls when the comment is long. Press `⌃J` again for the whole doc block. `⌃⌘J` jumps to the definition in `src/util.rs`. `⌘Y` peeks the definition without leaving the file.
 
 `⇧⌥⌘O` searches symbols in the workspace and the crate catalog. `⌘P` opens files by path.
 

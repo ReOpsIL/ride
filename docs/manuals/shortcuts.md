@@ -51,7 +51,7 @@ Editor commands take their keys only while the editor has keyboard focus. In the
 | Last Edit Location | ⇧⌘⌫ | app |  |
 | Go to Line | ⌘L | app |  |
 | Go to Symbol in File / Project | ⌥⌘O · ⌥⇧⌘O | app |  |
-| Go to Definition | F12 | editor |  |
+| Go to Definition | ⌃⌘J | editor |  |
 | Switch Header / Source | F10 | app |  |
 | Find Usages | ⌥F7 | editor |  |
 | Call / Type Hierarchy | ⌃⌥H · ⌃H | editor |  |

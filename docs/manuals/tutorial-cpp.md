@@ -27,7 +27,7 @@ Type `total_` or `Regis` in `main.cpp`; the hits point at `shapes.hpp` and `regi
 
 ## Go to definition and diagnostics
 
-`F12` (or ⌘-click) on `scale_all`, `Circle`, `Registry` or `total_area`.
+`⌃⌘J` (or ⌘-click) on `scale_all`, `Circle`, `Registry` or `total_area`.
 
 Save `src/main.cpp`, or press `⌘B`, to run `clang++ -fsyntax-only` with the compile database flags. Remove the `#include <iostream>` line for an error, then look at the Problems panel (`⌘6`).
 

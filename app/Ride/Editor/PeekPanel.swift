@@ -134,7 +134,7 @@ final class PeekChrome: NSView {
         origin.lineBreakMode = .byTruncatingMiddle
         open.bezelStyle = .roundRect
         open.font = Tokens.nsUI(11)
-        open.toolTip = "Open (F12)"
+        open.toolTip = Shortcuts.help("Open", "Navigate › Go to Definition")
         PopupPanelKit.configurePin(pin)
         segments.segmentStyle = .rounded
         segments.trackingMode = .selectOne

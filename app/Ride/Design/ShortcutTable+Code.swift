@@ -8,7 +8,7 @@ extension Shortcuts {
             ShortcutEntry("sym", "Go to Symbol in File / Project", [
                 .menu("Navigate › Go to Symbol in File…", "⌥⌘O"), .menu("Navigate › Go to Symbol in Project…", "⌥⇧⌘O"),
             ]),
-            ShortcutEntry("def", "Go to Definition", [.menu("Navigate › Go to Definition", "F12", .editor)]),
+            ShortcutEntry("def", "Go to Definition", [.menu("Navigate › Go to Definition", "⌃⌘J", .editor)]),
             ShortcutEntry("header", "Switch Header / Source", [.menu("Navigate › Switch Header / Source", "F10")]),
             ShortcutEntry("usages", "Find Usages", [.menu("Navigate › Find Usages", "⌥F7", .editor)]),
             ShortcutEntry("hier", "Call / Type Hierarchy", [
