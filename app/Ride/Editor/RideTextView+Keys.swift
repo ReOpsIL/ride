@@ -43,6 +43,10 @@ extension RideTextView: ClaimsKeysBeforeMenus {
         if AIInlineController.shared.dismiss(in: self) {
             return
         }
+        if HoverController.shared.isVisible {
+            HoverController.shared.hide()
+            return
+        }
         if let host = EditorPanes.shared.host(for: self) {
             if let peek = host.peekStorage, peek.isVisible {
                 peek.hide()

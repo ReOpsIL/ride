@@ -2,14 +2,15 @@ use std::collections::HashSet;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem, SymbolAt};
+use crate::ffi::{CompletionContext, CompletionHit, DefinitionResponse, OutlineItem, SymbolAt};
 use crate::highlight::BufferSession;
 
 use super::catalog::Catalog;
 use super::def_rank::RankContext;
 use super::reach::Reach;
 use super::{
-    Engine, Inner, def_rank, header_hits, include_def, local_defs, oracle_defs, variant_hits,
+    Engine, Inner, def_narrow, def_rank, header_hits, include_def, local_defs, oracle_defs,
+    variant_hits,
 };
 
 const LOCAL_SCORE: f32 = 2000.0;
@@ -32,6 +33,8 @@ struct Lookup {
     catalog: Option<Catalog>,
     reach: Reach,
     ctx: RankContext,
+    context: CompletionContext,
+    parameter: Option<String>,
 }
 
 fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
@@ -58,22 +61,43 @@ fn resolved(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionRes
 
 fn lookup(inner: &Inner, session_id: u64, cursor_byte: u32) -> Option<Lookup> {
     let session = inner.sessions.get(&session_id)?;
-    let symbol = session
+    let mut symbol = session
         .symbol_at(cursor_byte)
         .or_else(|| outline_symbol(session.outline(), cursor_byte))?;
+    if symbol.name == "Self"
+        && let Some(owner) = session.enclosing_type(cursor_byte)
+    {
+        symbol.name = owner;
+        symbol.qualifier = None;
+    }
+    let parameter = session
+        .names_type(cursor_byte)
+        .then(|| session.type_parameter(cursor_byte))
+        .flatten();
+    let context = if session.names_type(cursor_byte) {
+        CompletionContext::TypePosition
+    } else {
+        session.site_at(cursor_byte).context()
+    };
     let reach = Reach::take(inner, session_id, session);
-    let local = local_defs::hits(
-        session.outline(),
-        &reach.scope().types,
-        &symbol,
-        LOCAL_SCORE,
-    );
+    let local = if parameter.is_some() {
+        Vec::new()
+    } else {
+        local_defs::hits(
+            session.outline(),
+            &reach.scope().types,
+            &symbol,
+            LOCAL_SCORE,
+        )
+    };
     Some(Lookup {
         symbol,
         local,
-        catalog: session.lang().has_catalog().then(|| Catalog::of(inner)),
+        catalog: (parameter.is_none() && session.lang().has_catalog()).then(|| Catalog::of(inner)),
         reach,
         ctx: base_context(inner, session),
+        context,
+        parameter,
     })
 }
 
@@ -84,7 +108,22 @@ fn resolve(engine: &Engine, found: Lookup) -> DefinitionResponse {
         catalog,
         reach,
         mut ctx,
+        context,
+        parameter,
     } = found;
+    if let Some(decl) = parameter {
+        let mut hit = CompletionHit::local(
+            &symbol.name,
+            crate::ffi::ItemKind::Type,
+            LOCAL_SCORE,
+            Some((symbol.start_byte, symbol.end_byte)),
+        );
+        hit.signature = decl;
+        return DefinitionResponse {
+            symbol: Some(symbol),
+            hits: vec![hit],
+        };
+    }
     let headers = if catalog.is_some() {
         &[][..]
     } else {
@@ -100,6 +139,7 @@ fn resolve(engine: &Engine, found: Lookup) -> DefinitionResponse {
             reach.remember(engine);
         }
     }
+    def_narrow::apply(&mut hits, &symbol.name, context);
     hits.sort_by_key(|h| ctx.tier(h.source_path.as_deref(), &h.crate_name));
     DefinitionResponse {
         symbol: Some(symbol),

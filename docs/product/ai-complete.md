@@ -1,6 +1,6 @@
 # AI code suggestions: inline ghost text or popup rows
 
-Off by default. Preferences › AI turns it on, picks the provider and the amount of context, and Preferences › Editor › Popups chooses which popups show at all (engine completions, AI suggestions, cheat sheet, signature help, hover documentation).
+Off by default. Preferences › AI turns it on, picks the provider and the amount of context, and Preferences › Editor › Popups chooses which popups show at all (engine completions, AI suggestions, cheat sheet, signature help).
 
 ## Providers
 

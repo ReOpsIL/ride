@@ -26,6 +26,7 @@ extension DemoScene {
         e.focus()
         e.place(on: "Counter::new")
         state.showQuickDocumentation()
+        DemoLaunch.after(0.8) { state.showQuickDocumentation() }
     }
 
     private static func peek(_ state: AppState) {

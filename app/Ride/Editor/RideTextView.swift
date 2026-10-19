@@ -36,7 +36,6 @@ final class RideTextView: NSTextView {
     }
     var hooks = EditorHooks()
     weak var undoSteps: BufferUndo?
-    var hoverArea: NSTrackingArea?
     var selectionStack: [NSRange] = []
     var folds = FoldSet()
     var inlineGhost: AIInlineGhost?

@@ -12,6 +12,8 @@ use super::hit::doc_hit;
 use super::parse::escape_regex;
 use super::rank::{Columns, Ranking};
 
+const POOL: usize = 512;
+
 type Clause = (Occur, Box<dyn Query>);
 
 pub fn exact_search(
@@ -42,7 +44,8 @@ fn run(
         context: CompletionContext::Unknown,
     };
     let searcher = reader.searcher();
-    let collector = TopDocs::with_limit(limit * 4).tweak_score(move |seg: &SegmentReader| {
+    let pool = limit.saturating_mul(4).max(POOL);
+    let collector = TopDocs::with_limit(pool).tweak_score(move |seg: &SegmentReader| {
         let cols = Columns::open(seg);
         move |doc: DocId, bm25: Score| cols.score(doc, bm25, ranking)
     });
@@ -56,6 +59,9 @@ fn run(
         .filter(|h| seen.insert((h.path.clone(), h.crate_name.clone())))
         .collect();
     hits.sort_by(|a, b| b.score.total_cmp(&a.score));
+    if hits.iter().any(|h| h.name == name) {
+        hits.retain(|h| h.name == name);
+    }
     hits.truncate(limit);
     hits
 }

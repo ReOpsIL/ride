@@ -19,7 +19,15 @@ extension SelfTestSteps {
 
     private static func docSteps(e: SelfTestEditor, stash: SelfTestStash) -> [SelfTestStep] {
         [
-            SelfTestStep(name: "menu quick documentation", wait: 0.5, until: { docs?.html.contains("Adds two") == true }, timeout: 10, run: {
+            SelfTestStep(name: "menu quick documentation", wait: 0.4, until: {
+                if docs?.html.contains("Adds two") == true {
+                    return true
+                }
+                if HoverController.shared.isVisible {
+                    _ = HoverController.shared.upgradeIfVisible()
+                }
+                return false
+            }, timeout: 10, run: {
                 e.activate()
                 e.place(on: MenuBlock.call)
                 SelfTestMenu.perform("Code › Quick Documentation")

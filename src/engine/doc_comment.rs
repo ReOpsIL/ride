@@ -41,12 +41,12 @@ fn preceding(node: Node<'_>, source: &str) -> String {
     while let Some(s) = sib {
         match s.kind() {
             "line_comment" | "block_comment" => {
-                if !adjacent(s, next, source) {
+                let doc = comment(s, source, false);
+                if !(adjacent(s, next, source) || is_attr(next) && doc.is_some()) {
                     break;
                 }
-                match comment(s, source, false) {
-                    Some(text) => chunks.push(text),
-                    None => break,
+                if let Some(text) = doc {
+                    chunks.push(text);
                 }
                 next = s;
             }
@@ -140,6 +140,10 @@ fn c_anchor(node: Node<'_>) -> Node<'_> {
         anchor = parent;
     }
     anchor
+}
+
+fn is_attr(node: Node<'_>) -> bool {
+    matches!(node.kind(), "attribute_item" | "inner_attribute_item")
 }
 
 fn adjacent(comment: Node<'_>, next: Node<'_>, text: &str) -> bool {

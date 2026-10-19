@@ -38,6 +38,61 @@ pub fn expr_type(node: Node<'_>, text: &str) -> Option<String> {
     }
 }
 
+pub fn type_parameter(node: Node<'_>, text: &str) -> Option<String> {
+    let name = node_text(node, text);
+    let mut current = Some(node);
+    while let Some(n) = current {
+        if let Some(params) = n.child_by_field_name("type_parameters")
+            && let Some(decl) = parameter_decl(params, text, &name)
+        {
+            return Some(with_where(n, text, &name, &decl));
+        }
+        current = n.parent();
+    }
+    None
+}
+
+fn parameter_decl(params: Node<'_>, text: &str, name: &str) -> Option<String> {
+    let mut walk = params.walk();
+    params.named_children(&mut walk).find_map(|child| {
+        if child.kind() != "type_parameter" {
+            return None;
+        }
+        let id = child.child_by_field_name("name")?;
+        (node_text(id, text) == name).then(|| {
+            text.get(child.start_byte()..child.end_byte().min(text.len()))
+                .unwrap_or(name)
+                .to_string()
+        })
+    })
+}
+
+fn with_where(item: Node<'_>, text: &str, name: &str, decl: &str) -> String {
+    let decl = crate::text::collapse_ws(decl);
+    if decl.contains(':') {
+        return decl;
+    }
+    let Some(clause) = child_kind(item, "where_clause") else {
+        return decl;
+    };
+    let mut walk = clause.walk();
+    clause
+        .named_children(&mut walk)
+        .find_map(|pred| {
+            if pred.kind() != "where_predicate" {
+                return None;
+            }
+            let left = pred.child_by_field_name("left")?;
+            (type_name(left, text).as_deref() == Some(name)).then(|| {
+                crate::text::collapse_ws(
+                    text.get(pred.start_byte()..pred.end_byte().min(text.len()))
+                        .unwrap_or(&decl),
+                )
+            })
+        })
+        .unwrap_or(decl)
+}
+
 pub fn enclosing_impl(node: Node<'_>, text: &str) -> Option<String> {
     let mut current = node.parent();
     while let Some(parent) = current {
@@ -66,6 +121,11 @@ pub fn constructor(path: Node<'_>, text: &str) -> Option<String> {
         .next()
         .filter(char::is_ascii_uppercase)
         .map(|_| base)
+}
+
+fn child_kind<'a>(node: Node<'a>, kind: &str) -> Option<Node<'a>> {
+    let mut walk = node.walk();
+    node.named_children(&mut walk).find(|n| n.kind() == kind)
 }
 
 fn child_type(node: Node<'_>, field: &str, text: &str) -> Option<String> {

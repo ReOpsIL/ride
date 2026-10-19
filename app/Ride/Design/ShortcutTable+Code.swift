@@ -50,7 +50,7 @@ extension Shortcuts {
             ShortcutEntry("foldall", "Fold All / Unfold All", [.menu("Code › Fold All", "⌥⇧⌘←", .editor), .menu("Code › Unfold All", "⌥⇧⌘→", .editor)]),
             ShortcutEntry("trigger", "Trigger Completion", [.menu("Code › Trigger Completion", "⌥Space", .editor), .editorKey("⌥esc")]),
             ShortcutEntry("cheat", "Cheat Sheet", [.menu("Code › Cheat Sheet", "⌥⇧Space", .editor)]),
-            ShortcutEntry("doc", "Quick Documentation", [.menu("Code › Quick Documentation", "⌃J", .editor), .menu("Code › Quick Documentation", "F1", .editor)]),
+            ShortcutEntry("doc", "Quick Documentation", [.menu("Code › Quick Documentation", "⌃J", .editor), .editorKey("F1")]),
             ShortcutEntry("peek", "Quick Definition", [.menu("Code › Quick Definition", "⌘Y", .editor)]),
             ShortcutEntry("typeinfo", "Type Info", [.menu("Code › Type Info", "⌃⇧P", .editor)]),
             ShortcutEntry("extdoc", "External Documentation", [.menu("Code › External Documentation", "⇧F1", .editor)]),

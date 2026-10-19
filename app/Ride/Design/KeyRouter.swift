@@ -15,11 +15,19 @@ enum KeyRouter {
     }
 
     static func route(_ event: NSEvent) -> NSEvent? {
+        if opensQuickDoc(event) {
+            DocController.showFocused()
+            return nil
+        }
         guard let responder = (event.window ?? NSApp.keyWindow)?.firstResponder, claims(responder, event) else {
             return event
         }
         responder.keyDown(with: event)
         return nil
+    }
+
+    private static func opensQuickDoc(_ event: NSEvent) -> Bool {
+        EditorPanes.shared.focused != nil && KeyCombo(event: event) == KeyCombo(glyphs: "F1")
     }
 
     static func claims(_ responder: NSResponder, _ event: NSEvent) -> Bool {

@@ -29,6 +29,13 @@ final class DocController {
         guard let host = EditorPanes.shared.focused else {
             return
         }
+        if host.docsStorage?.isVisible == true {
+            host.docs.showAtCaret(in: host.textView)
+            return
+        }
+        if HoverController.shared.showAtCaret(in: host.textView) {
+            return
+        }
         host.docs.showAtCaret(in: host.textView)
     }
 

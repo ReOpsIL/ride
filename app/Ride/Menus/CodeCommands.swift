@@ -111,9 +111,6 @@ struct CodeCommands: Commands {
         Button("Quick Documentation") { DocController.showFocused() }
             .keyboardShortcut("j", modifiers: .control)
             .disabled(!menu.code.editor)
-        Button("Quick Documentation") { DocController.showFocused() }
-            .keyboardShortcut(FunctionKeys.f1, modifiers: [])
-            .disabled(!menu.code.editor)
         Button("Quick Definition") { PeekController.showFocused() }
             .keyboardShortcut("y", modifiers: .command)
             .disabled(!menu.code.editor)

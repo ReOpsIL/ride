@@ -65,6 +65,18 @@ impl BufferSession {
         self.syntax.symbol_at(&self.replica, byte)
     }
 
+    pub fn names_type(&self, byte: u32) -> bool {
+        self.syntax.names_type(&self.replica, byte)
+    }
+
+    pub fn type_parameter(&self, byte: u32) -> Option<String> {
+        self.syntax.type_parameter(&self.replica, byte)
+    }
+
+    pub fn enclosing_type(&self, byte: u32) -> Option<String> {
+        self.syntax.enclosing_type(&self.replica, byte)
+    }
+
     pub fn local_occurrences(&self, byte: u32) -> Vec<ByteRange> {
         self.syntax.local_occurrences(&self.replica, byte)
     }

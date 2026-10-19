@@ -45,6 +45,15 @@ pub trait Syntax: Send + Sync {
     fn errors(&self) -> Vec<ParseErrorSpan>;
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;
+    fn names_type(&self, _text: &str, _byte: u32) -> bool {
+        false
+    }
+    fn type_parameter(&self, _text: &str, _byte: u32) -> Option<String> {
+        None
+    }
+    fn enclosing_type(&self, _text: &str, _byte: u32) -> Option<String> {
+        None
+    }
     fn local_occurrences(&self, _text: &str, _byte: u32) -> Vec<ByteRange> {
         Vec::new()
     }

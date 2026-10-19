@@ -43,7 +43,6 @@ struct EditorSettings: View {
                 Toggle("AI suggestions in the completion popup", isOn: bind.bool(\.aiComplete))
                 Toggle("Cheat sheet with completions", isOn: bind.bool(\.cheatSheet))
                 Toggle("Signature help", isOn: bind.bool(\.signatureHelp))
-                Toggle("Documentation on hover", isOn: bind.bool(\.hoverDocs))
             }
             Section("Display") {
                 Toggle("Outline panel", isOn: bind.bool(\.outlinePanel))

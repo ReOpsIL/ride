@@ -1,6 +1,6 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
-use crate::ffi::{CompletionHit, OutlineItem, QuickDoc};
+use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem, QuickDoc};
 
 use super::Engine;
 use super::catalog::Catalog;
@@ -24,18 +24,54 @@ struct Ctx {
 }
 
 fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<QuickDoc> {
-    let hit = engine
-        .find_definitions(session_id, cursor_byte)
-        .hits
-        .into_iter()
-        .next()?;
+    let own = super::symbols::own_definitions(engine, session_id, cursor_byte);
     let ctx = session(engine, session_id)?;
-    let loaded = hit_source::load(
-        hit_source::file_of(&hit, Some(&ctx.buffer)),
-        Some(&ctx.buffer),
-    );
-    let lifted = lift_from(&hit, &loaded);
+    if let Some(page) = primitive_page(engine, session_id, cursor_byte, &own, &ctx) {
+        return Some(page);
+    }
+    let found = if own.hits.is_empty() {
+        super::oracle_defs::definition(engine, session_id, cursor_byte).unwrap_or(own)
+    } else {
+        own
+    };
+    let hit = found.hits.into_iter().next()?;
+    let disk = hit_source::file_of(&hit, Some(&ctx.buffer));
+    let loaded = hit_source::load(disk, Some(&ctx.buffer));
+    let lifted = lift_from(&hit, &loaded, disk.is_some());
     Some(assemble(&hit, &ctx, &loaded, lifted))
+}
+
+fn primitive_page(
+    engine: &Engine,
+    session_id: u64,
+    cursor_byte: u32,
+    found: &DefinitionResponse,
+    ctx: &Ctx,
+) -> Option<QuickDoc> {
+    let name = found.symbol.as_ref()?.name.clone();
+    if !names_a_type(engine, session_id, cursor_byte) {
+        return None;
+    }
+    let prim = super::primitive_doc::lift(&name)?;
+    let rewritten = doc_links::rewrite(&prim.markdown, |p| resolve(p, ctx));
+    Some(QuickDoc {
+        title: name.clone(),
+        signature: name,
+        html: crate::markdown::render(&doc_html::inert(&rewritten.markdown)),
+        origin_path: prim.path,
+        origin_line: prim.line,
+        links: rewritten.links,
+    })
+}
+
+fn names_a_type(engine: &Engine, session_id: u64, cursor_byte: u32) -> bool {
+    engine
+        .read(|i| {
+            i.sessions
+                .get(&session_id)
+                .is_some_and(|session| session.names_type(cursor_byte))
+        })
+        .unwrap_or(false)
 }
 
 fn session(engine: &Engine, session_id: u64) -> Option<Ctx> {
@@ -52,15 +88,20 @@ fn session(engine: &Engine, session_id: u64) -> Option<Ctx> {
         .flatten()
 }
 
-fn lift_from(hit: &CompletionHit, loaded: &Loaded) -> Option<Lifted> {
-    let byte = hit.byte_start? as usize;
-    doc_block::lift(loaded.lang, &loaded.text, byte)
+fn lift_from(hit: &CompletionHit, loaded: &Loaded, disk: bool) -> Option<Lifted> {
+    let byte = hit.name_byte.or(hit.byte_start).unwrap_or(0) as usize;
+    let read = || doc_block::lift_named(loaded.lang, &loaded.text, byte, &hit.name);
+    if disk {
+        super::doc_cache::cached(&loaded.path, &hit.name, read)
+    } else {
+        read()
+    }
 }
 
 fn assemble(hit: &CompletionHit, ctx: &Ctx, loaded: &Loaded, lifted: Option<Lifted>) -> QuickDoc {
     let markdown = match &lifted {
-        Some(l) if !l.markdown.is_empty() => l.markdown.clone(),
-        _ => hit.doc_paragraph.clone(),
+        Some(l) => l.markdown.clone(),
+        None => hit.doc_paragraph.clone(),
     };
     let rewritten = doc_links::rewrite(&markdown, |p| resolve(p, ctx));
     QuickDoc {

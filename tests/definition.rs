@@ -204,6 +204,66 @@ fn catalog_quick_doc_includes_sections_after_the_first_paragraph() {
     assert!(doc.html.contains("Missing path"), "{}", doc.html);
 }
 
+#[test]
+fn a_type_name_keeps_its_docs_when_a_function_shares_the_spelling() {
+    let dir = tempfile::tempdir().unwrap();
+    let project = dir.path().join("app");
+    let sysroot = dir.path().join("sysroot");
+    let std_root = sysroot.join("lib/rustlib/src/rust/library/std");
+    std::fs::create_dir_all(project.join("src")).unwrap();
+    std::fs::create_dir_all(std_root.join("src")).unwrap();
+    std::fs::write(
+        project.join("Cargo.toml"),
+        "[package]\nname = \"app\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+    )
+    .unwrap();
+    std::fs::write(project.join("src/lib.rs"), "pub fn path() -> i32 { 0 }\n").unwrap();
+    std::fs::write(
+        std_root.join("Cargo.toml"),
+        "[package]\nname = \"std\"\nversion = \"0.0.0\"\nedition = \"2021\"\n",
+    )
+    .unwrap();
+    std::fs::write(std_root.join("src/lib.rs"), "pub mod path;\n").unwrap();
+    std::fs::write(
+        std_root.join("src/path.rs"),
+        "/// A slice of a path.\n///\n/// # Examples\n///\n/// Open a path.\npub struct Path;\n",
+    )
+    .unwrap();
+    let index = dir.path().join("index");
+    let config = EngineConfig {
+        index_dir: index.display().to_string(),
+        cargo_home: Some(dir.path().join("cargo").display().to_string()),
+        sysroot: Some(sysroot.display().to_string()),
+        offline_metadata: true,
+        refs_dir: None,
+        report_dir: None,
+    };
+    write_index(&project, &index, &config).unwrap();
+    let engine = engine_start(config);
+    engine
+        .open_workspace(project.display().to_string())
+        .unwrap();
+    let src = "use std::path::Path;\nfn f(base: &Path) {}\nfn g() { path(); }\n";
+    let open = engine
+        .open_session("buf".into(), None, src.into(), None)
+        .unwrap();
+    let type_at = src.match_indices("Path").nth(1).unwrap().0 as u32 + 1;
+    let hit = &engine.find_definitions(open.session_id, type_at).hits[0];
+    assert_eq!(hit.name, "Path");
+    assert_eq!(hit.item_kind, ItemKind::Struct);
+    assert!(hit.path.ends_with("path::Path"), "{}", hit.path);
+    assert!(hit.signature.contains("struct Path"), "{}", hit.signature);
+    let doc = engine
+        .quick_doc(open.session_id, type_at)
+        .expect("quick_doc");
+    assert!(doc.html.contains("A slice of a path"), "{}", doc.html);
+    assert!(doc.html.contains("Open a path"), "{}", doc.html);
+    let value_at = src.find("path()").unwrap() as u32 + 1;
+    let call = &engine.find_definitions(open.session_id, value_at).hits[0];
+    assert_eq!(call.name, "path");
+    assert_eq!(call.item_kind, ItemKind::Fn);
+}
+
 fn demo_engine() -> (tempfile::TempDir, Arc<Engine>, PathBuf) {
     let dir = tempfile::tempdir().unwrap();
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("samples/rust-demo");

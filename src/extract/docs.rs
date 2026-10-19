@@ -25,8 +25,6 @@ pub fn preceding_docs(node: Node<'_>, source: &str) -> String {
             "line_comment" | "block_comment" => {
                 if let Some(text) = comment_doc(s, source) {
                     chunks.push(text);
-                } else {
-                    break;
                 }
             }
             "attribute_item" => {}

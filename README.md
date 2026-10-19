@@ -20,11 +20,11 @@ Arrow keys or a click select a row and the preview pane shows the complete examp
 
 ## Editing
 
-Hover an identifier for its signature and first doc paragraph; F12 jumps to the definition in the buffer, a crate on disk or an included header.
+`⌃J` (or F1) on an identifier opens a card with its signature and documentation. F12 jumps to the definition in the buffer, a crate on disk or an included header.
 
-![Hover card over HashMap showing the struct signature and documentation](docs/images/ride-hover.png)
+![Documentation card over HashMap showing the struct signature and documentation](docs/images/ride-hover.png)
 
-⌃J (or F1) opens Quick Documentation for the symbol at the caret: the whole doc block rendered as HTML under its signature, intra-doc links that load inside the panel and a pin that keeps it open across caret moves; ⌘I shows the same card for the selected completion row and ⇧F1 opens docs.rs or cppreference.
+Press `⌃J` (or F1) again, or click the card, for Quick Documentation: the whole doc block rendered as HTML under its signature, intra-doc links that load inside the panel and a pin that keeps it open across caret moves. `⌘I` shows the same panel for the selected completion row and `⇧F1` opens docs.rs or cppreference.
 
 ![Quick Documentation on Counter: the rendered doc block under the struct signature, with its origin file in the header](docs/images/ride-quickdoc.png)
 
@@ -102,7 +102,7 @@ The project model reads `cargo metadata`, the CMake File API, a Makefile or a ba
 
 ![Debugging the rust-demo crate: stopped on the breakpoint at src/main.rs:10, the frame list on the left, the locals tree with counter expanded, and a watch on counter on the right](docs/images/ride-debug.png)
 
-The debugger drives `lldb-dap` from Xcode. Click a line number to set a breakpoint, right-click it for a condition or hit count; C++ exception and Rust panic breakpoints are in the Debug menu. F7, F8 and ⇧F8 step, ⌘F2 stops. The Debug panel (⌘3) shows threads and frames, a lazily expanded locals tree with the toolchain's Rust formatters and lldb's libc++ ones, watches re-evaluated on every stop, and Evaluate Expression (⌥F8); hovering an identifier while stopped shows its value. Debugging needs macOS developer mode (`sudo DevToolsSecurity -enable`, once).
+The debugger drives `lldb-dap` from Xcode. Click a line number to set a breakpoint, right-click it for a condition or hit count; C++ exception and Rust panic breakpoints are in the Debug menu. F7, F8 and ⇧F8 step, ⌘F2 stops. The Debug panel (⌘3) shows threads and frames, a lazily expanded locals tree with the toolchain's Rust formatters and lldb's libc++ ones, watches re-evaluated on every stop, and Evaluate Expression (⌥F8). `⌃J` / `F1` on an identifier while stopped shows its value. Debugging needs macOS developer mode (`sudo DevToolsSecurity -enable`, once).
 
 C and C++ binaries take the same path: CMake builds the target, the breakpoint is sent in the spelling the debug info holds, and the frames come back with libc++ formatters, so a `std::vector` opens into its elements. Stopping inside a method of the cpp-demo sample and stepping back out to its caller is checked by the self-test on every run.
 

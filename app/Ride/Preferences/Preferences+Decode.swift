@@ -28,7 +28,6 @@ extension Preferences {
         case debugHeight
         case previewWidth
         case signatureHelp
-        case hoverDocs
         case codeVision
         case diagnosticOverlay
         case aiComplete
@@ -70,7 +69,6 @@ extension Preferences {
         debugHeight = try c.decodeIfPresent(Double.self, forKey: .debugHeight) ?? d.debugHeight
         previewWidth = try c.decodeIfPresent(Double.self, forKey: .previewWidth) ?? d.previewWidth
         signatureHelp = try c.decodeIfPresent(Bool.self, forKey: .signatureHelp) ?? d.signatureHelp
-        hoverDocs = try c.decodeIfPresent(Bool.self, forKey: .hoverDocs) ?? d.hoverDocs
         codeVision = try c.decodeIfPresent(Bool.self, forKey: .codeVision) ?? d.codeVision
         diagnosticOverlay = try c.decodeIfPresent(DiagnosticOverlayMode.self, forKey: .diagnosticOverlay) ?? d.diagnosticOverlay
         aiComplete = try c.decodeIfPresent(Bool.self, forKey: .aiComplete) ?? d.aiComplete

@@ -16,7 +16,16 @@ extension SelfTestSteps {
     }
 
     static func quickDoc(state: AppState, e: SelfTestEditor) -> SelfTestStep {
-        SelfTestStep(name: "quick doc", wait: 1.2, run: {
+        SelfTestStep(name: "quick doc", wait: 0.4, until: {
+            let html = EditorPanes.shared.focused?.docs.html ?? ""
+            if html.contains("<h1>") {
+                return true
+            }
+            if HoverController.shared.isVisible {
+                _ = HoverController.shared.upgradeIfVisible()
+            }
+            return false
+        }, timeout: 8, run: {
             placeCaret(e, on: "Counter")
             state.showQuickDocumentation()
         }, check: {

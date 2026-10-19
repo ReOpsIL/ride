@@ -1,33 +1,6 @@
 import AppKit
 
 extension RideTextView {
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let old = hoverArea {
-            removeTrackingArea(old)
-        }
-        let area = NSTrackingArea(
-            rect: .zero,
-            options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(area)
-        hoverArea = area
-    }
-
-    override func mouseMoved(with event: NSEvent) {
-        super.mouseMoved(with: event)
-        if hooks.binding?()?.state.prefs.hoverDocs != false {
-            HoverController.shared.mouseMoved(view: self, event: event)
-        }
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        super.mouseExited(with: event)
-        HoverController.shared.notePointerLeft()
-    }
-
     override func mouseDown(with event: NSEvent) {
         HoverController.shared.hide()
         EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()

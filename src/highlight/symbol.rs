@@ -9,15 +9,35 @@ pub fn symbol_at(
     kinds: &[&str],
     qualifier: fn(Node<'_>, &str) -> Option<String>,
 ) -> Option<SymbolAt> {
+    symbol_node(tree, byte, kinds).map(|node| SymbolAt {
+        name: node_text(node, text),
+        start_byte: node.start_byte() as u32,
+        end_byte: node.end_byte() as u32,
+        qualifier: qualifier(node, text),
+    })
+}
+
+pub fn names_type(tree: &Tree, byte: u32, kinds: &[&str]) -> bool {
+    symbol_node(tree, byte, kinds)
+        .is_some_and(|node| matches!(node.kind(), "type_identifier" | "primitive_type"))
+}
+
+pub fn symbol_node<'a>(tree: &'a Tree, byte: u32, kinds: &[&str]) -> Option<Node<'a>> {
     let byte = byte as usize;
-    ident_node(tree, byte, kinds)
-        .or_else(|| byte.checked_sub(1).and_then(|b| ident_node(tree, b, kinds)))
-        .map(|node| SymbolAt {
-            name: node_text(node, text),
-            start_byte: node.start_byte() as u32,
-            end_byte: node.end_byte() as u32,
-            qualifier: qualifier(node, text),
-        })
+    node_at(tree, byte, kinds)
+        .or_else(|| byte.checked_sub(1).and_then(|b| node_at(tree, b, kinds)))
+        .filter(|node| !in_lifetime(*node))
+}
+
+fn node_at<'a>(tree: &'a Tree, byte: usize, kinds: &[&str]) -> Option<Node<'a>> {
+    let node = ident_node(tree, byte, kinds)?;
+    (!in_lifetime(node)).then_some(node)
+}
+
+fn in_lifetime(node: Node<'_>) -> bool {
+    std::iter::successors(Some(node), |n| n.parent())
+        .take(6)
+        .any(|n| n.kind() == "lifetime")
 }
 
 fn ident_node<'a>(tree: &'a Tree, byte: usize, kinds: &[&str]) -> Option<Node<'a>> {

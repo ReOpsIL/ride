@@ -31,12 +31,19 @@ extension SelfTestSteps {
             typedPopupStep("pref signature help on", e: e, p: p, set: { bind.bool(\.signatureHelp).wrappedValue = true }, typed: Self.signatureCall, until: { SignatureHelpController.shared.isVisible }) {
                 SignatureHelpController.shared.isVisible ? nil : "signature help missing"
             },
-            hoverStep("pref hover docs off", e: e, set: { bind.bool(\.hoverDocs).wrappedValue = false }, wait: 1.5, until: nil) {
-                HoverController.shared.isVisible ? "hover shown" : nil
-            },
-            hoverStep("pref hover docs on", e: e, set: { bind.bool(\.hoverDocs).wrappedValue = true }, wait: 0.3, until: { HoverController.shared.isVisible }) {
-                HoverController.shared.isVisible ? nil : "hover missing"
-            },
+            SelfTestStep(name: "doc overlay ignores the pointer", wait: 0.4, run: {
+                HoverController.shared.hide()
+                movePointer(e, over: "Counter::new")
+            }, check: {
+                HoverController.shared.isVisible ? "card shown" : nil
+            }),
+            SelfTestStep(name: "doc overlay on quick documentation", wait: 0.3, until: { HoverController.shared.isVisible }, timeout: 8, run: {
+                HoverController.shared.hide()
+                e.place(on: "Counter::new")
+                state.showQuickDocumentation()
+            }, check: {
+                HoverController.shared.isVisible ? nil : "card missing"
+            }),
             SelfTestStep(name: "hover click opens docs", wait: 0.8, run: { p.flag = HoverController.shared.upgradeIfVisible() }, check: {
                 let docs = EditorPanes.shared.focused?.docsStorage?.isVisible == true
                 EditorPanes.shared.focused?.docsStorage?.hide()
@@ -103,24 +110,30 @@ extension SelfTestSteps {
         })
     }
 
-    private static func hoverStep(_ name: String, e: SelfTestEditor, set: @escaping () -> Void, wait: Double, until: (() -> Bool)?, check: @escaping () -> String?) -> SelfTestStep {
-        SelfTestStep(name: name, wait: wait, until: until, timeout: until == nil ? 0 : 5, run: {
-            set()
-            HoverController.shared.hide()
-            guard let view = e.view, let window = view.window else {
-                return
-            }
-            let text = view.string as NSString
-            let range = text.range(of: "Counter::new")
-            guard range.location != NSNotFound else {
-                return
-            }
-            let rect = SelfTestPixels.rect(of: NSRange(location: range.location + 2, length: 1), in: view)
-            let point = view.convert(NSPoint(x: rect.midX, y: rect.midY), to: nil)
-            if let event = NSEvent.mouseEvent(with: .mouseMoved, location: point, modifierFlags: [], timestamp: ProcessInfo.processInfo.systemUptime,
-                                              windowNumber: window.windowNumber, context: nil, eventNumber: 0, clickCount: 0, pressure: 0) {
-                view.mouseMoved(with: event)
-            }
-        }, check: check)
+    private static func movePointer(_ e: SelfTestEditor, over needle: String) {
+        guard let view = e.view, let window = view.window else {
+            return
+        }
+        let text = view.string as NSString
+        let range = text.range(of: needle)
+        guard range.location != NSNotFound else {
+            return
+        }
+        let rect = SelfTestPixels.rect(of: NSRange(location: range.location + 2, length: 1), in: view)
+        let point = view.convert(NSPoint(x: rect.midX, y: rect.midY), to: nil)
+        guard let event = NSEvent.mouseEvent(
+            with: .mouseMoved,
+            location: point,
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: window.windowNumber,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 0,
+            pressure: 0
+        ) else {
+            return
+        }
+        view.mouseMoved(with: event)
     }
 }

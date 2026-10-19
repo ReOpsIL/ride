@@ -53,7 +53,7 @@
 - Not reachable by the self-test yet: Install Tools › Install Selected and the tool checkboxes (would install software), Settings › Install `ride` command and Test connection (system install / network), AI answer panel header buttons, the project switcher (the demo samples hold one project each), real NSAlert buttons (steps answer through `DialogScript`), the SwiftTerm terminal itself (a probe view stands in).
 - Exception breakpoint filter changes do not reach a live debug session (the engine has no call to set exception breakpoints mid-session), and filter states are not saved in the workspace.
 - The Pause step accepts any stop reason except breakpoint/step because lldb-dap reports a pause as "exception"; map it to a pause state in the engine's DAP layer.
-- Quick Documentation shows two rows (⌃J and F1): SwiftUI Commands have no alternate items; ⌃? needs Shift on US layouts.
+- ⌃? needs Shift on US layouts.
 - C++ Generate offers members that already exist (the engine does not check).
 - Navigate › Go to Symbol in Project has no ⌘C copy-path test; there is no View item to reopen a hidden Hierarchy panel; Save All skips untitled buffers silently.
 - Two self-test key helpers do the same job: `SelfTestKeys` (KeyCombo glyphs, posts events) and `SelfTestKey` in `SelfTestKeyPress.swift` (fixed enum, sends to a view/sheet). Fold `SelfTestKey` into `SelfTestKeys`.

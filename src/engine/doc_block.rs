@@ -5,6 +5,7 @@ use crate::highlight::Lang;
 use super::doc_comment;
 use super::doxygen;
 
+#[derive(Clone)]
 pub struct Lifted {
     pub markdown: String,
     pub start_byte: usize,
@@ -39,13 +40,16 @@ const ITEMS: &[&str] = &[
     "preproc_function_def",
 ];
 
-pub fn lift(lang: Lang, source: &str, byte: usize) -> Option<Lifted> {
+pub fn lift_named(lang: Lang, source: &str, byte: usize, name: &str) -> Option<Lifted> {
     if source.is_empty() {
         return None;
     }
     let tree = parse(lang, source)?;
-    let last = source.len().saturating_sub(1);
-    let node = item_at(tree.root_node(), byte.min(last))?;
+    let root = tree.root_node();
+    let hint = byte.min(source.len().saturating_sub(1));
+    let node = super::doc_spot::pick(item_at(root, hint), root, source, hint, name, |kind| {
+        ITEMS.contains(&kind)
+    })?;
     let markdown = markdown(lang, node, source)?;
     Some(Lifted {
         markdown,
@@ -61,6 +65,10 @@ pub fn line_at(text: &str, byte: usize) -> u32 {
     text.get(..byte)
         .map(|s| s.bytes().filter(|&b| b == b'\n').count() as u32 + 1)
         .unwrap_or(0)
+}
+
+pub(crate) fn markdown_of(lang: Lang, node: Node<'_>, source: &str) -> Option<String> {
+    markdown(lang, node, source)
 }
 
 fn markdown(lang: Lang, node: Node<'_>, source: &str) -> Option<String> {
@@ -128,3 +136,7 @@ fn rust_info(info: &str) -> &str {
         _ => info.trim_end(),
     }
 }
+
+#[cfg(test)]
+#[path = "doc_block_tests.rs"]
+mod tests;

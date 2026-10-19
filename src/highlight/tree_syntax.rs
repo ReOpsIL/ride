@@ -16,7 +16,7 @@ use super::site::SiteAt;
 use super::syntax::{LocalHits, LocalQuery, Syntax, parse_failed};
 use super::tree_parser::TreeSyntax;
 use super::types::TypeTable;
-use super::{editing, errors, locals, spans, symbol};
+use super::{editing, errors, locals, spans};
 
 impl Syntax for TreeSyntax {
     fn parse_full(&mut self, text: &str) -> Result<(), EngineError> {
@@ -120,14 +120,19 @@ impl Syntax for TreeSyntax {
     }
 
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt> {
-        let tree = self.tree.as_ref()?;
-        symbol::symbol_at(
-            tree,
-            text,
-            byte,
-            self.grammar.symbol_kinds,
-            self.grammar.qualifier,
-        )
+        super::type_symbol::symbol_at(self, text, byte)
+    }
+
+    fn names_type(&self, _text: &str, byte: u32) -> bool {
+        super::type_symbol::names_type(self, byte)
+    }
+
+    fn type_parameter(&self, text: &str, byte: u32) -> Option<String> {
+        super::type_symbol::type_parameter(self, text, byte)
+    }
+
+    fn enclosing_type(&self, text: &str, byte: u32) -> Option<String> {
+        super::type_symbol::enclosing_type(self, text, byte)
     }
 
     fn local_occurrences(&self, text: &str, byte: u32) -> Vec<ByteRange> {

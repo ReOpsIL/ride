@@ -62,6 +62,7 @@ mod tree_parser;
 mod tree_syntax;
 mod type_lookup;
 mod type_relations;
+mod type_symbol;
 mod types;
 mod visibility;
 pub(crate) mod walk;

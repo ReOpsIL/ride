@@ -7,22 +7,12 @@ struct HoverContent {
 }
 
 enum HoverText {
-    static func content(_ resp: DefinitionResponse) -> HoverContent? {
-        guard let hit = resp.hits.first(where: { !$0.signature.isEmpty || CompletionRowStyle.hasDoc(.engine($0)) }) else {
+    static func shown(_ doc: QuickDoc) -> HoverContent? {
+        let body = HoverDocText.plain(doc.html)
+        let origin = DocPage.origin(path: doc.originPath, line: doc.originLine)
+        guard !doc.signature.isEmpty || !body.isEmpty else {
             return nil
         }
-        let origin = hit.crateName.isEmpty ? hit.path : "\(hit.path) · \(hit.crateName)"
-        return HoverContent(signature: hit.signature, doc: CompletionRowStyle.docText(.engine(hit)), origin: origin)
-    }
-
-    static func documented(_ card: HoverContent?, rendered: QuickDoc?) -> HoverContent? {
-        let full = rendered.map { HoverDocText.plain($0.html) } ?? ""
-        let signature = card?.signature ?? rendered?.signature ?? ""
-        let doc = full.isEmpty ? (card?.doc ?? "") : full
-        let origin = card?.origin ?? rendered.map { DocPage.origin(path: $0.originPath, line: $0.originLine) } ?? ""
-        guard !signature.isEmpty || !doc.isEmpty else {
-            return nil
-        }
-        return HoverContent(signature: signature, doc: doc, origin: origin)
+        return HoverContent(signature: doc.signature, doc: body, origin: origin)
     }
 }

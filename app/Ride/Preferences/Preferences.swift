@@ -27,7 +27,6 @@ struct Preferences: Codable, Equatable {
     var debugHeight: Double
     var previewWidth: Double
     var signatureHelp: Bool
-    var hoverDocs: Bool
     var codeVision: Bool
     var diagnosticOverlay: DiagnosticOverlayMode
     var aiComplete: Bool
@@ -86,7 +85,6 @@ struct Preferences: Codable, Equatable {
         softWrap: Bool = true,
         askMissingTools: Bool = true,
         signatureHelp: Bool = true,
-        hoverDocs: Bool = true,
         codeVision: Bool = true,
         diagnosticOverlay: DiagnosticOverlayMode = .caret,
         aiComplete: Bool = false,
@@ -124,7 +122,6 @@ struct Preferences: Codable, Equatable {
         self.softWrap = softWrap
         self.askMissingTools = askMissingTools
         self.signatureHelp = signatureHelp
-        self.hoverDocs = hoverDocs
         self.codeVision = codeVision
         self.diagnosticOverlay = diagnosticOverlay
         self.aiComplete = aiComplete
