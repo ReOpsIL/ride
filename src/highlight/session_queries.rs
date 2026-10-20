@@ -7,8 +7,10 @@ use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 
 use super::call_site::CallSite;
 use super::context::Context;
+use super::rust_type_names::TypeParam;
 use super::session::BufferSession;
 use super::site::SiteAt;
+use super::symbol_role::SymbolRole;
 use super::syntax::{Lang, LocalHits, LocalQuery};
 
 impl BufferSession {
@@ -65,11 +67,11 @@ impl BufferSession {
         self.syntax.symbol_at(&self.replica, byte)
     }
 
-    pub fn names_type(&self, byte: u32) -> bool {
-        self.syntax.names_type(&self.replica, byte)
+    pub fn symbol_role(&self, byte: u32) -> SymbolRole {
+        self.syntax.symbol_role(&self.replica, byte)
     }
 
-    pub fn type_parameter(&self, byte: u32) -> Option<String> {
+    pub fn type_parameter(&self, byte: u32) -> Option<TypeParam> {
         self.syntax.type_parameter(&self.replica, byte)
     }
 

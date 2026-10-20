@@ -97,6 +97,7 @@ pub fn grammar() -> Grammar {
         local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["word"],
         qualifier: super::none::no_qualifier,
+        role: crate::highlight::symbol_role::plain,
         postfix: super::none::no_postfix,
         outline: make_outline::outline,
         member_ops: &[],

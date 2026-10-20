@@ -137,3 +137,30 @@ fn a_trait_method_lists_its_workspace_implementations() {
         .expect("the impl next to the trait declaration");
     assert!(hit.source_path.is_none());
 }
+
+#[test]
+fn quick_doc_follows_the_same_target_as_go_to_definition() {
+    let source = "mod a {\n    /// Thing from a.\n    pub struct Thing;\n}\n\nmod b {\n    /// Thing from b.\n    pub struct Thing;\n}\n\nuse b::Thing;\n\nfn main() {\n    let _t: Thing = Thing;\n}\n";
+    let Some(probe) = open(source) else {
+        return;
+    };
+    let b_thing = source.find("pub struct Thing;\n}\n\nuse").expect("b") + "pub struct ".len();
+    let cursor = source.find("_t: Thing").expect("anchor") as u32 + "_t: T".len() as u32;
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(120);
+    let mut first = None;
+    while first != Some(b_thing as u32) && std::time::Instant::now() < deadline {
+        std::thread::sleep(std::time::Duration::from_millis(300));
+        let resp = probe.engine.find_definitions(probe.session_id, cursor);
+        first = resp.hits.first().and_then(|h| h.name_byte);
+    }
+    assert_eq!(
+        first,
+        Some(b_thing as u32),
+        "rust-analyzer resolves the import"
+    );
+    let doc = probe
+        .engine
+        .quick_doc(probe.session_id, cursor)
+        .expect("quick doc");
+    assert!(doc.html.contains("Thing from b"), "{}", doc.html);
+}

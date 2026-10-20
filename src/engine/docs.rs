@@ -1,6 +1,7 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
 use crate::ffi::{CompletionHit, DefinitionResponse, OutlineItem, QuickDoc};
+use crate::highlight::SymbolRole;
 
 use super::Engine;
 use super::catalog::Catalog;
@@ -24,16 +25,11 @@ struct Ctx {
 }
 
 fn build(engine: &Engine, session_id: u64, cursor_byte: u32) -> Option<QuickDoc> {
-    let own = super::symbols::own_definitions(engine, session_id, cursor_byte);
+    let found = super::symbols::definitions(engine, session_id, cursor_byte);
     let ctx = session(engine, session_id)?;
-    if let Some(page) = primitive_page(engine, session_id, cursor_byte, &own, &ctx) {
+    if let Some(page) = primitive_page(engine, session_id, cursor_byte, &found, &ctx) {
         return Some(page);
     }
-    let found = if own.hits.is_empty() {
-        super::oracle_defs::definition(engine, session_id, cursor_byte).unwrap_or(own)
-    } else {
-        own
-    };
     let hit = found.hits.into_iter().next()?;
     let disk = hit_source::file_of(&hit, Some(&ctx.buffer));
     let loaded = hit_source::load(disk, Some(&ctx.buffer));
@@ -49,7 +45,7 @@ fn primitive_page(
     ctx: &Ctx,
 ) -> Option<QuickDoc> {
     let name = found.symbol.as_ref()?.name.clone();
-    if !names_a_type(engine, session_id, cursor_byte) {
+    if role_at(engine, session_id, cursor_byte) != SymbolRole::Primitive {
         return None;
     }
     let prim = super::primitive_doc::lift(&name)?;
@@ -64,14 +60,16 @@ fn primitive_page(
     })
 }
 
-fn names_a_type(engine: &Engine, session_id: u64, cursor_byte: u32) -> bool {
+fn role_at(engine: &Engine, session_id: u64, cursor_byte: u32) -> SymbolRole {
     engine
         .read(|i| {
             i.sessions
                 .get(&session_id)
-                .is_some_and(|session| session.names_type(cursor_byte))
+                .map(|session| session.symbol_role(cursor_byte))
         })
-        .unwrap_or(false)
+        .ok()
+        .flatten()
+        .unwrap_or(SymbolRole::Other)
 }
 
 fn session(engine: &Engine, session_id: u64) -> Option<Ctx> {
@@ -92,7 +90,7 @@ fn lift_from(hit: &CompletionHit, loaded: &Loaded, disk: bool) -> Option<Lifted>
     let byte = hit.name_byte.or(hit.byte_start).unwrap_or(0) as usize;
     let read = || doc_block::lift_named(loaded.lang, &loaded.text, byte, &hit.name);
     if disk {
-        super::doc_cache::cached(&loaded.path, &hit.name, read)
+        super::doc_cache::cached(&loaded.path, byte, &hit.name, read)
     } else {
         read()
     }

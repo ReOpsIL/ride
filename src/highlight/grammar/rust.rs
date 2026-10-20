@@ -35,6 +35,7 @@ pub fn grammar() -> Grammar {
             "primitive_type",
         ],
         qualifier,
+        role: crate::highlight::symbol_role::rust,
         postfix: rust_postfix::receiver,
         outline,
         member_ops: &["."],

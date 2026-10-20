@@ -5,6 +5,7 @@ use crate::highlight::context::Detector;
 use crate::highlight::editing::EditingKinds;
 use crate::highlight::includes::IncludeRef;
 use crate::highlight::site::Classifier;
+use crate::highlight::symbol_role::SymbolRole;
 use crate::highlight::types::TypeTable;
 
 pub mod c;
@@ -24,6 +25,7 @@ pub struct Grammar {
     pub local_detail: crate::highlight::locals::LocalDetail,
     pub symbol_kinds: &'static [&'static str],
     pub qualifier: fn(Node<'_>, &str) -> Option<String>,
+    pub role: fn(Node<'_>) -> SymbolRole,
     pub postfix: fn(&Tree, &str, usize) -> Option<(usize, usize)>,
     pub outline: fn(&Tree, &str) -> Vec<OutlineItem>,
     pub member_ops: &'static [&'static str],

@@ -38,32 +38,42 @@ pub fn expr_type(node: Node<'_>, text: &str) -> Option<String> {
     }
 }
 
-pub fn type_parameter(node: Node<'_>, text: &str) -> Option<String> {
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TypeParam {
+    pub decl: String,
+    pub name_start: u32,
+    pub name_end: u32,
+}
+
+pub fn type_parameter(node: Node<'_>, text: &str) -> Option<TypeParam> {
     let name = node_text(node, text);
     let mut current = Some(node);
     while let Some(n) = current {
         if let Some(params) = n.child_by_field_name("type_parameters")
-            && let Some(decl) = parameter_decl(params, text, &name)
+            && let Some((param, id)) = parameter_decl(params, text, &name)
         {
-            return Some(with_where(n, text, &name, &decl));
+            let decl = text
+                .get(param.start_byte()..param.end_byte().min(text.len()))
+                .unwrap_or(&name);
+            return Some(TypeParam {
+                decl: with_where(n, text, &name, decl),
+                name_start: id.start_byte() as u32,
+                name_end: id.end_byte() as u32,
+            });
         }
         current = n.parent();
     }
     None
 }
 
-fn parameter_decl(params: Node<'_>, text: &str, name: &str) -> Option<String> {
+fn parameter_decl<'a>(params: Node<'a>, text: &str, name: &str) -> Option<(Node<'a>, Node<'a>)> {
     let mut walk = params.walk();
     params.named_children(&mut walk).find_map(|child| {
         if child.kind() != "type_parameter" {
             return None;
         }
         let id = child.child_by_field_name("name")?;
-        (node_text(id, text) == name).then(|| {
-            text.get(child.start_byte()..child.end_byte().min(text.len()))
-                .unwrap_or(name)
-                .to_string()
-        })
+        (node_text(id, text) == name).then_some((child, id))
     })
 }
 

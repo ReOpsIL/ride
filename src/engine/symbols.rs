@@ -2,10 +2,11 @@ use std::collections::HashSet;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::Path;
 
-use crate::ffi::{CompletionContext, CompletionHit, DefinitionResponse, OutlineItem, SymbolAt};
-use crate::highlight::BufferSession;
+use crate::ffi::{CompletionHit, DefinitionResponse, ItemKind, OutlineItem, SymbolAt};
+use crate::highlight::{BufferSession, SymbolRole, TypeParam};
 
 use super::catalog::Catalog;
+use super::def_narrow::Position;
 use super::def_rank::RankContext;
 use super::reach::Reach;
 use super::{
@@ -33,11 +34,15 @@ struct Lookup {
     catalog: Option<Catalog>,
     reach: Reach,
     ctx: RankContext,
-    context: CompletionContext,
-    parameter: Option<String>,
+    position: Position,
+    parameter: Option<TypeParam>,
 }
 
-fn definitions(engine: &Engine, session_id: u64, cursor_byte: u32) -> DefinitionResponse {
+pub(crate) fn definitions(
+    engine: &Engine,
+    session_id: u64,
+    cursor_byte: u32,
+) -> DefinitionResponse {
     include_def::definition(engine, session_id, cursor_byte, LOCAL_SCORE)
         .or_else(|| oracle_defs::definition(engine, session_id, cursor_byte))
         .unwrap_or_else(|| resolved(engine, session_id, cursor_byte))
@@ -70,15 +75,11 @@ fn lookup(inner: &Inner, session_id: u64, cursor_byte: u32) -> Option<Lookup> {
         symbol.name = owner;
         symbol.qualifier = None;
     }
-    let parameter = session
-        .names_type(cursor_byte)
+    let role = session.symbol_role(cursor_byte);
+    let parameter = (role != SymbolRole::Other)
         .then(|| session.type_parameter(cursor_byte))
         .flatten();
-    let context = if session.names_type(cursor_byte) {
-        CompletionContext::TypePosition
-    } else {
-        session.site_at(cursor_byte).context()
-    };
+    let position = Position::of(role, session.site_at(cursor_byte).context());
     let reach = Reach::take(inner, session_id, session);
     let local = if parameter.is_some() {
         Vec::new()
@@ -96,7 +97,7 @@ fn lookup(inner: &Inner, session_id: u64, cursor_byte: u32) -> Option<Lookup> {
         catalog: (parameter.is_none() && session.lang().has_catalog()).then(|| Catalog::of(inner)),
         reach,
         ctx: base_context(inner, session),
-        context,
+        position,
         parameter,
     })
 }
@@ -108,17 +109,17 @@ fn resolve(engine: &Engine, found: Lookup) -> DefinitionResponse {
         catalog,
         reach,
         mut ctx,
-        context,
+        position,
         parameter,
     } = found;
-    if let Some(decl) = parameter {
+    if let Some(param) = parameter {
         let mut hit = CompletionHit::local(
             &symbol.name,
-            crate::ffi::ItemKind::Type,
+            ItemKind::Type,
             LOCAL_SCORE,
-            Some((symbol.start_byte, symbol.end_byte)),
+            Some((param.name_start, param.name_end)),
         );
-        hit.signature = decl;
+        hit.signature = param.decl;
         return DefinitionResponse {
             symbol: Some(symbol),
             hits: vec![hit],
@@ -139,8 +140,8 @@ fn resolve(engine: &Engine, found: Lookup) -> DefinitionResponse {
             reach.remember(engine);
         }
     }
-    def_narrow::apply(&mut hits, &symbol.name, context);
-    hits.sort_by_key(|h| ctx.tier(h.source_path.as_deref(), &h.crate_name));
+    def_narrow::apply(&mut hits, &symbol.name, position);
+    hits.sort_by_key(|h| ctx.order(h));
     DefinitionResponse {
         symbol: Some(symbol),
         hits,

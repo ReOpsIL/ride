@@ -82,6 +82,7 @@ pub fn grammar() -> Grammar {
         local_detail: crate::highlight::locals::no_detail,
         symbol_kinds: &["bare_key"],
         qualifier: super::none::no_qualifier,
+        role: crate::highlight::symbol_role::plain,
         postfix: super::none::no_postfix,
         outline: toml_outline::outline,
         member_ops: &[],

@@ -13,7 +13,9 @@ use super::context::Context;
 use super::includes::IncludeRef;
 use super::leaves::Leaf;
 use super::members::Access;
+use super::rust_type_names::TypeParam;
 use super::site::SiteAt;
+use super::symbol_role::SymbolRole;
 use super::types::TypeTable;
 
 pub use super::lang::Lang;
@@ -45,10 +47,10 @@ pub trait Syntax: Send + Sync {
     fn errors(&self) -> Vec<ParseErrorSpan>;
     fn local_hits(&self, text: &str, outline: &[OutlineItem], q: &LocalQuery<'_>) -> LocalHits;
     fn symbol_at(&self, text: &str, byte: u32) -> Option<SymbolAt>;
-    fn names_type(&self, _text: &str, _byte: u32) -> bool {
-        false
+    fn symbol_role(&self, _text: &str, _byte: u32) -> SymbolRole {
+        SymbolRole::Other
     }
-    fn type_parameter(&self, _text: &str, _byte: u32) -> Option<String> {
+    fn type_parameter(&self, _text: &str, _byte: u32) -> Option<TypeParam> {
         None
     }
     fn enclosing_type(&self, _text: &str, _byte: u32) -> Option<String> {

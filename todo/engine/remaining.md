@@ -97,3 +97,9 @@
 - oracle: empty answers are not cached, so a path into a non-dependency crate asks rust-analyzer again on every keystroke; add a short-lived negative entry if it shows in profiles
 - oracle: struct-literal fields (`Site::StructLiteral`) still come from the buffer's type table
 - oracle: the first answer after a cold start takes ~1–3 s on a small crate; measure on a large workspace and consider starting the sidecar when a Rust workspace opens instead of on the first dot
+
+# Open after the 2026-10-20 definition/Quick Doc fixes
+
+- highlight: `tree_syntax.rs` is over 200 lines because one `impl Syntax` holds every query; split the trait into narrow query traits (symbols, editing, refactor spans) so each impl lives in its own module
+- highlight: C++ path heads (`std::` in `std::array`) are `namespace_identifier`, which the plain symbol role reports as `Other`; give C++ its own role so a scope head narrows to namespaces and types
+- engine: a qualified path keeps local items when its head names any local item or `self`/`crate`/`super`; Rust module scopes are not in the type table, so `a::f` cannot be checked against `mod a` precisely

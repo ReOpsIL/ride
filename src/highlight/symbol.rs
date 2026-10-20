@@ -17,11 +17,6 @@ pub fn symbol_at(
     })
 }
 
-pub fn names_type(tree: &Tree, byte: u32, kinds: &[&str]) -> bool {
-    symbol_node(tree, byte, kinds)
-        .is_some_and(|node| matches!(node.kind(), "type_identifier" | "primitive_type"))
-}
-
 pub fn symbol_node<'a>(tree: &'a Tree, byte: u32, kinds: &[&str]) -> Option<Node<'a>> {
     let byte = byte as usize;
     node_at(tree, byte, kinds)

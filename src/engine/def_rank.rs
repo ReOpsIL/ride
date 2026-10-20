@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
+use crate::ffi::{CompletionHit, ItemKind};
+
 use super::open_workspace::WorkspaceTree;
 
 pub const BUFFER: u8 = 0;
@@ -40,6 +42,11 @@ impl RankContext {
             return IMPORTED;
         }
         OTHER
+    }
+
+    pub fn order(&self, hit: &CompletionHit) -> (u8, bool) {
+        let tier = self.tier(hit.source_path.as_deref(), &hit.crate_name);
+        (tier, hit.item_kind == ItemKind::Type)
     }
 }
 
@@ -95,6 +102,28 @@ mod tests {
         assert_eq!(ctx.tier(Some("/usr/include/geo.h"), ""), HEADER);
         assert_eq!(ctx.tier(Some("/reg/serde/lib.rs"), "serde"), IMPORTED);
         assert_eq!(ctx.tier(Some("/reg/ctr/lib.rs"), "ctr"), OTHER);
+    }
+
+    fn hit(kind: ItemKind, source: Option<&str>) -> CompletionHit {
+        let mut hit = CompletionHit::local("Result", kind, 1.0, None);
+        hit.source_path = source.map(str::to_string);
+        hit
+    }
+
+    #[test]
+    fn a_nominal_type_precedes_an_alias_of_the_same_reach() {
+        let ctx = context();
+        let alias = hit(ItemKind::Type, Some("/reg/std/io.rs"));
+        let nominal = hit(ItemKind::Enum, Some("/reg/std/result.rs"));
+        assert!(ctx.order(&nominal) < ctx.order(&alias));
+    }
+
+    #[test]
+    fn a_local_alias_precedes_a_farther_nominal_type() {
+        let ctx = context();
+        let alias = hit(ItemKind::Type, None);
+        let nominal = hit(ItemKind::Enum, Some("/reg/std/result.rs"));
+        assert!(ctx.order(&alias) < ctx.order(&nominal));
     }
 
     #[test]

@@ -12,7 +12,9 @@ use crate::refactor::{ConstantSpans, ExtractSpans, InlineSpans};
 use super::context::Context;
 use super::includes::IncludeRef;
 use super::ranges::from_ts;
+use super::rust_type_names::TypeParam;
 use super::site::SiteAt;
+use super::symbol_role::SymbolRole;
 use super::syntax::{LocalHits, LocalQuery, Syntax, parse_failed};
 use super::tree_parser::TreeSyntax;
 use super::types::TypeTable;
@@ -123,11 +125,11 @@ impl Syntax for TreeSyntax {
         super::type_symbol::symbol_at(self, text, byte)
     }
 
-    fn names_type(&self, _text: &str, byte: u32) -> bool {
-        super::type_symbol::names_type(self, byte)
+    fn symbol_role(&self, _text: &str, byte: u32) -> SymbolRole {
+        super::type_symbol::symbol_role(self, byte)
     }
 
-    fn type_parameter(&self, text: &str, byte: u32) -> Option<String> {
+    fn type_parameter(&self, text: &str, byte: u32) -> Option<TypeParam> {
         super::type_symbol::type_parameter(self, text, byte)
     }
 
