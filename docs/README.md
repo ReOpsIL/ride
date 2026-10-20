@@ -45,6 +45,7 @@
 | Support plan 2027 v2 (revision for review): shape hash, equivalence triage, per-author marks, hunt since last green, agent hand-off. Holds in §0.1 | `plan/roadmap/support-2027-v2.md` |
 | Support plan 2027 v2, build order: what is scheduled after the holds | `plan/roadmap/support-2027-v2-build.md` |
 | Support plan 2027 v2, as mock screens: the night shift and the second push | `docs/product/support-2027-v2.html` |
+| GPU pipelines concept (brainstorm): Sinai-style stage graphs with each stage a cuda-rust kernel, remote GPU runs, per-edge data and timing, roadmap M0–M6 | `brainstorm/product/cuda-pipelines.md` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
 | App follow-ups | `todo/app/remaining.md` |
