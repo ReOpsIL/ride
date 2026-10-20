@@ -1,6 +1,6 @@
 import AppKit
 
-final class HoverPanel {
+final class DocCardPanel {
     let panel: NSPanel
     static let maxWidth: CGFloat = 520
     static let maxDocHeight: CGFloat = 320
@@ -9,9 +9,7 @@ final class HoverPanel {
     private let scroll = NSScrollView()
     private let doc = HoverDocView()
     private let origin = NSTextField(labelWithString: "")
-    private let exitWatch = HoverMouseWatch()
     var onClick: (() -> Void)?
-    var onMouseExit: (() -> Void)?
 
     init() {
         panel = OverlayPanel.make(size: NSSize(width: 200, height: 40))
@@ -27,10 +25,7 @@ final class HoverPanel {
         scroll.borderType = .noBorder
         scroll.scrollerStyle = .overlay
         scroll.documentView = doc
-        exitWatch.onExit = { [weak self] in
-            self?.onMouseExit?()
-        }
-        for view in [signature, scroll, origin, exitWatch] {
+        for view in [signature, scroll, origin] {
             card.addSubview(view)
         }
         panel.contentView = card
@@ -38,17 +33,6 @@ final class HoverPanel {
 
     var isVisible: Bool {
         panel.isVisible
-    }
-
-    var screenFrame: NSRect {
-        panel.frame
-    }
-
-    func containsMouse() -> Bool {
-        guard panel.isVisible else {
-            return false
-        }
-        return panel.frame.insetBy(dx: -8, dy: -8).contains(NSEvent.mouseLocation)
     }
 
     func show(_ content: HoverContent, anchor: NSRect, bounds: NSRect) {
@@ -71,8 +55,6 @@ final class HoverPanel {
         scroll.isHidden = content.doc.isEmpty
         let size = NSSize(width: max(widest, 40) + inset * 2, height: y - Tokens.Space.m + inset)
         OverlayPanel.present(panel, frame: Self.place(size: size, anchor: anchor, bounds: bounds))
-        exitWatch.frame = card.bounds
-        exitWatch.updateTrackingAreas()
     }
 
     static func place(size: NSSize, anchor: NSRect, bounds: NSRect) -> NSRect {
@@ -181,33 +163,5 @@ final class HoverDocView: NSTextView {
         let rect = layout.usedRect(for: container)
         isVerticallyResizable = grow
         return NSSize(width: ceil(rect.width), height: ceil(rect.height))
-    }
-}
-
-final class HoverMouseWatch: NSView {
-    var onExit: (() -> Void)?
-    private var area: NSTrackingArea?
-
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        nil
-    }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let area {
-            removeTrackingArea(area)
-        }
-        let next = NSTrackingArea(
-            rect: bounds,
-            options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(next)
-        area = next
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        onExit?()
     }
 }

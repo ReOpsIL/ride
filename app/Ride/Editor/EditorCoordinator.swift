@@ -160,7 +160,7 @@ extension EditorPane {
             CompletionSession.shared.viewportChanged(view: view)
             CheatSheetController.shared.viewportChanged(view: view)
             SignatureHelpController.shared.relocate(in: view)
-            HoverController.shared.hide()
+            DocCardController.shared.viewportChanged(in: view)
             state.previewViewport(line: view.firstVisibleLine())
             state.scheduleWorkspaceSave()
         }

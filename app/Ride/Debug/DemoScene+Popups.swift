@@ -93,7 +93,7 @@ extension DemoScene {
         guard range.location != NSNotFound else {
             return
         }
-        HoverController.shared.present(view: view, range: range)
+        DocCardController.shared.present(view: view, range: range)
     }
 
     private static func quickOpen(_ state: AppState) {

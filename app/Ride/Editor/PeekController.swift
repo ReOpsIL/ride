@@ -85,13 +85,13 @@ final class PeekController {
 
     private func present(_ excerpts: [DefinitionExcerpt], in view: RideTextView) {
         popup.present(in: view)
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         CompletionSession.shared.hide()
         EditorPanes.shared.host(for: view)?.docsStorage?.hide()
         var actual = NSRange()
         let caret = view.selectedRange()
         let anchor = view.firstRect(forCharacterRange: NSRange(location: caret.location, length: 0), actualRange: &actual)
-        panel.show(excerpts: excerpts, anchor: anchor, bounds: HoverController.bounds(for: view))
+        panel.show(excerpts: excerpts, anchor: anchor, bounds: DocCardController.bounds(for: view))
     }
 
 }

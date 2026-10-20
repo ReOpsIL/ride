@@ -27,7 +27,10 @@ enum KeyRouter {
     }
 
     private static func opensQuickDoc(_ event: NSEvent) -> Bool {
-        EditorPanes.shared.focused != nil && KeyCombo(event: event) == KeyCombo(glyphs: "F1")
+        guard let editor = EditorPanes.shared.focusedView else {
+            return false
+        }
+        return (event.window ?? NSApp.keyWindow)?.firstResponder === editor && KeyCombo(event: event) == KeyCombo(glyphs: "F1")
     }
 
     static func claims(_ responder: NSResponder, _ event: NSEvent) -> Bool {

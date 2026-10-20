@@ -2,7 +2,7 @@ import AppKit
 
 extension RideTextView {
     override func mouseDown(with event: NSEvent) {
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
         let point = convert(event.locationInWindow, from: nil)
         if let utf16 = visionHit(at: point) {
@@ -20,7 +20,7 @@ extension RideTextView {
     }
 
     override func scrollWheel(with event: NSEvent) {
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         super.scrollWheel(with: event)
     }
 }

@@ -457,7 +457,7 @@
 		A00000000000000000000112 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000111 /* Definitions.swift */; };
 		A00000000000000000000114 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
 		A00000000000000000000115 /* IdentifierRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000113 /* IdentifierRange.swift */; };
-		A00000000000000000000117 /* HoverPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* HoverPanel.swift */; };
+		A00000000000000000000117 /* DocCardPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000116 /* DocCardPanel.swift */; };
 		D19000000000000000000002 /* DocPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000001 /* DocPage.swift */; };
 		D19000000000000000000003 /* DocPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000001 /* DocPage.swift */; };
 		D19000000000000000000005 /* DocPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19000000000000000000004 /* DocPanel.swift */; };
@@ -467,6 +467,7 @@
 		D19100000000000000000002 /* PeekPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000001 /* PeekPanel.swift */; };
 		D19100000000000000000004 /* PeekController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19100000000000000000003 /* PeekController.swift */; };
 		D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000A /* SelfTestSteps+Doc.swift */; };
+		DCARD000000000000000000B /* SelfTestSteps+DocCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCARD000000000000000000A /* SelfTestSteps+DocCard.swift */; };
 		D2500000000000000000000B /* SelfTestSteps+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2500000000000000000000A /* SelfTestSteps+Tests.swift */; };
 		D19200000000000000000002 /* SelfTestSteps+Rust.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19200000000000000000001 /* SelfTestSteps+Rust.swift */; };
 		0AC1E0000000000000000104 /* SelfTestSteps+Semantic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */; };
@@ -578,14 +579,11 @@
 		F1500000000000000000000B /* SelfTestSteps+SafeDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */; };
 		F1400000000000000000000D /* HierarchyQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1400000000000000000000C /* HierarchyQuery.swift */; };
 		F14000000000000000000011 /* HierarchySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14000000000000000000010 /* HierarchySession.swift */; };
-		A00000000000000000000119 /* HoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* HoverController.swift */; };
+		A00000000000000000000119 /* DocCardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000118 /* DocCardController.swift */; };
 		A0000000000000000000011B /* HoverText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011A /* HoverText.swift */; };
 		HDOC0000000000000000B001 /* HoverDocText.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A001 /* HoverDocText.swift */; };
 		HDOC0000000000000000C001 /* HoverDocText.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A001 /* HoverDocText.swift */; };
 		HDOC0000000000000000C002 /* HoverDocTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HDOC0000000000000000A002 /* HoverDocTextTests.swift */; };
-		HREACH00000000000000B001 /* HoverReach.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A001 /* HoverReach.swift */; };
-		HREACH00000000000000C001 /* HoverReach.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A001 /* HoverReach.swift */; };
-		HREACH00000000000000C002 /* HoverReachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HREACH00000000000000A002 /* HoverReachTests.swift */; };
 		CDOC0000000000000000B001 /* CompletionDocLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDOC0000000000000000A001 /* CompletionDocLoad.swift */; };
 		A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011C /* RideTextView+Mouse.swift */; };
 		A0000000000000000000011F /* FunctionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000011E /* FunctionKeys.swift */; };
@@ -1505,7 +1503,7 @@
 		A0000000000000000000010F /* EditorPane+Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorPane+Nav.swift"; sourceTree = "<group>"; };
 		A00000000000000000000111 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		A00000000000000000000113 /* IdentifierRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierRange.swift; sourceTree = "<group>"; };
-		A00000000000000000000116 /* HoverPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverPanel.swift; sourceTree = "<group>"; };
+		A00000000000000000000116 /* DocCardPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocCardPanel.swift; sourceTree = "<group>"; };
 		D19000000000000000000001 /* DocPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPage.swift; sourceTree = "<group>"; };
 		D19000000000000000000004 /* DocPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPanel.swift; sourceTree = "<group>"; };
 		D19000000000000000000006 /* DocWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocWebView.swift; sourceTree = "<group>"; };
@@ -1514,6 +1512,7 @@
 		D19100000000000000000001 /* PeekPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekPanel.swift; sourceTree = "<group>"; };
 		D19100000000000000000003 /* PeekController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekController.swift; sourceTree = "<group>"; };
 		D1900000000000000000000A /* SelfTestSteps+Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Doc.swift"; sourceTree = "<group>"; };
+		DCARD000000000000000000A /* SelfTestSteps+DocCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DocCard.swift"; sourceTree = "<group>"; };
 		D2500000000000000000000A /* SelfTestSteps+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Tests.swift"; sourceTree = "<group>"; };
 		D19200000000000000000001 /* SelfTestSteps+Rust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Rust.swift"; sourceTree = "<group>"; };
 		0AC1E0000000000000000004 /* SelfTestSteps+Semantic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Semantic.swift"; sourceTree = "<group>"; };
@@ -1616,12 +1615,10 @@
 		F1500000000000000000000A /* SelfTestSteps+SafeDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+SafeDelete.swift"; sourceTree = "<group>"; };
 		F1400000000000000000000C /* HierarchyQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyQuery.swift; sourceTree = "<group>"; };
 		F14000000000000000000010 /* HierarchySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchySession.swift; sourceTree = "<group>"; };
-		A00000000000000000000118 /* HoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverController.swift; sourceTree = "<group>"; };
+		A00000000000000000000118 /* DocCardController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocCardController.swift; sourceTree = "<group>"; };
 		A0000000000000000000011A /* HoverText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverText.swift; sourceTree = "<group>"; };
 		HDOC0000000000000000A001 /* HoverDocText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverDocText.swift; sourceTree = "<group>"; };
 		HDOC0000000000000000A002 /* HoverDocTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverDocTextTests.swift; sourceTree = "<group>"; };
-		HREACH00000000000000A001 /* HoverReach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverReach.swift; sourceTree = "<group>"; };
-		HREACH00000000000000A002 /* HoverReachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverReachTests.swift; sourceTree = "<group>"; };
 		CDOC0000000000000000A001 /* CompletionDocLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionDocLoad.swift; sourceTree = "<group>"; };
 		A0000000000000000000011C /* RideTextView+Mouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Mouse.swift"; sourceTree = "<group>"; };
 		A0000000000000000000011E /* FunctionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionKeys.swift; sourceTree = "<group>"; };
@@ -2091,7 +2088,6 @@
 				CV0000000000000000000003 /* VisionLayoutTests.swift */,
 				D1900000000000000000000C /* DocPageTests.swift */,
 				HDOC0000000000000000A002 /* HoverDocTextTests.swift */,
-				HREACH00000000000000A002 /* HoverReachTests.swift */,
 				A00000000000000000000124 /* NavigationTests.swift */,
 				S10000000000000000000025 /* UpdateControllerTests.swift */,
 				A000000000000000000000C1 /* Utf16Tests.swift */,
@@ -2437,7 +2433,7 @@
 				A0000000000000000000010F /* EditorPane+Nav.swift */,
 				A00000000000000000000111 /* Definitions.swift */,
 				A00000000000000000000113 /* IdentifierRange.swift */,
-				A00000000000000000000116 /* HoverPanel.swift */,
+				A00000000000000000000116 /* DocCardPanel.swift */,
 				D19000000000000000000001 /* DocPage.swift */,
 				D19000000000000000000004 /* DocPanel.swift */,
 				F1A5E0000000000000000009 /* CaretPopup.swift */,
@@ -2454,10 +2450,9 @@
 				F10000000000000000000004 /* EditorPanes.swift */,
 				F2000000000000000000A001 /* PaneTabStrips.swift */,
 				F10000000000000000000006 /* EditorHostView+Jump.swift */,
-				A00000000000000000000118 /* HoverController.swift */,
+				A00000000000000000000118 /* DocCardController.swift */,
 				A0000000000000000000011A /* HoverText.swift */,
 				HDOC0000000000000000A001 /* HoverDocText.swift */,
-				HREACH00000000000000A001 /* HoverReach.swift */,
 				A0000000000000000000011C /* RideTextView+Mouse.swift */,
 				CV0000000000000000000004 /* RideTextView+Vision.swift */,
 				A0000000000000000000011E /* FunctionKeys.swift */,
@@ -2798,6 +2793,7 @@
 				MC95A530F99A261C015A43BB /* SelfTestSteps+MenusRun.swift */,
 				MC8FBAF8A5A72960C23AABEB /* SelfTestRunScratch.swift */,
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
+				DCARD000000000000000000A /* SelfTestSteps+DocCard.swift */,
 				D2500000000000000000000A /* SelfTestSteps+Tests.swift */,
 				E80000000000000000000001 /* DemoSelfTest.swift */,
 				WS0000000000000000000111 /* SelfTestSteps+Workspace.swift */,
@@ -3463,8 +3459,6 @@
 				D1900000000000000000000D /* DocPageTests.swift in Sources */,
 				HDOC0000000000000000C001 /* HoverDocText.swift in Sources */,
 				HDOC0000000000000000C002 /* HoverDocTextTests.swift in Sources */,
-				HREACH00000000000000C001 /* HoverReach.swift in Sources */,
-				HREACH00000000000000C002 /* HoverReachTests.swift in Sources */,
 				A00000000000000000000115 /* IdentifierRange.swift in Sources */,
 				A00000000000000000000120 /* Workspace.swift in Sources */,
 				A00000000000000000000121 /* FileIndex.swift in Sources */,
@@ -3795,6 +3789,7 @@
 				P50000000000000000000002 /* SelfTestSteps+CppDebug.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
+				DCARD000000000000000000B /* SelfTestSteps+DocCard.swift in Sources */,
 				D2500000000000000000000B /* SelfTestSteps+Tests.swift in Sources */,
 				E80000000000000000000002 /* DemoSelfTest.swift in Sources */,
 				E70000000000000000000002 /* RideTextView+Typing.swift in Sources */,
@@ -3966,7 +3961,7 @@
 				A00000000000000000000110 /* EditorPane+Nav.swift in Sources */,
 				A00000000000000000000112 /* Definitions.swift in Sources */,
 				A00000000000000000000114 /* IdentifierRange.swift in Sources */,
-				A00000000000000000000117 /* HoverPanel.swift in Sources */,
+				A00000000000000000000117 /* DocCardPanel.swift in Sources */,
 				D19000000000000000000002 /* DocPage.swift in Sources */,
 				D19000000000000000000005 /* DocPanel.swift in Sources */,
 				D19000000000000000000007 /* DocWebView.swift in Sources */,
@@ -4004,10 +3999,9 @@
 				F2000000000000000000A002 /* PaneTabStrips.swift in Sources */,
 				F10000000000000000000007 /* EditorHostView+Jump.swift in Sources */,
 				F10000000000000000000009 /* AppState+Panes.swift in Sources */,
-				A00000000000000000000119 /* HoverController.swift in Sources */,
+				A00000000000000000000119 /* DocCardController.swift in Sources */,
 				A0000000000000000000011B /* HoverText.swift in Sources */,
 				HDOC0000000000000000B001 /* HoverDocText.swift in Sources */,
-				HREACH00000000000000B001 /* HoverReach.swift in Sources */,
 				A0000000000000000000011D /* RideTextView+Mouse.swift in Sources */,
 				CV0000000000000000000014 /* RideTextView+Vision.swift in Sources */,
 				A0000000000000000000011F /* FunctionKeys.swift in Sources */,

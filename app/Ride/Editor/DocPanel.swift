@@ -37,7 +37,7 @@ final class DocPanel: PinnablePanel {
             lastSize = panel.frame.size
             return
         }
-        OverlayPanel.present(panel, frame: HoverPanel.place(size: lastSize, anchor: anchor, bounds: bounds))
+        OverlayPanel.present(panel, frame: DocCardPanel.place(size: lastSize, anchor: anchor, bounds: bounds))
     }
 
     func hide() {

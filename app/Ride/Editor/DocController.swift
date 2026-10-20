@@ -23,17 +23,17 @@ final class DocController {
     }
 
     static func showFocused() {
-        if HoverController.shared.upgradeIfVisible() {
+        guard let host = EditorPanes.shared.focused else {
             return
         }
-        guard let host = EditorPanes.shared.focused else {
+        if DocCardController.shared.upgradeAtCaret(in: host.textView) {
             return
         }
         if host.docsStorage?.isVisible == true {
             host.docs.showAtCaret(in: host.textView)
             return
         }
-        if HoverController.shared.showAtCaret(in: host.textView) {
+        if DocCardController.shared.showAtCaret(in: host.textView) {
             return
         }
         host.docs.showAtCaret(in: host.textView)
@@ -178,7 +178,7 @@ final class DocController {
 
     private func present(_ doc: QuickDoc, in view: RideTextView) {
         popup.present(in: view)
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         CompletionSession.shared.hide()
         EditorPanes.shared.host(for: view)?.peekStorage?.hide()
         var actual = NSRange()
@@ -189,7 +189,7 @@ final class DocController {
             origin: DocPage.origin(path: doc.originPath, line: doc.originLine),
             html: DocPage.html(title: doc.title, signature: doc.signature, body: doc.html),
             anchor: anchor,
-            bounds: HoverController.bounds(for: view)
+            bounds: DocCardController.bounds(for: view)
         )
     }
 

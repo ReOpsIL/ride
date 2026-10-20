@@ -22,6 +22,7 @@ extension SelfTestSteps {
         return [prefBaseline(state: state, e: e, p: p)] + prefGeneralSteps(state: state, e: e, bind: bind, p: p)
             + prefDisplaySteps(state: state, e: e, bind: bind, p: p)
             + prefPopupSteps(state: state, e: e, bind: bind, p: p)
+            + docCardSteps(state: state, e: e)
             + prefToolSteps(state: state, e: e, bind: bind, p: p)
             + prefAISteps(state: state, e: e, bind: bind)
             + [prefRestore(state: state, e: e, p: p)]

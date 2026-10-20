@@ -43,8 +43,8 @@ extension RideTextView: ClaimsKeysBeforeMenus {
         if AIInlineController.shared.dismiss(in: self) {
             return
         }
-        if HoverController.shared.isVisible {
-            HoverController.shared.hide()
+        if DocCardController.shared.isVisible {
+            DocCardController.shared.hide()
             return
         }
         if let host = EditorPanes.shared.host(for: self) {
@@ -64,7 +64,7 @@ extension RideTextView: ClaimsKeysBeforeMenus {
     }
 
     override func keyDown(with event: NSEvent) {
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         EditorPanes.shared.host(for: self)?.hideUnpinnedDocs()
         if PopupSearchRouter.key(event) {
             return

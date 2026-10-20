@@ -26,7 +26,7 @@ extension AppState {
     }
 
     func goToDefinition(document: BufferDocument, view: RideTextView, utf16: Int) {
-        HoverController.shared.hide()
+        DocCardController.shared.hide()
         Definitions.lookup(document: document, view: view, utf16: utf16) { [weak self] resp in
             guard let self, let hit = resp.hits.first else {
                 return
