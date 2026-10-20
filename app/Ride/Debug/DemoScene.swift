@@ -105,7 +105,7 @@ enum DemoScene {
         guard let root = state.workspaceRoot else {
             return "src/main.rs"
         }
-        let candidates = ["src/main.rs", "src/shapes.cpp", "src/main.cpp"]
+        let candidates = ["src/main.rs", "src/shapes.cpp", "src/main.cpp", "src/main.c"]
         return candidates.first { FileManager.default.fileExists(atPath: root.appendingPathComponent($0).path) } ?? "src/main.rs"
     }
 
