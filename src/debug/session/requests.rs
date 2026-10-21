@@ -42,7 +42,11 @@ impl DebugSession {
             .transport
             .request(STACK_TRACE, arguments(STACK_TRACE, &request)?)?;
         let listed = body::<StackTraceResponseBody>(STACK_TRACE, response)?;
-        Ok(listed.stack_frames.into_iter().map(frame).collect())
+        Ok(listed
+            .stack_frames
+            .into_iter()
+            .map(|source| self.local_frame(frame(source)))
+            .collect())
     }
 
     pub fn scopes(&self, frame_id: i64) -> Result<Vec<DebugScope>, EngineError> {

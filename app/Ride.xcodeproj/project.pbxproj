@@ -858,6 +858,21 @@
 		Q30000000000000000000008 /* AppState+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000007 /* AppState+Run.swift */; };
 		Q3000000000000000000000A /* RunCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q30000000000000000000009 /* RunCommands.swift */; };
 		Q3000000000000000000000C /* RunConfigSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000B /* RunConfigSheet.swift */; };
+		RMT200000000000000000001 /* RemoteToolchain.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000001 /* RemoteToolchain.swift */; };
+		RMT200000000000000000002 /* RemoteEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000002 /* RemoteEditor.swift */; };
+		RMT200000000000000000003 /* RemoteLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000003 /* RemoteLaunch.swift */; };
+		RMT200000000000000000004 /* ProcessPipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000004 /* ProcessPipe.swift */; };
+		RMT200000000000000000005 /* RemoteRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000005 /* RemoteRun.swift */; };
+		RMT200000000000000000006 /* RemoteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000006 /* RemoteSheet.swift */; };
+		RMT200000000000000000007 /* AppState+Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000007 /* AppState+Remote.swift */; };
+		RMT200000000000000000011 /* RemoteProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000011 /* RemoteProbe.swift */; };
+		RMT200000000000000000012 /* RemoteKind+Help.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000012 /* RemoteKind+Help.swift */; };
+		RMT200000000000000000013 /* RemoteFieldRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000013 /* RemoteFieldRow.swift */; };
+		RMT200000000000000000014 /* RemoteFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000014 /* RemoteFields.swift */; };
+		RMT200000000000000000015 /* RemoteProbeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000015 /* RemoteProbeView.swift */; };
+		RMT200000000000000000016 /* DemoScene+Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000016 /* DemoScene+Remote.swift */; };
+		RMT200000000000000000008 /* SelfTestSteps+Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000008 /* SelfTestSteps+Remote.swift */; };
+		RMT300000000000000000001 /* RemoteToolchain.swift in Sources */ = {isa = PBXBuildFile; fileRef = RMT100000000000000000001 /* RemoteToolchain.swift */; };
 		MCA63637AB792BEF223C355D /* RunConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC63637AB792BEF223C355D5 /* RunConfigEditor.swift */; };
 		Q3000000000000000000000E /* RunConfigDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000D /* RunConfigDraft.swift */; };
 		Q30000000000000000000010 /* ProjectModelStore+Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000F /* ProjectModelStore+Run.swift */; };
@@ -908,6 +923,8 @@
 		D50000000000000000000005 /* DebugPanelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000004 /* DebugPanelModel.swift */; };
 		D50000000000000000000007 /* DebugPanelModel+Load.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000006 /* DebugPanelModel+Load.swift */; };
 		D50000000000000000000009 /* DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000008 /* DebugPanel.swift */; };
+		EC0000000000000000000008 /* DebugToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0000000000000000000007 /* DebugToolbar.swift */; };
+		EC0000000000000000000006 /* DebugAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0000000000000000000005 /* DebugAction.swift */; };
 		D50000000000000000000011 /* DebugPanelLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000010 /* DebugPanelLists.swift */; };
 		D50000000000000000000013 /* DebugWatchesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000012 /* DebugWatchesList.swift */; };
 		D50000000000000000000015 /* DebugFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000014 /* DebugFilters.swift */; };
@@ -1020,6 +1037,8 @@
 		D2B000000000000000000005 /* OverlayShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000005 /* OverlayShift.swift */; };
 		D2B000000000000000000006 /* OverlayRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000006 /* OverlayRows.swift */; };
 		D2B000000000000000000007 /* RideTextView+Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000007 /* RideTextView+Overlay.swift */; };
+		EC0000000000000000000004 /* RideTextView+Backgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0000000000000000000003 /* RideTextView+Backgrounds.swift */; };
+		EC0000000000000000000002 /* BackgroundLayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0000000000000000000001 /* BackgroundLayers.swift */; };
 		D2B000000000000000000008 /* GutterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000008 /* GutterOverlay.swift */; };
 		D2B000000000000000000009 /* Preferences+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F000000000000000000009 /* Preferences+Decode.swift */; };
 		D2B00000000000000000000A /* Preferences+Clamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F00000000000000000000A /* Preferences+Clamp.swift */; };
@@ -1463,6 +1482,20 @@
 		Q30000000000000000000007 /* AppState+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Run.swift"; sourceTree = "<group>"; };
 		Q30000000000000000000009 /* RunCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunCommands.swift; sourceTree = "<group>"; };
 		Q3000000000000000000000B /* RunConfigSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigSheet.swift; sourceTree = "<group>"; };
+		RMT100000000000000000001 /* RemoteToolchain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteToolchain.swift; sourceTree = "<group>"; };
+		RMT100000000000000000002 /* RemoteEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteEditor.swift; sourceTree = "<group>"; };
+		RMT100000000000000000003 /* RemoteLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteLaunch.swift; sourceTree = "<group>"; };
+		RMT100000000000000000004 /* ProcessPipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessPipe.swift; sourceTree = "<group>"; };
+		RMT100000000000000000005 /* RemoteRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRun.swift; sourceTree = "<group>"; };
+		RMT100000000000000000006 /* RemoteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSheet.swift; sourceTree = "<group>"; };
+		RMT100000000000000000007 /* AppState+Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Remote.swift"; sourceTree = "<group>"; };
+		RMT100000000000000000011 /* RemoteProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteProbe.swift; sourceTree = "<group>"; };
+		RMT100000000000000000012 /* RemoteKind+Help.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RemoteKind+Help.swift"; sourceTree = "<group>"; };
+		RMT100000000000000000013 /* RemoteFieldRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFieldRow.swift; sourceTree = "<group>"; };
+		RMT100000000000000000014 /* RemoteFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFields.swift; sourceTree = "<group>"; };
+		RMT100000000000000000015 /* RemoteProbeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteProbeView.swift; sourceTree = "<group>"; };
+		RMT100000000000000000016 /* DemoScene+Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoScene+Remote.swift"; sourceTree = "<group>"; };
+		RMT100000000000000000008 /* SelfTestSteps+Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+Remote.swift"; sourceTree = "<group>"; };
 		MC63637AB792BEF223C355D5 /* RunConfigEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigEditor.swift; sourceTree = "<group>"; };
 		Q3000000000000000000000D /* RunConfigDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunConfigDraft.swift; sourceTree = "<group>"; };
 		Q3000000000000000000000F /* ProjectModelStore+Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectModelStore+Run.swift"; sourceTree = "<group>"; };
@@ -1786,6 +1819,8 @@
 		D50000000000000000000004 /* DebugPanelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelModel.swift; sourceTree = "<group>"; };
 		D50000000000000000000006 /* DebugPanelModel+Load.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugPanelModel+Load.swift"; sourceTree = "<group>"; };
 		D50000000000000000000008 /* DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanel.swift; sourceTree = "<group>"; };
+		EC0000000000000000000007 /* DebugToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugToolbar.swift; sourceTree = "<group>"; };
+		EC0000000000000000000005 /* DebugAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAction.swift; sourceTree = "<group>"; };
 		D50000000000000000000010 /* DebugPanelLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelLists.swift; sourceTree = "<group>"; };
 		D50000000000000000000012 /* DebugWatchesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugWatchesList.swift; sourceTree = "<group>"; };
 		D50000000000000000000014 /* DebugFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugFilters.swift; sourceTree = "<group>"; };
@@ -1881,6 +1916,8 @@
 		D2F000000000000000000005 /* OverlayShift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayShift.swift; sourceTree = "<group>"; };
 		D2F000000000000000000006 /* OverlayRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayRows.swift; sourceTree = "<group>"; };
 		D2F000000000000000000007 /* RideTextView+Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Overlay.swift"; sourceTree = "<group>"; };
+		EC0000000000000000000003 /* RideTextView+Backgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RideTextView+Backgrounds.swift"; sourceTree = "<group>"; };
+		EC0000000000000000000001 /* BackgroundLayers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackgroundLayers.swift"; sourceTree = "<group>"; };
 		D2F000000000000000000008 /* GutterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterOverlay.swift; sourceTree = "<group>"; };
 		D2F000000000000000000009 /* Preferences+Decode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preferences+Decode.swift"; sourceTree = "<group>"; };
 		D2F00000000000000000000A /* Preferences+Clamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preferences+Clamp.swift"; sourceTree = "<group>"; };
@@ -2177,6 +2214,7 @@
 				REV0000000000000000000C1 /* Review */,
 				P20000000000000000000010 /* Project */,
 				Q10000000000000000000010 /* Run */,
+				RMT100000000000000000010 /* Remote */,
 				S20000000000000000000020 /* Terminal */,
 				T20000000000000000000100 /* Tests */,
 				F13000000000000000000100 /* Usages */,
@@ -2344,6 +2382,25 @@
 			path = Run;
 			sourceTree = "<group>";
 		};
+		RMT100000000000000000010 /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				RMT100000000000000000001 /* RemoteToolchain.swift */,
+				RMT100000000000000000002 /* RemoteEditor.swift */,
+				RMT100000000000000000003 /* RemoteLaunch.swift */,
+				RMT100000000000000000004 /* ProcessPipe.swift */,
+				RMT100000000000000000005 /* RemoteRun.swift */,
+				RMT100000000000000000006 /* RemoteSheet.swift */,
+				RMT100000000000000000007 /* AppState+Remote.swift */,
+				RMT100000000000000000011 /* RemoteProbe.swift */,
+				RMT100000000000000000012 /* RemoteKind+Help.swift */,
+				RMT100000000000000000013 /* RemoteFieldRow.swift */,
+				RMT100000000000000000014 /* RemoteFields.swift */,
+				RMT100000000000000000015 /* RemoteProbeView.swift */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
 		P20000000000000000000010 /* Project */ = {
 			isa = PBXGroup;
 			children = (
@@ -2460,6 +2517,8 @@
 				E60000000000000000000128 /* GutterLines.swift */,
 				D2F000000000000000000008 /* GutterOverlay.swift */,
 				D2F000000000000000000007 /* RideTextView+Overlay.swift */,
+				EC0000000000000000000003 /* RideTextView+Backgrounds.swift */,
+				EC0000000000000000000001 /* BackgroundLayers.swift */,
 				D2F000000000000000000010 /* RideTextView+OverlayMarks.swift */,
 				D2F000000000000000000013 /* RideTextView+OverlayPlace.swift */,
 				D400000000000000000000BF /* HighlightApply+Line.swift */,
@@ -2693,6 +2752,8 @@
 				D50000000000000000000004 /* DebugPanelModel.swift */,
 				D50000000000000000000006 /* DebugPanelModel+Load.swift */,
 				D50000000000000000000008 /* DebugPanel.swift */,
+				EC0000000000000000000007 /* DebugToolbar.swift */,
+				EC0000000000000000000005 /* DebugAction.swift */,
 				D50000000000000000000010 /* DebugPanelLists.swift */,
 				D50000000000000000000012 /* DebugWatchesList.swift */,
 				D50000000000000000000014 /* DebugFilters.swift */,
@@ -2791,6 +2852,8 @@
 				MCD4D3DA6497A02BDB0C1CE3 /* SelfTestSteps+RunPanels.swift */,
 				MC30D00136A800DC03A51750 /* SelfTestSteps+RunConfig.swift */,
 				MC95A530F99A261C015A43BB /* SelfTestSteps+MenusRun.swift */,
+				RMT100000000000000000008 /* SelfTestSteps+Remote.swift */,
+				RMT100000000000000000016 /* DemoScene+Remote.swift */,
 				MC8FBAF8A5A72960C23AABEB /* SelfTestRunScratch.swift */,
 				D1900000000000000000000A /* SelfTestSteps+Doc.swift */,
 				DCARD000000000000000000A /* SelfTestSteps+DocCard.swift */,
@@ -3376,6 +3439,7 @@
 				FEE0000000000000000000C7 /* DiagnosticDocLinkTests.swift in Sources */,
 				FEE0000000000000000000C8 /* ClangTidyParseTests.swift in Sources */,
 				F11000000000000000000003 /* WorkspaceState.swift in Sources */,
+				RMT300000000000000000001 /* RemoteToolchain.swift in Sources */,
 				F1100000000000000000000A /* WorkspaceStateStore.swift in Sources */,
 				F11000000000000000000009 /* WorkspaceStateTests.swift in Sources */,
 				F1100000000000000000000C /* WorkspaceStateStoreTests.swift in Sources */,
@@ -3722,6 +3786,8 @@
 				D50000000000000000000005 /* DebugPanelModel.swift in Sources */,
 				D50000000000000000000007 /* DebugPanelModel+Load.swift in Sources */,
 				D50000000000000000000009 /* DebugPanel.swift in Sources */,
+				EC0000000000000000000008 /* DebugToolbar.swift in Sources */,
+				EC0000000000000000000006 /* DebugAction.swift in Sources */,
 				D50000000000000000000011 /* DebugPanelLists.swift in Sources */,
 				D50000000000000000000013 /* DebugWatchesList.swift in Sources */,
 				D50000000000000000000015 /* DebugFilters.swift in Sources */,
@@ -4092,6 +4158,20 @@
 				Q30000000000000000000006 /* RunPlan+Engine.swift in Sources */,
 				Q30000000000000000000008 /* AppState+Run.swift in Sources */,
 				Q3000000000000000000000A /* RunCommands.swift in Sources */,
+				RMT200000000000000000001 /* RemoteToolchain.swift in Sources */,
+				RMT200000000000000000002 /* RemoteEditor.swift in Sources */,
+				RMT200000000000000000003 /* RemoteLaunch.swift in Sources */,
+				RMT200000000000000000004 /* ProcessPipe.swift in Sources */,
+				RMT200000000000000000005 /* RemoteRun.swift in Sources */,
+				RMT200000000000000000006 /* RemoteSheet.swift in Sources */,
+				RMT200000000000000000007 /* AppState+Remote.swift in Sources */,
+				RMT200000000000000000011 /* RemoteProbe.swift in Sources */,
+				RMT200000000000000000012 /* RemoteKind+Help.swift in Sources */,
+				RMT200000000000000000013 /* RemoteFieldRow.swift in Sources */,
+				RMT200000000000000000014 /* RemoteFields.swift in Sources */,
+				RMT200000000000000000015 /* RemoteProbeView.swift in Sources */,
+				RMT200000000000000000008 /* SelfTestSteps+Remote.swift in Sources */,
+				RMT200000000000000000016 /* DemoScene+Remote.swift in Sources */,
 				Q3000000000000000000000C /* RunConfigSheet.swift in Sources */,
 				Q3000000000000000000000E /* RunConfigDraft.swift in Sources */,
 				Q30000000000000000000010 /* ProjectModelStore+Run.swift in Sources */,
@@ -4151,6 +4231,8 @@
 				D2B000000000000000000005 /* OverlayShift.swift in Sources */,
 				D2B000000000000000000006 /* OverlayRows.swift in Sources */,
 				D2B000000000000000000007 /* RideTextView+Overlay.swift in Sources */,
+				EC0000000000000000000004 /* RideTextView+Backgrounds.swift in Sources */,
+				EC0000000000000000000002 /* BackgroundLayers.swift in Sources */,
 				D2B000000000000000000008 /* GutterOverlay.swift in Sources */,
 				D2B000000000000000000009 /* Preferences+Decode.swift in Sources */,
 				D2B00000000000000000000A /* Preferences+Clamp.swift in Sources */,

@@ -42,6 +42,7 @@ final class WorkspaceStateTests: XCTestCase {
         XCTAssertNil(state.focusedPath)
         XCTAssertEqual(state.layout, .defaults)
         XCTAssertNil(state.split)
+        XCTAssertEqual(state.remote, .off)
     }
 
     func testVersionMismatchYieldsNil() {

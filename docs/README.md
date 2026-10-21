@@ -8,6 +8,7 @@
 | Rust tutorial | `docs/manuals/tutorial-rust.md` |
 | C tutorial | `docs/manuals/tutorial-c.md` |
 | C++ tutorial | `docs/manuals/tutorial-cpp.md` |
+| Local Docker remote: Rust build, run and debug container over SSH | `docs/manuals/remote-docker.md` |
 | Product and architecture spec | `plan/ride_draft.md` |
 | Roadmap and phases | `plan/roadmap/improve-extend.md` |
 | UI design plan and audit | `plan/roadmap/ui-design.md` |
@@ -23,11 +24,15 @@
 | Markdown files render in the editor pane, source on a toggle, split beside other files | `docs/product/markdown-view.md` |
 | Workspace map: nested canvas of crates, modules and symbols | `docs/product/workspace-map.md` |
 | Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
+| Editor line backgrounds: caret line, marked (debug) line and bracket pair as ordered layers; theme keys | `docs/tui/editor-backgrounds.md` |
+| Debugger lab: the same ten scenarios in Rust, C++ and C, including attach to a forked child, with a manual checklist | `samples/debugger/README.md` |
 | AppKit view clipping: since macOS 14 a view that fills its dirty rect paints over its neighbours; the gutter clips | `docs/tui/appkit-view-clipping.md` |
 | Several projects in one folder: discovery, the active project that follows the editor, where build and check run, tree reveal | `docs/product/multi-project.md` |
 | Diagnostic overlay: every labelled span of a compiler message drawn on the code, gutter order, notes, fixes, freshness rules | `docs/product/diagnostic-overlay.md` |
 | Diagnostic overlay executor cards DO-1 to DO-3 | `plan/roadmap/diagnostic-overlay-cards.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
+| Remote toolchain: edit on the Mac, build, run and debug through one SSH endpoint | `docs/product/remote-toolchain.md` |
+| Remote toolchain plan: SSH presets for a VM, container, pod and local Docker, then sync, debug and the workspace sheet | `plan/toolchain/remote.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | AI chat panel and Explain: context packs, streaming, threads, code-block actions | `docs/product/ai-chat.md` |
 | AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed, JetBrains; engine context packs | `plan/ai/assistant.md` |
@@ -45,8 +50,10 @@
 | Support plan 2027 v2 (revision for review): shape hash, equivalence triage, per-author marks, hunt since last green, agent hand-off. Holds in §0.1 | `plan/roadmap/support-2027-v2.md` |
 | Support plan 2027 v2, build order: what is scheduled after the holds | `plan/roadmap/support-2027-v2-build.md` |
 | Support plan 2027 v2, as mock screens: the night shift and the second push | `docs/product/support-2027-v2.html` |
+| Learn Rust in Ride, as mock screens: one Python developer ports a script; ownership overlay, hint ladder, type lens, concept map, tracks, learning mode | `docs/product/learn-rust.html` |
 | Historical engine notes | `plan/autocomplete.md` |
 | Engine follow-ups | `todo/engine/remaining.md` |
+| Remote toolchain follow-ups | `todo/engine/remote.md` |
 | App follow-ups | `todo/app/remaining.md` |
 | Diagnostic overlay follow-ups | `todo/app/diagnostic-overlay.md` |
 
@@ -71,6 +78,7 @@
 | `src/review` | Symbol diff against that base: shape hash, formatting and unique-move equivalence, checks, inbox order, dossier, hand-off, hunt |
 | `src/follow` | Per-author marks in `.ride/follow/<author>.toml` |
 | `src/trail` | Local append-only trail of test results and debug stops, under Application Support |
+| `src/remote` | One SSH endpoint for a VM, container, pod or local Docker: path prefix map, tar sync, command argv, and the launch mapping for remote `lldb-dap` |
 | `src/ai` | context packs for AI requests: focus widened to whole lines, enclosing outline item, definitions of referenced symbols, character budget |
 | `src/wire` | Content-Length JSON framing and the response mailbox shared by the debug adapter and LSP clients |
 | `src/oracle` | language-server sidecars (rust-analyzer per Cargo root, clangd per compile-database project), background completion jobs for member, identifier and path sites, the facts cache the completion router reads |

@@ -46,7 +46,7 @@ struct DetailColumn: View {
                         .background(SplitPositioner(position: 220, fromEnd: true))
                 }
                 if debugPanel.visible {
-                    DebugPanel(model: debugPanel)
+                    DebugPanel(state: state, model: debugPanel)
                         .frame(minHeight: 320, idealHeight: state.prefs.debugHeight, maxHeight: 600)
                         .background(SplitPositioner(position: state.prefs.debugHeight, fromEnd: true))
                         .reportSize(.height) { debugHeight.wrappedValue = $0 }

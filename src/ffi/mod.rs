@@ -18,6 +18,7 @@ mod project;
 mod query;
 mod refactor;
 mod refs;
+mod remote;
 mod rename;
 mod review;
 mod run;
@@ -56,6 +57,9 @@ pub use query::{
 };
 pub use refactor::ExtractPlan;
 pub use refs::{UsageHit, UsagesResponse};
+pub use remote::{
+    RemoteCheck, RemoteCheckStatus, RemoteCommand, RemoteLink, RemoteReach, RemoteSync,
+};
 pub use rename::{RenameFile, RenamePlan};
 pub use review::{ReviewDossier, ReviewHunt, ReviewInbox, ReviewMark, ReviewMarkLine, ReviewRow};
 pub use run::{RecompileCommand, SingleRun};

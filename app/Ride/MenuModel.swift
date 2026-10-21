@@ -44,6 +44,10 @@ final class MenuModel: ObservableObject {
     @Published var showDebugPanel = false
     @Published var debugFilters: [DebugFilterToggle] = []
 
+    var debugGates: DebugGates {
+        DebugGates(canDebug: canDebug, isActive: isDebugging, isStopped: isDebugStopped, isRunning: isDebugRunning)
+    }
+
     func sync(from state: AppState) {
         set(\.previewAvailable, state.previewAvailable)
         set(\.hasEditor, state.activeBuffer != nil)

@@ -35,6 +35,9 @@ struct RootView: View {
         .sheet(isPresented: $state.showRunConfigSheet) {
             RunConfigSheet(editor: state.runConfigEditor).environmentObject(state)
         }
+        .sheet(isPresented: $state.showRemoteSheet) {
+            RemoteSheet(editor: state.remoteEditor).environmentObject(state)
+        }
         .sheet(isPresented: $state.showRenamePreview) {
             RenamePreviewSheet(
                 model: state.renamePreview,

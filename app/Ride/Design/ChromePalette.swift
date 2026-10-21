@@ -40,6 +40,8 @@ struct ChromeColors {
 struct EditorColors {
     var background: NSColor
     var currentLine: NSColor
+    var markedLine: NSColor
+    var bracketMatch: NSColor
     var selection: NSColor
     var caret: NSColor
     var gutterText: NSColor
@@ -51,6 +53,8 @@ struct EditorColors {
         return EditorColors(
             background: e.color("background", dark ? "#1E2024" : "#FFFFFF"),
             currentLine: e.color("currentLine", dark ? "#FFFFFF08" : "#0000000A"),
+            markedLine: e.color("markedLine", dark ? "#4C8DFF47" : "#2F6FE033"),
+            bracketMatch: e.color("bracketMatch", dark ? "#4C8DFF4D" : "#2F6FE04D"),
             selection: e.color("selection", dark ? "#4C8DFF4D" : "#2F6FE040"),
             caret: e.color("caret", dark ? "#4C8DFF" : "#2F6FE0"),
             gutterText: e.color("gutterText", dark ? "#5C6370" : "#9AA0A6"),

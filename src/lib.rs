@@ -27,6 +27,7 @@ pub mod project;
 mod query;
 mod refactor;
 mod refs;
+pub mod remote;
 mod report;
 pub mod review;
 mod run;

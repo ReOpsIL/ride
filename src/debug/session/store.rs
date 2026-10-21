@@ -80,7 +80,7 @@ impl DebugSession {
         breakpoints: Vec<Breakpoint>,
     ) -> Result<Vec<Breakpoint>, EngineError> {
         let opened = self.request_breakpoints(path, &breakpoints)?;
-        if bound(&opened) {
+        if bound(&opened) || self.mapped() {
             return Ok(opened);
         }
         let Some(twin) = twin(path) else {
@@ -95,8 +95,10 @@ impl DebugSession {
         path: &str,
         breakpoints: &[Breakpoint],
     ) -> Result<Vec<Breakpoint>, EngineError> {
-        let request =
-            SetBreakpointsArguments::new(source_of(path), breakpoints.iter().map(wanted).collect());
+        let request = SetBreakpointsArguments::new(
+            source_of(&self.remote_path(path)),
+            breakpoints.iter().map(wanted).collect(),
+        );
         let response = self
             .transport
             .request(SET_BREAKPOINTS, arguments(SET_BREAKPOINTS, &request)?)?;
@@ -120,13 +122,14 @@ impl DebugSession {
         let Some(line) = reported.line else {
             return;
         };
-        let Some(path) = reported
+        let Some(reported_path) = reported
             .source
             .as_ref()
             .and_then(|source| source.path.clone())
         else {
             return;
         };
+        let path = self.local_path(&reported_path);
         let updated = self.breakpoints.lock().ok().and_then(|mut store| {
             let key = stored_key(&store, &path)?;
             let entries = store.get_mut(&key)?;

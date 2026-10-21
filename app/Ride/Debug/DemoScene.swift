@@ -16,6 +16,7 @@ enum DemoScene {
             || assistant(name, state: state)
             || gitScene(name, state: state)
             || reviewScene(name, state: state)
+            || remoteScene(name, state: state)
         if !handled {
             DemoLaunch.ready()
         }

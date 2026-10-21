@@ -76,6 +76,7 @@ final class AppState: ObservableObject {
     @Published var showToolsSheet = false
     @Published var showNewProjectSheet = false
     @Published var showRunConfigSheet = false
+    @Published var showRemoteSheet = false
     @Published var showRenamePreview = false
     let renamePreview = RenamePreviewModel()
     var renamePlan: RenamePlan?
@@ -100,6 +101,11 @@ final class AppState: ObservableObject {
     let menu = MenuModel()
     let projectModel = ProjectModelStore()
     let runConfigEditor = RunConfigEditor()
+    let remoteEditor = RemoteEditor()
+    let remoteRun = RemoteRun()
+    @Published var remoteToolchain = RemoteToolchain.off {
+        didSet { scheduleWorkspaceSave() }
+    }
     let runOutput = RunOutput()
     let testRun = TestRunStore.shared
     let terminals = TerminalStore()

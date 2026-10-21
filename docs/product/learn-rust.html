@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ride Learn — Rust for people who already code</title>
+<style>
+  :root {
+    --bg: #191B1F; --raised: #22252A; --overlay: #26292F; --editor: #1E2024;
+    --border: rgba(255,255,255,.08); --text: #E6E8EC; --secondary: #A0A6B0; --tertiary: #6B7280;
+    --accent: #4C8DFF; --error: #F16A6A; --warning: #E5B94A; --info: #5AA9FF; --success: #58C27D;
+    --violet: #B48CFF; --sel: rgba(76,141,255,.28);
+    --kw: #C586C0; --fn: #DCDCAA; --ty: #4EC9B0; --str: #CE9178; --cmt: #6A9955; --num: #B5CEA8; --mac: #4FC1FF;
+    --py: #FFD866; --page: #0c0e12;
+    --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--page); color: var(--text); font-family: var(--ui); }
+  .deck { display: grid; grid-template-columns: 236px 1fr; min-height: 100%; }
+  .rail { position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto; padding: 22px 14px 28px; border-right: 1px solid var(--border); background: #101216; }
+  .rail::-webkit-scrollbar { width: 8px; } .rail::-webkit-scrollbar-thumb { background: #3a3f48; border-radius: 4px; }
+  .brand { font-size: 13px; letter-spacing: .04em; color: var(--secondary); margin: 0 8px 4px; }
+  .brand b { color: var(--text); font-weight: 600; }
+  .brand-sub { margin: 0 8px 18px; color: var(--tertiary); font-size: 12px; line-height: 1.4; }
+  .rail button { display: grid; grid-template-columns: 22px 1fr; gap: 8px; width: 100%; text-align: left; background: transparent; color: var(--secondary); border: 0; border-radius: 8px; padding: 7px 8px; cursor: pointer; font-size: 13px; }
+  .rail button[aria-current="true"] { background: var(--sel); color: var(--text); }
+  .rail button:hover { background: rgba(255,255,255,.05); color: var(--text); }
+  .rail .n { color: var(--tertiary); font-variant-numeric: tabular-nums; }
+  .rail .ph { display: block; color: var(--tertiary); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  .rail button[aria-current="true"] .ph { color: var(--accent); }
+  .stage { padding: 28px 36px 48px; max-width: 1200px; }
+  .kicker { margin: 0 0 6px; color: var(--accent); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { margin: 0 0 8px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .lede { margin: 0 0 18px; max-width: 72ch; color: var(--secondary); font-size: 16px; line-height: 1.45; }
+  .lede b, .caption b { color: var(--text); font-weight: 600; }
+  code, .m { font-family: var(--mono); font-size: .92em; }
+  .caption { margin: 14px 0 0; color: var(--secondary); font-size: 15px; line-height: 1.45; max-width: 80ch; }
+
+  .win { background: var(--bg); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.35); display: flex; flex-direction: column; }
+  .titlebar { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #14161a; border-bottom: 1px solid var(--border); flex: none; }
+  .lights { display: flex; gap: 6px; } .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .titlebar .name { margin-left: 8px; font-size: 12px; color: var(--secondary); }
+  .titlebar .grow { flex: 1; }
+  .modepill { font-size: 11px; color: var(--success); border: 1px solid rgba(88,194,125,.45); border-radius: 99px; padding: 2px 9px; }
+  .body { display: flex; min-height: 0; flex: 1; }
+  .tree { width: 176px; flex: none; border-right: 1px solid var(--border); padding: 8px 0; font-size: 12px; }
+  .tree .root { padding: 4px 12px 8px; font-weight: 600; }
+  .tree .row { padding: 3px 12px 3px 22px; color: var(--secondary); }
+  .tree .row.on { background: #3a6fbf; color: white; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--editor); position: relative; }
+  .tabs { display: flex; background: var(--bg); border-bottom: 1px solid var(--border); height: 32px; flex: none; }
+  .tab { padding: 0 12px; display: flex; align-items: center; font-size: 12px; color: var(--secondary); border-right: 1px solid var(--border); }
+  .tab.on { background: var(--editor); color: var(--text); }
+  .status { height: 26px; flex: none; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: #14161a; border-top: 1px solid var(--border); color: var(--tertiary); font-size: 11px; }
+  .status .grow { flex: 1; } .status .ok { color: var(--success); } .status .bad { color: var(--error); }
+
+  .code { padding: 8px 0 12px; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; overflow: auto; }
+  .l { display: grid; grid-template-columns: 40px 16px 1fr; }
+  .l .ln { color: var(--tertiary); text-align: right; padding-right: 8px; }
+  .l .g { display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .l .t { white-space: pre; }
+  .l.cur { background: rgba(255,255,255,.04); }
+  .l.stop { background: rgba(76,141,255,.16); box-shadow: inset 2px 0 0 var(--accent); }
+  .l.fixed { background: rgba(88,194,125,.10); }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .ty { color: var(--ty); } .str { color: var(--str); }
+  .cmt { color: var(--cmt); } .num { color: var(--num); } .mac { color: var(--mac); }
+  .hint { color: var(--tertiary); background: rgba(255,255,255,.05); border-radius: 3px; padding: 0 3px; font-size: 11.5px; }
+  .u-err { text-decoration: underline wavy var(--error); text-underline-offset: 3px; }
+  .u-mv { box-shadow: inset 0 -2px 0 var(--warning); }
+  .u-own { box-shadow: inset 0 -2px 0 var(--info); }
+  .u-use { box-shadow: inset 0 -2px 0 var(--error); }
+  .u-shr { box-shadow: inset 0 -2px 0 var(--info); background: rgba(90,169,255,.10); }
+  .u-mut { box-shadow: inset 0 -2px 0 var(--error); background: rgba(241,106,106,.12); }
+  .u-new { background: rgba(88,194,125,.22); border-radius: 2px; }
+  .off { display: inline-block; width: calc(var(--c) * 1ch); }
+  .ann { display: inline-block; margin-left: -4px; font-family: var(--ui); font-size: 11px; padding: 1px 7px; border-radius: 5px; white-space: nowrap; }
+  .ann::before { content: "▲ "; font-size: 8px; vertical-align: 1px; }
+  .ann.own { color: #cfe5ff; background: rgba(90,169,255,.18); }
+  .ann.mv { color: #ffe9b0; background: rgba(229,185,74,.18); }
+  .ann.use { color: #ffd0d0; background: rgba(241,106,106,.20); }
+  .ann.drop { color: #e3d4ff; background: rgba(180,140,255,.18); }
+  .ann.drop::before { content: "◆ "; }
+  .ann.ok { color: #c9f2d6; background: rgba(88,194,125,.18); }
+
+  .side { width: 340px; flex: none; background: var(--bg); border-left: 1px solid var(--border); display: flex; flex-direction: column; font-size: 12.5px; }
+  .side h2 { margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  .side h2 span { color: var(--tertiary); font-weight: 400; }
+  .pad { padding: 10px 12px; line-height: 1.45; color: var(--secondary); }
+  .pad b { color: var(--text); font-weight: 600; }
+  .errhead { font-family: var(--mono); font-size: 12px; color: var(--error); }
+  .compare { border: 1px solid rgba(255,216,102,.35); background: rgba(255,216,102,.06); border-radius: 8px; padding: 8px 10px; margin-top: 10px; }
+  .compare .st, .rung .st, .box .st { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .compare .st { color: var(--py); }
+  .py { color: var(--py); }
+  .rung { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 8px; }
+  .rung .st { color: var(--tertiary); display: flex; justify-content: space-between; }
+  .rung.open { border-color: rgba(76,141,255,.55); background: rgba(76,141,255,.07); }
+  .rung.open .st { color: var(--accent); }
+  .rung.done .st { color: var(--success); }
+  .rung.locked { opacity: .5; }
+  .btn { display: inline-block; margin-top: 8px; background: var(--overlay); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 4px 9px; font-size: 11px; }
+  .btn.pri { background: var(--accent); border-color: var(--accent); color: white; }
+  .btn + .btn { margin-left: 4px; }
+  .box { border-radius: 8px; padding: 8px 10px; margin-top: 10px; border: 1px solid var(--border); }
+  .box.good { border-color: rgba(88,194,125,.45); background: rgba(88,194,125,.07); } .box.good .st { color: var(--success); }
+  .box.note { border-color: rgba(180,140,255,.45); background: rgba(180,140,255,.07); } .box.note .st { color: var(--violet); }
+  .box.warn { border-color: rgba(229,185,74,.45); background: rgba(229,185,74,.07); } .box.warn .st { color: var(--warning); }
+  pre.snip { margin: 6px 0 0; font-family: var(--mono); font-size: 11.5px; line-height: 1.5; background: var(--editor); border-radius: 6px; padding: 7px 9px; white-space: pre-wrap; color: var(--text); }
+
+  .popup { position: absolute; z-index: 3; background: #1c1f25; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.55); display: flex; overflow: hidden; font-size: 12px; }
+  .popup .list { width: 290px; border-right: 1px solid var(--border); }
+  .popup .search { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 11.5px; }
+  .popup .search::before { content: "⌕ "; color: var(--tertiary); }
+  .popup .sec { padding: 6px 10px 2px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--tertiary); }
+  .popup .it { padding: 4px 10px; display: flex; justify-content: space-between; gap: 8px; color: var(--secondary); }
+  .popup .it.on { background: var(--sel); color: var(--text); }
+  .popup .it em { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--py); opacity: .85; }
+  .popup .prev { width: 400px; padding: 10px 12px; }
+  .popup .prev .lab { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--tertiary); margin-top: 6px; }
+  .popup .prev pre { margin: 4px 0 0; font-family: var(--mono); font-size: 11.5px; line-height: 1.5; white-space: pre-wrap; background: var(--editor); padding: 7px 9px; border-radius: 6px; }
+  .popup .prev .doc { color: var(--secondary); line-height: 1.4; margin-top: 8px; }
+  .hover { position: absolute; z-index: 3; width: 380px; background: #1c1f25; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.55); padding: 10px 12px; font-size: 12px; line-height: 1.45; color: var(--secondary); }
+  .hover .sig { font-family: var(--mono); color: var(--text); background: var(--editor); padding: 6px 8px; border-radius: 6px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .card { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+  .card p { margin: 0; color: var(--secondary); font-size: 13px; line-height: 1.45; }
+  .card .k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .card.pick { border-color: rgba(76,141,255,.65); box-shadow: inset 0 0 0 1px rgba(76,141,255,.3); }
+  .card pre { margin: 8px 0 0; font-family: var(--mono); font-size: 11.5px; line-height: 1.5; white-space: pre-wrap; color: var(--text); }
+  .bet { margin-top: 18px; border-left: 3px solid var(--accent); padding: 8px 14px; font-size: 16px; line-height: 1.45; color: var(--text); max-width: 80ch; background: rgba(76,141,255,.06); border-radius: 0 8px 8px 0; }
+
+  .ba { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+  .ba > div { min-width: 0; }
+  .ba > div + div { border-left: 1px solid var(--border); }
+  .ba.stack { grid-template-columns: 1fr; }
+  .ba.stack > div + div { border-left: 0; border-top: 1px solid var(--border); }
+  .ba .hd { padding: 6px 12px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--tertiary); background: var(--bg); }
+  .ba .hd b { color: var(--text); font-weight: 500; }
+  .ba .hd b.p { color: var(--py); }
+
+  .cm { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 14px; }
+  .cn { border-radius: 10px; padding: 10px 12px; border: 1px solid var(--border); background: var(--raised); font-size: 12px; color: var(--secondary); line-height: 1.4; min-height: 92px; }
+  .cn b { display: block; color: var(--text); font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .cn .s { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .cn.learned { border-color: rgba(88,194,125,.5); } .cn.learned .s { color: var(--success); }
+  .cn.practice { border-color: rgba(229,185,74,.5); } .cn.practice .s { color: var(--warning); }
+  .cn.met { border-color: rgba(90,169,255,.4); } .cn.met .s { color: var(--info); }
+  .cn.notyet { opacity: .55; } .cn.notyet .s { color: var(--tertiary); }
+  .cn.next { border-style: dashed; border-color: rgba(76,141,255,.7); opacity: 1; }
+  .meter { height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); margin-top: 8px; overflow: hidden; }
+  .meter i { display: block; height: 100%; }
+
+  .tests .tr { display: flex; gap: 8px; padding: 5px 12px; font-size: 12px; color: var(--secondary); border-bottom: 1px solid var(--border); }
+  .tests .tr .r { margin-left: auto; color: var(--tertiary); font-size: 11px; }
+  .pass { color: var(--success); } .fail { color: var(--error); } .todo { color: var(--tertiary); }
+
+  .mem { padding: 10px 12px; font-size: 12px; }
+  .frame { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+  .frame .fh { padding: 5px 9px; font-size: 11px; color: var(--tertiary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .frame .fh b { color: var(--text); font-weight: 500; font-family: var(--mono); }
+  .slot { display: grid; grid-template-columns: 74px 1fr; gap: 6px; padding: 4px 9px; font-family: var(--mono); font-size: 11.5px; }
+  .slot .nm { color: var(--fn); }
+  .slot .v { color: var(--secondary); }
+  .slot.gone { opacity: .45; text-decoration: line-through; }
+  .heap { border: 1px dashed rgba(180,140,255,.5); border-radius: 8px; padding: 6px 9px; font-family: var(--mono); font-size: 11px; color: var(--secondary); line-height: 1.5; }
+  .heap .lab { font-family: var(--ui); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--violet); }
+  .arrow { color: var(--violet); }
+
+  .chat .msg { margin: 10px 12px 0; padding: 8px 10px; border-radius: 8px; line-height: 1.45; color: var(--secondary); }
+  .chat .me { background: var(--overlay); color: var(--text); margin-left: 40px; }
+  .chat .tutor { border: 1px solid rgba(76,141,255,.35); background: rgba(76,141,255,.06); }
+  .chat .who { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--tertiary); margin-bottom: 3px; }
+  .prefs { padding: 12px 14px; font-size: 12.5px; color: var(--secondary); }
+  .prefs .row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .prefs .row b { color: var(--text); font-weight: 500; }
+  .prefs .row .r { margin-left: auto; color: var(--tertiary); font-size: 11.5px; }
+  .tog { width: 28px; height: 16px; border-radius: 99px; background: #3a3f48; position: relative; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #c9ccd2; }
+  .tog.on { background: var(--success); } .tog.on::after { left: 14px; background: white; }
+
+  .term { background: #0f1115; font-family: var(--mono); font-size: 12px; line-height: 1.55; padding: 10px 14px; color: var(--secondary); border-top: 1px solid var(--border); white-space: pre-wrap; }
+  .term .p { color: var(--success); } .term .c { color: var(--text); }
+
+  table.map { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.map th { text-align: left; font-weight: 500; color: var(--tertiary); padding: 6px 10px; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  table.map td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,.05); color: var(--secondary); vertical-align: top; line-height: 1.4; }
+  table.map td:first-child { color: var(--py); font-family: var(--mono); font-size: 12.5px; }
+  table.map td:nth-child(2) { color: var(--text); font-family: var(--mono); font-size: 12.5px; }
+  .tag { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--border); margin-right: 4px; }
+  .tag.have { color: var(--success); border-color: rgba(88,194,125,.45); }
+  .tag.build { color: var(--warning); border-color: rgba(229,185,74,.45); }
+  ul.clean { margin: 6px 0 0; padding-left: 18px; color: var(--secondary); font-size: 13px; line-height: 1.55; }
+  ul.clean li b { color: var(--text); font-weight: 500; }
+  .pager { display: flex; gap: 8px; margin-top: 18px; }
+  .pager button { background: var(--raised); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; cursor: pointer; font-size: 13px; }
+  .pager .k { margin-left: auto; color: var(--tertiary); font-size: 12px; align-self: center; }
+  [hidden] { display: none !important; }
+  @media (max-width: 1080px) {
+    .deck { grid-template-columns: 1fr; }
+    .rail { position: relative; height: auto; display: flex; gap: 4px; overflow: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    .brand, .brand-sub, .rail .ph { display: none; }
+    .rail button { width: auto; white-space: nowrap; grid-template-columns: auto auto; }
+    .stage { padding: 18px 14px 32px; }
+    .grid2, .grid3, .grid4, .cm, .ba { grid-template-columns: 1fr; }
+    .tree { display: none; } .body { flex-direction: column; } .side { width: auto; border-left: 0; border-top: 1px solid var(--border); }
+    .popup, .hover { position: relative; inset: auto !important; margin: 10px; flex-direction: column; width: auto; }
+    .popup .list, .popup .prev { width: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+  <nav class="rail" aria-label="Scenes">
+    <p class="brand"><b>Ride</b> · Learn</p>
+    <p class="brand-sub">Rust for people who already code. One Python developer, one real script, two weeks.</p>
+    <button data-go="maya"><span class="n">1</span><span>Meet Maya<span class="ph">the learner</span></span></button>
+    <button data-go="from"><span class="n">2</span><span>Where you come from<span class="ph">onboarding</span></span></button>
+    <button data-go="rosetta"><span class="n">3</span><span>Type Python, get Rust<span class="ph">cheat sheet</span></span></button>
+    <button data-go="types"><span class="n">4</span><span>Types you didn't write<span class="ph">type lens</span></span></button>
+    <button data-go="move"><span class="n">5</span><span>The first move<span class="ph">ownership overlay</span></span></button>
+    <button data-go="ladder"><span class="n">6</span><span>You write the fix<span class="ph">hint ladder</span></span></button>
+    <button data-go="borrow"><span class="n">7</span><span>A bug Python allows<span class="ph">borrowing</span></span></button>
+    <button data-go="errors"><span class="n">8</span><span>No exceptions<span class="ph">Result and ?</span></span></button>
+    <button data-go="xray"><span class="n">9</span><span>X-ray debugger<span class="ph">stack, heap, drop</span></span></button>
+    <button data-go="concepts"><span class="n">10</span><span>What you know<span class="ph">concept map</span></span></button>
+    <button data-go="projects"><span class="n">11</span><span>Projects, not drills<span class="ph">tracks and tests</span></span></button>
+    <button data-go="pyo3"><span class="n">12</span><span>Speed up your Python<span class="ph">PyO3 track</span></span></button>
+    <button data-go="tutor"><span class="n">13</span><span>AI that teaches<span class="ph">learning mode</span></span></button>
+    <button data-go="toolbox"><span class="n">14</span><span>pip, pytest, black<span class="ph">the toolbox</span></span></button>
+    <button data-go="build"><span class="n">15</span><span>What to build<span class="ph">today vs next</span></span></button>
+  </nav>
+  <main>
+
+<!-- 1 -->
+    <section class="stage" data-scene="maya">
+      <p class="kicker">The learner</p>
+      <h1>Maya writes Python every day. She wants Rust in her toolbox.</h1>
+      <p class="lede">She is a data engineer. Her pipeline has one slow script that sums a sales CSV by region. She has read the first chapters of the Rust Book twice. Every time she opens a real file, the compiler says no and she does not know why. This deck follows her for two weeks, porting that script inside Ride.</p>
+      <div class="grid3">
+        <div class="card"><div class="k">Ownership</div><h3><code>b = a</code> stops meaning two names</h3><p>In Python both names point at one list. In Rust the value moves to <code>b</code>, and <code>a</code> is gone.</p></div>
+        <div class="card"><div class="k">Borrowing</div><h3>Read or write, not both at once</h3><p>Appending to a list while looping over it is legal Python. Rust refuses it before the program runs.</p></div>
+        <div class="card"><div class="k">Strings</div><h3>Two string types</h3><p><code>String</code> owns its text. <code>&amp;str</code> is a view into text someone else owns. Python has one <code>str</code>.</p></div>
+        <div class="card"><div class="k">Errors</div><h3>No try / except</h3><p>A function that can fail says so in its type, <code>Result</code>. The <code>?</code> operator passes the error up.</p></div>
+        <div class="card"><div class="k">Types</div><h3>Types everywhere, mostly inferred</h3><p>She rarely writes them, but they are always there. She needs to see them without typing them.</p></div>
+        <div class="card"><div class="k">Traits</div><h3>No duck typing</h3><p>"Has a <code>len</code>" is not enough. A type implements a trait, and the compiler checks it.</p></div>
+      </div>
+      <p class="bet">Ride's bet: teach these six on the code Maya is already writing. The compiler is the teacher, the IDE translates, and Maya types every fix herself.</p>
+    </section>
+
+<!-- 2 -->
+    <section class="stage" data-scene="from" hidden>
+      <p class="kicker">Onboarding · one question</p>
+      <h1>Ride asks where you come from, and explains in that language.</h1>
+      <p class="lede">The first launch asks one thing. The answer picks the comparisons in every lesson card, the cheat sheet keys and the starter project. It can be changed any time in Preferences.</p>
+      <div class="grid2">
+        <div>
+          <div class="grid2" style="gap:10px">
+            <div class="card pick"><div class="k">Selected</div><h3>Python</h3><p>Comprehensions, dicts, exceptions, duck typing, pip.</p></div>
+            <div class="card"><h3>JavaScript / TypeScript</h3><p>Closures, promises, npm, <code>null</code> and <code>undefined</code>.</p></div>
+            <div class="card"><h3>Go</h3><p>Goroutines, interfaces, <code>if err != nil</code>.</p></div>
+            <div class="card"><h3>Java / C#</h3><p>Classes, inheritance, exceptions, a garbage collector.</p></div>
+            <div class="card"><h3>C / C++</h3><p>Pointers, RAII, <code>std::move</code>, headers.</p></div>
+            <div class="card"><h3>New to programming</h3><p>No comparisons. Concepts from first principles.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="k">The same error, explained five ways</div>
+          <h3 style="font-family:var(--mono);font-size:13px;color:var(--error)">E0382 borrow of moved value: `rows`</h3>
+          <ul class="clean">
+            <li><b>Python.</b> <code>b = a</code> gives one list two names. Here the list was handed to the function, and <code>rows</code> no longer holds anything.</li>
+            <li><b>JavaScript.</b> Like passing an array, except the caller's variable is emptied afterwards.</li>
+            <li><b>Go.</b> A slice would share its backing array. A Rust <code>Vec</code> has exactly one owner.</li>
+            <li><b>Java.</b> No garbage collector keeps both references alive. The owner frees the value, so there can be only one.</li>
+            <li><b>C++.</b> Every pass by value is an implicit <code>std::move</code>, and the compiler forbids use after move.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="caption">The comparisons are data, one short file per language and per error code, next to the cheat sheets. They are reviewed text, not generated on the fly.</p>
+    </section>
+
+<!-- 3 -->
+    <section class="stage" data-scene="rosetta" hidden>
+      <p class="kicker">Cheat sheet · Python keys</p>
+      <h1>Maya searches for what she would write in Python.</h1>
+      <p class="lede">She wants the big sales only. In Python that is a list comprehension. She types the word she knows into the cheat sheet search, and the row shows Python and Rust side by side. <b>↩</b> inserts the Rust as a snippet with tab stops.</p>
+      <div class="win" style="min-height:470px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/main.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="tree"><div class="root">sales</div><div class="row">Cargo.toml</div><div class="row">sales.csv</div><div class="row">src</div><div class="row on">main.rs</div></div>
+          <div class="main">
+            <div class="tabs"><div class="tab on">main.rs</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">9</span><span class="g"></span><span class="t">    <span class="kw">let</span> sales = <span class="fn">load</span>(<span class="str">"sales.csv"</span>)?;</span></div>
+              <div class="l cur"><span class="ln">10</span><span class="g"></span><span class="t">    <span class="kw">let</span> big = </span></div>
+            </div>
+            <div class="popup" style="top:96px;left:110px">
+              <div class="list">
+                <div class="search">list comprehension</div>
+                <div class="sec">From Python · iterators</div>
+                <div class="it"><span>list comprehension</span><em>[f(x) for x in xs]</em></div>
+                <div class="it on"><span>comprehension with if</span><em>[.. if ..]</em></div>
+                <div class="it"><span>dict comprehension</span><em>{k: v for ..}</em></div>
+                <div class="it"><span>sum of a generator</span><em>sum(..)</em></div>
+                <div class="it"><span>enumerate</span><em>enumerate(xs)</em></div>
+                <div class="it"><span>zip two lists</span><em>zip(a, b)</em></div>
+                <div class="it"><span>sorted with key</span><em>sorted(key=)</em></div>
+                <div class="sec">Iterators · adapters</div>
+                <div class="it"><span>filter then map</span><em></em></div>
+              </div>
+              <div class="prev">
+                <div class="lab py">Python</div>
+                <pre><span class="py">big = [s.amount for s in sales if s.amount &gt; 100]</span></pre>
+                <div class="lab" style="color:var(--accent)">Rust</div>
+                <pre><span class="kw">let</span> big: <span class="ty">Vec</span>&lt;<span class="ty">f64</span>&gt; = sales
+    .<span class="fn">iter</span>()
+    .<span class="fn">filter</span>(|s| s.amount &gt; <span class="num">100.0</span>)
+    .<span class="fn">map</span>(|s| s.amount)
+    .<span class="fn">collect</span>();</pre>
+                <div class="doc"><b style="color:var(--text)">Why it looks longer.</b> <code>iter()</code> borrows <code>sales</code>, so it is still usable afterwards. <code>collect()</code> builds the list at the end. Nothing runs until then. <code>100.0</code> needs the dot, because Rust never mixes integers and floats silently.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>Rust · sales</span><span class="grow"></span><span>Cheat sheet · 89 Rust topics + From Python</span></div>
+      </div>
+      <p class="caption">Today the Rust sheet holds about 2,000 templates, each with search keys and a doc line. Learn adds a <b>From Python</b> section and a Python field per entry, so the preview can show both. The same shape works for every language picked in onboarding.</p>
+    </section>
+
+<!-- 4 -->
+    <section class="stage" data-scene="types" hidden>
+      <p class="kicker">Type lens</p>
+      <h1>Every value has a type. Maya sees it without writing it.</h1>
+      <p class="lede">Grey labels show the type rust-analyzer inferred after each <code>let</code> and loop variable. Hovering a type opens a short card written for someone who knows Python, then the real documentation below it.</p>
+      <div class="win" style="min-height:430px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/main.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">main.rs</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">4</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">main</span>() {</span></div>
+              <div class="l"><span class="ln">5</span><span class="g"></span><span class="t">    <span class="kw">let</span> text<span class="hint">: String</span> = fs::<span class="fn">read_to_string</span>(<span class="str">"sales.csv"</span>).<span class="fn">unwrap</span>();</span></div>
+              <div class="l cur"><span class="ln">6</span><span class="g"></span><span class="t">    <span class="kw">let</span> rows: <span class="ty">Vec</span>&lt;<span class="u-own">&amp;<span class="ty">str</span></span>&gt; = text.<span class="fn">lines</span>().<span class="fn">skip</span>(<span class="num">1</span>).<span class="fn">collect</span>();</span></div>
+              <div class="l"><span class="ln">7</span><span class="g"></span><span class="t">    <span class="kw">for</span> row<span class="hint">: &amp;str</span> <span class="kw">in</span> &amp;rows {</span></div>
+              <div class="l"><span class="ln">8</span><span class="g"></span><span class="t">        <span class="kw">let</span> cols<span class="hint">: Vec&lt;&amp;str&gt;</span> = row.<span class="fn">split</span>(<span class="str">','</span>).<span class="fn">collect</span>();</span></div>
+              <div class="l"><span class="ln">9</span><span class="g"></span><span class="t">        <span class="kw">let</span> n<span class="hint">: usize</span> = cols.<span class="fn">len</span>();</span></div>
+              <div class="l"><span class="ln">10</span><span class="g"></span><span class="t">    }</span></div>
+              <div class="l"><span class="ln">11</span><span class="g"></span><span class="t">}</span></div>
+            </div>
+            <div class="hover" style="top:168px;left:300px">
+              <div class="sig">&amp;str</div>
+              <p style="margin:8px 0 0"><b style="color:var(--text)">A borrowed view into text.</b> The bytes live in <code>text</code>, the <code>String</code> on line 5. Each row is a window onto part of it, so nothing is copied.</p>
+              <div class="compare"><div class="st">If you know Python</div>Like a slice <code class="py">text[a:b]</code>, except no copy is made, and the compiler makes sure <code>text</code> outlives every row.</div>
+              <p style="margin:8px 0 0;color:var(--tertiary)">⌃J for the full std documentation · ⇧F1 opens doc.rust-lang.org</p>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>rust-analyzer · ready</span><span class="grow"></span><span>Type lens on · ⌃⇧P Type Info</span></div>
+      </div>
+      <p class="caption">Type Info and hover from rust-analyzer already ship. Inlay labels are the oracle card O-4, still open. The Python card on a type is new, short, and lives with the comparison data.</p>
+    </section>
+
+<!-- 5 -->
+    <section class="stage" data-scene="move" hidden>
+      <p class="kicker">Ownership overlay · E0382</p>
+      <h1>The first real error. Ride draws it on the code.</h1>
+      <p class="lede">Maya passes <code>rows</code> to a function, then prints its length. Python would be fine with that. rustc already reports where the value was created, where it moved, and where it was used after. Ride draws those three places on the lines themselves, in the order they happen.</p>
+      <div class="win" style="min-height:470px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/main.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">main.rs</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">4</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">main</span>() {</span></div>
+              <div class="l"><span class="ln">5</span><span class="g"></span><span class="t">    <span class="kw">let</span> text = fs::<span class="fn">read_to_string</span>(<span class="str">"sales.csv"</span>).<span class="fn">unwrap</span>();</span></div>
+              <div class="l"><span class="ln">6</span><span class="g" style="color:var(--info)">1</span><span class="t">    <span class="kw">let</span> <span class="u-own">rows</span>: <span class="ty">Vec</span>&lt;&amp;<span class="ty">str</span>&gt; = text.<span class="fn">lines</span>().<span class="fn">skip</span>(<span class="num">1</span>).<span class="fn">collect</span>();</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:8"></span><span class="ann own">rows owns the list</span></span></div>
+              <div class="l"><span class="ln">7</span><span class="g" style="color:var(--warning)">2</span><span class="t">    <span class="kw">let</span> totals = <span class="fn">sum_by_region</span>(<span class="u-mv">rows</span>);</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:31"></span><span class="ann mv">moved into sum_by_region, rows is empty now</span></span></div>
+              <div class="l cur"><span class="ln">8</span><span class="g" style="color:var(--error)">3</span><span class="t">    <span class="mac">println!</span>(<span class="str">"{} rows, {} regions"</span>, <span class="u-use u-err">rows</span>.<span class="fn">len</span>(), totals.<span class="fn">len</span>());</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:36"></span><span class="ann use">used after the move</span></span></div>
+              <div class="l"><span class="ln">9</span><span class="g"></span><span class="t">}</span></div>
+              <div class="l"><span class="ln">10</span><span class="g"></span><span class="t"></span></div>
+              <div class="l"><span class="ln">11</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">sum_by_region</span>(rows: <span class="ty">Vec</span>&lt;&amp;<span class="ty">str</span>&gt;) -&gt; <span class="ty">HashMap</span>&lt;<span class="ty">String</span>, <span class="ty">f64</span>&gt; {</span></div>
+              <div class="l"><span class="ln">12</span><span class="g"></span><span class="t">    <span class="kw">let mut</span> totals = <span class="ty">HashMap</span>::<span class="fn">new</span>();</span></div>
+              <div class="l"><span class="ln">13</span><span class="g"></span><span class="t">    <span class="kw">for</span> row <span class="kw">in</span> rows {</span></div>
+              <div class="l"><span class="ln">14</span><span class="g"></span><span class="t">        <span class="cmt">…</span></span></div>
+            </div>
+          </div>
+          <div class="side">
+            <h2>Coach <span>E0382 · Ownership</span></h2>
+            <div class="pad">
+              <div class="errhead">borrow of moved value: `rows`</div>
+              <p style="margin:8px 0 0">Read the numbers in the gutter: <b>1</b> where the list is born, <b>2</b> where it leaves, <b>3</b> where you reach for it again.</p>
+              <div class="compare"><div class="st">If you know Python</div><code class="py">sum_by_region(rows)</code> would pass a reference and <code class="py">rows</code> would still work. In Rust, passing a <code>Vec</code> by value hands it over. One owner at a time.</div>
+              <div class="rung open"><div class="st"><span>Step 1 · Question</span><span>open</span></div>Does <code>sum_by_region</code> need to <b>keep</b> the rows, or only <b>read</b> them?</div>
+              <div class="rung locked"><div class="st"><span>Step 2 · Hint</span><span>after you try</span></div></div>
+              <span class="btn">I think it only reads them</span><span class="btn">Show a hint</span>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span class="bad">● 1 error</span><span>cargo check · live</span><span class="grow"></span><span>Ownership · practicing</span></div>
+      </div>
+      <p class="caption">No guessing is involved. Every label comes from the spans and messages in rustc's JSON, which Ride already reads for the Problems panel. Learn draws them in order and adds the comparison.</p>
+    </section>
+
+<!-- 6 -->
+    <section class="stage" data-scene="ladder" hidden>
+      <p class="kicker">Hint ladder</p>
+      <h1>Maya types the fix. The coach only climbs when she asks.</h1>
+      <p class="lede">She answered "it only reads them". Step 2 told her to lend the list instead of giving it away. She changed two places. The error cleared while she typed, and the fix counts as hers.</p>
+      <div class="win" style="min-height:460px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/main.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">main.rs</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">6</span><span class="g"></span><span class="t">    <span class="kw">let</span> rows: <span class="ty">Vec</span>&lt;&amp;<span class="ty">str</span>&gt; = text.<span class="fn">lines</span>().<span class="fn">skip</span>(<span class="num">1</span>).<span class="fn">collect</span>();</span></div>
+              <div class="l fixed"><span class="ln">7</span><span class="g" style="color:var(--success)">✓</span><span class="t">    <span class="kw">let</span> totals = <span class="fn">sum_by_region</span>(<span class="u-new">&amp;</span>rows);</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:31"></span><span class="ann ok">lent, not given: rows stays with main</span></span></div>
+              <div class="l"><span class="ln">8</span><span class="g"></span><span class="t">    <span class="mac">println!</span>(<span class="str">"{} rows, {} regions"</span>, rows.<span class="fn">len</span>(), totals.<span class="fn">len</span>());</span></div>
+              <div class="l"><span class="ln">9</span><span class="g"></span><span class="t">}</span></div>
+              <div class="l"><span class="ln">10</span><span class="g"></span><span class="t"></span></div>
+              <div class="l fixed"><span class="ln">11</span><span class="g" style="color:var(--success)">✓</span><span class="t"><span class="kw">fn</span> <span class="fn">sum_by_region</span>(rows: <span class="u-new">&amp;[&amp;<span class="ty">str</span>]</span>) -&gt; <span class="ty">HashMap</span>&lt;<span class="ty">String</span>, <span class="ty">f64</span>&gt; {</span></div>
+              <div class="l"><span class="ln">12</span><span class="g"></span><span class="t">    <span class="kw">let mut</span> totals = <span class="ty">HashMap</span>::<span class="fn">new</span>();</span></div>
+              <div class="l"><span class="ln">13</span><span class="g"></span><span class="t">    <span class="kw">for</span> row <span class="kw">in</span> rows {</span></div>
+              <div class="l"><span class="ln">14</span><span class="g"></span><span class="t">        <span class="cmt">…</span></span></div>
+            </div>
+          </div>
+          <div class="side">
+            <h2>Coach <span>E0382 · fixed</span></h2>
+            <div class="pad">
+              <div class="rung done"><div class="st"><span>Step 1 · Question</span><span>answered</span></div>Keep, or only read? <b>Only read.</b></div>
+              <div class="rung done"><div class="st"><span>Step 2 · Hint</span><span>used</span></div>Reading only means borrowing. Put <code>&amp;</code> in front of the argument, and say in the signature that the function takes a borrowed list.</div>
+              <div class="rung locked"><div class="st"><span>Step 3 · Concept</span><span>not needed</span></div></div>
+              <div class="rung locked"><div class="st"><span>Step 4 · The fix</span><span>not needed</span></div></div>
+              <div class="box good"><div class="st">Fixed by you</div>Counts toward <b>Ownership</b>. Two more in different places and it is marked learned.</div>
+              <div class="box note"><div class="st">The other fix</div><code>sum_by_region(rows.clone())</code> also compiles. It copies the whole list. Fine for 4 rows, slow for 4 million. Ride shows it, never picks it for you.</div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span class="ok">● no problems</span><span>cargo check · live</span><span class="grow"></span><span>Ownership · 1 of 3</span></div>
+      </div>
+      <div class="grid4" style="margin-top:14px">
+        <div class="card"><div class="k">Step 1</div><h3>Question</h3><p>A question that points at the decision. No code.</p></div>
+        <div class="card"><div class="k">Step 2</div><h3>Hint</h3><p>What to change, in words. Still no code.</p></div>
+        <div class="card"><div class="k">Step 3</div><h3>Concept</h3><p>The two-minute lesson with a tiny example, linked to the Rust Book chapter.</p></div>
+        <div class="card"><div class="k">Step 4</div><h3>Fix</h3><p>The edit, shown as a diff. Applying it counts as assisted, not learned.</p></div>
+      </div>
+    </section>
+
+<!-- 7 -->
+    <section class="stage" data-scene="borrow" hidden>
+      <p class="kicker">Borrowing · E0502</p>
+      <h1>The borrow checker caught a bug Python would have run.</h1>
+      <p class="lede">Maya adds a discount pass the way she would in Python: loop over the prices, append discounted ones. Rust refuses. The overlay colours the shared borrow blue and the mutable one red, so the conflict is visible as two colours on one value.</p>
+      <div class="win" style="min-height:440px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/discount.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="ba">
+              <div>
+                <div class="hd"><b class="p">What Maya would write in Python</b></div>
+                <div class="code">
+                  <div class="l"><span class="ln">1</span><span class="g"></span><span class="t py">def apply_discount(prices):</span></div>
+                  <div class="l"><span class="ln">2</span><span class="g"></span><span class="t py">    for p in prices:</span></div>
+                  <div class="l"><span class="ln">3</span><span class="g"></span><span class="t py">        if p &gt; 100:</span></div>
+                  <div class="l"><span class="ln">4</span><span class="g"></span><span class="t py">            prices.append(p * 0.9)</span></div>
+                  <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:12"></span><span class="ann mv">runs, and the loop visits what it appends</span></span></div>
+                </div>
+              </div>
+              <div>
+                <div class="hd"><b>src/discount.rs</b></div>
+                <div class="code">
+                  <div class="l"><span class="ln">1</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">apply_discount</span>(prices: &amp;<span class="kw">mut</span> <span class="ty">Vec</span>&lt;<span class="ty">f64</span>&gt;) {</span></div>
+                  <div class="l"><span class="ln">2</span><span class="g" style="color:var(--info)">1</span><span class="t">    <span class="kw">for</span> p <span class="kw">in</span> <span class="u-shr">prices.<span class="fn">iter</span>()</span> {</span></div>
+                  <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:13"></span><span class="ann own">reading prices, until the loop ends</span></span></div>
+                  <div class="l"><span class="ln">3</span><span class="g"></span><span class="t">        <span class="kw">if</span> *p &gt; <span class="num">100.0</span> {</span></div>
+                  <div class="l cur"><span class="ln">4</span><span class="g" style="color:var(--error)">2</span><span class="t">            <span class="u-mut u-err">prices.<span class="fn">push</span></span>(p * <span class="num">0.9</span>);</span></div>
+                  <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:12"></span><span class="ann use">writing prices while it is being read</span></span></div>
+                  <div class="l"><span class="ln">5</span><span class="g"></span><span class="t">        }</span></div>
+                  <div class="l"><span class="ln">6</span><span class="g"></span><span class="t">    }</span></div>
+                  <div class="l"><span class="ln">7</span><span class="g"></span><span class="t">}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="side">
+            <h2>Coach <span>E0502 · Borrowing</span></h2>
+            <div class="pad">
+              <div class="errhead">cannot borrow `*prices` as mutable because it is also borrowed as immutable</div>
+              <p style="margin:8px 0 0"><b>The rule.</b> Many readers, or one writer. Never both at the same time.</p>
+              <div class="compare"><div class="st">If you know Python</div>Changing a list while looping over it is a classic Python bug. The loop sees the new items. Rust turns that bug into a compile error.</div>
+              <div class="rung open"><div class="st"><span>Step 1 · Question</span><span>open</span></div>Can you <b>finish reading</b> before you start writing?</div>
+              <div class="box note"><div class="st">Where this leads</div>Collect the new prices first, then add them in one go:<pre class="snip"><span class="kw">let</span> extra: <span class="ty">Vec</span>&lt;<span class="ty">f64</span>&gt; = prices.<span class="fn">iter</span>()
+    .<span class="fn">filter</span>(|p| **p &gt; <span class="num">100.0</span>)
+    .<span class="fn">map</span>(|p| p * <span class="num">0.9</span>).<span class="fn">collect</span>();
+prices.<span class="fn">extend</span>(extra);</pre></div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span class="bad">● 1 error</span><span>cargo check · live</span><span class="grow"></span><span>Borrowing · met</span></div>
+      </div>
+      <p class="caption">The "where this leads" box stays folded until step 4. It is shown open here for the deck. This is the moment Python developers stop seeing the borrow checker as an obstacle.</p>
+    </section>
+
+<!-- 8 -->
+    <section class="stage" data-scene="errors" hidden>
+      <p class="kicker">Result and ?</p>
+      <h1>No exceptions. Every place that can fail is marked.</h1>
+      <p class="lede">Maya's loader reads a file and parses numbers. Both can fail. In Python that is invisible until it raises. In Rust the signature says it, and each <code>?</code> is a spot where the function can stop and hand the error up.</p>
+      <div class="win" style="min-height:400px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/load.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="ba stack">
+              <div>
+                <div class="hd"><b class="p">Python</b></div>
+                <div class="code">
+                  <div class="l"><span class="ln">1</span><span class="g"></span><span class="t py">def load(path):</span></div>
+                  <div class="l"><span class="ln">2</span><span class="g"></span><span class="t py">    with open(path) as f:</span></div>
+                  <div class="l"><span class="ln">3</span><span class="g"></span><span class="t py">        lines = f.read().splitlines()[1:]</span></div>
+                  <div class="l"><span class="ln">4</span><span class="g"></span><span class="t py">    sales = []</span></div>
+                  <div class="l"><span class="ln">5</span><span class="g"></span><span class="t py">    for line in lines:</span></div>
+                  <div class="l"><span class="ln">6</span><span class="g"></span><span class="t py">        cols = line.split(",")</span></div>
+                  <div class="l"><span class="ln">7</span><span class="g"></span><span class="t py">        amount = float(cols[2])</span></div>
+                  <div class="l"><span class="ln">8</span><span class="g"></span><span class="t py">        sales.append(Sale(cols[1], amount))</span></div>
+                  <div class="l"><span class="ln">9</span><span class="g"></span><span class="t py">    return sales</span></div>
+                </div>
+              </div>
+              <div>
+                <div class="hd"><b>src/load.rs</b></div>
+                <div class="code">
+                  <div class="l"><span class="ln">1</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">load</span>(path: &amp;<span class="ty">str</span>) -&gt; <span class="u-own"><span class="ty">Result</span>&lt;<span class="ty">Vec</span>&lt;<span class="ty">Sale</span>&gt;, <span class="ty">Box</span>&lt;<span class="kw">dyn</span> <span class="ty">Error</span>&gt;&gt;</span> {</span></div>
+                  <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:23"></span><span class="ann own">this function can fail, and says so</span></span></div>
+                  <div class="l"><span class="ln">2</span><span class="g" style="color:var(--warning)">?</span><span class="t">    <span class="kw">let</span> text = fs::<span class="fn">read_to_string</span>(path)<span class="u-mv">?</span>;</span></div>
+                  <div class="l"><span class="ln">3</span><span class="g"></span><span class="t">    <span class="kw">let mut</span> sales = <span class="ty">Vec</span>::<span class="fn">new</span>();</span></div>
+                  <div class="l"><span class="ln">4</span><span class="g"></span><span class="t">    <span class="kw">for</span> line <span class="kw">in</span> text.<span class="fn">lines</span>().<span class="fn">skip</span>(<span class="num">1</span>) {</span></div>
+                  <div class="l"><span class="ln">5</span><span class="g"></span><span class="t">        <span class="kw">let</span> cols: <span class="ty">Vec</span>&lt;&amp;<span class="ty">str</span>&gt; = line.<span class="fn">split</span>(<span class="str">','</span>).<span class="fn">collect</span>();</span></div>
+                  <div class="l"><span class="ln">6</span><span class="g" style="color:var(--warning)">?</span><span class="t">        <span class="kw">let</span> amount: <span class="ty">f64</span> = cols[<span class="num">2</span>].<span class="fn">parse</span>()<span class="u-mv">?</span>;</span></div>
+                  <div class="l"><span class="ln">7</span><span class="g"></span><span class="t">        sales.<span class="fn">push</span>(<span class="ty">Sale</span> { region: cols[<span class="num">1</span>].<span class="fn">to_string</span>(), amount });</span></div>
+                  <div class="l"><span class="ln">8</span><span class="g"></span><span class="t">    }</span></div>
+                  <div class="l"><span class="ln">9</span><span class="g"></span><span class="t">    <span class="ty">Ok</span>(sales)</span></div>
+                  <div class="l"><span class="ln">10</span><span class="g"></span><span class="t">}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="side">
+            <h2>Lesson card <span>Result and ?</span></h2>
+            <div class="pad">
+              <p style="margin:0"><b><code>?</code> is a <code>raise</code> you can see.</b> If the file is missing, line 2 returns the error to the caller. If a number is bad, line 6 does.</p>
+              <div class="compare"><div class="st">If you know Python</div><code class="py">float(cols[2])</code> can raise <code class="py">ValueError</code>, but nothing on the line tells you. Here the <code>?</code> does, and the caller must handle the <code>Result</code>.</div>
+              <div class="box warn"><div class="st">Seen in main.rs:9</div><code>load("sales.csv").unwrap()</code> crashes on any error, like an uncaught exception. Fine while learning. The project checkpoint asks for a real message instead.</div>
+              <div class="box note"><div class="st">Also true</div><code>cols[2]</code> still panics on a short line. The tests in the project track will find it.</div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span class="ok">● no problems</span><span class="grow"></span><span>Errors · practicing</span></div>
+      </div>
+    </section>
+
+<!-- 9 -->
+    <section class="stage" data-scene="xray" hidden>
+      <p class="kicker">X-ray debugger</p>
+      <h1>Stop anywhere and see who owns what.</h1>
+      <p class="lede">Python frees memory when the last reference goes, somewhere, later. Rust frees it at a closing brace you can point at. Ride's debugger already shows frames and locals. Learn adds where each value lives, what points where, and a mark on every line where something is dropped.</p>
+      <div class="win" style="min-height:470px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — src/main.rs · stopped at line 15</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="main">
+            <div class="tabs"><div class="tab on">main.rs</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">11</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">sum_by_region</span>(rows: &amp;[&amp;<span class="ty">str</span>]) -&gt; <span class="ty">HashMap</span>&lt;<span class="ty">String</span>, <span class="ty">f64</span>&gt; {</span></div>
+              <div class="l"><span class="ln">12</span><span class="g"></span><span class="t">    <span class="kw">let mut</span> totals = <span class="ty">HashMap</span>::<span class="fn">new</span>();</span></div>
+              <div class="l"><span class="ln">13</span><span class="g"></span><span class="t">    <span class="kw">for</span> row <span class="kw">in</span> rows {</span></div>
+              <div class="l"><span class="ln">14</span><span class="g"></span><span class="t">        <span class="kw">let</span> cols: <span class="ty">Vec</span>&lt;&amp;<span class="ty">str</span>&gt; = row.<span class="fn">split</span>(<span class="str">','</span>).<span class="fn">collect</span>();</span></div>
+              <div class="l stop"><span class="ln">15</span><span class="g" style="color:var(--accent)">▶</span><span class="t">        <span class="kw">let</span> amount: <span class="ty">f64</span> = cols[<span class="num">2</span>].<span class="fn">parse</span>().<span class="fn">unwrap_or</span>(<span class="num">0.0</span>);</span></div>
+              <div class="l"><span class="ln">16</span><span class="g"></span><span class="t">        *totals.<span class="fn">entry</span>(cols[<span class="num">1</span>].<span class="fn">to_string</span>()).<span class="fn">or_insert</span>(<span class="num">0.0</span>) += amount;</span></div>
+              <div class="l"><span class="ln">17</span><span class="g" style="color:var(--violet)">◆</span><span class="t">    }</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:4"></span><span class="ann drop">cols dropped here, every turn of the loop</span></span></div>
+              <div class="l"><span class="ln">18</span><span class="g"></span><span class="t">    totals</span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:4"></span><span class="ann mv">moved out to the caller, not dropped</span></span></div>
+              <div class="l"><span class="ln">19</span><span class="g"></span><span class="t">}</span></div>
+            </div>
+          </div>
+          <div class="side" style="width:380px">
+            <h2>Memory <span>who owns what</span></h2>
+            <div class="mem">
+              <div class="frame"><div class="fh"><b>sum_by_region</b><span>stack</span></div>
+                <div class="slot"><span class="nm">rows</span><span class="v">&amp;[&amp;str] → borrows main's list, len 4</span></div>
+                <div class="slot"><span class="nm">totals</span><span class="v">HashMap · owns 1 entry <span class="arrow">→ heap</span></span></div>
+                <div class="slot"><span class="nm">cols</span><span class="v">Vec&lt;&amp;str&gt; · owns 3 views <span class="arrow">→ heap</span></span></div>
+              </div>
+              <div class="frame"><div class="fh"><b>main</b><span>stack</span></div>
+                <div class="slot"><span class="nm">text</span><span class="v">String · owns 58 bytes <span class="arrow">→ heap</span></span></div>
+                <div class="slot"><span class="nm">rows</span><span class="v">Vec&lt;&amp;str&gt; · 4 views into text <span class="arrow">→ heap</span></span></div>
+              </div>
+              <div class="heap"><span class="lab">Heap · text's bytes</span><br>date,region,amount⏎<span style="background:rgba(90,169,255,.18)">10-01,north,120.5</span>⏎<span style="background:rgba(90,169,255,.18)">10-01,south,80</span>⏎…<br><span class="arrow">↑ rows[0] and rows[1] point here. No copies.</span></div>
+              <div class="compare"><div class="st">If you know Python</div>No reference counts and no garbage collector. Each value is freed at the ◆ of its owner. Step over line 17 and watch <code>cols</code> disappear.</div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>lldb-dap · paused</span><span class="grow"></span><span>F8 step over · ⇧F8 step out</span></div>
+      </div>
+    </section>
+
+<!-- 10 -->
+    <section class="stage" data-scene="concepts" hidden>
+      <p class="kicker">Concept map · day 9</p>
+      <h1>Progress comes from what Maya wrote, not from quizzes.</h1>
+      <p class="lede">Ride sees the code structurally. It knows when she wrote her first <code>impl</code>, her first <code>?</code>, her first closure, and which compiler errors she fixed without the last step of the ladder. Each card links to the lines where it happened.</p>
+      <div class="win">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">Learn › What you know</span><span class="grow"></span><span style="font-size:11px;color:var(--tertiary)">stored on this Mac only</span></div>
+        <div class="cm">
+          <div class="cn learned"><span class="s">learned</span><b>Ownership and moves</b>Fixed E0382 yourself 3 times · main.rs:7, report.rs:31, cli.rs:12<div class="meter"><i style="width:100%;background:var(--success)"></i></div></div>
+          <div class="cn learned"><span class="s">learned</span><b>String and &amp;str</b>Wrote both, converted between them in 5 places<div class="meter"><i style="width:100%;background:var(--success)"></i></div></div>
+          <div class="cn learned"><span class="s">learned</span><b>Structs and impl</b><code>Sale</code>, <code>Report</code>, three methods<div class="meter"><i style="width:100%;background:var(--success)"></i></div></div>
+          <div class="cn practice"><span class="s">practicing</span><b>Borrowing</b>E0502 once with a hint, once alone<div class="meter"><i style="width:66%;background:var(--warning)"></i></div></div>
+          <div class="cn practice"><span class="s">practicing</span><b>Result and ?</b>Five <code>?</code>, two <code>unwrap</code> left in main<div class="meter"><i style="width:50%;background:var(--warning)"></i></div></div>
+          <div class="cn met"><span class="s">met</span><b>Iterators and closures</b>Inserted from the cheat sheet, not written yet<div class="meter"><i style="width:25%;background:var(--info)"></i></div></div>
+          <div class="cn met"><span class="s">met</span><b>Enums and match</b>Used <code>Option</code>, no enum of your own<div class="meter"><i style="width:25%;background:var(--info)"></i></div></div>
+          <div class="cn met"><span class="s">met</span><b>Modules and crates</b>Split into 3 files, one dependency added<div class="meter"><i style="width:30%;background:var(--info)"></i></div></div>
+          <div class="cn notyet next"><span class="s" style="color:var(--accent)">next</span><b>Traits</b>Project 2 asks you to implement <code>Display</code> for <code>Report</code></div>
+          <div class="cn notyet"><span class="s">not yet</span><b>Generics</b></div>
+          <div class="cn notyet"><span class="s">not yet</span><b>Lifetimes</b>Project 3 meets them at the Python boundary</div>
+          <div class="cn notyet"><span class="s">not yet</span><b>Threads and async</b></div>
+        </div>
+      </div>
+      <p class="caption"><b>The rule.</b> A concept is learned after Ride sees Maya write it, or fix its error herself, three times in different places. A fix applied from step 4 counts as practice. The record is a local file under Application Support, never uploaded.</p>
+    </section>
+
+<!-- 11 -->
+    <section class="stage" data-scene="projects" hidden>
+      <p class="kicker">Tracks</p>
+      <h1>Real projects, with tests as checkpoints.</h1>
+      <p class="lede">Each track is a small Cargo project with failing tests. A checkpoint is a test that turns green. Every track is picked for what Python developers actually want Rust for.</p>
+      <div class="grid4">
+        <div class="card pick"><div class="k">Track 1 · in progress</div><h3>Port a Python script</h3><p>The sales CSV summary. Ownership, strings, <code>Result</code>, structs.</p><p style="margin-top:8px;color:var(--success)">5 of 7 checkpoints</p></div>
+        <div class="card"><div class="k">Track 2</div><h3>A real command-line tool</h3><p><code>clap</code>, files, exit codes. Enums, <code>match</code>, traits, modules.</p></div>
+        <div class="card"><div class="k">Track 3</div><h3>Speed up your Python</h3><p>A Rust module that Python imports with PyO3. The boundary, lifetimes.</p></div>
+        <div class="card"><div class="k">Track 4</div><h3>A small web API</h3><p><code>axum</code> and <code>tokio</code>. Async, <code>Arc</code>, shared state.</p></div>
+      </div>
+      <div class="win" style="margin-top:14px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">sales — Tests</span><span class="grow"></span><span class="btn" style="margin:0">Rerun failed</span></div>
+        <div class="tests">
+          <div class="tr"><span class="pass">✓</span><span>reads_the_header_and_skips_it</span><span class="r">checkpoint 1 · Strings</span></div>
+          <div class="tr"><span class="pass">✓</span><span>sums_two_regions</span><span class="r">checkpoint 2 · Ownership</span></div>
+          <div class="tr"><span class="pass">✓</span><span>returns_an_error_for_a_missing_file</span><span class="r">checkpoint 3 · Result</span></div>
+          <div class="tr"><span class="pass">✓</span><span>sale_is_a_struct_with_a_method</span><span class="r">checkpoint 4 · Structs</span></div>
+          <div class="tr"><span class="pass">✓</span><span>big_sales_uses_an_iterator</span><span class="r">checkpoint 5 · Iterators</span></div>
+          <div class="tr"><span class="fail">✗</span><span>a_short_line_is_an_error_not_a_panic</span><span class="r">checkpoint 6 · Result · <span style="color:var(--error)">panicked at main.rs:14 index out of bounds</span></span></div>
+          <div class="tr"><span class="todo">○</span><span>main_prints_a_message_instead_of_unwrap</span><span class="r">checkpoint 7 · Errors</span></div>
+        </div>
+      </div>
+      <p class="caption">Already doing the work: the Tests panel, ▶ gutter markers on each test, Rerun Failed and the run console. <b>Rustlings</b> fits the same shape. Open its folder and Ride offers the next exercise, runs its check and records the concept.</p>
+    </section>
+
+<!-- 12 -->
+    <section class="stage" data-scene="pyo3" hidden>
+      <p class="kicker">Track 3 · PyO3</p>
+      <h1>Keep the Python. Move the slow part to Rust.</h1>
+      <p class="lede">Most Python developers will not rewrite their stack. They want one hot function to be fast. Track 3 builds the sales summary as a Python module in Rust. Ride runs <code>maturin</code> from the Run menu, and the terminal panel imports it from Python.</p>
+      <div class="win" style="min-height:460px">
+        <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">fastsales — src/lib.rs</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+        <div class="body">
+          <div class="tree"><div class="root">fastsales</div><div class="row">Cargo.toml</div><div class="row">pyproject.toml</div><div class="row">bench.py</div><div class="row">src</div><div class="row on">lib.rs</div></div>
+          <div class="main">
+            <div class="tabs"><div class="tab on">lib.rs</div><div class="tab">bench.py</div></div>
+            <div class="code">
+              <div class="l"><span class="ln">1</span><span class="g"></span><span class="t"><span class="kw">use</span> pyo3::prelude::*;</span></div>
+              <div class="l"><span class="ln">2</span><span class="g"></span><span class="t"><span class="kw">use</span> std::collections::<span class="ty">HashMap</span>;</span></div>
+              <div class="l"><span class="ln">3</span><span class="g"></span><span class="t"></span></div>
+              <div class="l"><span class="ln">4</span><span class="g"></span><span class="t"><span class="u-own">#[pyfunction]</span></span></div>
+              <div class="l"><span class="ln"></span><span class="g"></span><span class="t"><span class="off" style="--c:0"></span><span class="ann own">Python can call this. The dict and the str convert for you.</span></span></div>
+              <div class="l"><span class="ln">5</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">sum_by_region</span>(path: &amp;<span class="ty">str</span>) -&gt; <span class="ty">PyResult</span>&lt;<span class="ty">HashMap</span>&lt;<span class="ty">String</span>, <span class="ty">f64</span>&gt;&gt; {</span></div>
+              <div class="l"><span class="ln">6</span><span class="g"></span><span class="t">    <span class="kw">let</span> text = std::fs::<span class="fn">read_to_string</span>(path)?;</span></div>
+              <div class="l"><span class="ln">7</span><span class="g"></span><span class="t">    <span class="ty">Ok</span>(sales::<span class="fn">sum_by_region</span>(&amp;text))</span></div>
+              <div class="l"><span class="ln">8</span><span class="g"></span><span class="t">}</span></div>
+              <div class="l"><span class="ln">9</span><span class="g"></span><span class="t"></span></div>
+              <div class="l"><span class="ln">10</span><span class="g"></span><span class="t">#[pymodule]</span></div>
+              <div class="l"><span class="ln">11</span><span class="g"></span><span class="t"><span class="kw">fn</span> <span class="fn">fastsales</span>(m: &amp;<span class="ty">Bound</span>&lt;<span class="str">'_</span>, <span class="ty">PyModule</span>&gt;) -&gt; <span class="ty">PyResult</span>&lt;()&gt; {</span></div>
+              <div class="l"><span class="ln">12</span><span class="g"></span><span class="t">    m.<span class="fn">add_function</span>(<span class="mac">wrap_pyfunction!</span>(sum_by_region, m)?)?;</span></div>
+              <div class="l"><span class="ln">13</span><span class="g"></span><span class="t">    <span class="ty">Ok</span>(())</span></div>
+              <div class="l"><span class="ln">14</span><span class="g"></span><span class="t">}</span></div>
+            </div>
+            <div class="term"><span class="p">❯</span> <span class="c">maturin develop --release</span>
+📦 Built wheel for CPython 3.12 · Installed fastsales-0.1.0
+<span class="p">❯</span> <span class="c">python bench.py big_sales.csv</span>
+pure python   <span style="color:var(--warning)">8.4 s</span>
+fastsales     <span style="color:var(--success)">0.6 s</span>   same totals ✓        <span style="color:var(--tertiary)">illustrative numbers</span></div>
+          </div>
+          <div class="side" style="width:300px">
+            <h2>Lesson card <span>the boundary</span></h2>
+            <div class="pad">
+              <p style="margin:0"><b>The <code>'_</code> on line 11 is a lifetime.</b> The module object belongs to Python. Rust may use it only while Python lends it. This is Maya's first lifetime, and she did not have to write one of her own.</p>
+              <div class="compare"><div class="st">If you know Python</div>From the Python side it is a normal import: <code class="py">from fastsales import sum_by_region</code>. Errors arrive as Python exceptions, thanks to <code>PyResult</code>.</div>
+              <div class="box good"><div class="st">Reuses track 1</div>Line 7 calls the code Maya already wrote and tested. The Python wrapper is 10 lines.</div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span>Run › maturin develop</span><span class="grow"></span><span>Lifetimes · met</span></div>
+      </div>
+    </section>
+
+<!-- 13 -->
+    <section class="stage" data-scene="tutor" hidden>
+      <p class="kicker">Learning mode</p>
+      <h1>The AI teaches. It does not type for her.</h1>
+      <p class="lede">Ghost-text suggestions would write the Rust Maya is trying to learn. Learning mode turns them off and points the chat at the hint ladder. Completion, the cheat sheet and every IDE feature keep working.</p>
+      <div class="grid2">
+        <div class="win" style="min-height:400px">
+          <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">AI Chat · tutor</span><span class="grow"></span><span class="modepill">Learning mode</span></div>
+          <div class="chat" style="flex:1;padding-bottom:12px">
+            <div class="msg me"><div class="who">Maya</div>just fix main.rs line 14 for me</div>
+            <div class="msg tutor"><div class="who">Tutor · local model</div>You'll keep this one longer if you write it. Line 14 indexes <code>cols[2]</code> and the line has two columns. What should <code>sum_by_region</code> do with a row it can't read: skip it, or stop?</div>
+            <div class="msg me"><div class="who">Maya</div>stop, and say which line</div>
+            <div class="msg tutor"><div class="who">Tutor</div>Then the function needs a way to fail, which you already know from <code>load</code>. Look at <code>cols.get(2)</code> in the cheat sheet. It returns an <code>Option</code> instead of panicking.<br><span class="btn">Show the fix · counts as assisted</span><span class="btn">Explain Option</span></div>
+          </div>
+        </div>
+        <div class="win">
+          <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="name">Preferences › Learn</span></div>
+          <div class="prefs">
+            <div class="row"><span class="tog on"></span><b>Learning mode</b><span class="r">for this workspace</span></div>
+            <div class="row"><span class="tog"></span><b>AI ghost text</b><span class="r">off in learning mode</span></div>
+            <div class="row"><span class="tog on"></span><b>Chat answers with a question first</b><span class="r">hint ladder</span></div>
+            <div class="row"><span class="tog on"></span><b>Coach on compiler errors</b><span class="r">E0382, E0499, E0502, E0505, E0106, E0308…</span></div>
+            <div class="row"><span class="tog on"></span><b>Type lens</b><span class="r">grey types after let</span></div>
+            <div class="row"><span class="tog on"></span><b>Simple menus</b><span class="r">hides Git, Generate, Refactor</span></div>
+            <div class="row"><b style="min-width:120px">Coming from</b><span class="r" style="color:var(--text)">Python ▾</span></div>
+            <div class="row"><b style="min-width:120px">Tutor model</b><span class="r" style="color:var(--text)">Local · Ollama ▾</span></div>
+            <p style="margin:10px 0 0;color:var(--tertiary);line-height:1.45">With a local model nothing leaves the Mac. The tutor gets Ride's context pack, the item at the caret and the definitions it uses, so a small model is enough. An API key works too.</p>
+          </div>
+        </div>
+      </div>
+      <p class="caption">The chat panel, context packs and Explain ship today. Learning mode adds the tutor prompt, the ladder and the local provider, which the October plan already lists as card A-4.</p>
+    </section>
+
+<!-- 14 -->
+    <section class="stage" data-scene="toolbox" hidden>
+      <p class="kicker">The toolbox</p>
+      <h1>Every tool Maya knows has a Rust twin, and Ride runs it.</h1>
+      <p class="lede">Half of the confusion is not the language. It is the tools. The From Python section of the Cargo.toml cheat sheet maps each habit, and the Tools panel installs what is missing.</p>
+      <div class="card" style="padding:6px 6px">
+        <table class="map">
+          <tr><th>Python</th><th>Rust</th><th>In Ride</th></tr>
+          <tr><td>pip install requests</td><td>cargo add reqwest</td><td>Cargo.toml completion and cheat sheet. The tree refreshes when the manifest changes.</td></tr>
+          <tr><td>requirements.txt / poetry.lock</td><td>Cargo.toml / Cargo.lock</td><td>Highlighting, outline and key completion for the manifest.</td></tr>
+          <tr><td>venv</td><td>nothing to set up</td><td>Each project builds into its own <code>target/</code>. Nothing global to activate.</td></tr>
+          <tr><td>python main.py</td><td>cargo run</td><td>⌘R runs the selected target. Output links jump to <code>file:line</code>.</td></tr>
+          <tr><td>pytest</td><td>cargo test</td><td>⇧⌘R, the Tests panel, ▶ markers in the gutter.</td></tr>
+          <tr><td>black</td><td>rustfmt</td><td>Reformat on save.</td></tr>
+          <tr><td>ruff / pylint</td><td>clippy</td><td>Live while typing. Each lint links to its explanation, and Learn adds a Python note.</td></tr>
+          <tr><td>mypy</td><td>the compiler</td><td>Types are always checked. The type lens shows them.</td></tr>
+          <tr><td>pdb / breakpoint()</td><td>lldb</td><td>Click the gutter, ⌃⌘R to debug. Locals with Rust formatters.</td></tr>
+          <tr><td>help(), docstrings</td><td>/// doc comments, docs.rs</td><td>Hover, ⌃J Quick Documentation, the docs of every crate already on disk.</td></tr>
+          <tr><td>PyPI</td><td>crates.io</td><td>Completion knows every crate already downloaded. Nothing to configure.</td></tr>
+        </table>
+      </div>
+    </section>
+
+<!-- 15 -->
+    <section class="stage" data-scene="build" hidden>
+      <p class="kicker">Plan</p>
+      <h1>Most of the engine is already here. The teaching layer is new.</h1>
+      <p class="lede">Learn is a mode of Ride, not a separate app. It reuses the compiler data, the oracle, the debugger and the cheat sheets, and adds a thin layer of explanation on top.</p>
+      <div class="grid2">
+        <div class="card">
+          <div class="k" style="color:var(--success)">In the tree today</div>
+          <ul class="clean">
+            <li><b>Cheat sheets.</b> 89 Rust topics, about 2,000 templates with keys and docs, chosen by caret context.</li>
+            <li><b>Compiler data.</b> Live cargo check and clippy JSON, with every span and label.</li>
+            <li><b>Types.</b> rust-analyzer hover, Type Info and type-aware completion.</li>
+            <li><b>Debugger.</b> lldb-dap with frames, locals and Rust formatters.</li>
+            <li><b>Tests.</b> Tests panel, gutter markers, Rerun Failed.</li>
+            <li><b>AI.</b> Chat panel, Explain and engine context packs.</li>
+            <li><b>Structure.</b> tree-sitter items and the reference index, which can tell what was written.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="k" style="color:var(--warning)">To build</div>
+          <ul class="clean">
+            <li><b>Ownership overlay.</b> Draw rustc's labels on the lines, numbered in order.</li>
+            <li><b>Coach and hint ladder.</b> Cards for the top 15 borrow and type errors, per source language.</li>
+            <li><b>From Python keys.</b> A Python field and section in the cheat sheet data.</li>
+            <li><b>Type lens.</b> Inlay hints, oracle card O-4.</li>
+            <li><b>Learning mode.</b> Ghost text off, tutor prompt, simple menus, local model.</li>
+            <li><b>Concept tracking.</b> Detect concepts from the syntax tree and fixed errors, stored locally.</li>
+            <li><b>Tracks.</b> Four projects with checkpoint tests, plus Rustlings.</li>
+            <li><b>X-ray.</b> Drop marks and a heap view. The largest card, so it comes last.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card"><div class="k">Two-week test</div><h3>Overlay, ladder, Rustlings</h3><p>The ownership overlay for E0382 and E0502, the hint ladder with a fixed text per error, and Rustlings folder support.</p></div>
+        <div class="card"><div class="k">Who</div><h3>Five people learning Rust now</h3><p>Python developers first. Each one works on their own script, not on a demo.</p></div>
+        <div class="card"><div class="k">The number</div><h3>The second E0382</h3><p>After the first move error, do they fix the next one without step 4? That is the whole product in one measure.</p></div>
+      </div>
+    </section>
+
+    <div class="stage" style="padding-top:0">
+      <div class="pager"><button data-dir="-1">← Back</button><button data-dir="1">Next →</button><span class="k">← → keys</span></div>
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  var buttons = Array.prototype.slice.call(document.querySelectorAll(".rail [data-go]"));
+  var order = buttons.map(function (b) { return b.getAttribute("data-go"); });
+  var stages = Array.prototype.slice.call(document.querySelectorAll("[data-scene]"));
+  function current() { var id = location.hash.slice(1); return order.indexOf(id) < 0 ? order[0] : id; }
+  function show(id) {
+    if (order.indexOf(id) < 0) id = order[0];
+    stages.forEach(function (s) { s.hidden = s.getAttribute("data-scene") !== id; });
+    buttons.forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-go") === id ? "true" : "false"); });
+    window.scrollTo(0, 0);
+    history.replaceState(null, "", "#" + id);
+  }
+  function step(d) { var i = order.indexOf(current()); show(order[Math.max(0, Math.min(order.length - 1, i + d))]); }
+  buttons.forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-go")); }); });
+  document.querySelectorAll("[data-dir]").forEach(function (b) { b.addEventListener("click", function () { step(Number(b.getAttribute("data-dir"))); }); });
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+  show(current());
+})();
+</script>
+</body>
+</html>

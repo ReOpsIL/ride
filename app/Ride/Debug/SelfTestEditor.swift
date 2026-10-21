@@ -28,6 +28,20 @@ struct SelfTestEditor {
         return (text as NSString).lineRange(for: NSRange(location: start, length: 0))
     }
 
+    func background(line number: Int) -> NSColor? {
+        guard let view, let tlm = view.textLayoutManager,
+              let start = view.textRange(utf16: NSRange(location: lineRange(number).location, length: 0))?.location
+        else {
+            return nil
+        }
+        var color: NSColor?
+        tlm.enumerateRenderingAttributes(from: start, reverse: false) { _, attributes, _ in
+            color = attributes[.backgroundColor] as? NSColor
+            return false
+        }
+        return color
+    }
+
     func caret(line number: Int, column: Int = 1) {
         let range = lineRange(number)
         view?.setSelectedRange(NSRange(location: range.location + column - 1, length: 0))

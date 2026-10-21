@@ -32,6 +32,30 @@ impl DebugRegistry {
         Ok(id)
     }
 
+    pub fn start_mapped(
+        self: &Arc<Self>,
+        adapter: &Path,
+        arguments: &[String],
+        launch: DebugLaunch,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+        paths: crate::remote::PathMap,
+    ) -> Result<u64, EngineError> {
+        let id = self.reserve();
+        let session = DebugSession::open(
+            adapter,
+            arguments,
+            launch,
+            None,
+            breakpoints,
+            listener,
+            Some(paths),
+        )?;
+        self.insert(id, Arc::clone(&session));
+        session.attach(self, id);
+        Ok(id)
+    }
+
     pub fn reserve(&self) -> u64 {
         self.next.fetch_add(1, Ordering::SeqCst) + 1
     }
