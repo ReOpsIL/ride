@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA7A00000000000000000010 /* SelfTestSteps+DebugLabAttach.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A0000000000000000000F /* SelfTestSteps+DebugLabAttach.swift */; };
+		AA7A0000000000000000000E /* SelfTestSteps+DebugAttach.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A0000000000000000000D /* SelfTestSteps+DebugAttach.swift */; };
+		AA7A0000000000000000000C /* AttachModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A0000000000000000000B /* AttachModelTests.swift */; };
+		AA7A0000000000000000000A /* AppState+Attach.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000009 /* AppState+Attach.swift */; };
+		AA7A00000000000000000008 /* AttachSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000007 /* AttachSheet.swift */; };
+		AA7A00000000000000000006 /* AttachModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000004 /* AttachModel.swift */; };
+		AA7A00000000000000000005 /* AttachModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000004 /* AttachModel.swift */; };
+		AA7A00000000000000000003 /* ProcessFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000001 /* ProcessFilter.swift */; };
+		AA7A00000000000000000002 /* ProcessFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7A00000000000000000001 /* ProcessFilter.swift */; };
 		MCTC510752448302C4A236CE /* RunOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q20000000000000000000003 /* RunOutput.swift */; };
 		MCT045857B8FB5CEFA1E9D57 /* RunConfigDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q3000000000000000000000D /* RunConfigDraft.swift */; };
 		MCTBFB4794D5F91E53BD1C00 /* DebugProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4000000000000000000004F /* DebugProgram.swift */; };
@@ -1049,6 +1058,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AA7A0000000000000000000F /* SelfTestSteps+DebugLabAttach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabAttach.swift"; sourceTree = "<group>"; };
+		AA7A0000000000000000000D /* SelfTestSteps+DebugAttach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugAttach.swift"; sourceTree = "<group>"; };
+		AA7A0000000000000000000B /* AttachModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachModelTests.swift; sourceTree = "<group>"; };
+		AA7A00000000000000000009 /* AppState+Attach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Attach.swift"; sourceTree = "<group>"; };
+		AA7A00000000000000000007 /* AttachSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachSheet.swift; sourceTree = "<group>"; };
+		AA7A00000000000000000004 /* AttachModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachModel.swift; sourceTree = "<group>"; };
+		AA7A00000000000000000001 /* ProcessFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessFilter.swift; sourceTree = "<group>"; };
 		WS0000000000000000000011 /* DebugForwarder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugForwarder.swift; sourceTree = "<group>"; };
 		WS0000000000000000000021 /* DebugCommandEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommandEffect.swift; sourceTree = "<group>"; };
 		WS0000000000000000000031 /* DebugBreakpointSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBreakpointSync.swift; sourceTree = "<group>"; };
@@ -2089,6 +2105,7 @@
 				MC4AE638A3178AC2153E8B3B /* RunOutputOriginTests.swift */,
 				MC8DC561DC85041630DDE157 /* RunConfigDraftTests.swift */,
 				MC8EAB613C72E10C6F99A482 /* DebugProgramTests.swift */,
+				AA7A0000000000000000000B /* AttachModelTests.swift */,
 				MCF22A416DB304AACCB99388 /* RunChainTests.swift */,
 				MC74A2EFB4F7AFCFB82A4265 /* RunRequestsTests.swift */,
 				MC562305029C392879356D71 /* RunVariantTests.swift */,
@@ -2775,6 +2792,8 @@
 				P50000000000000000000001 /* SelfTestSteps+CppDebug.swift */,
 				D1AB00000000000000000001 /* DebugLab.swift */,
 				D1AB00000000000000000003 /* SelfTestSteps+DebugLab.swift */,
+				AA7A0000000000000000000F /* SelfTestSteps+DebugLabAttach.swift */,
+				AA7A0000000000000000000D /* SelfTestSteps+DebugAttach.swift */,
 				D1AB00000000000000000005 /* SelfTestSteps+DebugLabStepping.swift */,
 				D1AB00000000000000000007 /* SelfTestSteps+DebugLabThreads.swift */,
 				D1AB00000000000000000009 /* SelfTestDebugControls.swift */,
@@ -2850,6 +2869,10 @@
 				WS0000000000000000000011 /* DebugForwarder.swift */,
 				D4000000000000000000002F /* DebugController+Events.swift */,
 				D4000000000000000000004F /* DebugProgram.swift */,
+				AA7A00000000000000000009 /* AppState+Attach.swift */,
+				AA7A00000000000000000007 /* AttachSheet.swift */,
+				AA7A00000000000000000004 /* AttachModel.swift */,
+				AA7A00000000000000000001 /* ProcessFilter.swift */,
 				D4000000000000000000005F /* AppState+Debug.swift */,
 				D4000000000000000000006F /* AppState+Breakpoints.swift */,
 				D4000000000000000000007F /* BreakpointEditor.swift */,
@@ -3239,6 +3262,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA7A0000000000000000000C /* AttachModelTests.swift in Sources */,
+				AA7A00000000000000000006 /* AttachModel.swift in Sources */,
+				AA7A00000000000000000003 /* ProcessFilter.swift in Sources */,
 				GIT000000000000000000060 /* AIInlineGhost.swift in Sources */,
 				GIT000000000000000000063 /* AIInlineLine.swift in Sources */,
 				GIT00000000000000000006B /* AIInlineGhostTests.swift in Sources */,
@@ -3547,6 +3573,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA7A00000000000000000010 /* SelfTestSteps+DebugLabAttach.swift in Sources */,
+				AA7A0000000000000000000E /* SelfTestSteps+DebugAttach.swift in Sources */,
+				AA7A0000000000000000000A /* AppState+Attach.swift in Sources */,
+				AA7A00000000000000000008 /* AttachSheet.swift in Sources */,
+				AA7A00000000000000000005 /* AttachModel.swift in Sources */,
+				AA7A00000000000000000002 /* ProcessFilter.swift in Sources */,
 				GIT00000000000000000005F /* AIInlineGhost.swift in Sources */,
 				GIT000000000000000000062 /* AIInlineLine.swift in Sources */,
 				GIT000000000000000000065 /* AIInlineController.swift in Sources */,

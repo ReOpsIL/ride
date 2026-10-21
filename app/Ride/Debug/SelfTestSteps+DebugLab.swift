@@ -24,6 +24,7 @@ extension SelfTestSteps {
             + labLoopSteps(state: state, e: e, lab: lab, scratch: scratch)
             + labThreadSteps(state: state, e: e, lab: lab, scratch: scratch)
             + labHeartbeatSteps(state: state, e: e, lab: lab, scratch: scratch)
+            + labAttachSteps(state: state, e: e, lab: lab, scratch: scratch)
             + throwing
     }
 

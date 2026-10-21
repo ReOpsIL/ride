@@ -20,6 +20,7 @@ extension AppState {
             self?.appendDebugOutput(text)
         }
         observeDebugPanel()
+        observeAttach()
     }
 
     func startDebug() {
@@ -60,7 +61,7 @@ extension AppState {
         }
     }
 
-    private func debugLaunch() -> DebugLaunch? {
+    func debugLaunch() -> DebugLaunch? {
         guard let target = runTarget, let plan = runPlan(.run) else {
             return nil
         }

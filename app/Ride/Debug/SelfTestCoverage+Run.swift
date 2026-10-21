@@ -10,6 +10,7 @@ extension SelfTestCoverage {
         "Run › Stop": ["menu run stop"],
         "Run › Edit Configurations…": ["menu edit configurations", "run config save", "cmake sanitizer build"],
         "Debug › Debug": ["menu debug while running", "rerun after debug relaunches the debugger"],
+        "Debug › Attach to Process…": ["menu debug attach"],
         "Debug › Continue": ["menu debug continue"],
         "Debug › Step Over": ["menu debug step over"],
         "Debug › Step Into": ["menu debug step into"],

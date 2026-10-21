@@ -3,6 +3,7 @@ import SwiftUI
 
 struct RootView: View {
     @ObservedObject private var assistant = AIAssistant.shared
+    @ObservedObject private var attach = AttachModel.shared
     @EnvironmentObject private var state: AppState
     @ObservedObject private var ts = ThemeStore.shared
 
@@ -34,6 +35,9 @@ struct RootView: View {
         }
         .sheet(isPresented: $state.showRunConfigSheet) {
             RunConfigSheet(editor: state.runConfigEditor).environmentObject(state)
+        }
+        .sheet(isPresented: $attach.visible) {
+            AttachSheet(model: attach)
         }
         .sheet(isPresented: $state.showRenamePreview) {
             RenamePreviewSheet(

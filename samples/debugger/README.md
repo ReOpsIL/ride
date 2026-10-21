@@ -1,6 +1,6 @@
 # Debugger lab
 
-Three small programs, in Rust, C++ and C, for checking Ride's debugger by hand. They are written to be stepped through: stepping controls, the call stack, variables and watches, breakpoint conditions, threads, exceptions and Pause. All three run the same nine scenarios with the same function names and print the same results, so one checklist covers all three languages.
+Three small programs, in Rust, C++ and C, for checking Ride's debugger by hand. They are written to be stepped through: stepping controls, the call stack, variables and watches, breakpoint conditions, threads, exceptions, Pause and attaching to a forked child. All three run the same ten scenarios with the same function names and print the same results, so one checklist covers all three languages.
 
 ```
 rust/   Cargo crate `debugger-lab`, one module per scenario (src/<scenario>.rs)
@@ -10,7 +10,7 @@ c/      CMake, C17 + pthreads, one file per scenario (src/<scenario>.c)
 
 Open `samples/debugger` itself to get all three as projects in one window (the active project follows the editor), or open one language folder on its own. Debug (⌃⌘R) builds first: Cargo `dev` and CMake `Debug`, both `-O0 -g`. You need `lldb-dap`; Xcode's copy is found through `xcrun`.
 
-Every scenario runs by default, in order, and prints `== <scenario> ==` first. To run a single one, put its name in **Run › Edit Configurations… › Program Arguments** (`stepping`, `stack`, `recursion`, `loops`, `data`, `dispatch`, `threads`, `faults`, `heartbeat`). From a shell: `cargo run -- stack`, or `cmake -S . -B build/Debug && cmake --build build/Debug && build/Debug/debugger-lab stack`.
+The first nine scenarios run by default, in order, and each prints `== <scenario> ==` first. To run a single one, put its name in **Run › Edit Configurations… › Program Arguments** (`stepping`, `stack`, `recursion`, `loops`, `data`, `dispatch`, `threads`, `faults`, `heartbeat`). `fork` runs only when named. From a shell: `cargo run -- stack`, or `cmake -S . -B build/Debug && cmake --build build/Debug && build/Debug/debugger-lab stack`.
 
 Set breakpoints by clicking the gutter. The steps below point at code by function name and statement, not line number.
 
@@ -102,13 +102,36 @@ Expect `threads: total=99`.
 - **Step Out** a few times (one per system frame) returns to the loop in `heartbeat`. **Continue** resumes and the output keeps coming.
 - **Stop (⌘F2)** ends the session part-way through.
 
+## 10. fork: attach to a child process
+
+`fork` forks once. The child runs `child_work` 60 times, twice a second, for 30 seconds, then exits. Program Arguments `fork <seconds>` sets how long the parent waits before it forks (default 10). The output shows both PIDs:
+
+```
+fork: parent pid 31548 forks in 10 s
+fork: child pid 31550
+fork: child total=73810
+fork: child 31550 exited with 0
+```
+
+lldb debugs one process and does not follow a fork, so the child is reached by attaching to it. Start the program with **Run** (⌘R), not Debug: under Debug, only the parent is debugged and the child runs through its breakpoints. C and C++ need a **Run › Build** first, because Run does not build CMake targets.
+
+Set a breakpoint on `let squared = round * round;` / `int squared = round * round;` in `child_work` first.
+
+**By PID.** Set Program Arguments to `fork 0` and Run. Open **Debug › Attach to Process…**, type `debugger-lab` in the filter, and pick the row whose PID matches `fork: child pid`. Its parent column shows the parent's PID. Attach. The debugger stops in `child_work`, and `round` counts up on each Continue.
+
+**By waiting for it.** Set Program Arguments to `fork` (10 s delay) and Run. While the parent counts down, open **Debug › Attach to Process…**, switch to **Wait for Launch** (the name defaults to the selected target's binary) and Attach. lldb skips processes that already exist, so it catches the child when the parent forks, not the parent itself. If the wait starts before the parent, it catches the parent instead.
+
+- The threads, stack and variables panels work as for a launched program. Step Over and Continue stay in the child; the parent is not stopped.
+- **Stop (⌘F2)** detaches: the child keeps running and the parent still prints `exited with 0` at the end.
+- Attaching needs macOS developer mode, as debugging does.
+
 ## Button bar and menu
 
 The same controls are in the **Debug** menu and in the Debug panel header: Debug, Continue, Step Over, Step Into, Step Out, Pause, Stop. While running, only Pause and Stop are enabled; while stopped, Continue and the three steps. Each scenario above can be driven from either.
 
 ## Automated check
 
-Ride's in-app self-test drives scenarios 1, 2, 3, 4, 7 and 9 (and the C++ Throw filter from 8) through the real debugger when it is opened on one language folder of the lab. It presses the Debug shortcuts and menu items, clicks the gutter, fills in the breakpoint dialog, and checks that the editor follows each stop. It needs macOS developer mode. Run it on a fresh copy, one language at a time:
+Ride's in-app self-test drives scenarios 1, 2, 3, 4, 7, 9 and 10 (and the C++ Throw filter from 8) through the real debugger when it is opened on one language folder of the lab. It presses the Debug shortcuts and menu items, clicks the gutter, fills in the breakpoint dialog, and checks that the editor follows each stop. It needs macOS developer mode. Run it on a fresh copy, one language at a time:
 
 ```
 cp -R samples/debugger/rust "$TMPDIR/lab-rust"
