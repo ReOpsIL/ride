@@ -4,6 +4,9 @@ final class DebugLabScratch {
     var path = ""
     var line: UInt32 = 0
     var sequence = 0
+    var pressed = false
+    var seen = false
+    var count = 0
     var filter: Bool?
 }
 
@@ -18,7 +21,9 @@ extension SelfTestSteps {
             + labSteppingSteps(state: state, e: e, lab: lab, scratch: scratch)
             + labStackSteps(state: state, e: e, lab: lab, scratch: scratch)
             + labRecursionSteps(state: state, e: e, lab: lab, scratch: scratch)
+            + labLoopSteps(state: state, e: e, lab: lab, scratch: scratch)
             + labThreadSteps(state: state, e: e, lab: lab, scratch: scratch)
+            + labHeartbeatSteps(state: state, e: e, lab: lab, scratch: scratch)
             + throwing
     }
 
@@ -39,82 +44,97 @@ extension SelfTestSteps {
         })
     }
 
-    static func labBreakpoint(_ name: String, state: AppState, e: SelfTestEditor, file: String, anchor: String, condition: String? = nil, scratch: DebugLabScratch) -> SelfTestStep {
+    static func labBreakpoint(_ name: String, state: AppState, e: SelfTestEditor, file: String, anchor: String, scratch: DebugLabScratch) -> SelfTestStep {
         SelfTestStep(name: name, wait: 0.6, until: {
-            guard scratch.line == 0, e.text.contains(anchor) else {
-                return scratch.line > 0
+            guard e.text.contains(anchor) else {
+                return false
             }
-            e.focus()
-            e.place(on: anchor)
-            scratch.line = UInt32(e.caretLine)
-            scratch.path = debugPath(state) ?? ""
-            state.toggleBreakpoint(path: scratch.path, line: scratch.line)
-            if let condition {
-                state.debug.breakpoints.edit(path: scratch.path, line: scratch.line, condition: condition, hitCondition: nil)
-                state.breakpointsChanged(path: scratch.path)
+            if scratch.line == 0 {
+                e.focus()
+                e.place(on: anchor)
+                scratch.line = UInt32(e.caretLine)
+                scratch.path = debugPath(state) ?? ""
             }
-            return true
+            return !marks(state).isEmpty || SelfTestGutter.click(e, line: Int(scratch.line)) && !marks(state).isEmpty
         }, timeout: 15, run: {
             scratch.line = 0
             openRelative(state, file)
         }, check: {
-            let mark = state.debug.breakpoints.mark(path: scratch.path, line: scratch.line)
-            return e.expect(
-                scratch.path.hasSuffix(file) && marks(state) == [scratch.line] && mark?.condition == condition,
-                "\(scratch.path):\(scratch.line) marks \(marks(state)) condition \(mark?.condition ?? "nil")"
+            e.expect(
+                scratch.path.hasSuffix(file) && marks(state) == [scratch.line],
+                "\(scratch.path):\(scratch.line) marks \(marks(state))"
             )
         })
     }
 
-    static func labDebug(
-        _ name: String,
-        state: AppState,
-        scenario: String,
-        prepare: @escaping () -> Void = {},
-        ready: @escaping () -> Bool,
-        check: @escaping () -> String?
-    ) -> SelfTestStep {
-        SelfTestStep(name: name, wait: 0.5, until: { ready() || (!state.runOutput.isRunning && !state.debug.isActive) }, timeout: 240, run: {
+    static func labBreakpointDialog(_ name: String, state: AppState, e: SelfTestEditor, condition: String, hits: String, scratch: DebugLabScratch) -> SelfTestStep {
+        let edited = { state.debug.breakpoints.mark(path: scratch.path, line: scratch.line) }
+        let window = { SelfTestGutter.host(e)?.window }
+        return SelfTestStep(name: name, wait: 0.5, until: {
+            if !scratch.pressed, window()?.attachedSheet != nil {
+                scratch.pressed = SelfTestSheet.answer(window(), values: [condition, hits], button: "Save")
+            }
+            return scratch.pressed && window()?.attachedSheet == nil
+        }, timeout: 15, run: {
+            scratch.pressed = false
+            _ = SelfTestGutter.click(e, line: Int(scratch.line), right: true)
+        }, check: {
+            let mark = edited()
+            return e.expect(
+                scratch.pressed && mark?.condition == condition.nilIfEmpty && mark?.hitCondition == hits.nilIfEmpty,
+                "saved \(scratch.pressed) condition \(mark?.condition ?? "nil") hits \(mark?.hitCondition ?? "nil")"
+            )
+        })
+    }
+
+    static func labDebug(_ name: String, state: AppState, scenario: String, prepare: @escaping () -> Void = {}, ready: @escaping () -> Bool, check: @escaping () -> String?) -> SelfTestStep {
+        let started = DebugLabScratch()
+        return SelfTestStep(name: name, wait: 0.5, until: {
+            guard started.pressed else {
+                started.pressed = SelfTestShortcut.press("Debug › Debug", in: SelfTestKeys.mainWindow)
+                return false
+            }
+            started.seen = started.seen || state.runOutput.isRunning || state.debug.isActive
+            return ready() || (started.seen && !state.runOutput.isRunning && !state.debug.isActive)
+        }, timeout: 240, run: {
+            started.pressed = false
+            started.seen = false
             prepare()
             var config = state.runConfig
             config.args = [scenario]
             state.runConfigs = RunConfig.merged(config, into: state.runConfigs)
-            state.startDebug()
-        }, check: check)
+        }, check: {
+            started.pressed ? check() : "\(Shortcuts.keys(for: "Debug › Debug") ?? "no shortcut") did not reach Debug › Debug"
+        })
     }
 
-    static func labCommand(_ name: String, state: AppState, command: DebugCommand, ready: @escaping () -> Bool, check: @escaping () -> String?) -> SelfTestStep {
-        SelfTestStep(name: name, wait: 0.5, until: { ready() || !state.debug.isActive }, timeout: 60, run: {
-            state.debugCommand(command)
-        }, check: check)
+    static func labKey(_ name: String, _ path: String, state: AppState, ready: @escaping () -> Bool, check: @escaping () -> String?) -> SelfTestStep {
+        let key = DebugLabScratch()
+        return SelfTestStep(name: name, wait: 0.5, until: { !key.pressed || ready() || !state.debug.isActive }, timeout: 60, run: {
+            key.pressed = SelfTestShortcut.press(path, in: SelfTestKeys.mainWindow)
+        }, check: {
+            key.pressed ? check() : "\(Shortcuts.keys(for: path) ?? "no shortcut") did not reach \(path)"
+        })
     }
 
     static func labStop(_ name: String, state: AppState, e: SelfTestEditor, scratch: DebugLabScratch) -> SelfTestStep {
         SelfTestStep(name: name, wait: 0.5, until: { !state.debug.isActive }, timeout: 30, run: {
-            state.stopDebug()
-            state.toggleBreakpoint(path: scratch.path, line: scratch.line)
+            SelfTestShortcut.press("Debug › Stop", in: SelfTestKeys.mainWindow)
         }, check: {
-            e.expect(
+            if scratch.line > 0 {
+                state.toggleBreakpoint(path: scratch.path, line: scratch.line)
+                scratch.line = 0
+            }
+            return e.expect(
                 !state.debug.isActive && state.debug.breakpoints.isEmpty,
                 "state \(state.debug.state) marks \(marks(state))"
             )
         })
     }
+}
 
-    static func labFrames(_ state: AppState) -> [String] {
-        state.debugPanel.frames.map(\.name)
-    }
-
-    static func labTop(_ state: AppState, is function: String) -> Bool {
-        debugStopped(state) && state.debugPanel.frames.first?.name.contains(function) == true
-    }
-
-    static func labLocal(_ state: AppState, _ name: String) -> String? {
-        state.debugPanel.tree.rows.first { $0.node.name == name }?.node.value
-    }
-
-    static func labWhere(_ state: AppState) -> String {
-        "state \(state.debug.state) at \(stoppedFile(state)):\(state.debug.stoppedLine) frames \(labFrames(state).prefix(8)) "
-            + SelfTestRunScratch.status(state)
+extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
     }
 }

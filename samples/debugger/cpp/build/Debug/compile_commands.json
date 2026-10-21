@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/main.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/main.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/main.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/stepping.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/stepping.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/stepping.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/stepping.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/stack.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/stack.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/stack.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/stack.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/recursion.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/recursion.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/recursion.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/recursion.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/loops.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/loops.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/loops.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/loops.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/data.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/data.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/data.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/data.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/dispatch.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/dispatch.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/dispatch.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/dispatch.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/threads.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/threads.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/threads.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/threads.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/faults.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/faults.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/faults.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/faults.cpp.o"
+},
+{
+  "directory": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/build/Debug",
+  "command": "/usr/bin/c++  -I/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/include -O0 -g -std=gnu++20 -arch arm64 -Wall -Wextra -o CMakeFiles/debugger-lab.dir/src/heartbeat.cpp.o -c /Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/heartbeat.cpp",
+  "file": "/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/cpp/src/heartbeat.cpp",
+  "output": "CMakeFiles/debugger-lab.dir/src/heartbeat.cpp.o"
+}
+]

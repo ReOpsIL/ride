@@ -1,0 +1,3 @@
+/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/c/build/Debug/CMakeFiles/debugger-lab.dir
+/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/c/build/Debug/CMakeFiles/edit_cache.dir
+/Users/dovcaspi/develop/ride/.claude/worktrees/sad-tharp-af6f7f/samples/debugger/c/build/Debug/CMakeFiles/rebuild_cache.dir

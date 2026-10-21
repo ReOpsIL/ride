@@ -504,6 +504,11 @@
 		D1AB00000000000000000004 /* SelfTestSteps+DebugLab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000003 /* SelfTestSteps+DebugLab.swift */; };
 		D1AB00000000000000000006 /* SelfTestSteps+DebugLabStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000005 /* SelfTestSteps+DebugLabStepping.swift */; };
 		D1AB00000000000000000008 /* SelfTestSteps+DebugLabThreads.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000007 /* SelfTestSteps+DebugLabThreads.swift */; };
+		D1AB00000000000000000010 /* SelfTestDebugControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000009 /* SelfTestDebugControls.swift */; };
+		D1AB00000000000000000012 /* SelfTestSteps+DebugLabQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000011 /* SelfTestSteps+DebugLabQueries.swift */; };
+		D1AB00000000000000000014 /* SelfTestSteps+DebugLabStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000013 /* SelfTestSteps+DebugLabStack.swift */; };
+		D1AB00000000000000000016 /* SelfTestSteps+DebugLabRecursion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000015 /* SelfTestSteps+DebugLabRecursion.swift */; };
+		D1AB00000000000000000018 /* SelfTestSteps+DebugLabThrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AB00000000000000000017 /* SelfTestSteps+DebugLabThrow.swift */; };
 		D1900000000000000000000D /* DocPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000C /* DocPageTests.swift */; };
 		D1900000000000000000000F /* EditorHostView+Docs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1900000000000000000000E /* EditorHostView+Docs.swift */; };
 		F1A000000000000000000002 /* PeekSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A000000000000000000001 /* PeekSegments.swift */; };
@@ -1553,6 +1558,11 @@
 		D1AB00000000000000000003 /* SelfTestSteps+DebugLab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLab.swift"; sourceTree = "<group>"; };
 		D1AB00000000000000000005 /* SelfTestSteps+DebugLabStepping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabStepping.swift"; sourceTree = "<group>"; };
 		D1AB00000000000000000007 /* SelfTestSteps+DebugLabThreads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabThreads.swift"; sourceTree = "<group>"; };
+		D1AB00000000000000000009 /* SelfTestDebugControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfTestDebugControls.swift; sourceTree = "<group>"; };
+		D1AB00000000000000000011 /* SelfTestSteps+DebugLabQueries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabQueries.swift"; sourceTree = "<group>"; };
+		D1AB00000000000000000013 /* SelfTestSteps+DebugLabStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabStack.swift"; sourceTree = "<group>"; };
+		D1AB00000000000000000015 /* SelfTestSteps+DebugLabRecursion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabRecursion.swift"; sourceTree = "<group>"; };
+		D1AB00000000000000000017 /* SelfTestSteps+DebugLabThrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelfTestSteps+DebugLabThrow.swift"; sourceTree = "<group>"; };
 		D1900000000000000000000C /* DocPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocPageTests.swift; sourceTree = "<group>"; };
 		D1900000000000000000000E /* EditorHostView+Docs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorHostView+Docs.swift"; sourceTree = "<group>"; };
 		F1A000000000000000000001 /* PeekSegments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeekSegments.swift; sourceTree = "<group>"; };
@@ -2767,6 +2777,11 @@
 				D1AB00000000000000000003 /* SelfTestSteps+DebugLab.swift */,
 				D1AB00000000000000000005 /* SelfTestSteps+DebugLabStepping.swift */,
 				D1AB00000000000000000007 /* SelfTestSteps+DebugLabThreads.swift */,
+				D1AB00000000000000000009 /* SelfTestDebugControls.swift */,
+				D1AB00000000000000000011 /* SelfTestSteps+DebugLabQueries.swift */,
+				D1AB00000000000000000013 /* SelfTestSteps+DebugLabStack.swift */,
+				D1AB00000000000000000015 /* SelfTestSteps+DebugLabRecursion.swift */,
+				D1AB00000000000000000017 /* SelfTestSteps+DebugLabThrow.swift */,
 				FEE0000000000000000000A4 /* SelfTestSteps+Live.swift */,
 				F12000000000000000000006 /* SelfTestSteps+Split.swift */,
 				MD79E51F435EB0BB84D05111 /* SelfTestSteps+ProbeSources.swift */,
@@ -3803,6 +3818,11 @@
 				D1AB00000000000000000004 /* SelfTestSteps+DebugLab.swift in Sources */,
 				D1AB00000000000000000006 /* SelfTestSteps+DebugLabStepping.swift in Sources */,
 				D1AB00000000000000000008 /* SelfTestSteps+DebugLabThreads.swift in Sources */,
+				D1AB00000000000000000010 /* SelfTestDebugControls.swift in Sources */,
+				D1AB00000000000000000012 /* SelfTestSteps+DebugLabQueries.swift in Sources */,
+				D1AB00000000000000000014 /* SelfTestSteps+DebugLabStack.swift in Sources */,
+				D1AB00000000000000000016 /* SelfTestSteps+DebugLabRecursion.swift in Sources */,
+				D1AB00000000000000000018 /* SelfTestSteps+DebugLabThrow.swift in Sources */,
 				F12000000000000000000007 /* SelfTestSteps+Split.swift in Sources */,
 				D1900000000000000000000B /* SelfTestSteps+Doc.swift in Sources */,
 				DCARD000000000000000000B /* SelfTestSteps+DocCard.swift in Sources */,

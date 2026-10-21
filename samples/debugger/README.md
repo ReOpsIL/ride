@@ -108,7 +108,7 @@ The same controls are in the **Debug** menu and in the Debug panel header: Debug
 
 ## Automated check
 
-Ride's in-app self-test drives scenarios 1, 2, 3 and 7 (and the C++ Throw filter from 8) through the real debugger when it is opened on one language folder of the lab. It needs macOS developer mode. Run it on a fresh copy, one language at a time:
+Ride's in-app self-test drives scenarios 1, 2, 3, 4, 7 and 9 (and the C++ Throw filter from 8) through the real debugger when it is opened on one language folder of the lab. It presses the Debug shortcuts and menu items, clicks the gutter, fills in the breakpoint dialog, and checks that the editor follows each stop. It needs macOS developer mode. Run it on a fresh copy, one language at a time:
 
 ```
 cp -R samples/debugger/rust "$TMPDIR/lab-rust"

@@ -21,7 +21,8 @@ enum SelfTestKeys {
         guard let (code, text) = codeAndText(combo) else {
             return nil
         }
-        let flags = combo.key == "?" ? combo.modifiers.union(.shift).flags : combo.modifiers.flags
+        let typed = combo.key == "?" ? combo.modifiers.union(.shift).flags : combo.modifiers.flags
+        let flags = isFunctionKey(text) ? typed.union(.function) : typed
         return NSEvent.keyEvent(
             with: .keyDown,
             location: .zero,
@@ -43,6 +44,10 @@ enum SelfTestKeys {
         }
         NSApp.postEvent(event, atStart: false)
         return true
+    }
+
+    private static func isFunctionKey(_ text: String) -> Bool {
+        text.unicodeScalars.first.map { $0.value >= 0xF700 && $0.value <= 0xF8FF } ?? false
     }
 
     private static func codeAndText(_ combo: KeyCombo) -> (UInt16, String)? {

@@ -20,21 +20,20 @@ extension AppState {
         breakpointsChanged(path: path)
     }
 
-    func editBreakpoint(path: String, line: UInt32) {
+    func editBreakpoint(path: String, line: UInt32, in window: NSWindow?) {
         guard let mark = debug.breakpoints.mark(path: path, line: line) else {
             toggleBreakpoint(path: path, line: line)
             return
         }
-        guard let edited = BreakpointEditor.run(mark, path: path) else {
-            return
+        BreakpointEditor.begin(mark, path: path, in: window) { [weak self] edited in
+            self?.debug.breakpoints.edit(
+                path: path,
+                line: line,
+                condition: edited.condition,
+                hitCondition: edited.hitCondition
+            )
+            self?.breakpointsChanged(path: path)
         }
-        debug.breakpoints.edit(
-            path: path,
-            line: line,
-            condition: edited.condition,
-            hitCondition: edited.hitCondition
-        )
-        breakpointsChanged(path: path)
     }
 
     func breakpointsChanged(path: String) {
