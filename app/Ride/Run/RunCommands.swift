@@ -29,6 +29,8 @@ struct RunCommands: Commands {
             Divider()
             Button("Edit Configurations…") { state.editRunConfig() }
                 .disabled(!menu.canEditRunConfig)
+            Button("Remote Toolchain…") { state.editRemote() }
+                .disabled(!menu.hasWorkspace)
         }
     }
 }

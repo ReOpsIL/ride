@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 use crate::error::EngineError;
-use crate::ffi::{Breakpoint, DebugListener};
+use crate::ffi::{Breakpoint, DebugLaunch, DebugListener};
 
 use super::session::DebugSession;
 use super::target::DebugTarget;
@@ -28,6 +28,30 @@ impl DebugRegistry {
         let id = self.reserve();
         let session =
             DebugSession::start(adapter, arguments, target, sysroot, breakpoints, listener)?;
+        self.insert(id, Arc::clone(&session));
+        session.attach(self, id);
+        Ok(id)
+    }
+
+    pub fn start_mapped(
+        self: &Arc<Self>,
+        adapter: &Path,
+        arguments: &[String],
+        launch: DebugLaunch,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+        paths: crate::remote::PathMap,
+    ) -> Result<u64, EngineError> {
+        let id = self.reserve();
+        let session = DebugSession::open(
+            adapter,
+            arguments,
+            launch,
+            None,
+            breakpoints,
+            listener,
+            Some(paths),
+        )?;
         self.insert(id, Arc::clone(&session));
         session.attach(self, id);
         Ok(id)

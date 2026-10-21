@@ -203,3 +203,7 @@ C suite, full run (0:28).
 - `plan/roadmap/next-1.3.md` — coding, completion, running and debugging after 1.2
 - `todo/` — open follow-ups per module
 - `AGENTS.md` — engineering rules for this repo
+
+## License
+
+[MIT](LICENSE).

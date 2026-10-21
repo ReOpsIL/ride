@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DebugPanel: View {
+    let state: AppState
     @ObservedObject var model: DebugPanelModel
     @ObservedObject private var debug = DebugController.shared
     @ObservedObject private var ts = ThemeStore.shared
@@ -8,6 +9,9 @@ struct DebugPanel: View {
     var body: some View {
         VStack(spacing: 0) {
             PanelHeader(icon: "ladybug", title: "Debug", badges: badges) {
+                DebugToolbar(state: state, menu: state.menu)
+                ts.ui.border.frame(width: Tokens.Size.hairline, height: 14)
+                    .padding(.horizontal, Tokens.Space.xs)
                 IconButton(symbol: "plus.magnifyingglass", help: "Evaluate Expression (⌥F8)") {
                     model.showEvaluate = true
                 }

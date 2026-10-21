@@ -25,6 +25,7 @@ extension AppState {
         runOutput.onChange = { [weak self] in
             self?.syncMenu()
         }
+        bindRemoteRun()
         AIAssistant.shared.onPanelChange = { [weak self] in
             self?.syncMenu()
         }

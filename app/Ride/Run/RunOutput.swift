@@ -12,6 +12,8 @@ final class RunOutput: ObservableObject {
     var onChange: (() -> Void)?
     var lineFilter: ((Int, String) -> String?)?
     var onFinish: ((Int, RunFinish) -> Void)?
+    var remoteStart: ((RunInvocation, Int, RemoteRunHooks) -> Bool)?
+    var remoteStop: (() -> Void)?
     private let runner = ProcessRunner()
     private(set) var lastRequest: RunRequest?
     private(set) var origin: RunRequest?
@@ -58,12 +60,41 @@ final class RunOutput: ObservableObject {
         command = invocation.argv.joined(separator: " ")
         isRunning = true
         onChange?()
+        if remoteStart?(invocation, id, hooks(id)) == true {
+            command = "sync"
+            onChange?()
+            return id
+        }
         runner.start(invocation, runId: id) { [weak self] lineId, line in
             self?.append(line, runId: lineId)
         } onFinish: { [weak self] finish in
             self?.finished(finish, id: id)
         }
         return id
+    }
+
+    func hold(_ command: String) -> Int? {
+        guard !isRunning else {
+            return nil
+        }
+        nextId += 1
+        let id = nextId
+        runId = id
+        stopping = false
+        status = nil
+        self.command = command
+        isRunning = true
+        onChange?()
+        return id
+    }
+
+    func release(_ finish: RunFinish, id: Int) {
+        finished(finish, id: id)
+    }
+
+    func showCommand(_ text: String) {
+        command = text
+        onChange?()
     }
 
     @discardableResult
@@ -75,6 +106,7 @@ final class RunOutput: ObservableObject {
         let id = nextId
         queued = (id, request, origin ?? request)
         stopping = true
+        remoteStop?()
         runner.stop()
         return id
     }
@@ -82,6 +114,7 @@ final class RunOutput: ObservableObject {
     func stop() {
         queued = nil
         stopping = true
+        remoteStop?()
         runner.stop()
     }
 
@@ -113,6 +146,20 @@ final class RunOutput: ObservableObject {
         }
     }
 
+    private func hooks(_ id: Int) -> RemoteRunHooks {
+        RemoteRunHooks(
+            onLine: { [weak self] lineId, line in
+                self?.append(line, runId: lineId)
+            },
+            onCommand: { [weak self] text in
+                self?.showCommand(text)
+            },
+            onFinish: { [weak self] finish in
+                self?.finished(finish, id: id)
+            }
+        )
+    }
+
     private func finished(_ finish: RunFinish, id: Int) {
         guard id == runId else {
             return
@@ -135,4 +182,10 @@ final class RunOutput: ObservableObject {
             launch(next.request, origin: next.origin, id: next.id)
         }
     }
+}
+
+struct RemoteRunHooks {
+    var onLine: (Int, String) -> Void
+    var onCommand: (String) -> Void
+    var onFinish: (RunFinish) -> Void
 }

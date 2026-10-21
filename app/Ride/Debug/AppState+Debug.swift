@@ -43,7 +43,8 @@ extension AppState {
         guard !debug.isActive, let launch = debugLaunch() else {
             return
         }
-        debug.launch(launch)
+        debugPanel.visible = true
+        syncThenDebug(launch)
     }
 
     func debugCommand(_ command: DebugCommand) {

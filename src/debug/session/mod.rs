@@ -2,6 +2,7 @@ mod debuggee;
 mod events;
 mod handshake;
 mod lifecycle;
+mod paths;
 mod progress;
 mod registration;
 mod requests;
@@ -34,6 +35,7 @@ pub struct DebugSession {
     listener: Arc<dyn DebugListener>,
     target: DebugTarget,
     sysroot: Option<PathBuf>,
+    paths: Option<crate::remote::PathMap>,
     state: Mutex<DebugState>,
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
@@ -51,12 +53,33 @@ impl DebugSession {
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
     ) -> Result<Arc<Self>, EngineError> {
+        Self::open(
+            adapter,
+            arguments,
+            target,
+            sysroot,
+            breakpoints,
+            listener,
+            None,
+        )
+    }
+
+    pub(crate) fn open(
+        adapter: &Path,
+        arguments: &[String],
+        target: impl Into<DebugTarget>,
+        sysroot: Option<PathBuf>,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+        paths: Option<crate::remote::PathMap>,
+    ) -> Result<Arc<Self>, EngineError> {
         let transport = Transport::spawn(adapter, arguments)?;
         let session = Arc::new(Self {
             transport,
             listener,
             target: target.into(),
             sysroot,
+            paths,
             state: Mutex::new(DebugState::Launching),
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),

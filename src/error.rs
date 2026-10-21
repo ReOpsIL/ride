@@ -18,6 +18,8 @@ pub enum EngineError {
     Debug { message: String },
     #[error("git: {message}")]
     Git { message: String },
+    #[error("remote: {message}")]
+    Remote { message: String },
 }
 
 impl EngineError {
@@ -42,6 +44,12 @@ impl EngineError {
 
     pub fn git(message: impl std::fmt::Display) -> Self {
         Self::Git {
+            message: message.to_string(),
+        }
+    }
+
+    pub fn remote(message: impl std::fmt::Display) -> Self {
+        Self::Remote {
             message: message.to_string(),
         }
     }

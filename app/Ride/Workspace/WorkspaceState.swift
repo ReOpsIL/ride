@@ -47,6 +47,7 @@ struct WorkspaceState: Codable, Equatable {
     var profile: String?
     var breakpoints: Breakpoints
     var watches: [String]
+    var remote: RemoteToolchain
 
     init(
         version: Int = currentVersion,
@@ -58,7 +59,8 @@ struct WorkspaceState: Codable, Equatable {
         selectedTarget: String? = nil,
         profile: String? = nil,
         breakpoints: Breakpoints = Breakpoints(),
-        watches: [String] = []
+        watches: [String] = [],
+        remote: RemoteToolchain = .off
     ) {
         self.version = version
         self.tabs = tabs
@@ -70,6 +72,7 @@ struct WorkspaceState: Codable, Equatable {
         self.profile = profile
         self.breakpoints = breakpoints
         self.watches = watches
+        self.remote = remote
     }
 
     init(from decoder: Decoder) throws {
@@ -84,6 +87,7 @@ struct WorkspaceState: Codable, Equatable {
         profile = try c.decodeIfPresent(String.self, forKey: .profile)
         breakpoints = try c.decodeIfPresent(Breakpoints.self, forKey: .breakpoints) ?? Breakpoints()
         watches = try c.decodeIfPresent([String].self, forKey: .watches) ?? []
+        remote = try c.decodeIfPresent(RemoteToolchain.self, forKey: .remote) ?? .off
     }
 
     static func decode(_ data: Data) -> WorkspaceState? {

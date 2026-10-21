@@ -58,8 +58,12 @@ extension SelfTestSteps {
     }
 
     private static func liveDebug(state: AppState, e: SelfTestEditor) -> [SelfTestStep] {
-        [
-            SelfTestStep(name: "debug", wait: 0.5, until: { (state.debug.isStopped && state.debug.stoppedLine > 0) || !state.debug.isActive }, timeout: 240, run: {
+        var started = false
+        return [
+            SelfTestStep(name: "debug", wait: 0.5, until: {
+                started = started || state.debug.isActive
+                return (state.debug.isStopped && state.debug.stoppedLine > 0) || (started && !state.debug.isActive)
+            }, timeout: 240, run: {
                 state.startDebug()
             }, check: {
                 e.expect(
@@ -71,11 +75,16 @@ extension SelfTestSteps {
             SelfTestStep(name: "debug step over", wait: 0.5, until: { state.debug.isStopped && state.debug.stoppedLine > 0 && state.debug.stoppedLine != breakpointLine }, timeout: 60, run: {
                 state.debugCommand(.next)
             }, check: {
-                e.expect(
+                let marked = e.background(line: Int(state.debug.stoppedLine))
+                return e.expect(
                     state.debug.stoppedLine == breakpointLine + 1,
                     "line \(state.debug.stoppedLine)"
+                ) ?? e.expect(
+                    marked == ThemeStore.shared.editor.markedLine,
+                    "stop line background \(marked.map(String.init(describing:)) ?? "none")"
                 )
             }),
+            toolbarMirrorsMenu(state: state, e: e),
             SelfTestStep(name: "debug stop", wait: 0.5, until: { !state.debug.isActive }, timeout: 60, run: {
                 state.stopDebug()
             }, check: {
@@ -93,5 +102,18 @@ extension SelfTestSteps {
             return []
         }
         return state.debug.breakpoints.lines(path: path)
+    }
+
+    private static func toolbarMirrorsMenu(state: AppState, e: SelfTestEditor) -> SelfTestStep {
+        SelfTestStep(name: "debug toolbar mirrors menu", wait: 0.4, run: {}, check: {
+            let gates = state.menu.debugGates
+            let mismatched = DebugAction.allCases.filter {
+                SelfTestMenu.item("Debug › \($0.title)") == nil || SelfTestMenu.isEnabled("Debug › \($0.title)") != $0.isEnabled(gates)
+            }
+            return e.expect(
+                state.debugPanel.visible && gates.isStopped && mismatched.isEmpty,
+                "panel \(state.debugPanel.visible) stopped \(gates.isStopped) mismatched \(mismatched.map(\.title))"
+            )
+        })
     }
 }

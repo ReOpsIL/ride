@@ -77,6 +77,31 @@ final class DebugController: ObservableObject {
         return true
     }
 
+    func launchRemote(_ link: RemoteLink, _ request: DebugLaunch) -> String? {
+        guard let engine = RideEngineClient.shared.engine else {
+            return "Engine is not running"
+        }
+        guard !isActive else {
+            return "Debugger is already running"
+        }
+        breakpointSync.cancel()
+        let forwarder = DebugForwarder(controller: self)
+        self.forwarder = forwarder
+        publish(state: .launching, path: nil, line: 0)
+        do {
+            sessionId = try engine.debugLaunchRemote(
+                target: link,
+                launch: request,
+                breakpoints: engineBreakpoints(),
+                listener: forwarder
+            )
+            return nil
+        } catch {
+            end(state: .terminated)
+            return RemoteLaunch.explain(error)
+        }
+    }
+
     func send(_ command: DebugCommand) {
         guard let engine = RideEngineClient.shared.engine, let id = sessionId else {
             return

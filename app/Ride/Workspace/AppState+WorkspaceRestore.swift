@@ -14,7 +14,8 @@ extension AppState {
             selectedTarget: projectModel.selected?.name,
             profile: projectModel.profile.isEmpty ? nil : projectModel.profile,
             breakpoints: DebugController.shared.breakpoints,
-            watches: DebugPanelModel.shared.expressions
+            watches: DebugPanelModel.shared.expressions,
+            remote: remoteToolchain
         )
     }
 
@@ -27,6 +28,7 @@ extension AppState {
         }
         applyLayout(saved.layout)
         runConfigs = saved.runConfigs
+        remoteToolchain = saved.remote
         DebugController.shared.breakpoints = saved.breakpoints
         DebugPanelModel.shared.restore(watches: saved.watches)
         projectModel.restoreProfile(saved.profile)

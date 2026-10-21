@@ -39,6 +39,9 @@ struct RootView: View {
         .sheet(isPresented: $attach.visible) {
             AttachSheet(model: attach)
         }
+        .sheet(isPresented: $state.showRemoteSheet) {
+            RemoteSheet(editor: state.remoteEditor).environmentObject(state)
+        }
         .sheet(isPresented: $state.showRenamePreview) {
             RenamePreviewSheet(
                 model: state.renamePreview,

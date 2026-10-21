@@ -17,12 +17,38 @@ enum ProcessSpawn {
         guard pipe(&fds) == 0 else {
             throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
         }
-        var actions = fileActions(output: fds[1], workingDir: workingDir)
+        defer { close(fds[1]) }
+        do {
+            let pid = try spawn(
+                executable: executable,
+                arguments: arguments,
+                environment: environment,
+                workingDir: workingDir,
+                input: nil,
+                output: fds[1],
+                error: fds[1]
+            )
+            return SpawnedProcess(pid: pid, output: FileHandle(fileDescriptor: fds[0], closeOnDealloc: true))
+        } catch {
+            close(fds[0])
+            throw error
+        }
+    }
+
+    static func spawn(
+        executable: String,
+        arguments: [String],
+        environment: [String: String],
+        workingDir: String?,
+        input: Int32?,
+        output: Int32,
+        error: Int32
+    ) throws -> pid_t {
+        var actions = fileActions(input: input, output: output, error: error, workingDir: workingDir)
         var attributes = spawnAttributes()
         defer {
             posix_spawn_file_actions_destroy(&actions)
             posix_spawnattr_destroy(&attributes)
-            close(fds[1])
         }
         let argv = [executable] + arguments
         let envp = environment.map { "\($0.key)=\($0.value)" }
@@ -33,10 +59,9 @@ enum ProcessSpawn {
             }
         }
         guard result == 0 else {
-            close(fds[0])
             throw POSIXError(POSIXErrorCode(rawValue: result) ?? .EIO)
         }
-        return SpawnedProcess(pid: pid, output: FileHandle(fileDescriptor: fds[0], closeOnDealloc: true))
+        return pid
     }
 
     static func finish(status: Int32) -> RunFinish {
@@ -47,12 +72,16 @@ enum ProcessSpawn {
         return .signalled(signal)
     }
 
-    private static func fileActions(output: Int32, workingDir: String?) -> posix_spawn_file_actions_t? {
+    private static func fileActions(input: Int32?, output: Int32, error: Int32, workingDir: String?) -> posix_spawn_file_actions_t? {
         var actions: posix_spawn_file_actions_t?
         posix_spawn_file_actions_init(&actions)
-        posix_spawn_file_actions_addopen(&actions, 0, "/dev/null", O_RDONLY, 0)
+        if let input {
+            posix_spawn_file_actions_adddup2(&actions, input, 0)
+        } else {
+            posix_spawn_file_actions_addopen(&actions, 0, "/dev/null", O_RDONLY, 0)
+        }
         posix_spawn_file_actions_adddup2(&actions, output, 1)
-        posix_spawn_file_actions_adddup2(&actions, output, 2)
+        posix_spawn_file_actions_adddup2(&actions, error, 2)
         if let workingDir {
             posix_spawn_file_actions_addchdir_np(&actions, workingDir)
         }

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use std::path::Path;
 use std::sync::Arc;
 
 use crate::debug::adapter::adapter_path;
@@ -9,7 +11,8 @@ use crate::debug::target::DebugTarget;
 use crate::error::EngineError;
 use crate::ffi::{
     Breakpoint, DebugAttach, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch,
-    DebugListener, DebugProcess, DebugScope, DebugThread, ExceptionFilter, StackFrame, Variable,
+    DebugListener, DebugProcess, DebugScope, DebugThread, ExceptionFilter, RemoteLink, StackFrame,
+    Variable,
 };
 
 use super::Engine;
@@ -36,6 +39,21 @@ impl Engine {
 
     pub fn debug_processes(&self) -> Result<Vec<DebugProcess>, EngineError> {
         list_processes()
+    }
+
+    pub fn debug_launch_remote(
+        &self,
+        target: RemoteLink,
+        launch: DebugLaunch,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+    ) -> Result<u64, EngineError> {
+        self.open_remote(&target, launch, breakpoints, Arc::clone(&listener))
+            .inspect_err(|err| {
+                listener.on_event(DebugEvent::Failed {
+                    message: err.to_string(),
+                });
+            })
     }
 
     pub fn debug_exception_filters(&self) -> Vec<ExceptionFilter> {
@@ -125,6 +143,34 @@ impl Engine {
             })
     }
 
+    fn open_remote(
+        &self,
+        target: &RemoteLink,
+        launch: DebugLaunch,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+    ) -> Result<u64, EngineError> {
+        let endpoint = crate::remote::from_link(target).map_err(as_remote)?;
+        let launch = crate::remote::map_launch(&endpoint, launch).map_err(as_remote)?;
+        let owned = env_pairs(&launch.env);
+        let pairs = pair_refs(&owned);
+        let cwd = launch
+            .cwd
+            .clone()
+            .unwrap_or_else(|| endpoint.remote_root().display().to_string());
+        let invocation = endpoint
+            .invocation(Path::new(&cwd), &pairs, &["lldb-dap"])
+            .map_err(as_remote)?;
+        self.debug_registry()?.start_mapped(
+            Path::new(&invocation.program),
+            &invocation.args,
+            launch,
+            breakpoints,
+            listener,
+            endpoint.path_map(),
+        )
+    }
+
     fn debug_registry(&self) -> Result<Arc<DebugRegistry>, EngineError> {
         self.read(|i| Arc::clone(&i.debug_sessions))
     }
@@ -134,4 +180,21 @@ impl Engine {
             .get(session_id)
             .ok_or(EngineError::SessionNotFound { session_id })
     }
+}
+
+fn env_pairs(env: &HashMap<String, String>) -> Vec<(String, String)> {
+    env.iter()
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect()
+}
+
+fn pair_refs(pairs: &[(String, String)]) -> Vec<(&str, &str)> {
+    pairs
+        .iter()
+        .map(|(key, value)| (key.as_str(), value.as_str()))
+        .collect()
+}
+
+fn as_remote(err: crate::remote::RemoteError) -> EngineError {
+    EngineError::remote(err.to_string())
 }

@@ -9,6 +9,7 @@ extension SelfTestCoverage {
         "Run › Recompile File": ["menu recompile file"],
         "Run › Stop": ["menu run stop"],
         "Run › Edit Configurations…": ["menu edit configurations", "run config save", "cmake sanitizer build"],
+        "Run › Remote Toolchain…": ["menu remote toolchain", "remote toolchain test explains identity", "remote toolchain save"],
         "Debug › Debug": ["menu debug while running", "rerun after debug relaunches the debugger"],
         "Debug › Attach to Process…": ["menu debug attach"],
         "Debug › Continue": ["menu debug continue"],

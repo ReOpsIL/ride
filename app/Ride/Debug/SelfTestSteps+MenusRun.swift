@@ -10,7 +10,7 @@ extension SelfTestSteps {
             menuRunStop(state: state, e: e),
             menuRunFile(state: state, e: e),
             rerunRunFile(state: state, e: e, scratch: scratch),
-        ] + runConfigSteps(state: state, e: e, scratch: scratch)
+        ] + runConfigSteps(state: state, e: e, scratch: scratch) + remoteMenuSteps(state: state, e: e)
     }
 
     private static func menuRunBuild(state: AppState, e: SelfTestEditor) -> SelfTestStep {

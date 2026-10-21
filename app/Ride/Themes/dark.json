@@ -18,6 +18,8 @@
   "editor": {
     "background": "#1E2024",
     "currentLine": "#FFFFFF08",
+    "markedLine": "#4C8DFF47",
+    "bracketMatch": "#4C8DFF4D",
     "selection": "#4C8DFF4D",
     "caret": "#4C8DFF",
     "gutterText": "#5C6370",

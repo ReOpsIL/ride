@@ -42,7 +42,8 @@ final class RideTextView: NSTextView {
     let foldDelegate = FoldLayoutDelegate()
     let overlayCache = OverlayCache()
     var overlayMode = DiagnosticOverlayMode.caret
-    private var currentLineUTF16 = NSRange(location: 0, length: 0)
+    var backgrounds = BackgroundLayers()
+    var paintedBackgrounds: [NSRange] = []
 
     override init(frame frameRect: NSRect, textContainer container: NSTextContainer?) {
         super.init(frame: frameRect, textContainer: container)
@@ -89,22 +90,7 @@ final class RideTextView: NSTextView {
     }
 
     func updateCurrentLineHighlight() {
-        guard let tlm = textLayoutManager, let storage = textContentStorage else {
-            return
-        }
-        if let prev = nsRangeToTextRange(currentLineUTF16, storage: storage) {
-            tlm.removeRenderingAttribute(.backgroundColor, for: prev)
-        }
-        let line = lineNSRange()
-        currentLineUTF16 = line
-        if let next = nsRangeToTextRange(line, storage: storage) {
-            tlm.addRenderingAttribute(
-                .backgroundColor,
-                value: ThemeStore.shared.editor.currentLine,
-                for: next
-            )
-        }
-        BracketHighlight.restore(self)
+        setBackground(.caretLine, ranges: [lineNSRange()])
     }
 
     func lineNSRange() -> NSRange {

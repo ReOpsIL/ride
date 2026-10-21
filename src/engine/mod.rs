@@ -65,6 +65,8 @@ mod reach;
 mod refactor;
 mod refs;
 mod rel_path;
+mod remote_api;
+mod remote_probe_api;
 mod rename;
 mod review;
 mod review_map;
