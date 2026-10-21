@@ -45,8 +45,10 @@ pub use check::{
 };
 pub use debug::adapter::{adapter_path, find_adapter};
 pub use debug::filters::{exception_filters, probe_exception_filters};
+pub use debug::processes::{list_processes, parse_processes};
 pub use debug::registry::DebugRegistry;
 pub use debug::session::DebugSession;
+pub use debug::target::DebugTarget;
 pub use debug::transport::Transport;
 pub use discover::{
     DiscoveredCrate, Discovery, SystemIncludes, cargo_home, discover, probe_args, rustc_sysroot,

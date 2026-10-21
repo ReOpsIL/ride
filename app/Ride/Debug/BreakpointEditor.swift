@@ -1,10 +1,7 @@
 import AppKit
 
 enum BreakpointEditor {
-    static func run(_ mark: BreakpointMark, path: String) -> BreakpointMark? {
-        guard !DemoLaunch.isDemo else {
-            return nil
-        }
+    static func begin(_ mark: BreakpointMark, path: String, in window: NSWindow?, done: @escaping (BreakpointMark) -> Void) {
         let condition = field(mark.condition, placeholder: "Condition, e.g. i == 3")
         let hits = field(mark.hitCondition, placeholder: "Hit count, e.g. >5")
         let alert = NSAlert()
@@ -14,13 +11,20 @@ enum BreakpointEditor {
         alert.addButton(withTitle: "Save")
         alert.addButton(withTitle: "Cancel")
         alert.window.initialFirstResponder = condition
-        guard alert.runModal() == .alertFirstButtonReturn else {
-            return nil
+        let finish = { (response: NSApplication.ModalResponse) in
+            guard response == .alertFirstButtonReturn else {
+                return
+            }
+            var edited = mark
+            edited.condition = condition.stringValue
+            edited.hitCondition = hits.stringValue
+            done(edited)
         }
-        var edited = mark
-        edited.condition = condition.stringValue
-        edited.hitCondition = hits.stringValue
-        return edited
+        guard let window else {
+            finish(alert.runModal())
+            return
+        }
+        alert.beginSheetModal(for: window, completionHandler: finish)
     }
 
     private static func field(_ value: String?, placeholder: String) -> NSTextField {

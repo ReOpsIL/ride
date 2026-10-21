@@ -4,6 +4,7 @@ mod check;
 mod check_labels;
 mod config;
 mod debug;
+mod debug_attach;
 mod docs;
 mod edit;
 mod editing;
@@ -36,6 +37,7 @@ pub use debug::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
     DebugScope, DebugState, DebugThread, ExceptionFilter, StackFrame, Variable,
 };
+pub use debug_attach::{AttachProcess, DebugAttach, DebugProcess};
 pub use docs::{DocLink, QuickDoc};
 pub use edit::{SignatureHelp, TextEdit};
 pub use editing::{BracketPair, FoldRange, StatementBounds};

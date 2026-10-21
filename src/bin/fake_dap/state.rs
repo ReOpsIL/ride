@@ -9,6 +9,8 @@ pub const EXIT_ON_CONTINUE: &str = "--exit-on-continue";
 pub const DIE_ON_DONE: &str = "--die-on-done";
 pub const DIE_AFTER_DONE: &str = "--die-after-done";
 pub const VERIFY_CANONICAL: &str = "--verify-canonical";
+pub const HOLD_ATTACH: &str = "--hold-attach";
+pub const JOURNAL: &str = "--journal";
 
 #[derive(Default)]
 pub struct Reply {
@@ -22,12 +24,14 @@ pub struct State {
     pub line: u32,
     pub path: String,
     pub delay: Duration,
-    pub launch_seq: Option<i64>,
+    pub start: Option<(String, i64)>,
     pub ignore_disconnect: bool,
     pub exit_on_continue: bool,
     pub die_on_done: bool,
     pub die_after_done: bool,
     pub verify_canonical: bool,
+    pub hold_attach: bool,
+    pub journal: Option<String>,
 }
 
 impl Default for State {
@@ -37,12 +41,14 @@ impl Default for State {
             line: 10,
             path: "src/main.rs".to_string(),
             delay: Duration::ZERO,
-            launch_seq: None,
+            start: None,
             ignore_disconnect: false,
             exit_on_continue: false,
             die_on_done: false,
             die_after_done: false,
             verify_canonical: false,
+            hold_attach: false,
+            journal: None,
         }
     }
 }
@@ -55,6 +61,8 @@ impl State {
             die_on_done: args.iter().any(|arg| arg == DIE_ON_DONE),
             die_after_done: args.iter().any(|arg| arg == DIE_AFTER_DONE),
             verify_canonical: args.iter().any(|arg| arg == VERIFY_CANONICAL),
+            hold_attach: args.iter().any(|arg| arg == HOLD_ATTACH),
+            journal: value(args, JOURNAL).map(str::to_string),
             delay: Duration::from_millis(millis(args, DELAY_STOP)),
             ..Self::default()
         }
@@ -89,9 +97,14 @@ impl State {
 }
 
 fn millis(args: &[String], flag: &str) -> u64 {
+    value(args, flag)
+        .and_then(|value| value.parse::<u64>().ok())
+        .unwrap_or_default()
+}
+
+fn value<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
     args.iter()
         .position(|arg| arg == flag)
         .and_then(|index| args.get(index + 1))
-        .and_then(|value| value.parse::<u64>().ok())
-        .unwrap_or_default()
+        .map(String::as_str)
 }

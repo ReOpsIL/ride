@@ -6,6 +6,9 @@ enum SelfTestSteps {
 
     static func all(state: AppState) -> [SelfTestStep] {
         let e = SelfTestEditor(state: state)
+        if let lab = DebugLab.detect(state.workspaceRoot) {
+            return debugLabSteps(state: state, e: e, lab: lab)
+        }
         let file = SelfTestOpened.from(state)
         let scratch = SelfTestScratch()
         let suites = [

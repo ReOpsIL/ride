@@ -51,13 +51,13 @@ Engine: `src/debug/` (transport with framing and a `RIDE_DAP_TRACE=<file>` frame
 | Capability | Status | Notes |
 |---|---|---|
 | Launch the selected target (⌃⌘R) | live (Rust, C++) | builds first, then launches `target/<profile>/<bin>` for Cargo or argv[0] for other kinds, with the run configuration's arguments, environment and cwd |
-| Attach to a process | none in the app | the protocol types carry `attach` (pid, core file) and the D2 fixtures were captured through a core-file attach; no menu, no engine entry point |
+| Attach to a process | live (Rust, C++, C) | Debug › Attach to Process…: pick a running process by PID or wait for the next process with a name; same session as a launch; Stop detaches (`docs/product/debug-attach.md`) |
 | Line breakpoints | live | click the line number (or the breakpoint column when View → Line Numbers is off) or ⌘F8; paths canonicalised before `setBreakpoints` (R32) so symlinked directories verify; red marker filled when verified, hollow when not |
 | Conditional and hit-count breakpoints | built | right-click the marker; sent as `condition` and `hitCondition`; re-sent for that file while the process runs |
 | Breakpoints persist per workspace | live | in the workspace state, keyed by absolute path |
 | Exception breakpoints | built | the filters the adapter advertises (`cpp_throw`, `cpp_catch` on Xcode 26's adapter), toggled in the Debug menu, enabled ones sent on launch |
 | Rust panic breakpoint | built | Xcode's adapter has no `rust_panic` filter; a function breakpoint on `rust_panic` is set for Rust targets |
-| Continue, Step Over (F8), Step Into (F7), Step Out (⇧F8), Pause, Stop (⌘F2) | live (stop and step over on Rust, step out on C++), built (others) | Stop disconnects with a 3 s timeout, then kills the adapter |
+| Continue, Step Over (F8), Step Into (F7), Step Out (⇧F8), Pause, Stop (⌘F2) | live (stop and step over on Rust, step out on C++), built (others) | Stop disconnects with a 3 s timeout, then kills the adapter; it detaches an attached process |
 | Stopped line highlight and editor jump | live | follows the top frame's file, opening it if needed |
 | Threads and frames | live | Debug panel (⌘3), click a frame to select it and jump |
 | Locals, scopes, variables tree | live (Rust, C++) | lazy children by `variablesReference`, paging over 100, loads off the main thread with a stop generation so stale results are dropped |
@@ -71,7 +71,7 @@ Engine: `src/debug/` (transport with framing and a `RIDE_DAP_TRACE=<file>` frame
 | Disassembly, instruction stepping | none | `SteppingGranularity` exists in the protocol types only |
 | Data breakpoints, watchpoints | none | |
 | Reverse debugging, record and replay | none | |
-| Multi-process, fork follow, remote targets | none | |
+| Multi-process, fork follow, remote targets | partial | a forked child is reached by attaching to it (debugger lab `fork` scenario); one session at a time, no automatic follow, no remote targets |
 | Core files, crash logs | none in the app | |
 
 ## 5. Assembly
@@ -86,12 +86,12 @@ Nothing: no `.s`/`.S` highlighting or outline, no disassembly view, no instructi
 | `cargo test --test debug_render_live` | a live Rust launch shows `size=3` for a `Vec<u32>` and the `Option<String>` value | needs developer mode |
 | `--demo selftest` on a copy of `samples/rust-demo` | Build, Run, Run Tests, gutter marker, build diagnostics, stop-and-rerun, breakpoint toggle and persistence, Debug stop on line 10, Step Over to 11, Stop, Debug panel, watches, variable paging (91 steps) | `Ride --demo selftest --open <copy> --report <file>` |
 | `--demo selftest` on a copy of `samples/cpp-demo` | header/source switch, Complete Statement, fold, Quick Definition, Run File link error, Recompile File, then Debug: a breakpoint in `Circle::area`, the stop and its frames, a `std::vector` local expanded in `main`, Step Out into `Shape::describe`, Stop | same with `--file src/shapes.cpp` |
+| `cargo test --test debug_attach --test debug_attach_live` | attach request shapes, detach on Stop, Stop while waiting, against the fake adapter; then lldb-dap attaching to the debugger lab's forked child by PID and by waiting | the live cases need developer mode |
 | `--demo selftest` on a copy of `samples/c-demo` | editing and navigation on `src/main.c`, workspace restore, `cmake --build` and run of the `demo` target, a build diagnostic appearing and clearing, Recompile File | same with `--file src/main.c` |
 
 ## 7. Gaps worth the next cards
 
-1. Attach to process: a menu item with a process picker, `attach` through the existing protocol types and the same session.
-2. Assembly: a tree-sitter grammar for GNU and NASM syntax for highlighting and outline; a disassembly view fed by `lldb-dap`'s `disassemble` request with instruction stepping.
-3. Memory view: `readMemory` request into a hex pane with a pointer follow.
-4. Watchpoints: `dataBreakpointInfo` and `setDataBreakpoints` on a variable's context menu.
-5. C++ `TEST(` markers inside block comments (`todo/engine/remaining.md`).
+1. Assembly: a tree-sitter grammar for GNU and NASM syntax for highlighting and outline; a disassembly view fed by `lldb-dap`'s `disassemble` request with instruction stepping.
+2. Memory view: `readMemory` request into a hex pane with a pointer follow.
+3. Watchpoints: `dataBreakpointInfo` and `setDataBreakpoints` on a variable's context menu.
+4. C++ `TEST(` markers inside block comments (`todo/engine/remaining.md`).

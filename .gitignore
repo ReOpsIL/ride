@@ -13,3 +13,5 @@ xcuserdata
 /samples/*/target/
 .claude/
 app/target/
+/samples/debugger/*/build/
+/samples/debugger/*/target/

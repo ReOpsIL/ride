@@ -49,6 +49,19 @@ final class DebugController: ObservableObject {
 
     @discardableResult
     func launch(_ request: DebugLaunch) -> Bool {
+        start { engine, breakpoints, listener in
+            try engine.debugLaunch(launch: request, breakpoints: breakpoints, listener: listener)
+        }
+    }
+
+    @discardableResult
+    func attach(_ request: DebugAttach) -> Bool {
+        start { engine, breakpoints, listener in
+            try engine.debugAttach(attach: request, breakpoints: breakpoints, listener: listener)
+        }
+    }
+
+    private func start(_ open: (Engine, [Breakpoint], DebugForwarder) throws -> UInt64) -> Bool {
         guard let engine = RideEngineClient.shared.engine, !isActive else {
             return false
         }
@@ -56,11 +69,7 @@ final class DebugController: ObservableObject {
         let forwarder = DebugForwarder(controller: self)
         self.forwarder = forwarder
         publish(state: .launching, path: nil, line: 0)
-        guard let id = try? engine.debugLaunch(
-            launch: request,
-            breakpoints: engineBreakpoints(),
-            listener: forwarder
-        ) else {
+        guard let id = try? open(engine, engineBreakpoints(), forwarder) else {
             end(state: .terminated)
             return false
         }

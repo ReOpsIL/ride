@@ -38,6 +38,7 @@ extension SelfTestSteps {
             + menuSteps(state: state, e: e)
             + codeMenuRust(state: state, e: e)
             + semanticSteps(state: state, e: e)
+            + [menuDebugAttach(state: state, e: e)]
     }
 
     private static func findUsages(state: AppState, e: SelfTestEditor) -> SelfTestStep {

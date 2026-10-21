@@ -1,10 +1,13 @@
+mod debuggee;
 mod events;
 mod handshake;
 mod lifecycle;
 mod progress;
 mod registration;
 mod requests;
+mod rust_target;
 mod source_path;
+mod start_request;
 mod store;
 mod wire;
 
@@ -15,10 +18,12 @@ use std::thread;
 use std::time::Duration;
 
 use crate::error::EngineError;
-use crate::ffi::{Breakpoint, DebugEvent, DebugLaunch, DebugListener, DebugState, DebugThread};
+use crate::ffi::{Breakpoint, DebugEvent, DebugListener, DebugState, DebugThread};
 
 use super::registry::DebugRegistry;
+use super::target::DebugTarget;
 use super::transport::Transport;
+use debuggee::Debuggee;
 use progress::Progress;
 use registration::Registration;
 
@@ -27,20 +32,21 @@ const DRAIN_TIMEOUT: Duration = Duration::from_secs(5);
 pub struct DebugSession {
     transport: Transport,
     listener: Arc<dyn DebugListener>,
-    launch: DebugLaunch,
+    target: DebugTarget,
     sysroot: Option<PathBuf>,
     state: Mutex<DebugState>,
     breakpoints: Mutex<BTreeMap<String, Vec<Breakpoint>>>,
     threads: Mutex<Vec<DebugThread>>,
     registration: Registration,
     progress: Progress,
+    debuggee: Debuggee,
 }
 
 impl DebugSession {
     pub fn start(
         adapter: &Path,
         arguments: &[String],
-        launch: DebugLaunch,
+        target: impl Into<DebugTarget>,
         sysroot: Option<PathBuf>,
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
@@ -49,13 +55,14 @@ impl DebugSession {
         let session = Arc::new(Self {
             transport,
             listener,
-            launch,
+            target: target.into(),
             sysroot,
             state: Mutex::new(DebugState::Launching),
             breakpoints: Mutex::new(store::group(breakpoints)),
             threads: Mutex::new(Vec::new()),
             registration: Registration::default(),
             progress: Progress::default(),
+            debuggee: Debuggee::default(),
         });
         session.emit(DebugEvent::Launching);
         let worker = Arc::clone(&session);

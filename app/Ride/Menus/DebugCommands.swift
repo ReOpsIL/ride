@@ -9,6 +9,8 @@ struct DebugCommands: Commands {
             Button("Debug") { state.startDebug() }
                 .keyboardShortcut("r", modifiers: [.control, .command])
                 .disabled(!menu.canDebug || menu.isDebugging)
+            Button("Attach to Process…") { state.showAttachSheet() }
+                .disabled(menu.isDebugging)
             Button("Continue") { state.debugCommand(.continue) }
                 .keyboardShortcut("r", modifiers: [.command, .option])
                 .disabled(!menu.isDebugStopped)

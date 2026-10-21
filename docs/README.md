@@ -28,6 +28,7 @@
 | Diagnostic overlay: every labelled span of a compiler message drawn on the code, gutter order, notes, fixes, freshness rules | `docs/product/diagnostic-overlay.md` |
 | Diagnostic overlay executor cards DO-1 to DO-3 | `plan/roadmap/diagnostic-overlay-cards.md` |
 | Debugger source paths: breakpoints are sent in the spelling the build recorded, resolved twin second, per build system | `docs/product/debug-source-paths.md` |
+| Attach to a running process: by PID or by waiting for a name, forked children, detach on Stop, the attach handshake | `docs/product/debug-attach.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | AI chat panel and Explain: context packs, streaming, threads, code-block actions | `docs/product/ai-chat.md` |
 | AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed, JetBrains; engine context packs | `plan/ai/assistant.md` |

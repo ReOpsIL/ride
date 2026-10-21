@@ -126,7 +126,7 @@ final class GutterView: NSView {
         else {
             return
         }
-        state(of: textView)?.editBreakpoint(path: path, line: UInt32(line))
+        state(of: textView)?.editBreakpoint(path: path, line: UInt32(line), in: window)
     }
 
     private func runMarker(_ line: Int, in textView: RideTextView) {

@@ -4,9 +4,10 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 use crate::error::EngineError;
-use crate::ffi::{Breakpoint, DebugLaunch, DebugListener};
+use crate::ffi::{Breakpoint, DebugListener};
 
 use super::session::DebugSession;
+use super::target::DebugTarget;
 
 #[derive(Default)]
 pub struct DebugRegistry {
@@ -19,14 +20,14 @@ impl DebugRegistry {
         self: &Arc<Self>,
         adapter: &Path,
         arguments: &[String],
-        launch: DebugLaunch,
+        target: impl Into<DebugTarget>,
         sysroot: Option<PathBuf>,
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
     ) -> Result<u64, EngineError> {
         let id = self.reserve();
         let session =
-            DebugSession::start(adapter, arguments, launch, sysroot, breakpoints, listener)?;
+            DebugSession::start(adapter, arguments, target, sysroot, breakpoints, listener)?;
         self.insert(id, Arc::clone(&session));
         session.attach(self, id);
         Ok(id)

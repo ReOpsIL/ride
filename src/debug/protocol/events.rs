@@ -9,6 +9,7 @@ pub const EXITED: &str = "exited";
 pub const TERMINATED: &str = "terminated";
 pub const OUTPUT: &str = "output";
 pub const BREAKPOINT: &str = "breakpoint";
+pub const PROCESS: &str = "process";
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

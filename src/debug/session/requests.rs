@@ -128,18 +128,24 @@ impl DebugSession {
     }
 
     fn disconnect(&self) -> Result<(), EngineError> {
-        let request = DisconnectArguments {
-            restart: Some(false),
-            terminate_debuggee: Some(true),
-            suspend_debuggee: None,
-        };
-        let _ = self.transport.request_within(
-            DISCONNECT,
-            arguments(DISCONNECT, &request)?,
-            DISCONNECT_TIMEOUT,
-        );
+        if self.debuggee.present() {
+            self.request_disconnect();
+        }
         self.shutdown();
         Ok(())
+    }
+
+    fn request_disconnect(&self) {
+        let request = DisconnectArguments {
+            restart: Some(false),
+            terminate_debuggee: Some(self.target.owns_debuggee()),
+            suspend_debuggee: None,
+        };
+        if let Ok(request) = arguments(DISCONNECT, &request) {
+            let _ = self
+                .transport
+                .request_within(DISCONNECT, request, DISCONNECT_TIMEOUT);
+        }
     }
 
     fn send(&self, command: &str, request: Value) -> Result<(), EngineError> {
