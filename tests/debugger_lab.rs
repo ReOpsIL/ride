@@ -3,7 +3,7 @@ use std::process::Command;
 
 use ride_engine::{EngineConfig, ProjectKind, ProjectModel, Target, TargetKind, engine_start};
 
-const SCENARIOS: [&str; 9] = [
+const SCENARIOS: [&str; 10] = [
     "stepping",
     "stack",
     "recursion",
@@ -13,6 +13,7 @@ const SCENARIOS: [&str; 9] = [
     "threads",
     "faults",
     "heartbeat",
+    "fork",
 ];
 
 fn engine() -> (tempfile::TempDir, std::sync::Arc<ride_engine::Engine>) {

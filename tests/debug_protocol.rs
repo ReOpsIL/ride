@@ -7,13 +7,13 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use ride_engine::debug::protocol::{
-    BreakpointBody, Capabilities, ConfigurationDoneArguments, ContinueArguments, ContinuedBody,
-    DisconnectArguments, ErrorMessage, EvaluateArguments, EvaluateContext, EvaluateResponseBody,
-    Event, ExitedBody, InitializeArguments, LaunchArguments, OutputBody, PauseArguments, Response,
-    ScopesArguments, ScopesResponseBody, SetBreakpointsArguments, SetBreakpointsResponseBody,
-    SetExceptionBreakpointsArguments, Source, SourceBreakpoint, StackTraceArguments,
-    StackTraceResponseBody, StepArguments, SteppingGranularity, StoppedBody, ThreadsResponseBody,
-    VariablesArguments, VariablesResponseBody,
+    AttachArguments, BreakpointBody, Capabilities, ConfigurationDoneArguments, ContinueArguments,
+    ContinuedBody, DisconnectArguments, ErrorMessage, EvaluateArguments, EvaluateContext,
+    EvaluateResponseBody, Event, ExitedBody, InitializeArguments, LaunchArguments, OutputBody,
+    PauseArguments, Response, ScopesArguments, ScopesResponseBody, SetBreakpointsArguments,
+    SetBreakpointsResponseBody, SetExceptionBreakpointsArguments, Source, SourceBreakpoint,
+    StackTraceArguments, StackTraceResponseBody, StepArguments, SteppingGranularity, StoppedBody,
+    ThreadsResponseBody, VariablesArguments, VariablesResponseBody,
 };
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -104,6 +104,23 @@ fn launch_and_attach_round_trip() {
 
     let (message, _) = request("attach_request");
     assert_eq!(message.command, "attach");
+}
+
+#[test]
+fn attach_by_pid_and_by_waiting_round_trip() {
+    let (message, arguments) = request("attach_pid_request");
+    assert_eq!(message.command, "attach");
+    let parsed: AttachArguments = round_trip(&arguments);
+    assert_eq!(serde_json::to_value(&parsed).unwrap(), arguments);
+    assert_eq!(parsed.pid, Some(27391));
+    assert_eq!(parsed.wait_for, None);
+
+    let (_, arguments) = request("attach_wait_request");
+    let parsed: AttachArguments = round_trip(&arguments);
+    assert_eq!(serde_json::to_value(&parsed).unwrap(), arguments);
+    assert_eq!(parsed.pid, None);
+    assert_eq!(parsed.wait_for, Some(true));
+    assert!(parsed.program.unwrap().ends_with("debugger-lab"));
 }
 
 #[test]

@@ -7,7 +7,7 @@ use crate::ffi::{DebugEvent, DebugState};
 use super::DebugSession;
 use crate::debug::protocol::{
     BREAKPOINT, BreakpointBody, CONTINUED, ContinuedBody, EXITED, Event, ExitedBody, OUTPUT,
-    OutputBody, STOPPED, StoppedBody, TERMINATED,
+    OutputBody, PROCESS, STOPPED, StoppedBody, TERMINATED,
 };
 
 pub const POLL: Duration = Duration::from_millis(100);
@@ -43,6 +43,7 @@ pub fn handle(session: &DebugSession, raw: &Value) {
         EXITED => exited(session, &event),
         TERMINATED => terminate(session),
         BREAKPOINT => breakpoint(session, &event),
+        PROCESS => session.debuggee.mark(),
         _ => {}
     }
 }

@@ -3,6 +3,7 @@
 mod data;
 mod dispatch;
 mod faults;
+mod fork;
 mod heartbeat;
 mod loops;
 mod recursion;
@@ -25,11 +26,17 @@ const SCENARIOS: [Scenario; 9] = [
 ];
 
 fn main() {
-    let only = std::env::args().nth(1);
-    for (name, scenario) in SCENARIOS {
-        if only.as_deref().is_none_or(|wanted| wanted == name) {
-            println!("== {name} ==");
-            scenario();
+    let mut args = std::env::args().skip(1);
+    let only = args.next();
+    if only.as_deref() == Some("fork") {
+        println!("== fork ==");
+        fork::run(args.next());
+    } else {
+        for (name, scenario) in SCENARIOS {
+            if only.as_deref().is_none_or(|wanted| wanted == name) {
+                println!("== {name} ==");
+                scenario();
+            }
         }
     }
     println!("== done ==");

@@ -1,0 +1,9 @@
+{
+  "arguments": {
+    "program": "/tmp/lab/target/debug/debugger-lab",
+    "waitFor": true
+  },
+  "command": "attach",
+  "seq": 2,
+  "type": "request"
+}

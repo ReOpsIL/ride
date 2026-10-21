@@ -10,5 +10,6 @@ void lab_dispatch(void);
 void lab_threads(void);
 void lab_faults(void);
 void lab_heartbeat(void);
+void lab_fork(unsigned delay);
 
 #endif

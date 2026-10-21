@@ -11,5 +11,6 @@ void dispatch();
 void threads();
 void faults();
 void heartbeat();
+void fork(unsigned delay);
 
 }

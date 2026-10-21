@@ -1,5 +1,7 @@
 mod data;
+mod journal;
 mod script;
+mod start;
 mod state;
 
 use std::io::{self, BufRead, BufReader, Stdout, Write};
@@ -23,6 +25,7 @@ fn main() {
             .and_then(Value::as_str)
             .unwrap_or("")
             .to_string();
+        journal::record(state.journal.as_deref(), &message);
         if command == "truncate" {
             return truncate(&out);
         }

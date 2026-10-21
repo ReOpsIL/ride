@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "pid": 27391
+  },
+  "command": "attach",
+  "seq": 2,
+  "type": "request"
+}

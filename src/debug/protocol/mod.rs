@@ -1,3 +1,4 @@
+mod attach;
 mod breakpoints;
 mod control;
 mod events;
@@ -7,6 +8,7 @@ mod message;
 mod stack;
 mod variables;
 
+pub use attach::AttachArguments;
 pub use breakpoints::{
     Breakpoint, ExceptionFilterOptions, FILTER_RUST_PANIC, FunctionBreakpoint,
     SetBreakpointsArguments, SetBreakpointsResponseBody, SetExceptionBreakpointsArguments,
@@ -18,7 +20,7 @@ pub use control::{
 };
 pub use events::{
     BREAKPOINT, BreakpointBody, CONTINUED, ContinuedBody, EXITED, ExitedBody, INITIALIZED, OUTPUT,
-    OutputBody, STOPPED, StoppedBody, TERMINATED,
+    OutputBody, PROCESS, STOPPED, StoppedBody, TERMINATED,
 };
 pub use initialize::{Capabilities, ExceptionBreakpointFilter, InitializeArguments};
 pub use launch::{DisconnectArguments, LaunchArguments};

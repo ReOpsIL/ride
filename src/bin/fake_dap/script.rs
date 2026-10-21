@@ -1,21 +1,14 @@
 use serde_json::{Value, json};
 
 use super::data::{capabilities, scopes, set_breakpoints, stack_trace, variables};
+use super::start::{configuration_done, start};
 use super::state::{Reply, State};
 
 pub fn reply(state: &mut State, command: &str, message: &Value) -> Reply {
     let request_seq = message.get("seq").and_then(Value::as_i64).unwrap_or(0);
     let arguments = message.get("arguments").cloned().unwrap_or(Value::Null);
-    if command == "launch" {
-        state.launch_seq = Some(request_seq);
-        let commands = state.event(
-            "output",
-            json!({ "category": "console", "output": format!("initCommands: {}\n", init_commands(&arguments)) }),
-        );
-        return Reply {
-            now: vec![commands, state.event("initialized", Value::Null)],
-            ..Reply::default()
-        };
+    if command == "launch" || command == "attach" {
+        return start(state, command, request_seq, &arguments);
     }
     if command == "configurationDone" {
         return configuration_done(state, request_seq);
@@ -93,46 +86,7 @@ fn continued(state: &mut State) -> Vec<Value> {
     messages
 }
 
-fn configuration_done(state: &mut State, request_seq: i64) -> Reply {
-    if state.die_on_done {
-        return Reply {
-            stop: true,
-            ..Reply::default()
-        };
-    }
-    let mut now = vec![state.response("configurationDone", request_seq, true, Value::Null)];
-    if state.die_after_done {
-        return Reply {
-            now,
-            later: Vec::new(),
-            stop: true,
-        };
-    }
-    if state.delay.is_zero() {
-        now.push(state.event("stopped", stop_body("breakpoint", vec![1])));
-        now.extend(launch_response(state));
-        return Reply {
-            now,
-            ..Reply::default()
-        };
-    }
-    now.extend(launch_response(state));
-    Reply {
-        now,
-        later: vec![state.event("stopped", stop_body("breakpoint", vec![1]))],
-        stop: false,
-    }
-}
-
-fn launch_response(state: &mut State) -> Vec<Value> {
-    state
-        .launch_seq
-        .take()
-        .map(|seq| vec![state.response("launch", seq, true, Value::Null)])
-        .unwrap_or_default()
-}
-
-fn stop_body(reason: &str, hit: Vec<i64>) -> Value {
+pub fn stop_body(reason: &str, hit: Vec<i64>) -> Value {
     json!({
         "reason": reason,
         "threadId": 1,
@@ -141,7 +95,7 @@ fn stop_body(reason: &str, hit: Vec<i64>) -> Value {
     })
 }
 
-fn init_commands(arguments: &Value) -> String {
+pub fn init_commands(arguments: &Value) -> String {
     strings(arguments, "initCommands").join(" | ")
 }
 

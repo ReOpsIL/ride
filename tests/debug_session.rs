@@ -1,9 +1,12 @@
+mod debug_support;
+
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
+use debug_support::{Recorder, alive, developer_mode, stopped, until};
 use ride_engine::{
     Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
     DebugRegistry, DebugSession, DebugState, ExceptionFilter, find_adapter,
@@ -11,72 +14,6 @@ use ride_engine::{
 };
 
 const FAKE_ADAPTER: &str = env!("CARGO_BIN_EXE_fake-dap");
-
-#[derive(Default)]
-struct Recorder {
-    events: Mutex<Vec<DebugEvent>>,
-    output: Mutex<Vec<String>>,
-}
-
-impl DebugListener for Recorder {
-    fn on_event(&self, event: DebugEvent) {
-        self.events.lock().unwrap().push(event);
-    }
-
-    fn on_output(&self, category: String, text: String) {
-        self.output
-            .lock()
-            .unwrap()
-            .push(format!("{category}: {text}"));
-    }
-}
-
-impl Recorder {
-    fn events(&self) -> Vec<DebugEvent> {
-        self.events.lock().unwrap().clone()
-    }
-
-    fn output(&self) -> Vec<String> {
-        self.output.lock().unwrap().clone()
-    }
-
-    fn saw(&self, matches: impl Fn(&DebugEvent) -> bool) -> bool {
-        self.events().iter().any(matches)
-    }
-
-    fn count(&self, matches: impl Fn(&&DebugEvent) -> bool) -> usize {
-        self.events().iter().filter(matches).count()
-    }
-
-    fn breakpoints(&self, path: &str) -> Vec<Breakpoint> {
-        self.events()
-            .into_iter()
-            .rev()
-            .find_map(|event| match event {
-                DebugEvent::Breakpoints {
-                    path: reported,
-                    breakpoints,
-                } if reported == path => Some(breakpoints),
-                _ => None,
-            })
-            .unwrap_or_default()
-    }
-
-    fn wait(&self, what: &str, matches: impl Fn(&DebugEvent) -> bool) -> DebugEvent {
-        let deadline = Instant::now() + Duration::from_secs(20);
-        while Instant::now() < deadline {
-            if let Some(event) = self.events().into_iter().find(&matches) {
-                return event;
-            }
-            sleep(Duration::from_millis(20));
-        }
-        panic!("timed out waiting for {what}, saw {:?}", self.events());
-    }
-}
-
-fn stopped(event: &DebugEvent, expected: &str) -> bool {
-    matches!(event, DebugEvent::Stopped { reason, .. } if reason == expected)
-}
 
 fn scripted(breakpoints: Vec<Breakpoint>) -> (Arc<DebugSession>, Arc<Recorder>) {
     scripted_with(&[], breakpoints)
@@ -146,15 +83,6 @@ fn the_launch_sends_only_the_advertised_enabled_filters() {
     let _ = session.command(DebugCommand::Disconnect);
 }
 
-fn alive(pid: u32) -> bool {
-    Command::new("/bin/kill")
-        .arg("-0")
-        .arg(pid.to_string())
-        .output()
-        .map(|output| output.status.success())
-        .unwrap_or(false)
-}
-
 fn adapter_pid(pid_file: &Path) -> u32 {
     let deadline = Instant::now() + Duration::from_secs(10);
     while Instant::now() < deadline {
@@ -166,17 +94,6 @@ fn adapter_pid(pid_file: &Path) -> u32 {
         sleep(Duration::from_millis(20));
     }
     panic!("the fake adapter never wrote its pid");
-}
-
-fn until(what: &str, ready: impl Fn() -> bool) {
-    let deadline = Instant::now() + Duration::from_secs(10);
-    while Instant::now() < deadline {
-        if ready() {
-            return;
-        }
-        sleep(Duration::from_millis(20));
-    }
-    panic!("timed out waiting for {what}");
 }
 
 #[test]
@@ -651,14 +568,6 @@ fn a_handshake_against_a_silent_adapter_fails() {
         matches!(event, DebugEvent::Failed { .. })
     });
     assert_eq!(session.state(), DebugState::Terminated);
-}
-
-fn developer_mode() -> bool {
-    Command::new("/usr/sbin/DevToolsSecurity")
-        .arg("-status")
-        .output()
-        .map(|output| String::from_utf8_lossy(&output.stdout).contains("enabled"))
-        .unwrap_or(false)
 }
 
 fn demo_binary() -> Option<PathBuf> {

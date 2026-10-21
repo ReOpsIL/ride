@@ -21,6 +21,7 @@ add_executable(debugger-lab
     src/dispatch.cpp
     src/threads.cpp
     src/faults.cpp
+    src/fork.cpp
     src/heartbeat.cpp
 )
 target_include_directories(debugger-lab PRIVATE include)

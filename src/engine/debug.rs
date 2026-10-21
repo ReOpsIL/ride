@@ -2,12 +2,14 @@ use std::sync::Arc;
 
 use crate::debug::adapter::adapter_path;
 use crate::debug::filters::exception_filters;
+use crate::debug::processes::list_processes;
 use crate::debug::registry::DebugRegistry;
 use crate::debug::session::DebugSession;
+use crate::debug::target::DebugTarget;
 use crate::error::EngineError;
 use crate::ffi::{
-    Breakpoint, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch, DebugListener,
-    DebugScope, DebugThread, ExceptionFilter, StackFrame, Variable,
+    Breakpoint, DebugAttach, DebugCommand, DebugEvaluateContext, DebugEvent, DebugLaunch,
+    DebugListener, DebugProcess, DebugScope, DebugThread, ExceptionFilter, StackFrame, Variable,
 };
 
 use super::Engine;
@@ -20,23 +22,20 @@ impl Engine {
         breakpoints: Vec<Breakpoint>,
         listener: Arc<dyn DebugListener>,
     ) -> Result<u64, EngineError> {
-        let adapter = adapter_path()?;
-        let registry = self.debug_registry()?;
-        let sysroot = self.read(|i| i.sysroot.clone())?;
-        registry
-            .start(
-                &adapter,
-                &[],
-                launch,
-                sysroot,
-                breakpoints,
-                Arc::clone(&listener),
-            )
-            .inspect_err(|err| {
-                listener.on_event(DebugEvent::Failed {
-                    message: err.to_string(),
-                });
-            })
+        self.debug_start(launch.into(), breakpoints, listener)
+    }
+
+    pub fn debug_attach(
+        &self,
+        attach: DebugAttach,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+    ) -> Result<u64, EngineError> {
+        self.debug_start(attach.into(), breakpoints, listener)
+    }
+
+    pub fn debug_processes(&self) -> Result<Vec<DebugProcess>, EngineError> {
+        list_processes()
     }
 
     pub fn debug_exception_filters(&self) -> Vec<ExceptionFilter> {
@@ -101,6 +100,31 @@ impl Engine {
 }
 
 impl Engine {
+    fn debug_start(
+        &self,
+        target: DebugTarget,
+        breakpoints: Vec<Breakpoint>,
+        listener: Arc<dyn DebugListener>,
+    ) -> Result<u64, EngineError> {
+        let adapter = adapter_path()?;
+        let registry = self.debug_registry()?;
+        let sysroot = self.read(|i| i.sysroot.clone())?;
+        registry
+            .start(
+                &adapter,
+                &[],
+                target,
+                sysroot,
+                breakpoints,
+                Arc::clone(&listener),
+            )
+            .inspect_err(|err| {
+                listener.on_event(DebugEvent::Failed {
+                    message: err.to_string(),
+                });
+            })
+    }
+
     fn debug_registry(&self) -> Result<Arc<DebugRegistry>, EngineError> {
         self.read(|i| Arc::clone(&i.debug_sessions))
     }

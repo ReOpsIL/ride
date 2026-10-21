@@ -74,8 +74,13 @@ impl Transport {
         reply::await_body(&self.mailbox, seq, command, timeout)
     }
 
-    pub fn await_response(&self, seq: i64, command: &str) -> Result<Value, EngineError> {
-        reply::await_body(&self.mailbox, seq, command, DEFAULT_TIMEOUT)
+    pub fn await_response(
+        &self,
+        seq: i64,
+        command: &str,
+        timeout: Duration,
+    ) -> Result<Value, EngineError> {
+        reply::await_body(&self.mailbox, seq, command, timeout)
     }
 
     pub fn send_request(&self, command: &str, arguments: Value) -> Result<i64, EngineError> {

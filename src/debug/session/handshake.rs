@@ -1,34 +1,34 @@
-use std::collections::BTreeMap;
-use std::path::Path;
 use std::sync::Arc;
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use crate::error::EngineError;
 use crate::ffi::DebugEvent;
 
+use super::rust_target::is_rust_target;
+use super::start_request::start_request;
 use super::wire::{arguments, body};
 use super::{DebugSession, events};
 use crate::debug::filters;
 use crate::debug::protocol::{
     CONFIGURATION_DONE, Capabilities, ConfigurationDoneArguments, FILTER_RUST_PANIC,
-    FunctionBreakpoint, INITIALIZED, InitializeArguments, LaunchArguments,
-    SetExceptionBreakpointsArguments, SetFunctionBreakpointsArguments,
+    FunctionBreakpoint, INITIALIZED, InitializeArguments, SetExceptionBreakpointsArguments,
+    SetFunctionBreakpointsArguments,
 };
 use crate::debug::render;
 
 const INITIALIZE: &str = "initialize";
-const LAUNCH: &str = "launch";
 const SET_EXCEPTION_BREAKPOINTS: &str = "setExceptionBreakpoints";
 const SET_FUNCTION_BREAKPOINTS: &str = "setFunctionBreakpoints";
 const RUST_PANIC_FUNCTION: &str = "rust_panic";
-const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(30);
 
 pub fn run(session: &Arc<DebugSession>) -> Result<(), EngineError> {
     let capabilities = initialize(session)?;
-    let launch_seq = session
+    let target = &session.target;
+    let init_commands = render::init_commands(session.sysroot.as_deref(), is_rust_target(target));
+    let start_seq = session
         .transport
-        .send_request(LAUNCH, arguments(LAUNCH, &launch_arguments(session))?)?;
+        .send_request(target.command(), start_request(target, init_commands)?)?;
     await_initialized(session)?;
     session.send_stored_breakpoints()?;
     exception_breakpoints(session, &capabilities)?;
@@ -36,18 +36,24 @@ pub fn run(session: &Arc<DebugSession>) -> Result<(), EngineError> {
         CONFIGURATION_DONE,
         arguments(CONFIGURATION_DONE, &ConfigurationDoneArguments {})?,
     )?;
-    let launched = Arc::clone(session);
-    thread::spawn(move || decide(&launched, launch_seq));
+    let started = Arc::clone(session);
+    thread::spawn(move || decide(&started, start_seq));
     Ok(())
 }
 
-fn decide(session: &DebugSession, launch_seq: i64) {
-    if let Err(err) = session.transport.await_response(launch_seq, LAUNCH) {
+fn decide(session: &DebugSession, start_seq: i64) {
+    let target = &session.target;
+    let command = target.command();
+    if let Err(err) =
+        session
+            .transport
+            .await_response(start_seq, command, target.handshake_timeout())
+    {
         session.fail(&err.to_string());
         return;
     }
     if !session.drained(session.transport.events_received()) {
-        session.abandon_launch("launch: the adapter stopped delivering events");
+        session.abandon_launch(&format!("{command}: the adapter stopped delivering events"));
         return;
     }
     if session.begin_running() {
@@ -63,24 +69,8 @@ fn initialize(session: &DebugSession) -> Result<Capabilities, EngineError> {
     body::<Capabilities>(INITIALIZE, response)
 }
 
-fn launch_arguments(session: &DebugSession) -> LaunchArguments {
-    let launch = &session.launch;
-    LaunchArguments {
-        program: launch.program.clone(),
-        args: launch.args.clone(),
-        cwd: launch.cwd.clone(),
-        env: launch
-            .env
-            .iter()
-            .map(|(name, value)| (name.clone(), value.clone()))
-            .collect::<BTreeMap<String, String>>(),
-        stop_on_entry: Some(launch.stop_on_entry),
-        init_commands: render::init_commands(session.sysroot.as_deref(), is_rust_target(session)),
-    }
-}
-
 fn await_initialized(session: &DebugSession) -> Result<(), EngineError> {
-    let deadline = Instant::now() + HANDSHAKE_TIMEOUT;
+    let deadline = Instant::now() + session.target.handshake_timeout();
     while Instant::now() < deadline {
         let Some((stamp, event)) = session.transport.poll_received(events::POLL)? else {
             continue;
@@ -99,8 +89,8 @@ fn exception_breakpoints(
     session: &DebugSession,
     capabilities: &Capabilities,
 ) -> Result<(), EngineError> {
-    let rust = is_rust_target(session);
-    let mut filters = filters::enabled(&session.launch.exception_filters, capabilities);
+    let rust = is_rust_target(&session.target);
+    let mut filters = filters::enabled(session.target.exception_filters(), capabilities);
     if rust
         && capabilities.has_filter(FILTER_RUST_PANIC)
         && !filters.iter().any(|id| id == FILTER_RUST_PANIC)
@@ -126,29 +116,4 @@ fn exception_breakpoints(
         arguments(SET_FUNCTION_BREAKPOINTS, &request)?,
     )?;
     Ok(())
-}
-
-fn is_rust_target(session: &DebugSession) -> bool {
-    let launch = &session.launch;
-    if let Some(cwd) = &launch.cwd
-        && has_manifest(Path::new(cwd))
-    {
-        return true;
-    }
-    Path::new(&launch.program)
-        .ancestors()
-        .any(is_cargo_target_dir)
-}
-
-fn has_manifest(directory: &Path) -> bool {
-    directory
-        .ancestors()
-        .any(|parent| parent.join("Cargo.toml").is_file())
-}
-
-fn is_cargo_target_dir(directory: &Path) -> bool {
-    directory.file_name().is_some_and(|name| name == "target")
-        && directory
-            .parent()
-            .is_some_and(|parent| parent.join("Cargo.toml").is_file())
 }
