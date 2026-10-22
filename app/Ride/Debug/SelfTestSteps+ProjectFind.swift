@@ -46,7 +46,9 @@ extension SelfTestSteps {
                 model.showPreview = false
                 return e.expect(shown && none && all && e.text.contains("record"), "preview \(shown) none \(none) all \(all)")
             }),
-            SelfTestStep(name: "project find opens match", wait: 0.6, run: {
+            SelfTestStep(name: "project find opens match", until: {
+                !state.showProjectFind && e.line(e.caretLine).contains("record")
+            }, timeout: 5, run: {
                 state.projectFindSubmit()
             }, check: {
                 e.expect(!state.showProjectFind && e.line(e.caretLine).contains("record"), "overlay \(state.showProjectFind) line '\(e.line(e.caretLine))'")

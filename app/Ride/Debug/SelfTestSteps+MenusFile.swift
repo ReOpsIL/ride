@@ -12,7 +12,7 @@ extension SelfTestSteps {
             e.view?.insertText(text, replacementRange: NSRange(location: end, length: 0))
         }
         return [
-            c.step("menu new file", "File › New File…", prepare: {
+            c.step("menu new file", "File › New File…", until: { reveal(c, notes) }, timeout: 5, prepare: {
                 [notes, notes2].compactMap { $0 }.forEach { try? FileManager.default.removeItem(at: $0) }
                 c.script(notes.map { ScriptedURL(url: $0) })
             }) {
@@ -42,7 +42,7 @@ extension SelfTestSteps {
             c.step("menu markdown preview close", "View › Toggle Markdown Preview") {
                 (!state.showPreview, "shown \(state.showPreview)")
             },
-            c.step("menu save as", "File › Save As…", prepare: {
+            c.step("menu save as", "File › Save As…", until: { reveal(c, notes2) }, timeout: 5, prepare: {
                 c.script(notes2.map { ScriptedURL(url: $0) })
             }) {
                 (c.activeName == "menu-notes-2.md" && c.disk(notes2) == e.text && !dirty(), "active \(c.activeName) disk '\(c.disk(notes2))'")
@@ -104,5 +104,13 @@ extension SelfTestSteps {
                 state.showNewProjectSheet = false
             }, check: { c.e.expect(sheet() == nil && !state.showNewProjectSheet, "sheet still open") }),
         ]
+    }
+
+    private static func reveal(_ c: SelfTestMenuContext, _ url: URL?) -> Bool {
+        if let buffer = c.state.activeBuffer,
+           MarkdownPage.matches(buffer.fileURL) || HtmlPage.matches(buffer.fileURL) {
+            buffer.showHtmlSource = true
+        }
+        return c.shows(url)
     }
 }

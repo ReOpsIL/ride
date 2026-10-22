@@ -120,7 +120,7 @@ fn overlap_pair(
             }
         }
     }
-    pairs.sort_by(|a, b| b.0.cmp(&a.0));
+    pairs.sort_by_key(|pair| std::cmp::Reverse(pair.0));
     for (_, old_index, new_index) in pairs {
         if used_old[old_index] || used_new[new_index] {
             continue;

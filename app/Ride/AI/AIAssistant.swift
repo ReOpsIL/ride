@@ -41,7 +41,7 @@ final class AIAssistant: ObservableObject {
         let store = AIChatStore.shared
         store.newThread()
         showPanel = true
-        store.send(request, config: state.prefs.aiChatConfig, attachments: attachments)
+        store.send(request, config: state.prefs.aiChatConfig, attachments: attachments, includeDraft: false)
     }
 
     private func wider(_ level: AIContextLevel, document: BufferDocument, view: RideTextView, state: AppState) -> [AIChatAttachment] {

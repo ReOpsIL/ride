@@ -21,6 +21,8 @@ The earlier `refreshFolds()` marked the whole store edited and invalidated the d
 
 Invariant: no path invalidates layout for more than the paragraphs whose presentation changed, and every invalidated paragraph is laid out again before the viewport is.
 
+`layoutViewport()` posts a clip-view bounds change while fragment frames are still moving. Completion, the cheat sheet and signature help follow that notification and hide when the caret rect misses the viewport. `refreshFragments(in:)` brackets the pass in `EditorHostView.beginFragmentSettle` / `endFragmentSettle`, so a bounds change inside the pass only repaints the gutter. Followers hear one `viewportMoved` after the caret rect has settled.
+
 ## Style writers settle what they invalidate (`Editor/RideTextView+Styles.swift`)
 
 Syntax colours (`HighlightApply`) and underlines (`Underlines`) are text-storage attributes. Any attribute write, even one that sets the value already there, makes TextKit 2 drop the layout of every paragraph in the storage's `editedRange`, and inside one `beginEditing`/`endEditing` that range is the union of all writes. Two writes far apart (a warning underline near the top, a parse error at the caret) therefore invalidate everything between them. Paragraphs above the viewport fall back to estimated heights that ignore vision margins, hidden folds and soft wrap, and the viewport's first fragment lands below the visible top: a blank band that flickers while typing and fills in on scroll.

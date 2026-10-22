@@ -167,9 +167,9 @@ The SwiftUI pickers (Quick Open, Recent Files, Go to Line, both Symbol pickers) 
 | View › Show Whitespace | — | `toggleWhitespace()` | Flips `prefs.visibleWhitespace`. | NONE | |
 | View › Indent Guides | — | `toggleIndentGuides()` | Flips `prefs.indentGuides`. | NONE | |
 | View › Code Vision | — | `toggleCodeVision()` | Flips `prefs.codeVision`, which controls the inline usage-count labels. | NONE | "code vision" tests the labels, not the toggle. demo: "codevision" |
-| View › Diagnostic Overlay › Off | — | `setDiagnosticOverlay(.off)` | Sets `prefs.diagnosticOverlay` to off. The editor keeps primary underlines and gutter dots and draws no label chips. | NONE | No shortcut: the inventory has no free chord. Unclaimed until DO-3. |
-| View › Diagnostic Overlay › At Caret | — | `setDiagnosticOverlay(.caret)` | Sets the mode to at caret (the default). The diagnostic under the caret is drawn on the code. | NONE | Unclaimed until DO-3. |
-| View › Diagnostic Overlay › All in File | — | `setDiagnosticOverlay(.all)` | Draws every diagnostic in the open file. | NONE | Unclaimed until DO-3. |
+| View › Diagnostic Overlay › Off | — | `setDiagnosticOverlay(.off)` | Sets `prefs.diagnosticOverlay` to off. The editor keeps primary underlines and gutter dots and draws no label chips. | SELFTEST: "menu diagnostic overlay off" | No shortcut: the inventory has no free chord. |
+| View › Diagnostic Overlay › At Caret | — | `setDiagnosticOverlay(.caret)` | Sets the mode to at caret (the default). The diagnostic under the caret is drawn on the code. | SELFTEST: "menu diagnostic overlay at caret" | No shortcut. The suite restores caret after the all-in-file step. |
+| View › Diagnostic Overlay › All in File | — | `setDiagnosticOverlay(.all)` | Draws every diagnostic in the open file. | SELFTEST: "menu diagnostic overlay all in file" | No shortcut. |
 | View › Open in Split | — | `openInSplit()` → `AppState+Panes.swift` | If there is no split, it opens a right pane and moves the active tab into it. If already split, it moves the active tab to the other pane. Disabled `!hasEditor`. | SELFTEST: "split header source" (rust; `openInSplit(other.id)` with an explicit id); UNIT: PaneLayoutTests.testMoveTakesTabToOtherPane, PaneLayoutTests.testOpenRemovesTabFromOtherPanes | It moves the tab rather than duplicating it, so the source pane can end up empty. demo: "split" |
 | View › Toggle Split | ⌘\ | `toggleSplit()` | If split, calls `closeSplit()`. Otherwise `openSplit()` adds an empty, focused right pane. Disabled only when there is no editor and no split. | UNIT: SplitLayoutTests.testToggleOpensHorizontalThenReturnsToSingle, PaneLayoutTests.testClosePaneKeepsLastPane | "split header source" calls it only in a fallback branch that the rust fixture doesn't reach, because other buffers are open. |
 | View › Close Split | — | `closeSplit()` | Closes `panes[1]` whichever pane is focused, merges its tabs into the left pane and refocuses the editor. Disabled `!hasSplit`. | SELFTEST: "breakpoint shift settle" (rust; asserts 1 pane); UNIT: PaneLayoutTests.testClosePaneMergesTabsIntoNeighbour, SplitLayoutTests.testCloseRightPaneFocusesLeft | Also called as cleanup in "move statement open". |
@@ -469,15 +469,15 @@ Engine order is: diagnostic fixes, then import/include, then underscore, missing
 | Ask AI › Prompt editor | — | `TextEditor($assistant.prompt)` | An editable request, pre-filled from the comment at or above the caret. | UNIT: AICommentPromptTests.testCaretOnCommentLineJoinsTheCommentRun, testCommentAboveTheCaretLineIsUsed, testBlockCommentsAndHashComments | |
 | Ask AI › Context picker | — | `Picker($assistant.level)` | Chooses the context sent: Code block, Function, File, Directory or Project. It starts from `prefs.aiContext`. | NONE | The choice applies to this request only and is not saved to prefs. |
 | Ask AI › Cancel | Esc | `assistant.showPrompt = false` | Closes the sheet without sending. | NONE | |
-| Ask AI › Send | ⌘↩ | `AIAssistant.send()` → `AIChatContext.pack` (+ file and directory/project files by level) → `AIChatStore.send` | Starts a chat thread with the request and its context chips and streams the answer into the AI chat panel. Disabled while the prompt is blank. | NONE | ⚠ Return is the default action, but the focused `TextEditor` probably takes ↩ as a newline (not verified). If the captured document or view is gone, it closes the sheet and silently drops the request. |
+| Ask AI › Send | ⌘↩ | `AIAssistant.send()` → `AIChatContext.pack` (+ file and directory/project files by level) → `AIChatStore.send` | Starts a chat thread with the request and its context chips and streams the answer into the AI chat panel. Chips already staged on the composer are dropped. Disabled while the prompt is blank. | NONE | ⚠ Return is the default action, but the focused `TextEditor` probably takes ↩ as a newline (not verified). If the captured document or view is gone, it closes the sheet and silently drops the request. |
 
 ### AI chat panel and Explain (`AI/Chat/`, added 2026-10-06)
 
 | Command (path) | Shortcut | Handler | What it does | Coverage | Notes/⚠ |
 |---|---|---|---|---|---|
 | Code › Suggest with AI | ⌥\ | `suggestInline()` → `AIInlineController.trigger` | Requests an inline suggestion at the caret now, whatever the AI suggestions preference; the result is ghost text (⇥ / ⌥⇥ accept, ⌘→ one word, esc dismiss). | SELFTEST: "menu suggest with ai without key"; UNIT: AIInlineGhostTests | Needs the rest of the caret line to be blank. |
-| Code › Explain | ⌃⌘E | `explainSelection()` → `AIChatContext.selection` | New thread with the selected lines (or the item under the caret), streaming an explanation. | SELFTEST: "menu explain without key" | |
-| Code › Explain File | — | `explainFile()` | New thread with the whole file (60k characters, marked truncated beyond). | SELFTEST: "menu explain file without key" | |
+| Code › Explain | ⌃⌘E | `explainSelection()` → `AIChatContext.selection` | New thread with the selected lines (or the item under the caret), streaming an explanation. Chips already staged on the composer are dropped, not added to the message. | SELFTEST: "menu explain without key" | |
+| Code › Explain File | — | `explainFile()` | New thread with the whole file (60k characters, marked truncated beyond). Staged composer chips are dropped, same as Explain. | SELFTEST: "menu explain file without key" | |
 | Code › Add Selection to Chat | ⌃⌘L | `addSelectionToChat()` → `AIChatContext.selection` | Adds the selected lines (or the item under the caret) as one chip and focuses the chat input. | SELFTEST: "menu add selection to chat" | |
 | Chat › history menu, New Chat, close | — | `AIChatStore.select/delete/newThread`, `showPanel = false` | Switches, deletes or starts threads (in memory for the session). | NONE | |
 | Chat › input ↩ / ⇧↩, Send, Stop | ↩ | `sendChat()` / `AIChatStore.stop()` | Sends the message with its chips; Stop cancels the stream and keeps what arrived. | UNIT: AIChatPromptTests | |
@@ -1065,9 +1065,6 @@ General gaps: no unit test covers `Preferences` decoding (missing keys → defau
 - View › Show Whitespace
 - View › Indent Guides
 - View › Code Vision
-- View › Diagnostic Overlay › Off
-- View › Diagnostic Overlay › At Caret
-- View › Diagnostic Overlay › All in File
 - Navigate › Open Quickly…
 - Navigate › Recent Files…
 - Navigate › Last Edit Location

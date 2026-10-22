@@ -76,6 +76,6 @@ extension AppState {
         let store = AIChatStore.shared
         store.newThread()
         showChat(focus: false)
-        store.send(prompt, config: prefs.aiChatConfig, attachments: attachments)
+        store.send(prompt, config: prefs.aiChatConfig, attachments: attachments, includeDraft: false)
     }
 }

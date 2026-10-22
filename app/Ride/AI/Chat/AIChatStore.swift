@@ -63,7 +63,7 @@ final class AIChatStore: ObservableObject {
         pending.removeAll { $0.id == id }
     }
 
-    func send(_ question: String, config: AIConfig, attachments extra: [AIChatAttachment] = []) {
+    func send(_ question: String, config: AIConfig, attachments extra: [AIChatAttachment] = [], includeDraft: Bool = true) {
         let text = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else {
             return
@@ -78,7 +78,8 @@ final class AIChatStore: ObservableObject {
         if threads[index].messages.isEmpty {
             threads[index].title = AIChatPrompt.title(for: text)
         }
-        threads[index].messages.append(AIChatMessage(role: .user, text: text, attachments: pending + extra))
+        let attached = includeDraft ? pending + extra : extra
+        threads[index].messages.append(AIChatMessage(role: .user, text: text, attachments: attached))
         let turns = AIChatPrompt.turns(threads[index].messages)
         let answer = AIChatMessage(role: .assistant, text: "", streaming: true)
         threads[index].messages.append(answer)

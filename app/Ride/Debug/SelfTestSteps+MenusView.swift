@@ -25,6 +25,7 @@ extension SelfTestSteps {
             + terminalToggle(c)
             + editorOptions.flatMap { menuToggle(c, name: $0.0, path: $0.1, read: $0.2, applied: $0.3) }
             + whitespaceToggle(c)
+            + diagnosticOverlaySteps(c)
             + zoomSteps(c)
     }
 
@@ -75,6 +76,25 @@ extension SelfTestSteps {
 
     private static func whitespaceToggle(_ c: SelfTestMenuContext) -> [SelfTestStep] {
         menuToggle(c, name: "show whitespace", path: "View › Show Whitespace", read: { c.state.prefs.visibleWhitespace })
+    }
+
+    private static func diagnosticOverlaySteps(_ c: SelfTestMenuContext) -> [SelfTestStep] {
+        let state = c.state
+        let choices: [(String, String, DiagnosticOverlayMode)] = [
+            ("off", "Off", .off),
+            ("at caret", "At Caret", .caret),
+            ("all in file", "All in File", .all),
+        ]
+        return choices.map { name, title, mode in
+            let path = "View › Diagnostic Overlay › \(title)"
+            return c.step("menu diagnostic overlay \(name)", path) {
+                let selected = state.prefs.diagnosticOverlay == mode && SelfTestMenu.isChecked(path)
+                if name == "all in file", selected {
+                    state.setDiagnosticOverlay(.caret)
+                }
+                return (selected, "mode \(state.prefs.diagnosticOverlay)")
+            }
+        }
     }
 
     private static func zoomSteps(_ c: SelfTestMenuContext) -> [SelfTestStep] {

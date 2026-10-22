@@ -21,6 +21,9 @@ extension RideTextView {
         guard !paragraphs.isEmpty else {
             return
         }
+        let host = enclosingScrollView?.superview as? EditorHostView
+        host?.beginFragmentSettle()
+        defer { host?.endFragmentSettle() }
         storage.performEditingTransaction {
             for paragraph in paragraphs {
                 backing.edited(.editedAttributes, range: paragraph, changeInLength: 0)
@@ -33,7 +36,6 @@ extension RideTextView {
         }
         tlm.textViewportLayoutController.layoutViewport()
         needsDisplay = true
-        (enclosingScrollView?.superview as? EditorHostView)?.viewportMoved()
     }
 
     func lineRange(_ line: Int) -> NSRange? {

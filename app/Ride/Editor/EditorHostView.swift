@@ -10,6 +10,7 @@ final class EditorHostView: NSView {
     var docsStorage: DocController?
     var peekStorage: PeekController?
     private var gutterWidth: NSLayoutConstraint!
+    private var fragmentSettles = 0
 
     override init(frame frameRect: NSRect) {
         textView = RideTextView.makeTK2()
@@ -78,8 +79,23 @@ final class EditorHostView: NSView {
         gutter.needsDisplay = true
     }
 
+    func beginFragmentSettle() {
+        fragmentSettles += 1
+    }
+
+    func endFragmentSettle() {
+        fragmentSettles -= 1
+        guard fragmentSettles == 0 else {
+            return
+        }
+        viewportMoved()
+    }
+
     @objc func viewportMoved() {
         gutter.needsDisplay = true
+        guard fragmentSettles == 0 else {
+            return
+        }
         onViewport?()
     }
 }

@@ -23,7 +23,7 @@ pub fn list_processes() -> Result<Vec<DebugProcess>, EngineError> {
 
 pub fn parse_processes(listing: &str) -> Vec<DebugProcess> {
     let mut processes: Vec<DebugProcess> = listing.lines().filter_map(parse_row).collect();
-    processes.sort_by(|left, right| right.pid.cmp(&left.pid));
+    processes.sort_by_key(|process| std::cmp::Reverse(process.pid));
     processes
 }
 

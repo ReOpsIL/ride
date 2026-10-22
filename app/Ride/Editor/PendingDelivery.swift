@@ -35,9 +35,13 @@ extension AppState {
 
     func openFile(_ url: URL, at target: PendingJump, readOnly: Bool = false) {
         openFile(url, readOnly: readOnly)
-        if let buffer = buffer(for: url) {
-            jump(to: target, in: buffer)
+        guard let buffer = buffer(for: url) else {
+            return
         }
+        if MarkdownPage.matches(buffer.fileURL) || HtmlPage.matches(buffer.fileURL) {
+            buffer.showHtmlSource = true
+        }
+        jump(to: target, in: buffer)
     }
 
     func flushPending(_ host: EditorHostView) {
