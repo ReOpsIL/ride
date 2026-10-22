@@ -47,7 +47,7 @@
 # Refactor (added 2026-09-20, 1.3-6b review)
 
 - refactor: Introduce Constant anchors at the item node, so a `const` lands between a doc comment or attribute and its item; anchor above the contiguous run of `line_comment`/`attribute_item` siblings that precede the item.
-- menus: Inline Variable is ⌃⌥N because ⌥⌘N is New Buffer; decide whether New Buffer moves so the JetBrains chord can be used.
+- menus: Inline Variable is ⌃⌥N because ⌥⌘N is New Buffer; decide whether New Buffer moves so Inline Variable can use ⌥⌘N.
 
 
 # Multi-project indexing (2026-09-23, see docs/product/multi-project.md)

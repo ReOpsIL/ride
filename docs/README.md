@@ -15,7 +15,7 @@
 | Completion plan (sites, `use`/`#include`, ranking, rows, accept) | `plan/roadmap/completion.md` |
 | Cheat sheet plan (contexts, sheet data, popup) | `plan/roadmap/cheatsheet.md` |
 | Must-have editor functionality (Edit / View / Navigate / Code menus), first priority | `plan/roadmap/must_have.md` |
-| Next features and releases 1.1 / 1.2 / 1.3 / 2.0 (trimmed to daily native-app work after the RustRover and CLion pass) | `plan/roadmap/next.md` |
+| Next features and releases 1.1 / 1.2 / 1.3 / 2.0 (trimmed to daily native-app work) | `plan/roadmap/next.md` |
 | Implementation plan for a delegated model: executor contract, tiers, task cards for 1.1 and 1.2 | `plan/roadmap/next-impl.md` |
 | Feature inventory for running and debugging C, C++, Rust and assembly, with verification status | `docs/product/feature-inventory.md` |
 | Every menu item, popup, panel control, key binding and preference: what it does (traced to its handler) and which test covers it | `docs/product/command-inventory.md` |
@@ -36,7 +36,7 @@
 | Remote toolchain plan: SSH presets for a VM, container, pod and local Docker, then sync, debug and the workspace sheet | `plan/toolchain/remote.md` |
 | AI suggestions in the completion popup: providers (API keys), context levels, request shape | `docs/product/ai-complete.md` |
 | AI chat panel and Explain: context packs, streaming, threads, code-block actions | `docs/product/ai-chat.md` |
-| AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed, JetBrains; engine context packs | `plan/ai/assistant.md` |
+| AI assistant plan: inline ghost-text completion, Explain, chat; research on Cursor, Copilot, Zed; engine context packs | `plan/ai/assistant.md` |
 | Semantic oracle: rust-analyzer and clangd sidecars for type-aware completion, never on the keystroke path | `docs/product/semantic-oracle.md` |
 | Git: changes panel, diff, stage, commit, push, pull, branches; engine `src/git/` over the `git` CLI | `docs/product/git.md` |
 | Follow files: one committed `.ride/follow/<author>.toml` per author, the mark schema an agent answers in | `docs/sessions/follow-format.md` |

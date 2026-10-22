@@ -36,13 +36,13 @@ Status: **shipped** (live, verified), **built** (implemented, not verified end t
 ### 1.3 What is unusual and worth protecting
 
 1. The keystroke path answers from everything on the machine in under a millisecond, with nothing to install and no language server to babysit.
-2. Cheat sheets: a second popup that teaches the language at the caret; nothing comparable exists in RustRover or CLion.
+2. Cheat sheets: a second popup that teaches the language at the caret.
 3. C, C++ and Rust as peers in one small app, from `compile_commands.json` to `lldb-dap`.
 4. The engineering process: every card ships with gates re-run by the reviewer, self-test steps that run without UI automation, ranking goldens. This is what lets a small team move fast without a QA team.
 
 ### 1.4 What holds it back
 
-1. **Heuristic types have a ceiling.** `foo().bar`, iterator chains, generics, trait methods and macro-generated items are all "unknown". 1.3-7 and 1.4 push the heuristics three hops further and then stop. RustRover users judge an IDE by whether `.` after an iterator chain completes.
+1. **Heuristic types have a ceiling.** `foo().bar`, iterator chains, generics, trait methods and macro-generated items are all "unknown". 1.3-7 and 1.4 push the heuristics three hops further and then stop. Users judge an IDE by whether `.` after an iterator chain completes.
 2. **Nothing has shipped.** 0.1.0, no tag, no appcast, no page. Every feature since 1.0 has one user.
 3. **No Git.** The daily loop still leaves the app to commit.
 4. **The C and C++ story is built but unproven live.** The inventory lists it honestly; users will not read the inventory.

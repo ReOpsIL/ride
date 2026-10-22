@@ -19,7 +19,7 @@ Ride is a single-purpose native macOS IDE for Rust. The user opens a Cargo proje
 
 The product is two tightly coupled pieces:
 
-1. **Ride.app** — a SwiftUI + AppKit IDE shell. Windows, tabs, project tree, TextKit 2 editor, completion popup, find, status bar. Looks like a conventional IDE (RustRover / Xcode layout), without the feature surface of one. One editor split is optional polish, not a 1.0 gate.
+1. **Ride.app** — a SwiftUI + AppKit IDE shell. Windows, tabs, project tree, TextKit 2 editor, completion popup, find, status bar. Looks like a conventional IDE (Xcode layout), without the feature surface of one. One editor split is optional polish, not a 1.0 gate.
 2. **RideEngine** — a Rust library (this repo’s `ride` crate, renamed `ride-engine`) that discovers crates, extracts items, builds a Tantivy index, and answers keystroke queries in **under 20–50 ms**. Incremental parse and lexical query run **in-process**. Index writing (and later ONNX) runs in a **one-shot child** `Contents/Helpers/ride-engine` so a bad crate or embedder abort does not take down the editor. The in-process engine **watches** `index_dir/manifest.json` and reopens `IndexReader`; it does not spawn the child.
 
 Autocomplete is a **local index + hybrid retrieval** system plus ordinary editor sources (keywords, locals, current-file outline). It is not a generative LLM on every keypress. Cloud completion (Kimi 2.7 Coder via OpenRouter, ghost-text streaming, Keychain API keys, cost indicators) is a **rejected alternative** for the live list. A local 1–3B model may appear later only to explain a selected hit, never to produce the popup.
@@ -34,7 +34,6 @@ Autocomplete is a **local index + hybrid retrieval** system plus ordinary editor
 
 Rust developers on macOS currently choose among:
 
-- **RustRover / CLion** — excellent language intelligence, heavy, commercial, dense with settings.
 - **VS Code + rust-analyzer** — capable, non-native, plugin-shaped, easy to turn into a general IDE.
 - **Zed / Helix / Neovim** — fast editors, not a small Cargo-project IDE with a project tree and crate-catalog search.
 
@@ -266,11 +265,11 @@ A minimal, opinionated native macOS IDE for Rust: Cargo project, tree-sitter edi
 
 ### Target user
 
-Rust developers who want a lighter native alternative to RustRover / VS Code, are happy with a handful of defaults, and edit Cargo projects locally. They already have a terminal for `cargo test`. Not students of “how to configure LSP.” Not people who need remote-SSH or a debugger in the same window.
+Rust developers who want a lighter native alternative to VS Code, are happy with a handful of defaults, and edit Cargo projects locally. They already have a terminal for `cargo test`. Not students of “how to configure LSP.” Not people who need remote-SSH or a debugger in the same window.
 
 ### Look and feel
 
-Dense IDE chrome, **dark default**, SF Mono 13 pt, line-number gutter, current-line highlight, minimal toolbars. Inspired by RustRover / Xcode **layout**, not feature count: sidebar + editor + thin status bar, optional right outline. No inspections widget, no plugin toolbar, no AI side chat.
+Dense IDE chrome, **dark default**, SF Mono 13 pt, line-number gutter, current-line highlight, minimal toolbars. Inspired by the Xcode **layout**, not feature count: sidebar + editor + thin status bar, optional right outline. No inspections widget, no plugin toolbar, no AI side chat.
 
 ### In scope (1.0)
 

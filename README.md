@@ -8,7 +8,7 @@ Completions come from the open buffer, the workspace and every crate already on 
 
 ![The completion popup on a partial `HashM`, the documentation card on the right and the cheat sheet stacked below it](docs/images/ride-completion.png)
 
-Reformat Document runs rustfmt, clang-format (found in the Xcode toolchain, so no Homebrew install is needed), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing basics follow RustRover's menus: smart Enter, Tab and ⇧Tab on a selection, ⌘/ comments, bracket pairing, duplicate, delete, join and move lines, Move Statement (⇧⌘↑ / ⇧⌘↓), which lifts a whole block over its neighbour instead of one line, extend selection (⌥↑), matching brace, folding, Surround With, Back/Forward (⌘[ / ⌘]), Go to Line (⌘L), Recent Files (⌘E), next problem (F2) and header/source switch. ⌘? lists every shortcut.
+Reformat Document runs rustfmt, clang-format (found in the Xcode toolchain, so no Homebrew install is needed), taplo or cmake-format when installed, and a built-in Makefile formatter. Editing basics: smart Enter, Tab and ⇧Tab on a selection, ⌘/ comments, bracket pairing, duplicate, delete, join and move lines, Move Statement (⇧⌘↑ / ⇧⌘↓), which lifts a whole block over its neighbour instead of one line, extend selection (⌥↑), matching brace, folding, Surround With, Back/Forward (⌘[ / ⌘]), Go to Line (⌘L), Recent Files (⌘E), next problem (F2) and header/source switch. ⌘? lists every shortcut.
 
 ## Cheat sheet
 

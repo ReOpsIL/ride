@@ -4,7 +4,7 @@ Status: AI-1 to AI-5 implemented 2026-10-06 (engine and RideTests-level logic te
 
 ## What the leading tools do (research 2026-10-06)
 
-Sources: VS Code and Copilot docs read first-hand from their GitHub markdown; Zed docs and keymap read first-hand; Cursor, JetBrains and Windsurf from search snippets of their docs (pages blocked by the proxy, re-check before quoting).
+Sources: VS Code and Copilot docs read first-hand from their GitHub markdown; Zed docs and keymap read first-hand; Cursor and Windsurf from search snippets of their docs (pages blocked by the proxy, re-check before quoting).
 
 | Feature | Best ideas | Where |
 |---|---|---|
@@ -12,7 +12,7 @@ Sources: VS Code and Copilot docs read first-hand from their GitHub markdown; Ze
 | Popup coexistence | When the language-server popup is open, Tab belongs to the popup; ⌥Tab always takes the AI suggestion; optional "subtle" mode shows the prediction only while ⌥ is held | Zed `edit-prediction.md`, `default-macos.json` |
 | Completion context | Prefix and suffix (fill-in-the-middle), snippets from open files near the cursor, recent edits, diagnostics nearby; Cursor adds linter errors and recent edits | GitHub blog on Copilot context; Cursor Tab docs |
 | Next edit | A gutter arrow points at the predicted next edit; first Tab jumps, second applies | Copilot NES, Cursor Tab, Windsurf Tab to Jump |
-| Explain | Context menu Explain and `/explain`; answer in the chat panel so follow-ups keep the thread; show which elements were attached | VS Code `copilot-smart-actions.md`, JetBrains Explain Code |
+| Explain | Context menu Explain and `/explain`; answer in the chat panel so follow-ups keep the thread; show which elements were attached | VS Code `copilot-smart-actions.md` |
 | Chat | Side panel; ⌘L adds the selection; implicit current file and selection chips; `#file` / `@file`, `#sym`, diagnostics, codebase search; streaming markdown; code blocks with Copy, Insert, Apply (diff preview); threads with history; read-only Ask mode | VS Code `chat-overview.md`, `copilot-chat-context.md`; Zed `agent-panel.md`; Cursor chat docs |
 
 ## Ride's design

@@ -1,16 +1,15 @@
-# Ride — Next features and roadmap (2026-09-10, trimmed to daily native-app work after the RustRover and CLion pass)
+# Ride — Next features and roadmap (2026-09-10, trimmed to daily native-app work)
 
 | Field | Value |
 |---|---|
 | Scope | What a developer building native apps in Rust, C and C++ needs every day. Everything that is not on that path was removed (see "Cut"). |
 | Baseline | 1.0 backlog done except A3 split, update check and universal build; completion phases 1–5, cheat sheet and the editor must-haves (`must_have.md`) shipped |
 | Principle | KD-1/2/6: Swift shell, Rust engine, no cloud model, no LSP dependency; local and fast |
-| Reference | RustRover: [quick start](https://www.jetbrains.com/help/rust/quick-start-guide-rustrover.html), [reference views](https://www.jetbrains.com/help/rust/viewing-reference-information.html), [inspections](https://www.jetbrains.com/help/rust/code-inspection.html), [terminal](https://www.jetbrains.com/help/rust/terminal-emulator.html), [debugging](https://www.jetbrains.com/help/rust/debugging-code.html). CLion: [quick start](https://www.jetbrains.com/help/clion/clion-quick-start-guide.html), [code generation](https://www.jetbrains.com/help/clion/generating-code.html), [code analysis](https://www.jetbrains.com/help/clion/code-analysis.html), [compilation database](https://www.jetbrains.com/help/clion/compilation-database.html) |
 | Horizon | 1.1 Trust · 1.2 Build, run, test, debug · 1.3 Understand and change code · 2.0 Git |
 
-## What CLion adds to the picture
+## The project model
 
-CLion is organised around the **project model** (CMake first, then Makefile and compilation-database projects), and everything else hangs off it: targets become run/debug configurations, the debugger and the test runner attach to targets, single files can be compiled and run without a project, and the Generate menu (⌘N in CLion) writes the C++ boilerplate (constructors, getters and setters, operators, override and implement, definitions in the `.cpp`). Analysis runs on the fly through clangd with Clang-Tidy as the checker. For Ride this means the build-run-test-debug loop moves ahead of the reference index: a native-app developer runs and debugs many times a day and renames rarely.
+The daily loop hangs off the **project model** (CMake first, then Makefile and compilation-database projects): targets become run/debug configurations, the debugger and the test runner attach to targets, single files can be compiled and run without a project, and Generate (⌘N) writes the C++ boilerplate (constructors, getters and setters, operators, override and implement, definitions in the `.cpp`). The build-run-test-debug loop moves ahead of the reference index: a native-app developer runs and debugs many times a day and renames rarely.
 
 ## Cut from the previous draft
 
@@ -42,12 +41,12 @@ Exit: two panes with independent popups; workspace reopens as left; update check
 
 ## Release 1.2 — Build, run, test, debug (7–9 weeks)
 
-Goal: the CLion loop. Targets come from the project model, run and debug attach to targets, tests run from the gutter.
+Goal: the build-run-test-debug loop. Targets come from the project model, run and debug attach to targets, tests run from the gutter.
 
 | # | Feature | Design notes | Where | Days |
 |---|---|---|---|---|
-| 1.2-1 | **Project model** | One `ProjectModel` per workspace root, detected in this order: Cargo (`cargo metadata`: packages, bin/lib/test/bench/example targets, features), CMake (`CMakeLists.txt`: configure into `build/<profile>` with `CMAKE_EXPORT_COMPILE_COMMANDS=ON`, read the CMake File API for targets, so the compile database Ride already uses is produced automatically), Makefile (targets from the outline, `make -n` to learn the commands), compilation database only (targets are the listed sources; build through a user command like CLion's custom build target). Reload on manifest change. A Targets panel lists them with build type profiles (Debug, Release, RelWithDebInfo) for CMake. | `src/project/`, `app/Ride/Project` | 8 |
-| 1.2-2 | **Run configurations** | Per target: command, arguments, environment, working directory, `RUST_BACKTRACE`, sanitizer flags (ASan/UBSan/TSan as a checkbox that adds the compile and env flags for CMake and Cargo), saved with the workspace; a toolbar target picker; ⌘R runs, ⌘B builds, ⇧⌘R runs tests, ⌃⌘R debugs (CLion: ⇧F10/⇧F9). | `app/Ride/Run` | 4 |
+| 1.2-1 | **Project model** | One `ProjectModel` per workspace root, detected in this order: Cargo (`cargo metadata`: packages, bin/lib/test/bench/example targets, features), CMake (`CMakeLists.txt`: configure into `build/<profile>` with `CMAKE_EXPORT_COMPILE_COMMANDS=ON`, read the CMake File API for targets, so the compile database Ride already uses is produced automatically), Makefile (targets from the outline, `make -n` to learn the commands), compilation database only (targets are the listed sources; build through a user command). Reload on manifest change. A Targets panel lists them with build type profiles (Debug, Release, RelWithDebInfo) for CMake. | `src/project/`, `app/Ride/Project` | 8 |
+| 1.2-2 | **Run configurations** | Per target: command, arguments, environment, working directory, `RUST_BACKTRACE`, sanitizer flags (ASan/UBSan/TSan as a checkbox that adds the compile and env flags for CMake and Cargo), saved with the workspace; a toolbar target picker; ⌘R runs, ⌘B builds, ⇧⌘R runs tests, ⌃⌘R debugs. | `app/Ride/Run` | 4 |
 | 1.2-3 | **Terminal and Run console** | A bottom panel tab on SwiftTerm over a pty for the shell (⌥F12, Open in Terminal from the tree, multiple tabs); the Run console is the same view with `path:line:col` clickable, ANSI colors, Stop and Rerun; build errors from the console feed the Problems panel through the existing parsers. | `app/Ride/Terminal` | 5 |
 | 1.2-4 | **Test runner** | `cargo test` (JSON via `--format json` when available, otherwise parsed output), GoogleTest and Catch2 through their `--gtest_list_tests` / `--list-tests` and result output, CTest through `ctest --show-only=json-v1`; ▶ in the gutter next to `#[test]`, `TEST(...)`, `TEST_CASE(...)` and `fn main`; a Tests panel with pass/fail tree, output per test, rerun failed, filter. | `src/run/tests/`, `app/Ride/Tests` | 6 |
 | 1.2-5 | **Single-file run and recompile** | Run the current `.c`, `.cpp` or `.rs` file without a project (clang / rustc into a temp dir) and Recompile File (⇧⌘F9) for compilation-database projects using that file's command. | `src/run/single.rs` | 2 |
@@ -101,7 +100,7 @@ All through the `git` CLI; no libgit2, no hosting-service client.
 2.0-4 local history ◄── diff engine ──► 2.0-1 changes
 ```
 
-1.2 comes before 1.3 on purpose: a native-app developer runs, tests and debugs many times a day and renames or extracts occasionally, and CLion users judge an IDE by the build-run-debug loop first.
+1.2 comes before 1.3 on purpose: a native-app developer runs, tests and debugs many times a day and renames or extracts occasionally.
 
 ## Tradeoffs and non-goals
 

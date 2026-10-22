@@ -67,7 +67,7 @@ Sinai lets imaging teams wire typed stages into a graph and watch each run, stag
 **Who, in order of fit:**
 
 1. **The imaging algorithm engineer at a Sinai customer.** They have a working Sinai pipeline in Python. One or two nodes dominate the run, for example HU windowing over 51,000 series, a threshold and connected-component pass on a TotalSegmentator mask, resampling, or a calcium-score sum. They want those stages on the GPU without becoming CUDA C++ people, and they work on a Mac. This is the beachhead: Sinai already has the users, the pipelines and the reference outputs to check a kernel against.
-2. **The Rust systems engineer who needs a few kernels.** Their Rust service has a hot loop in signal processing, vision, compression or geometry. They know Rust, not CUDA. Their editor is VS Code or RustRover today.
+2. **The Rust systems engineer who needs a few kernels.** Their Rust service has a hot loop in signal processing, vision, compression or geometry. They know Rust, not CUDA. Their editor is VS Code today.
 3. **The GPU engineer evaluating cuda-rust.** They know CUDA C++ and want to see what Rust codegen produces. For them the PTX and IR inspector and the sanitizer view are the hook.
 
 **Why now.** cuda-rust went public in April 2026 and is moving daily. cutile builds on stable Rust. The window in which "the IDE for Rust on GPUs" is unclaimed is short, and Ride is already a Rust-first native IDE.

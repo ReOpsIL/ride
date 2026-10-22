@@ -2,13 +2,13 @@
 
 Status (2026-09-10): P0, P1, P1b, P2 and most of P3 implemented. Done: smart Enter, Tab/⇧Tab indent, comment toggle, bracket pairing, undo grouping; duplicate/delete/join/move/new line/case/sort, copy line and Copy Reference, extend/shrink selection, matching brace, find options and Find and Replace; New File with language picker, Open… for files, Close Workspace, Save All/As, Revert, Close All/Others, disk-change prompt, CRLF preserved and shown, tree and tab context items; Back/Forward, Last Edit, Go to Line, Recent Files, next/previous problem and method, header/source switch, zoom and view toggles; folding, Surround With, Quick Documentation and Signature Help on demand. Open: gutter fold chevrons and bracket-pair highlight, Reformat Selection, Move Statement, Complete Statement, Replace in Project, ⌫/↩ in the tree, Recent Locations. Verification: the `--demo selftest` scene runs 47 command checks in-process (all pass on the demo project) and the menu bar was enumerated through Accessibility to confirm every item and its enabled state. Tests: `tests/editing.rs` (engine), `app/RideTests` (LineOps, CommentToggle, SmartIndent, BracketPairing, NavigationHistory, SiblingSource, FindMatcher, FoldSet).
 
-Priority: **before** `plan/roadmap/next.md`. Reference: RustRover's Edit, View, Navigate and Code menus ([quick start](https://www.jetbrains.com/help/rust/quick-start-guide-rustrover.html), [source code editing](https://www.jetbrains.com/help/rust/working-with-source-code.html), [navigation](https://www.jetbrains.com/help/rust/navigating-through-the-source-code.html), [reformat](https://www.jetbrains.com/help/rust/reformat-and-rearrange-code.html)).
+Priority: **before** `plan/roadmap/next.md`. Reference: the Edit, View, Navigate and Code menus.
 
-## Audit: RustRover menus against Ride today
+## Audit: editor menus against Ride today
 
 Ride's editor is a bare `NSTextView` with completion, snippets, hover, definitions, find/replace in file and project, symbol pickers, check and format. Everything a programmer reaches for between keystrokes is missing: the Edit menu is the macOS default (undo, clipboard, select all), Enter does not indent, Tab only inserts spaces, there is no comment toggle, no line operations, no bracket pairing, no go-to-line, no navigation history, no folding.
 
-| RustRover item (mac shortcut) | Ride today | Verdict |
+| Menu item (mac shortcut) | Ride today | Verdict |
 |---|---|---|
 | **File** | | |
 | New ▸ Rust File / File / Directory (⌘N in the tree), New Project | New Buffer (⌘N, untitled `.rs`); tree toolbar and context menu New File / New Folder with a name prompt | Must: ⌘N becomes New File in the selected folder with the save panel's language picker (todo item); New Folder in the File menu; New Buffer stays as ⌥⌘N |
@@ -48,7 +48,7 @@ Ride's editor is a bare `NSTextView` with completion, snippets, hover, definitio
 | Last Edit Location (⇧⌘⌫) | none | Must (falls out of the history) |
 | Go to Line:Column (⌘L) | none | Must |
 | Declaration or Usages (⌘B), Type Declaration (⇧⌘B), Implementation (⌥⌘B), Super (⌘U) | F12 definition | Fine for 1.x; usages arrive with `next.md` 1.2-1 |
-| Related Symbol / Header-Source switch (⌃⌥↑ in CLion) | none | Must for C/C++: switch between `.h` / `.c` / `.cpp` siblings |
+| Related Symbol / Header-Source switch (⌃⌥↑) | none | Must for C/C++: switch between `.h` / `.c` / `.cpp` siblings |
 | Next / Previous Highlighted Error (F2 / ⇧F2) | Problems panel click only | Must |
 | Next / Previous Method (⌃↓ / ⌃↑) | none | Must (outline ranges already known) |
 | Matching Brace (⌃M) | none | Must, plus highlight the pair under the caret |
@@ -85,7 +85,7 @@ Ride's editor is a bare `NSTextView` with completion, snippets, hover, definitio
 | `statement_range(session, byte)` | the statement or item around the caret | move statement, complete statement |
 | `sibling_source(path)` | `.h` ↔ `.c`/`.cpp` candidate paths | header/source switch |
 
-**Keymap.** RustRover's mac defaults where they do not fight the macOS text system; the Keyboard Shortcuts panel and menus list them. Conflicts resolved: Ride's Find Next stays ⌘G (macOS), so Go to Line is ⌘L; extend selection ⌥↑ / ⌥↓ is free when no popup is open (the cheat sheet uses it only while both popups are visible); Back/Forward ⌘[ / ⌘] so Indent/Unindent are Tab / ⇧Tab on a selection and ⌘] / ⌘[ are **not** reused; Duplicate is ⌘D; Delete Line ⌘⌫; Move Line ⌥⇧↑ / ⌥⇧↓; Comment ⌘/ (the Keyboard Shortcuts help panel moves to ⌘?).
+**Keymap.** macOS IDE defaults where they do not fight the macOS text system; the Keyboard Shortcuts panel and menus list them. Conflicts resolved: Ride's Find Next stays ⌘G (macOS), so Go to Line is ⌘L; extend selection ⌥↑ / ⌥↓ is free when no popup is open (the cheat sheet uses it only while both popups are visible); Back/Forward ⌘[ / ⌘] so Indent/Unindent are Tab / ⇧Tab on a selection and ⌘] / ⌘[ are **not** reused; Duplicate is ⌘D; Delete Line ⌘⌫; Move Line ⌥⇧↑ / ⌥⇧↓; Comment ⌘/ (the Keyboard Shortcuts help panel moves to ⌘?).
 
 **Menu layout.** Edit and View gain the missing items; a new **Navigate** menu takes Open Quickly, Recent Files, Back/Forward, Last Edit, Go to Line, Symbol pickers, Definition, Header/Source, Next/Previous Problem and Method, Matching Brace; a new **Code** menu takes Comment, Indent, Reformat, Auto-Indent, Surround, Fold, Move Line/Statement, Complete Statement, Trigger Completion, Cheat Sheet, Quick Documentation, Signature Help. Menus observe `MenuModel` only (see the menu-rebuild fix); enabled state comes from a few published flags (has editor, has selection).
 
