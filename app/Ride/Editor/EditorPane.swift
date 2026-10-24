@@ -105,6 +105,8 @@ struct PaneColumn: View {
                 HtmlColumn(document: buffer, paneID: pane.id, focused: focused)
             } else if let buffer = state.buffer(pane.activeID), MarkdownPage.matches(buffer.fileURL) {
                 MarkdownColumn(document: buffer, paneID: pane.id, focused: focused)
+            } else if let buffer = state.buffer(pane.activeID), SvgPage.matches(buffer.fileURL) {
+                SvgColumn(document: buffer, paneID: pane.id, focused: focused)
             } else {
                 if focused, state.showFind {
                     FindBar()

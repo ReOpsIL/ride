@@ -42,7 +42,14 @@ enum HtmlAsset {
         return contained(root: root, relative: clean)
     }
 
-    static func payload(root: URL, name: String, page: String, url: URL?, render: HtmlRender? = nil) -> HtmlPayload {
+    static func payload(
+        root: URL,
+        name: String,
+        page: String,
+        url: URL?,
+        render: HtmlRender? = nil,
+        accept: String? = nil
+    ) -> HtmlPayload {
         guard let url, url.scheme == HtmlPage.scheme, url.host == HtmlPage.host, let relative = lexical(url.path) else {
             return .deny
         }
@@ -50,7 +57,7 @@ enum HtmlAsset {
             let data = Data(HtmlPolicy.stamp(page).utf8)
             return .bytes(data, mime: "text/html", encoding: "utf-8")
         }
-        return bytes(at: file(root: root, relative: relative), render: render)
+        return bytes(at: file(root: root, relative: relative), render: render, accept: accept)
     }
 
     private static func contained(root: URL, relative: String) -> URL? {
@@ -69,17 +76,21 @@ enum HtmlAsset {
         }
     }
 
-    private static func bytes(at url: URL?, render: HtmlRender?) -> HtmlPayload {
+    private static func bytes(at url: URL?, render: HtmlRender?, accept: String?) -> HtmlPayload {
         guard let url, let data = read(url) else {
             return .deny
         }
         if HtmlPage.matches(url), let text = String(data: data, encoding: .utf8) {
             return .bytes(Data(HtmlPolicy.stamp(text).utf8), mime: "text/html", encoding: "utf-8")
         }
-        if let render, let html = render(url.lastPathComponent, data) {
+        if let render, allows(url, accept), let html = render(url.lastPathComponent, data) {
             return .bytes(Data(HtmlPolicy.stamp(html).utf8), mime: "text/html", encoding: "utf-8")
         }
         return .bytes(data, mime: mime(url), encoding: nil)
+    }
+
+    private static func allows(_ url: URL, _ accept: String?) -> Bool {
+        !SvgPage.matches(url) || SvgPage.asDocument(accept)
     }
 
     private static func read(_ url: URL) -> Data? {

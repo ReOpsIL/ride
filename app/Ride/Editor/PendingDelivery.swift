@@ -38,7 +38,7 @@ extension AppState {
         guard let buffer = buffer(for: url) else {
             return
         }
-        if MarkdownPage.matches(buffer.fileURL) || HtmlPage.matches(buffer.fileURL) {
+        if RenderedFile.matches(buffer.fileURL) {
             buffer.showHtmlSource = true
         }
         jump(to: target, in: buffer)

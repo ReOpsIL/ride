@@ -133,8 +133,7 @@ final class SelfTestMenuContext {
                 self.openProbe()
             } else if let url {
                 self.state.openFile(url)
-                if let buffer = self.state.buffer(for: url),
-                   MarkdownPage.matches(buffer.fileURL) || HtmlPage.matches(buffer.fileURL) {
+                if let buffer = self.state.buffer(for: url), RenderedFile.matches(buffer.fileURL) {
                     buffer.showHtmlSource = true
                 }
             }

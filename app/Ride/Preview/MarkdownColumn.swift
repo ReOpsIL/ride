@@ -4,56 +4,20 @@ struct MarkdownColumn: View {
     @ObservedObject var document: BufferDocument
     let paneID: UUID
     let focused: Bool
-    @EnvironmentObject private var state: AppState
     @ObservedObject private var themes = ThemeStore.shared
 
     var body: some View {
-        VStack(spacing: 0) {
-            if focused, state.showFind, document.showHtmlSource {
-                FindBar()
-            }
-            PanelHeader(icon: "doc.richtext", title: document.displayName, badges: [badge]) {
-                IconButton(symbol: symbol, help: help) {
-                    state.paneFocused(paneID)
-                    document.showHtmlSource.toggle()
-                }
-            }
-            content
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(themes.editorBackground)
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        if document.showHtmlSource {
-            EditorPane(document: document, state: state, paneID: paneID, focused: focused)
-                .id(document.id)
-        } else {
-            HtmlWebView(
-                document: document,
-                paneID: paneID,
-                focused: focused,
-                revision: "\(document.htmlGeneration)|\(themes.theme.name)",
-                page: { Self.page(document.text, themes.theme) },
-                renderSibling: { Self.sibling($0, $1, themes.theme) }
-            ) {
-                state.paneFocused(paneID)
-            }
-            .id(document.fileURL)
-        }
-    }
-
-    private var badge: PanelBadge {
-        PanelBadge(id: "mode", text: document.showHtmlSource ? "Source" : "Rendered", tint: nil)
-    }
-
-    private var symbol: String {
-        document.showHtmlSource ? "eye" : "chevron.left.forwardslash.chevron.right"
-    }
-
-    private var help: String {
-        document.showHtmlSource ? "Show Rendered Markdown" : "Show Markdown Source"
+        RenderedColumn(
+            document: document,
+            paneID: paneID,
+            focused: focused,
+            icon: "doc.richtext",
+            sourceHelp: "Show Rendered Markdown",
+            renderedHelp: "Show Markdown Source",
+            revision: "\(document.htmlGeneration)|\(themes.theme.name)",
+            page: { Self.page(document.text, themes.theme) },
+            renderSibling: { Self.sibling($0, $1, themes.theme) }
+        )
     }
 
     private static func page(_ text: String, _ theme: Theme) -> String {

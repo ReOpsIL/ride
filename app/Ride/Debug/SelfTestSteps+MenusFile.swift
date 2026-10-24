@@ -107,8 +107,7 @@ extension SelfTestSteps {
     }
 
     private static func reveal(_ c: SelfTestMenuContext, _ url: URL?) -> Bool {
-        if let buffer = c.state.activeBuffer,
-           MarkdownPage.matches(buffer.fileURL) || HtmlPage.matches(buffer.fileURL) {
+        if let buffer = c.state.activeBuffer, RenderedFile.matches(buffer.fileURL) {
             buffer.showHtmlSource = true
         }
         return c.shows(url)

@@ -30,7 +30,15 @@ final class HtmlSchemeHandler: NSObject, WKURLSchemeHandler {
                 return
             }
             let shot = self.snapshot()
-            let payload = HtmlAsset.payload(root: self.root, name: self.name, page: shot.page, url: url, render: shot.render)
+            let accept = task.request.value(forHTTPHeaderField: "Accept")
+            let payload = HtmlAsset.payload(
+                root: self.root,
+                name: self.name,
+                page: shot.page,
+                url: url,
+                render: shot.render,
+                accept: accept
+            )
             self.deliver(task, payload)
         }
     }

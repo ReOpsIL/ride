@@ -22,6 +22,7 @@
 | Editor binding rules: hosts own documents, pending text and jumps are per document, focus follows the pane layout | `docs/product/editor-binding.md` |
 | HTML files render in the editor pane, source on a toggle, split beside other files | `docs/product/html-view.md` |
 | Markdown files render in the editor pane, source on a toggle, split beside other files | `docs/product/markdown-view.md` |
+| SVG files render in the editor pane, source on a toggle, split beside other files | `docs/product/svg-view.md` |
 | Workspace map: nested canvas of crates, modules and symbols | `docs/product/workspace-map.md` |
 | Editor fragment refresh: why `refreshFolds` must mark the store edited for TextKit 2 to ask the layout delegate again | `docs/tui/editor-fragment-refresh.md` |
 | Editor line backgrounds: caret line, marked (debug) line and bracket pair as ordered layers; theme keys | `docs/tui/editor-backgrounds.md` |

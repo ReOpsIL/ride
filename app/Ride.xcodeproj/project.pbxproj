@@ -291,6 +291,12 @@
 		H7ML0000000000000000B00C /* HtmlSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A00C /* HtmlSurface.swift */; };
 		H7ML0000000000000000B00D /* MarkdownPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A00D /* MarkdownPage.swift */; };
 		H7ML0000000000000000B00E /* MarkdownColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A00E /* MarkdownColumn.swift */; };
+		SVGP0000000000000000B001 /* SvgPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A001 /* SvgPage.swift */; };
+		SVGP0000000000000000B002 /* SvgColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A002 /* SvgColumn.swift */; };
+		SVGP0000000000000000B003 /* RenderedColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A003 /* RenderedColumn.swift */; };
+		SVGP0000000000000000B004 /* RenderedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A004 /* RenderedFile.swift */; };
+		SVGP0000000000000000C001 /* SvgPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A001 /* SvgPage.swift */; };
+		SVGP0000000000000000C005 /* SvgPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SVGP0000000000000000A005 /* SvgPageTests.swift */; };
 		H7ML0000000000000000C001 /* HtmlPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = H7ML0000000000000000A001 /* HtmlPage.swift */; };
 		WMAP0000000000000000B001 /* MapGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A001 /* MapGraph.swift */; };
 		WMAP0000000000000000B002 /* MapLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = WMAP0000000000000000A002 /* MapLayout.swift */; };
@@ -1414,6 +1420,11 @@
 		H7ML0000000000000000A00D /* MarkdownPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPage.swift; sourceTree = "<group>"; };
 		H7ML0000000000000000A00E /* MarkdownColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownColumn.swift; sourceTree = "<group>"; };
 		H7ML0000000000000000A00F /* MarkdownPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPageTests.swift; sourceTree = "<group>"; };
+		SVGP0000000000000000A001 /* SvgPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SvgPage.swift; sourceTree = "<group>"; };
+		SVGP0000000000000000A002 /* SvgColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SvgColumn.swift; sourceTree = "<group>"; };
+		SVGP0000000000000000A003 /* RenderedColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderedColumn.swift; sourceTree = "<group>"; };
+		SVGP0000000000000000A004 /* RenderedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderedFile.swift; sourceTree = "<group>"; };
+		SVGP0000000000000000A005 /* SvgPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SvgPageTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000007A /* AppState+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+Preview.swift"; sourceTree = "<group>"; };
 		B1000000000000000000008A /* HeadingLevelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeadingLevelTests.swift"; sourceTree = "<group>"; };
 		B1000000000000000000001A /* MarkupFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkupFonts.swift; sourceTree = "<group>"; };
@@ -2126,6 +2137,7 @@
 				H7ML0000000000000000A007 /* HtmlPageTests.swift */,
 				WMAP0000000000000000A019 /* MapScanTests.swift */,
 				H7ML0000000000000000A00F /* MarkdownPageTests.swift */,
+				SVGP0000000000000000A005 /* SvgPageTests.swift */,
 				H7ML0000000000000000A00B /* HtmlScrollTests.swift */,
 				A00000000000000000000910 /* RangeShiftTests.swift */,
 				A00000000000000000000122 /* ProjectFindTests.swift */,
@@ -3003,6 +3015,10 @@
 				H7ML0000000000000000A006 /* HtmlColumn.swift */,
 				H7ML0000000000000000A00D /* MarkdownPage.swift */,
 				H7ML0000000000000000A00E /* MarkdownColumn.swift */,
+				SVGP0000000000000000A001 /* SvgPage.swift */,
+				SVGP0000000000000000A002 /* SvgColumn.swift */,
+				SVGP0000000000000000A003 /* RenderedColumn.swift */,
+				SVGP0000000000000000A004 /* RenderedFile.swift */,
 				H7ML0000000000000000A008 /* HtmlScroll.swift */,
 				H7ML0000000000000000A009 /* HtmlFindHost.swift */,
 				H7ML0000000000000000A00C /* HtmlSurface.swift */,
@@ -3613,6 +3629,8 @@
 				H7ML0000000000000000C009 /* HtmlSurface.swift in Sources */,
 				H7ML0000000000000000C00A /* MarkdownPage.swift in Sources */,
 				H7ML0000000000000000C00B /* MarkdownPageTests.swift in Sources */,
+				SVGP0000000000000000C001 /* SvgPage.swift in Sources */,
+				SVGP0000000000000000C005 /* SvgPageTests.swift in Sources */,
 				H7ML0000000000000000C007 /* HtmlScrollTests.swift in Sources */,
 				B1000000000000000000000D /* LineIndex.swift in Sources */,
 				B1000000000000000000000E /* LineIndexTests.swift in Sources */,
@@ -4360,6 +4378,10 @@
 				H7ML0000000000000000B006 /* HtmlColumn.swift in Sources */,
 				H7ML0000000000000000B00D /* MarkdownPage.swift in Sources */,
 				H7ML0000000000000000B00E /* MarkdownColumn.swift in Sources */,
+				SVGP0000000000000000B001 /* SvgPage.swift in Sources */,
+				SVGP0000000000000000B002 /* SvgColumn.swift in Sources */,
+				SVGP0000000000000000B003 /* RenderedColumn.swift in Sources */,
+				SVGP0000000000000000B004 /* RenderedFile.swift in Sources */,
 				H7ML0000000000000000B007 /* HtmlScroll.swift in Sources */,
 				H7ML0000000000000000B008 /* HtmlFindHost.swift in Sources */,
 				H7ML0000000000000000B00C /* HtmlSurface.swift in Sources */,

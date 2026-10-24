@@ -1,0 +1,7 @@
+# SVG view
+
+An `.svg` file opens rendered in its editor pane. The pane header shows Rendered, and its button switches that pane to the source and back. ⌘\ still splits the editor, so one pane can hold Rust (or any other file) while the other holds the drawing.
+
+The drawing is the buffer, including unsaved edits, shown on the editor background. A reload from disk replaces the buffer and the view loads again. Changing the theme loads the drawing again. Images, fonts and other files load only from that file's folder. A link to another SVG file in that folder opens rendered. A link to `http` or `https` opens in the browser. Other targets, including `javascript:` and `file:`, are dropped. The page gets a content-security policy that allows its own inline script and style and the files next to it, and nothing from the network.
+
+Source is the plain-text editor, with the editor find bar. The rendered drawing uses the system find bar (⌘F, ⌘G, ⇧⌘G, ⌥⌘F). Next, previous, and Return scroll the page to that match. Switching tabs, or switching between the drawing and the source, keeps the page's vertical scroll.
